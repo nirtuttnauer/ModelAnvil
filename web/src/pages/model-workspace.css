@@ -1,0 +1,17 @@
+.catalog-results { list-style: none; padding: 0; display: grid; gap: 8px; }
+.catalog-results li { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.catalog-results span { color: var(--text-muted); font-size: 13px; overflow-wrap: anywhere; }
+.chat-transcript { display: grid; gap: 16px; }
+.chat-message { padding: 16px; border: 1px solid var(--border); border-radius: 10px; min-width: 0; }
+.chat-message strong { text-transform: capitalize; }
+.chat-message p, .chat-output { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.6; }
+.chat-user { background: var(--surface-subtle); }
+.chat-arena { display: grid; gap: 16px; margin: 20px 0; }
+.chat-arena-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.chat-arena h3 { overflow-wrap: anywhere; }
+.chat-composer { margin: 24px 0; display: grid; gap: 12px; }
+.chat-composer label { display: grid; gap: 8px; }
+.ml-page .checkbox-label { display: flex; align-items: center; gap: 10px; grid-column: 1 / -1; }
+.ml-page .checkbox-label input { width: 20px; height: 20px; flex: 0 0 auto; }
+.catalog-results button, .chat-composer button { min-height: 44px; }
+@media (max-width: 700px) { .chat-arena-pair { grid-template-columns: minmax(0, 1fr); } }

@@ -110,6 +110,16 @@ class TokenizerVersion(TenantContextModel):
     class Meta:
         constraints = [models.UniqueConstraint(fields=("tenant_id", "name", "revision_no"), name="tokenizer_version_uniq")]
 
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        if self.pk:
+            previous = type(self).all_objects.filter(pk=self.pk).first()
+            if previous and previous.compatibility.get('immutable_import'):
+                fields = ('tenant_id', 'project_id', 'configuration_digest', 'vocabulary_size',
+                          'chat_template', 'special_tokens', 'compatibility', 'artifact_manifest_id')
+                if any(getattr(previous, f) != getattr(self, f) for f in fields):
+                    raise ValidationError('Imported tokenizer snapshots are immutable; import a new version.')
+        super().save(*args, **kwargs)
+
     def __str__(self) -> str:
         return f"{self.name} r{self.revision_no}"
 
@@ -172,11 +182,63 @@ class ModelVersion(TenantContextModel):
     def save(self, *args: Any, **kwargs: Any) -> None:
         if not self.project_id and self.model_id and self.model.project_id:
             self.project = self.model.project
+        if self.pk:
+            previous = type(self).all_objects.filter(pk=self.pk).first()
+            if previous and previous.metadata.get('imported'):
+                fields = ('tenant_id', 'project_id', 'model_id', 'tokenizer_id', 'processor_id',
+                          'revision_no', 'architecture_ref', 'artifact_manifest_id', 'metadata', 'license_evidence')
+                if any(getattr(previous, f) != getattr(self, f) for f in fields):
+                    raise ValidationError('Imported model snapshots are immutable; import a new version.')
         self.clean()
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return f"{self.model.name} r{self.revision_no} [{self.state}]"
+
+
+class InferenceRequest(TenantContextModel):
+    request_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, related_name='inference_requests')
+    model_version = models.ForeignKey(ModelVersion, on_delete=models.PROTECT, related_name='inference_requests')
+    principal_id = models.CharField(max_length=128)
+    input_digest = models.CharField(max_length=64)
+    configuration = models.JSONField(default=dict)
+    status = models.CharField(max_length=20, default='running')
+    usage = models.JSONField(null=True)
+    elapsed_seconds = models.FloatField(null=True)
+    output_digest = models.CharField(max_length=64, blank=True)
+    completed_at = models.DateTimeField(null=True)
+
+
+class ChatConversation(TenantContextModel):
+    conversation_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, related_name='chat_conversations')
+    title = models.CharField(max_length=180)
+    messages = models.JSONField(default=list)
+    configuration = models.JSONField(default=dict)
+    revision_no = models.PositiveIntegerField(default=1)
+
+
+class ModelImport(TenantContextModel):
+    """Pinned acquisition; only a live job fence may publish its candidate."""
+
+    import_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    project = models.ForeignKey("identity.Project", on_delete=models.PROTECT, related_name="model_imports")
+    name = models.CharField(max_length=180)
+    repo_id = models.CharField(max_length=200)
+    revision = models.CharField(max_length=40)
+    format = models.CharField(max_length=20, default="safetensors")
+    license_expression = models.CharField(max_length=200)
+    files = models.JSONField(default=dict)
+    acquired_files = models.JSONField(default=dict)
+    job = models.OneToOneField("jobs.Job", on_delete=models.PROTECT, null=True, related_name="model_import")
+    candidate = models.ForeignKey(ModelVersion, on_delete=models.PROTECT, null=True, related_name="imports")
+    status = models.CharField(max_length=20, default="queued")
+    input_digest = models.CharField(max_length=64)
+    idempotency_key = models.CharField(max_length=128)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=("tenant_id", "project", "idempotency_key"), name="model_import_idempotency")]
 
 
 def validate_model_tokenizer_compatibility(model_version: ModelVersion, tokenizer_version: TokenizerVersion) -> None:

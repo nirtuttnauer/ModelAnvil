@@ -1,0 +1,178 @@
+{
+  "source": {
+    "repo_id": "HuggingFaceTB/SmolLM2-135M",
+    "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+    "license": "Apache-2.0"
+  },
+  "plan": {
+    "repo_id": "HuggingFaceTB/SmolLM2-135M",
+    "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+    "format": "safetensors",
+    "files": {
+      "config.json": {
+        "byte_size": 704,
+        "sha256": null
+      },
+      "generation_config.json": {
+        "byte_size": 111,
+        "sha256": null
+      },
+      "merges.txt": {
+        "byte_size": 466391,
+        "sha256": null
+      },
+      "model.safetensors": {
+        "byte_size": 269060552,
+        "sha256": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1"
+      },
+      "special_tokens_map.json": {
+        "byte_size": 831,
+        "sha256": null
+      },
+      "tokenizer.json": {
+        "byte_size": 2104556,
+        "sha256": null
+      },
+      "tokenizer_config.json": {
+        "byte_size": 3658,
+        "sha256": null
+      },
+      "vocab.json": {
+        "byte_size": 800662,
+        "sha256": null
+      }
+    },
+    "byte_size": 272437465,
+    "license": "apache-2.0",
+    "gated": false,
+    "task": "text-generation",
+    "architecture": "llama",
+    "parameters_count": 134515008,
+    "training_supported": true
+  },
+  "import_id": "6a15ac25-c168-4cd4-b1fb-1bd279205fc4",
+  "candidate_id": "98729ea7-05bc-481c-93f4-be0650d8181c",
+  "resume_primed_bytes": 1048576,
+  "job": {
+    "claimed": true,
+    "committed": true,
+    "status": "succeeded"
+  },
+  "wall_seconds": 21.790963707957417,
+  "outputs": {
+    "cpu": {
+      "id": "chatcmpl-dbe71a2e1c664a1d85d6d77ad38e9694",
+      "created": 1791748547,
+      "model": "98729ea7-05bc-481c-93f4-be0650d8181c",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": ", there was a little girl named Lily. She lived in"
+          },
+          "finish_reason": "length"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 4,
+        "completion_tokens": 12,
+        "total_tokens": 16
+      },
+      "modelanvil": {
+        "device": "cpu",
+        "elapsed_seconds": 0.11500774999149144
+      }
+    },
+    "mps:0": {
+      "id": "chatcmpl-5fc1d4a284cd42ddbd7c585e81b7fbc8",
+      "created": 1791748548,
+      "model": "98729ea7-05bc-481c-93f4-be0650d8181c",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": ", there was a little girl named Lily. She lived in"
+          },
+          "finish_reason": "length"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 4,
+        "completion_tokens": 12,
+        "total_tokens": 16
+      },
+      "modelanvil": {
+        "device": "mps:0",
+        "elapsed_seconds": 0.41361087502446026
+      }
+    },
+    "mlx:0": {
+      "id": "chatcmpl-11f24cb71ba64344928be614c7a0e158",
+      "created": 1791748549,
+      "model": "bea249e5-8aa7-4618-996c-e3de4d121a40",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": ", there was a little girl named Lily. She lived in"
+          },
+          "finish_reason": "length"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 4,
+        "completion_tokens": 12,
+        "total_tokens": 16
+      },
+      "modelanvil": {
+        "device": "mlx:0",
+        "elapsed_seconds": 0.06259262497769669
+      }
+    },
+    "gguf:cpu": {
+      "id": "chatcmpl-6158fb78f44b418a9c8a39894b563818",
+      "created": 1791748616,
+      "model": "93b07004-2f30-4add-8a15-e9a79563b242",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": ", there was a little girl named Lily. She lived in"
+          },
+          "finish_reason": "length"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 4,
+        "completion_tokens": 12,
+        "total_tokens": 16
+      },
+      "modelanvil": {
+        "device": "cpu",
+        "elapsed_seconds": 0.043813833966851234
+      }
+    }
+  },
+  "cpu_mps_equal": true,
+  "qualification": "Public pinned import and bounded local inference on this Mac only; other runtimes/hardware pending.",
+  "gguf_recheck": "Raw base-model prompt after removing llama.cpp default chat fallback.",
+  "same_decoded_completion": true,
+  "packages": {
+    "torch": "2.9.0",
+    "transformers": "4.57.1",
+    "tokenizers": "0.22.2",
+    "safetensors": "0.6.2",
+    "huggingface-hub": "0.36.2",
+    "mlx": "0.32.3",
+    "mlx-lm": "0.29.1",
+    "llama-cpp-python": "0.3.36"
+  }
+}

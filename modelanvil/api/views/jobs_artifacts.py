@@ -81,6 +81,9 @@ class JobSerializer(serializers.ModelSerializer):
         read_only_fields = ("job_id", "status", "desired_action", "attempt_count", "created_at", "updated_at")
 
     def validate(self, attrs):
+        if (attrs.get('payload', {}).get('type') == 'model_import' or
+                (self.instance and self.instance.payload.get('type') == 'model_import')):
+            raise serializers.ValidationError('Manage model acquisition through the model-imports API.')
         if (self.instance and self.instance.training_runs.filter(hardware_config__execution_mode='worker').exists()):
             raise serializers.ValidationError('Training jobs are immutable; manage the associated training run.')
         if attrs.get('payload', {}).get('type') == 'qualified_training':

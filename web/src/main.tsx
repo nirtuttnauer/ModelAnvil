@@ -37,6 +37,7 @@ import { DatasetBankPage } from './pages/DatasetBankPage';
 import { WorkflowsPage } from './pages/WorkflowsPage';
 import { BudgetsPage } from './pages/BudgetsPage';
 import { ModelsPage } from './pages/ModelsPage';
+import { ChatPage } from './pages/ChatPage';
 import { TrainingPage } from './pages/TrainingPage';
 import { ClusterExplorerPage } from './pages/ClusterExplorerPage';
 import { ContextLabPage } from './pages/ContextLabPage';
@@ -61,6 +62,7 @@ type Page =
   | 'Alignment'
   | 'Infrastructure'
   | 'Models'
+  | 'Chat'
   | 'Training'
   | 'Workflows'
   | 'RAG'
@@ -76,6 +78,7 @@ const pages: { name: Page; icon: React.ElementType; endpoint: string; slug?: str
   { name: 'Datasets', icon: Database, endpoint: '/api/v1/datasets/' },
   { name: 'Annotation', icon: Tags, endpoint: '/api/v1/labeling-campaigns/' },
   { name: 'Models', icon: Bot, endpoint: '/api/v1/models/' },
+  { name: 'Chat', icon: Bot, endpoint: '/api/v1/inference/models/' },
   { name: 'Training', icon: Flame, endpoint: '/api/v1/training-runs/' },
   { name: 'Alignment', icon: Scale, endpoint: '/api/v1/alignment-runs/' },
   { name: 'Evaluation', icon: CheckCheck, endpoint: '/api/v1/evaluation-runs/' },
@@ -97,7 +100,7 @@ function slugFor(name: Page): string {
 const navigationGroups = [
   { label: 'Workspace', names: ['Overview'] },
   { label: 'Data', names: ['Dataset Bank', 'Datasets', 'Annotation'] },
-  { label: 'Develop', names: ['Models', 'Training', 'Alignment', 'Evaluation'] },
+  { label: 'Develop', names: ['Models', 'Chat', 'Training', 'Alignment', 'Evaluation'] },
   { label: 'Context & release', names: ['RAG', 'Context Lab', 'Releases'] },
   { label: 'Operations', names: ['Workflows', 'Infrastructure', 'Budgets', 'Audit'] },
 ];
@@ -108,6 +111,7 @@ const descriptions: Record<Page, string> = {
   Datasets: 'Prepare reproducible data, inspect splits, and publish immutable versions.',
   Annotation: 'Review samples, refine labels, and build approved training snapshots.',
   Models: 'Keep model versions and their evaluation evidence together.',
+  Chat: 'Run local models, save conversations and compare actual responses.',
   Training: 'Configure reproducible runs and follow their actual progress.',
   Alignment: 'Configure preference learning and inspect recorded outcomes.',
   Evaluation: 'Compare pinned versions, inspect failures, and review the evidence.',
@@ -656,6 +660,8 @@ export function App() {
             />
           ) : active === 'Models' ? (
             <ModelsPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
+          ) : active === 'Chat' ? (
+            <ChatPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
           ) : active === 'Training' ? (
             <TrainingPage
               key={`${token}-${activeProjectId}`}

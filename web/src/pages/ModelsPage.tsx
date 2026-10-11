@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { BookOpen, Layers, Box, ArrowUpRight } from 'lucide-react';
 import { apiPage, apiRequest, errorMessage, nextPagePath } from '../api/client';
 import { ResourceState } from '../components/ResourceState';
+import { ModelCatalog } from '../components/ModelCatalog';
 import { BarChart, ChartPanel, MetricsChart } from '../components/Charts';
 import { runHash } from '../api/runs';
 import './ml-pages.css';
@@ -156,6 +157,7 @@ export function ModelsPage({ token = '', refreshKey = 0 }: { token?: string; ref
 
   return (
     <div className="resource-view ml-page ml-models">
+      <ModelCatalog token={token} onImported={() => void load()} />
       <section className="panel ml-main-panel">
         <div className="panel-title">
           <div>
