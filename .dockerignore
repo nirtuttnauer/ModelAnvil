@@ -17,6 +17,7 @@ venv
 web/dist
 /data
 /artifacts
+/storage
 /checkpoints
 /runs
 /output

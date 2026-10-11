@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 160" color="#1d4ed8" fill="currentColor" role="img" aria-labelledby="title">
+  <title id="title">ModelAnvil anvil with neural network</title>
+  <defs>
+    <mask id="network-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="256" height="160" style="mask-type:luminance">
+      <rect width="256" height="160" fill="white"/>
+      <path d="M106 58 127 88 148 58" fill="none" stroke="black" stroke-width="7" stroke-linecap="round"/>
+      <g fill="black">
+        <circle cx="106" cy="58" r="10"/>
+        <circle cx="148" cy="58" r="10"/>
+        <circle cx="127" cy="88" r="10"/>
+      </g>
+    </mask>
+  </defs>
+  <path mask="url(#network-cutout)" d="M19 24H165a3 3 0 0 1 3 3v2a3 3 0 0 0 3 3h71c3 0 4 3 2 5-22 21-49 29-79 33-16 2-23 12-18 26 3 10 18 13 30 20 5 3 7 7 7 12a3 3 0 0 1-3 3H53a3 3 0 0 1-3-3c0-5 2-9 7-12 12-7 27-10 30-20 5-14 0-21-9-29-20-17-36-23-59-23a3 3 0 0 1-3-3V27a3 3 0 0 1 3-3Z"/>
+</svg>

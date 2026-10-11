@@ -22,7 +22,7 @@ make migrate
 make check test migration-check smoke
 ```
 
-The bootstrap command creates synthetic local demo records and the development API key used by the browser. Use it only in a local development database.
+The bootstrap command creates a local tenant, admin user, empty project and the development API key used by the browser. Use it only in a local development database. Use Storybook for populated demo screens; create datasets and models through the app for real execution.
 
 Start the API with `.venv/bin/python manage.py runserver` and the web UI with `cd web && npm ci && npm run dev`. The browser dev server proxies `/api` to `http://127.0.0.1:8000`.
 

@@ -30,11 +30,11 @@ auth.json
 credentials*
 
 # Local data, checkpoints, and model artifacts
-data/
-artifacts/
-storage/
-checkpoints/
-runs/
+/data/
+/artifacts/
+/storage/
+/checkpoints/
+/runs/
 *.safetensors
 *.pt
 *.pth
