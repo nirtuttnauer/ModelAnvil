@@ -211,10 +211,11 @@ test('overview page mounts onboarding checklist with derived readiness and actio
   );
 
   // Derives readiness from saved resources
-  assert.match(checklistSource, /\/api\/v1\/datasets\//);
+  assert.match(checklistSource, /\/api\/v1\/dataset-revisions\//);
   assert.match(checklistSource, /\/api\/v1\/tokenizers\//);
   assert.match(checklistSource, /\/api\/v1\/model-versions\//);
   assert.match(checklistSource, /\/api\/v1\/worker-pools\//);
+  assert.match(checklistSource, /\/api\/v1\/worker-inventory\//);
   assert.match(checklistSource, /\/api\/v1\/budget-policies\//);
 
   // Resumable state surviving refresh/reconnect

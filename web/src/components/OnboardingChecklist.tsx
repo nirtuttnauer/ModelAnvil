@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import {
   CheckCircle2,
   Circle,
@@ -19,28 +19,11 @@ import {
 } from 'lucide-react';
 import { apiPage, errorMessage } from '../api/client';
 import {
-  RegisterTokenizerModal,
-  RegisterModelVersionModal,
   CreateProjectModal,
 } from './PrerequisiteModals';
-import type { Project, TokenizerVersion, RegisteredModelVersion } from '../api/resources';
+import type { Project, TokenizerVersion } from '../api/resources';
 
-interface WorkerPool {
-  id: number;
-  name: string;
-  is_active: boolean;
-}
-
-interface BudgetPolicy {
-  policy_id: string;
-  name: string;
-  is_enabled: boolean;
-}
-
-interface Dataset {
-  dataset_id: string;
-  name: string;
-}
+import { setupReadiness, type SetupDataset, type SetupPool, type SetupBudget, type SetupWorker, type SetupRunner, type SetupModel } from '../api/setup-readiness';
 
 export interface OnboardingState {
   hasConnection: boolean;
@@ -61,7 +44,6 @@ export function OnboardingChecklist({
   onNavigate,
   onOpenConnection,
   onProjectCreated,
-  onPrerequisiteAdded,
 }: {
   token: string;
   refreshKey: number;
@@ -78,8 +60,10 @@ export function OnboardingChecklist({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [state, setState] = useState<OnboardingState>({
-    hasConnection: !!token.trim(),
+  const requestVersion = useRef(0);
+  const savedConnection = useRef(token);
+  const [savedState, setState] = useState<OnboardingState>({
+    hasConnection: false,
     activeProject,
     datasetCount: 0,
     tokenizerCount: 0,
@@ -88,9 +72,11 @@ export function OnboardingChecklist({
     budgetPolicyCount: 0,
   });
 
+  const state = savedConnection.current === token && savedState.activeProject?.id === activeProject?.id ? savedState : {
+    hasConnection: false, activeProject, datasetCount: 0, tokenizerCount: 0, modelVersionCount: 0, workerPoolCount: 0, budgetPolicyCount: 0,
+  };
+
   // Modal open states
-  const [showTokenizerModal, setShowTokenizerModal] = useState(false);
-  const [showModelModal, setShowModelModal] = useState(false);
   const [showProjectModal, setShowProjectModal] = useState(false);
 
   const toggleCollapsed = () => {
@@ -102,52 +88,29 @@ export function OnboardingChecklist({
   };
 
   const loadPrerequisites = useCallback(async (signal?: AbortSignal) => {
-    if (!token.trim()) {
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
+    const version = ++requestVersion.current;
+    savedConnection.current = token;
+    setState({ hasConnection: false, activeProject, datasetCount: 0, tokenizerCount: 0, modelVersionCount: 0, workerPoolCount: 0, budgetPolicyCount: 0 });
     setError(null);
-
-    try {
-      const [datasetsRes, tokenizersRes, modelsRes, workersRes, budgetsRes] =
-        await Promise.allSettled([
-          apiPage<Dataset>('/api/v1/datasets/', token, signal),
-          apiPage<TokenizerVersion>('/api/v1/tokenizers/', token, signal),
-          apiPage<RegisteredModelVersion>('/api/v1/model-versions/', token, signal),
-          apiPage<WorkerPool>('/api/v1/worker-pools/', token, signal),
-          apiPage<BudgetPolicy>('/api/v1/budget-policies/', token, signal),
-        ]);
-
-      if (signal?.aborted) return;
-
-      const datasetCount = datasetsRes.status === 'fulfilled' ? datasetsRes.value.results.length : 0;
-      const tokenizers = tokenizersRes.status === 'fulfilled' ? tokenizersRes.value.results : [];
-      const modelVersions = modelsRes.status === 'fulfilled' ? modelsRes.value.results : [];
-      const workerPoolCount = workersRes.status === 'fulfilled' ? workersRes.value.results.length : 0;
-      const budgetPolicyCount = budgetsRes.status === 'fulfilled' ? budgetsRes.value.results.length : 0;
-
-      setState({
-        hasConnection: !!token.trim(),
-        activeProject,
-        datasetCount,
-        tokenizerCount: tokenizers.length,
-        modelVersionCount: modelVersions.length,
-        workerPoolCount,
-        budgetPolicyCount,
-        firstTokenizerName: tokenizers[0]?.name,
-        firstModelName: modelVersions[0]?.model_name,
-      });
-    } catch (err) {
-      if (!signal?.aborted) {
-        setError(errorMessage(err));
-      }
-    } finally {
-      if (!signal?.aborted) {
-        setLoading(false);
-      }
-    }
+    if (!token.trim()) { setLoading(false); return; }
+    setLoading(true);
+    const results = await Promise.allSettled([
+      apiPage<SetupDataset>('/api/v1/dataset-revisions/', token, signal),
+      apiPage<TokenizerVersion>('/api/v1/tokenizers/', token, signal),
+      apiPage<SetupModel>('/api/v1/model-versions/', token, signal),
+      apiPage<SetupPool>('/api/v1/worker-pools/', token, signal),
+      apiPage<SetupBudget>('/api/v1/budget-policies/', token, signal),
+      apiPage<SetupWorker>('/api/v1/worker-inventory/', token, signal),
+      apiPage<SetupRunner>('/api/v1/runner-manifests/', token, signal),
+    ]);
+    if (signal?.aborted || version !== requestVersion.current) return;
+    const [datasets, tokenizers, models, pools, budgets, workers, runners] = results.map(r => r.status === 'fulfilled' ? r.value.results : []);
+    const failures = results.filter(r => r.status === 'rejected');
+    if (failures.length) setError('Some prerequisites could not be verified. ' + errorMessage((failures[0] as PromiseRejectedResult).reason));
+    setState({ hasConnection: results.some(r => r.status === 'fulfilled'), activeProject,
+      ...setupReadiness({ datasets: datasets as SetupDataset[], tokenizers: tokenizers as TokenizerVersion[], models: models as SetupModel[],
+        pools: pools as SetupPool[], budgets: budgets as SetupBudget[], workers: workers as SetupWorker[], runners: runners as SetupRunner[] }) });
+    setLoading(false);
   }, [token, activeProject]);
 
   useEffect(() => {
@@ -161,8 +124,8 @@ export function OnboardingChecklist({
     {
       id: 'connection',
       title: 'Tenant API connection',
-      description: token.trim() ? 'Authorized key connected' : 'Connect with a workspace API key',
-      isReady: !!token.trim(),
+      description: state.hasConnection ? 'Authorized key verified' : 'Connect and verify a workspace API key',
+      isReady: state.hasConnection,
       icon: KeyRound,
       actionText: token.trim() ? 'Switch key' : 'Connect workspace',
       action: onOpenConnection,
@@ -183,12 +146,12 @@ export function OnboardingChecklist({
       title: 'Dataset readiness',
       description:
         state.datasetCount > 0
-          ? `${state.datasetCount} prepared dataset(s) available`
+          ? `${state.datasetCount} published dataset revision(s) available`
           : 'Prepare a dataset version or import catalog source',
       isReady: state.datasetCount > 0,
       icon: Database,
       actionText: state.datasetCount > 0 ? 'View datasets' : 'Prepare dataset',
-      action: () => onNavigate(state.datasetCount > 0 ? 'Datasets' : 'Dataset Bank'),
+      action: () => onNavigate('Datasets'),
     },
     {
       id: 'tokenizer',
@@ -196,31 +159,31 @@ export function OnboardingChecklist({
       description:
         state.tokenizerCount > 0
           ? `${state.tokenizerCount} tokenizer(s) ready (${state.firstTokenizerName || 'active'})`
-          : 'Register a tokenizer vocabulary for training',
+          : 'Import a model with its actual tokenizer or initialize a CPU base',
       isReady: state.tokenizerCount > 0,
       icon: BookOpen,
-      actionText: '+ Register Tokenizer',
-      action: () => setShowTokenizerModal(true),
+      actionText: 'Set up model and tokenizer',
+      action: () => onNavigate('Models'),
     },
     {
       id: 'model',
       title: 'Base model version',
       description:
         state.modelVersionCount > 0
-          ? `${state.modelVersionCount} model version(s) pinned (${state.firstModelName || 'active'})`
-          : 'Pin a base model checkpoint version',
+          ? `${state.modelVersionCount} model version(s) with recorded weights (${state.firstModelName || 'active'})`
+          : 'Import pinned model weights or initialize a CPU base',
       isReady: state.modelVersionCount > 0,
       icon: Layers,
-      actionText: '+ Register Model Version',
-      action: () => setShowModelModal(true),
+      actionText: 'Import or initialize model',
+      action: () => onNavigate('Models'),
     },
     {
       id: 'workers',
       title: 'Worker pools & execution',
       description:
         state.workerPoolCount > 0
-          ? `${state.workerPoolCount} active worker pool(s) discovered`
-          : 'Worker pool required to dispatch durable jobs',
+          ? `${state.workerPoolCount} active pool(s) with an available matching worker`
+          : 'Register an available worker with matching runtime and memory',
       isReady: state.workerPoolCount > 0,
       icon: Server,
       actionText: 'Inspect infrastructure',
@@ -231,8 +194,8 @@ export function OnboardingChecklist({
       title: 'Spending policy & budgets',
       description:
         state.budgetPolicyCount > 0
-          ? `${state.budgetPolicyCount} budget policy rule(s) configured`
-          : 'Inspect spending reservations and thresholds',
+          ? `${state.budgetPolicyCount} enabled training-step budget(s)`
+          : 'Enable a training-step budget with a positive limit',
       isReady: state.budgetPolicyCount > 0,
       icon: CircleDollarSign,
       actionText: 'Review budgets',
@@ -243,11 +206,7 @@ export function OnboardingChecklist({
   const readyCount = items.filter((item) => item.isReady).length;
   const totalCount = items.length;
   const isAllReady = readyCount === totalCount;
-  const isTrainingReady =
-    state.hasConnection &&
-    state.tokenizerCount > 0 &&
-    state.modelVersionCount > 0 &&
-    state.workerPoolCount > 0;
+  const isTrainingReady = !loading && !error && isAllReady;
 
   // Identify next suggested action
   const nextMissing = items.find((item) => !item.isReady);
@@ -282,7 +241,7 @@ export function OnboardingChecklist({
               className={`badge ${isAllReady ? 'state-completed' : ''}`}
               style={{ fontWeight: 600 }}
             >
-              {readyCount} of {totalCount} satisfied
+              {loading ? 'Checking prerequisites…' : `${readyCount} of ${totalCount} recorded`}
             </span>
           </div>
           <p style={{ margin: '4px 0 0', color: 'var(--text-muted)', fontSize: '13px' }}>
@@ -316,15 +275,6 @@ export function OnboardingChecklist({
         </div>
       </div>
 
-      <div className="onboarding-journey" aria-label="Workspace prerequisites">
-        {items.map(item => <button type="button" className={`journey-step ${item.isReady ? 'ready' : ''}`} key={item.id} onClick={item.action}>
-          {item.isReady ? <CheckCircle2 size={18} aria-hidden="true" /> : <Circle size={18} aria-hidden="true" />}
-          <span>{item.title}<small>{loading ? 'Checking…' : item.isReady ? 'Resource present' : 'Needs setup'}</small></span>
-        </button>)}
-      </div>
-
-      {!collapsed && (
-        <div id="onboarding-checklist-body" className="panel-body" style={{ paddingTop: '16px' }}>
           {error && (
             <div className="notice error" role="alert" style={{ marginBottom: '16px' }}>
               <AlertCircle size={16} />
@@ -334,6 +284,17 @@ export function OnboardingChecklist({
               </button>
             </div>
           )}
+
+      <div className="onboarding-journey" aria-label="Workspace prerequisites">
+        {items.map(item => <button type="button" className={`journey-step ${item.isReady ? 'ready' : ''}`} key={item.id} onClick={item.action}>
+          {item.isReady ? <CheckCircle2 size={18} aria-hidden="true" /> : <Circle size={18} aria-hidden="true" />}
+          <span>{item.title}<small>{loading ? 'Checking…' : item.isReady ? 'Resource present' : 'Needs setup'}</small></span>
+        </button>)}
+      </div>
+
+      {!collapsed && (
+        <div id="onboarding-checklist-body" className="panel-body" style={{ paddingTop: '16px' }}>
+
 
           {/* Actionable highlight banner */}
           {isTrainingReady ? (
@@ -352,8 +313,8 @@ export function OnboardingChecklist({
                 <div>
                   <strong>Ready for training preflight!</strong>
                   <p style={{ margin: '2px 0 0', fontSize: '12px' }}>
-                    Model, tokenizer, and worker records are present. Review compatibility,
-                    execution capabilities and budget before launching.
+                    Published data, model/tokenizer, a matching worker and a step budget are recorded.
+                    Preflight still verifies actual bytes, current runtime, device availability and remaining budget.
                   </p>
                 </div>
               </div>
@@ -510,27 +471,6 @@ export function OnboardingChecklist({
           </div>
         </div>
       )}
-
-      {/* Prerequisite registration modals */}
-      <RegisterTokenizerModal
-        token={token}
-        isOpen={showTokenizerModal}
-        onClose={() => setShowTokenizerModal(false)}
-        onSuccess={() => {
-          void loadPrerequisites();
-          onPrerequisiteAdded();
-        }}
-      />
-
-      <RegisterModelVersionModal
-        token={token}
-        isOpen={showModelModal}
-        onClose={() => setShowModelModal(false)}
-        onSuccess={() => {
-          void loadPrerequisites();
-          onPrerequisiteAdded();
-        }}
-      />
 
       <CreateProjectModal
         token={token}

@@ -1,0 +1,9 @@
+# Recorded setup prerequisites
+
+The Overview checklist reads project-scoped saved records. Dataset readiness requires a published nonempty revision with a manifest digest and artifact. A model must have recorded weight artifacts and a registered nonempty tokenizer. An active pool needs an available worker with slots, a matching enabled training runner contract, sufficient declared memory and a compatible model architecture. A budget must be enabled, positive, denominated in training steps and have no currency.
+
+These counts describe the loaded inventory page. They do not qualify bytes, current runtime packages, live device capacity or remaining budget; training preflight verifies those before admission. Partial read failures remain visible, including when the checklist is minimized, with a retry action. Scope/connection changes clear counts and obsolete responses cannot restore previous scope records. Refresh reloads inventory; only the expanded/minimized preference is stored locally.
+
+Model/tokenizer setup opens the actual model acquisition/initialization screen. Dataset setup opens the publication flow. Infrastructure and budgets link to their inspection screens; operator registration is still required for missing workers/policies. Metadata-only registration cannot make a model ready.
+
+The [Mac pilot](verification/modelanvil-setup-readiness-2026-10-12.json) verified an isolated project with actual published data, model artifacts, worker, runner and budget: seven recorded prerequisites persisted across reload, and keyboard activation opened Models. The browser also exposed a wrong worker-list URL; the implementation now uses the existing worker-inventory endpoint. A fresh workspace setup timing/abandonment pilot, project-switch browser pilot and human acceptance remain pending.
