@@ -5401,6 +5401,16 @@
             ],
             "minimum": 0,
             "default": null
+          },
+          "chunk_characters": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 32,
+            "maximum": 4096,
+            "default": null,
+            "description": "Optional deterministic character-bound chunking of single plain text blocks. Source-level privacy/protected checks run before chunking; tokenizer bounds remain preflight checks."
           }
         },
         "required": [

@@ -525,6 +525,7 @@ class DatasetPreparationSerializer(serializers.Serializer):
     source_format = serializers.ChoiceField(choices=("jsonl", "csv", "json", "docx", "pdf"), required=False, default="jsonl")
     text_field = serializers.CharField(required=False, default="text", max_length=128, trim_whitespace=False)
     group_field = serializers.CharField(required=False, default=None, allow_null=True, max_length=128, trim_whitespace=False)
+    chunk_characters = serializers.JSONField(required=False, default=None, allow_null=True)
     split_seed = serializers.JSONField(required=False, default="0")
     validation_percent = serializers.JSONField(required=False, default=10)
     test_percent = serializers.JSONField(required=False, default=10)
@@ -544,6 +545,9 @@ class DatasetPreparationSerializer(serializers.Serializer):
         return super().to_internal_value(data)
 
     def validate(self, attrs):
+        limit = attrs["chunk_characters"]
+        if limit is not None and (type(limit) is not int or not 32 <= limit <= 4096):
+            raise serializers.ValidationError("Chunk character limit must be an integer from 32 to 4096.")
         if not isinstance(attrs["split_seed"], str) or len(attrs["split_seed"]) > 1024:
             raise serializers.ValidationError("Split seed must be a string of at most 1024 characters.")
         percentages = (attrs["validation_percent"], attrs["test_percent"])

@@ -23,6 +23,7 @@ try {
   const sourceFormat = input.source_format || 'jsonl';
   const raw = input.raw_base64 ? Buffer.from(input.raw_base64, 'base64') : input.raw;
   const options = { file: new File([raw], `source.${sourceFormat}`), sourceFormat,
+    ...(input.chunk_characters ? { chunkCharacters: input.chunk_characters } : {}),
     name: input.name, token: input.token, splitSeed: 'http-fixture', fetchImpl };
   if (input.invalid) {
     await assert.rejects(prepareUploadedDataset(options), error => error instanceof DatasetClientError
@@ -54,13 +55,28 @@ try {
     assert.equal(bytes.length, manifest.byte_size);
     assert.equal(createHash('sha256').update(bytes).digest('hex'), revision.manifest_digest);
     const prepared = JSON.parse(bytes.toString('utf8'));
-    const documents = sourceFormat === 'jsonl' ? input.raw.trimEnd().split('\n').map(line => JSON.parse(line)) : prepared.rows;
-    if (sourceFormat === 'jsonl') assert.deepEqual(prepared.rows, documents);
+    const documents = sourceFormat === 'jsonl' && !input.chunk_characters ? input.raw.trimEnd().split('\n').map(line => JSON.parse(line)) : prepared.rows;
+    if (sourceFormat === 'jsonl' && !input.chunk_characters) assert.deepEqual(prepared.rows, documents);
     else {
-      assert.deepEqual(prepared.rows.map(row => row.blocks[0].text), input.expected_texts);
+      if (input.chunk_characters) {
+        const grouped = new Map();
+        for (const row of prepared.rows) {
+          const block = row.blocks[0];
+          const characters = [...block.text].length;
+          assert.ok(characters <= input.chunk_characters);
+          assert.equal(block.location.char_end - block.location.char_start, characters);
+          const parent = row.metadata.chunk.parent_sample_id;
+          grouped.set(parent, (grouped.get(parent) || '') + block.text);
+          assert.ok(row.provenance.parent_sample_refs.includes(parent));
+        }
+        assert.deepEqual([...grouped.values()], input.expected_texts);
+        assert.equal(prepared.recipe.chunking.character_limit, input.chunk_characters);
+      } else assert.deepEqual(prepared.rows.map(row => row.blocks[0].text), input.expected_texts);
       const sourceDigest = createHash('sha256').update(raw).digest('hex');
-      assert.equal(prepared.recipe.extraction.input_sha256, sourceDigest);
-      assert.equal(prepared.recipe.extraction.source_format, sourceFormat);
+      if (sourceFormat !== 'jsonl') {
+        assert.equal(prepared.recipe.extraction.input_sha256, sourceDigest);
+        assert.equal(prepared.recipe.extraction.source_format, sourceFormat);
+      }
       for (const row of prepared.rows) {
         assert.equal(row.provenance.source_snapshot_ref, `sha256:${sourceDigest}`);
         assert.equal(row.provenance.content_sha256, createHash('sha256').update(row.blocks[0].text).digest('hex'));

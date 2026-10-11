@@ -108,3 +108,13 @@ class DatasetPreparationHttpTests(LiveServerTestCase):
         self.assertEqual(report["row_count"], 2)
         revision = DatasetRevision.all_objects.get(revision_id=report["revision_id"])
         self.assertEqual(revision.metadata["recipe"]["extraction"]["pdf_parser"], "pypdf==6.20.0")
+
+    def test_actual_frontend_client_publishes_exact_source_chunks(self):
+        text = "Real 日本語 source paragraph with emoji 🙂 and line breaks.\n" * 20
+        raw = json.dumps([{"text": text}]).encode()
+        result = subprocess.run([shutil.which("node"), str(Path(settings.BASE_DIR) / "scripts/dataset_client_http.mjs")],
+            cwd=settings.BASE_DIR, input=json.dumps({"base": self.live_server_url, "token": self.secret,
+                "raw_base64": base64.b64encode(raw).decode(), "source_format": "json", "chunk_characters": 128,
+                "expected_texts": [text], "name": "HTTP chunked source"}), text=True, capture_output=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)["row_count"], (len(text) + 127) // 128)
