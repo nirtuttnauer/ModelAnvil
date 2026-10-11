@@ -66,6 +66,7 @@ def staged_snapshot(files, tenant, project):
     with tempfile.TemporaryDirectory(prefix='modelanvil-inference-') as temp:
         directory = Path(temp)
         for name, ref in files.items():
+            (directory / name).parent.mkdir(exist_ok=True)
             with (directory / name).open('wb') as target:
                 copy_verified(ref, tenant, project, target)
         yield directory
