@@ -3,7 +3,7 @@ import type { FormEvent } from 'react';
 import {
   DatasetClientError, loadDatasetFirstPages, prepareUploadedDataset,
 } from '../api/datasets';
-import type { DatasetFirstPages, DatasetRevision, PreparedDataset } from '../api/datasets';
+import type { DatasetFirstPages, DatasetRevision, PreparedDataset, DatasetSourceFormat } from '../api/datasets';
 import { BarChart, ChartEmpty, ChartPanel, EventTimeline, SegmentBar } from '../components/Charts';
 import { numericEntries } from '../components/chart-data';
 import './datasets.css';
@@ -49,6 +49,9 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
   const formId = useId();
   const [name, setName] = useState('');
   const [file, setFile] = useState<File | null>(null);
+  const [sourceFormat, setSourceFormat] = useState<DatasetSourceFormat>('jsonl');
+  const [textField, setTextField] = useState('text');
+  const [groupField, setGroupField] = useState('');
   const [splitSeed, setSplitSeed] = useState('0');
   const [validationPercent, setValidationPercent] = useState('10');
   const [testPercent, setTestPercent] = useState('10');
@@ -117,7 +120,7 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
     setPrepared(null);
     preparedToken.current = null;
     setUploadError(null);
-    if (!file) { setUploadError('Select a nonempty UTF-8 JSONL file.'); return; }
+    if (!file) { setUploadError('Select a nonempty source file.'); return; }
     if (!validationPercent.trim() || !testPercent.trim()) {
       setUploadError('Both split percentages are required.');
       return;
@@ -127,7 +130,9 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
     setUploadLoading(true);
     try {
       const result = await prepareUploadedDataset({
-        file, name, token: requestToken, splitSeed,
+        file, name, token: requestToken, splitSeed, sourceFormat,
+        textField: sourceFormat === 'csv' || sourceFormat === 'json' ? textField : 'text',
+        groupField: sourceFormat === 'csv' || sourceFormat === 'json' ? groupField : '',
         validationPercent: Number(validationPercent), testPercent: Number(testPercent),
       });
       if (!mounted.current) return;
@@ -151,6 +156,7 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
   }
 
   function handleAutoFillSample() {
+    setSourceFormat('jsonl');
     const sample = [
       JSON.stringify({
         schema_version: '1.0',
@@ -192,8 +198,8 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
 
   return <div className="datasets-page">
     <section className="datasets-capability" aria-labelledby={`${formId}-capability`}>
-      <h2 id={`${formId}-capability`}>Supported upload format</h2>
-      <p>Upload a canonical sample-envelope JSONL file to prepare and publish a dataset version.
+      <h2 id={`${formId}-capability`}>Supported upload formats</h2>
+      <p>Upload canonical sample-envelope JSONL, CSV, a JSON record array or DOCX main-body text to prepare a dataset version.
         Files are stored locally and verified before publication.</p>
     </section>
 
@@ -202,7 +208,7 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
       <div className="datasets-panel-heading"><div>
         <h2 id={`${formId}-upload-heading`}>Upload and prepare</h2>
         <p>Create one dataset and publish a revision after the uploaded bytes are verified.</p>
-      </div><span className="datasets-badge">LOCAL / JSONL</span></div>
+      </div><span className="datasets-badge">LOCAL / {sourceFormat.toUpperCase()}</span></div>
       {!token.trim() && <p className="datasets-hint">Open Connection and enter an API key before uploading or loading datasets.</p>}
       <form onSubmit={event => void submit(event)} aria-describedby={`${formId}-file-help`} aria-busy={uploadLoading}>
         <fieldset disabled={busy} className="datasets-form-fields">
@@ -223,11 +229,24 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
             <input id={`${formId}-name`} name="dataset-name" value={name} onChange={event => setName(event.target.value)} required autoComplete="off" />
           </div>
           <div className="datasets-field datasets-wide">
-            <label htmlFor={`${formId}-file`}>Canonical sample-envelope JSONL file</label>
-            <input id={`${formId}-file`} name="dataset-file" type="file" accept=".jsonl,application/x-ndjson"
+            <label htmlFor={`${formId}-format`}>Source format</label>
+            <select id={`${formId}-format`} value={sourceFormat} onChange={event => setSourceFormat(event.target.value as DatasetSourceFormat)}>
+              <option value="jsonl">Canonical sample-envelope JSONL</option><option value="csv">CSV records</option>
+              <option value="json">JSON record array</option><option value="docx">DOCX main-body text</option>
+            </select>
+          </div>
+          {(sourceFormat === 'csv' || sourceFormat === 'json') && <>
+            <div className="datasets-field"><label htmlFor={`${formId}-text-field`}>Text field</label>
+              <input id={`${formId}-text-field`} value={textField} onChange={event => setTextField(event.target.value)} required maxLength={128} /></div>
+            <div className="datasets-field"><label htmlFor={`${formId}-group-field`}>Source group field (optional)</label>
+              <input id={`${formId}-group-field`} value={groupField} onChange={event => setGroupField(event.target.value)} maxLength={128} /></div>
+          </>}
+          <div className="datasets-field datasets-wide">
+            <label htmlFor={`${formId}-file`}>Source file</label>
+            <input id={`${formId}-file`} name="dataset-file" type="file" accept={`.${sourceFormat}`}
               aria-describedby={`${formId}-file-help`} onChange={event => setFile(event.target.files?.[0] ?? null)} />
-            <p id={`${formId}-file-help`} className="datasets-hint">UTF-8, maximum 16 MiB. Each line must be a canonical sample envelope.
-              Canonical schema validation is performed by the backend; arbitrary text or CSV is not supported.</p>
+            <p id={`${formId}-file-help`} className="datasets-hint">Maximum 16 MiB and 10,000 samples. CSV and JSON text fields must contain nonempty strings.
+              Without a source group field, the entire file stays in one split. DOCX imports body paragraphs and table text; headers, images and embedded objects are excluded.</p>
             {file && <p className="datasets-hint">Selected: {file.name} · {file.size.toLocaleString()} bytes</p>}
           </div>
           <div className="datasets-field">
@@ -270,7 +289,7 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
 
     <aside className="datasets-preview-column" aria-label="Dataset preparation preview">
       <ChartPanel title="Split configuration" description="Preview of requested percentages, before preparation.">{validSplits ? <SegmentBar data={[{ label: 'Train', value: 100 - validation - test }, { label: 'Validation', value: validation }, { label: 'Test', value: test }]} unit="percent" /> : <p className="datasets-error">Enter whole percentages with a combined total below 100.</p>}<p className="datasets-hint">These are configuration targets. Source groups stay together, so actual sample counts can differ. Inspect the published revision for recorded allocation.</p></ChartPanel>
-      <ChartPanel title="Publication flow" description="Verified input becomes an immutable dataset revision."><EventTimeline events={[{ label: 'Select canonical source', detail: file ? `${file.name} · ${file.size.toLocaleString()} bytes` : 'UTF-8 sample-envelope JSONL · up to 16 MiB', status: file ? 'ready' : 'pending' }, { label: 'Verify & prepare', detail: visiblePrepared ? `Input digest ${visiblePrepared.artifact.sha256.slice(0, 16)}…` : 'SHA-256 verification, schema validation, and source-group splits', status: visiblePrepared ? 'completed' : uploadLoading ? 'running' : 'pending' }, { label: 'Publish immutable revision', detail: visiblePrepared ? `Revision ${visiblePrepared.revision.revision_no} · ${visiblePrepared.revision.row_count?.toLocaleString()} samples` : 'Confirmation requires a published server revision.', status: visiblePrepared ? 'published' : 'pending' }]} /></ChartPanel>
+      <ChartPanel title="Publication flow" description="Verified input becomes an immutable dataset revision."><EventTimeline events={[{ label: 'Select source file', detail: file ? `${file.name} · ${file.size.toLocaleString()} bytes` : `${sourceFormat.toUpperCase()} source · up to 16 MiB`, status: file ? 'ready' : 'pending' }, { label: 'Verify & prepare', detail: visiblePrepared ? `Input digest ${visiblePrepared.artifact.sha256.slice(0, 16)}…` : 'SHA-256 verification, schema validation, and source-group splits', status: visiblePrepared ? 'completed' : uploadLoading ? 'running' : 'pending' }, { label: 'Publish immutable revision', detail: visiblePrepared ? `Revision ${visiblePrepared.revision.revision_no} · ${visiblePrepared.revision.row_count?.toLocaleString()} samples` : 'Confirmation requires a published server revision.', status: visiblePrepared ? 'published' : 'pending' }]} /></ChartPanel>
     </aside>
     </div>
     <section className="datasets-panel" aria-labelledby={`${formId}-lists-heading`} aria-busy={listingLoading}>

@@ -119,11 +119,11 @@ class DatasetPreparationApiTests(TransactionTestCase):
             "input_artifact_id": str((artifact or self.input_artifact).artifact_id), **options,
         }, format="json", **self.auth)
 
-    def committed_input(self, raw):
+    def committed_input(self, raw, media_type="application/x-ndjson"):
         artifact = Artifact.all_objects.create(
             tenant_id=self.tenant.pk, storage_location_id="local",
             object_key=f"inputs/{uuid.uuid4()}.jsonl", sha256=hashlib.sha256(raw).hexdigest(),
-            byte_size=len(raw), media_type="application/x-ndjson")
+            byte_size=len(raw), media_type=media_type)
         upload_staged_artifact(artifact, io.BytesIO(raw), backend=artifact_storage_backend())
         return artifact
 
@@ -138,6 +138,45 @@ class DatasetPreparationApiTests(TransactionTestCase):
         response = self.post_prepare(validation_precent=25)
         self.assertEqual(response.status_code, 400)
         self.assert_no_publication(1)
+
+    def test_csv_and_json_import_publish_pinned_extraction_and_split_protection(self):
+        from modelanvil.data.source_import import MEDIA_TYPES
+        sources = [("csv", b'text,group\nFirst text,source-a\nSecond text,source-a\n'),
+                   ("json", b'[{"text":"First text","group":"source-a"},{"text":"Second text","group":"source-a"}]')]
+        for fmt, raw in sources:
+            artifact = self.committed_input(raw, media_type=MEDIA_TYPES[fmt])
+            response = self.post_prepare(artifact, source_format=fmt, group_field="group")
+            self.assertEqual(response.status_code, 201, response.content)
+            revision = DatasetRevision.all_objects.get(revision_id=response.json()["revision_id"])
+            with artifact_storage_backend().open(self.tenant.pk, revision.manifest_artifact.object_key) as stream:
+                prepared = json.load(stream)
+            self.assertEqual(prepared["recipe"]["extraction"]["input_sha256"], artifact.sha256)
+            self.assertEqual(prepared["row_count"], 2)
+            self.assertEqual(prepared["source_group_count"], 1)
+            self.assertEqual(sum(bool(ids) for ids in prepared["split_manifest"].values()), 1)
+            self.assertEqual(prepared["recipe_digest"], revision.recipe_digest)
+            self.assertEqual(hashlib.sha256(json.dumps(prepared["recipe"], sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest(), revision.recipe_digest)
+
+    def test_source_format_mismatch_and_invalid_csv_do_not_publish_or_echo(self):
+        self.assertEqual(self.post_prepare(source_format="csv").status_code, 400)
+        artifact = self.committed_input(b'text\n"PRIVATE_MARKER', media_type="text/csv")
+        response = self.post_prepare(artifact, source_format="csv")
+        self.assertEqual(response.status_code, 400)
+        self.assertNotIn("PRIVATE_MARKER", response.content.decode())
+        self.assert_no_publication(2)
+
+    def test_docx_import_publishes_and_bad_xml_leaves_no_revision(self):
+        from modelanvil.data.test_source_import import docx
+        from modelanvil.data.source_import import MEDIA_TYPES
+        bad = self.committed_input(docx('<!DOCTYPE private [<!ENTITY e "PRIVATE_MARKER">]><private/>'), media_type=MEDIA_TYPES["docx"])
+        response = self.post_prepare(bad, source_format="docx")
+        self.assertEqual(response.status_code, 400)
+        self.assert_no_publication(2)
+        raw = docx('<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Actual body text.</w:t></w:r></w:p></w:body></w:document>')
+        artifact = self.committed_input(raw, media_type=MEDIA_TYPES["docx"])
+        response = self.post_prepare(artifact, source_format="docx")
+        self.assertEqual(response.status_code, 201, response.content)
+        self.assertEqual(response.json()["row_count"], 1)
 
     def test_corrupted_or_missing_committed_bytes_cannot_publish(self):
         backend = artifact_storage_backend()

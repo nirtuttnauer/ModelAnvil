@@ -1,4 +1,9 @@
 export const MAX_DATASET_BYTES = 16 * 1024 * 1024;
+export const DATASET_SOURCE_TYPES = {
+  jsonl: 'application/x-ndjson', csv: 'text/csv', json: 'application/json',
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+};
+export type DatasetSourceFormat = keyof typeof DATASET_SOURCE_TYPES;
 
 export interface UploadedArtifact {
   artifact_id: string;
@@ -45,6 +50,9 @@ export interface PrepareUploadedDatasetOptions {
   splitSeed?: string;
   validationPercent?: number;
   testPercent?: number;
+  sourceFormat?: DatasetSourceFormat;
+  textField?: string;
+  groupField?: string;
   fetchImpl?: typeof fetch;
 }
 
@@ -245,6 +253,7 @@ export async function fetchDatasetWorkspace(
 
 export async function prepareUploadedDataset({
   file, name, token, splitSeed = '0', validationPercent = 10, testPercent = 10,
+  sourceFormat = 'jsonl', textField = 'text', groupField = '',
   fetchImpl = fetch,
 }: PrepareUploadedDatasetOptions): Promise<PreparedDataset> {
   if (typeof name !== 'string' || !name.trim()) {
@@ -260,6 +269,11 @@ export async function prepareUploadedDataset({
   if (file.size > MAX_DATASET_BYTES) {
     throw new DatasetClientError('Input validation', 'File exceeds the 16 MiB limit.');
   }
+  if (!Object.hasOwn(DATASET_SOURCE_TYPES, sourceFormat) || typeof textField !== 'string' || !textField || textField.length > 128
+    || typeof groupField !== 'string' || groupField.length > 128
+    || ((sourceFormat === 'jsonl' || sourceFormat === 'docx') && (textField !== 'text' || groupField))) {
+    throw new DatasetClientError('Input validation', 'Choose a supported source format and valid field mappings.');
+  }
   if (!Number.isInteger(validationPercent) || !Number.isInteger(testPercent)
     || validationPercent < 0 || testPercent < 0 || validationPercent + testPercent >= 100) {
     throw new DatasetClientError('Input validation', 'Split percentages must be nonnegative integers with a sum below 100.');
@@ -273,8 +287,10 @@ export async function prepareUploadedDataset({
   let bytes: ArrayBuffer;
   try { bytes = await file.arrayBuffer(); }
   catch { throw new DatasetClientError('Input validation', 'The selected file could not be read.'); }
-  try { new TextDecoder('utf-8', { fatal: true }).decode(bytes); }
-  catch { throw new DatasetClientError('Input validation', 'The file must be valid UTF-8 JSONL.'); }
+  if (sourceFormat !== 'docx') {
+    try { new TextDecoder('utf-8', { fatal: true }).decode(bytes); }
+    catch { throw new DatasetClientError('Input validation', 'The file must be valid UTF-8 text.'); }
+  }
   let digest: ArrayBuffer;
   let objectId: string;
   try {
@@ -285,8 +301,8 @@ export async function prepareUploadedDataset({
   }
   const sha256 = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
   const registered = await request('/api/v1/artifacts/', 'Artifact registration', token, fetchImpl, 201, {
-    storage_location_id: 'local', object_key: `inputs/${objectId}.jsonl`,
-    sha256, byte_size: file.size, media_type: 'application/x-ndjson',
+    storage_location_id: 'local', object_key: `inputs/${objectId}.${sourceFormat}`,
+    sha256, byte_size: file.size, media_type: DATASET_SOURCE_TYPES[sourceFormat],
   });
   verifyArtifact(registered, 'staging', sha256, file.size, 'Artifact registration');
   const form = new FormData();
@@ -298,6 +314,7 @@ export async function prepareUploadedDataset({
   const revision = await request(`/api/v1/datasets/${dataset.dataset_id}/prepare/`, 'Dataset preparation', token, fetchImpl, 201, {
     input_artifact_id: artifact.artifact_id, split_seed: splitSeed,
     validation_percent: validationPercent, test_percent: testPercent,
+    ...(sourceFormat !== 'jsonl' ? { source_format: sourceFormat, text_field: textField, group_field: groupField || null } : {}),
   });
   if (!validRevision(revision) || revision.state !== 'published' || !revision.published_at
     || revision.row_count === null || revision.manifest_artifact === null || !revision.recipe_digest) {

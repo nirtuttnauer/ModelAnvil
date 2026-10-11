@@ -1001,7 +1001,7 @@
           "Datasets"
         ],
         "summary": "Execute preparation pipeline on input artifact and publish revision",
-        "description": "Performs pure kernel PII/quality/dedup/protected-set detection, group splits, and publishes a new revision.",
+        "description": "Verify committed local source bytes and publish a bounded canonical dataset revision. Supports JSONL envelopes, CSV/JSON string text records, and DOCX main-body paragraphs, preserving source locations and protected source-group splits. This synchronous path is not a durable recipe worker.",
         "parameters": [
           {
             "$ref": "#/components/parameters/DatasetId"
@@ -5255,30 +5255,73 @@
             "minimum": 0,
             "maximum": 99
           },
-          "detect_pii": {
-            "type": "boolean",
-            "default": false
+          "source_format": {
+            "type": "string",
+            "enum": [
+              "jsonl",
+              "csv",
+              "json",
+              "docx"
+            ],
+            "default": "jsonl"
           },
-          "detect_quality": {
-            "type": "boolean",
-            "default": false
+          "text_field": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "default": "text"
           },
-          "detect_duplicates": {
-            "type": "boolean",
-            "default": false
+          "group_field": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 128,
+            "default": null
           },
-          "detect_protected_eval": {
-            "type": "boolean",
-            "default": false
+          "detect": {
+            "type": [
+              "boolean",
+              "object",
+              "null"
+            ],
+            "default": null
           },
-          "drop_report": {
-            "type": "boolean",
-            "default": false
+          "dedup": {
+            "type": [
+              "boolean",
+              "object",
+              "null"
+            ],
+            "default": null
+          },
+          "protected": {
+            "type": [
+              "object",
+              "array",
+              "null"
+            ],
+            "default": null
+          },
+          "near_threshold": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 3
+          },
+          "min_text_chars": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "default": null
           }
         },
         "required": [
           "input_artifact_id"
-        ]
+        ],
+        "additionalProperties": false
       },
       "DatasetPage": {
         "$ref": "#/components/schemas/Page"
@@ -6883,7 +6926,7 @@
             "maximum": 1000000
           }
         },
-        "description": "Required for verifier_rl. Targets come from chosen responses; sampled completions receive actual rule rewards. Tolerance must be finite and within 0\u20131000000."
+        "description": "Required for verifier_rl. Targets come from chosen responses; sampled completions receive actual rule rewards. Tolerance must be finite and within 0–1000000."
       },
       "PreferencePair": {
         "type": "object",
