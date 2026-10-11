@@ -37,12 +37,16 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.utils import timezone
 
-from modelanvil.artifacts.models import Artifact, Dataset, DatasetRevision
+from modelanvil.artifacts.models import Artifact, Dataset, DatasetRevision, LineageEdge
 from modelanvil.artifacts.storage import artifact_storage_backend, upload_staged_artifact
 from modelanvil.budgets.models import BudgetPolicy, BudgetReservation, UsageEvent
 from modelanvil.data.bank.catalog import DatasetBankCatalog, SourceCard
 from modelanvil.data.bank.downloader import ResumablePresetDownloader
 from modelanvil.data.bank.svg_starter import prepare_svg_record
+from modelanvil.data.bank.http_snapshot import (
+    CONNECTOR as HTTP_SUBSET_CONNECTOR, MAX_TRANSFER_BYTES, SnapshotError,
+    cached_transport, fetch_qualified_record, load_manifest, record_url, validate_sample,
+)
 from modelanvil.data.models import SourceSnapshot
 from modelanvil.data.publication import publish_prepared_dataset
 from modelanvil.jobs.models import Job, Worker, WorkerPool
@@ -144,7 +148,10 @@ def https_transport(url: str, headers: dict[str, str]) -> "tuple[int, bytes, dic
     request = urllib.request.Request(url, headers=headers, method="GET")
     try:
         with urllib.request.urlopen(request, timeout=UPSTREAM_TIMEOUT_SECONDS) as response:
-            return response.status, response.read(), dict(response.headers)
+            body = response.read(MAX_TRANSFER_BYTES + 1)
+            if len(body) > MAX_TRANSFER_BYTES:
+                raise UpstreamError("Upstream response exceeds the bounded transfer size.")
+            return response.status, body, dict(response.headers)
     except urllib.error.HTTPError as exc:
         raise UpstreamError(f"Upstream returned HTTP {exc.code}.") from None
     except (urllib.error.URLError, TimeoutError, OSError):
@@ -231,6 +238,11 @@ def list_inventory(
     """Return (selected-pattern records, license-path records) at the pinned revision."""
     transport = transport or https_transport
     card = source.acquisition
+    if card.connector == HTTP_SUBSET_CONNECTOR:
+        manifest = load_manifest(source)
+        records = [UpstreamRecord(entry["path"], entry["blob_sha1"], entry["size"]) for entry in manifest["records"]]
+        notices = [UpstreamRecord(entry["path"], entry["blob_sha1"], entry["size"]) for entry in manifest["licenses"]]
+        return sorted(records, key=lambda record: record.path), notices
     base = _repository_api_base(card.upstream_repository)
     payload = _read_json(f"{base}/git/trees/{card.pinned_revision}?recursive=1", transport)
     if payload.get("truncated"):
@@ -271,6 +283,14 @@ def fetch_record(
 ) -> bytes:
     """Fetch one blob at the pinned revision and verify its Git object id."""
     transport = transport or https_transport
+    if source.acquisition.connector == HTTP_SUBSET_CONNECTOR:
+        try:
+            body = fetch_qualified_record(source, record, transport)
+            if not record.path.startswith("notice/"):
+                validate_sample(source.id, body)
+            return body
+        except SnapshotError as exc:
+            raise UpstreamError(str(exc)) from None
     raw_base = _raw_base(source.acquisition.upstream_repository, source.acquisition.pinned_revision)
     url = raw_base + quote(record.path)
     status, body, _headers = transport(url, {"User-Agent": USER_AGENT})
@@ -293,7 +313,7 @@ def preview_samples(
     inventory: Optional[tuple[list[UpstreamRecord], list[UpstreamRecord]]] = None,
 ) -> list[dict[str, Any]]:
     """Fetch real bounded records from the pinned upstream revision."""
-    transport = transport or https_transport
+    transport = cached_transport(transport or https_transport)
     card = source.acquisition
     inventory = inventory or list_inventory(source, transport=transport)
     count = limit or card.preview_limit or 5
@@ -301,6 +321,16 @@ def preview_samples(
     samples: list[dict[str, Any]] = []
     for record in selected:
         payload = fetch_record(source, record, transport=transport)
+        if card.connector == HTTP_SUBSET_CONNECTOR:
+            content = json.loads(payload)
+            for field in ("image_hex", "audio_hex"):
+                if field in content:
+                    media = bytes.fromhex(content.pop(field))
+                    content[field.removesuffix("_hex")] = {"byte_size": len(media), "sha256": hashlib.sha256(media).hexdigest()}
+            samples.append({"upstream_path": record.path, "upstream_url": _record_url(source, record.path),
+                "byte_size": record.size, "content_sha256": hashlib.sha256(payload).hexdigest(),
+                "digest_verified": True, "license": source.license_expression, "content": content})
+            continue
         item = prepare_svg_record(
             source_library=source.id.split("-", 1)[-1],
             icon_name=record.path.rsplit("/", 1)[-1].rsplit(".", 1)[0],
@@ -681,11 +711,65 @@ def _fail(snapshot: SourceSnapshot, detail: dict[str, Any], plan: dict[str, Any]
     snapshot.save(update_fields=["state", "detail", "updated_at"])
 
 
+def _record_url(source: SourceCard, path: str) -> str:
+    if source.acquisition.connector == HTTP_SUBSET_CONNECTOR:
+        manifest = load_manifest(source)
+        entry = next(item for item in manifest["records"] + manifest["licenses"] if item["path"] == path)
+        return record_url(manifest, entry)
+    return _raw_base(source.acquisition.upstream_repository, source.acquisition.pinned_revision) + quote(path)
+
+
+def _http_envelopes(source, snapshot, records, verified, stored):
+    manifest = load_manifest(source)
+    expected = {record["path"]: record for record in manifest["records"]}
+    envelopes = []
+    for record in records:
+        entry = expected[record["path"]]
+        raw = bytes.fromhex(stored[record["path"]]["payload_hex"])
+        if hashlib.sha256(raw).hexdigest() != entry["sha256"] or verified[record["path"]]["sha256"] != entry["sha256"]:
+            raise UpstreamError("Checkpoint bytes differ from the qualified sample.")
+        value = validate_sample(source.id, raw)
+        blocks = []
+        for field, kind, media_type in (("image_hex", "image", "image/png"), ("audio_hex", "audio", "audio/flac" if source.id == "audio-vctk" else "audio/wav")):
+            if field not in value:
+                continue
+            media = bytes.fromhex(value.pop(field))
+            media_sha256 = hashlib.sha256(media).hexdigest()
+            artifact, _ = Artifact.all_objects.get_or_create(
+                tenant_id=snapshot.tenant_id, storage_location_id="local",
+                object_key=f"bank/{source.id}/{snapshot.snapshot_id}/media/{media_sha256}",
+                defaults={"project_id": snapshot.project_id, "sha256": media_sha256,
+                    "byte_size": len(media), "media_type": media_type, "state": Artifact.State.STAGING,
+                    "metadata": {"kind": "dataset_bank_media", "source_id": source.id,
+                        "source_revision": source.acquisition.pinned_revision, "snapshot_ref": str(snapshot.snapshot_id)}},
+            )
+            if artifact.project_id != snapshot.project_id or artifact.sha256 != media_sha256 or artifact.byte_size != len(media):
+                raise UpstreamError("Media artifact differs from the authorized verified sample.")
+            if artifact.state != Artifact.State.COMMITTED:
+                upload_staged_artifact(artifact, io.BytesIO(media), backend=artifact_storage_backend())
+            blocks.append({"block_id": kind, "type": kind, "asset_ref": f"sha256:{media_sha256}",
+                "media_type": media_type, "metadata": {"artifact_ref": str(artifact.artifact_id), "byte_size": len(media), "sha256": media_sha256}})
+        blocks.append({"block_id": "upstream-record", "type": "table" if source.category == "numeric" else "json", "value": value})
+        envelopes.append({"schema_version": "1.0",
+            "sample_id": str(uuid.uuid5(ENVELOPE_NAMESPACE, f"{snapshot.snapshot_id}:{record['path']}")),
+            "source_group_id": entry["source_group_id"], "blocks": blocks,
+            "provenance": {"source_snapshot_ref": str(snapshot.snapshot_id),
+                "source_record_key": record["path"], "content_sha256": entry["sha256"],
+                "transformation_revision_ref": HTTP_SUBSET_CONNECTOR},
+            "metadata": {**entry["metadata"], "license": source.license_expression,
+                "upstream_url": record_url(manifest, entry), "source_revision": source.acquisition.pinned_revision,
+                "source_id": source.id, "training_recipe_qualified": False},
+        })
+    return envelopes
+
+
 def _build_envelopes(
     source: SourceCard, snapshot: SourceSnapshot, records: list[dict[str, Any]],
     verified: dict[str, dict[str, Any]], stored: dict[str, dict[str, Any]], *, raw_base: str,
 ) -> list[dict[str, Any]]:
     """Map verified upstream records to canonical sample envelopes with real provenance."""
+    if source.acquisition.connector == HTTP_SUBSET_CONNECTOR:
+        return _http_envelopes(source, snapshot, records, verified, stored)
     library = source.id.split("-", 1)[-1]
     envelopes: list[dict[str, Any]] = []
     for record in records:
@@ -806,7 +890,8 @@ def _execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, 
         path: entry for path, entry in verified.items()
         if stored.get(path, {}).get("sha256") == entry.get("sha256")
     }
-    raw_base = _raw_base(source.acquisition.upstream_repository, source.acquisition.pinned_revision)
+    raw_base = "" if source.acquisition.connector == HTTP_SUBSET_CONNECTOR else _raw_base(source.acquisition.upstream_repository, source.acquisition.pinned_revision)
+    transport = cached_transport(https_transport)
     total_bytes = sum(int(record.get("size", 0)) for record in records) or 1
     transferred = sum(int(entry.get("size", 0)) for entry in verified.values())
 
@@ -825,7 +910,7 @@ def _execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, 
                 snapshot.save(update_fields=["state", "updated_at"])
                 settle(len(verified))
                 raise AcquisitionCancelled("Transfer cancelled before completion.")
-            record_bytes = fetch_record(source, UpstreamRecord(**record))
+            record_bytes = fetch_record(source, UpstreamRecord(**record), transport=transport)
             content_sha256 = hashlib.sha256(record_bytes).hexdigest()
             store.append(
                 snapshot_ref, record["path"], record_bytes,
@@ -855,10 +940,10 @@ def _execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, 
 
     notices = []
     for record in plan.get("license_records") or []:
-        notice = fetch_record(source, UpstreamRecord(**record))
+        notice = fetch_record(source, UpstreamRecord(**record), transport=transport)
         notices.append({
             "path": record["path"],
-            "upstream_url": raw_base + record["path"],
+            "upstream_url": _record_url(source, record["path"]),
             "upstream_blob_sha1": record["blob_sha1"],
             "content_sha256": hashlib.sha256(notice).hexdigest(),
             "byte_size": len(notice),
@@ -894,6 +979,14 @@ def _execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, 
     staged.refresh_from_db()
     if staged.state != Artifact.State.COMMITTED or staged.sha256 != digest:
         raise UpstreamError("Acquired artifact bytes were not committed with the verified digest.")
+
+    for envelope in envelopes:
+        for block in envelope["blocks"]:
+            media_ref = block.get("metadata", {}).get("artifact_ref")
+            if media_ref:
+                media = Artifact.all_objects.get(artifact_id=media_ref, tenant_id=tenant_id, project_id=snapshot.project_id, state=Artifact.State.COMMITTED)
+                LineageEdge.all_objects.get_or_create(tenant_id=tenant_id, parent_artifact=media, child_artifact=staged,
+                    relation="bank_media", defaults={"detail": {"source_revision": source.acquisition.pinned_revision}})
 
     manifest_hasher = hashlib.sha256()
     for record in records:
@@ -944,6 +1037,12 @@ def _execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, 
              "detail": ("Rows held out by the previous published version were dropped from this version."
                         if protected else "No earlier published version required protection.")},
         ]
+        if source.acquisition.connector == HTTP_SUBSET_CONNECTOR:
+            transformations = [
+                {"step": "qualified_sha256_verification", "detail": "Every downloaded range, decoded sample, and archived notice matched the content-pinned subset manifest."},
+                {"step": "canonical_source_record_import", "detail": "Source fields are retained as JSON/table blocks. Paired image/audio bytes are committed as tenant/project-scoped artifacts with content-addressed asset references. Training adapters are not qualified."},
+                {"step": "source_group_split_enforcement", "detail": "Qualified prompt, passage, image, speaker, or feature groups stay within one local split. Only the qualified upstream split/configuration is admitted."},
+            ]
         history = list(dataset.metadata.get("acquisition") or [])
         history.append({
             "revision_no": revision.revision_no, "revision_id": str(revision.revision_id),

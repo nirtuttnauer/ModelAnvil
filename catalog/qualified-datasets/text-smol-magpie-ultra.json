@@ -1,0 +1,402 @@
+{
+  "schema_version": "1.0",
+  "source_id": "text-smol-magpie-ultra",
+  "upstream": {
+    "repository": "HuggingFaceTB/smoltalk",
+    "commit": "5feaf2fd3ffca7c237fc38d1861bc30365d48ffa",
+    "file": "data/smol-magpie-ultra/train-00000-of-00006.parquet",
+    "file_size": 232402904,
+    "publisher_lfs_sha256": "512cb90bf3c8a6772e97c43977d10177b2726118a107eaf8de4797a604e09df8",
+    "full_file_checksum_verified": false
+  },
+  "containers": {
+    "data": {
+      "url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk/resolve/5feaf2fd3ffca7c237fc38d1861bc30365d48ffa/data/smol-magpie-ultra/train-00000-of-00006.parquet",
+      "size": 232402904,
+      "segments": [
+        {
+          "start": 232337368,
+          "length": 65536,
+          "sha256": "95dfe66f36c1628694229cb2a969d9814f3e1512a0a6b659db40362958efefe4"
+        },
+        {
+          "start": 232245704,
+          "length": 157192,
+          "sha256": "2374b7302efbd1bf72693c44848e16dda89d842c298f45d39387ecf54bc246b3"
+        },
+        {
+          "start": 4,
+          "length": 3426690,
+          "sha256": "c453b90419549ab98b9b0395f1f36a825538db0e23dfa8447af157bf6a7e0922"
+        },
+        {
+          "start": 74817027,
+          "length": 3400122,
+          "sha256": "e015e5beeb37e3e457108d59c21af55aaaabf90a7edbb9605f12f659571511c1"
+        },
+        {
+          "start": 153002634,
+          "length": 3414573,
+          "sha256": "948b248e2c704607559aea2dd2ffc3df9b1c277a5c09b9b3461db76f96d18a2c"
+        },
+        {
+          "start": 231384650,
+          "length": 861054,
+          "sha256": "45532f7a816d73c6c7f0c4d7bf1c49e9e985325fd2e09dc16d90ca33fe068551"
+        }
+      ]
+    }
+  },
+  "records": [
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=0&row=0",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 0
+      },
+      "source_group_id": "prompt:79ca1093dd5500d1775a0bc7ccbdf72ba890c379aeb4dfbeace8f05e01a404a1",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 6378,
+      "sha256": "699914d491cb39bc172e53da6cbfdc00670d39b2c0baec65200371d3e01fd7e5",
+      "blob_sha1": "15d5eba18170a10fea9fe542d11450b1474367b5"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=0&row=249",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 249
+      },
+      "source_group_id": "prompt:ff3c8a5e13d4442d3f2ef8c786f95be5c0b0203d8d3422bf66078d369eca3494",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 11636,
+      "sha256": "43af1145f08a7b07efbb7657d57730cda379872058a6b99f20e73c25aef5b9ef",
+      "blob_sha1": "55978296a33f328b47fd48355f99ec6dc6ac7ff6"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=0&row=499",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 499
+      },
+      "source_group_id": "prompt:bdcf7fbf95963121de48a0a67fab3e3efbcf8e48b1c05453b93ca290550493b6",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 5314,
+      "sha256": "b37e2577b59d831972c872258b6af24e523512f4d85682aa19f5206e5b3aa375",
+      "blob_sha1": "39b2e45b31522e2826e80be456263025b182863f"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=0&row=749",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 749
+      },
+      "source_group_id": "prompt:4e05041ccab9a2a7ab13e01bf4f673e5ccb07fb8f13fdf0f2fb339e53b218455",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 5883,
+      "sha256": "539c58852f84fb1570da27c3fd3504f8aadca35df99c5bea4706c461b38e4430",
+      "blob_sha1": "8ede51882605589076822fe08b19770938e5ec0d"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=0&row=999",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 999
+      },
+      "source_group_id": "prompt:a6517e936f3f935842027047df811ada38595059561e26d63fbf1992e9cf3642",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 7900,
+      "sha256": "631aa4754937415a06064ffeb4c5a6f730dbae43fb684a151aaf50425066d853",
+      "blob_sha1": "339a2eae4fe8ef5601f9fdd82247420cd559fadb"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=22&row=0",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 22,
+        "row_index": 0
+      },
+      "source_group_id": "prompt:44173fed4a1a8f76e8b0146bbe8e950cab8dff3883927e5dc442804d516a911b",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 6534,
+      "sha256": "af207452612e9bfd47d13655bdeff4db9eae37f6479e5d40a0e8c6436ee9acf3",
+      "blob_sha1": "b16437a66769823108d595870bef662c4eea2eff"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=22&row=249",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 22,
+        "row_index": 249
+      },
+      "source_group_id": "prompt:410b6bb0cebd55ba43ba93ca1cebca2d38cae6dcadc14047d127ed7b4c63ae63",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 9196,
+      "sha256": "1845717c04e484708f191c6556993ef05695a6ad11b6493190d81858bacea9ba",
+      "blob_sha1": "38a8ebdc932556b7105cc0abca9c409b8a3d70d3"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=22&row=499",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 22,
+        "row_index": 499
+      },
+      "source_group_id": "prompt:d0b0ea36a4d2b0d39d7a4acf0a98516730f4a5724c7448a5e1373c205363e84b",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 9073,
+      "sha256": "32a3efc36b4b4f8e79e73f3c132dc7367461a32233692b6004f26a30694579e3",
+      "blob_sha1": "708efe2094576ba623c94f0a9b3e2be69929d8f0"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=22&row=749",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 22,
+        "row_index": 749
+      },
+      "source_group_id": "prompt:d56883b400e7b57262dd37e9d462a28ce8c62d16b11eb7935d7045e4e61245ec",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 5974,
+      "sha256": "c48b7d5040b095cf661e69495dcf186ab8ee73764bf9dd93a8c7f6121bd08322",
+      "blob_sha1": "e0a29030b215f936d3685cf1cacdae1141da6dee"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=22&row=999",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 22,
+        "row_index": 999
+      },
+      "source_group_id": "prompt:286c4dd56087471826d8ef0efe7b7dc9e53e1b868d59b0aed6108dc28b5cf165",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 5276,
+      "sha256": "428358b0985bcf330d3fe631b8f459ba4dbc8691437e4df4cccc811c63cf22d3",
+      "blob_sha1": "e57c52ebf708884cb23b766a8a348bf444f9df1d"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=45&row=0",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 45,
+        "row_index": 0
+      },
+      "source_group_id": "prompt:a42e0a45ae71d4895539294e911719e2ad443b838085c6e38f7d617e1ae1c3ce",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 4913,
+      "sha256": "54593ecbbb0901801eecfc18d1310b395403e0150d221d15932a57f8d3886c05",
+      "blob_sha1": "11489adc879aa01fc361d1cfcaff9d9d28808af5"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=45&row=249",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 45,
+        "row_index": 249
+      },
+      "source_group_id": "prompt:2145cd1e7c1594f9df0b2719b337769576c58e4daeed0b08dc92c466050e0d2f",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 7197,
+      "sha256": "ca98c3740c0a0ddb55a40d951a9eafa746b78a9282f4c4f7321a2f43291a9ce6",
+      "blob_sha1": "6e8661bf4243840b6b6bb12e6be07054da77827a"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=45&row=499",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 45,
+        "row_index": 499
+      },
+      "source_group_id": "prompt:d2fe2169f51ce1813af82f1367e9631bb66f02c3cd2fa87be156d51b3a8d9f85",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 5760,
+      "sha256": "404dc8ea23f8cd4380094ec112663067c91082108a36ef806b5ef1f8568460a5",
+      "blob_sha1": "ad4ebebb42d95110d66a6c56f8163d0d72982e34"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=45&row=749",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 45,
+        "row_index": 749
+      },
+      "source_group_id": "prompt:12f99588de6f8330be3978daa303a66928547e35973f8a37aa7d210c89b186a2",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 6038,
+      "sha256": "2a9336d227d2f9248990a1843ba75ce0d9bb773e5f1ba6ba1cf6ca03ba00bcb0",
+      "blob_sha1": "668afca3aac0b0b09ff45f5c89d8442c82616230"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=45&row=999",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 45,
+        "row_index": 999
+      },
+      "source_group_id": "prompt:8b9dd23a13d364f1ec3d53c938ed478bc51a1a5fcaf5f74d08d6aa5a89bd49a7",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 5384,
+      "sha256": "8ad7891d94816691dc4d7bab67a8d48c1deb95017bcad91eb9dce8b838cd0992",
+      "blob_sha1": "0634ebf57273da0177a429997397a2dcd18563fb"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=68&row=0",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 68,
+        "row_index": 0
+      },
+      "source_group_id": "prompt:148556fe7b888785406f87d2e8df670d3858df6a4315ed22218d37e626fdfa65",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 8549,
+      "sha256": "fd072ca7ad4cf8f55c71629c795176a585d8c7a53605e8e0693babb4c769cd98",
+      "blob_sha1": "bb563c76b61f2794f4f2b2fa1111d0d397112f2b"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=68&row=64",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 68,
+        "row_index": 64
+      },
+      "source_group_id": "prompt:5946391dc72c0ed1927e58ca997f82a23f4d7fff5d4cea33befd168c496afd72",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 2373,
+      "sha256": "6697942cfc426350ad781a06de00d196afa54ff29adc2c05f3165691b7a8b06b",
+      "blob_sha1": "26cacd9e5b0b4367b578008de2a0f67ead4c522e"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=68&row=128",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 68,
+        "row_index": 128
+      },
+      "source_group_id": "prompt:e8800a7c1095e53e3a1a7a3fd0441b96da6a4440f3cd370239a7baa5ebc84d29",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 8801,
+      "sha256": "e651d679f802be40c3a2feeea2e17135e4a7568100815c04b3ea3bb55920b5d2",
+      "blob_sha1": "e2e5fe4ce76858168c71b31f8e156dacb99b5af8"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=68&row=192",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 68,
+        "row_index": 192
+      },
+      "source_group_id": "prompt:2fce142a9e5b0e2ac8fc24fe3a21db7f473b143b040bf03e4baf241415159a11",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 7889,
+      "sha256": "062c880cc26697fd318218ccb6cdefd3191a677d6ca50624aa247063f028cfce",
+      "blob_sha1": "9d12fc1cbf20a5ed7783c2d1c069ed55de1dcdbb"
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=68&row=256",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 68,
+        "row_index": 256
+      },
+      "source_group_id": "prompt:817dc4e437eaed43327f1ce8a1391fe999a43c04b3c9d6863ba304c3c210ab35",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "smol-magpie-ultra"
+      },
+      "size": 4548,
+      "sha256": "03f04006880b97305931699e414a8debc2181d7ef2d4c94032d4a074afc85598",
+      "blob_sha1": "76b8da904f9dfe262f77fdb375d55d81ea4c7849"
+    }
+  ],
+  "licenses": [
+    {
+      "path": "notice/publisher-card",
+      "archive_name": "text-smol-magpie-ultra-publisher-card.txt",
+      "upstream_url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk/resolve/5feaf2fd3ffca7c237fc38d1861bc30365d48ffa/README.md",
+      "size": 9723,
+      "sha256": "b6ff197df18e272fe15361db889638f9679b8443f299034137b5234acd8d3487",
+      "blob_sha1": "a6c7236d6b8dd179b84d48ea95a5a0c1115b4686"
+    }
+  ]
+}

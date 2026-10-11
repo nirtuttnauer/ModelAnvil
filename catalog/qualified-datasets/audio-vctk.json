@@ -1,0 +1,1235 @@
+{
+  "schema_version": "1.0",
+  "source_id": "audio-vctk",
+  "upstream": {
+    "release_url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/535f4286-e54c-4038-838c-a02285e32cb2/content",
+    "archive_size": 11747302977,
+    "archive_etag": "\"8a6ba2946b36fcbef0212cad601f4bfa\"",
+    "full_archive_checksum_verified": false
+  },
+  "containers": {
+    "data": {
+      "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/535f4286-e54c-4038-838c-a02285e32cb2/content",
+      "size": 11747302977,
+      "segments": [
+        {
+          "start": 11747302955,
+          "length": 22,
+          "sha256": "5bd220944a26975d33b26efb5cf45f66f26af520f9e86d038c2d040a2d8eae97"
+        },
+        {
+          "start": 11747237420,
+          "length": 65557,
+          "sha256": "37f3986bacdad8b9edb7886d20589a39d232b99adf50da517b94d6ef12eced4d"
+        },
+        {
+          "start": 11747302877,
+          "length": 20,
+          "sha256": "9539f133e718e0adc5fda58f820ccfcfb02dbd7864080ec5395cee944f5d91c4"
+        },
+        {
+          "start": 11747302821,
+          "length": 56,
+          "sha256": "4044f5178110d8ff48fe79bcb18923ef8c547f5e12e18c41a4c106e9a58eb1b4"
+        },
+        {
+          "start": 11734391133,
+          "length": 12911688,
+          "sha256": "82cc391c1674dbbefc89eeb0801ea77cfaa32a035172008e0b5cef57ff1263e3"
+        },
+        {
+          "start": 2101341907,
+          "length": 30,
+          "sha256": "2c0ed6c3ab051830ba6a7161c48d33bc85ff02e0acb39365f415e16d6a164a0c"
+        },
+        {
+          "start": 2101341937,
+          "length": 45,
+          "sha256": "54a47bcad4f2ba351db11a21f8d02ebdea36a4136476babb835ddf630dcec5ca"
+        },
+        {
+          "start": 2101341995,
+          "length": 105919,
+          "sha256": "924edaf737b4d50970add89c5af9124f8372ddfebb73192e00f48350fd270a5d"
+        },
+        {
+          "start": 808981,
+          "length": 30,
+          "sha256": "32979d0f789d91b40999abbb030954b64e4c4d68c2a5a5b97f14f5bfaefee3ae"
+        },
+        {
+          "start": 809011,
+          "length": 21,
+          "sha256": "8f869ce5f958096de659d94def4d63f6a234530b7ee68952d2b55273a00a11bb"
+        },
+        {
+          "start": 809045,
+          "length": 22,
+          "sha256": "42766d910fa87428c2c31e98d87d295494ae1d4ff66dfe14e7174664943f672d"
+        },
+        {
+          "start": 2049449356,
+          "length": 30,
+          "sha256": "976c850cbb17631eb56e1d79baa8d0179564bdccb49e57bb3f5e51fa88e154e1"
+        },
+        {
+          "start": 2049449386,
+          "length": 45,
+          "sha256": "c69c1d049c8eaeb0502d74b082552de74f1cf15b579b80d1d850606e8bc6c4de"
+        },
+        {
+          "start": 2049449444,
+          "length": 187770,
+          "sha256": "3d7671493e1cfd35668ff48e525a32daac711351e6e193d4afc09f41c35dc9d5"
+        },
+        {
+          "start": 810334,
+          "length": 30,
+          "sha256": "860f8812050168558c55168adba31f66d131f69fbb9c5d38938325544b0af203"
+        },
+        {
+          "start": 810364,
+          "length": 21,
+          "sha256": "651ea429081fb609bcfc874405c73e1a57044c143dec19d17044a4a6d2cf5e24"
+        },
+        {
+          "start": 810398,
+          "length": 49,
+          "sha256": "ec67b763579a3bf46af138fe44b8f53071a4ab949af93d4730983c0be1f5dff6"
+        },
+        {
+          "start": 8725878538,
+          "length": 30,
+          "sha256": "0e3c0598f59076e68f0a56c04f0689f79e88a1cdb6e44dbaff2c8fb94f209c9c"
+        },
+        {
+          "start": 8725878568,
+          "length": 45,
+          "sha256": "41d6f56b3e2d72e08ef95be8798eec372f0810c1015fd87e27bf9a61c1ce6025"
+        },
+        {
+          "start": 8725878626,
+          "length": 134677,
+          "sha256": "9721cfda578695988323e8cac0d86b73c91e9d64c9d5e8b0666805046c61bcc1"
+        },
+        {
+          "start": 3421359,
+          "length": 30,
+          "sha256": "c958ca53a9a470f37b4a618659fc446097e9f7ef25bbf14c2b4bf056a8447c73"
+        },
+        {
+          "start": 3421389,
+          "length": 21,
+          "sha256": "df57ed55e4282b9aed96ddf338193b952fffbcac6b82cea55caee3a3dffca786"
+        },
+        {
+          "start": 3421423,
+          "length": 24,
+          "sha256": "966e3f29c34fb9cdbc11b87c794557a615d91b51698c684d56440f1ec8de29e9"
+        },
+        {
+          "start": 8644263197,
+          "length": 30,
+          "sha256": "1ccf247406eebadb87d9cce3f18c1dba4c58d689b64ae78a26e607db9da09bec"
+        },
+        {
+          "start": 8644263227,
+          "length": 45,
+          "sha256": "85ce3e452e6b6e5d2d1cbf6ed829db6ee7764d4f3375f845c5646d949181d3c0"
+        },
+        {
+          "start": 8644263285,
+          "length": 193971,
+          "sha256": "556749df24838c119e49a659d6b099d610a175863dc78e522c4442f0d251ce81"
+        },
+        {
+          "start": 3419686,
+          "length": 30,
+          "sha256": "35155eba5476c5a89a0b83d5fb30bf87f9d3854b8e768c2ff560cc1115c2462d"
+        },
+        {
+          "start": 3419716,
+          "length": 21,
+          "sha256": "509c27d882a96b3b384e5f9a382a8bec2825274d35fff5a08b4f5218d9963c71"
+        },
+        {
+          "start": 3419750,
+          "length": 51,
+          "sha256": "d86bde2ac510074fd6d11098b2f9a646fc4b083e186fba5cb277fcc209de4c4a"
+        },
+        {
+          "start": 7735877117,
+          "length": 30,
+          "sha256": "7e4c0131e603287c50f9814b4ec6161ea46a27418e88fedc869f04a36f00e728"
+        },
+        {
+          "start": 7735877147,
+          "length": 45,
+          "sha256": "d38a89d6b2eed7a2589c2b5a6de6bea3f312c9b6ed84371a2742dc71462b9fc0"
+        },
+        {
+          "start": 7735877205,
+          "length": 134630,
+          "sha256": "2887f1c21b5c0bfa4110e3d48023e3e25a0fe4a42c05004de287e7ec83e3d882"
+        },
+        {
+          "start": 3061537,
+          "length": 30,
+          "sha256": "cca8a0bf1153f38034d90ac20ab4b86cca0d1380a6b0b11c3f1dc7356888c8ac"
+        },
+        {
+          "start": 3061567,
+          "length": 21,
+          "sha256": "3d8c00964eb4b5b88b22008f15ec5c0b4341acd433245b5dda8299240da46532"
+        },
+        {
+          "start": 3061601,
+          "length": 24,
+          "sha256": "966e3f29c34fb9cdbc11b87c794557a615d91b51698c684d56440f1ec8de29e9"
+        },
+        {
+          "start": 7815003534,
+          "length": 30,
+          "sha256": "a14dd7ea409b9dc38313332e1516f8d01185ac41e82b34a6382b8c843dcb1ff3"
+        },
+        {
+          "start": 7815003564,
+          "length": 45,
+          "sha256": "6c7fd6e4564887c93daf44db9816fdc644a2f143c4e92122ec2358e561fc2fa0"
+        },
+        {
+          "start": 7815003622,
+          "length": 198296,
+          "sha256": "9c0ef41126415d716f641bebc1211af06e13ece9cd04404300b73b240d53c027"
+        },
+        {
+          "start": 3063690,
+          "length": 30,
+          "sha256": "9ca500c1e0744ad2a5dcd2f08b750f34313e57440e39e5471d3b8d9d897568b3"
+        },
+        {
+          "start": 3063720,
+          "length": 21,
+          "sha256": "091eb06df27c62a1889e8d77f081a563ced1e017741c4a7a005c2ac863224d6d"
+        },
+        {
+          "start": 3063754,
+          "length": 51,
+          "sha256": "d86bde2ac510074fd6d11098b2f9a646fc4b083e186fba5cb277fcc209de4c4a"
+        },
+        {
+          "start": 8790732284,
+          "length": 30,
+          "sha256": "0ce7a01dd2ad81c65dcc1acf6acd97ec0dc96f7ca01be3b3fa763e64522ab85f"
+        },
+        {
+          "start": 8790732314,
+          "length": 45,
+          "sha256": "db7222368b952818f97884d9cac50d78c9795bd51da965ba30849b57dd0fb3f7"
+        },
+        {
+          "start": 8790732372,
+          "length": 112812,
+          "sha256": "3658436873f9050f0aaa563f668da957c8cee5f0c64dff1bfc172768f2bea1ad"
+        },
+        {
+          "start": 3480393,
+          "length": 30,
+          "sha256": "bdb2e194c3d1d69a8d99f228f449f9c643bd52e6130937c80107e507f5653ef6"
+        },
+        {
+          "start": 3480423,
+          "length": 21,
+          "sha256": "1c64ef738e2cafa62c1bef3fea8beff780dbb4cbce4100901cd2f5423798e212"
+        },
+        {
+          "start": 3480457,
+          "length": 22,
+          "sha256": "42766d910fa87428c2c31e98d87d295494ae1d4ff66dfe14e7174664943f672d"
+        },
+        {
+          "start": 8761151809,
+          "length": 30,
+          "sha256": "7615adf3f61799632ef0deecb09907d0a342804a3a920f30429855a01eb5d95f"
+        },
+        {
+          "start": 8761151839,
+          "length": 45,
+          "sha256": "6ef68e56c4cb0a6613477506e204ed3d345d1bd15d5106ba0eec582306d0b5bb"
+        },
+        {
+          "start": 8761151897,
+          "length": 205015,
+          "sha256": "2d6f419baacab4338d588b180270d4a731ecfebc0b3be8ab81560c6483e98291"
+        },
+        {
+          "start": 3478250,
+          "length": 30,
+          "sha256": "583f013b16f436497818481e8a31fbbf88c5a9d2ca0fc37eb9f595cb29870908"
+        },
+        {
+          "start": 3478280,
+          "length": 21,
+          "sha256": "d1f7b9b5ac7b19f7b46ebcdb17f9d1003c9fda6a68c1865cbd6df2df3c9878be"
+        },
+        {
+          "start": 3478314,
+          "length": 49,
+          "sha256": "ec67b763579a3bf46af138fe44b8f53071a4ab949af93d4730983c0be1f5dff6"
+        },
+        {
+          "start": 7667762488,
+          "length": 30,
+          "sha256": "c74dd10014e991df37e058b05afd4f7c5cd50e4ce2267077f75ee7ee21de3683"
+        },
+        {
+          "start": 7667762518,
+          "length": 45,
+          "sha256": "0220c723729f0c868566bc0608a6a56c20faf8dd2e7e3d4f3ea9381ed29b854b"
+        },
+        {
+          "start": 7667762576,
+          "length": 93558,
+          "sha256": "6b373de6c4aa4e3ddca5eec87550b9a0c89df7d77de1c63669f6d5c7d9a75652"
+        },
+        {
+          "start": 3042549,
+          "length": 30,
+          "sha256": "87df74cebdcc1dbe03e17a1e7f27536bf0c4c192e5262a1e26dcbf383a02773c"
+        },
+        {
+          "start": 3042579,
+          "length": 21,
+          "sha256": "2ce2c8c07e17ad77bda6710fdb695552d908c1b307bd910b27b37c7a73d85e4e"
+        },
+        {
+          "start": 3042613,
+          "length": 24,
+          "sha256": "966e3f29c34fb9cdbc11b87c794557a615d91b51698c684d56440f1ec8de29e9"
+        },
+        {
+          "start": 7693640075,
+          "length": 30,
+          "sha256": "924ef34bc9a838126a33af9ef2ea98fa1e9a774fd8468eb322dc3ce4ba6eabcb"
+        },
+        {
+          "start": 7693640105,
+          "length": 45,
+          "sha256": "9be00e98a6d046cabd627af1de1d18282425b23c0e1b49acc724ddf5f3f58586"
+        },
+        {
+          "start": 7693640163,
+          "length": 181453,
+          "sha256": "485bf28c51a7c8b5b8e373cb645cee4dcbcbd2aea9a7021895721b0095475838"
+        },
+        {
+          "start": 3045020,
+          "length": 30,
+          "sha256": "dc68dff2e18f92599da7e62226a09b70d5ec1ad9a13a17e8673f69f1a6e1c9df"
+        },
+        {
+          "start": 3045050,
+          "length": 21,
+          "sha256": "054aa9cf1fe0b38eca0746187e32f5a34e368fcd92cc8579e29319b1097f8bde"
+        },
+        {
+          "start": 3045084,
+          "length": 51,
+          "sha256": "d86bde2ac510074fd6d11098b2f9a646fc4b083e186fba5cb277fcc209de4c4a"
+        },
+        {
+          "start": 4774168182,
+          "length": 30,
+          "sha256": "7bf6d043ba17217dbb7eace8995f0b3b0a4b657b72a65215df653f94936ad0fd"
+        },
+        {
+          "start": 4774168212,
+          "length": 45,
+          "sha256": "69f5ac73a7b8b46ccca8332f96bc1e4270d661913d101a8d4f87508ad675697a"
+        },
+        {
+          "start": 4774168270,
+          "length": 91714,
+          "sha256": "671d5d5026ada5701a08307fefcb3b65aeae1520b61f720bc2e6cbd338391b77"
+        },
+        {
+          "start": 1873103,
+          "length": 30,
+          "sha256": "33a91e7b17dbeaeacc8a646f7a99e1e14fe40702e26c50ae1de24bee6c735768"
+        },
+        {
+          "start": 1873133,
+          "length": 21,
+          "sha256": "c55166080f1baf743eb292b4f70987f0efc8e00a030e7680c7cb42bc7cab67fd"
+        },
+        {
+          "start": 1873167,
+          "length": 24,
+          "sha256": "966e3f29c34fb9cdbc11b87c794557a615d91b51698c684d56440f1ec8de29e9"
+        },
+        {
+          "start": 4861290938,
+          "length": 30,
+          "sha256": "9e42f9d3389eba700ba474dddade7bd8d6e6ea5466af0e5800767a227dbac635"
+        },
+        {
+          "start": 4861290968,
+          "length": 45,
+          "sha256": "c6a48b6f64ed6feac1cf2a1d0b61c61ef74a891d2237d78d1f1c758b88d7874d"
+        },
+        {
+          "start": 4861291026,
+          "length": 195967,
+          "sha256": "3547eb3baf13a885bc8ae6e6bc8544f9126523861a66e9c817301369f43f601b"
+        },
+        {
+          "start": 1870701,
+          "length": 30,
+          "sha256": "25613c03d727a53c1552739d4cdf6a862f47997daadd415eabb3c76d9a1d0751"
+        },
+        {
+          "start": 1870731,
+          "length": 21,
+          "sha256": "cc26f5833f578815a67afe8a206b19c009208dad8422a84be47f7341ce17fb89"
+        },
+        {
+          "start": 1870765,
+          "length": 51,
+          "sha256": "d86bde2ac510074fd6d11098b2f9a646fc4b083e186fba5cb277fcc209de4c4a"
+        },
+        {
+          "start": 3774352292,
+          "length": 30,
+          "sha256": "3c10f2b13a58a947475fbf13e9b51ac57bf5656e22d12f85d504509e2012c419"
+        },
+        {
+          "start": 3774352322,
+          "length": 45,
+          "sha256": "c53a7b23c9aa8dab18b4c7daea233e1189a99b6d1e8a59a9ac0b8ba2d0366418"
+        },
+        {
+          "start": 3774352380,
+          "length": 81183,
+          "sha256": "76f6bc09c557dd4f65712c199249a1c06b017c4188387df336faeae74ed9ea11"
+        },
+        {
+          "start": 1468665,
+          "length": 30,
+          "sha256": "04347bd629625925e3127afcc1cd767012add0ca2b1ff64d4a567b51824bde32"
+        },
+        {
+          "start": 1468695,
+          "length": 21,
+          "sha256": "7b508514633b7495af7eff50f1aac763837811d0fccc4b4bf741a51386a5baeb"
+        },
+        {
+          "start": 1468729,
+          "length": 24,
+          "sha256": "966e3f29c34fb9cdbc11b87c794557a615d91b51698c684d56440f1ec8de29e9"
+        },
+        {
+          "start": 3698905084,
+          "length": 30,
+          "sha256": "02fed7ffb34304bbc12a574f7b74f0b31855133e79629839233aa66587022f21"
+        },
+        {
+          "start": 3698905114,
+          "length": 45,
+          "sha256": "5d8bb60703f07ea80a5c838d7fabe2aad61bd70d7409cfcc40ffc136a30095ab"
+        },
+        {
+          "start": 3698905172,
+          "length": 135978,
+          "sha256": "7809546767085d50c6a879f9b618c52773ed7854b3b52e1a4ace4c7f9738a9f8"
+        },
+        {
+          "start": 1470991,
+          "length": 30,
+          "sha256": "fd7eda112234115a2639c005f518b578ac9d8057a9dfa72c428b04bef8c034e0"
+        },
+        {
+          "start": 1471021,
+          "length": 21,
+          "sha256": "1f7018ced8a862303e2b052185dee9c65175662b1d320a459a4d259b7cee5b3f"
+        },
+        {
+          "start": 1471055,
+          "length": 51,
+          "sha256": "d86bde2ac510074fd6d11098b2f9a646fc4b083e186fba5cb277fcc209de4c4a"
+        },
+        {
+          "start": 8923405174,
+          "length": 30,
+          "sha256": "7da4bf6b2b8968c906f30abd4d28d59d65898e0a4158e7809647c214292009cd"
+        },
+        {
+          "start": 8923405204,
+          "length": 45,
+          "sha256": "079c85a4810dae193ce5bfc21859dba292c8926f610f888536590bdd74c41a62"
+        },
+        {
+          "start": 8923405262,
+          "length": 88057,
+          "sha256": "e8e5c3112b41e59c5176c713d6454952d994eb62ac2cbe331c9392e1e8a578b3"
+        },
+        {
+          "start": 3514179,
+          "length": 30,
+          "sha256": "6bf0668f6f7c8dc330cd0e62e3b4beb4e7ddabe002b2803cded3a1dcf27fc02c"
+        },
+        {
+          "start": 3514209,
+          "length": 21,
+          "sha256": "ce012d7fb71feb358e52619de6db325817cc639b319d8d360d1249d98ca9ba20"
+        },
+        {
+          "start": 3514243,
+          "length": 24,
+          "sha256": "966e3f29c34fb9cdbc11b87c794557a615d91b51698c684d56440f1ec8de29e9"
+        },
+        {
+          "start": 8847520114,
+          "length": 30,
+          "sha256": "cab26e62fa9d03e228c7a6cd032347a0353230e945a9d756f51144475e50b21e"
+        },
+        {
+          "start": 8847520144,
+          "length": 45,
+          "sha256": "5a77065b76967d1d379efd8b20a89d05293167e01ffa497f588b72863c600ca1"
+        },
+        {
+          "start": 8847520202,
+          "length": 143865,
+          "sha256": "1adbcc8ad9b4c97716370d0ab73b8c982f01691d958c888f582f0b864cc1a079"
+        },
+        {
+          "start": 3511225,
+          "length": 30,
+          "sha256": "6b7fc2026b04f3c1b849ed148c2ee32e676f39eee26d7f7fb7754c976fc11067"
+        },
+        {
+          "start": 3511255,
+          "length": 21,
+          "sha256": "321f46a44d3a585c3d7922a2c818773c44eba767133a4c791b87a08c322c95a5"
+        },
+        {
+          "start": 3511289,
+          "length": 51,
+          "sha256": "d86bde2ac510074fd6d11098b2f9a646fc4b083e186fba5cb277fcc209de4c4a"
+        },
+        {
+          "start": 9959045371,
+          "length": 30,
+          "sha256": "780b1218276ee02778e2848be575c20b42e20bab39c52006e487523eecfd9479"
+        },
+        {
+          "start": 9959045401,
+          "length": 45,
+          "sha256": "17a74bd1934d2a3bf18c94fbb2615a9f7612de2104c5c1899e56e3e873d3e464"
+        },
+        {
+          "start": 9959045459,
+          "length": 118194,
+          "sha256": "02e91be3a26c0dfd3fe59fd19c17d0a8ebcd6b69130387395bdb48ee4b637f8d"
+        },
+        {
+          "start": 3951584,
+          "length": 30,
+          "sha256": "fdf7bdc76c52e5b75cd2bf4f4b3ec635f5236cc41d158bef206f7e6a2c569cf4"
+        },
+        {
+          "start": 3951614,
+          "length": 21,
+          "sha256": "eb8af87edfbb01d9a4f7aafb497ea9d612546a775062137555808a9268f58f17"
+        },
+        {
+          "start": 3951648,
+          "length": 24,
+          "sha256": "966e3f29c34fb9cdbc11b87c794557a615d91b51698c684d56440f1ec8de29e9"
+        },
+        {
+          "start": 10041623051,
+          "length": 30,
+          "sha256": "c23dfea7e5b297dd6a9c4aeb0b2a43455a7f72cbcc85a0060c272c08b19a2e64"
+        },
+        {
+          "start": 10041623081,
+          "length": 45,
+          "sha256": "d7c3f26eb560e6c2eadc99d0476227cc45f92a9f12611641e05d83e76798c94f"
+        },
+        {
+          "start": 10041623139,
+          "length": 211588,
+          "sha256": "b8785f54050549c58a5dbc5eedcd46a9c45c4ca98125550ffd59f63259524780"
+        },
+        {
+          "start": 3953855,
+          "length": 30,
+          "sha256": "23f5f080ad723c578c6383ea6769bc4d0ca0a95991b9272c634921d8cf1c8da0"
+        },
+        {
+          "start": 3953885,
+          "length": 21,
+          "sha256": "3b354ff8729eb870adae15210af1fff2d909c75d46acf1c20da455227125e755"
+        },
+        {
+          "start": 3953919,
+          "length": 51,
+          "sha256": "d86bde2ac510074fd6d11098b2f9a646fc4b083e186fba5cb277fcc209de4c4a"
+        },
+        {
+          "start": 9855579190,
+          "length": 30,
+          "sha256": "5fb0931e893e9dc51a7909f0c1b41a01c3221a949be623b867be17044ed04a62"
+        },
+        {
+          "start": 9855579220,
+          "length": 45,
+          "sha256": "9fcd4e1e9aa8bd0e0336991b0d3ad760f2f29bbe359cd3e386b7b3fb0db19c5c"
+        },
+        {
+          "start": 9855579278,
+          "length": 113181,
+          "sha256": "604707b9174e1d015051dd9c99ae84c3c7bac8034ded9c4d67da8e7c39aa592c"
+        },
+        {
+          "start": 3894699,
+          "length": 30,
+          "sha256": "3f81afd7f685bfb06b7670c99d2f7b4edd25c9062b50c7b1c06fb47deb303542"
+        },
+        {
+          "start": 3894729,
+          "length": 21,
+          "sha256": "b9a96ff5aaeeaae12eac18d01e1cec8a8a93d7c83b5a44b2bf5d7a4e4083a562"
+        },
+        {
+          "start": 3894763,
+          "length": 24,
+          "sha256": "966e3f29c34fb9cdbc11b87c794557a615d91b51698c684d56440f1ec8de29e9"
+        },
+        {
+          "start": 9925561443,
+          "length": 30,
+          "sha256": "100efb3eff97c51ccaaa32ef52cf62088195f21162dc484b14ac62b1db5d8a16"
+        },
+        {
+          "start": 9925561473,
+          "length": 45,
+          "sha256": "fe9eb78f8a5068c750b2c776d9afd4f0c32bf7f66c674b632fede71cd3b3a441"
+        },
+        {
+          "start": 9925561531,
+          "length": 180113,
+          "sha256": "282abb7f6350bf67712b3299f215c0a0beb3871642b31aaad2a4a20e2b8fae2a"
+        },
+        {
+          "start": 3892903,
+          "length": 30,
+          "sha256": "4dd9415f209d0e28827b7cd6152c4c29341842e5b0235914323fd9fbe95a2140"
+        },
+        {
+          "start": 3892933,
+          "length": 21,
+          "sha256": "22a5070fc514404ce7023ddab5576e5139edb5d29a513d6b8c8a4aeadb8a0486"
+        },
+        {
+          "start": 3892967,
+          "length": 51,
+          "sha256": "d86bde2ac510074fd6d11098b2f9a646fc4b083e186fba5cb277fcc209de4c4a"
+        }
+      ]
+    }
+  },
+  "records": [
+    {
+      "path": "p225_001",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p225/p225_001_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p225/p225_001.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p225",
+      "metadata": {
+        "speaker_id": "p225",
+        "utterance_id": "p225_001",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 211843,
+      "sha256": "d6e4acb6cbf83fb0ae75ef0ccede62be48fce26f0cbacc299b5bc842d661d3de",
+      "blob_sha1": "d53ce1f096993232ab22ee8a5195f71a749b165c"
+    },
+    {
+      "path": "p225_002",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p225/p225_002_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p225/p225_002.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p225",
+      "metadata": {
+        "speaker_id": "p225",
+        "utterance_id": "p225_002",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 375664,
+      "sha256": "9ff5d017870017ebaf0e3568792ec7497e20fe30d7eee5ec1e6730697dd68da2",
+      "blob_sha1": "fc2e4a7246a3d58ddbd352161c5b2060cb036ebd"
+    },
+    {
+      "path": "p226_001",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p226/p226_001_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p226/p226_001.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p226",
+      "metadata": {
+        "speaker_id": "p226",
+        "utterance_id": "p226_001",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 269349,
+      "sha256": "f9dd246f6fa3720bfea3845671d43545916a5be234f563f5756869f5a5730e10",
+      "blob_sha1": "9d09d2b617d8eb8351b134cc4338e748ce9ec161"
+    },
+    {
+      "path": "p226_002",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p226/p226_002_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p226/p226_002.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p226",
+      "metadata": {
+        "speaker_id": "p226",
+        "utterance_id": "p226_002",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 388022,
+      "sha256": "945bd0b93d8a0593f79c69718dbd0c0e3eaf4d5f47c5a0265c1d495be9779548",
+      "blob_sha1": "45e198da19fbe778546f8d6971d1a24f0de08de4"
+    },
+    {
+      "path": "p227_001",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p227/p227_001_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p227/p227_001.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p227",
+      "metadata": {
+        "speaker_id": "p227",
+        "utterance_id": "p227_001",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 269451,
+      "sha256": "a61e90ceab5f8ebf9e1f1733dbda046f64bc5e8b9da1027f4eb2952ad140f95d",
+      "blob_sha1": "790fcfbd64e8b2aa7e01ff396d1850ec1492bfd6"
+    },
+    {
+      "path": "p227_002",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p227/p227_002_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p227/p227_002.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p227",
+      "metadata": {
+        "speaker_id": "p227",
+        "utterance_id": "p227_002",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 396628,
+      "sha256": "2a469143fa6b1a5d950e853918d4a019d236a3a6cc1dba9583d9df8be575df74",
+      "blob_sha1": "c222be963a2d9c8d699452b5af70b97b26290b20"
+    },
+    {
+      "path": "p228_001",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p228/p228_001_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p228/p228_001.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p228",
+      "metadata": {
+        "speaker_id": "p228",
+        "utterance_id": "p228_001",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 225713,
+      "sha256": "e7b6ad8983c390cbd4d404a9574e52ee57d62438150db9a5138ae6d553ed224d",
+      "blob_sha1": "2ad3d85765057a18261d877ba75f5aa65c0d373e"
+    },
+    {
+      "path": "p228_002",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p228/p228_002_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p228/p228_002.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p228",
+      "metadata": {
+        "speaker_id": "p228",
+        "utterance_id": "p228_002",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 410268,
+      "sha256": "8a3c8846499ae4c125dcc81a58fbe941404b2938585079658ee475bdc1d5b0e8",
+      "blob_sha1": "fa9623c0bbf6c1d57db4174935c0934647ea7bac"
+    },
+    {
+      "path": "p229_001",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p229/p229_001_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p229/p229_001.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p229",
+      "metadata": {
+        "speaker_id": "p229",
+        "utterance_id": "p229_001",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 187221,
+      "sha256": "c644676ef996bc641ca29bc1ab3ace8b69a9f4a7018ba46843bc01c26a4ad630",
+      "blob_sha1": "405796cc813f94303ff483690a3f0cd5e8daf6bf"
+    },
+    {
+      "path": "p229_002",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p229/p229_002_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p229/p229_002.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p229",
+      "metadata": {
+        "speaker_id": "p229",
+        "utterance_id": "p229_002",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 362952,
+      "sha256": "75c5c2c2cd9ce467efa2fe5fc59fa9dd762661734406ba57e53e9426612e6530",
+      "blob_sha1": "3f0d9bb27f58a87d9675f049798a1e86b84d9179"
+    },
+    {
+      "path": "p230_001",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p230/p230_001_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p230/p230_001.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p230",
+      "metadata": {
+        "speaker_id": "p230",
+        "utterance_id": "p230_001",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 183459,
+      "sha256": "3ee7d9cef789a8ec64e91f784ec5889f8a69c7cedad87b0902a4ee149e159a73",
+      "blob_sha1": "68ebfffca3fe2d1325e06874391411a52cec9ae4"
+    },
+    {
+      "path": "p230_002",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p230/p230_002_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p230/p230_002.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p230",
+      "metadata": {
+        "speaker_id": "p230",
+        "utterance_id": "p230_002",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 392098,
+      "sha256": "294884e1dd3156fcac61defaeb4a6f1642a0051c051cd80508f098ffb77c9fa9",
+      "blob_sha1": "a4d4f01167ce9fcbb10d5dfaffd67989eddbdb4d"
+    },
+    {
+      "path": "p231_001",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p231/p231_001_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p231/p231_001.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p231",
+      "metadata": {
+        "speaker_id": "p231",
+        "utterance_id": "p231_001",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 162433,
+      "sha256": "b2e1a14a896786e8e868cf81f13a7fbdd661ea03ac0be7f1c2dffeacf61d77b2",
+      "blob_sha1": "8d1205219606d529bbf1ec89da8ded4e2d15ea31"
+    },
+    {
+      "path": "p231_002",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p231/p231_002_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p231/p231_002.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p231",
+      "metadata": {
+        "speaker_id": "p231",
+        "utterance_id": "p231_002",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 272080,
+      "sha256": "b66b89d694228314e44baab74040a664789662b6dc13af30c17891c633862d13",
+      "blob_sha1": "6bb35fa5776b3094024facf0ee9ef547e23bfc50"
+    },
+    {
+      "path": "p232_001",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p232/p232_001_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p232/p232_001.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p232",
+      "metadata": {
+        "speaker_id": "p232",
+        "utterance_id": "p232_001",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 176275,
+      "sha256": "cd8a65d0324f4c1b499e2c5a61e6d99d977bdb72b497c11818320d1be04f59fc",
+      "blob_sha1": "e6fb4c268cd57982de7ea1662dfed59b572dc090"
+    },
+    {
+      "path": "p232_002",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p232/p232_002_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p232/p232_002.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p232",
+      "metadata": {
+        "speaker_id": "p232",
+        "utterance_id": "p232_002",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 287780,
+      "sha256": "5c8b14b73badb20792a42d5cd49c585405b5ea3761cea5f69c58d6a56e0dca94",
+      "blob_sha1": "3e4c0f8bd9c89f994d18531a72b2f1caf890813b"
+    },
+    {
+      "path": "p233_001",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p233/p233_001_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p233/p233_001.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p233",
+      "metadata": {
+        "speaker_id": "p233",
+        "utterance_id": "p233_001",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 236393,
+      "sha256": "d6411d0d7ac93a3c27c092f36389de557cc1264b4313872cfbf591a36b818940",
+      "blob_sha1": "2596ba65965c128a16b9736d9e9cab4849808de0"
+    },
+    {
+      "path": "p233_002",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p233/p233_002_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p233/p233_002.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p233",
+      "metadata": {
+        "speaker_id": "p233",
+        "utterance_id": "p233_002",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 423308,
+      "sha256": "481f3e361fdba501890b313bef3163639ab0db0737c2d4c188ef700e0d904dcf",
+      "blob_sha1": "afb81e0f5c0d39261eaa30a1f4c936314a32b12d"
+    },
+    {
+      "path": "p234_001",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p234/p234_001_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p234/p234_001.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p234",
+      "metadata": {
+        "speaker_id": "p234",
+        "utterance_id": "p234_001",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 226405,
+      "sha256": "e8dde754fdfa9d60f17806a661933f09f9e448ede15ede33076df20d5afdd9d9",
+      "blob_sha1": "393cbc654a825e40a8f79b138c219c05d846fcce"
+    },
+    {
+      "path": "p234_002",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "wav48_silence_trimmed/p234/p234_002_mic1.flac",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "txt/p234/p234_002.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "vctk:speaker:p234",
+      "metadata": {
+        "speaker_id": "p234",
+        "utterance_id": "p234_002",
+        "microphone": "mic1",
+        "upstream_split": null
+      },
+      "size": 360270,
+      "sha256": "098bc93375e4b1f9b7ad8ad982503dabb0bc2a8ba11ba5ff61600d721c49a0a9",
+      "blob_sha1": "9fb3cb1de8d72ad982f9a5ec1547509ba9fa7af3"
+    }
+  ],
+  "licenses": [
+    {
+      "path": "notice/publisher-declaration",
+      "archive_name": "audio-vctk-publisher-declaration.txt",
+      "upstream_url": "https://datashare.ed.ac.uk/items/30e7453c-9ea8-48b4-8e18-f96d0dc62928/full",
+      "size": 511587,
+      "sha256": "c027a614825c90e1318d38dc551e546c93b81051a8501daef5c5bfa14288f4bc",
+      "blob_sha1": "7df1dd794d1a713abb6e4471d422d1711f298d98"
+    }
+  ]
+}

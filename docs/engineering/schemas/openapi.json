@@ -3562,6 +3562,71 @@
           }
         }
       }
+    },
+    "/dataset-bank/sources/{source_id}/upstream/": {
+      "get": {
+        "tags": [
+          "Dataset Bank"
+        ],
+        "summary": "Inspect the qualified revision and supported update check",
+        "parameters": [
+          {
+            "name": "source_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Git source head comparison, or a frozen HTTP subset with no automatic update check. New samples require requalification.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "source_id": {
+                      "type": "string"
+                    },
+                    "pinned_revision": {
+                      "type": "string"
+                    },
+                    "upstream_head_revision": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "moved": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "acquirable_revisions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "automatic_update_check_supported": {
+                      "type": "boolean"
+                    },
+                    "note": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Source is unqualified or its pinned qualification manifest is invalid."
+          }
+        }
+      }
     }
   },
   "components": {

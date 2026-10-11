@@ -386,14 +386,14 @@ class DatasetBankCatalog:
             )
 
         # 2. Check share-alike requirements
-        if source.obligations.share_alike and not policy.get("allow_share_alike", False):
+        if source.obligations.share_alike and policy.get("allow_share_alike") is not True:
             raise ValidationError(
                 f"Source {source.name!r} is under share-alike license ({source.license_expression}). "
                 "Project policy must explicitly set allow_share_alike=True to enable download."
             )
 
         # 3. Check gated access requirements
-        if source.obligations.gated and not policy.get("gated_credentials_accepted", False):
+        if source.obligations.gated and policy.get("gated_credentials_accepted") is not True:
             raise ValidationError(
                 f"Source {source.name!r} requires accepted user agreement and access credentials."
             )
@@ -482,6 +482,14 @@ class DatasetBankCatalog:
             raise ValidationError(
                 f"Source {source.name!r} is not qualified for acquisition: {card.blocked_reason}"
             )
+        if card.connector == "qualified_http_subset_v1":
+            from modelanvil.data.bank.http_snapshot import load_manifest, SnapshotError
+            try:
+                manifest = load_manifest(source)
+                if card.record_limit_max > len(manifest["records"]):
+                    raise SnapshotError("Acquisition scope exceeds the pinned subset inventory.")
+            except SnapshotError as exc:
+                raise ValidationError(str(exc)) from None
         if source_revision and not card.revision_is_qualified(str(source_revision)):
             raise ValidationError(
                 f"Upstream revision {source_revision!r} of {source.name!r} is not qualified. "

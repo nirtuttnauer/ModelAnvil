@@ -1,0 +1,606 @@
+{
+  "schema_version": "1.0",
+  "source_id": "image-clevr",
+  "upstream": {
+    "release_url": "https://dl.fbaipublicfiles.com/clevr/CLEVR_v1.0.zip",
+    "archive_size": 19021600724,
+    "archive_etag": "\"3426f0a360618fcf2179966a8d1428c3-1210\"",
+    "full_archive_checksum_verified": false
+  },
+  "containers": {
+    "data": {
+      "url": "https://dl.fbaipublicfiles.com/clevr/CLEVR_v1.0.zip",
+      "size": 19021600724,
+      "segments": [
+        {
+          "start": 19021600702,
+          "length": 22,
+          "sha256": "3ab452c4aebd6f0180147403f378288742d6612e0df9ba33b854875a6f359b7d"
+        },
+        {
+          "start": 19021600682,
+          "length": 20,
+          "sha256": "49e0529edc2d0cbfea708778a09a048e1ba1519d4ad91e254d42f9a404a8f800"
+        },
+        {
+          "start": 19021600626,
+          "length": 56,
+          "sha256": "235fe0fdfe042a2b111fa28457a0b733920d3ae478de956fdd0c6993b1ec40db"
+        },
+        {
+          "start": 19009161410,
+          "length": 12439216,
+          "sha256": "e7a1ec2a18317d3117017d89bec384158139cb76aea284def89f4556e80e5dc0"
+        },
+        {
+          "start": 18967134374,
+          "length": 30,
+          "sha256": "6a54c7d33bb239f99e083b9c6c9d21f1867f2ce25fea1d3abe6411d1e9165a92"
+        },
+        {
+          "start": 18967134404,
+          "length": 47,
+          "sha256": "934af2bb02ca628e6d5b0f3d9ee5dae8e4e3467b5aed2a8643211153d147509f"
+        },
+        {
+          "start": 18967134479,
+          "length": 2097152,
+          "sha256": "8846056a3b2111590068f9366528a1846d9ad64b8ca81abc0874998435e60e51"
+        },
+        {
+          "start": 14812358857,
+          "length": 30,
+          "sha256": "dd5cab69068c26e8d62dfdc23af5d2521cb13ff102d8b84fd32657a9b734ef01"
+        },
+        {
+          "start": 14812358887,
+          "length": 46,
+          "sha256": "1a6b7e755295bd5c6703791560095c8509330889206c1ae1404a9e6a426cd567"
+        },
+        {
+          "start": 14812358961,
+          "length": 186939,
+          "sha256": "0d430c2d2d62457cb4df834246411eb7c0fa6cf7f1271e016746052a05ce5115"
+        },
+        {
+          "start": 9343224732,
+          "length": 30,
+          "sha256": "4d12c52791786c49c22d0171ce2e25a78d5da16b1dc3d951256085e729638772"
+        },
+        {
+          "start": 9343224762,
+          "length": 46,
+          "sha256": "f57d84263dc99fc0bf420f52a3ce207d4b565e21b8005f21cc89a44712df016d"
+        },
+        {
+          "start": 9343224836,
+          "length": 185567,
+          "sha256": "c0151d03d723f37b4202b9394ce5b97aefe307b447c77ecacc5ca6184f5f3440"
+        },
+        {
+          "start": 16037197751,
+          "length": 30,
+          "sha256": "2591801498ab4c2d4102cc983e24cbe2d822e4a48ba112c049a8d98992f3f59b"
+        },
+        {
+          "start": 16037197781,
+          "length": 46,
+          "sha256": "a0a7dfab9b8ad3ac3a2f2cf4e71f658de937df001cc63db182a86ef902a1f544"
+        },
+        {
+          "start": 16037197855,
+          "length": 183736,
+          "sha256": "b55bbf3f3ca4247874e60de3649158fb70d5d15e427f118910b77b5b8a909587"
+        },
+        {
+          "start": 7027393549,
+          "length": 30,
+          "sha256": "f348fb4497c107f7af36993215b473ac306c1b057319e51065a840a14513cf9f"
+        },
+        {
+          "start": 7027393579,
+          "length": 46,
+          "sha256": "3f119c9da05a8f5b315378ff143fafa5f9a70db60836dfced5a0a6ee94f476e4"
+        },
+        {
+          "start": 7027393653,
+          "length": 204756,
+          "sha256": "509e5ea444f9ee7b53c96b25bb28d9b1388b7e18b52a4d8df9cb0ef47fccb634"
+        },
+        {
+          "start": 17591923219,
+          "length": 30,
+          "sha256": "834b8f9557700b144f570953a02654ea294600c4ad5696501365247bdb04983f"
+        },
+        {
+          "start": 17591923249,
+          "length": 46,
+          "sha256": "8c8f76b1c551020f6c63e493857b0468326aeaf47e0b5377b789342a1b27bab1"
+        },
+        {
+          "start": 17591923323,
+          "length": 171372,
+          "sha256": "199946fb525330824f2cb553dd359c36e817496ecb02c93f4c1c880ef0660ddf"
+        },
+        {
+          "start": 18636921177,
+          "length": 30,
+          "sha256": "0a9b613c48202362d6ac0e28a6fba3c277403c7f9a04db57b626dfb7b5389f04"
+        },
+        {
+          "start": 18636921207,
+          "length": 46,
+          "sha256": "6cfaa2f529ee55d58feed35c26d9804f39a64b611e20572f110c9748a59e73e3"
+        },
+        {
+          "start": 18636921281,
+          "length": 198154,
+          "sha256": "d5a814040fd925c60db4ffbd62fbaa7ea92048053563a08664df312d308a9419"
+        },
+        {
+          "start": 7693270065,
+          "length": 30,
+          "sha256": "9cb6b86f2dccd95edcdf349ae59747c62b56c650404abf1a9ead4f2e3b3876b7"
+        },
+        {
+          "start": 7693270095,
+          "length": 46,
+          "sha256": "10e88f84f4d07e517cc7cec44c38e915eb59f127e3e595cf129b79139f27677a"
+        },
+        {
+          "start": 7693270169,
+          "length": 186064,
+          "sha256": "18a40f03ea9a79b88a652598934aed3d46b4adc0515d150cd707f6c8d8e5bda0"
+        },
+        {
+          "start": 14993677276,
+          "length": 30,
+          "sha256": "aa8d038d0f7b4768b015641567b1c031b98cf5b74b19f300e270b74f671df5a8"
+        },
+        {
+          "start": 14993677306,
+          "length": 46,
+          "sha256": "da9b2292a6729c14740b5035e9c7212ce1d457a9ed23ed85692962f2920502b2"
+        },
+        {
+          "start": 14993677380,
+          "length": 195216,
+          "sha256": "9c8a01fc3b8422251350ffbc0bf77c64e6c13f218db1d97ac4df7e95b0639a82"
+        },
+        {
+          "start": 14271054683,
+          "length": 30,
+          "sha256": "8d3b5b5387e9e39776563027c30dd1a24c00193a25ef2de912ac24df55fe6299"
+        },
+        {
+          "start": 14271054713,
+          "length": 46,
+          "sha256": "659e5de12b3e43e80a5cb318722d4010983177d063fbfabf70b27d29603a155e"
+        },
+        {
+          "start": 14271054787,
+          "length": 185410,
+          "sha256": "0bde51ebf71c504fdbc530e2a77a38bb8227af6c776d9224dd6b4dedbaf92208"
+        },
+        {
+          "start": 11911088907,
+          "length": 30,
+          "sha256": "f64f65031eac8f943ae334f3881777f602e831e894c4e61995c31b87961c7d99"
+        },
+        {
+          "start": 11911088937,
+          "length": 46,
+          "sha256": "5f9112b70a52d010868f5c20fee5fb27a68942c57cac89eb46a9675432acf103"
+        },
+        {
+          "start": 11911089011,
+          "length": 176388,
+          "sha256": "876d9b0655ebfd44f2d970d72719aec2f0a70a1828dabd0bfc7fc55efb424d28"
+        },
+        {
+          "start": 19009154149,
+          "length": 30,
+          "sha256": "abe611a2ed6df7fd3328ab799c7500e2f2f8cef946a410b55a5a466aaad5022a"
+        },
+        {
+          "start": 19009154179,
+          "length": 22,
+          "sha256": "adc509fbe3449820535f5f9029bae583bf923a2db4a8d7ad8d0f8eea3e19dbe1"
+        },
+        {
+          "start": 19009154229,
+          "length": 5919,
+          "sha256": "5b0c3aace40f832cedb265f37c98d38b61b8fbc3112934269b3521a77887b77e"
+        },
+        {
+          "start": 19009153885,
+          "length": 30,
+          "sha256": "4744d3d65a3e48552b301b5302c3c341157a9819af1520005eb94b5695360ca3"
+        },
+        {
+          "start": 19009153915,
+          "length": 24,
+          "sha256": "b44b88f9c07fc0bb2b5db9e258c31a1b5e06e02c093dd28f4d279d1f912f88eb"
+        },
+        {
+          "start": 19009153967,
+          "length": 182,
+          "sha256": "dd667a69ae20e143862a5bb6f7151cd58c4f8945ef4acd88cf1e44b29b661640"
+        },
+        {
+          "start": 19009160148,
+          "length": 30,
+          "sha256": "596931466eb84d0aefec05bfb67063da90776a199a884677cc2858dc0b428310"
+        },
+        {
+          "start": 19009160178,
+          "length": 21,
+          "sha256": "e1b31a24dd775205c6c7bb618af8074e04bcabefa625656ddb480c4be793127b"
+        },
+        {
+          "start": 19009160227,
+          "length": 1183,
+          "sha256": "69992ccacb69f0346d8600178c43a47e9e04f9a13403ebca97c58dea6935b21c"
+        }
+      ]
+    }
+  },
+  "records": [
+    {
+      "path": "CLEVR_v1.0/images/train/CLEVR_train_000000.png",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "CLEVR_v1.0/images/train/CLEVR_train_000000.png",
+            "field": "image_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "CLEVR_v1.0/questions/CLEVR_train_questions.json",
+            "field": "questions",
+            "encoding": "json_prefix_filter",
+            "prefix_bytes": 2097152,
+            "selection": {
+              "key": "questions",
+              "match_field": "image_index",
+              "match_value": 0
+            }
+          }
+        ]
+      },
+      "source_group_id": "clevr:train:0",
+      "metadata": {
+        "upstream_split": "train",
+        "question_selection": "complete questions present in the first 2 MiB of the question member"
+      },
+      "size": 382692,
+      "sha256": "566e2dfb6d819d27e60749a8892b75db763dafd05b3a480e0801fe1e8acadccb",
+      "blob_sha1": "272676bf63bf488ef88f55e31c2b4de1a2cc9f8a"
+    },
+    {
+      "path": "CLEVR_v1.0/images/train/CLEVR_train_000001.png",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "CLEVR_v1.0/images/train/CLEVR_train_000001.png",
+            "field": "image_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "CLEVR_v1.0/questions/CLEVR_train_questions.json",
+            "field": "questions",
+            "encoding": "json_prefix_filter",
+            "prefix_bytes": 2097152,
+            "selection": {
+              "key": "questions",
+              "match_field": "image_index",
+              "match_value": 1
+            }
+          }
+        ]
+      },
+      "source_group_id": "clevr:train:1",
+      "metadata": {
+        "upstream_split": "train",
+        "question_selection": "complete questions present in the first 2 MiB of the question member"
+      },
+      "size": 381214,
+      "sha256": "f9006f52aed29e35acb2c81dff539fe95fa27c219c0651d268e9ee0d3e07c07e",
+      "blob_sha1": "fa5584e0a8bab14cf16312273da7a5be0693ff10"
+    },
+    {
+      "path": "CLEVR_v1.0/images/train/CLEVR_train_000002.png",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "CLEVR_v1.0/images/train/CLEVR_train_000002.png",
+            "field": "image_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "CLEVR_v1.0/questions/CLEVR_train_questions.json",
+            "field": "questions",
+            "encoding": "json_prefix_filter",
+            "prefix_bytes": 2097152,
+            "selection": {
+              "key": "questions",
+              "match_field": "image_index",
+              "match_value": 2
+            }
+          }
+        ]
+      },
+      "source_group_id": "clevr:train:2",
+      "metadata": {
+        "upstream_split": "train",
+        "question_selection": "complete questions present in the first 2 MiB of the question member"
+      },
+      "size": 377164,
+      "sha256": "0205a65a518d70344323d4741a47b80912454a327e39f6330bab4e1ebc53cee4",
+      "blob_sha1": "ee9ded37893eda9b2af9669399c9cac726763927"
+    },
+    {
+      "path": "CLEVR_v1.0/images/train/CLEVR_train_000003.png",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "CLEVR_v1.0/images/train/CLEVR_train_000003.png",
+            "field": "image_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "CLEVR_v1.0/questions/CLEVR_train_questions.json",
+            "field": "questions",
+            "encoding": "json_prefix_filter",
+            "prefix_bytes": 2097152,
+            "selection": {
+              "key": "questions",
+              "match_field": "image_index",
+              "match_value": 3
+            }
+          }
+        ]
+      },
+      "source_group_id": "clevr:train:3",
+      "metadata": {
+        "upstream_split": "train",
+        "question_selection": "complete questions present in the first 2 MiB of the question member"
+      },
+      "size": 417380,
+      "sha256": "606f99433ec27d9a5c3317ccb5372a46bc4888733b7d910c4bcb4cae8362d227",
+      "blob_sha1": "47b6fe46a3b98f207c80e2390da3d03df5f6ccdf"
+    },
+    {
+      "path": "CLEVR_v1.0/images/train/CLEVR_train_000004.png",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "CLEVR_v1.0/images/train/CLEVR_train_000004.png",
+            "field": "image_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "CLEVR_v1.0/questions/CLEVR_train_questions.json",
+            "field": "questions",
+            "encoding": "json_prefix_filter",
+            "prefix_bytes": 2097152,
+            "selection": {
+              "key": "questions",
+              "match_field": "image_index",
+              "match_value": 4
+            }
+          }
+        ]
+      },
+      "source_group_id": "clevr:train:4",
+      "metadata": {
+        "upstream_split": "train",
+        "question_selection": "complete questions present in the first 2 MiB of the question member"
+      },
+      "size": 351779,
+      "sha256": "2033054e0358044c50f7460747ea77a44b12b39d48f791716044f988e8c80baf",
+      "blob_sha1": "7549fa84017545fdd8a57962cad8ca3643bbdaff"
+    },
+    {
+      "path": "CLEVR_v1.0/images/train/CLEVR_train_000005.png",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "CLEVR_v1.0/images/train/CLEVR_train_000005.png",
+            "field": "image_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "CLEVR_v1.0/questions/CLEVR_train_questions.json",
+            "field": "questions",
+            "encoding": "json_prefix_filter",
+            "prefix_bytes": 2097152,
+            "selection": {
+              "key": "questions",
+              "match_field": "image_index",
+              "match_value": 5
+            }
+          }
+        ]
+      },
+      "source_group_id": "clevr:train:5",
+      "metadata": {
+        "upstream_split": "train",
+        "question_selection": "complete questions present in the first 2 MiB of the question member"
+      },
+      "size": 406005,
+      "sha256": "ee0d1f8db55dea55bd164e05e8324a3e96a399b925cd356c0fd2265811405c51",
+      "blob_sha1": "f073e36c5f77fa6b89d60a4f5ee7d05e8c575270"
+    },
+    {
+      "path": "CLEVR_v1.0/images/train/CLEVR_train_000006.png",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "CLEVR_v1.0/images/train/CLEVR_train_000006.png",
+            "field": "image_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "CLEVR_v1.0/questions/CLEVR_train_questions.json",
+            "field": "questions",
+            "encoding": "json_prefix_filter",
+            "prefix_bytes": 2097152,
+            "selection": {
+              "key": "questions",
+              "match_field": "image_index",
+              "match_value": 6
+            }
+          }
+        ]
+      },
+      "source_group_id": "clevr:train:6",
+      "metadata": {
+        "upstream_split": "train",
+        "question_selection": "complete questions present in the first 2 MiB of the question member"
+      },
+      "size": 380432,
+      "sha256": "e1f07de033552178029cf63f8359e181fe7b619a90a8b5a054375c8fef920b26",
+      "blob_sha1": "f97976f9373c9aeffbeb73b56777d1327893899f"
+    },
+    {
+      "path": "CLEVR_v1.0/images/train/CLEVR_train_000007.png",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "CLEVR_v1.0/images/train/CLEVR_train_000007.png",
+            "field": "image_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "CLEVR_v1.0/questions/CLEVR_train_questions.json",
+            "field": "questions",
+            "encoding": "json_prefix_filter",
+            "prefix_bytes": 2097152,
+            "selection": {
+              "key": "questions",
+              "match_field": "image_index",
+              "match_value": 7
+            }
+          }
+        ]
+      },
+      "source_group_id": "clevr:train:7",
+      "metadata": {
+        "upstream_split": "train",
+        "question_selection": "complete questions present in the first 2 MiB of the question member"
+      },
+      "size": 400393,
+      "sha256": "db8d4ea868967d08fd422d7d04f92b707222307b92c7c17a07b533fcfb505058",
+      "blob_sha1": "e329e621cce8a89e6234cb68a9e334317ed2e703"
+    },
+    {
+      "path": "CLEVR_v1.0/images/train/CLEVR_train_000008.png",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "CLEVR_v1.0/images/train/CLEVR_train_000008.png",
+            "field": "image_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "CLEVR_v1.0/questions/CLEVR_train_questions.json",
+            "field": "questions",
+            "encoding": "json_prefix_filter",
+            "prefix_bytes": 2097152,
+            "selection": {
+              "key": "questions",
+              "match_field": "image_index",
+              "match_value": 8
+            }
+          }
+        ]
+      },
+      "source_group_id": "clevr:train:8",
+      "metadata": {
+        "upstream_split": "train",
+        "question_selection": "complete questions present in the first 2 MiB of the question member"
+      },
+      "size": 379461,
+      "sha256": "2669210be678df2b58ca81ec8d2a9333dd720e9e7180943311a2c5e95c369af5",
+      "blob_sha1": "f62da533ee1ec6c4cffbb6294de6744e64455954"
+    },
+    {
+      "path": "CLEVR_v1.0/images/train/CLEVR_train_000009.png",
+      "reader": {
+        "kind": "zip_bundle",
+        "container": "data",
+        "members": [
+          {
+            "name": "CLEVR_v1.0/images/train/CLEVR_train_000009.png",
+            "field": "image_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "CLEVR_v1.0/questions/CLEVR_train_questions.json",
+            "field": "questions",
+            "encoding": "json_prefix_filter",
+            "prefix_bytes": 2097152,
+            "selection": {
+              "key": "questions",
+              "match_field": "image_index",
+              "match_value": 9
+            }
+          }
+        ]
+      },
+      "source_group_id": "clevr:train:9",
+      "metadata": {
+        "upstream_split": "train",
+        "question_selection": "complete questions present in the first 2 MiB of the question member"
+      },
+      "size": 362535,
+      "sha256": "c5b8f106738863ef263b95847ac4873e8292d072dfdb812a447d96c6f8821a8e",
+      "blob_sha1": "8e80e7c12cbc9e1f453541569fdafa7ccf4ca8bb"
+    }
+  ],
+  "licenses": [
+    {
+      "path": "notice/license",
+      "archive_name": "image-clevr-license.txt",
+      "upstream_url": "https://dl.fbaipublicfiles.com/clevr/CLEVR_v1.0.zip#CLEVR_v1.0/LICENSE.txt",
+      "size": 18651,
+      "sha256": "fd3a263fe19ed8faa9068b43abaebafc02c77897b0c6fc09abc04bb592e5f16e",
+      "blob_sha1": "06c608dcf4552094bc86dc48aaa90addb2886049"
+    },
+    {
+      "path": "notice/copyright",
+      "archive_name": "image-clevr-copyright.txt",
+      "upstream_url": "https://dl.fbaipublicfiles.com/clevr/CLEVR_v1.0.zip#CLEVR_v1.0/COPYRIGHT.txt",
+      "size": 244,
+      "sha256": "54ba37e0ab79441f65434f298d55556a15ef0cb3a8b0bd589573adf20439eb11",
+      "blob_sha1": "c38fe88db58fe9f2285584cd2282241fe726f79e"
+    },
+    {
+      "path": "notice/readme",
+      "archive_name": "image-clevr-readme.txt",
+      "upstream_url": "https://dl.fbaipublicfiles.com/clevr/CLEVR_v1.0.zip#CLEVR_v1.0/README.txt",
+      "size": 3601,
+      "sha256": "115519388e2ce6b0182f545e7ec8dba217f86906278cf7cce554b8a036c8ae67",
+      "blob_sha1": "422274d7a9e4c58a3edc9d24b2b03554c2414679"
+    }
+  ]
+}

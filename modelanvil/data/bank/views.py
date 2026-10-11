@@ -53,6 +53,9 @@ class AcquisitionRequestSerializer(serializers.Serializer):
         return super().to_internal_value(data)
 
     def validate_project_policy(self, policy):
+        for flag in ("allow_share_alike", "gated_credentials_accepted"):
+            if flag in policy and type(policy[flag]) is not bool:
+                raise serializers.ValidationError(f"{flag} must be a boolean.")
         if "record_limit" in policy:
             value = policy["record_limit"]
             if isinstance(value, bool) or not isinstance(value, int) or value < 1:
@@ -265,6 +268,12 @@ class DatasetBankViewSet(viewsets.ViewSet):
             source = self.catalog.assert_acquirable(source_id)
         except ValidationError as exc:
             return Response({"detail": str(exc)}, status=status.HTTP_409_CONFLICT)
+        if source.acquisition.connector == "qualified_http_subset_v1":
+            return Response({"source_id": source.id, "pinned_revision": source.acquisition.pinned_revision,
+                "upstream_head_revision": None, "moved": None,
+                "acquirable_revisions": source.acquisition.qualified_revisions,
+                "automatic_update_check_supported": False,
+                "note": "This source uses a frozen content-pinned subset. Requalification is required to admit new samples or upstream ranges."})
         try:
             head = upstream_head_revision(source)
         except Exception as exc:  # noqa: BLE001 - sanitized upstream failure

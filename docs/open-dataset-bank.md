@@ -1,6 +1,6 @@
 # ModelAnvil open dataset source bank
 
-Research dates: 8 and 11 October 2026. Status: Expanded candidate catalog; Lucide alone is qualified for bounded acquisition. Other connectors remain planned and unqualified.
+Research dates: 8 and 11 October 2026. Status: Lucide and all ten additions are qualified for bounded acquisition. Other candidates remain unqualified. See [qualification scope and download contract](dataset-bank-qualification.md).
 
 ## Recommendation
 
@@ -132,4 +132,4 @@ Mixed-license aggregation sites also need per-asset checks rather than a single 
 
 ## What has been prepared
 
-The accompanying JSON catalog records source identities, output groups, license evidence URLs, download connector designs, preparation requirements, and three SVG presets. For unqualified candidates, fields for precise revisions, byte sizes, and counts remain unset until qualification. Connector paths are candidates to test against the selected snapshot. HumanEval is evaluation-only by default; xLAM requires user-approved gated access. FineVideo stays held pending license and access-term review. The Dataset Bank interface and a bounded Lucide acquisition connector now exist. The ten additions reviewed on 11 October remain unqualified research candidates; their sizes, counts, and revisions are unset until measured qualification. SmolTalk is scoped to Smol-Magpie-Ultra; no license is asserted for its full mixture.
+The accompanying JSON catalog records source identities, output groups, license evidence URLs, download connector designs, preparation requirements, and three SVG presets. For unqualified candidates, fields for precise revisions, byte sizes, and counts remain unset until qualification. Connector paths are candidates to test against the selected snapshot. HumanEval is evaluation-only by default; xLAM requires user-approved gated access. FineVideo stays held pending license and access-term review. The Dataset Bank interface and a bounded Lucide acquisition connector now exist. The ten additions reviewed on 11 October now have measured, content-pinned subsets totaling 200 samples. Only those frozen inventories are downloadable; full corpora and training adapters remain unqualified. SmolTalk is scoped to Smol-Magpie-Ultra; no license is asserted for its full mixture.

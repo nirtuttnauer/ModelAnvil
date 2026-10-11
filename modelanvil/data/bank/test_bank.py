@@ -78,7 +78,9 @@ class DatasetBankCatalogTests(TestCase):
 
     def test_only_a_qualified_source_is_acquirable(self):
         qualified = {source.id for source in self.catalog.qualified_sources()}
-        self.assertEqual(qualified, {"svg-lucide"})
+        self.assertEqual(qualified, {"svg-lucide", "text-smol-magpie-ultra", "text-ultrachat-200k", "text-squad",
+            "preference-ultrafeedback-binarized", "tools-glaive-v2", "image-clevr", "audio-vctk",
+            "audio-libritts-r", "numeric-iris", "numeric-wine-quality"})
         for source in self.catalog.list_sources():
             if source.id in qualified:
                 continue

@@ -14,11 +14,11 @@ const published = { ...acquisition, state: 'ready', verified_records: 2, transfe
 const flush = () => new Promise(resolve => setImmediate(resolve));
 function deferred() { let resolve; const promise = new Promise(done => { resolve = done; }); return { promise, resolve }; }
 
-function fixture({ policies = [], policyId = '', estimate = '', existing = null, budgetLoading = false, budgetError = null } = {}) {
+function fixture({ policies = [], policyId = '', estimate = '', existing = null, budgetLoading = false, budgetError = null, bankSource = source, allowShareAlike = false } = {}) {
   let stateIndex = 0, callbacks = 0;
   const effects = [], calls = [], resourceCalls = [], writes = [], first = deferred(), second = deferred();
   // Hook slots represent a loaded catalog and the requested budget configuration.
-  const states = { 1: [source], 2: false, 8: existing ? { [source.id]: existing } : {}, 9: policies, 10: budgetLoading, 11: budgetError, 13: policyId, 14: estimate };
+  const states = { 1: [bankSource], 2: false, 8: existing ? { [source.id]: existing } : {}, 9: policies, 10: budgetLoading, 11: budgetError, 13: policyId, 14: estimate, 15: allowShareAlike ? bankSource.id : '' };
   const jsx = (type, props) => ({ type, props });
   const React = {
     useState(initial) { const index = stateIndex++; return [Object.hasOwn(states, index) ? states[index] : initial, value => writes.push({ index, value })]; },
@@ -32,7 +32,7 @@ function fixture({ policies = [], policyId = '', estimate = '', existing = null,
     if (name.endsWith('/api/resources')) return { allResources(path, token, signal) { resourceCalls.push({ path, token, signal }); return Promise.resolve(policies); } };
     if (name.endsWith('/api/client')) return { apiRequest(path, token, init) {
       calls.push({ path, token, init });
-      if (path.endsWith('/sources/')) return Promise.resolve({ sources: [source] });
+      if (path.endsWith('/sources/')) return Promise.resolve({ sources: [bankSource] });
       return calls.filter(call => !call.path.endsWith('/sources/')).length === 1 ? first.promise : second.promise;
     }, errorMessage: error => error.message };
     return new Proxy({}, { get: (_, key) => key });
@@ -101,4 +101,22 @@ test('late acquisition and refresh responses cannot change state or call publica
   f.second.resolve(published); await flush(); assert.equal(f.writes.length, writes); assert.equal(f.callbacks(), 0);
   const refresh = fixture({ existing: acquisition }); refresh.click('Refresh transfer'); refresh.unmount(); const before = refresh.writes.length;
   refresh.first.resolve(published); await flush(); assert.equal(refresh.writes.length, before); assert.equal(refresh.callbacks(), 0);
+});
+
+
+test('share-alike acquisition remains blocked until explicit opt-in and carries that choice through preflight and launch', async () => {
+  const bankSource = { ...source, eligibility: 'opt_in_required', license: 'CC-BY-SA-4.0' };
+  const blocked = fixture({ bankSource });
+  assert.equal(blocked.button('Acquire to workspace').props.disabled, true);
+  blocked.click('Acquire to workspace');
+  assert.equal(blocked.calls.some(call => call.path.includes('/preflight/')), false);
+  blocked.unmount();
+  const allowed = fixture({ bankSource, allowShareAlike: true });
+  assert.equal(allowed.button('Acquire to workspace').props.disabled, false);
+  allowed.click('Acquire to workspace');
+  assert.deepEqual(JSON.parse(allowed.calls.at(-1).init.body), { project_policy: { allow_share_alike: true } });
+  allowed.first.resolve({ status: 'approved' }); await flush();
+  assert.deepEqual(JSON.parse(allowed.calls.at(-1).init.body), { project_policy: { allow_share_alike: true } });
+  allowed.second.resolve(published); await flush();
+  assert.equal(allowed.callbacks(), 1);
 });
