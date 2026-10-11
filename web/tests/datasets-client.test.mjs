@@ -91,13 +91,14 @@ test('explicit split settings preserve zero percentages and the exact string see
 
 test('CSV mappings and binary DOCX retain original bytes and media type', async () => {
   const { prepareUploadedDataset } = await client();
-  for (const sourceFormat of ['csv', 'json', 'docx']) {
-    const raw = sourceFormat === 'docx' ? new Uint8Array([0x50, 0x4b, 0xff]) : new TextEncoder().encode(content);
+  for (const sourceFormat of ['csv', 'json', 'docx', 'pdf']) {
+    const binary = sourceFormat === 'docx' || sourceFormat === 'pdf';
+    const raw = binary ? new Uint8Array([0x50, 0x4b, 0xff]) : new TextEncoder().encode(content);
     const input = new File([raw], `source.${sourceFormat}`);
     const hash = createHash('sha256').update(raw).digest('hex');
     let index = 0;
     await prepareUploadedDataset({ file: input, name: dataset.name, token, sourceFormat,
-      ...(sourceFormat === 'docx' ? {} : { textField: 'body', groupField: 'group' }),
+      ...(binary ? {} : { textField: 'body', groupField: 'group' }),
       fetchImpl: async (_url, init) => {
         const stage = index++;
         const registered = { ...artifact, sha256: hash, byte_size: raw.length };
@@ -105,7 +106,7 @@ test('CSV mappings and binary DOCX retain original bytes and media type', async 
           const body = JSON.parse(init.body);
           assert.equal(body.sha256, hash);
           assert.match(body.object_key, new RegExp(`\\.${sourceFormat}$`));
-          assert.equal(body.media_type, sourceFormat === 'csv' ? 'text/csv' : sourceFormat === 'json' ? 'application/json' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+          assert.equal(body.media_type, sourceFormat === 'csv' ? 'text/csv' : sourceFormat === 'json' ? 'application/json' : sourceFormat === 'pdf' ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
           return response({ ...registered, state: 'staging' }, 201);
         }
         if (stage === 1) {
@@ -116,8 +117,8 @@ test('CSV mappings and binary DOCX retain original bytes and media type', async 
         assert.equal(stage, 3);
         const body = JSON.parse(init.body);
         assert.equal(body.source_format, sourceFormat);
-        assert.equal(body.text_field, sourceFormat === 'docx' ? 'text' : 'body');
-        assert.equal(body.group_field, sourceFormat === 'docx' ? null : 'group');
+        assert.equal(body.text_field, binary ? 'text' : 'body');
+        assert.equal(body.group_field, binary ? null : 'group');
         return response(revision, 201);
       },
     });
@@ -127,7 +128,7 @@ test('CSV mappings and binary DOCX retain original bytes and media type', async 
 
 test('unsupported formats and binary field mappings are refused before upload', async () => {
   const { prepareUploadedDataset } = await client();
-  for (const options of [{ sourceFormat: 'pdf' }, { sourceFormat: 'docx', groupField: 'group' }, { sourceFormat: 'csv', textField: '' }]) {
+  for (const options of [{ sourceFormat: 'html' }, { sourceFormat: 'pdf', groupField: 'group' }, { sourceFormat: 'docx', groupField: 'group' }, { sourceFormat: 'csv', textField: '' }]) {
     await assert.rejects(prepareUploadedDataset({ file: file(), name: dataset.name, token, ...options,
       fetchImpl: async () => assert.fail('Unexpected upload') }), /source format|field mappings/);
   }

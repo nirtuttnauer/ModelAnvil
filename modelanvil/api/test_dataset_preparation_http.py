@@ -92,3 +92,19 @@ class DatasetPreparationHttpTests(LiveServerTestCase):
             self.assertEqual(report["state"], "published")
             self.assertEqual(report["row_count"], 1)
             self.assertEqual(report["request_count"], 8)
+
+    def test_actual_frontend_client_imports_pdf_and_pins_parser_revision(self):
+        from modelanvil.data.test_pdf_import import HAS_PDF, pdf
+        if not HAS_PDF:
+            self.skipTest("Install requirements.documents.txt for actual PDF HTTP checks")
+        raw = pdf(["Real PDF page one", "Real PDF page two"], compressed=True)
+        result = subprocess.run([shutil.which("node"), str(Path(settings.BASE_DIR) / "scripts/dataset_client_http.mjs")],
+            cwd=settings.BASE_DIR, input=json.dumps({"base": self.live_server_url, "token": self.secret,
+                "raw_base64": base64.b64encode(raw).decode(), "source_format": "pdf",
+                "expected_texts": ["Real PDF page one", "Real PDF page two"], "name": "HTTP PDF source"}),
+            text=True, capture_output=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        report = json.loads(result.stdout)
+        self.assertEqual(report["row_count"], 2)
+        revision = DatasetRevision.all_objects.get(revision_id=report["revision_id"])
+        self.assertEqual(revision.metadata["recipe"]["extraction"]["pdf_parser"], "pypdf==6.20.0")

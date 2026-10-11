@@ -199,7 +199,7 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
   return <div className="datasets-page">
     <section className="datasets-capability" aria-labelledby={`${formId}-capability`}>
       <h2 id={`${formId}-capability`}>Supported upload formats</h2>
-      <p>Upload canonical sample-envelope JSONL, CSV, a JSON record array or DOCX main-body text to prepare a dataset version.
+      <p>Upload canonical sample-envelope JSONL, CSV, a JSON record array, DOCX main-body text or a text PDF to prepare a dataset version.
         Files are stored locally and verified before publication.</p>
     </section>
 
@@ -232,7 +232,7 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
             <label htmlFor={`${formId}-format`}>Source format</label>
             <select id={`${formId}-format`} value={sourceFormat} onChange={event => setSourceFormat(event.target.value as DatasetSourceFormat)}>
               <option value="jsonl">Canonical sample-envelope JSONL</option><option value="csv">CSV records</option>
-              <option value="json">JSON record array</option><option value="docx">DOCX main-body text</option>
+              <option value="json">JSON record array</option><option value="docx">DOCX main-body text</option><option value="pdf">PDF page text</option>
             </select>
           </div>
           {(sourceFormat === 'csv' || sourceFormat === 'json') && <>
@@ -246,7 +246,8 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
             <input id={`${formId}-file`} name="dataset-file" type="file" accept={`.${sourceFormat}`}
               aria-describedby={`${formId}-file-help`} onChange={event => setFile(event.target.files?.[0] ?? null)} />
             <p id={`${formId}-file-help`} className="datasets-hint">Maximum 16 MiB and 10,000 samples. CSV and JSON text fields must contain nonempty strings.
-              Without a source group field, the entire file stays in one split. DOCX imports body paragraphs and table text; headers, images and embedded objects are excluded.</p>
+              Without a source group field, the entire file stays in one split. DOCX imports body paragraphs and table text; headers, images and embedded objects are excluded.
+              PDF requires the optional document dependencies and supports up to 100 text pages, 1 MiB decoded content per page and 8 MiB total. Encrypted or scanned pages are refused; run OCR separately first.</p>
             {file && <p className="datasets-hint">Selected: {file.name} · {file.size.toLocaleString()} bytes</p>}
           </div>
           <div className="datasets-field">

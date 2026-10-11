@@ -90,7 +90,7 @@ def publish_prepared_dataset(dataset, artifact, *, split_seed="0", validation_pe
     backend = artifact_storage_backend()
     if artifact.storage_location_id != "local" or artifact.object_version is not None:
         raise DatasetPreparationError("Preparation currently supports only unversioned local storage artifacts.")
-    from modelanvil.data.source_import import MEDIA_TYPES, VERSION, extract_source
+    from modelanvil.data.source_import import MEDIA_TYPES, VERSION, PDF_VERSION, SourceImportError, extract_source
     if artifact.media_type != {"jsonl": "application/x-ndjson", **MEDIA_TYPES}.get(source_format):
         raise DatasetPreparationError("Source format does not match the committed media type.")
     if source_format == "jsonl" and (text_field != "text" or group_field is not None):
@@ -108,10 +108,14 @@ def publish_prepared_dataset(dataset, artifact, *, split_seed="0", validation_pe
         if source_format != "jsonl":
             prepared["recipe"]["extraction"] = {"version": VERSION, "source_format": source_format,
                 "input_sha256": artifact.sha256, "text_field": text_field, "group_field": group_field}
+            if source_format == "pdf":
+                prepared["recipe"]["extraction"]["pdf_parser"] = f"pypdf=={PDF_VERSION}"
             prepared["recipe_digest"] = hashlib.sha256(json.dumps(prepared["recipe"], sort_keys=True,
                 separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode("utf-8")).hexdigest()
         payload = json.dumps(prepared, sort_keys=True, separators=(",", ":"),
                              ensure_ascii=False, allow_nan=False).encode("utf-8")
+    except SourceImportError as exc:
+        raise DatasetPreparationError(str(exc)) from None
     except (ValueError, TypeError, UnicodeError, RecursionError, KeyError, zipfile.BadZipFile, ParseError, RuntimeError, OSError, csv.Error):
         raise DatasetPreparationError("Input or split recipe is invalid for bounded source preparation.") from None
     manifest = Artifact.all_objects.create(

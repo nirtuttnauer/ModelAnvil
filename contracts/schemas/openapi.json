@@ -1001,7 +1001,7 @@
           "Datasets"
         ],
         "summary": "Execute preparation pipeline on input artifact and publish revision",
-        "description": "Verify committed local source bytes and publish a bounded canonical dataset revision. Supports JSONL envelopes, CSV/JSON string text records, and DOCX main-body paragraphs, preserving source locations and protected source-group splits. This synchronous path is not a durable recipe worker.",
+        "description": "Verify committed local source bytes and publish a bounded canonical dataset revision. Supports JSONL envelopes, CSV/JSON string text records, DOCX main-body paragraphs, and PDF text pages through a pinned isolated parser, preserving source locations and protected source-group splits. Scanned/encrypted PDFs are refused. This synchronous path is not a durable recipe worker.",
         "parameters": [
           {
             "$ref": "#/components/parameters/DatasetId"
@@ -5261,7 +5261,8 @@
               "jsonl",
               "csv",
               "json",
-              "docx"
+              "docx",
+              "pdf"
             ],
             "default": "jsonl"
           },

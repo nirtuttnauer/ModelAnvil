@@ -522,7 +522,7 @@ class DatasetViewSet(ScopedViewSet):
 
 class DatasetPreparationSerializer(serializers.Serializer):
     input_artifact_id = serializers.UUIDField()
-    source_format = serializers.ChoiceField(choices=("jsonl", "csv", "json", "docx"), required=False, default="jsonl")
+    source_format = serializers.ChoiceField(choices=("jsonl", "csv", "json", "docx", "pdf"), required=False, default="jsonl")
     text_field = serializers.CharField(required=False, default="text", max_length=128, trim_whitespace=False)
     group_field = serializers.CharField(required=False, default=None, allow_null=True, max_length=128, trim_whitespace=False)
     split_seed = serializers.JSONField(required=False, default="0")

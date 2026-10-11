@@ -2,6 +2,7 @@ export const MAX_DATASET_BYTES = 16 * 1024 * 1024;
 export const DATASET_SOURCE_TYPES = {
   jsonl: 'application/x-ndjson', csv: 'text/csv', json: 'application/json',
   docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  pdf: 'application/pdf',
 };
 export type DatasetSourceFormat = keyof typeof DATASET_SOURCE_TYPES;
 
@@ -271,7 +272,7 @@ export async function prepareUploadedDataset({
   }
   if (!Object.hasOwn(DATASET_SOURCE_TYPES, sourceFormat) || typeof textField !== 'string' || !textField || textField.length > 128
     || typeof groupField !== 'string' || groupField.length > 128
-    || ((sourceFormat === 'jsonl' || sourceFormat === 'docx') && (textField !== 'text' || groupField))) {
+    || ((sourceFormat === 'jsonl' || sourceFormat === 'docx' || sourceFormat === 'pdf') && (textField !== 'text' || groupField))) {
     throw new DatasetClientError('Input validation', 'Choose a supported source format and valid field mappings.');
   }
   if (!Number.isInteger(validationPercent) || !Number.isInteger(testPercent)
@@ -287,7 +288,7 @@ export async function prepareUploadedDataset({
   let bytes: ArrayBuffer;
   try { bytes = await file.arrayBuffer(); }
   catch { throw new DatasetClientError('Input validation', 'The selected file could not be read.'); }
-  if (sourceFormat !== 'docx') {
+  if (sourceFormat !== 'docx' && sourceFormat !== 'pdf') {
     try { new TextDecoder('utf-8', { fatal: true }).decode(bytes); }
     catch { throw new DatasetClientError('Input validation', 'The file must be valid UTF-8 text.'); }
   }
