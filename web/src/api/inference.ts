@@ -6,7 +6,7 @@ export interface TokenUsage { prompt_tokens: number; completion_tokens: number; 
 
 export async function streamCompletion(token: string, body: Record<string, unknown>, signal: AbortSignal,
   onText: (text: string) => void, onUsage: (usage: TokenUsage) => void,
-  fetchImpl: typeof fetch = fetch): Promise<void> {
+  fetchImpl: typeof fetch = fetch): Promise<string> {
   if (!token.trim()) throw new Error('Connect to your workspace before chatting.');
   const headers = new Headers({ Authorization: `Bearer ${token.trim()}`, 'Content-Type': 'application/json' });
   const project = getActiveProjectId();
@@ -22,7 +22,7 @@ export async function streamCompletion(token: string, body: Record<string, unkno
   }
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
-  let pending = '', finished = false;
+  let pending = '', finished = false, requestId = '';
   try {
     while (!finished) {
       const { value, done } = await reader.read();
@@ -36,6 +36,10 @@ export async function streamCompletion(token: string, body: Record<string, unkno
         if (data === '[DONE]') { finished = true; break; }
         const chunk = JSON.parse(data);
         if (chunk.error) throw new Error(chunk.error.message || 'Local generation failed.');
+        if (typeof chunk.id !== 'string' || !/^chatcmpl-[a-f0-9]{32}$/.test(chunk.id) || (requestId && requestId !== chunk.id)) {
+          throw new Error('Inference stream returned an invalid request identity.');
+        }
+        requestId = chunk.id;
         const text = chunk.choices?.[0]?.delta?.content;
         if (typeof text === 'string') onText(text);
         if (chunk.usage) onUsage(chunk.usage);
@@ -49,4 +53,6 @@ export async function streamCompletion(token: string, body: Record<string, unkno
     await reader.cancel().catch(() => undefined);
     reader.releaseLock();
   }
+  if (!requestId) throw new Error('Inference stream returned no request identity.');
+  return requestId.slice('chatcmpl-'.length);
 }

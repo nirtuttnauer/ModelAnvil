@@ -4028,6 +4028,166 @@
           }
         }
       }
+    },
+    "/api/v1/chat-comparisons/": {
+      "get": {
+        "tags": [
+          "Local inference"
+        ],
+        "summary": "List project-scoped saved arena comparisons",
+        "responses": {
+          "200": {
+            "description": "Paired text with stable A/B assignment; model identity hidden until preference is recorded"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Local inference"
+        ],
+        "summary": "Save two completed measured responses for identical input and generation settings",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "conversation_id",
+                  "messages",
+                  "responses"
+                ],
+                "properties": {
+                  "conversation_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "messages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "responses": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "request_id",
+                        "text"
+                      ],
+                      "properties": {
+                        "request_id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "text": {
+                          "type": "string",
+                          "maxLength": 32000
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Comparison saved"
+          },
+          "200": {
+            "description": "Existing response pair returned"
+          },
+          "400": {
+            "description": "Unverified output, mismatched input/settings or inaccessible requests"
+          }
+        }
+      }
+    },
+    "/api/v1/chat-comparisons/{comparison_id}/": {
+      "get": {
+        "tags": [
+          "Local inference"
+        ],
+        "summary": "Read a saved scoped comparison",
+        "parameters": [
+          {
+            "name": "comparison_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saved comparison"
+          },
+          "404": {
+            "description": "Comparison unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/chat-comparisons/{comparison_id}/vote/": {
+      "post": {
+        "tags": [
+          "Local inference"
+        ],
+        "summary": "Record one preference and reveal model identities",
+        "parameters": [
+          {
+            "name": "comparison_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "vote"
+                ],
+                "properties": {
+                  "vote": {
+                    "type": "string",
+                    "enum": [
+                      "A",
+                      "B",
+                      "tie",
+                      "neither"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Preference saved or exact same-voter retry"
+          },
+          "409": {
+            "description": "Preference already recorded"
+          },
+          "404": {
+            "description": "Comparison unavailable"
+          }
+        }
+      }
     }
   },
   "components": {

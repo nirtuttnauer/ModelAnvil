@@ -16,7 +16,7 @@ from modelanvil.identity.models import Project
 from modelanvil.jobs.models import WorkerPool
 from modelanvil.runners import model_catalog
 from modelanvil.runners.inference import generate, local_session, validate_messages
-from modelanvil.runners.models import ChatConversation, InferenceRequest, ModelImport, ModelVersion
+from modelanvil.runners.models import ChatComparison, ChatConversation, InferenceRequest, ModelImport, ModelVersion
 
 
 def selected_project():
@@ -195,6 +195,103 @@ class ConversationViewSet(TenantScopedViewSet):
                 raise WorkflowConflict('This conversation changed; refresh before saving.')
             serializer.instance = current
             serializer.save(revision_no=current.revision_no + 1)
+
+
+class ComparisonInput(serializers.Serializer):
+    conversation_id = serializers.UUIDField()
+    messages = serializers.JSONField()
+    responses = serializers.ListField(child=serializers.DictField(), min_length=2, max_length=2)
+
+
+class ComparisonSerializer(serializers.ModelSerializer):
+    conversation_id = serializers.UUIDField(source='conversation.conversation_id', read_only=True, allow_null=True)
+    sides = serializers.SerializerMethodField()
+
+    def get_sides(self, comparison):
+        sides = []
+        for label, first in (('A', comparison.first_is_a), ('B', not comparison.first_is_a)):
+            request = comparison.first_request if first else comparison.second_request
+            value = {'label': label, 'text': comparison.first_text if first else comparison.second_text}
+            if comparison.vote:
+                value.update(model=str(request.model_version.model_version_id), name=request.model_version.model.name,
+                    usage=request.usage, elapsed_seconds=request.elapsed_seconds, configuration=request.configuration)
+            sides.append(value)
+        return sides
+
+    class Meta:
+        model = ChatComparison
+        fields = ['comparison_id', 'conversation_id', 'messages', 'sides', 'vote', 'created_at', 'voted_at']
+        read_only_fields = fields
+
+
+class ComparisonViewSet(TenantScopedViewSet):
+    queryset = ChatComparison.objects.select_related('conversation', 'first_request__model_version__model', 'second_request__model_version__model')
+    serializer_class = ComparisonSerializer
+    lookup_field = 'comparison_id'
+    http_method_names = ['get', 'post', 'head', 'options']
+
+    def get_queryset(self):
+        selected_project()
+        return super().get_queryset()
+
+    def create(self, request):
+        import hashlib
+        import secrets
+        from django.db import transaction
+        from modelanvil.runners.training.runtime import digest
+        project = selected_project()
+        form = ComparisonInput(data=request.data); form.is_valid(raise_exception=True)
+        value = form.validated_data
+        try:
+            messages = validate_messages(value['messages'])
+            conversation = ConversationViewSet.queryset.filter(tenant_id=get_active_tenant(), project=project,
+                conversation_id=value['conversation_id']).first()
+            if conversation is None:
+                raise ValueError('Select a conversation in this project.')
+            results = []
+            for response in value['responses']:
+                if set(response) != {'request_id', 'text'} or not isinstance(response['text'], str) or len(response['text']) > 32000:
+                    raise ValueError('Each response needs its request ID and bounded actual output text.')
+                identifier = serializers.UUIDField().run_validation(response['request_id'])
+                record = InferenceRequest.all_objects.filter(request_id=identifier, tenant_id=get_active_tenant(),
+                    project=project, principal_id=str(request.user.pk), status='completed').first()
+                if record is None or record.input_digest != digest(messages):
+                    raise ValueError('Use your completed requests for exactly the same comparison input.')
+                expected = hashlib.sha256(response['text'].encode()).hexdigest() if response['text'] else ''
+                if expected != record.output_digest:
+                    raise ValueError('Comparison output differs from its measured inference request.')
+                results.append((record, response['text']))
+            (first, first_text), (second, second_text) = sorted(results, key=lambda item: str(item[0].request_id))
+            if first.pk == second.pk or first.model_version_id == second.model_version_id:
+                raise ValueError('Compare two distinct model versions and requests.')
+            settings = lambda record: {k: v for k, v in record.configuration.items() if k not in {'device'}}
+            if settings(first) != settings(second):
+                raise ValueError('Comparison generation settings must match; devices may differ.')
+            with transaction.atomic():
+                comparison, created = ChatComparison.all_objects.get_or_create(first_request=first, second_request=second,
+                    defaults={'tenant_id': get_active_tenant(), 'project': project, 'conversation': conversation,
+                        'first_text': first_text, 'second_text': second_text, 'first_is_a': bool(secrets.randbelow(2)), 'messages': messages})
+                if comparison.conversation_id != conversation.pk:
+                    raise ValueError('This response pair is already saved to another conversation.')
+            return Response(self.get_serializer(comparison).data, status=201 if created else 200)
+        except ValueError as exc:
+            raise serializers.ValidationError(str(exc)) from exc
+
+    @action(detail=True, methods=['post'])
+    def vote(self, request, *args, **kwargs):
+        from django.db import transaction
+        from django.utils import timezone
+        from modelanvil.core.exceptions import WorkflowConflict
+        choice = serializers.ChoiceField(choices=['A', 'B', 'tie', 'neither']).run_validation(request.data.get('vote'))
+        with transaction.atomic():
+            comparison = self.get_queryset().select_for_update(of=('self',)).get(pk=self.get_object().pk)
+            if comparison.vote:
+                if comparison.vote != choice or comparison.voter_id != str(request.user.pk):
+                    raise WorkflowConflict('This comparison already has a recorded preference.')
+            else:
+                comparison.vote, comparison.voter_id, comparison.voted_at = choice, str(request.user.pk), timezone.now()
+                comparison.save(update_fields=['vote', 'voter_id', 'voted_at', 'updated_at'])
+        return Response(self.get_serializer(comparison).data)
 
 
 class CompletionStream:

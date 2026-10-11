@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-11",
+  "comparison_id": "4cd8f581-b49c-4b2f-ab14-d9cadb1fc7fd",
+  "vote": "tie",
+  "assignment_persisted": true,
+  "responses": [
+    {
+      "request_id": "136e0a0d-e72f-400c-a199-db315c164841",
+      "model_id": "f9367193-1652-4183-955f-433b8eb818b4",
+      "text": ", there was a little girl named Lily. She lived in",
+      "usage": {
+        "prompt_tokens": 4,
+        "completion_tokens": 12,
+        "total_tokens": 16
+      },
+      "configuration": {
+        "max_tokens": 12,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "mps:0",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "93a918b2-a856-4e28-ac7a-55d19afbc143",
+      "model_id": "d8067222-031d-47e8-ad70-46f73e73f5d2",
+      "text": ", there was a little girl named Lily. She lived in",
+      "usage": {
+        "prompt_tokens": 4,
+        "completion_tokens": 12,
+        "total_tokens": 16
+      },
+      "configuration": {
+        "max_tokens": 12,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "cpu",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    }
+  ],
+  "verification": {
+    "actual_output_digests_match": true,
+    "identical_input_digests": true,
+    "browser_reload_preserves_outputs_and_vote": true,
+    "backend_tests": 39,
+    "frontend_tests": 129,
+    "frontend_build_passed": true
+  },
+  "scope": "Browser comparison of two completed Mac LoRA pilot versions, CPU and mps:0. Informal saved preference, not formal blind annotation or release qualification."
+}

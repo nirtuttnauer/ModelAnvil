@@ -219,6 +219,25 @@ class ChatConversation(TenantContextModel):
     revision_no = models.PositiveIntegerField(default=1)
 
 
+class ChatComparison(TenantContextModel):
+    comparison_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, related_name='chat_comparisons')
+    conversation = models.ForeignKey(ChatConversation, on_delete=models.SET_NULL, null=True, related_name='comparisons')
+    first_request = models.ForeignKey(InferenceRequest, on_delete=models.PROTECT, related_name='first_comparisons')
+    second_request = models.ForeignKey(InferenceRequest, on_delete=models.PROTECT, related_name='second_comparisons')
+    first_text = models.TextField()
+    second_text = models.TextField()
+    first_is_a = models.BooleanField()
+    messages = models.JSONField(default=list)
+    vote = models.CharField(max_length=8, blank=True)
+    voter_id = models.CharField(max_length=128, blank=True)
+    voted_at = models.DateTimeField(null=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=('first_request', 'second_request'), name='chat_comparison_pair_unique')]
+        ordering = ('-created_at',)
+
+
 class ModelImport(TenantContextModel):
     """Pinned acquisition; only a live job fence may publish its candidate."""
 

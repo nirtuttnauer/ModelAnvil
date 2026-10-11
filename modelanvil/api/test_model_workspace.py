@@ -321,3 +321,49 @@ class ModelWorkspaceTests(TestCase):
         candidate.metadata = {}; self.assertRaises(ValidationError, candidate.save)
         TrainingCheckpoint.all_objects.filter(pk=checkpoint.pk).update(state_digest='0' * 64)
         self.assertEqual(self.client.post('/api/v1/inference/chat/completions', body, format='json').status_code, 400)
+
+    def test_comparisons_preserve_verified_outputs_hide_identities_and_record_one_vote(self):
+        from modelanvil.runners.models import ChatComparison
+        first = self.import_model().data['candidate_id']
+        second = self.import_model(name='Second snapshot', idempotency_key='second').data['candidate_id']
+        messages = [{'role': 'user', 'content': 'hello world'}]
+        body = {'messages': messages, 'max_tokens': 4}
+        responses = []
+        for model in (first, second):
+            response = self.client.post('/api/v1/inference/chat/completions', {**body, 'model': model}, format='json')
+            self.assertEqual(response.status_code, 200, response.content)
+            responses.append({'request_id': response.data['id'].removeprefix('chatcmpl-'),
+                'text': response.data['choices'][0]['message']['content']})
+        conversation = self.client.post('/api/v1/chat-conversations/', {'title': 'Paired output',
+            'messages': messages, 'configuration': {'model': first, 'compare_model': second, 'max_tokens': 4}}, format='json')
+        payload = {'conversation_id': conversation.data['conversation_id'], 'messages': messages, 'responses': responses}
+        saved = self.client.post('/api/v1/chat-comparisons/', payload, format='json')
+        self.assertEqual(saved.status_code, 201, saved.content)
+        self.assertEqual([side['label'] for side in saved.data['sides']], ['A', 'B'])
+        self.assertTrue(all(set(side) == {'label', 'text'} for side in saved.data['sides']))
+        repeated = self.client.post('/api/v1/chat-comparisons/', {**payload, 'responses': list(reversed(responses))}, format='json')
+        self.assertEqual(repeated.status_code, 200, repeated.content)
+        self.assertEqual(repeated.data['sides'], saved.data['sides'])
+        self.assertEqual(ChatComparison.all_objects.count(), 1)
+        path = f"/api/v1/chat-comparisons/{saved.data['comparison_id']}/"
+        self.assertEqual(self.client.get(path).data['sides'], saved.data['sides'])
+        voted = self.client.post(path + 'vote/', {'vote': 'A'}, format='json')
+        self.assertEqual(voted.status_code, 200, voted.content)
+        self.assertEqual({s['model'] for s in voted.data['sides']}, {first, second})
+        self.assertTrue(all(s['usage']['total_tokens'] > 0 for s in voted.data['sides']))
+        self.assertEqual(self.client.post(path + 'vote/', {'vote': 'A'}, format='json').status_code, 200)
+        self.assertEqual(self.client.post(path + 'vote/', {'vote': 'B'}, format='json').status_code, 409)
+        self.assertEqual(self.client.patch(path, {'vote': 'B'}, format='json').status_code, 405)
+        bad = [{**responses[0], 'text': 'fabricated output'}, responses[1]]
+        self.assertEqual(self.client.post('/api/v1/chat-comparisons/', {**payload, 'responses': bad}, format='json').status_code, 400)
+        self.assertEqual(self.client.post('/api/v1/chat-comparisons/', {**payload, 'messages': [{'role': 'user', 'content': 'different'}]}, format='json').status_code, 400)
+        changed = self.client.post('/api/v1/inference/chat/completions', {**body, 'model': second, 'temperature': 0.5}, format='json')
+        mismatch = [responses[0], {'request_id': changed.data['id'].removeprefix('chatcmpl-'), 'text': changed.data['choices'][0]['message']['content']}]
+        self.assertEqual(self.client.post('/api/v1/chat-comparisons/', {**payload, 'responses': mismatch}, format='json').status_code, 400)
+        secret, hashed = generate_api_key()
+        ApiKey.objects.create(tenant=self.tenant, project=self.other, name='comparison other project', role=Role.ENGINEER, secret_hash=hashed)
+        other = APIClient(); other.credentials(HTTP_AUTHORIZATION=f'Bearer {secret}')
+        self.assertEqual(other.get(path).status_code, 404)
+        self.assertEqual(other.get('/api/v1/chat-comparisons/').data['results'], [])
+        self.assertEqual(other.post('/api/v1/chat-comparisons/', payload, format='json').status_code, 400)
+        self.assertEqual(other.post(path + 'vote/', {'vote': 'A'}, format='json').status_code, 404)

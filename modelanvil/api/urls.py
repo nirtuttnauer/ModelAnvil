@@ -68,6 +68,7 @@ router.register("worker-inventory", infrastructure_views.WorkerViewSet, basename
 router.register("models", models_evals.ModelViewSet, basename="model")
 router.register("model-imports", model_workspace.ModelImportViewSet, basename="model-import")
 router.register("chat-conversations", model_workspace.ConversationViewSet, basename="chat-conversation")
+router.register("chat-comparisons", model_workspace.ComparisonViewSet, basename="chat-comparison")
 router.register("inference/models", model_workspace.InferenceViewSet, basename="inference-model")
 router.register("model-versions", models_evals.ModelVersionViewSet, basename="model-version")
 router.register("tokenizers", models_evals.TokenizerVersionViewSet, basename="tokenizer")
