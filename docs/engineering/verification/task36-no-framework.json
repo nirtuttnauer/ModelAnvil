@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "host": {
+    "system": "Darwin",
+    "machine": "arm64",
+    "release": "27.0.0"
+  },
+  "framework": {
+    "name": "torch",
+    "version": null,
+    "cuda_version": null,
+    "hip_version": null
+  },
+  "backends": {
+    "cuda": {
+      "vendor": "NVIDIA",
+      "status": "unavailable",
+      "devices": [],
+      "reason": "PyTorch could not be imported (ModuleNotFoundError). Install a compatible worker runtime; driver detection alone is insufficient."
+    },
+    "rocm": {
+      "vendor": "AMD",
+      "status": "unavailable",
+      "devices": [],
+      "reason": "PyTorch could not be imported (ModuleNotFoundError). Install a compatible worker runtime; driver detection alone is insufficient."
+    },
+    "xpu": {
+      "vendor": "Intel",
+      "status": "unavailable",
+      "devices": [],
+      "reason": "PyTorch could not be imported (ModuleNotFoundError). Install a compatible worker runtime; driver detection alone is insufficient."
+    },
+    "mps": {
+      "vendor": "Apple",
+      "status": "unavailable",
+      "devices": [],
+      "reason": "PyTorch could not be imported (ModuleNotFoundError). Install a compatible worker runtime; driver detection alone is insufficient."
+    }
+  },
+  "model_qualified": false,
+  "production_qualified": false
+}

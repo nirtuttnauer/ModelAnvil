@@ -1,0 +1,18 @@
+{
+  "weights_sha256": "6e8a4cfe8c355e5b91a1bf2b5b1137b5615e334525bfbba3e766437d9af4df48",
+  "prompt": "Once upon a time",
+  "generated_token_ids": [
+    28,
+    665,
+    436,
+    253,
+    1838,
+    8180,
+    3365,
+    14176
+  ],
+  "completion": ", there was a little girl named Lily",
+  "parameter_count": 134515008,
+  "consumer_imported_modelanvil_or_django": false,
+  "scope": "Independent process, CPU FP32 inference from actual GPU-produced candidate; no quality or production claim."
+}

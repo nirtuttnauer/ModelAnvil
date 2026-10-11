@@ -1,0 +1,124 @@
+{
+ "accelerator_backends_checked": [
+  "cuda",
+  "rocm",
+  "mps",
+  "xpu"
+ ],
+ "accelerator_reason": "No tensor framework backend (cuda/rocm/mps/xpu) is importable, so no training accelerator can be verified on this host. Graphics adapters are not training capacity.",
+ "accelerator_status": "unavailable",
+ "accelerators": [],
+ "dependencies": [
+  {
+   "installed_version": "5.2.18",
+   "matches_pin": true,
+   "pinned_version": "5.2.18",
+   "requirement": "Django"
+  },
+  {
+   "installed_version": "3.15.2",
+   "matches_pin": true,
+   "pinned_version": "3.15.2",
+   "requirement": "djangorestframework"
+  },
+  {
+   "installed_version": "26.2",
+   "matches_pin": false,
+   "pinned_version": "25.2",
+   "requirement": "django-filter"
+  },
+  {
+   "installed_version": "4.9.0",
+   "matches_pin": true,
+   "pinned_version": "4.9.0",
+   "requirement": "django-cors-headers"
+  },
+  {
+   "installed_version": "4.26.0",
+   "matches_pin": false,
+   "pinned_version": "4.25.1",
+   "requirement": "jsonschema"
+  },
+  {
+   "installed_version": null,
+   "matches_pin": false,
+   "pinned_version": "3.2.12",
+   "requirement": "psycopg"
+  },
+  {
+   "installed_version": "1.3.2",
+   "matches_pin": true,
+   "pinned_version": "1.3.2",
+   "requirement": "pika"
+  },
+  {
+   "installed_version": "1.43.110",
+   "matches_pin": true,
+   "pinned_version": "1.43.110",
+   "requirement": "boto3"
+  }
+ ],
+ "graphics_devices": [
+  {
+   "cores": "20",
+   "metal": null,
+   "name": "Apple M5 Pro",
+   "source": "system_profiler:SPDisplaysDataType",
+   "vendor": "sppci_vendor_Apple"
+  }
+ ],
+ "graphics_devices_are_training_capacity": false,
+ "hardware_qualified": false,
+ "host": {
+  "cpu_brand": "Apple M5 Pro",
+  "logical_cores": 18,
+  "machine": "arm64",
+  "physical_cores": 18,
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "processor": "arm",
+  "python": {
+   "compiler": "Clang 22.1.3 ",
+   "executable": "<workspace>/.venv/bin/python",
+   "implementation": "CPython",
+   "version": "3.12.15"
+  },
+  "release": "27.0.0",
+  "system": "Darwin",
+  "total_memory_bytes": 51539607552
+ },
+ "production_qualified": false,
+ "report_version": "1.0",
+ "runtimes": [
+  {
+   "build_digest": "23112c40482b056851f1172b86edcc2af43c9ea96ebb2602a6d78ed76716e97f",
+   "contract_digest": "6590e79bf229fa31750d7493e84526aca4964ad6eface014874ebfe24696642d",
+   "declared_cpu_cores": 1,
+   "declared_distributed": false,
+   "declared_gpu_count": 0,
+   "declared_memory_bytes": 268435456,
+   "limitations": [
+    "Trusted local Python executor; image field identifies the contract, not a published container.",
+    "Single CPU character bigram model; no transformer context, chat, GPU or distributed support."
+   ],
+   "optimizer": "sgd",
+   "runtime_id": "modelanvil.cpu-character-sft.v1",
+   "tokenizer": "character-v1"
+  },
+  {
+   "build_digest": "99dc199ebf90521a4102a6f5f368d4d0ae02f4945fdee194c60a66cae6be6dc4",
+   "contract_digest": "0936a1002ace2e3a380a005a61e5bc7de52773d3fafa6e9e94828db6681c1a1a",
+   "declared_cpu_cores": 1,
+   "declared_distributed": false,
+   "declared_gpu_count": 0,
+   "declared_memory_bytes": 536870912,
+   "limitations": [
+    "Pure-Python CPU reference; no GPU, distributed or remote-worker support.",
+    "Intended for small models and tests, not production throughput."
+   ],
+   "optimizer": "adamw",
+   "runtime_id": "modelanvil.general-transformer-sft.v1",
+   "tokenizer": "byte-v1"
+  }
+ ],
+ "scope_note": "Measured on the current host with the standard library only. This report describes observed capability; it does not qualify any model, checkpoint or release."
+}

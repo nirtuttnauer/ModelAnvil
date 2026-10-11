@@ -1,0 +1,68 @@
+# Default values for modelanvil.
+replicaCount: 2
+
+image:
+  repository: modelanvil/control-plane
+  pullPolicy: IfNotPresent
+  tag: "1.0.0"
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: modelanvil.internal
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: modelanvil-tls
+      hosts:
+        - modelanvil.internal
+
+resources:
+  api:
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+  worker:
+    limits:
+      cpu: 8000m
+      memory: 32Gi
+      nvidia.com/gpu: 1
+    requests:
+      cpu: 4000m
+      memory: 16Gi
+      nvidia.com/gpu: 1
+
+postgresql:
+  enabled: false
+  externalHost: "postgres.internal"
+  externalPort: 5432
+  database: "modelanvil"
+  user: "modelanvil"
+  existingSecret: "modelanvil-db-secret"
+
+rabbitmq:
+  enabled: false
+  externalHost: "rabbitmq.internal"
+  externalPort: 5672
+  user: "modelanvil"
+  existingSecret: "modelanvil-broker-secret"
+
+s3:
+  endpoint: "https://s3.us-east-1.amazonaws.com"
+  bucket: "modelanvil-artifacts-prod"
+  region: "us-east-1"
+  existingSecret: "modelanvil-s3-secret"
+
+deploymentMode: "managed" # managed | self_hosted | hybrid

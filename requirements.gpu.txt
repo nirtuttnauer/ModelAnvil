@@ -1,0 +1,6 @@
+# Optional trusted local GPU API/worker environment. Select the vendor's torch build.
+torch==2.9.0
+transformers==4.57.1
+safetensors==0.6.2
+tokenizers==0.22.2
+numpy==2.3.3

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "host": {
+    "system": "Darwin",
+    "machine": "arm64",
+    "release": "27.0.0"
+  },
+  "framework": {
+    "name": "torch",
+    "version": "2.9.0",
+    "cuda_version": null,
+    "hip_version": null
+  },
+  "backends": {
+    "cuda": {
+      "vendor": "NVIDIA",
+      "status": "unavailable",
+      "devices": [],
+      "reason": "Installed PyTorch was not built for cuda; install the matching runtime."
+    },
+    "rocm": {
+      "vendor": "AMD",
+      "status": "unavailable",
+      "devices": [],
+      "reason": "Installed PyTorch was not built for rocm; install the matching runtime."
+    },
+    "xpu": {
+      "vendor": "Intel",
+      "status": "unavailable",
+      "devices": [],
+      "reason": "PyTorch reports xpu unavailable. Check the compatible runtime, OS, driver, device permissions and visibility settings."
+    },
+    "mps": {
+      "vendor": "Apple",
+      "status": "available",
+      "devices": [
+        {
+          "id": "mps:0",
+          "backend": "mps",
+          "torch_device": "mps:0",
+          "name": "Metal Performance Shaders device",
+          "vendor": "Apple",
+          "total_memory_bytes": null,
+          "memory_scope": "shared_unified",
+          "runtime_recommended_memory_bytes": 40200896512
+        }
+      ],
+      "reason": "Framework-visible devices; model and operation qualification is still required."
+    }
+  },
+  "model_qualified": false,
+  "production_qualified": false
+}

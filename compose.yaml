@@ -1,0 +1,103 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: modelanvil
+      POSTGRES_USER: modelanvil
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-dev-only}
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U modelanvil -d modelanvil"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    volumes:
+      - ./deploy/compose/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  object-store:
+    image: chrislusf/seaweedfs:4.48
+    command: ["mini", "-dir=/data"]
+    environment:
+      AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY:-modelanvil}
+      AWS_SECRET_ACCESS_KEY: ${S3_SECRET_KEY:-local-dev-only}
+      S3_BUCKET: modelanvil
+    volumes: [object_data:/data]
+    ports: ["8333:8333"]
+  api:
+    build: .
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-local-only-change-before-deploy}
+      DJANGO_DEBUG: "1"
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,api
+      DATABASE_ENGINE: postgresql
+      DATABASE_NAME: modelanvil
+      DATABASE_USER: modelanvil
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-local-dev-only}
+      DATABASE_HOST: db
+      DATABASE_PORT: "5432"
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
+      MODELANVIL_ARTIFACT_BACKEND: s3
+      MODELANVIL_S3_ENDPOINT: http://object-store:8333
+      MODELANVIL_S3_BUCKET: modelanvil
+      MODELANVIL_S3_ACCESS_KEY: ${S3_ACCESS_KEY:-modelanvil}
+      MODELANVIL_S3_SECRET_KEY: ${S3_SECRET_KEY:-local-dev-only}
+    ports: ["8000:8000"]
+    depends_on:
+      db: {condition: service_healthy}
+      rabbitmq: {condition: service_healthy}
+      object-store: {condition: service_started}
+    volumes: [.:/app]
+  outbox-publisher:
+    build: .
+    command: ["python", "manage.py", "flush_outbox", "--loop"]
+    restart: unless-stopped
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-local-only-change-before-deploy}
+      DJANGO_DEBUG: "1"
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,api
+      DATABASE_ENGINE: postgresql
+      DATABASE_NAME: modelanvil
+      DATABASE_USER: modelanvil
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-local-dev-only}
+      DATABASE_HOST: db
+      DATABASE_PORT: "5432"
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
+    depends_on:
+      db: {condition: service_healthy}
+      rabbitmq: {condition: service_healthy}
+      api: {condition: service_started}
+  lease-reconciler:
+    build: .
+    command: ["python", "manage.py", "reconcile_leases", "--loop"]
+    restart: unless-stopped
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-local-only-change-before-deploy}
+      DJANGO_DEBUG: "1"
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,api
+      DATABASE_ENGINE: postgresql
+      DATABASE_NAME: modelanvil
+      DATABASE_USER: modelanvil
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-local-dev-only}
+      DATABASE_HOST: db
+      DATABASE_PORT: "5432"
+    depends_on:
+      db: {condition: service_healthy}
+      api: {condition: service_started}
+  web:
+    image: node:22-alpine
+    working_dir: /app/web
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0"
+    environment:
+      VITE_API_URL: http://api:8000
+    ports: ["5173:5173"]
+    volumes: [./web:/app/web, /app/web/node_modules]
+    depends_on: [api]
+volumes:
+  postgres_data:
+  object_data:

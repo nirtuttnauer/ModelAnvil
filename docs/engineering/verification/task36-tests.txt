@@ -1,0 +1,18 @@
+test_cli_outputs_machine_readable_inventory_and_selection_errors (modelanvil.test_accelerators.AcceleratorInventoryTests.test_cli_outputs_machine_readable_inventory_and_selection_errors) ... ok
+test_cpu_build_does_not_invent_cuda_from_driver_inventory (modelanvil.test_accelerators.AcceleratorInventoryTests.test_cpu_build_does_not_invent_cuda_from_driver_inventory) ... ok
+test_cuda_enumerates_visible_devices_and_identity (modelanvil.test_accelerators.AcceleratorInventoryTests.test_cuda_enumerates_visible_devices_and_identity) ... ok
+test_diagnostic_never_allocates_on_missing_devices_or_invalid_step_count (modelanvil.test_accelerators.AcceleratorInventoryTests.test_diagnostic_never_allocates_on_missing_devices_or_invalid_step_count) ... ok
+test_missing_optional_namespaces_and_memory_are_unknown (modelanvil.test_accelerators.AcceleratorInventoryTests.test_missing_optional_namespaces_and_memory_are_unknown) ... ok
+test_missing_or_broken_framework_never_advertises_capacity (modelanvil.test_accelerators.AcceleratorInventoryTests.test_missing_or_broken_framework_never_advertises_capacity) ... ok
+test_mps_unified_memory_is_not_dedicated_vram (modelanvil.test_accelerators.AcceleratorInventoryTests.test_mps_unified_memory_is_not_dedicated_vram) ... ok
+test_no_implicit_mps_cpu_kernel_fallback_in_diagnostic (modelanvil.test_accelerators.AcceleratorInventoryTests.test_no_implicit_mps_cpu_kernel_fallback_in_diagnostic) ... ok
+test_partial_enumeration_error_rejects_entire_backend (modelanvil.test_accelerators.AcceleratorInventoryTests.test_partial_enumeration_error_rejects_entire_backend) ... ok
+test_rocm_retains_amd_identity_in_cuda_namespace (modelanvil.test_accelerators.AcceleratorInventoryTests.test_rocm_retains_amd_identity_in_cuda_namespace) ... ok
+test_runtime_failure_during_diagnostic_is_actionable_and_does_not_fallback (modelanvil.test_accelerators.AcceleratorInventoryTests.test_runtime_failure_during_diagnostic_is_actionable_and_does_not_fallback) ... ok
+test_selection_fails_closed_on_malformed_missing_or_insufficient_device (modelanvil.test_accelerators.AcceleratorInventoryTests.test_selection_fails_closed_on_malformed_missing_or_insufficient_device) ... ok
+test_xpu_does_not_require_cuda_runtime (modelanvil.test_accelerators.AcceleratorInventoryTests.test_xpu_does_not_require_cuda_runtime) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.002s
+
+OK

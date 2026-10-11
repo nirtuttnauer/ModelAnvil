@@ -1,0 +1,39 @@
+Creating test database for alias 'default'...
+...........{"timestamp": "2026-10-11T17:30:53+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "eb359cc9-5d14-4e91-9cf3-b436348b5ad5", "tenant_id": "aac9b2de-bff0-40cb-867b-42b33efde040"}
+..{"timestamp": "2026-10-11T17:30:53+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "779fa776-b9fe-4b52-9723-b7abb93c0a32", "tenant_id": "3f4a287a-ecb2-49e7-ba9a-a5a68946d90e"}
+....{"timestamp": "2026-10-11T17:30:55+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "2c5da474-7575-4a91-b431-b8d5b89448e8", "tenant_id": "457718a5-5cd5-4fb5-b90e-c19a65d2b83a"}
+...{"timestamp": "2026-10-11T17:30:55+0000", "level": "WARNING", "logger": "django.request", "message": "Conflict: /api/v1/training-runs/", "request_id": "f232ab88-5f69-4dfa-b5e3-5f5dd043ce86", "tenant_id": "822ccb8e-0e55-463a-87fa-bcc106db6e14"}
+.........{"timestamp": "2026-10-11T17:31:40+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "03121d6c-57d5-45d4-a77f-1dd24adf1fdc", "tenant_id": "30b6b29b-e0be-4320-bf0f-e372d0c8fc61"}
+...{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "9a86abf5-cf8d-47e7-ac71-4e817239d570", "tenant_id": "2297ce60-9a5a-4ca5-8f8d-6be4baabbd2e"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "c63c7a4c-9a1e-43ea-8394-fb7e34158489", "tenant_id": "2297ce60-9a5a-4ca5-8f8d-6be4baabbd2e"}
+.{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "5ef23169-70ab-4aba-8b05-5a50c04ff050", "tenant_id": "2f85ce1d-6ba2-4bc0-80d1-2457171be0cc"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "4c99b223-9707-448e-bbcc-cb31cabe3c9f", "tenant_id": "2f85ce1d-6ba2-4bc0-80d1-2457171be0cc"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/preflight/", "request_id": "ffd7423b-26bf-47dc-be22-0a2c9acb68b0", "tenant_id": "2f85ce1d-6ba2-4bc0-80d1-2457171be0cc"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "0514cc99-965e-4120-bf28-043af054206b", "tenant_id": "2f85ce1d-6ba2-4bc0-80d1-2457171be0cc"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "44b57c7d-d867-4bcc-a385-0060e8f783ce", "tenant_id": "2f85ce1d-6ba2-4bc0-80d1-2457171be0cc"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "7ac6fd52-543d-42ce-be7f-5d16e79d4452", "tenant_id": "2f85ce1d-6ba2-4bc0-80d1-2457171be0cc"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "0ffd8c5d-73f2-4d34-a662-0ae5b0178d3f", "tenant_id": "2f85ce1d-6ba2-4bc0-80d1-2457171be0cc"}
+.{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "5f98689b-b2ce-40f3-8f94-c54dacfd437c", "tenant_id": "af2c5dc6-e0e7-43db-b0c3-824a86f39ba4"}
+{"timestamp": "2286-11-20T17:46:39+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "85ce8731-8c00-45c9-8385-ef827bc7465b", "tenant_id": "af2c5dc6-e0e7-43db-b0c3-824a86f39ba4"}
+.{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "6eec75f5-227d-41b1-9390-24918e8f2eb6", "tenant_id": "07768aa3-1b62-4d4d-b33e-c73ca9f86c90"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "a7be1355-4675-4bbc-8a51-708af1c3101f", "tenant_id": "07768aa3-1b62-4d4d-b33e-c73ca9f86c90"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "01fd6071-6da1-4427-92a7-45281c6ef68d", "tenant_id": "07768aa3-1b62-4d4d-b33e-c73ca9f86c90"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "240be942-8b1c-4477-a136-7b2f13bff0dd", "tenant_id": "07768aa3-1b62-4d4d-b33e-c73ca9f86c90"}
+.{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/preflight/", "request_id": "e8cff3f8-48d8-4ef5-9ee7-fe4afa1778bd", "tenant_id": "6b00c5e8-eefd-406b-9869-a3f5aa48bcb3"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/preflight/", "request_id": "7d49d5e2-3164-49f9-857b-e75a4ed879ec", "tenant_id": "6b00c5e8-eefd-406b-9869-a3f5aa48bcb3"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/preflight/", "request_id": "2e1de8ca-f8c1-4719-931d-f89f2f968618", "tenant_id": "6b00c5e8-eefd-406b-9869-a3f5aa48bcb3"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/preflight/", "request_id": "689d0a2a-6eea-4fab-a9c4-4a341b5e4e64", "tenant_id": "6b00c5e8-eefd-406b-9869-a3f5aa48bcb3"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/preflight/", "request_id": "0e685f9e-485d-4918-921d-7bdc11a5f161", "tenant_id": "6b00c5e8-eefd-406b-9869-a3f5aa48bcb3"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/preflight/", "request_id": "30a0e2aa-e82e-4e24-a4a9-4c5fc6bd0322", "tenant_id": "6b00c5e8-eefd-406b-9869-a3f5aa48bcb3"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/preflight/", "request_id": "37b9b54a-1389-4d25-8aa4-9e15777d5ac8", "tenant_id": "6b00c5e8-eefd-406b-9869-a3f5aa48bcb3"}
+...{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/preflight/", "request_id": "62a8b9ca-e584-4a8d-ba7f-8460d5530f9a", "tenant_id": "88bc1840-d38e-457c-971b-90e742818453"}
+{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "68087c03-a09b-4995-b99a-a5ce507f3491", "tenant_id": "88bc1840-d38e-457c-971b-90e742818453"}
+.{"timestamp": "2026-10-11T17:31:45+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "07d64837-d432-4b6c-aebf-1d89f9554535", "tenant_id": "459e5de9-338e-49d4-9bdf-e5c5f0e27c8a"}
+.................
+----------------------------------------------------------------------
+Ran 57 tests in 53.080s
+
+OK
+Destroying test database for alias 'default'...
+Found 57 test(s).
+System check identified no issues (0 silenced).

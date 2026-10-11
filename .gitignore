@@ -1,0 +1,45 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+.DS_Store
+.venv/
+.venv-gpu/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+node_modules/
+.next/
+dist/
+build/
+coverage/
+*.log
+.scratch/
+output/
+*.db
+*.db-*
+*.sqlite3
+*.sqlite3-*
+*.pem
+*.key
+*.tsbuildinfo
+.npmrc
+auth.json
+credentials*
+
+# Local data, checkpoints, and model artifacts
+data/
+artifacts/
+storage/
+checkpoints/
+runs/
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.gguf
+
+# Storybook generated output
+storybook-static/

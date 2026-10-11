@@ -1,0 +1,1006 @@
+{
+  "run_id": "2e9a5db8-a0a9-431e-b3e6-d2e8dbf6bc73",
+  "tenant_id": "b2e4727b-781b-4b1d-8aa9-48db67029bec",
+  "project_id": "4b60fb27-9518-4248-bd2a-2c79ff549b05",
+  "installed": {
+    "worker_id": 1,
+    "accelerator": {
+      "device": {
+        "id": "mps:0",
+        "backend": "mps",
+        "torch_device": "mps:0",
+        "name": "Metal Performance Shaders device",
+        "vendor": "Apple",
+        "total_memory_bytes": null,
+        "memory_scope": "shared_unified",
+        "runtime_recommended_memory_bytes": 40200896512
+      },
+      "framework": {
+        "name": "torch",
+        "version": "2.9.0",
+        "cuda_version": null,
+        "hip_version": null
+      },
+      "packages": {
+        "torch": "2.9.0",
+        "transformers": "4.57.1",
+        "safetensors": "0.6.2",
+        "tokenizers": "0.22.2"
+      },
+      "capacity_source": "MPS recommended shared-memory budget"
+    },
+    "source": {
+      "repo_id": "HuggingFaceTB/SmolLM2-135M",
+      "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+      "license": "Apache-2.0"
+    },
+    "launch": {
+      "project": "4b60fb27-9518-4248-bd2a-2c79ff549b05",
+      "execution_mode": "worker",
+      "recipe_type": "full_sft",
+      "base_model_version": 1,
+      "tokenizer_version": 1,
+      "dataset_revision": 1,
+      "runner_manifest": 1,
+      "pool": 1,
+      "budget_policy_id": "682c4a6b-9c9d-4ca9-b02c-6ae788c438b9",
+      "total_steps": 3
+    }
+  },
+  "preflight": {
+    "status": "approved",
+    "recipe_type": "full_sft",
+    "execution_mode": "worker",
+    "checks": [
+      {
+        "check": "recipe-execution-mode",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Worker preflight requires full_sft.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "dataset_revision",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "dataset_revision: selected accessible resource.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "base_model_version",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "base_model_version: selected accessible resource.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "tokenizer_version",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "tokenizer_version: selected accessible resource.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "runner_manifest",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "runner_manifest: selected accessible resource.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "pool",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "pool: selected accessible resource.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "dataset-published",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Dataset must be published with immutable prepared text.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "model-tokenizer",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Base weights must pin the selected tokenizer.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "runner-contract",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Runner must be enabled and match the qualified runtime contract.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "pinned-inputs",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Verified dataset bytes, base weights, tokenizer encoding and runner contract.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "worker-memory",
+        "category": "capacity",
+        "status": "pass",
+        "blocking": false,
+        "reason": "A worker must declare the selected contract and sufficient memory.",
+        "corrective_action": null,
+        "detail": {
+          "required_memory_bytes": 8589934592,
+          "matching_workers": 1
+        }
+      },
+      {
+        "check": "worker-slots",
+        "category": "capacity",
+        "status": "pass",
+        "blocking": false,
+        "reason": "1 free matching worker slot(s); one required.",
+        "corrective_action": null,
+        "detail": {
+          "available_slots": 1,
+          "required_slots": 1
+        }
+      },
+      {
+        "check": "budget",
+        "category": "budget",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Budget must be enabled, use training_steps, and cover the requested sample passes.",
+        "corrective_action": null,
+        "detail": {
+          "policy_id": "682c4a6b-9c9d-4ca9-b02c-6ae788c438b9",
+          "period": "lifetime",
+          "period_start": "1970-01-01",
+          "unit": "training_steps",
+          "currency": null,
+          "limit": "3.000000",
+          "committed": "0",
+          "remaining": "3.000000",
+          "requested": 3
+        }
+      },
+      {
+        "check": "storage",
+        "category": "capacity",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Local artifact and checkpoint storage must cover the projected states.",
+        "corrective_action": null,
+        "detail": {
+          "artifacts": {
+            "available_bytes": 607569846272,
+            "required_bytes": 8077059440
+          },
+          "checkpoints": {
+            "available_bytes": 607569846272,
+            "required_bytes": 8077059440
+          }
+        }
+      }
+    ],
+    "blocking_checks": [],
+    "samples": [
+      {
+        "sample_id": "f0eab12c-9c7e-4da2-96b7-a9cac6205b61",
+        "text_preview": "A telescope collects light from distant stars to study the universe.",
+        "token_ids": [
+          49,
+          13776,
+          23805,
+          1420,
+          429,
+          9931,
+          5703,
+          288,
+          1108,
+          260,
+          6128,
+          30
+        ],
+        "token_count": 12
+      },
+      {
+        "sample_id": "03db5a29-ba49-430d-9c51-8afb66787706",
+        "text_preview": "Trees absorb sunlight and grow leaves through photosynthesis.",
+        "token_ids": [
+          46059,
+          6024,
+          8118,
+          284,
+          1075,
+          3711,
+          738,
+          19173,
+          30
+        ],
+        "token_count": 9
+      },
+      {
+        "sample_id": "40bce41c-163f-429d-8fa4-b05dc7c68548",
+        "text_preview": "An orchestra plays music with strings, wind instruments and percussion.",
+        "token_ids": [
+          2089,
+          30172,
+          4566,
+          2477,
+          351,
+          12345,
+          28,
+          2251,
+          6907,
+          284,
+          37700,
+          30
+        ],
+        "token_count": 12
+      },
+      {
+        "sample_id": "687114fd-8ce7-47e7-a9a9-60df7e8dc433",
+        "text_preview": "A library organizes books so that readers can find useful information.",
+        "token_ids": [
+          49,
+          4971,
+          43049,
+          2905,
+          588,
+          338,
+          4419,
+          416,
+          1042,
+          3465,
+          1096,
+          30
+        ],
+        "token_count": 12
+      }
+    ],
+    "sample_count": 4,
+    "pins": {
+      "runtime": "modelanvil.smollm2-gpu-sft.v1",
+      "contract_digest": "d44494fb19f01caf859adc988d9ac1b3c52029128ffd4140f7eb133cae696f8c",
+      "build_digest": "be595a1ad82582572d85fb729bc4fd93be2fd1740b7bda0e3b81532c68e273fc",
+      "dataset_id": "6a720fd1-ddfb-4438-ac7c-2bed214f5f47",
+      "dataset_digest": "7f0e1d62e9da1b43f4176d20e9e3d3414983f4c554267a61c1af7c5f7ea82fda",
+      "base_id": "0e349af5-2e29-4248-b6c7-5ddfe92ac64e",
+      "base_artifact_id": "ebfb0199-5a17-4549-8f58-642183f46ed0",
+      "base_digest": "7cd889a491229f323856f5450446812d6fb1cb7e1dbe222e73830e13dd96fd3c",
+      "tokenizer_id": "bb348e5c-7791-4bc2-815d-73e4a8f59821",
+      "tokenizer_digest": "ae3d933364e21602b759f9e5f9660236ed574ab9f0c21e05a966043111305d61",
+      "runner_id": "d159172d-bccf-42d2-b7ab-aa5fe0dc3ae5",
+      "runner_digest": "eb526ffaa12627a836c49698c0aba560e395943ddb2ac852b8fd0d6bf23dd8aa",
+      "pool_id": 1,
+      "steps": 3,
+      "config": {
+        "architectures": [
+          "LlamaForCausalLM"
+        ],
+        "attention_bias": false,
+        "attention_dropout": 0.0,
+        "bos_token_id": 0,
+        "eos_token_id": 0,
+        "hidden_act": "silu",
+        "hidden_size": 576,
+        "initializer_range": 0.041666666666666664,
+        "intermediate_size": 1536,
+        "is_llama_config": true,
+        "max_position_embeddings": 8192,
+        "model_type": "llama",
+        "num_attention_heads": 9,
+        "num_hidden_layers": 30,
+        "num_key_value_heads": 3,
+        "pretraining_tp": 1,
+        "rms_norm_eps": 1e-05,
+        "rope_interleaved": false,
+        "rope_scaling": null,
+        "rope_theta": 100000,
+        "tie_word_embeddings": true,
+        "torch_dtype": "bfloat16",
+        "transformers_version": "4.40.1",
+        "use_cache": true,
+        "vocab_size": 49152,
+        "runtime": "modelanvil.smollm2-gpu-sft.v1"
+      },
+      "optimizer": {
+        "algorithm": "adamw",
+        "learning_rate": 1e-05,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "weight_decay": 0.0
+      },
+      "sample_digest": "32b2a1bc873ec08a487259a9cfa903fb8179a100df6d39830a8e80dcd8e55cbd",
+      "splits": {
+        "consumed": "train",
+        "train_rows": 4,
+        "excluded_rows": {
+          "test": 3,
+          "validation": 3
+        },
+        "excluded_digest": "545bc5b7151de1933a7ce8ced02d517cd85dbef9a856e7a3840c35f5ef22eb87"
+      },
+      "accelerator": {
+        "device": {
+          "id": "mps:0",
+          "backend": "mps",
+          "torch_device": "mps:0",
+          "name": "Metal Performance Shaders device",
+          "vendor": "Apple",
+          "total_memory_bytes": null,
+          "memory_scope": "shared_unified",
+          "runtime_recommended_memory_bytes": 40200896512
+        },
+        "framework": {
+          "name": "torch",
+          "version": "2.9.0",
+          "cuda_version": null,
+          "hip_version": null
+        },
+        "packages": {
+          "torch": "2.9.0",
+          "transformers": "4.57.1",
+          "safetensors": "0.6.2",
+          "tokenizers": "0.22.2"
+        },
+        "capacity_source": "MPS recommended shared-memory budget"
+      },
+      "worker_id": 1
+    },
+    "requirements": {
+      "runtime": "modelanvil.smollm2-gpu-sft.v1",
+      "recipe": "full_sft",
+      "config": {
+        "architectures": [
+          "LlamaForCausalLM"
+        ],
+        "attention_bias": false,
+        "attention_dropout": 0.0,
+        "bos_token_id": 0,
+        "eos_token_id": 0,
+        "hidden_act": "silu",
+        "hidden_size": 576,
+        "initializer_range": 0.041666666666666664,
+        "intermediate_size": 1536,
+        "is_llama_config": true,
+        "max_position_embeddings": 8192,
+        "model_type": "llama",
+        "num_attention_heads": 9,
+        "num_hidden_layers": 30,
+        "num_key_value_heads": 3,
+        "pretraining_tp": 1,
+        "rms_norm_eps": 1e-05,
+        "rope_interleaved": false,
+        "rope_scaling": null,
+        "rope_theta": 100000,
+        "tie_word_embeddings": true,
+        "torch_dtype": "bfloat16",
+        "transformers_version": "4.40.1",
+        "use_cache": true,
+        "vocab_size": 49152,
+        "runtime": "modelanvil.smollm2-gpu-sft.v1"
+      },
+      "optimizer": {
+        "algorithm": "adamw",
+        "learning_rate": 1e-05,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "weight_decay": 0.0
+      },
+      "cpu_slots": 1,
+      "memory_bytes": 8589934592,
+      "storage_bytes": 8077059440,
+      "storage_assumption": "FP32 weights, two FP32 Adam moments, per-step checkpoints and staging/candidate headroom; shared local host.",
+      "gpu_count": 1,
+      "accelerator": {
+        "device": {
+          "id": "mps:0",
+          "backend": "mps",
+          "torch_device": "mps:0",
+          "name": "Metal Performance Shaders device",
+          "vendor": "Apple",
+          "total_memory_bytes": null,
+          "memory_scope": "shared_unified",
+          "runtime_recommended_memory_bytes": 40200896512
+        },
+        "framework": {
+          "name": "torch",
+          "version": "2.9.0",
+          "cuda_version": null,
+          "hip_version": null
+        },
+        "packages": {
+          "torch": "2.9.0",
+          "transformers": "4.57.1",
+          "safetensors": "0.6.2",
+          "tokenizers": "0.22.2"
+        },
+        "capacity_source": "MPS recommended shared-memory budget"
+      },
+      "precision": "fp32"
+    },
+    "budget": {
+      "policy_id": "682c4a6b-9c9d-4ca9-b02c-6ae788c438b9",
+      "period": "lifetime",
+      "period_start": "1970-01-01",
+      "unit": "training_steps",
+      "currency": null,
+      "limit": "3.000000",
+      "committed": "0",
+      "remaining": "3.000000",
+      "requested": 3
+    },
+    "estimate": {
+      "known": false,
+      "source": "GPU estimate unavailable; CPU process time is not GPU elapsed time.",
+      "assumptions": [],
+      "units": {
+        "duration": "GPU wall seconds (unknown until a matching GPU pilot is qualified)",
+        "tokens": "next-token pairs",
+        "currency": null
+      },
+      "currency": null,
+      "uncertainty": "Unknown; no confidence interval has been measured.",
+      "estimated_duration_seconds": null,
+      "estimated_cost": {
+        "known": false,
+        "value": null,
+        "reason": "No measured monetary rate or currency is configured."
+      }
+    },
+    "fingerprint": "09366fcc219f9058257f7c1470bc162302b0b227ea2a50d6375865a3ad7602e9",
+    "checked_at": "2026-10-11T17:48:05.718800+00:00",
+    "expires_in_seconds": 600,
+    "runtime_scope": {
+      "targets": [],
+      "available": [
+        "modelanvil.smollm2-gpu-sft.v1"
+      ],
+      "unavailable": []
+    },
+    "capacity_note": "Capacity is observed, not reserved. Launch rechecks; worker claim enforces slots and budget reservation is atomic."
+  },
+  "metrics": [
+    {
+      "step": 1,
+      "loss": 2.878109931945801,
+      "post_update_loss": 2.456385850906372,
+      "sample_id": "f0eab12c-9c7e-4da2-96b7-a9cac6205b61",
+      "training_pairs": 11,
+      "cpu_seconds": 0.5772330000000006,
+      "engine_wall_seconds": 1.1195109590189531,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "device_residency_checked": true,
+      "gpu_allocated_bytes": 2240722176,
+      "unified_memory": {
+        "recommended_bytes": 40200896512,
+        "process_limit_bytes": 36180806860,
+        "driver_allocated_bytes": 3749347328,
+        "process_headroom_bytes": 32431459532,
+        "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+      }
+    },
+    {
+      "step": 2,
+      "loss": 4.179774284362793,
+      "post_update_loss": 3.8491244316101074,
+      "sample_id": "03db5a29-ba49-430d-9c51-8afb66787706",
+      "training_pairs": 8,
+      "cpu_seconds": 0.34863799999999934,
+      "engine_wall_seconds": 0.4820930830319412,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "device_residency_checked": true,
+      "gpu_allocated_bytes": 2238746112,
+      "unified_memory": {
+        "recommended_bytes": 40200896512,
+        "process_limit_bytes": 36180806860,
+        "driver_allocated_bytes": 3873996800,
+        "process_headroom_bytes": 32306810060,
+        "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+      }
+    },
+    {
+      "step": 3,
+      "loss": 2.861598253250122,
+      "post_update_loss": 2.6224615573883057,
+      "sample_id": "40bce41c-163f-429d-8fa4-b05dc7c68548",
+      "training_pairs": 11,
+      "cpu_seconds": 0.26520299999999963,
+      "engine_wall_seconds": 0.39531804097350687,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "device_residency_checked": true,
+      "gpu_allocated_bytes": 2238777856,
+      "unified_memory": {
+        "recommended_bytes": 40200896512,
+        "process_limit_bytes": 36180806860,
+        "driver_allocated_bytes": 3873996800,
+        "process_headroom_bytes": 32306810060,
+        "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+      }
+    }
+  ],
+  "pins": {
+    "runtime": "modelanvil.smollm2-gpu-sft.v1",
+    "contract_digest": "d44494fb19f01caf859adc988d9ac1b3c52029128ffd4140f7eb133cae696f8c",
+    "build_digest": "be595a1ad82582572d85fb729bc4fd93be2fd1740b7bda0e3b81532c68e273fc",
+    "dataset_id": "6a720fd1-ddfb-4438-ac7c-2bed214f5f47",
+    "dataset_digest": "7f0e1d62e9da1b43f4176d20e9e3d3414983f4c554267a61c1af7c5f7ea82fda",
+    "base_id": "0e349af5-2e29-4248-b6c7-5ddfe92ac64e",
+    "base_artifact_id": "ebfb0199-5a17-4549-8f58-642183f46ed0",
+    "base_digest": "7cd889a491229f323856f5450446812d6fb1cb7e1dbe222e73830e13dd96fd3c",
+    "tokenizer_id": "bb348e5c-7791-4bc2-815d-73e4a8f59821",
+    "tokenizer_digest": "ae3d933364e21602b759f9e5f9660236ed574ab9f0c21e05a966043111305d61",
+    "runner_id": "d159172d-bccf-42d2-b7ab-aa5fe0dc3ae5",
+    "runner_digest": "eb526ffaa12627a836c49698c0aba560e395943ddb2ac852b8fd0d6bf23dd8aa",
+    "pool_id": 1,
+    "steps": 3,
+    "config": {
+      "architectures": [
+        "LlamaForCausalLM"
+      ],
+      "attention_bias": false,
+      "attention_dropout": 0.0,
+      "bos_token_id": 0,
+      "eos_token_id": 0,
+      "hidden_act": "silu",
+      "hidden_size": 576,
+      "initializer_range": 0.041666666666666664,
+      "intermediate_size": 1536,
+      "is_llama_config": true,
+      "max_position_embeddings": 8192,
+      "model_type": "llama",
+      "num_attention_heads": 9,
+      "num_hidden_layers": 30,
+      "num_key_value_heads": 3,
+      "pretraining_tp": 1,
+      "rms_norm_eps": 1e-05,
+      "rope_interleaved": false,
+      "rope_scaling": null,
+      "rope_theta": 100000,
+      "tie_word_embeddings": true,
+      "torch_dtype": "bfloat16",
+      "transformers_version": "4.40.1",
+      "use_cache": true,
+      "vocab_size": 49152,
+      "runtime": "modelanvil.smollm2-gpu-sft.v1"
+    },
+    "optimizer": {
+      "algorithm": "adamw",
+      "learning_rate": 1e-05,
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "epsilon": 1e-08,
+      "weight_decay": 0.0
+    },
+    "sample_digest": "32b2a1bc873ec08a487259a9cfa903fb8179a100df6d39830a8e80dcd8e55cbd",
+    "splits": {
+      "consumed": "train",
+      "train_rows": 4,
+      "excluded_rows": {
+        "test": 3,
+        "validation": 3
+      },
+      "excluded_digest": "545bc5b7151de1933a7ce8ced02d517cd85dbef9a856e7a3840c35f5ef22eb87"
+    },
+    "accelerator": {
+      "device": {
+        "id": "mps:0",
+        "backend": "mps",
+        "torch_device": "mps:0",
+        "name": "Metal Performance Shaders device",
+        "vendor": "Apple",
+        "total_memory_bytes": null,
+        "memory_scope": "shared_unified",
+        "runtime_recommended_memory_bytes": 40200896512
+      },
+      "framework": {
+        "name": "torch",
+        "version": "2.9.0",
+        "cuda_version": null,
+        "hip_version": null
+      },
+      "packages": {
+        "torch": "2.9.0",
+        "transformers": "4.57.1",
+        "safetensors": "0.6.2",
+        "tokenizers": "0.22.2"
+      },
+      "capacity_source": "MPS recommended shared-memory budget"
+    },
+    "worker_id": 1
+  },
+  "hardware": {
+    "report_version": "1.0",
+    "host": {
+      "platform": "macOS-27.0.1-arm64-arm-64bit",
+      "machine": "arm64",
+      "processor": "arm",
+      "system": "Darwin",
+      "release": "27.0.0",
+      "cpu_brand": "Apple M5 Pro",
+      "logical_cores": 18,
+      "physical_cores": 18,
+      "total_memory_bytes": 51539607552,
+      "python": {
+        "version": "3.12.15",
+        "implementation": "CPython",
+        "compiler": "Clang 22.1.3 ",
+        "executable": "<workspace>/.venv-gpu/bin/python"
+      }
+    },
+    "accelerator_backends_checked": [
+      "cuda",
+      "rocm",
+      "mps",
+      "xpu"
+    ],
+    "accelerators": [
+      {
+        "id": "mps:0",
+        "backend": "mps",
+        "torch_device": "mps:0",
+        "name": "Metal Performance Shaders device",
+        "vendor": "Apple",
+        "total_memory_bytes": null,
+        "memory_scope": "shared_unified",
+        "runtime_recommended_memory_bytes": 40200896512
+      }
+    ],
+    "accelerator_status": "available",
+    "accelerator_reason": "Detected 1 framework-visible GPU device(s); model qualification is separate.",
+    "graphics_devices": [
+      {
+        "name": "Apple M5 Pro",
+        "vendor": "sppci_vendor_Apple",
+        "cores": "20",
+        "metal": null,
+        "source": "system_profiler:SPDisplaysDataType"
+      }
+    ],
+    "graphics_devices_are_training_capacity": false,
+    "dependencies": [
+      {
+        "requirement": "Django",
+        "pinned_version": "5.2.18",
+        "installed_version": "5.2.18",
+        "matches_pin": true
+      },
+      {
+        "requirement": "djangorestframework",
+        "pinned_version": "3.15.2",
+        "installed_version": "3.15.2",
+        "matches_pin": true
+      },
+      {
+        "requirement": "django-filter",
+        "pinned_version": "25.2",
+        "installed_version": "25.2",
+        "matches_pin": true
+      },
+      {
+        "requirement": "django-cors-headers",
+        "pinned_version": "4.9.0",
+        "installed_version": "4.9.0",
+        "matches_pin": true
+      },
+      {
+        "requirement": "jsonschema",
+        "pinned_version": "4.25.1",
+        "installed_version": "4.25.1",
+        "matches_pin": true
+      },
+      {
+        "requirement": "psycopg",
+        "pinned_version": "3.2.12",
+        "installed_version": "3.2.12",
+        "matches_pin": true
+      },
+      {
+        "requirement": "pika",
+        "pinned_version": "1.3.2",
+        "installed_version": "1.3.2",
+        "matches_pin": true
+      },
+      {
+        "requirement": "boto3",
+        "pinned_version": "1.43.110",
+        "installed_version": "1.43.110",
+        "matches_pin": true
+      }
+    ],
+    "runtimes": [
+      {
+        "runtime_id": "modelanvil.cpu-character-sft.v1",
+        "contract_digest": "6590e79bf229fa31750d7493e84526aca4964ad6eface014874ebfe24696642d",
+        "build_digest": "23112c40482b056851f1172b86edcc2af43c9ea96ebb2602a6d78ed76716e97f",
+        "declared_gpu_count": 0,
+        "declared_distributed": false,
+        "declared_memory_bytes": 268435456,
+        "declared_cpu_cores": 1,
+        "optimizer": "sgd",
+        "tokenizer": "character-v1",
+        "limitations": [
+          "Trusted local Python executor; image field identifies the contract, not a published container.",
+          "Single CPU character bigram model; no transformer context, chat, GPU or distributed support."
+        ]
+      },
+      {
+        "runtime_id": "modelanvil.general-transformer-sft.v1",
+        "contract_digest": "0936a1002ace2e3a380a005a61e5bc7de52773d3fafa6e9e94828db6681c1a1a",
+        "build_digest": "99dc199ebf90521a4102a6f5f368d4d0ae02f4945fdee194c60a66cae6be6dc4",
+        "declared_gpu_count": 0,
+        "declared_distributed": false,
+        "declared_memory_bytes": 536870912,
+        "declared_cpu_cores": 1,
+        "optimizer": "adamw",
+        "tokenizer": "byte-v1",
+        "limitations": [
+          "Pure-Python CPU reference; no GPU, distributed or remote-worker support.",
+          "Intended for small models and tests, not production throughput."
+        ]
+      },
+      {
+        "runtime_id": "modelanvil.smollm2-gpu-sft.v1",
+        "contract_digest": "d44494fb19f01caf859adc988d9ac1b3c52029128ffd4140f7eb133cae696f8c",
+        "build_digest": "be595a1ad82582572d85fb729bc4fd93be2fd1740b7bda0e3b81532c68e273fc",
+        "declared_gpu_count": 1,
+        "declared_distributed": false,
+        "declared_memory_bytes": 8589934592,
+        "declared_cpu_cores": 1,
+        "optimizer": {
+          "algorithm": "adamw",
+          "learning_rate": 1e-05,
+          "beta1": 0.9,
+          "beta2": 0.999,
+          "epsilon": 1e-08,
+          "weight_decay": 0.0
+        },
+        "tokenizer": null,
+        "limitations": [
+          "One pinned SmolLM2-135M model, text full SFT, FP32, deterministic manifest-order samples.",
+          "One trusted local GPU worker per pool; cross-worker device reservations require TASK-42.",
+          "No LoRA, QLoRA, quantization, distributed or remote worker support; each device needs qualification."
+        ]
+      }
+    ],
+    "production_qualified": false,
+    "hardware_qualified": false,
+    "scope_note": "Measured on the current host; GPU detection uses the optional tensor framework. This report describes framework-visible devices; it does not qualify any model, checkpoint or release."
+  },
+  "checkpoints": [
+    {
+      "step": 1,
+      "state_digest": "f78bbb26c246829e8f173f4e25d7a8c52a47b088d0821df2b839eb20a939f7c3",
+      "weights_sha256": "7c3de756b61eff1e5da5e3d9cbb7b41a8487403cd5f8e953b59edb2f3443bb5d"
+    },
+    {
+      "step": 2,
+      "state_digest": "0e0df84ae51b8ea0170386cbc33595dd613d00dfd7a07a2830dc6d421efe273c",
+      "weights_sha256": "522781f20b8cc918e5689dd630ee3130db43aab973336f0d57fff2bbb0588a9e"
+    },
+    {
+      "step": 3,
+      "state_digest": "6842d865519f98f52046c0727a6c0cceb3e90182fec6c5b9046c4fdb8c921e4a",
+      "weights_sha256": "6e8a4cfe8c355e5b91a1bf2b5b1137b5615e334525bfbba3e766437d9af4df48"
+    }
+  ],
+  "candidate": "7cd82b57-537e-4369-9ab5-683d3cb0ef06",
+  "bundle": {
+    "config.json": {
+      "architectures": [
+        "LlamaForCausalLM"
+      ],
+      "attention_bias": false,
+      "attention_dropout": 0.0,
+      "bos_token_id": 0,
+      "eos_token_id": 0,
+      "hidden_act": "silu",
+      "hidden_size": 576,
+      "initializer_range": 0.041666666666666664,
+      "intermediate_size": 1536,
+      "is_llama_config": true,
+      "max_position_embeddings": 8192,
+      "model_type": "llama",
+      "num_attention_heads": 9,
+      "num_hidden_layers": 30,
+      "num_key_value_heads": 3,
+      "pretraining_tp": 1,
+      "rms_norm_eps": 1e-05,
+      "rope_interleaved": false,
+      "rope_scaling": null,
+      "rope_theta": 100000,
+      "tie_word_embeddings": true,
+      "torch_dtype": "bfloat16",
+      "transformers_version": "4.40.1",
+      "use_cache": true,
+      "vocab_size": 49152,
+      "runtime": "modelanvil.smollm2-gpu-sft.v1"
+    },
+    "files": {
+      "config.json": {
+        "artifact_id": "2d818e3e-674f-46f6-aa52-9f0e89b7cf42",
+        "byte_size": 704,
+        "sha256": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843"
+      },
+      "model.safetensors": {
+        "artifact_id": "d3ac7bfb-0668-4f98-819a-37ecf3c23160",
+        "sha256": "6e8a4cfe8c355e5b91a1bf2b5b1137b5615e334525bfbba3e766437d9af4df48",
+        "byte_size": 538090408
+      },
+      "special_tokens_map.json": {
+        "artifact_id": "cd120ef4-1cbd-402b-a79c-8f7cae586926",
+        "byte_size": 831,
+        "sha256": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3"
+      },
+      "tokenizer.json": {
+        "artifact_id": "71f9d538-5024-4e07-9ed6-2962eb40c0c5",
+        "byte_size": 2104556,
+        "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+      },
+      "tokenizer_config.json": {
+        "artifact_id": "29e6ec46-9459-41b3-8bca-d21fd4f30d93",
+        "byte_size": 3658,
+        "sha256": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424"
+      }
+    },
+    "source": {
+      "repo_id": "HuggingFaceTB/SmolLM2-135M",
+      "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+      "license": "Apache-2.0"
+    },
+    "weights_manifest.json": {
+      "weights_sha256": "6e8a4cfe8c355e5b91a1bf2b5b1137b5615e334525bfbba3e766437d9af4df48"
+    },
+    "tokenizer_config.json": {
+      "kind": "huggingface",
+      "source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      }
+    },
+    "provenance.json": {
+      "tenant_id": "b2e4727b-781b-4b1d-8aa9-48db67029bec",
+      "project_id": "4b60fb27-9518-4248-bd2a-2c79ff549b05",
+      "run_id": "2e9a5db8-a0a9-431e-b3e6-d2e8dbf6bc73",
+      "pins": {
+        "runtime": "modelanvil.smollm2-gpu-sft.v1",
+        "contract_digest": "d44494fb19f01caf859adc988d9ac1b3c52029128ffd4140f7eb133cae696f8c",
+        "build_digest": "be595a1ad82582572d85fb729bc4fd93be2fd1740b7bda0e3b81532c68e273fc",
+        "dataset_id": "6a720fd1-ddfb-4438-ac7c-2bed214f5f47",
+        "dataset_digest": "7f0e1d62e9da1b43f4176d20e9e3d3414983f4c554267a61c1af7c5f7ea82fda",
+        "base_id": "0e349af5-2e29-4248-b6c7-5ddfe92ac64e",
+        "base_artifact_id": "ebfb0199-5a17-4549-8f58-642183f46ed0",
+        "base_digest": "7cd889a491229f323856f5450446812d6fb1cb7e1dbe222e73830e13dd96fd3c",
+        "tokenizer_id": "bb348e5c-7791-4bc2-815d-73e4a8f59821",
+        "tokenizer_digest": "ae3d933364e21602b759f9e5f9660236ed574ab9f0c21e05a966043111305d61",
+        "runner_id": "d159172d-bccf-42d2-b7ab-aa5fe0dc3ae5",
+        "runner_digest": "eb526ffaa12627a836c49698c0aba560e395943ddb2ac852b8fd0d6bf23dd8aa",
+        "pool_id": 1,
+        "steps": 3,
+        "config": {
+          "architectures": [
+            "LlamaForCausalLM"
+          ],
+          "attention_bias": false,
+          "attention_dropout": 0.0,
+          "bos_token_id": 0,
+          "eos_token_id": 0,
+          "hidden_act": "silu",
+          "hidden_size": 576,
+          "initializer_range": 0.041666666666666664,
+          "intermediate_size": 1536,
+          "is_llama_config": true,
+          "max_position_embeddings": 8192,
+          "model_type": "llama",
+          "num_attention_heads": 9,
+          "num_hidden_layers": 30,
+          "num_key_value_heads": 3,
+          "pretraining_tp": 1,
+          "rms_norm_eps": 1e-05,
+          "rope_interleaved": false,
+          "rope_scaling": null,
+          "rope_theta": 100000,
+          "tie_word_embeddings": true,
+          "torch_dtype": "bfloat16",
+          "transformers_version": "4.40.1",
+          "use_cache": true,
+          "vocab_size": 49152,
+          "runtime": "modelanvil.smollm2-gpu-sft.v1"
+        },
+        "optimizer": {
+          "algorithm": "adamw",
+          "learning_rate": 1e-05,
+          "beta1": 0.9,
+          "beta2": 0.999,
+          "epsilon": 1e-08,
+          "weight_decay": 0.0
+        },
+        "sample_digest": "32b2a1bc873ec08a487259a9cfa903fb8179a100df6d39830a8e80dcd8e55cbd",
+        "splits": {
+          "consumed": "train",
+          "train_rows": 4,
+          "excluded_rows": {
+            "test": 3,
+            "validation": 3
+          },
+          "excluded_digest": "545bc5b7151de1933a7ce8ced02d517cd85dbef9a856e7a3840c35f5ef22eb87"
+        },
+        "accelerator": {
+          "device": {
+            "id": "mps:0",
+            "backend": "mps",
+            "torch_device": "mps:0",
+            "name": "Metal Performance Shaders device",
+            "vendor": "Apple",
+            "total_memory_bytes": null,
+            "memory_scope": "shared_unified",
+            "runtime_recommended_memory_bytes": 40200896512
+          },
+          "framework": {
+            "name": "torch",
+            "version": "2.9.0",
+            "cuda_version": null,
+            "hip_version": null
+          },
+          "packages": {
+            "torch": "2.9.0",
+            "transformers": "4.57.1",
+            "safetensors": "0.6.2",
+            "tokenizers": "0.22.2"
+          },
+          "capacity_source": "MPS recommended shared-memory budget"
+        },
+        "worker_id": 1
+      },
+      "step": 3
+    }
+  },
+  "usage": [
+    {
+      "quantity": "3.000000",
+      "unit": "training_steps",
+      "detail": {
+        "runtime": "modelanvil.smollm2-gpu-sft.v1",
+        "cpu_seconds": 1.1910739999999995,
+        "training_pairs": 30,
+        "status": "completed"
+      }
+    }
+  ],
+  "budget": [
+    {
+      "reserved": "3.000000",
+      "settled": "3.000000"
+    }
+  ],
+  "scope": "One local mps:0 SmolLM2 FP32 full-SFT pilot; synthetic qualification corpus; no quality, cross-vendor or production claim."
+}

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-worker
+  labels:
+    app.kubernetes.io/name: modelanvil-worker
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: modelanvil-worker
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: modelanvil-worker
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: worker
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["python", "manage.py", "run_executor"]
+          env:
+            - name: DJANGO_SETTINGS_MODULE
+              value: "modelanvil.settings"
+            - name: DEPLOYMENT_MODE
+              value: "{{ .Values.deploymentMode }}"
+          resources:
+            {{- toYaml .Values.resources.worker | nindent 12 }}

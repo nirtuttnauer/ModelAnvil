@@ -1,0 +1,27 @@
+Bad Request: /api/v1/training-runs/preflight/
+{"timestamp": "2026-10-11T17:48:05+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/preflight/", "request_id": "8bede11a-4548-437e-a928-f43baca7d1ac", "tenant_id": "b2e4727b-781b-4b1d-8aa9-48db67029bec"}
+Bad Request: /api/v1/training-runs/
+{"timestamp": "2026-10-11T17:48:05+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "00cec990-3929-44dd-82ba-4af9b049592e", "tenant_id": "b2e4727b-781b-4b1d-8aa9-48db67029bec"}
+Bad Request: /api/v1/training-runs/preflight/
+{"timestamp": "2026-10-11T17:48:05+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/preflight/", "request_id": "8d9c9b6c-44dd-4885-bf58-aec80c48076a", "tenant_id": "b2e4727b-781b-4b1d-8aa9-48db67029bec"}
+Bad Request: /api/v1/training-runs/
+{"timestamp": "2026-10-11T17:48:05+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "5de1f008-0cea-412f-82ef-cf2f96604277", "tenant_id": "b2e4727b-781b-4b1d-8aa9-48db67029bec"}
+Bad Request: /api/v1/training-runs/preflight/
+{"timestamp": "2026-10-11T17:48:05+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/preflight/", "request_id": "3da0a392-5de8-442c-b0f5-0f809f4cf569", "tenant_id": "b2e4727b-781b-4b1d-8aa9-48db67029bec"}
+Bad Request: /api/v1/training-runs/
+{"timestamp": "2026-10-11T17:48:05+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "11bc7f7a-acc3-4c24-b480-cde6094bad3a", "tenant_id": "b2e4727b-781b-4b1d-8aa9-48db67029bec"}
+Bad Request: /api/v1/training-runs/preflight/
+{"timestamp": "2026-10-11T17:48:05+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/preflight/", "request_id": "16150d59-3e2f-4959-a20f-44377e319cdd", "tenant_id": "b2e4727b-781b-4b1d-8aa9-48db67029bec"}
+Bad Request: /api/v1/training-runs/
+{"timestamp": "2026-10-11T17:48:05+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/training-runs/", "request_id": "fac33911-6554-462f-bc35-e84d90019281", "tenant_id": "b2e4727b-781b-4b1d-8aa9-48db67029bec"}
+unsupported precision/adapter/quantization rejected without jobs or budget
+preflight approved {'runtime': 'modelanvil.smollm2-gpu-sft.v1', 'recipe': 'full_sft', 'config': {'architectures': ['LlamaForCausalLM'], 'attention_bias': False, 'attention_dropout': 0.0, 'bos_token_id': 0, 'eos_token_id': 0, 'hidden_act': 'silu', 'hidden_size': 576, 'initializer_range': 0.041666666666666664, 'intermediate_size': 1536, 'is_llama_config': True, 'max_position_embeddings': 8192, 'model_type': 'llama', 'num_attention_heads': 9, 'num_hidden_layers': 30, 'num_key_value_heads': 3, 'pretraining_tp': 1, 'rms_norm_eps': 1e-05, 'rope_interleaved': False, 'rope_scaling': None, 'rope_theta': 100000, 'tie_word_embeddings': True, 'torch_dtype': 'bfloat16', 'transformers_version': '4.40.1', 'use_cache': True, 'vocab_size': 49152, 'runtime': 'modelanvil.smollm2-gpu-sft.v1'}, 'optimizer': {'algorithm': 'adamw', 'learning_rate': 1e-05, 'beta1': 0.9, 'beta2': 0.999, 'epsilon': 1e-08, 'weight_decay': 0.0}, 'cpu_slots': 1, 'memory_bytes': 8589934592, 'storage_bytes': 8077059440, 'storage_assumption': 'FP32 weights, two FP32 Adam moments, per-step checkpoints and staging/candidate headroom; shared local host.', 'gpu_count': 1, 'accelerator': {'device': {'id': 'mps:0', 'backend': 'mps', 'torch_device': 'mps:0', 'name': 'Metal Performance Shaders device', 'vendor': 'Apple', 'total_memory_bytes': None, 'memory_scope': 'shared_unified', 'runtime_recommended_memory_bytes': 40200896512}, 'framework': {'name': 'torch', 'version': '2.9.0', 'cuda_version': None, 'hip_version': None}, 'packages': {'torch': '2.9.0', 'transformers': '4.57.1', 'safetensors': '0.6.2', 'tokenizers': '0.22.2'}, 'capacity_source': 'MPS recommended shared-memory budget'}, 'precision': 'fp32'}
+launched 2e9a5db8-a0a9-431e-b3e6-d2e8dbf6bc73
+outcome {'claimed': True, 'committed': True, 'status': JobAttempt.Status.SUCCEEDED} error
+saved real GPU report
+independent inference passed
+GPU inference matches CPU candidate reload
+expired lease stopped at committed step 1
+recovered exact baseline weights
+cancellation settled only one committed step
+saved failure and recovery evidence

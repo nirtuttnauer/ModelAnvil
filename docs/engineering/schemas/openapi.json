@@ -1,0 +1,6249 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "ModelAnvil Control Plane REST API",
+    "version": "1.0.0",
+    "description": "ModelAnvil multi-organization model development platform control plane API. Supports versioned datasets, durable jobs, worker protocols, budget governance, runners, and artifacts.",
+    "contact": {
+      "name": "ModelAnvil Engineering",
+      "url": "https://modelanvil.internal"
+    }
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "API v1 base path"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "System",
+      "description": "Liveness and readiness probes"
+    },
+    {
+      "name": "Identity",
+      "description": "Tenants, users, API keys, and memberships"
+    },
+    {
+      "name": "Hierarchy",
+      "description": "Teams, projects, and immutable project configurations"
+    },
+    {
+      "name": "Workers",
+      "description": "Execution worker registration, claims, heartbeats, results, and credentials"
+    },
+    {
+      "name": "Data Sources",
+      "description": "Data sources and immutable source snapshots"
+    },
+    {
+      "name": "Artifacts",
+      "description": "Artifact storage, staging, commit, and resumable multipart transfers"
+    },
+    {
+      "name": "Datasets",
+      "description": "Datasets, revisions, and preparation pipelines"
+    },
+    {
+      "name": "Jobs",
+      "description": "Workflow jobs, dependency execution, and job attempts"
+    },
+    {
+      "name": "Runners",
+      "description": "Runner manifests and adapter registry entries"
+    },
+    {
+      "name": "Budgets",
+      "description": "Budget policies, reservations, and resource usage metering"
+    },
+    {
+      "name": "Audit",
+      "description": "Immutable security and operational audit trail"
+    },
+    {
+      "name": "Models",
+      "description": "Model registry and immutable version lineage"
+    },
+    {
+      "name": "Training",
+      "description": "Training runs, checkpoints, and parameter sweeps"
+    },
+    {
+      "name": "Evaluations",
+      "description": "Evaluation suites, runs, and leaderboards"
+    },
+    {
+      "name": "Alignment",
+      "description": "DPO, reward modeling, and verifier RL"
+    },
+    {
+      "name": "RAG",
+      "description": "Knowledge bases, index versions, and hybrid retrieval"
+    },
+    {
+      "name": "Context Lab",
+      "description": "Context recipes, compilation, and stress experiments"
+    },
+    {
+      "name": "Releases",
+      "description": "Release candidates, gates, SBOMs, and serving endpoints"
+    },
+    {
+      "name": "Dataset Bank",
+      "description": "Curated open dataset presets and catalog"
+    }
+  ],
+  "paths": {
+    "/health/": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Liveness probe",
+        "description": "Lightweight liveness check that does not touch database or storage.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Service is live",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "service": {
+                      "type": "string",
+                      "example": "modelanvil"
+                    },
+                    "api": {
+                      "type": "string",
+                      "example": "v1"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "service",
+                    "api"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ready/": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Readiness probe",
+        "description": "Verifies that the control plane database is reachable.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Service is ready",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ready"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service degraded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "degraded"
+                    },
+                    "reason": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "reason"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "OpenAPI Specification",
+        "description": "Publishes this OpenAPI 3.1 contract in machine-readable JSON format.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "OpenAPI contract document",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tenants/": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "List tenants",
+        "responses": {
+          "200": {
+            "description": "List of tenants",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantPage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Create tenant",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TenantCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tenant created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tenant"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/tenants/{tenant_id}/": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Retrieve tenant",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TenantId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tenant details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tenant"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/users/": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "List users",
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserPage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Create user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/users/{id}/": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Retrieve user",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Remove user from tenant",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Membership removed"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api-keys/": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "List API keys",
+        "responses": {
+          "200": {
+            "description": "List of keys",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiKeyPage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Create API key",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiKeyCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Key created; secret shown once",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiKeyCreated"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/api-keys/{id}/": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Retrieve API key",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ApiKeyId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Key details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiKey"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Revoke API key",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ApiKeyId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Key revoked"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/memberships/": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "List tenant memberships",
+        "responses": {
+          "200": {
+            "description": "List of memberships",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembershipPage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Create tenant membership",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MembershipCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Membership created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Membership"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/memberships/{id}/": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Retrieve tenant membership",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/MembershipId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Membership details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Membership"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Update tenant membership",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/MembershipId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MembershipUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Membership updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Membership"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Delete tenant membership",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/MembershipId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Membership deleted"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/teams/": {
+      "get": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "List teams in current tenant",
+        "responses": {
+          "200": {
+            "description": "List of teams",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamPage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "Create team",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Team created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/teams/{id}/": {
+      "get": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "Retrieve team",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TeamId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "Delete team",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TeamId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Team deleted"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/projects/": {
+      "get": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "List projects in current tenant",
+        "responses": {
+          "200": {
+            "description": "List of projects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectPage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "Create project",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Project created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/projects/{id}/": {
+      "get": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "Retrieve project",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/team-memberships/": {
+      "get": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "List team memberships",
+        "responses": {
+          "200": {
+            "description": "List of team memberships",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamMembershipPage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "Grant role in team",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamMembershipCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Role granted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamMembership"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/team-memberships/{id}/": {
+      "get": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "Retrieve team membership",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TeamMembershipId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamMembership"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "Update role in team",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TeamMembershipId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamMembership"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "Revoke role in team",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TeamMembershipId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Role revoked"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/project-memberships/": {
+      "get": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "List project memberships",
+        "responses": {
+          "200": {
+            "description": "List of project memberships",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectMembershipPage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "Grant role in project",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectMembershipCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectMembership"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/project-memberships/{id}/": {
+      "get": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "Retrieve project membership",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectMembershipId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectMembership"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "Update role in project",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectMembershipId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectMembership"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "Revoke role in project",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectMembershipId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Role revoked"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/project-configs/": {
+      "get": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "List immutable project configuration revisions",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter by project UUID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of revisions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectConfigPage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "Append new immutable project configuration revision",
+        "description": "Appends a new monotonically incremented revision of project goals. Past revisions are immutable.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectConfigCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Revision created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectConfig"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/project-configs/{id}/": {
+      "get": {
+        "tags": [
+          "Hierarchy"
+        ],
+        "summary": "Retrieve immutable project configuration revision",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectConfigId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectConfig"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/artifacts/": {
+      "get": {
+        "tags": [
+          "Artifacts"
+        ],
+        "summary": "List artifacts",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactPage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Artifacts"
+        ],
+        "summary": "Register staging artifact",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArtifactRegister"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Artifact"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/artifacts/{artifact_id}/": {
+      "get": {
+        "tags": [
+          "Artifacts"
+        ],
+        "summary": "Retrieve artifact metadata",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ArtifactId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Artifact"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/artifacts/{artifact_id}/upload/": {
+      "post": {
+        "tags": [
+          "Artifacts"
+        ],
+        "summary": "Direct file upload to stage and commit an artifact",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ArtifactId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Artifact committed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Artifact"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/artifacts/{artifact_id}/download/": {
+      "get": {
+        "tags": [
+          "Artifacts"
+        ],
+        "summary": "Download committed artifact bytes",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ArtifactId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Binary payload",
+            "content": {
+              "application/octet-stream": {}
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/datasets/": {
+      "get": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "List datasets",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetPage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "Create dataset container",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DatasetCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dataset"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/datasets/{dataset_id}/": {
+      "get": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "Retrieve dataset details",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DatasetId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dataset"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/datasets/{dataset_id}/prepare/": {
+      "post": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "Execute preparation pipeline on input artifact and publish revision",
+        "description": "Performs pure kernel PII/quality/dedup/protected-set detection, group splits, and publishes a new revision.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DatasetId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DatasetPrepare"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetRevision"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/dataset-revisions/": {
+      "get": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "List dataset revisions",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetRevisionPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dataset-revisions/{revision_id}/": {
+      "get": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "Retrieve dataset revision metadata and report",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RevisionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetRevision"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/jobs/": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "List execution jobs",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobPage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Submit execution job",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/jobs/{job_id}/": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Retrieve job state",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/JobId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/jobs/{job_id}/cancel/": {
+      "post": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Request job cancellation",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/JobId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/job-attempts/": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "List job attempts",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobAttemptPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/budget-policies/": {
+      "get": {
+        "tags": [
+          "Budgets"
+        ],
+        "summary": "List budget policies",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetPolicyPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/budget-reservations/": {
+      "get": {
+        "tags": [
+          "Budgets"
+        ],
+        "summary": "List budget reservations",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetReservationPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usage-events/": {
+      "get": {
+        "tags": [
+          "Budgets"
+        ],
+        "summary": "List metered usage events",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageEventPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/audit/": {
+      "get": {
+        "tags": [
+          "Audit"
+        ],
+        "summary": "List immutable audit events",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditEventPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/models/": {
+      "get": {
+        "tags": [
+          "Models"
+        ],
+        "summary": "List models",
+        "operationId": "listModels",
+        "responses": {
+          "200": {
+            "description": "List of models"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Models"
+        ],
+        "summary": "Create model",
+        "operationId": "createModel",
+        "responses": {
+          "201": {
+            "description": "Created model"
+          }
+        }
+      }
+    },
+    "/models/{model_id}/": {
+      "get": {
+        "tags": [
+          "Models"
+        ],
+        "summary": "Get model",
+        "operationId": "getModel",
+        "parameters": [
+          {
+            "name": "model_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Model details"
+          }
+        }
+      }
+    },
+    "/model-versions/": {
+      "get": {
+        "tags": [
+          "Models"
+        ],
+        "summary": "List model versions",
+        "operationId": "listModelVersions",
+        "responses": {
+          "200": {
+            "description": "List of model versions"
+          }
+        }
+      }
+    },
+    "/training-runs/": {
+      "get": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "List training runs",
+        "operationId": "listTrainingRuns",
+        "responses": {
+          "200": {
+            "description": "List of training runs"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Launch training run",
+        "operationId": "launchTrainingRun",
+        "responses": {
+          "201": {
+            "description": "Created training run"
+          }
+        }
+      }
+    },
+    "/training-runs/{run_id}/train-steps/": {
+      "post": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Advance training run steps",
+        "operationId": "advanceTrainingRun",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Training step metrics"
+          }
+        }
+      }
+    },
+    "/training-runs/{run_id}/export/": {
+      "post": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Export loadable model bundle",
+        "operationId": "exportTrainingRunBundle",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Exported bundle"
+          }
+        }
+      }
+    },
+    "/evaluation-runs/": {
+      "get": {
+        "tags": [
+          "Evaluations"
+        ],
+        "summary": "List evaluation runs",
+        "operationId": "listEvaluationRuns",
+        "responses": {
+          "200": {
+            "description": "List of evaluation runs"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Evaluations"
+        ],
+        "summary": "Create pending evaluation configuration",
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid inputs"
+          },
+          "409": {
+            "description": "Workflow state or revision conflict"
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvaluationRunInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/evaluation-runs/leaderboard/": {
+      "get": {
+        "tags": [
+          "Evaluations"
+        ],
+        "summary": "Get aggregate evaluation leaderboard",
+        "operationId": "getEvaluationLeaderboard",
+        "responses": {
+          "200": {
+            "description": "Leaderboard metrics"
+          }
+        }
+      }
+    },
+    "/alignment-runs/": {
+      "get": {
+        "tags": [
+          "Alignment"
+        ],
+        "summary": "List alignment runs",
+        "operationId": "listAlignmentRuns",
+        "responses": {
+          "200": {
+            "description": "List of alignment runs"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Alignment"
+        ],
+        "summary": "Create a validated alignment plan from pinned preferences and model weights",
+        "responses": {
+          "201": {
+            "description": "Pending plan; optimizer execution is explicit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlignmentRun"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid inputs"
+          },
+          "409": {
+            "description": "Workflow state or revision conflict"
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlignmentRunInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/knowledge-bases/": {
+      "get": {
+        "tags": [
+          "RAG"
+        ],
+        "summary": "List knowledge bases",
+        "operationId": "listKnowledgeBases",
+        "responses": {
+          "200": {
+            "description": "List of knowledge bases"
+          }
+        }
+      }
+    },
+    "/index-versions/{index_id}/query/": {
+      "post": {
+        "tags": [
+          "RAG"
+        ],
+        "summary": "Execute hybrid RAG retrieval query",
+        "operationId": "queryIndexVersion",
+        "parameters": [
+          {
+            "name": "index_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieved chunks"
+          }
+        }
+      }
+    },
+    "/context-recipes/": {
+      "get": {
+        "tags": [
+          "Context Lab"
+        ],
+        "summary": "List context recipes",
+        "operationId": "listContextRecipes",
+        "responses": {
+          "200": {
+            "description": "List of context recipes"
+          }
+        }
+      },
+      "post": {
+        "summary": "Atomically save a recipe and optional first version",
+        "tags": [
+          "Context Lab"
+        ],
+        "operationId": "createContextRecipe",
+        "responses": {
+          "201": {
+            "description": "Successful operation"
+          },
+          "400": {
+            "description": "Invalid request or unsupported executor"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this scope"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "initial_version": {
+                    "$ref": "#/components/schemas/ContextVersionInput"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/context-recipe-versions/{recipe_version_id}/compile/": {
+      "post": {
+        "tags": [
+          "Context Lab"
+        ],
+        "summary": "Compile context recipe prompt",
+        "operationId": "compileContextRecipe",
+        "parameters": [
+          {
+            "name": "recipe_version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Compiled prompt"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "variables": {
+                    "type": "object",
+                    "maxProperties": 100,
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "description": "At most 500,000 text characters; values override saved content by block key."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/releases/": {
+      "get": {
+        "tags": [
+          "Releases"
+        ],
+        "summary": "List releases",
+        "operationId": "listReleases",
+        "responses": {
+          "200": {
+            "description": "List of releases"
+          }
+        }
+      }
+    },
+    "/release-versions/{release_version_id}/sbom/": {
+      "get": {
+        "tags": [
+          "Releases"
+        ],
+        "summary": "Get SPDX 2.3 Software Bill of Materials (SBOM)",
+        "operationId": "getReleaseSBOM",
+        "parameters": [
+          {
+            "name": "release_version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SPDX SBOM document"
+          }
+        }
+      },
+      "post": {
+        "summary": "Commit an SPDX document artifact and return a protected download path",
+        "tags": [
+          "Releases"
+        ],
+        "operationId": "saveReleaseSbom",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "400": {
+            "description": "Invalid request or unsupported executor"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this scope"
+          }
+        },
+        "parameters": [
+          {
+            "name": "release_version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/serving-endpoints/": {
+      "get": {
+        "tags": [
+          "Releases"
+        ],
+        "summary": "List serving endpoints",
+        "operationId": "listServingEndpoints",
+        "responses": {
+          "200": {
+            "description": "List of serving endpoints"
+          }
+        }
+      }
+    },
+    "/serving-endpoints/{endpoint_id}/promote/": {
+      "post": {
+        "tags": [
+          "Releases"
+        ],
+        "summary": "Promote serving endpoint to release version",
+        "operationId": "promoteServingEndpoint",
+        "parameters": [
+          {
+            "name": "endpoint_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Promoted deployment"
+          }
+        }
+      }
+    },
+    "/serving-endpoints/{endpoint_id}/rollback/": {
+      "post": {
+        "tags": [
+          "Releases"
+        ],
+        "summary": "Rollback serving endpoint to previous deployment revision",
+        "operationId": "rollbackServingEndpoint",
+        "parameters": [
+          {
+            "name": "endpoint_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rolled back deployment"
+          }
+        }
+      }
+    },
+    "/dataset-bank/": {
+      "get": {
+        "tags": [
+          "Dataset Bank"
+        ],
+        "summary": "Search curated open dataset bank",
+        "operationId": "searchDatasetBank",
+        "responses": {
+          "200": {
+            "description": "List of open dataset presets"
+          }
+        }
+      }
+    },
+    "/labeling-campaigns/": {
+      "get": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "List labeling-campaigns",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/LabelingCampaign"
+                      }
+                    },
+                    "next": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "previous": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "results"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "Create a campaign and its immutable schema/rubric",
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabelingCampaign"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid inputs"
+          },
+          "409": {
+            "description": "Workflow state or revision conflict"
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelingCampaignSetup"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/labeling-campaigns/{campaign_id}/": {
+      "get": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "Retrieve labeling-campaigns",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabelingCampaign"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "parameters": [
+          {
+            "name": "campaign_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/labeling-batches/": {
+      "get": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "List labeling-batches",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/LabelingBatch"
+                      }
+                    },
+                    "next": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "previous": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "results"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        }
+      }
+    },
+    "/labeling-batches/{batch_id}/": {
+      "get": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "Retrieve labeling-batches",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabelingBatch"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "parameters": [
+          {
+            "name": "batch_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/annotation-tasks/": {
+      "get": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "List annotation-tasks",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AnnotationTask"
+                      }
+                    },
+                    "next": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "previous": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "results"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        }
+      }
+    },
+    "/annotation-tasks/{task_id}/": {
+      "get": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "Retrieve annotation-tasks",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnnotationTask"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/annotation-snapshots/": {
+      "get": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "List annotation-snapshots",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AnnotationSnapshot"
+                      }
+                    },
+                    "next": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "previous": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "results"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        }
+      }
+    },
+    "/annotation-snapshots/{snapshot_id}/": {
+      "get": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "Retrieve annotation-snapshots",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnnotationSnapshot"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "parameters": [
+          {
+            "name": "snapshot_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/labeling-campaigns/{campaign_id}/lifecycle/": {
+      "post": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "Pause or resume campaign",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabelingCampaign"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid inputs"
+          },
+          "409": {
+            "description": "Workflow state or revision conflict"
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "parameters": [
+          {
+            "name": "campaign_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelingLifecycleInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/labeling-campaigns/{campaign_id}/batches/": {
+      "post": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "Start eligible source batch with pinned draft provenance",
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabelingBatch"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid inputs"
+          },
+          "409": {
+            "description": "Workflow state or revision conflict"
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "parameters": [
+          {
+            "name": "campaign_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelingBatchInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/labeling-batches/{batch_id}/tasks/": {
+      "get": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "List tasks in this batch",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AnnotationTask"
+                      }
+                    },
+                    "next": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "previous": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "results"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "parameters": [
+          {
+            "name": "batch_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/labeling-batches/{batch_id}/close/": {
+      "post": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "Freeze cumulative approved snapshot (idempotent)",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnnotationSnapshot"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid inputs"
+          },
+          "409": {
+            "description": "Workflow state or revision conflict"
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "parameters": [
+          {
+            "name": "batch_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/annotation-tasks/{task_id}/review/": {
+      "post": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "Append review with optimistic revision check",
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnnotationTask"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid inputs"
+          },
+          "409": {
+            "description": "Workflow state or revision conflict"
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnnotationReviewInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/annotation-tasks/{task_id}/history/": {
+      "get": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "List immutable review history",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AnnotationRecord"
+                      }
+                    },
+                    "next": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "previous": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "results"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/annotation-snapshots/{snapshot_id}/export/": {
+      "get": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "Export frozen approved labels",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnnotationSnapshotExport"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "parameters": [
+          {
+            "name": "snapshot_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/worker-pools/": {
+      "get": {
+        "tags": [
+          "Infrastructure"
+        ],
+        "summary": "List worker-pools",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/WorkerPool"
+                      }
+                    },
+                    "next": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "previous": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "results"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        }
+      }
+    },
+    "/worker-inventory/": {
+      "get": {
+        "tags": [
+          "Infrastructure"
+        ],
+        "summary": "List worker-inventory",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/WorkerInventory"
+                      }
+                    },
+                    "next": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "previous": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "results"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        }
+      }
+    },
+    "/evaluation-suite-versions/": {
+      "get": {
+        "tags": [
+          "Evaluations"
+        ],
+        "summary": "List evaluation-suite-versions",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EvaluationSuiteVersion"
+                      }
+                    },
+                    "next": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "previous": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "results"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        }
+      }
+    },
+    "/evaluation-runs/{run_id}/cases/": {
+      "get": {
+        "tags": [
+          "Evaluations"
+        ],
+        "summary": "List case-level results",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EvaluationCaseResult"
+                      }
+                    },
+                    "next": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "previous": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "results"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/knowledge-bases/{knowledge_base_id}/index/": {
+      "post": {
+        "summary": "Import local document text and build an immutable lexical index",
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "buildKnowledgeIndex",
+        "responses": {
+          "201": {
+            "description": "Successful operation"
+          },
+          "400": {
+            "description": "Invalid request or unsupported executor"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this scope"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KnowledgeIndexInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "knowledge_base_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/context-recipe-versions/": {
+      "post": {
+        "summary": "Save an immutable recipe revision with ordered blocks",
+        "tags": [
+          "Context Lab"
+        ],
+        "operationId": "createContextRecipeVersion",
+        "responses": {
+          "201": {
+            "description": "Successful operation"
+          },
+          "400": {
+            "description": "Invalid request or unsupported executor"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this scope"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "recipe",
+                  "blocks"
+                ],
+                "properties": {
+                  "model_limit_tokens": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1000000,
+                    "default": 4096
+                  },
+                  "output_reserve_tokens": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 1000000,
+                    "default": 512,
+                    "description": "Must be less than the model limit."
+                  },
+                  "budget_policy": {
+                    "type": "string",
+                    "enum": [
+                      "fail_on_overflow",
+                      "trim_lowest_priority"
+                    ],
+                    "default": "trim_lowest_priority"
+                  },
+                  "blocks": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "items": {
+                      "$ref": "#/components/schemas/ContextBlockInput"
+                    },
+                    "description": "Unique block keys; up to 500,000 total content characters."
+                  },
+                  "recipe": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "revision_no": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "default": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/model-versions/initialize-cpu/": {
+      "post": {
+        "summary": "Initialize reproducible untrained CPU character model weights",
+        "tags": [
+          "Models"
+        ],
+        "operationId": "initializeCpuModel",
+        "responses": {
+          "201": {
+            "description": "Successful operation"
+          },
+          "400": {
+            "description": "Invalid request or unsupported executor"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this scope"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 180
+                  },
+                  "seed": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 2147483647,
+                    "default": 42
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/evaluation-suites/register-cpu/": {
+      "post": {
+        "summary": "Atomically register a bounded local evaluation suite and first pin",
+        "tags": [
+          "Evaluations"
+        ],
+        "operationId": "registerCpuEvaluationSuite",
+        "responses": {
+          "201": {
+            "description": "Successful operation"
+          },
+          "400": {
+            "description": "Invalid request or unsupported executor"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this scope"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocalEvaluationSuiteInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/evaluation-runs/{run_id}/execute/": {
+      "post": {
+        "summary": "Evaluate checksum-verified committed CPU character weights and optional baseline",
+        "tags": [
+          "Evaluations"
+        ],
+        "operationId": "executeCpuEvaluation",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "400": {
+            "description": "Invalid request or unsupported executor"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this scope"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "max_tokens": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 32,
+                    "default": 8
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/alignment-runs/{run_id}/execute/": {
+      "post": {
+        "tags": [
+          "Alignment"
+        ],
+        "summary": "Execute bounded CPU DPO, reward, PPO or verifier alignment",
+        "operationId": "executeAlignmentRun",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Serialized run after actual execution; completed replay returns the existing verified candidate. Cancelled execution retains committed progress and no later candidate is published.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlignmentRun"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid inputs, changed/corrupt artifacts, unsupported model or workflow state, or budget refusal"
+          },
+          "403": {
+            "description": "Engineer role required"
+          },
+          "404": {
+            "description": "Run unavailable in tenant/project scope"
+          }
+        }
+      }
+    },
+    "/alignment-runs/{run_id}/cancel/": {
+      "post": {
+        "tags": [
+          "Alignment"
+        ],
+        "summary": "Fence alignment execution and settle committed optimizer steps",
+        "operationId": "cancelAlignmentRun",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Terminal serialized run. Pending cancellation records no optimizer work; running cancellation invalidates the execution token and settles committed progress.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlignmentRun"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid inputs, changed/corrupt artifacts, unsupported model or workflow state, or budget refusal"
+          },
+          "403": {
+            "description": "Engineer role required"
+          },
+          "404": {
+            "description": "Run unavailable in tenant/project scope"
+          }
+        }
+      }
+    },
+    "/alignment-runs/register-preferences/": {
+      "post": {
+        "tags": [
+          "Alignment"
+        ],
+        "summary": "Commit a checksummed preference JSON artifact",
+        "operationId": "registerAlignmentPreferences",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "samples"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "samples": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 32,
+                    "items": {
+                      "$ref": "#/components/schemas/PreferencePair"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Committed tenant/project preference artifact",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreferenceArtifactSummary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid preference data or unavailable filesystem storage"
+          },
+          "403": {
+            "description": "Engineer role required"
+          }
+        }
+      }
+    },
+    "/alignment-runs/preference-artifacts/": {
+      "get": {
+        "tags": [
+          "Alignment"
+        ],
+        "summary": "List accessible committed alignment preference artifacts",
+        "operationId": "listAlignmentPreferenceArtifacts",
+        "responses": {
+          "200": {
+            "description": "Cursor-paginated committed preference summaries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PreferenceArtifactSummary"
+                      }
+                    },
+                    "next": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "previous": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Viewer role required"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "mkv_token",
+        "description": "Tenant API key prefixed with mkv_"
+      }
+    },
+    "parameters": {
+      "TenantId": {
+        "name": "tenant_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "UserId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "ApiKeyId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "MembershipId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "TeamId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "ProjectId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "TeamMembershipId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "ProjectMembershipId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "ProjectConfigId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "ArtifactId": {
+        "name": "artifact_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "DatasetId": {
+        "name": "dataset_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "RevisionId": {
+        "name": "revision_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "JobId": {
+        "name": "job_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "responses": {
+      "ErrorResponse": {
+        "description": "Standard error envelope",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiErrorEnvelope"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Resource not found or concealed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiErrorEnvelope"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Action forbidden under RBAC",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiErrorEnvelope"
+            }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "Resource or state conflict",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiErrorEnvelope"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ApiErrorEnvelope": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "example": "validation_failed"
+              },
+              "message": {
+                "type": "string",
+                "example": "Request validation failed."
+              },
+              "details": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "request_id": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "Tenant": {
+        "type": "object",
+        "properties": {
+          "tenant_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "suspended",
+              "deleted"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "slug",
+          "name",
+          "status",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "TenantCreate": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "slug",
+          "name"
+        ]
+      },
+      "TenantPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "name": {
+            "type": "string"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "name",
+          "is_active",
+          "created_at"
+        ]
+      },
+      "UserCreate": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "UserPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "ApiKey": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "owner",
+              "admin",
+              "manager",
+              "engineer",
+              "viewer",
+              "worker"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_used_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "is_active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "role",
+          "created_at",
+          "is_active"
+        ]
+      },
+      "ApiKeyCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "owner",
+              "admin",
+              "manager",
+              "engineer",
+              "viewer",
+              "worker"
+            ],
+            "default": "engineer"
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ApiKeyCreated": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiKey"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "secret": {
+                "type": "string",
+                "description": "Plaintext secret token, returned only at creation"
+              }
+            },
+            "required": [
+              "secret"
+            ]
+          }
+        ]
+      },
+      "ApiKeyPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "Membership": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenant": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "owner",
+              "admin",
+              "manager",
+              "engineer",
+              "viewer",
+              "worker"
+            ]
+          },
+          "role_rank": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "tenant",
+          "user",
+          "role",
+          "role_rank",
+          "created_at"
+        ]
+      },
+      "MembershipCreate": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "owner",
+              "admin",
+              "manager",
+              "engineer",
+              "viewer",
+              "worker"
+            ]
+          }
+        },
+        "required": [
+          "user",
+          "role"
+        ]
+      },
+      "MembershipUpdate": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "owner",
+              "admin",
+              "manager",
+              "engineer",
+              "viewer",
+              "worker"
+            ]
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "MembershipPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "Team": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "slug": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name"
+        ]
+      },
+      "TeamCreate": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "default": ""
+          }
+        },
+        "required": [
+          "slug",
+          "name"
+        ]
+      },
+      "TeamPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "Project": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "team": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "slug": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "team",
+          "slug",
+          "name"
+        ]
+      },
+      "ProjectCreate": {
+        "type": "object",
+        "properties": {
+          "team": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "slug": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "default": ""
+          }
+        },
+        "required": [
+          "team",
+          "slug",
+          "name"
+        ]
+      },
+      "ProjectPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "TeamMembership": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "team": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "role": {
+            "type": "string"
+          },
+          "role_rank": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "team",
+          "user",
+          "role"
+        ]
+      },
+      "TeamMembershipCreate": {
+        "type": "object",
+        "properties": {
+          "team": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "team",
+          "user",
+          "role"
+        ]
+      },
+      "TeamMembershipPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "ProjectMembership": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "project": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "role": {
+            "type": "string"
+          },
+          "role_rank": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "project",
+          "user",
+          "role"
+        ]
+      },
+      "ProjectMembershipCreate": {
+        "type": "object",
+        "properties": {
+          "project": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "user": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project",
+          "user",
+          "role"
+        ]
+      },
+      "ProjectMembershipPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "RoleUpdate": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "ProjectConfig": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "project": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision_no": {
+            "type": "integer"
+          },
+          "goals": {
+            "type": "object"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "created_by": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "id",
+          "project",
+          "revision_no",
+          "goals"
+        ]
+      },
+      "ProjectConfigCreate": {
+        "type": "object",
+        "properties": {
+          "project": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "goals": {
+            "type": "object",
+            "default": {}
+          },
+          "notes": {
+            "type": "string",
+            "default": ""
+          }
+        },
+        "required": [
+          "project"
+        ]
+      },
+      "ProjectConfigPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "Artifact": {
+        "type": "object",
+        "properties": {
+          "artifact_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "storage_location_id": {
+            "type": "string"
+          },
+          "object_key": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "byte_size": {
+            "type": "integer"
+          },
+          "media_type": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "staging",
+              "committed",
+              "failed",
+              "deleted"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "artifact_id",
+          "sha256",
+          "byte_size",
+          "state"
+        ]
+      },
+      "ArtifactRegister": {
+        "type": "object",
+        "properties": {
+          "storage_location_id": {
+            "type": "string",
+            "default": "local"
+          },
+          "object_key": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "byte_size": {
+            "type": "integer"
+          },
+          "media_type": {
+            "type": "string",
+            "default": "application/x-ndjson"
+          }
+        },
+        "required": [
+          "object_key",
+          "sha256",
+          "byte_size"
+        ]
+      },
+      "ArtifactPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "Dataset": {
+        "type": "object",
+        "properties": {
+          "dataset_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "current_revision": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "dataset_id",
+          "name",
+          "metadata",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "DatasetCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "default": ""
+          },
+          "metadata": {
+            "type": "object",
+            "default": {}
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "DatasetPrepare": {
+        "type": "object",
+        "properties": {
+          "input_artifact_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "split_seed": {
+            "type": "string",
+            "default": "0",
+            "maxLength": 1024
+          },
+          "validation_percent": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 0,
+            "maximum": 99
+          },
+          "test_percent": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 0,
+            "maximum": 99
+          },
+          "detect_pii": {
+            "type": "boolean",
+            "default": false
+          },
+          "detect_quality": {
+            "type": "boolean",
+            "default": false
+          },
+          "detect_duplicates": {
+            "type": "boolean",
+            "default": false
+          },
+          "detect_protected_eval": {
+            "type": "boolean",
+            "default": false
+          },
+          "drop_report": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "required": [
+          "input_artifact_id"
+        ]
+      },
+      "DatasetPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "DatasetRevision": {
+        "type": "object",
+        "properties": {
+          "revision_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dataset": {
+            "type": "integer"
+          },
+          "revision_no": {
+            "type": "integer"
+          },
+          "schema_version": {
+            "type": "string"
+          },
+          "manifest_digest": {
+            "type": "string"
+          },
+          "manifest_artifact": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "recipe_digest": {
+            "type": "string"
+          },
+          "source_snapshots": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "row_count": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published",
+              "failed"
+            ]
+          },
+          "published_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "revision_id",
+          "dataset",
+          "revision_no",
+          "schema_version",
+          "manifest_digest",
+          "recipe_digest",
+          "state",
+          "metadata"
+        ]
+      },
+      "DatasetRevisionPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "Job": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "validating",
+              "blocked",
+              "queued",
+              "claimed",
+              "running",
+              "checkpointing",
+              "succeeded",
+              "failed",
+              "cancelled"
+            ]
+          },
+          "desired_action": {
+            "type": "string",
+            "enum": [
+              "run",
+              "cancel",
+              "pause"
+            ]
+          },
+          "input_digest": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "job_id",
+          "name",
+          "stage",
+          "status",
+          "desired_action",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "JobCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "name",
+          "stage"
+        ]
+      },
+      "JobPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "JobAttempt": {
+        "type": "object",
+        "properties": {
+          "attempt_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "job": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "attempt_no": {
+            "type": "integer"
+          },
+          "worker_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finished_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "attempt_id",
+          "job",
+          "attempt_no",
+          "status",
+          "started_at"
+        ]
+      },
+      "JobAttemptPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "BudgetPolicy": {
+        "type": "object",
+        "properties": {
+          "policy_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "tenant_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "max_compute_credits": {
+            "type": "number"
+          },
+          "max_storage_bytes": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "policy_id",
+          "name"
+        ]
+      },
+      "BudgetPolicyPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "BudgetReservation": {
+        "type": "object",
+        "properties": {
+          "reservation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "policy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reserved_amount": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "reservation_id",
+          "reserved_amount",
+          "status"
+        ]
+      },
+      "BudgetReservationPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "UsageEvent": {
+        "type": "object",
+        "properties": {
+          "usage_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenant_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "resource_type": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "recorded_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "usage_id",
+          "resource_type",
+          "quantity",
+          "recorded_at"
+        ]
+      },
+      "UsageEventPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "AuditEvent": {
+        "type": "object",
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenant_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "actor": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "target_type": {
+            "type": "string"
+          },
+          "target_id": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "details": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "event_id",
+          "action",
+          "timestamp"
+        ]
+      },
+      "AuditEventPage": {
+        "$ref": "#/components/schemas/Page"
+      },
+      "Page": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "next": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "previous": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "results"
+        ]
+      },
+      "Model": {
+        "type": "object",
+        "required": [
+          "model_id",
+          "name"
+        ],
+        "properties": {
+          "model_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "intended_tasks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ModelVersion": {
+        "type": "object",
+        "required": [
+          "model_version_id",
+          "model",
+          "revision_no"
+        ],
+        "properties": {
+          "model_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "model": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision_no": {
+            "type": "integer"
+          },
+          "architecture_ref": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "qualified",
+              "rejected",
+              "archived"
+            ]
+          },
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "readOnly": true,
+            "description": "Tenant-scoped relation record ID for training inputs; resource URLs use model_version_id."
+          }
+        }
+      },
+      "TrainingRun": {
+        "type": "object",
+        "required": [
+          "run_id",
+          "recipe_type",
+          "status"
+        ],
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recipe_type": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "running",
+              "completed",
+              "failed",
+              "cancelled"
+            ]
+          },
+          "current_step": {
+            "type": "integer"
+          },
+          "total_steps": {
+            "type": "integer"
+          },
+          "latest_loss": {
+            "type": "number"
+          }
+        }
+      },
+      "TokenizerVersion": {
+        "type": "object",
+        "required": [
+          "id",
+          "tokenizer_id",
+          "name",
+          "revision_no"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "readOnly": true
+          },
+          "tokenizer_id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "revision_no": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "vocabulary_size": {
+            "type": "integer"
+          }
+        }
+      },
+      "LabelSchema": {
+        "type": "object",
+        "properties": {
+          "schema_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "classification",
+              "text_generation",
+              "preference_ranking",
+              "ner_span",
+              "rubric_scoring"
+            ]
+          },
+          "classes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "specification": {
+            "type": "object"
+          }
+        }
+      },
+      "LabelingBatch": {
+        "type": "object",
+        "properties": {
+          "batch_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cycle_no": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "sample_count": {
+            "type": "integer"
+          },
+          "reviewed_count": {
+            "type": "integer"
+          },
+          "approved_count": {
+            "type": "integer"
+          },
+          "snapshot_manifest_digest": {
+            "type": "string"
+          },
+          "drafting_model_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AnnotationSnapshot": {
+        "type": "object",
+        "properties": {
+          "snapshot_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cycle_no": {
+            "type": "integer"
+          },
+          "item_count": {
+            "type": "integer"
+          },
+          "manifest_digest": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "LabelingCampaign": {
+        "type": "object",
+        "properties": {
+          "campaign_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "seed_mode": {
+            "type": "string"
+          },
+          "current_cycle": {
+            "type": "integer"
+          },
+          "max_cycles": {
+            "type": "integer"
+          },
+          "budget_limit_dollars": {
+            "type": "number"
+          },
+          "accumulated_cost_dollars": {
+            "type": "number"
+          },
+          "active_model_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "held_out_audit_digest": {
+            "type": "string"
+          },
+          "configuration": {
+            "type": "object"
+          },
+          "label_schema": {
+            "$ref": "#/components/schemas/LabelSchema"
+          },
+          "rubric": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "batches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabelingBatch"
+            }
+          },
+          "snapshots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnnotationSnapshot"
+            }
+          }
+        }
+      },
+      "LabelingCampaignSetup": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "classification",
+              "text_generation",
+              "preference_ranking",
+              "ner_span",
+              "rubric_scoring"
+            ]
+          },
+          "classes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "guidelines": {
+            "type": "string"
+          },
+          "seed_mode": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "existing_model"
+            ],
+            "default": "manual"
+          },
+          "drafting_model_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "max_cycles": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 3
+          },
+          "budget_limit_dollars": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000,
+            "default": 100
+          },
+          "audit_sample_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "kind"
+        ]
+      },
+      "AnnotationRecord": {
+        "type": "object",
+        "properties": {
+          "record_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision_no": {
+            "type": "integer"
+          },
+          "reviewer_id": {
+            "type": "string"
+          },
+          "original_prediction": {
+            "type": "object"
+          },
+          "human_label": {
+            "type": "object"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "preference_choice": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AnnotationTask": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sample_ref": {
+            "type": "string"
+          },
+          "content": {
+            "type": "object"
+          },
+          "status": {
+            "type": "string"
+          },
+          "latest_review": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AnnotationRecord"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "AnnotationReviewInput": {
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "accepted_without_edit",
+              "corrected",
+              "rejected",
+              "skipped"
+            ]
+          },
+          "human_label": {
+            "type": "object"
+          },
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "decision",
+          "expected_revision"
+        ]
+      },
+      "LabelingBatchInput": {
+        "type": "object",
+        "properties": {
+          "samples": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 500,
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "maxLength": 128
+                },
+                "text": {
+                  "type": "string"
+                },
+                "prompt": {
+                  "type": "string"
+                },
+                "input": {},
+                "candidate_a": {
+                  "type": "string"
+                },
+                "candidate_b": {
+                  "type": "string"
+                },
+                "draft_prediction": {
+                  "type": "object"
+                }
+              },
+              "required": [
+                "id"
+              ]
+            }
+          }
+        },
+        "required": [
+          "samples"
+        ]
+      },
+      "WorkerPool": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "queue_name": {
+            "type": "string"
+          },
+          "result_egress": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          }
+        }
+      },
+      "WorkerInventory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "integer"
+          },
+          "pool_name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "slots": {
+            "type": "integer"
+          },
+          "capabilities": {
+            "type": "object"
+          },
+          "last_heartbeat_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string"
+          }
+        }
+      },
+      "EvaluationSuiteVersion": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "suite_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "suite_name": {
+            "type": "string"
+          },
+          "revision_no": {
+            "type": "integer"
+          },
+          "cases_count": {
+            "type": "integer"
+          },
+          "scorer_type": {
+            "type": "string"
+          },
+          "protected_role": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          }
+        }
+      },
+      "EvaluationCaseResult": {
+        "type": "object",
+        "properties": {
+          "result_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "case_id": {
+            "type": "string"
+          },
+          "input_prompt": {
+            "type": "string"
+          },
+          "candidate_output": {
+            "type": "string"
+          },
+          "expected_output": {
+            "type": "string"
+          },
+          "score": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "failure_reason": {
+            "type": "string"
+          },
+          "slice_name": {
+            "type": "string"
+          }
+        }
+      },
+      "EvaluationRunInput": {
+        "type": "object",
+        "properties": {
+          "suite_version": {
+            "type": "integer"
+          },
+          "candidate_model_version": {
+            "type": "integer"
+          },
+          "baseline_model_version": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "suite_version",
+          "candidate_model_version"
+        ]
+      },
+      "AlignmentRunInput": {
+        "type": "object",
+        "properties": {
+          "algorithm": {
+            "type": "string",
+            "enum": [
+              "dpo",
+              "reward_model",
+              "ppo_rlhf",
+              "verifier_rl"
+            ]
+          },
+          "policy_model_version": {
+            "type": "integer"
+          },
+          "reference_model_version": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "reward_model_version": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "dataset_manifest_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "Server-derived from actual pinned artifact bytes; required only for legacy digest-only saved plans."
+          },
+          "held_out_validation_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "Server-derived from actual pinned artifact bytes; required only for legacy digest-only saved plans."
+          },
+          "hyperparameters": {
+            "$ref": "#/components/schemas/AlignmentHyperparameters"
+          },
+          "verifier_spec": {
+            "$ref": "#/components/schemas/AlignmentVerifierSpec"
+          },
+          "total_steps": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "train_dataset_artifact": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "description": "Committed, accessible filesystem preference artifact, checked by digest and size. Training and held-out prompts must be disjoint."
+          },
+          "held_out_dataset_artifact": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "description": "Committed, accessible filesystem preference artifact, checked by digest and size. Training and held-out prompts must be disjoint."
+          }
+        },
+        "required": [
+          "algorithm",
+          "policy_model_version"
+        ],
+        "description": "Pending alignment plan. Actual execution requires both committed preference artifact UUIDs. Digest-only legacy plans are readable but cannot execute. DPO and PPO require a reference; PPO additionally requires an actual serialized reward head.",
+        "anyOf": [
+          {
+            "required": [
+              "train_dataset_artifact",
+              "held_out_dataset_artifact"
+            ],
+            "properties": {
+              "train_dataset_artifact": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "held_out_dataset_artifact": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          },
+          {
+            "required": [
+              "dataset_manifest_digest",
+              "held_out_validation_digest"
+            ],
+            "properties": {
+              "train_dataset_artifact": {
+                "type": "null"
+              },
+              "held_out_dataset_artifact": {
+                "type": "null"
+              }
+            }
+          }
+        ],
+        "allOf": [
+          {
+            "if": {
+              "allOf": [
+                {
+                  "required": [
+                    "train_dataset_artifact",
+                    "held_out_dataset_artifact"
+                  ]
+                },
+                {
+                  "properties": {
+                    "algorithm": {
+                      "const": "dpo"
+                    }
+                  }
+                }
+              ]
+            },
+            "then": {
+              "required": [
+                "reference_model_version"
+              ],
+              "properties": {
+                "reference_model_version": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "allOf": [
+                {
+                  "required": [
+                    "train_dataset_artifact",
+                    "held_out_dataset_artifact"
+                  ]
+                },
+                {
+                  "properties": {
+                    "algorithm": {
+                      "const": "ppo_rlhf"
+                    }
+                  }
+                }
+              ]
+            },
+            "then": {
+              "required": [
+                "reference_model_version",
+                "reward_model_version"
+              ],
+              "properties": {
+                "reference_model_version": {
+                  "type": "integer"
+                },
+                "reward_model_version": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "allOf": [
+                {
+                  "required": [
+                    "train_dataset_artifact",
+                    "held_out_dataset_artifact"
+                  ]
+                },
+                {
+                  "properties": {
+                    "algorithm": {
+                      "const": "verifier_rl"
+                    }
+                  }
+                }
+              ]
+            },
+            "then": {
+              "required": [
+                "verifier_spec"
+              ],
+              "properties": {
+                "verifier_spec": {
+                  "required": [
+                    "type"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "LabelingLifecycleInput": {
+        "type": "object",
+        "properties": {
+          "transition": {
+            "type": "string",
+            "enum": [
+              "pause",
+              "resume"
+            ]
+          }
+        },
+        "required": [
+          "transition"
+        ]
+      },
+      "AnnotationSnapshotExport": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AnnotationSnapshot"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ContextBlockInput": {
+        "type": "object",
+        "required": [
+          "block_key",
+          "block_type"
+        ],
+        "properties": {
+          "block_key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "block_type": {
+            "type": "string",
+            "enum": [
+              "instruction",
+              "user_query",
+              "examples",
+              "evidence",
+              "history",
+              "memory",
+              "tool_result"
+            ]
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "system",
+              "user",
+              "assistant",
+              "tool"
+            ],
+            "default": "system"
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10,
+            "default": 1
+          },
+          "order": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0
+          },
+          "content_template": {
+            "type": "string",
+            "maxLength": 200000
+          },
+          "max_tokens": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 1000000,
+            "description": "Estimated content token cap before serialization; role wrappers are included in the final prompt allocation."
+          }
+        }
+      },
+      "ContextVersionInput": {
+        "type": "object",
+        "required": [
+          "blocks"
+        ],
+        "properties": {
+          "model_limit_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000,
+            "default": 4096
+          },
+          "output_reserve_tokens": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000,
+            "default": 512,
+            "description": "Must be less than the model limit."
+          },
+          "budget_policy": {
+            "type": "string",
+            "enum": [
+              "fail_on_overflow",
+              "trim_lowest_priority"
+            ],
+            "default": "trim_lowest_priority"
+          },
+          "blocks": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/ContextBlockInput"
+            },
+            "description": "Unique block keys; up to 500,000 total content characters."
+          }
+        }
+      },
+      "KnowledgeIndexInput": {
+        "type": "object",
+        "required": [
+          "documents"
+        ],
+        "properties": {
+          "documents": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "items": {
+              "type": "object",
+              "required": [
+                "title",
+                "content"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                },
+                "content": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500000
+                },
+                "source_uri": {
+                  "type": "string",
+                  "maxLength": 512,
+                  "description": "Stable local source identifier; never fetched from the network."
+                }
+              }
+            },
+            "description": "At most 2 MB UTF-8 text and 10,000 chunks per import."
+          },
+          "chunk_size": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 10000,
+            "default": 1200
+          },
+          "chunk_overlap": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000,
+            "default": 100,
+            "description": "At most half the chunk size."
+          }
+        }
+      },
+      "LocalEvaluationSuiteInput": {
+        "type": "object",
+        "required": [
+          "name",
+          "cases"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "cases": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 64,
+            "items": {
+              "type": "object",
+              "required": [
+                "case_id",
+                "input_prompt",
+                "expected_output"
+              ],
+              "properties": {
+                "case_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "input_prompt": {
+                  "type": "string",
+                  "maxLength": 1024
+                },
+                "expected_output": {
+                  "type": "string",
+                  "maxLength": 4096
+                },
+                "slice": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64,
+                  "default": "all"
+                }
+              }
+            }
+          },
+          "scorer_type": {
+            "type": "string",
+            "enum": [
+              "exact_match",
+              "substring",
+              "numeric_tolerance"
+            ],
+            "default": "exact_match"
+          },
+          "scorer_config": {
+            "type": "object"
+          }
+        }
+      },
+      "AlignmentHyperparameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Finite numeric values only; booleans are rejected. beta is DPO-only. KL/clip/rollout/value knobs are PPO/verifier-only. Unknown or recipe-incompatible knobs are rejected. budget_policy_id selects an enabled tenant training_steps policy.",
+        "properties": {
+          "budget_policy_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "learning_rate": {
+            "type": "number",
+            "minimum": 1e-06,
+            "maximum": 0.2,
+            "default": 0.05
+          },
+          "max_gradient_norm": {
+            "type": "number",
+            "minimum": 0.01,
+            "maximum": 10,
+            "default": 1
+          },
+          "beta": {
+            "type": "number",
+            "minimum": 0.001,
+            "maximum": 1,
+            "default": 0.1,
+            "description": "DPO only."
+          },
+          "kl_coefficient": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 2,
+            "default": 0.1
+          },
+          "clip_range": {
+            "type": "number",
+            "minimum": 0.01,
+            "maximum": 0.5,
+            "default": 0.2
+          },
+          "ppo_epochs": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4,
+            "default": 2
+          },
+          "rollout_batch_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4,
+            "default": 2
+          },
+          "max_new_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 16,
+            "default": 8
+          },
+          "value_learning_rate": {
+            "type": "number",
+            "minimum": 1e-06,
+            "maximum": 0.2,
+            "default": 0.05
+          }
+        }
+      },
+      "AlignmentVerifierSpec": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "exact_match",
+              "substring",
+              "numeric_tolerance"
+            ]
+          },
+          "tolerance": {
+            "type": "number",
+            "minimum": 0,
+            "default": 0.0001,
+            "maximum": 1000000
+          }
+        },
+        "description": "Required for verifier_rl. Targets come from chosen responses; sampled completions receive actual rule rewards. Tolerance must be finite and within 0\u20131000000."
+      },
+      "PreferencePair": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 61
+          },
+          "chosen": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32
+          },
+          "rejected": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32
+          }
+        },
+        "required": [
+          "prompt",
+          "chosen",
+          "rejected"
+        ],
+        "description": "Nonblank text, distinct responses, unique triples. Prompt plus each response must be at most 62 characters. Execution requires complete policy vocabulary coverage."
+      },
+      "PreferenceArtifactContent": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "const": "modelanvil.preference-pairs.v1"
+          },
+          "pairs": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "items": {
+              "$ref": "#/components/schemas/PreferencePair"
+            }
+          }
+        },
+        "required": [
+          "schema_version",
+          "pairs"
+        ]
+      },
+      "PreferenceArtifactSummary": {
+        "type": "object",
+        "properties": {
+          "artifact_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "byte_size": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "row_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 32
+          },
+          "state": {
+            "const": "committed"
+          }
+        },
+        "required": [
+          "artifact_id",
+          "name",
+          "sha256",
+          "byte_size",
+          "row_count",
+          "state"
+        ]
+      },
+      "AlignmentRun": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "project": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "algorithm": {
+            "type": "string",
+            "enum": [
+              "dpo",
+              "reward_model",
+              "ppo_rlhf",
+              "verifier_rl"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "running",
+              "interrupted",
+              "completed",
+              "failed",
+              "cancelled"
+            ]
+          },
+          "train_dataset_artifact": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "description": "Committed, accessible filesystem preference artifact, checked by digest and size. Training and held-out prompts must be disjoint."
+          },
+          "held_out_dataset_artifact": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "description": "Committed, accessible filesystem preference artifact, checked by digest and size. Training and held-out prompts must be disjoint."
+          },
+          "policy_model_version": {
+            "type": "integer"
+          },
+          "reference_model_version": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "reward_model_version": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "output_model_version": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "readOnly": true
+          },
+          "current_step": {
+            "type": "integer",
+            "minimum": 0,
+            "readOnly": true
+          },
+          "total_steps": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "execution_pins": {
+            "type": "object",
+            "readOnly": true
+          },
+          "execution_evidence": {
+            "type": "object",
+            "readOnly": true
+          },
+          "execution_capabilities": {
+            "type": "object",
+            "readOnly": true
+          },
+          "latest_metrics": {
+            "type": "object",
+            "readOnly": true
+          },
+          "metrics_history": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "readOnly": true
+          },
+          "rollouts_log": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "readOnly": true
+          },
+          "stop_reason": {
+            "type": "string",
+            "readOnly": true
+          }
+        }
+      }
+    }
+  }
+}

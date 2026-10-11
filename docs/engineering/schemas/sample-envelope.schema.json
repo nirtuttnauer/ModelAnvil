@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:modelanvil:schema:sample-envelope:1.0",
+  "title": "ModelAnvil canonical sample envelope",
+  "description": "Interchange envelope. Task schemas and semantic validation are additionally required. Scope is authorized from server-side records, never trusted from this payload.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sample_id", "source_group_id", "blocks", "provenance"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "sample_id": {"type": "string", "format": "uuid"},
+    "source_group_id": {"type": "string", "minLength": 1},
+    "task_schema_ref": {"type": "string", "minLength": 1},
+    "language": {"type": "string", "minLength": 1},
+    "blocks": {
+      "type": "array", "minItems": 1,
+      "description": "Array order is content order. Roles apply to conversation blocks.",
+      "items": {"$ref": "#/$defs/block"}
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["relation", "target_sample_id"],
+        "properties": {
+          "relation": {"type": "string", "minLength": 1},
+          "target_sample_id": {"type": "string", "format": "uuid"}
+        }
+      }
+    },
+    "provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_snapshot_ref", "source_record_key", "content_sha256"],
+      "properties": {
+        "source_snapshot_ref": {"type": "string", "minLength": 1},
+        "source_record_key": {"type": "string", "minLength": 1},
+        "content_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "parent_sample_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "transformation_revision_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "metadata": {"type": "object"}
+  },
+  "$defs": {
+    "block": {
+      "type": "object", "additionalProperties": false,
+      "required": ["block_id", "type"],
+      "properties": {
+        "block_id": {"type": "string", "minLength": 1},
+        "type": {"enum": ["text", "code", "json", "table", "image", "audio", "video", "svg", "document", "tool_call", "tool_result", "custom"]},
+        "role": {"enum": ["system", "developer", "user", "assistant", "tool"]},
+        "text": {"type": "string"},
+        "value": {},
+        "asset_ref": {"type": "string", "minLength": 1},
+        "custom_type": {"type": "string", "minLength": 1},
+        "media_type": {"type": "string", "minLength": 1},
+        "location": {
+          "type": "object", "additionalProperties": false,
+          "properties": {
+            "page": {"type": "integer", "minimum": 1},
+            "char_start": {"type": "integer", "minimum": 0},
+            "char_end": {"type": "integer", "minimum": 0},
+            "time_start": {"type": "number", "minimum": 0},
+            "time_end": {"type": "number", "minimum": 0},
+            "time_unit": {"enum": ["seconds", "milliseconds", "samples", "frames"]},
+            "time_base": {"type": "string", "minLength": 1},
+            "coordinates": {"type": "array", "minItems": 2, "items": {"type": "number"}},
+            "coordinate_system": {"type": "string", "minLength": 1},
+            "source_path": {"type": "string"}
+          },
+          "dependentRequired": {
+            "time_start": ["time_end", "time_unit", "time_base"],
+            "time_end": ["time_start", "time_unit", "time_base"],
+            "char_start": ["char_end"],
+            "char_end": ["char_start"],
+            "coordinates": ["coordinate_system"]
+          }
+        },
+        "metadata": {"type": "object"}
+      },
+      "allOf": [
+        {"if": {"properties": {"type": {"enum": ["text", "code"]}}}, "then": {"required": ["text"]}},
+        {"if": {"properties": {"type": {"enum": ["image", "audio", "video", "svg", "document"]}}}, "then": {"required": ["asset_ref"]}},
+        {"if": {"properties": {"type": {"enum": ["json", "table", "tool_call", "tool_result"]}}}, "then": {"required": ["value"]}},
+        {"if": {"properties": {"type": {"const": "custom"}}}, "then": {"required": ["custom_type"], "anyOf": [{"required": ["asset_ref"]}, {"required": ["value"]}]}}
+      ]
+    }
+  }
+}

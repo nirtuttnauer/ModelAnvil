@@ -1,0 +1,106 @@
+{
+  "config.json": {
+    "vocab_size": 12,
+    "n_embd": 4,
+    "lora_r": 2,
+    "lora_alpha": 4
+  },
+  "weights_manifest.json": {
+    "format": "safetensors",
+    "total_bytes": 877,
+    "header_bytes": 421,
+    "weights_sha256": "d0b929517e8b3ce6fb3ef0fdd051e46d67286d26a2e8223d5e415d1d96a33c22",
+    "tensors": {
+      "lm_head.weight": {
+        "shape": [
+          12,
+          4
+        ],
+        "dtype": "F32",
+        "byte_size": 192,
+        "sha256": "7d40344ed8ad7c1ee83a8a34368fb204d892919511346c0d01926f273b846661"
+      },
+      "transformer.layers.0.lora_A.weight": {
+        "shape": [
+          2,
+          4
+        ],
+        "dtype": "F32",
+        "byte_size": 32,
+        "sha256": "77c75bb0b775bf5af337f8e2627256774f6fa70808088ec16a96167ae0dff4bb"
+      },
+      "transformer.layers.0.lora_B.weight": {
+        "shape": [
+          4,
+          2
+        ],
+        "dtype": "F32",
+        "byte_size": 32,
+        "sha256": "6a4857c1ffddcefede537b6b582b9a4dc3b19f46af26c0b0aecd3f6e54982c3e"
+      },
+      "transformer.wte.weight": {
+        "shape": [
+          12,
+          4
+        ],
+        "dtype": "F32",
+        "byte_size": 192,
+        "sha256": "da9584a713bfd069669425acb17ecd9821b9389d9069339c52b500d2f60edcf7"
+      }
+    }
+  },
+  "model.safetensors.b64": "pQEAAAAAAAB7Il9fbWV0YWRhdGFfXyI6eyJmb3JtYXQiOiJzYWZldGVuc29ycyIsInZlcnNpb24iOiIxLjAiLCJtb2RlbGFudmlsX3J1bnRpbWUiOiJ2MS4wIn0sImxtX2hlYWQud2VpZ2h0Ijp7ImR0eXBlIjoiRjMyIiwic2hhcGUiOlsxMiw0XSwiZGF0YV9vZmZzZXRzIjpbMCwxOTJdfSwidHJhbnNmb3JtZXIubGF5ZXJzLjAubG9yYV9BLndlaWdodCI6eyJkdHlwZSI6IkYzMiIsInNoYXBlIjpbMiw0XSwiZGF0YV9vZmZzZXRzIjpbMTkyLDIyNF19LCJ0cmFuc2Zvcm1lci5sYXllcnMuMC5sb3JhX0Iud2VpZ2h0Ijp7ImR0eXBlIjoiRjMyIiwic2hhcGUiOls0LDJdLCJkYXRhX29mZnNldHMiOlsyMjQsMjU2XX0sInRyYW5zZm9ybWVyLnd0ZS53ZWlnaHQiOnsiZHR5cGUiOiJGMzIiLCJzaGFwZSI6WzEyLDRdLCJkYXRhX29mZnNldHMiOlsyNTYsNDQ4XX19LFtQuw0qjzs0Tnc7ckufuixbULsNKo87NE53O3JLn7rhQ1M7zPeKu/lqkjsaOFw8LFtQuw0qjzs0Tnc7ckufusKP/bvPkRy831U3vE4ZqLxqaAG8zjmOOoJmN7uHpmM8llr/u9AOHrxRlTm81rypvGbw8zxHMBE8iVXfu+3d1bssW1C7DSqPOzROdztyS5+6LFtQuw0qjzs0Tnc7ckufupS0GzwjWVC8k4mkO5ka4zwsW1C7DSqPOzROdztyS5+6HXVZOkWPAb2ffEE9W/TMvbGUiLx1kdG8OO/TvAZbLj2Uf/m3V0r6tvbvrbYpDpe3IkeNuP7TyDcyHR25AeOFOGySpTwsHuI7o0KjvD8+VzwzzzM8/k0LvPx/Nb1z5De8fo6QPJKTwbwtVMC8E44dPXU9uDj3ZT07+IehvMq8CDxxFoa8QdcyvMZatrzF+VM9klObPD9XVbwn2mU9wQCRPRz35j2InII8lxUTvR2GlrxDwzs9F0qXvVSRRL3M16A9ikSWPAoxhz1/vLe9Yn58vLeTpLxVTD09y2jtO2LJc70rqvC81OeIvX+kYL3eYsG92JWXvXXN0ztx6xK8OM4TPA==",
+  "tokenizer_config.json": {
+    "kind": "character-v1",
+    "tokens": [
+      "<pad>",
+      "<bos>",
+      "<eos>",
+      "<unk>",
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      " ",
+      "\n"
+    ],
+    "bos_id": 1,
+    "eos_id": 2,
+    "unk_id": 3
+  },
+  "provenance.json": {
+    "run_id": "45d01bd5-93bf-43b2-9bc4-50716a3cc527",
+    "pins": {
+      "runtime": "modelanvil.cpu-character-sft.v1",
+      "contract_digest": "6590e79bf229fa31750d7493e84526aca4964ad6eface014874ebfe24696642d",
+      "dataset_id": "1cb588b1-0d83-438a-b1a6-707d39a62aa5",
+      "build_digest": "abda07023251d0ecae544e3a847babbdb7138f5abe1d85addb25d213a3a470cb",
+      "dataset_digest": "94baacc54c7a48eff3fffe7530005a37ac5bfc1cfd56327d540abe83451fd5d9",
+      "base_id": "f94c0ee5-5cf5-4af6-becd-2626056701e1",
+      "base_artifact_id": "135a2f10-9b94-428f-9613-f29799d4230a",
+      "base_digest": "cd2c1cb97c356ea853e7b268239845396977aa8bdf602d0d044497007355017a",
+      "tokenizer_id": "45f8301e-f478-4231-a057-ce9d3d345cb2",
+      "tokenizer_digest": "bde30dc6fb390a58751502b23b58ed833898f8071fe46846deb39175caad0e0a",
+      "runner_id": "f224df26-f5ff-4f25-a6d6-ac36ccc5e5cc",
+      "runner_digest": "e2565ce871109e01f460f951858f24e0f04aaaf44b9a0b0ef8f4489fc2c3f265",
+      "pool_id": 1,
+      "steps": 4,
+      "config": {
+        "vocab_size": 12,
+        "n_embd": 4,
+        "lora_r": 2,
+        "lora_alpha": 4
+      },
+      "optimizer": {
+        "algorithm": "sgd",
+        "learning_rate": 0.05,
+        "momentum": 0
+      },
+      "sample_digest": "ee5fc545c9b761bf0b9d4c5b34c2d263b0803710c894aaef5a7ed88940a5ca8c"
+    },
+    "step": 4,
+    "state_digest": "b4b86e3a2797294eaa770c5faff3faab544665716bbab6a51e484e2650b32635"
+  }
+}

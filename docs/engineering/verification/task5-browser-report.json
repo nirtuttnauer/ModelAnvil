@@ -1,0 +1,336 @@
+{
+  "status": "approved",
+  "recipe_type": "full_sft",
+  "execution_mode": "worker",
+  "checks": [
+    {
+      "check": "recipe-execution-mode",
+      "category": "compatibility",
+      "status": "pass",
+      "blocking": false,
+      "reason": "Worker preflight requires full_sft.",
+      "corrective_action": null,
+      "detail": {}
+    },
+    {
+      "check": "dataset_revision",
+      "category": "compatibility",
+      "status": "pass",
+      "blocking": false,
+      "reason": "dataset_revision: selected accessible resource.",
+      "corrective_action": null,
+      "detail": {}
+    },
+    {
+      "check": "base_model_version",
+      "category": "compatibility",
+      "status": "pass",
+      "blocking": false,
+      "reason": "base_model_version: selected accessible resource.",
+      "corrective_action": null,
+      "detail": {}
+    },
+    {
+      "check": "tokenizer_version",
+      "category": "compatibility",
+      "status": "pass",
+      "blocking": false,
+      "reason": "tokenizer_version: selected accessible resource.",
+      "corrective_action": null,
+      "detail": {}
+    },
+    {
+      "check": "runner_manifest",
+      "category": "compatibility",
+      "status": "pass",
+      "blocking": false,
+      "reason": "runner_manifest: selected accessible resource.",
+      "corrective_action": null,
+      "detail": {}
+    },
+    {
+      "check": "pool",
+      "category": "compatibility",
+      "status": "pass",
+      "blocking": false,
+      "reason": "pool: selected accessible resource.",
+      "corrective_action": null,
+      "detail": {}
+    },
+    {
+      "check": "dataset-published",
+      "category": "compatibility",
+      "status": "pass",
+      "blocking": false,
+      "reason": "Dataset must be published with immutable prepared text.",
+      "corrective_action": null,
+      "detail": {}
+    },
+    {
+      "check": "model-tokenizer",
+      "category": "compatibility",
+      "status": "pass",
+      "blocking": false,
+      "reason": "Base weights must pin the selected tokenizer.",
+      "corrective_action": null,
+      "detail": {}
+    },
+    {
+      "check": "runner-contract",
+      "category": "compatibility",
+      "status": "pass",
+      "blocking": false,
+      "reason": "Runner must be enabled and match the qualified runtime contract.",
+      "corrective_action": null,
+      "detail": {}
+    },
+    {
+      "check": "pinned-inputs",
+      "category": "compatibility",
+      "status": "pass",
+      "blocking": false,
+      "reason": "Verified dataset bytes, base weights, tokenizer encoding and runner contract.",
+      "corrective_action": null,
+      "detail": {}
+    },
+    {
+      "check": "worker-memory",
+      "category": "capacity",
+      "status": "pass",
+      "blocking": false,
+      "reason": "A worker must declare the selected contract and sufficient memory.",
+      "corrective_action": null,
+      "detail": {
+        "required_memory_bytes": 268435456,
+        "matching_workers": 1
+      }
+    },
+    {
+      "check": "worker-slots",
+      "category": "capacity",
+      "status": "pass",
+      "blocking": false,
+      "reason": "1 free matching worker slot(s); one required.",
+      "corrective_action": null,
+      "detail": {
+        "available_slots": 1,
+        "required_slots": 1
+      }
+    },
+    {
+      "check": "budget",
+      "category": "budget",
+      "status": "pass",
+      "blocking": false,
+      "reason": "Budget must be enabled, use training_steps, and cover the requested sample passes.",
+      "corrective_action": null,
+      "detail": {
+        "policy_id": "aae2a994-e434-4db2-82c0-188edc0bba25",
+        "period": "lifetime",
+        "period_start": "1970-01-01",
+        "unit": "training_steps",
+        "currency": null,
+        "limit": "1000.000000",
+        "committed": "40",
+        "remaining": "960.000000",
+        "requested": 20
+      }
+    },
+    {
+      "check": "storage",
+      "category": "capacity",
+      "status": "pass",
+      "blocking": false,
+      "reason": "Local artifact and checkpoint storage must cover the projected states.",
+      "corrective_action": null,
+      "detail": {
+        "artifacts": {
+          "available_bytes": 630784000000,
+          "required_bytes": 1547348
+        },
+        "checkpoints": {
+          "available_bytes": 630784000000,
+          "required_bytes": 1547348
+        }
+      }
+    }
+  ],
+  "blocking_checks": [],
+  "samples": [
+    {
+      "sample_id": "c106871e-c4e1-48c2-ae06-0b0be2bec462",
+      "text_preview": "a small training example.",
+      "token_ids": [
+        1,
+        4,
+        30,
+        22,
+        16,
+        4,
+        15,
+        15,
+        30,
+        23,
+        21,
+        4,
+        12,
+        17,
+        12,
+        17,
+        10,
+        30,
+        8,
+        27,
+        4,
+        16,
+        19,
+        15,
+        8,
+        31,
+        2
+      ],
+      "token_count": 27
+    },
+    {
+      "sample_id": "25867200-64c8-4867-9fcf-bbc67acc1409",
+      "text_preview": "another text sample.",
+      "token_ids": [
+        1,
+        4,
+        17,
+        18,
+        23,
+        11,
+        8,
+        21,
+        30,
+        23,
+        8,
+        27,
+        23,
+        30,
+        22,
+        4,
+        16,
+        19,
+        15,
+        8,
+        31,
+        2
+      ],
+      "token_count": 22
+    }
+  ],
+  "sample_count": 2,
+  "pins": {
+    "runtime": "modelanvil.cpu-character-sft.v1",
+    "contract_digest": "6590e79bf229fa31750d7493e84526aca4964ad6eface014874ebfe24696642d",
+    "dataset_id": "de06998b-acdc-45a3-97c2-0267db4e7829",
+    "build_digest": "23112c40482b056851f1172b86edcc2af43c9ea96ebb2602a6d78ed76716e97f",
+    "dataset_digest": "a03fd2f6c04e2b68b70d3ad96cc26e677226ee46f93bac882bb7bb18f12f9417",
+    "base_id": "06a61173-0153-49d0-96aa-b416dcbace79",
+    "base_artifact_id": "cfd47a33-9a5b-4162-9d90-5268c8e98dfc",
+    "base_digest": "244d3d7a4e50aad9bf81f045dca13e67b49ea6098c4bb146f84548c4075e8208",
+    "tokenizer_id": "2253ff26-0158-4863-bb79-eb6cc0332b99",
+    "tokenizer_digest": "8ea9a84c3e7d36a8f6fe35279ec404ffba31ebf8a598aa067473ca7fa04af4f6",
+    "runner_id": "7a9745dc-068c-466e-94ae-dbb0e3cba2c8",
+    "runner_digest": "e2565ce871109e01f460f951858f24e0f04aaaf44b9a0b0ef8f4489fc2c3f265",
+    "pool_id": 2,
+    "steps": 20,
+    "config": {
+      "vocab_size": 33,
+      "n_embd": 8,
+      "lora_r": 2,
+      "lora_alpha": 4
+    },
+    "optimizer": {
+      "algorithm": "sgd",
+      "learning_rate": 0.05,
+      "momentum": 0
+    },
+    "sample_digest": "d19b86f100ee4ccc6ecad51b2dd4cb2f8aa6a33121c8a2242a25505d1d7f4e58"
+  },
+  "requirements": {
+    "runtime": "modelanvil.cpu-character-sft.v1",
+    "recipe": "full_sft",
+    "config": {
+      "vocab_size": 33,
+      "n_embd": 8,
+      "lora_r": 2,
+      "lora_alpha": 4
+    },
+    "optimizer": {
+      "algorithm": "sgd",
+      "learning_rate": 0.05,
+      "momentum": 0
+    },
+    "cpu_slots": 1,
+    "memory_bytes": 268435456,
+    "storage_bytes": 1547348,
+    "storage_assumption": "One full checkpoint per step, candidate copies and 64 KiB overhead per state; shared local host."
+  },
+  "budget": {
+    "policy_id": "aae2a994-e434-4db2-82c0-188edc0bba25",
+    "period": "lifetime",
+    "period_start": "1970-01-01",
+    "unit": "training_steps",
+    "currency": null,
+    "limit": "1000.000000",
+    "committed": "40",
+    "remaining": "960.000000",
+    "requested": 20
+  },
+  "estimate": {
+    "known": true,
+    "source": "Measured completed worker pilot 217983e6-fc06-4415-b344-9e19111a812b",
+    "assumptions": [
+      "One step passes one encoded sample; samples cycle in manifest order.",
+      "Queue time, database writes, checkpoint storage and retries are excluded.",
+      "Linear scaling by next-token pairs assumes the pilot worker hardware; placement and timing variation are unmeasured."
+    ],
+    "units": {
+      "duration": "CPU seconds (engine only)",
+      "tokens": "next-token pairs",
+      "currency": null
+    },
+    "currency": null,
+    "uncertainty": "Unknown; no confidence interval has been measured.",
+    "estimated_duration_seconds": 0.027420000000000055,
+    "estimated_cost": {
+      "known": false,
+      "value": null,
+      "reason": "No measured monetary rate or currency is configured."
+    },
+    "total_tokens": 470,
+    "pilot": {
+      "run_id": "217983e6-fc06-4415-b344-9e19111a812b",
+      "cpu_seconds": 0.027420000000000055,
+      "training_pairs": 470
+    }
+  },
+  "fingerprint": "209a5f2fe551b02b5cb342eecf4e36fdc2f98faced9da13fa5bd8ae492ff57c1",
+  "checked_at": "2026-10-11T16:15:44.656274+00:00",
+  "expires_in_seconds": 600,
+  "runtime_scope": {
+    "targets": [],
+    "available": [
+      "modelanvil.cpu-character-sft.v1"
+    ],
+    "unavailable": []
+  },
+  "capacity_note": "Capacity is observed, not reserved. Launch rechecks; worker claim enforces slots and budget reservation is atomic.",
+  "browser_verification": {
+    "completed_run": "217983e6-fc06-4415-b344-9e19111a812b",
+    "committed_steps": 20,
+    "changed_input_invalidates_preview": true,
+    "empty_configuration_blocks_launch": true,
+    "preview_result_receives_keyboard_focus": true,
+    "viewport_375": {
+      "document_width": 375,
+      "viewport_width": 375
+    },
+    "final_form_submit_run": "6e7eb1b8-ab52-42ce-95e8-101946220404",
+    "final_form_submit_status": "cancelled",
+    "queued_cancel_settled_amount": "0.000000"
+  }
+}

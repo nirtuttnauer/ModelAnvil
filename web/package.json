@@ -1,0 +1,36 @@
+{
+  "name": "modelanvil-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "test": "node --test tests/*.test.mjs",
+    "preview": "vite preview --host 0.0.0.0",
+    "storybook": "storybook dev --host 127.0.0.1 -p 6006 --no-open --ci",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "lucide-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "typescript": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {
+    "@storybook/addon-a11y": "^10.6.1",
+    "@storybook/react-vite": "^10.6.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "msw": "^3.0.3",
+    "msw-storybook-addon": "^3.0.3",
+    "storybook": "^10.6.1"
+  },
+  "msw": {
+    "workerDirectory": [
+      ".storybook/static"
+    ]
+  }
+}

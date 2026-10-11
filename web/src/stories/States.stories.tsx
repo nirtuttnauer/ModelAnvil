@@ -1,0 +1,11 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import screens, { DatasetBank, Evaluation, Training } from './Screens.stories';
+import { expect, within } from 'storybook/test';
+const meta = { ...screens, title: 'ModelAnvil/States' } satisfies Meta<typeof screens.component>;
+export default meta;
+type Story = StoryObj<typeof meta>;
+export const Empty: Story = { ...DatasetBank, name: 'Empty catalog', parameters: { ...DatasetBank.parameters, demoState: 'empty' } };
+export const Loading: Story = { ...DatasetBank, name: 'Loading catalog', parameters: { ...DatasetBank.parameters, demoState: 'loading' }, play: async ({ canvasElement, parameters }) => { await expect(within(canvasElement).findByText('Loading workspace data…')).resolves.toBeVisible(); canvasElement.dataset.demoVerified = 'passed'; canvasElement.dataset.demoRoute = parameters.demoRoute; } };
+export const Error: Story = { ...DatasetBank, name: 'API error', parameters: { ...DatasetBank.parameters, demoState: 'error' }, play: async ({ canvasElement, parameters }) => { await expect(within(canvasElement).findByRole('alert')).resolves.toBeVisible(); canvasElement.dataset.demoVerified = 'passed'; canvasElement.dataset.demoRoute = parameters.demoRoute; } };
+export const DarkEvaluation: Story = { ...Evaluation, name: 'Dark evaluation', parameters: { ...Evaluation.parameters, demoTheme: 'dark' } };
+export const MobileTraining: Story = { ...Training, name: 'Mobile training', parameters: { ...Training.parameters }, globals: { viewport: { value: 'mobile1', isRotated: false } } };

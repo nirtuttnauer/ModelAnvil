@@ -1,0 +1,1748 @@
+{
+  "schema_version": "0.1.0",
+  "catalog_status": "partially_qualified",
+  "checked_on": "2026-10-11",
+  "policy": {
+    "meaning_of_open": "Declared license permits reuse, modification, and redistribution, including commercial use, subject to license obligations.",
+    "excluded_license_features": [
+      "noncommercial_only",
+      "no_derivatives",
+      "research_only",
+      "unclear_asset_license"
+    ],
+    "default_profile": "permissive_and_attribution",
+    "share_alike_profile": "explicit_opt_in",
+    "source_code_license_does_not_establish_dataset_license": true,
+    "publication_requires": [
+      "qualify_connector_and_file_selection",
+      "resolve_immutable_revision",
+      "archive_license_evidence_at_revision",
+      "inspect_asset_exceptions",
+      "record_hashes_and_sizes",
+      "validate_schema_and_sample",
+      "preserve_attribution",
+      "apply_project_distribution_policy"
+    ],
+    "readiness_note": "svg-lucide is qualified for bounded acquisition at commit 70562c1ee1c4fdcf736fe97bc893fb8511927934. Every other source stays explicitly unavailable: no connector is implemented for it and no upstream bytes were fetched.",
+    "qualification_note": "A source is qualified only when an implemented connector has fetched upstream bytes at a pinned immutable revision, verified per-record digests and archived the license notice at that revision. License eligibility alone never enables acquisition.",
+    "budget_quantity_note": "Dataset Bank acquisition budgets are reserved in the policy unit and settled with the number of verified upstream records transferred."
+  },
+  "presets": [
+    {
+      "id": "svg-starter-permissive",
+      "name": "SVG starter",
+      "description": "Initial icons with permissive source licenses.",
+      "source_ids": [
+        "svg-lucide",
+        "svg-tabler",
+        "svg-heroicons",
+        "svg-bootstrap",
+        "svg-phosphor",
+        "svg-feather",
+        "svg-material"
+      ],
+      "default_sample_limit_per_source": 100,
+      "exclude_branded_assets": true,
+      "recipe": "svg-paired-image-v1",
+      "recipe_status": "specification_only"
+    },
+    {
+      "id": "svg-attribution-expansion",
+      "name": "SVG emoji and game art",
+      "source_ids": [
+        "svg-twemoji",
+        "svg-game-icons"
+      ],
+      "default_sample_limit_per_source": 100,
+      "recipe": "svg-paired-image-v1",
+      "recipe_status": "specification_only"
+    },
+    {
+      "id": "svg-share-alike-expansion",
+      "name": "OpenMoji expansion",
+      "source_ids": [
+        "svg-openmoji"
+      ],
+      "requires_share_alike_profile": true,
+      "default_sample_limit_per_source": 100,
+      "recipe": "svg-paired-image-v1",
+      "recipe_status": "specification_only"
+    }
+  ],
+  "output_groups": [
+    {
+      "id": "svg",
+      "name": "SVG vector graphics",
+      "extensions": [
+        "svg"
+      ],
+      "source_ids": [
+        "svg-lucide",
+        "svg-tabler",
+        "svg-heroicons",
+        "svg-bootstrap",
+        "svg-phosphor",
+        "svg-feather",
+        "svg-material",
+        "svg-twemoji",
+        "svg-openmoji",
+        "svg-game-icons"
+      ]
+    },
+    {
+      "id": "text",
+      "name": "Prose chat and reasoning",
+      "extensions": [
+        "txt",
+        "md",
+        "jsonl"
+      ],
+      "source_ids": [
+        "text-oasst1",
+        "text-dolly15k",
+        "math-gsm8k"
+      ]
+    },
+    {
+      "id": "preference",
+      "name": "Rankings and reward scores",
+      "extensions": [
+        "json",
+        "jsonl",
+        "parquet"
+      ],
+      "source_ids": [
+        "preference-hh-rlhf",
+        "text-oasst1"
+      ]
+    },
+    {
+      "id": "code",
+      "name": "Code and notebooks",
+      "extensions": [
+        "py",
+        "source_files",
+        "ipynb"
+      ],
+      "source_ids": [
+        "code-mbpp",
+        "code-humaneval"
+      ]
+    },
+    {
+      "id": "structured",
+      "name": "Structured records and tool calls",
+      "extensions": [
+        "json",
+        "jsonl",
+        "yaml"
+      ],
+      "source_ids": [
+        "tools-xlam"
+      ]
+    },
+    {
+      "id": "raster",
+      "name": "Raster images",
+      "extensions": [
+        "png",
+        "jpeg",
+        "webp",
+        "tiff"
+      ],
+      "source_ids": [
+        "image-dsprites",
+        "image-fashion-mnist"
+      ]
+    },
+    {
+      "id": "speech",
+      "name": "Speech audio",
+      "extensions": [
+        "wav",
+        "flac",
+        "mp3",
+        "ogg"
+      ],
+      "source_ids": [
+        "audio-libritts",
+        "audio-librispeech"
+      ]
+    },
+    {
+      "id": "video",
+      "name": "Video",
+      "extensions": [
+        "mp4",
+        "webm",
+        "mov"
+      ],
+      "source_ids": [
+        "video-big-buck-bunny"
+      ]
+    },
+    {
+      "id": "numeric",
+      "name": "Tables and time series",
+      "extensions": [
+        "csv",
+        "tsv",
+        "parquet",
+        "arrow",
+        "npy",
+        "hdf5"
+      ],
+      "source_ids": [
+        "numeric-electricity"
+      ]
+    },
+    {
+      "id": "documents",
+      "name": "Documents presentations and web pages",
+      "extensions": [
+        "html",
+        "pdf",
+        "docx",
+        "pptx",
+        "epub"
+      ],
+      "source_ids": [],
+      "gap": "No dedicated document-layout output corpus qualified; use a separately licensed synthetic template recipe."
+    },
+    {
+      "id": "custom",
+      "name": "Custom formats 3D and other modalities",
+      "extensions": [
+        "custom"
+      ],
+      "source_ids": [],
+      "gap": "No approved generic corpus; requires task-specific source review and a validated adapter."
+    }
+  ],
+  "sources": [
+    {
+      "id": "svg-lucide",
+      "name": "Lucide",
+      "category": "svg_icons",
+      "source_kind": "open_asset_collection",
+      "description": "Outline icons with consistent geometry and semantic filenames.",
+      "source_url": "https://github.com/lucide-icons/lucide",
+      "modalities": [
+        "svg",
+        "image"
+      ],
+      "use_cases": [
+        "svg_generation",
+        "image_to_svg",
+        "svg_understanding"
+      ],
+      "license": {
+        "spdx_expression": "ISC AND MIT",
+        "applies_to": "selected asset paths",
+        "evidence_urls": [
+          "https://github.com/lucide-icons/lucide/blob/main/LICENSE"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Lucide uses ISC; the license also identifies Feather-derived icons under MIT. Preserve both notices. Deduplicate against Feather."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "git_snapshot",
+        "repository": "https://github.com/lucide-icons/lucide.git",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "include_patterns": [
+          "icons/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE"
+        ],
+        "metadata_paths": [],
+        "selection_status": "patterns_to_qualify"
+      },
+      "preparation": [
+        "retain_raw_svg",
+        "validate_and_sandbox_render",
+        "extract_available_labels",
+        "deduplicate_across_sources",
+        "group_variants_before_splitting"
+      ],
+      "text_pair_quality": "names_or_metadata_only_not_dense_verified_captions",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "svg"
+      ],
+      "acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-11",
+        "qualified_by": "TASK-9 acquisition qualification run",
+        "connector": "git_tree_blob_snapshot",
+        "upstream_repository": "https://github.com/lucide-icons/lucide.git",
+        "pinned_revision": "70562c1ee1c4fdcf736fe97bc893fb8511927934",
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "main resolved to an immutable commit through the upstream Git reference API; acquisition always reads this exact commit.",
+        "qualified_revisions": [
+          "70562c1ee1c4fdcf736fe97bc893fb8511927934"
+        ],
+        "include_patterns": [
+          "icons/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE"
+        ],
+        "record_selection": "deterministic evenly spaced slice of the sorted icons/*.svg inventory at the pinned commit",
+        "record_limit": 120,
+        "record_limit_max": 400,
+        "preview_limit": 8,
+        "measured_upstream_records": 1877,
+        "measured_upstream_bytes": 762249,
+        "measured_selected_records": 120,
+        "measured_selected_bytes": 48362,
+        "measured_transfer_seconds": 57,
+        "measurement_environment": "macOS arm64 laptop, CPython 3.12, HTTPS to raw.githubusercontent.com and api.github.com; the product deployment has not been exercised.",
+        "verified_record_digests": true,
+        "evidence": {
+          "resolved_from": "https://api.github.com/repos/lucide-icons/lucide/git/ref/heads/main",
+          "tree_listing": "https://api.github.com/repos/lucide-icons/lucide/git/trees/70562c1ee1c4fdcf736fe97bc893fb8511927934?recursive=1",
+          "record_bytes": "https://raw.githubusercontent.com/lucide-icons/lucide/70562c1ee1c4fdcf736fe97bc893fb8511927934/icons/*.svg",
+          "license_bytes": "https://raw.githubusercontent.com/lucide-icons/lucide/70562c1ee1c4fdcf736fe97bc893fb8511927934/LICENSE",
+          "verified_on": "2026-10-11",
+          "checks": [
+            "Git reference API resolved main to commit 70562c1ee1c4fdcf736fe97bc893fb8511927934.",
+            "Recursive tree listing reported 1877 icons/*.svg blobs totalling 762249 bytes, not truncated.",
+            "120 evenly spaced records were fetched and every git blob SHA-1 recomputed from the downloaded bytes matched the tree listing.",
+            "The LICENSE blob at the pinned commit was fetched and its notice is archived with the published dataset."
+          ]
+        }
+      }
+    },
+    {
+      "id": "svg-tabler",
+      "name": "Tabler Icons",
+      "category": "svg_icons",
+      "source_kind": "open_asset_collection",
+      "description": "Outline and filled UI icon variants.",
+      "source_url": "https://github.com/tabler/tabler-icons",
+      "modalities": [
+        "svg",
+        "image"
+      ],
+      "use_cases": [
+        "svg_generation",
+        "image_to_svg",
+        "svg_understanding"
+      ],
+      "license": {
+        "spdx_expression": "MIT",
+        "applies_to": "selected asset paths",
+        "evidence_urls": [
+          "https://github.com/tabler/tabler-icons/blob/main/LICENSE"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve copyright and permission notice. Group style variants and exclude branded assets by default."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "git_snapshot",
+        "repository": "https://github.com/tabler/tabler-icons.git",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "include_patterns": [
+          "icons/outline/*.svg",
+          "icons/filled/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE"
+        ],
+        "metadata_paths": [],
+        "selection_status": "patterns_to_qualify"
+      },
+      "preparation": [
+        "retain_raw_svg",
+        "validate_and_sandbox_render",
+        "extract_available_labels",
+        "deduplicate_across_sources",
+        "group_variants_before_splitting"
+      ],
+      "text_pair_quality": "names_or_metadata_only_not_dense_verified_captions",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "svg"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "https://github.com/tabler/tabler-icons.git",
+        "pinned_revision": "",
+        "include_patterns": [
+          "icons/outline/*.svg",
+          "icons/filled/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE"
+        ],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "svg-heroicons",
+      "name": "Heroicons",
+      "category": "svg_icons",
+      "source_kind": "open_asset_collection",
+      "description": "UI icons in several sizes and styles.",
+      "source_url": "https://github.com/tailwindlabs/heroicons",
+      "modalities": [
+        "svg",
+        "image"
+      ],
+      "use_cases": [
+        "svg_generation",
+        "image_to_svg",
+        "svg_understanding"
+      ],
+      "license": {
+        "spdx_expression": "MIT",
+        "applies_to": "selected asset paths",
+        "evidence_urls": [
+          "https://github.com/tailwindlabs/heroicons/blob/master/LICENSE"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve copyright and permission notice. Group size and style variants of each concept before splitting."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "git_snapshot",
+        "repository": "https://github.com/tailwindlabs/heroicons.git",
+        "ref_hint": "master",
+        "resolve_to_immutable_commit": true,
+        "include_patterns": [
+          "optimized/**/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE"
+        ],
+        "metadata_paths": [],
+        "selection_status": "patterns_to_qualify"
+      },
+      "preparation": [
+        "retain_raw_svg",
+        "validate_and_sandbox_render",
+        "extract_available_labels",
+        "deduplicate_across_sources",
+        "group_variants_before_splitting"
+      ],
+      "text_pair_quality": "names_or_metadata_only_not_dense_verified_captions",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "svg"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "https://github.com/tailwindlabs/heroicons.git",
+        "pinned_revision": "",
+        "include_patterns": [
+          "optimized/**/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE"
+        ],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "svg-bootstrap",
+      "name": "Bootstrap Icons",
+      "category": "svg_icons",
+      "source_kind": "open_asset_collection",
+      "description": "UI icons with outline and filled shapes.",
+      "source_url": "https://github.com/twbs/icons",
+      "modalities": [
+        "svg",
+        "image"
+      ],
+      "use_cases": [
+        "svg_generation",
+        "image_to_svg",
+        "svg_understanding"
+      ],
+      "license": {
+        "spdx_expression": "MIT",
+        "applies_to": "selected asset paths",
+        "evidence_urls": [
+          "https://github.com/twbs/icons/blob/main/LICENSE"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve copyright and permission notice. Filter branded and duplicate variants in the preparation recipe."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "git_snapshot",
+        "repository": "https://github.com/twbs/icons.git",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "include_patterns": [
+          "icons/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE"
+        ],
+        "metadata_paths": [],
+        "selection_status": "patterns_to_qualify"
+      },
+      "preparation": [
+        "retain_raw_svg",
+        "validate_and_sandbox_render",
+        "extract_available_labels",
+        "deduplicate_across_sources",
+        "group_variants_before_splitting"
+      ],
+      "text_pair_quality": "names_or_metadata_only_not_dense_verified_captions",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "svg"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "https://github.com/twbs/icons.git",
+        "pinned_revision": "",
+        "include_patterns": [
+          "icons/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE"
+        ],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "svg-phosphor",
+      "name": "Phosphor Icons",
+      "category": "svg_icons",
+      "source_kind": "open_asset_collection",
+      "description": "Icons spanning multiple stroke weights and styles.",
+      "source_url": "https://github.com/phosphor-icons/core",
+      "modalities": [
+        "svg",
+        "image"
+      ],
+      "use_cases": [
+        "svg_generation",
+        "image_to_svg",
+        "svg_understanding"
+      ],
+      "license": {
+        "spdx_expression": "MIT",
+        "applies_to": "selected asset paths",
+        "evidence_urls": [
+          "https://github.com/phosphor-icons/core/blob/main/LICENSE"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve copyright and permission notice. Keep weight and style variants in the same split."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "git_snapshot",
+        "repository": "https://github.com/phosphor-icons/core.git",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "include_patterns": [
+          "assets/**/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE"
+        ],
+        "metadata_paths": [],
+        "selection_status": "patterns_to_qualify"
+      },
+      "preparation": [
+        "retain_raw_svg",
+        "validate_and_sandbox_render",
+        "extract_available_labels",
+        "deduplicate_across_sources",
+        "group_variants_before_splitting"
+      ],
+      "text_pair_quality": "names_or_metadata_only_not_dense_verified_captions",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "svg"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "https://github.com/phosphor-icons/core.git",
+        "pinned_revision": "",
+        "include_patterns": [
+          "assets/**/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE"
+        ],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "svg-feather",
+      "name": "Feather Icons",
+      "category": "svg_icons",
+      "source_kind": "open_asset_collection",
+      "description": "A compact outline-icon collection suitable for initial experiments.",
+      "source_url": "https://github.com/feathericons/feather",
+      "modalities": [
+        "svg",
+        "image"
+      ],
+      "use_cases": [
+        "svg_generation",
+        "image_to_svg",
+        "svg_understanding"
+      ],
+      "license": {
+        "spdx_expression": "MIT",
+        "applies_to": "selected asset paths",
+        "evidence_urls": [
+          "https://github.com/feathericons/feather/blob/main/LICENSE"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve copyright and permission notice. Significant conceptual and asset overlap with Lucide requires cross-source deduplication."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "git_snapshot",
+        "repository": "https://github.com/feathericons/feather.git",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "include_patterns": [
+          "icons/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE"
+        ],
+        "metadata_paths": [],
+        "selection_status": "patterns_to_qualify"
+      },
+      "preparation": [
+        "retain_raw_svg",
+        "validate_and_sandbox_render",
+        "extract_available_labels",
+        "deduplicate_across_sources",
+        "group_variants_before_splitting"
+      ],
+      "text_pair_quality": "names_or_metadata_only_not_dense_verified_captions",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "svg"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "https://github.com/feathericons/feather.git",
+        "pinned_revision": "",
+        "include_patterns": [
+          "icons/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE"
+        ],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "svg-material",
+      "name": "Material Design Icons",
+      "category": "svg_icons",
+      "source_kind": "open_asset_collection",
+      "description": "SVG assets from the Material icon family.",
+      "source_url": "https://github.com/google/material-design-icons",
+      "modalities": [
+        "svg",
+        "image"
+      ],
+      "use_cases": [
+        "svg_generation",
+        "image_to_svg",
+        "svg_understanding"
+      ],
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "applies_to": "selected asset paths",
+        "evidence_urls": [
+          "https://github.com/google/material-design-icons/blob/master/LICENSE"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve the license and applicable notices; track modifications. Qualify selected SVG directories and exclude font binaries."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "git_snapshot",
+        "repository": "https://github.com/google/material-design-icons.git",
+        "ref_hint": "master",
+        "resolve_to_immutable_commit": true,
+        "include_patterns": [
+          "src/**/*.svg",
+          "symbols/**/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE"
+        ],
+        "metadata_paths": [
+          "NOTICE",
+          "README.md"
+        ],
+        "selection_status": "patterns_to_qualify"
+      },
+      "preparation": [
+        "retain_raw_svg",
+        "validate_and_sandbox_render",
+        "extract_available_labels",
+        "deduplicate_across_sources",
+        "group_variants_before_splitting"
+      ],
+      "text_pair_quality": "names_or_metadata_only_not_dense_verified_captions",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "svg"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "https://github.com/google/material-design-icons.git",
+        "pinned_revision": "",
+        "include_patterns": [
+          "src/**/*.svg",
+          "symbols/**/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE"
+        ],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "svg-twemoji",
+      "name": "Twemoji graphics",
+      "category": "svg_emoji",
+      "source_kind": "open_asset_collection",
+      "description": "Colored emoji SVG artwork indexed by Unicode sequences.",
+      "source_url": "https://github.com/jdecked/twemoji",
+      "modalities": [
+        "svg",
+        "image"
+      ],
+      "use_cases": [
+        "svg_generation",
+        "image_to_svg",
+        "svg_understanding"
+      ],
+      "license": {
+        "spdx_expression": "CC-BY-4.0",
+        "applies_to": "selected asset paths",
+        "evidence_urls": [
+          "https://github.com/jdecked/twemoji/blob/main/LICENSE-GRAPHICS"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Graphics use CC BY 4.0; code has a separate license. Preserve attribution, license link, source references, and modification records. Do not infer text captions from codepoints without a versioned Unicode mapping."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "git_snapshot",
+        "repository": "https://github.com/jdecked/twemoji.git",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "include_patterns": [
+          "assets/svg/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE-GRAPHICS"
+        ],
+        "metadata_paths": [],
+        "selection_status": "patterns_to_qualify"
+      },
+      "preparation": [
+        "retain_raw_svg",
+        "validate_and_sandbox_render",
+        "extract_available_labels",
+        "deduplicate_across_sources",
+        "group_variants_before_splitting"
+      ],
+      "text_pair_quality": "names_or_metadata_only_not_dense_verified_captions",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "svg"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "https://github.com/jdecked/twemoji.git",
+        "pinned_revision": "",
+        "include_patterns": [
+          "assets/svg/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE-GRAPHICS"
+        ],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "svg-openmoji",
+      "name": "OpenMoji",
+      "category": "svg_emoji",
+      "source_kind": "open_asset_collection",
+      "description": "Colored and monochrome emoji with accompanying metadata.",
+      "source_url": "https://github.com/hfg-gmuend/openmoji",
+      "modalities": [
+        "svg",
+        "image"
+      ],
+      "use_cases": [
+        "svg_generation",
+        "image_to_svg",
+        "svg_understanding"
+      ],
+      "license": {
+        "spdx_expression": "CC-BY-SA-4.0",
+        "applies_to": "selected asset paths",
+        "evidence_urls": [
+          "https://github.com/hfg-gmuend/openmoji/blob/master/LICENSE.txt"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": true,
+        "notes": "Preserve attribution and share-alike conditions for applicable redistributed adapted material. Opt-in under project distribution policy; do not automatically infer how obligations apply to trained weights."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "git_snapshot",
+        "repository": "https://github.com/hfg-gmuend/openmoji.git",
+        "ref_hint": "master",
+        "resolve_to_immutable_commit": true,
+        "include_patterns": [
+          "color/svg/*.svg",
+          "black/svg/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE.txt"
+        ],
+        "metadata_paths": [
+          "data/openmoji.json"
+        ],
+        "selection_status": "patterns_to_qualify"
+      },
+      "preparation": [
+        "retain_raw_svg",
+        "validate_and_sandbox_render",
+        "extract_available_labels",
+        "deduplicate_across_sources",
+        "group_variants_before_splitting"
+      ],
+      "text_pair_quality": "names_or_metadata_only_not_dense_verified_captions",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "svg"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "https://github.com/hfg-gmuend/openmoji.git",
+        "pinned_revision": "",
+        "include_patterns": [
+          "color/svg/*.svg",
+          "black/svg/*.svg"
+        ],
+        "license_paths": [
+          "LICENSE.txt"
+        ],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "svg-game-icons",
+      "name": "Game Icons",
+      "category": "svg_game_art",
+      "source_kind": "open_asset_collection",
+      "description": "Game-related silhouettes and symbolic artwork organized by contributor.",
+      "source_url": "https://github.com/game-icons/icons",
+      "modalities": [
+        "svg",
+        "image"
+      ],
+      "use_cases": [
+        "svg_generation",
+        "image_to_svg",
+        "svg_understanding"
+      ],
+      "license": {
+        "spdx_expression": "CC-BY-3.0",
+        "applies_to": "selected asset paths",
+        "evidence_urls": [
+          "https://github.com/game-icons/icons/blob/master/license.txt",
+          "https://game-icons.net/about.html"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Attribute the original artist, not only the hosting site. Preserve author directory and asset origin. Verify per-asset exceptions during ingestion."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "git_snapshot",
+        "repository": "https://github.com/game-icons/icons.git",
+        "ref_hint": "master",
+        "resolve_to_immutable_commit": true,
+        "include_patterns": [
+          "**/*.svg"
+        ],
+        "license_paths": [
+          "license.txt"
+        ],
+        "metadata_paths": [],
+        "selection_status": "patterns_to_qualify"
+      },
+      "preparation": [
+        "retain_raw_svg",
+        "validate_and_sandbox_render",
+        "extract_available_labels",
+        "deduplicate_across_sources",
+        "group_variants_before_splitting"
+      ],
+      "text_pair_quality": "names_or_metadata_only_not_dense_verified_captions",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "svg"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "https://github.com/game-icons/icons.git",
+        "pinned_revision": "",
+        "include_patterns": [
+          "**/*.svg"
+        ],
+        "license_paths": [
+          "license.txt"
+        ],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "text-oasst1",
+      "name": "OpenAssistant OASST1",
+      "category": "language_and_alignment",
+      "source_kind": "published_dataset",
+      "description": "Human conversation trees and ranking signals for supervised and preference training.",
+      "source_url": "https://huggingface.co/datasets/OpenAssistant/oasst1",
+      "modalities": [
+        "text"
+      ],
+      "use_cases": [
+        "Human conversation trees and ranking signals for supervised and preference training."
+      ],
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "applies_to": "dataset as declared by its publisher",
+        "evidence_urls": [
+          "https://huggingface.co/datasets/OpenAssistant/oasst1"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve license and notices. Reconstruct conversation trees; do not treat each message as an independent complete conversation. Keep trees together across splits."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "huggingface_dataset_snapshot",
+        "repo_id": "OpenAssistant/oasst1",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "configuration": null,
+        "allow_dataset_remote_code": false,
+        "file_selection_status": "data_files_and_splits_to_qualify"
+      },
+      "split_policy": "Preserve official split and group by message_tree_id.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "text",
+        "preference"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "text-dolly15k",
+      "name": "Databricks Dolly 15k",
+      "category": "language_and_alignment",
+      "source_kind": "published_dataset",
+      "description": "Instruction following, question answering, and summarization examples.",
+      "source_url": "https://huggingface.co/datasets/databricks/databricks-dolly-15k",
+      "modalities": [
+        "text"
+      ],
+      "use_cases": [
+        "Instruction following, question answering, and summarization examples."
+      ],
+      "license": {
+        "spdx_expression": "CC-BY-SA-3.0",
+        "applies_to": "dataset as declared by its publisher",
+        "evidence_urls": [
+          "https://huggingface.co/datasets/databricks/databricks-dolly-15k"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": true,
+        "notes": "Publisher allows academic and commercial use under CC BY-SA 3.0. Preserve Databricks and relevant Wikipedia attribution. Opt-in under project distribution policy."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "huggingface_dataset_snapshot",
+        "repo_id": "databricks/databricks-dolly-15k",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "configuration": null,
+        "allow_dataset_remote_code": false,
+        "file_selection_status": "data_files_and_splits_to_qualify"
+      },
+      "split_policy": "Create reproducible grouped held-out splits without overlapping derived examples.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "text"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "preference-hh-rlhf",
+      "name": "Anthropic HH RLHF",
+      "category": "language_and_alignment",
+      "source_kind": "published_dataset",
+      "description": "Chosen and rejected conversations for preference optimization and reward modeling.",
+      "source_url": "https://huggingface.co/datasets/Anthropic/hh-rlhf",
+      "modalities": [
+        "text"
+      ],
+      "use_cases": [
+        "Chosen and rejected conversations for preference optimization and reward modeling."
+      ],
+      "license": {
+        "spdx_expression": "MIT",
+        "applies_to": "dataset as declared by its publisher",
+        "evidence_urls": [
+          "https://huggingface.co/datasets/Anthropic/hh-rlhf",
+          "https://github.com/anthropics/hh-rlhf/blob/master/LICENSE"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve MIT notice. Parse paired conversation histories correctly. Distinguish preference data from red-team data and do not use chosen responses as unconditional ideal-answer SFT."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "huggingface_dataset_snapshot",
+        "repo_id": "Anthropic/hh-rlhf",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "configuration": null,
+        "allow_dataset_remote_code": false,
+        "file_selection_status": "data_files_and_splits_to_qualify"
+      },
+      "split_policy": "Preserve official train/test splits and group shared prompts across variants.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "preference"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "math-gsm8k",
+      "name": "GSM8K",
+      "category": "language_and_alignment",
+      "source_kind": "published_dataset",
+      "description": "Grade-school math problems with worked answers for training and held-out evaluation.",
+      "source_url": "https://huggingface.co/datasets/openai/gsm8k",
+      "modalities": [
+        "text"
+      ],
+      "use_cases": [
+        "Grade-school math problems with worked answers for training and held-out evaluation."
+      ],
+      "license": {
+        "spdx_expression": "MIT",
+        "applies_to": "dataset as declared by its publisher",
+        "evidence_urls": [
+          "https://huggingface.co/datasets/openai/gsm8k"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "MIT is declared on the official dataset card. Preserve its license evidence. Keep benchmark test examples out of training and synthetic-data seeds."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "huggingface_dataset_snapshot",
+        "repo_id": "openai/gsm8k",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "configuration": "main",
+        "allow_dataset_remote_code": false,
+        "file_selection_status": "data_files_and_splits_to_qualify"
+      },
+      "split_policy": "Train split for training; official test split reserved for evaluation.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "text"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "audio-librispeech",
+      "name": "LibriSpeech",
+      "category": "audio",
+      "source_kind": "published_dataset",
+      "description": "Read English speech aligned with transcripts.",
+      "source_url": "https://www.openslr.org/12",
+      "modalities": [
+        "audio",
+        "text"
+      ],
+      "use_cases": [
+        "speech_recognition",
+        "audio_text_alignment"
+      ],
+      "license": {
+        "spdx_expression": "CC-BY-4.0",
+        "applies_to": "LibriSpeech corpus release",
+        "evidence_urls": [
+          "https://www.openslr.org/12"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve attribution and source metadata. Scope this preset to corpus archives; separate original-book and MP3 downloads are not included."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "http_archive",
+        "discovery_url": "https://www.openslr.org/12",
+        "default_subset": "train-clean-100",
+        "version_strategy": "archive_hash_and_release_metadata",
+        "download_url": "https://openslr.trmal.net/resources/12/train-clean-100.tar.gz",
+        "upstream_checksum_url": "https://openslr.trmal.net/resources/12/md5sum.txt",
+        "upstream_checksum_algorithm": "md5",
+        "compute_local_sha256": true,
+        "reported_compressed_size": "6.3G as listed upstream",
+        "transport_status": "not_download_tested"
+      },
+      "split_policy": "Preserve official train/dev/test and speaker separation.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "speech"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "image-fashion-mnist",
+      "name": "Fashion MNIST",
+      "category": "image",
+      "source_kind": "published_dataset",
+      "description": "Small grayscale clothing images and class labels for pipeline smoke tests.",
+      "source_url": "https://github.com/zalandoresearch/fashion-mnist",
+      "modalities": [
+        "image",
+        "label"
+      ],
+      "use_cases": [
+        "image_classification",
+        "pipeline_smoke_test"
+      ],
+      "license": {
+        "spdx_expression": "MIT",
+        "applies_to": "dataset repository declaration",
+        "evidence_urls": [
+          "https://github.com/zalandoresearch/fashion-mnist#license"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve the publisher MIT notice. This is a small image-classification fixture, not a general vision-language training corpus."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "git_snapshot",
+        "repository": "https://github.com/zalandoresearch/fashion-mnist.git",
+        "ref_hint": "master",
+        "resolve_to_immutable_commit": true,
+        "include_patterns": [
+          "data/fashion/*.gz"
+        ],
+        "license_paths": [
+          "LICENSE",
+          "README.md"
+        ],
+        "selection_status": "patterns_to_qualify"
+      },
+      "split_policy": "Preserve official train/test splits.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "raster"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "https://github.com/zalandoresearch/fashion-mnist.git",
+        "pinned_revision": "",
+        "include_patterns": [
+          "data/fashion/*.gz"
+        ],
+        "license_paths": [
+          "LICENSE",
+          "README.md"
+        ],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "code-mbpp",
+      "name": "Mostly Basic Python Problems",
+      "category": "language_and_alignment",
+      "source_kind": "published_dataset",
+      "description": "Python generation examples with natural-language tasks and tests.",
+      "source_url": "https://huggingface.co/datasets/google-research-datasets/mbpp",
+      "modalities": [
+        "text"
+      ],
+      "use_cases": [
+        "Python generation examples with natural-language tasks and tests."
+      ],
+      "license": {
+        "spdx_expression": "CC-BY-4.0",
+        "applies_to": "dataset as declared by its publisher",
+        "evidence_urls": [
+          "https://huggingface.co/datasets/google-research-datasets/mbpp"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve attribution. Use official training split only for training; keep validation, test, and prompt examples distinct. Execute generated code only in isolated evaluators."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "huggingface_dataset_snapshot",
+        "repo_id": "google-research-datasets/mbpp",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "configuration": "full",
+        "allow_dataset_remote_code": false,
+        "file_selection_status": "data_files_and_splits_to_qualify"
+      },
+      "split_policy": "Preserve official splits and task IDs.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "code"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "tools-xlam",
+      "name": "xLAM function-calling 60k",
+      "category": "language_and_alignment",
+      "source_kind": "published_dataset",
+      "description": "Queries, tool schemas, and structured function-call answers.",
+      "source_url": "https://huggingface.co/datasets/Salesforce/xlam-function-calling-60k",
+      "modalities": [
+        "text"
+      ],
+      "use_cases": [
+        "Queries, tool schemas, and structured function-call answers."
+      ],
+      "license": {
+        "spdx_expression": "CC-BY-4.0",
+        "applies_to": "dataset as declared by its publisher",
+        "evidence_urls": [
+          "https://huggingface.co/datasets/Salesforce/xlam-function-calling-60k"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Gated access requires user acceptance and credentials. Inspect the current access conditions before enabling download; never accept them silently. Preserve attribution and APIGen citation."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "huggingface_dataset_snapshot",
+        "repo_id": "Salesforce/xlam-function-calling-60k",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "configuration": null,
+        "allow_dataset_remote_code": false,
+        "file_selection_status": "data_files_and_splits_to_qualify"
+      },
+      "split_policy": "Create grouped splits by tool/schema and related query families.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "access": {
+        "gated": true,
+        "user_acceptance_required": true,
+        "default_one_click_eligible": false
+      },
+      "output_group_ids": [
+        "structured"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "code-humaneval",
+      "name": "HumanEval",
+      "category": "code",
+      "source_kind": "published_dataset",
+      "description": "Python completion benchmark; evaluation only in default presets.",
+      "source_url": "https://github.com/openai/human-eval",
+      "modalities": [
+        "text",
+        "code"
+      ],
+      "use_cases": [
+        "code_evaluation"
+      ],
+      "license": {
+        "spdx_expression": "MIT",
+        "applies_to": "selected corpus assets under publisher declaration",
+        "evidence_urls": [
+          "https://github.com/openai/human-eval/blob/master/LICENSE"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve MIT notice. Exclude benchmark tasks, solutions, and derived examples from training and synthetic seeds. Sandbox all execution."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "git_snapshot",
+        "repository": "https://github.com/openai/human-eval.git",
+        "ref_hint": "master",
+        "resolve_to_immutable_commit": true,
+        "include_patterns": [
+          "data/*.jsonl.gz"
+        ],
+        "selection_status": "patterns_to_qualify"
+      },
+      "split_policy": "Evaluation only; reserve the entire benchmark.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "code"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "https://github.com/openai/human-eval.git",
+        "pinned_revision": "",
+        "include_patterns": [
+          "data/*.jsonl.gz"
+        ],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "image-dsprites",
+      "name": "dSprites",
+      "category": "image",
+      "source_kind": "published_dataset",
+      "description": "Synthetic binary shape images with known factors; small image-generation and conversion fixture.",
+      "source_url": "https://github.com/google-deepmind/dsprites-dataset",
+      "modalities": [
+        "image",
+        "numeric"
+      ],
+      "use_cases": [
+        "synthetic_image_generation"
+      ],
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "applies_to": "selected corpus assets under publisher declaration",
+        "evidence_urls": [
+          "https://github.com/google-deepmind/dsprites-dataset/blob/master/LICENSE"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve repository license and notices. Decode numeric arrays without executing notebooks or loading untrusted pickled metadata. This is not a natural-image caption corpus."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "git_snapshot",
+        "repository": "https://github.com/google-deepmind/dsprites-dataset.git",
+        "ref_hint": "master",
+        "resolve_to_immutable_commit": true,
+        "include_patterns": [
+          "*.npz",
+          "*.hdf5"
+        ],
+        "selection_status": "patterns_to_qualify"
+      },
+      "split_policy": "Version grouped factor-combination splits; prevent near-identical shapes from crossing evaluation boundaries.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "raster"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "https://github.com/google-deepmind/dsprites-dataset.git",
+        "pinned_revision": "",
+        "include_patterns": [
+          "*.npz",
+          "*.hdf5"
+        ],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "audio-libritts",
+      "name": "LibriTTS",
+      "category": "audio",
+      "source_kind": "published_dataset",
+      "description": "English speech and text designed for text-to-speech research.",
+      "source_url": "https://www.openslr.org/60/",
+      "modalities": [
+        "audio",
+        "text"
+      ],
+      "use_cases": [
+        "text_to_speech"
+      ],
+      "license": {
+        "spdx_expression": "CC-BY-4.0",
+        "applies_to": "selected corpus assets under publisher declaration",
+        "evidence_urls": [
+          "https://www.openslr.org/60/"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve attribution, speakers, and transcript alignment. Related to LibriSpeech; check overlap before mixing. Select corpus archives, not separate original-source books or recordings."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "http_archive",
+        "discovery_url": "https://www.openslr.org/60/",
+        "default_subset": "train-clean-100",
+        "download_url": "https://openslr.trmal.net/resources/60/train-clean-100.tar.gz",
+        "version_strategy": "archive_hash_and_release_metadata",
+        "compute_local_sha256": true,
+        "transport_status": "not_download_tested"
+      },
+      "split_policy": "Preserve official train/dev/test and speaker separation; check overlap with LibriSpeech.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "speech"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "video-big-buck-bunny",
+      "name": "Big Buck Bunny",
+      "category": "video",
+      "source_kind": "open_media_fixture",
+      "description": "Open movie for video decoding, clip preparation, and limited generation experiments; not a diverse captioned corpus.",
+      "source_url": "https://peach.blender.org/download/",
+      "modalities": [
+        "video",
+        "audio"
+      ],
+      "use_cases": [
+        "video_pipeline_fixture"
+      ],
+      "license": {
+        "spdx_expression": "CC-BY-3.0",
+        "applies_to": "selected corpus assets under publisher declaration",
+        "evidence_urls": [
+          "https://peach.blender.org/about/"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Scope to the released movie under the official CC BY 3.0 declaration and retain Blender Foundation credit. Exclude separately released isolated score and unrelated site files; their terms can differ. No prompt/clip captions are assumed."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "http_archive",
+        "discovery_url": "https://peach.blender.org/download/",
+        "version_strategy": "selected_movie_file_hash",
+        "file_selection_status": "movie_files_to_qualify",
+        "compute_local_sha256": true,
+        "transport_status": "not_download_tested"
+      },
+      "split_policy": "Split by separated scenes with temporal exclusion gaps; do not claim cross-film generalization from a single movie.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "video"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "numeric-electricity",
+      "name": "ElectricityLoadDiagrams20112014",
+      "category": "numeric",
+      "source_kind": "published_dataset",
+      "description": "Electricity consumption series for numeric forecasting and table-output adapters.",
+      "source_url": "https://archive.ics.uci.edu/dataset/321/electricityloaddiagrams20112014",
+      "modalities": [
+        "numeric",
+        "time_series"
+      ],
+      "use_cases": [
+        "time_series_forecasting"
+      ],
+      "license": {
+        "spdx_expression": "CC-BY-4.0",
+        "applies_to": "selected corpus assets under publisher declaration",
+        "evidence_urls": [
+          "https://archive.ics.uci.edu/dataset/321/electricityloaddiagrams20112014"
+        ],
+        "upstream_declaration_checked_on": "2026-10-08",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve Artur Trindade attribution. Parse semicolon delimiters and documented numeric conventions. Account for Portuguese time and daylight-saving encoding; zero may mark a client not yet present."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "http_archive",
+        "discovery_url": "https://archive.ics.uci.edu/dataset/321/electricityloaddiagrams20112014",
+        "version_strategy": "archive_hash_and_release_metadata",
+        "compute_local_sha256": true,
+        "file_selection_status": "official_zip_to_qualify",
+        "transport_status": "not_download_tested"
+      },
+      "split_policy": "Use chronological cutoffs and prevent overlapping forecasting windows across splits.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "numeric"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    }
+  ],
+  "held_candidates": [
+    {
+      "name": "SVG Stack",
+      "source_url": "https://huggingface.co/datasets/starvector/svg-stack",
+      "reason": "No dataset license declaration was found on the inspected official card. The StarVector code license does not establish rights to its gathered assets.",
+      "checked_on": "2026-10-08",
+      "download_enabled": false
+    },
+    {
+      "name": "FineVideo",
+      "source_url": "https://huggingface.co/datasets/HuggingFaceFV/finevideo",
+      "reason": "The card describes CC BY source videos, but per-asset license scope and additional gated access, removal-update, and redistribution terms require review. Outside the default open bank.",
+      "checked_on": "2026-10-08",
+      "download_enabled": false
+    }
+  ]
+}

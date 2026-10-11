@@ -1,0 +1,131 @@
+{
+  "environment": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "machine": "arm64",
+    "python": "3.12.15",
+    "processor": "arm",
+    "cpu_model": "Apple M5 Pro",
+    "physical_cores": 18,
+    "host_memory_bytes": 51539607552,
+    "database": "SQLite",
+    "django": "5.2.18"
+  },
+  "contract_digest": "6590e79bf229fa31750d7493e84526aca4964ad6eface014874ebfe24696642d",
+  "pins": {
+    "runtime": "modelanvil.cpu-character-sft.v1",
+    "contract_digest": "6590e79bf229fa31750d7493e84526aca4964ad6eface014874ebfe24696642d",
+    "dataset_id": "1cb588b1-0d83-438a-b1a6-707d39a62aa5",
+    "build_digest": "abda07023251d0ecae544e3a847babbdb7138f5abe1d85addb25d213a3a470cb",
+    "dataset_digest": "94baacc54c7a48eff3fffe7530005a37ac5bfc1cfd56327d540abe83451fd5d9",
+    "base_id": "f94c0ee5-5cf5-4af6-becd-2626056701e1",
+    "base_artifact_id": "135a2f10-9b94-428f-9613-f29799d4230a",
+    "base_digest": "cd2c1cb97c356ea853e7b268239845396977aa8bdf602d0d044497007355017a",
+    "tokenizer_id": "45f8301e-f478-4231-a057-ce9d3d345cb2",
+    "tokenizer_digest": "bde30dc6fb390a58751502b23b58ed833898f8071fe46846deb39175caad0e0a",
+    "runner_id": "f224df26-f5ff-4f25-a6d6-ac36ccc5e5cc",
+    "runner_digest": "e2565ce871109e01f460f951858f24e0f04aaaf44b9a0b0ef8f4489fc2c3f265",
+    "pool_id": 1,
+    "steps": 4,
+    "config": {
+      "vocab_size": 12,
+      "n_embd": 4,
+      "lora_r": 2,
+      "lora_alpha": 4
+    },
+    "optimizer": {
+      "algorithm": "sgd",
+      "learning_rate": 0.05,
+      "momentum": 0
+    },
+    "sample_digest": "ee5fc545c9b761bf0b9d4c5b34c2d263b0803710c894aaef5a7ed88940a5ca8c"
+  },
+  "metrics": [
+    {
+      "step": 1,
+      "loss": 2.484678286295887,
+      "post_update_loss": 2.4840936654109522,
+      "training_pairs": 9,
+      "cpu_seconds": 0.00024199999999985344,
+      "engine_wall_seconds": 0.00023954198695719242,
+      "sample_id": "b521fc48-7318-47d1-85ed-d2ac1d0d0696"
+    },
+    {
+      "step": 2,
+      "loss": 2.484452635184491,
+      "post_update_loss": 2.4834529987195113,
+      "training_pairs": 9,
+      "cpu_seconds": 0.0002420000000000755,
+      "engine_wall_seconds": 0.0002395409974269569,
+      "sample_id": "22e7b92c-29cc-435d-8a65-783b50b654e9"
+    },
+    {
+      "step": 3,
+      "loss": 2.48377048980994,
+      "post_update_loss": 2.483151425120811,
+      "training_pairs": 9,
+      "cpu_seconds": 0.00027100000000013225,
+      "engine_wall_seconds": 0.0002668329980224371,
+      "sample_id": "b521fc48-7318-47d1-85ed-d2ac1d0d0696"
+    },
+    {
+      "step": 4,
+      "loss": 2.4829648318885913,
+      "post_update_loss": 2.4818905696968807,
+      "training_pairs": 9,
+      "cpu_seconds": 0.00022099999999980469,
+      "engine_wall_seconds": 0.00022024998906999826,
+      "sample_id": "22e7b92c-29cc-435d-8a65-783b50b654e9"
+    }
+  ],
+  "usage": {
+    "training_steps": 4,
+    "training_pairs": 36,
+    "cpu_seconds": 0.0009759999999998659
+  },
+  "checkpoint_digest": "b4b86e3a2797294eaa770c5faff3faab544665716bbab6a51e484e2650b32635",
+  "external_inference": {
+    "completion": " cd cd c",
+    "generated_token_ids": [
+      10,
+      6,
+      7,
+      10,
+      6,
+      7,
+      10,
+      6
+    ],
+    "weights_sha256": "d0b929517e8b3ce6fb3ef0fdd051e46d67286d26a2e8223d5e415d1d96a33c22",
+    "runtime": "independent_stdlib_character_consumer"
+  },
+  "internal_inference": {
+    "is_verified": true,
+    "prompt": "ab",
+    "generated_token_ids": [
+      10,
+      6,
+      7,
+      10,
+      6,
+      7,
+      10,
+      6
+    ],
+    "generated_tokens": [
+      " ",
+      "c",
+      "d",
+      " ",
+      "c",
+      "d",
+      " ",
+      "c"
+    ],
+    "completion": " cd cd c",
+    "weights_sha256": "d0b929517e8b3ce6fb3ef0fdd051e46d67286d26a2e8223d5e415d1d96a33c22",
+    "verification_scope": "local_cpu_character_runtime",
+    "decoded_text": true,
+    "production_qualified": false
+  },
+  "consumer_sha256": "78f9b095ca1664ade929b7c458cff5f897848d83174a98cacc07cf6a697c72aa"
+}

@@ -1,0 +1,14 @@
+
+> modelanvil-web@0.1.0 build
+> tsc -b && vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 1924 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.35 kB │ gzip:   0.26 kB
+dist/assets/index-DGuBeIBG.css   28.49 kB │ gzip:   5.96 kB
+dist/assets/index-VVcvFo55.js   411.85 kB │ gzip: 115.65 kB
+
+✓ built in 172ms

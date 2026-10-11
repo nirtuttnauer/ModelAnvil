@@ -1,0 +1,11 @@
+apiVersion: v2
+name: modelanvil
+description: Helm chart for ModelAnvil multi-node production deployment
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - machine-learning
+  - model-training
+  - rlhf
+  - rag

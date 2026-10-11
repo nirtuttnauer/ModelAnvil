@@ -1,0 +1,6 @@
+# Override only the isolated dataset qualification runtime.
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dataset-tests

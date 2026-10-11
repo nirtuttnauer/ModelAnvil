@@ -1,0 +1,53 @@
+import { apiRequest } from './client';
+
+export interface PreferencePair { prompt: string; chosen: string; rejected: string }
+export interface PreferenceArtifact { artifact_id: string; name: string; sha256: string; byte_size: number; row_count: number; state: string }
+export interface AlignmentRun {
+  run_id: string; algorithm: string; status: string; current_step: number; total_steps: number;
+  execution_capabilities?: { can_execute: boolean; reason: string; runtime?: string; supported_algorithms?: string[] };
+  execution_evidence?: { level: string; source: string };
+  policy_model_version: number; reference_model_version: number | null; reward_model_version: number | null;
+  train_dataset_artifact?: string | null; held_out_dataset_artifact?: string | null;
+  dataset_manifest_digest: string; held_out_validation_digest: string;
+  hyperparameters: Record<string, unknown>; verifier_spec: Record<string, unknown>; latest_metrics: unknown;
+  metrics_history?: Array<Record<string, unknown>>; output_model_version?: number | null;
+  execution_pins?: Record<string, unknown>; stop_reason: string;
+}
+export interface AlignmentPlan {
+  algorithm: string; policy_model_version: number; reference_model_version: number | null; reward_model_version: number | null;
+  train_dataset_artifact: string; held_out_dataset_artifact: string; total_steps: number;
+  hyperparameters: Record<string, unknown>; verifier_spec: Record<string, unknown>;
+}
+
+export function preferencePairs(raw: string): PreferencePair[] {
+  let parsed: unknown;
+  try { parsed = JSON.parse(raw); } catch { throw new Error('Enter a JSON array of prompt, chosen, and rejected strings.'); }
+  if (!Array.isArray(parsed) || !parsed.length || parsed.length > 32) throw new Error('Provide between 1 and 32 preference pairs.');
+  const seen = new Set<string>();
+  return parsed.map(value => {
+    if (!value || typeof value !== 'object' || Array.isArray(value) || ['prompt', 'chosen', 'rejected'].some(key => typeof value[key] !== 'string' || !value[key].trim())) throw new Error('Each pair needs nonempty prompt, chosen, and rejected strings.');
+    const pair = value as PreferencePair;
+    if (pair.chosen === pair.rejected) throw new Error('Chosen and rejected responses must differ.');
+    if (pair.chosen.length > 32 || pair.rejected.length > 32 || pair.prompt.length + Math.max(pair.chosen.length, pair.rejected.length) > 62) throw new Error('Responses support at most 32 characters; prompt plus response supports 62.');
+    const identity = JSON.stringify([pair.prompt, pair.chosen, pair.rejected]);
+    if (seen.has(identity)) throw new Error('Preference pairs must be unique.');
+    seen.add(identity);
+    return { prompt: pair.prompt, chosen: pair.chosen, rejected: pair.rejected };
+  });
+}
+
+export function registerPreferences(token: string, name: string, samples: PreferencePair[], signal?: AbortSignal) {
+  return apiRequest<PreferenceArtifact>('/api/v1/alignment-runs/register-preferences/', token,
+    { method: 'POST', body: JSON.stringify({ name, samples }), signal });
+}
+export function createAlignmentPlan(token: string, plan: AlignmentPlan, signal?: AbortSignal) {
+  if (!Number.isInteger(plan.total_steps) || plan.total_steps < 1 || plan.total_steps > 100) throw new Error('Choose between 1 and 100 CPU steps.');
+  if (!plan.train_dataset_artifact || !plan.held_out_dataset_artifact || plan.train_dataset_artifact === plan.held_out_dataset_artifact) throw new Error('Pin separate training and held-out preference artifacts.');
+  return apiRequest<AlignmentRun>('/api/v1/alignment-runs/', token,
+    { method: 'POST', body: JSON.stringify(plan), signal });
+}
+export function alignmentAction(token: string, runId: string, action: 'execute' | 'cancel', signal?: AbortSignal) {
+  if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(runId)) throw new Error('Invalid alignment run identifier.');
+  return apiRequest<AlignmentRun>(`/api/v1/alignment-runs/${runId}/${action}/`, token,
+    { method: 'POST', body: '{}', signal });
+}

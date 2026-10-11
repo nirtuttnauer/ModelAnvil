@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "<workspace>/scripts/hf_candidate_infer.py", line 102, in <module>
+    main()
+  File "<workspace>/scripts/hf_candidate_infer.py", line 54, in main
+    device, backend = selected_device(args.device)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<workspace>/scripts/hf_candidate_infer.py", line 34, in selected_device
+    raise ValueError('Selected backend does not match the installed CUDA/HIP framework build.')
+ValueError: Selected backend does not match the installed CUDA/HIP framework build.

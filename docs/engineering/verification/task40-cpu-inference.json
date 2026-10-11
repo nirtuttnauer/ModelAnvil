@@ -1,0 +1,33 @@
+{
+  "weights_sha256": "6e8a4cfe8c355e5b91a1bf2b5b1137b5615e334525bfbba3e766437d9af4df48",
+  "prompt": "Once upon a time",
+  "file_hashes": {
+    "model.safetensors": "6e8a4cfe8c355e5b91a1bf2b5b1137b5615e334525bfbba3e766437d9af4df48",
+    "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+    "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+    "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+    "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3"
+  },
+  "generated_token_ids": [
+    28,
+    665,
+    436,
+    253,
+    1838,
+    8180,
+    3365,
+    14176
+  ],
+  "completion": ", there was a little girl named Lily",
+  "parameter_count": 134515008,
+  "execution": {
+    "backend": "cpu",
+    "device": "cpu",
+    "precision": "fp32",
+    "device_residency_checked": true,
+    "wall_seconds": 0.10883062501670793,
+    "allocated_bytes": null
+  },
+  "consumer_imported_modelanvil_or_django": false,
+  "scope": "Independent process, cpu FP32 inference from actual GPU-produced candidate; no quality or production claim."
+}

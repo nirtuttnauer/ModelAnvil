@@ -1,0 +1,9 @@
+{
+  "cpu_brand": "Apple M5 Pro",
+  "memory_bytes": 51539607552,
+  "macos": "27.0.1",
+  "source_sha256": {
+    "modelanvil/accelerators.py": "b928897f385219596cf6f8ddec049d55a520a1024e02046c2a060e9a1afadfbc",
+    "modelanvil/test_accelerators.py": "d43a01fb21443d699e03399a56a7cbe62273ca506a175c64fa71a470a4557bb1"
+  }
+}

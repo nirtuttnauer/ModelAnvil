@@ -1,0 +1,89 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: modelanvil-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-modelanvil}
+      POSTGRES_USER: ${POSTGRES_USER:-modelanvil}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-modelanvil_secret}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-modelanvil} -d ${POSTGRES_DB:-modelanvil}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: modelanvil-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-modelanvil}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-modelanvil_secret}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    container_name: modelanvil-storage
+    ports:
+      - "8333:8333"
+      - "9333:9333"
+    command: "server -s3 -dir=/data"
+    volumes:
+      - seaweedfs_data:/data
+
+  api:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    container_name: modelanvil-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      seaweedfs:
+        condition: service_started
+    environment:
+      DJANGO_SETTINGS_MODULE: modelanvil.settings
+      DATABASE_URL: postgres://${POSTGRES_USER:-modelanvil}:${POSTGRES_PASSWORD:-modelanvil_secret}@postgres:5432/${POSTGRES_DB:-modelanvil}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-modelanvil}:${RABBITMQ_PASSWORD:-modelanvil_secret}@rabbitmq:5672//
+      S3_ENDPOINT_URL: http://seaweedfs:8333
+      S3_BUCKET_NAME: modelanvil-artifacts
+    ports:
+      - "8000:8000"
+    command: ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    container_name: modelanvil-worker
+    depends_on:
+      api:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      DJANGO_SETTINGS_MODULE: modelanvil.settings
+      DATABASE_URL: postgres://${POSTGRES_USER:-modelanvil}:${POSTGRES_PASSWORD:-modelanvil_secret}@postgres:5432/${POSTGRES_DB:-modelanvil}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-modelanvil}:${RABBITMQ_PASSWORD:-modelanvil_secret}@rabbitmq:5672//
+    command: ["python", "manage.py", "run_executor"]
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+  seaweedfs_data:

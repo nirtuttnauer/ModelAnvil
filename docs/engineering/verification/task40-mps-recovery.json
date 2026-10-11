@@ -1,0 +1,22 @@
+{
+  "recovery": {
+    "run_id": "172707be-e267-4860-bd9d-4ec7c1d0c002",
+    "attempts": 2,
+    "final_weights_sha256": "6e8a4cfe8c355e5b91a1bf2b5b1137b5615e334525bfbba3e766437d9af4df48",
+    "exactly_matches_uninterrupted": true,
+    "steps": 3
+  },
+  "cancel": {
+    "run_id": "c1462b6b-c9be-49c5-9c03-6c970115b171",
+    "steps": 1,
+    "settled": "1.000000",
+    "candidate": null
+  },
+  "corruption": {
+    "run_id": "01c4c540-42f2-461e-bda6-77edbdbff108",
+    "steps": 0,
+    "settled": "0",
+    "candidate": null
+  },
+  "scope": "Real mps:0 SmolLM2 GPU worker, isolated database, live fencing/cancellation/corruption/accounting. Does not qualify other vendors or production scheduling."
+}
