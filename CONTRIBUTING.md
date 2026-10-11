@@ -15,6 +15,8 @@ npm run build-storybook
 
 Keep changes focused. Add a regression test for substantive behavior changes and update API contracts when request or response fields change. Use Storybook's synthetic fixtures for UI examples.
 
+CI uses a file-backed SQLite test database so HTTP server threads have separate connections. To use the same setup locally, set `DATABASE_TEST_NAME` to an unused temporary file path before `make test`.
+
 Preserve tenant/project isolation, permission checks, artifact integrity, cancellation and usage accounting. Distinguish measured execution from demo fixtures and hardware/production qualification. Do not commit local databases, model weights, dataset contents, credentials or generated verification output.
 
 Contributions are licensed under the repository's [MIT license](LICENSE). Dataset and model licenses remain separate from the software license.

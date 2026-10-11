@@ -50,6 +50,8 @@ else:
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": BASE_DIR / os.environ.get("DATABASE_NAME", "modelanvil.db"),
+            # HTTP tests need separate connections instead of shared in-memory SQLite.
+            "TEST": {"NAME": os.environ.get("DATABASE_TEST_NAME")},
         }
     }
 
