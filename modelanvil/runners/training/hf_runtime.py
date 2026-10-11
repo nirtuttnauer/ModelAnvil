@@ -19,6 +19,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from modelanvil.accelerators import inventory, select_device
+from modelanvil.device_admission import device_available, device_lease
 from modelanvil.artifacts.models import Artifact, DeletionTombstone
 from modelanvil.artifacts.storage import artifact_storage_backend, upload_staged_artifact
 from modelanvil.identity.models import check_resource_access
@@ -44,7 +45,8 @@ CONTRACT = {'runtime': RUNTIME_ID, 'source': SOURCE, 'file_hashes': FILE_HASHES,
             'recipe': 'full_sft', 'precision': 'fp32', 'optimizer': OPTIMIZER, 'limits': LIMITS,
             'dropout': 'disabled', 'placement': 'one_trusted_local_worker',
             'recipes': ['full_sft', 'lora_adapter'], 'lora': LORA, 'adapter_package': {'peft': '0.17.1'},
-            'lora_gradient_checkpointing': 'non_reentrant', 'deterministic_algorithms': True}
+            'lora_gradient_checkpointing': 'non_reentrant', 'deterministic_algorithms': True,
+            'device_admission': 'exclusive_posix_user_host_v1'}
 CONTRACT_DIGEST = digest(CONTRACT)
 MPS_MEMORY_FRACTION = 0.9
 
@@ -96,7 +98,7 @@ def runner_manifest():
 def build_digest():
     root = Path(__file__).parent
     paths = [root / name for name in ['hf_runtime.py', 'runtime.py', 'executor.py', 'registry.py']]
-    paths.append(root.parents[1] / 'accelerators.py')
+    paths.extend(root.parents[1] / name for name in ('accelerators.py', 'device_admission.py'))
     return hashlib.sha256(b''.join(p.read_bytes() for p in paths)).hexdigest()
 
 
@@ -321,6 +323,8 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
         raise ValueError('GPU worker backend changed; re-register the worker before launch.')
     if require_capacity and worker.slots < 1:
         raise ValueError('Free the GPU worker slot before launching.')
+    if require_capacity and not device_available(worker.capabilities['gpu_device']):
+        raise ValueError('The selected local device is busy; retry preflight when it finishes.')
     with staged_files(files, tenant, project) as directory:
         spec = _tokenizer(directory)
         config = json.loads((directory / 'config.json').read_text())
@@ -432,8 +436,7 @@ def deterministic_updates():
 
 def execute_training(run, context):
     import torch
-    from safetensors.torch import save_file
-    from modelanvil.runners.models import RunnerManifest, TrainingCheckpoint, TrainingRun
+    from modelanvil.runners.models import RunnerManifest
     pins = run.hardware_config['pins']
     if not context.heartbeat(progress=run.current_step / run.total_steps):
         return
@@ -451,78 +454,107 @@ def execute_training(run, context):
     device = torch.device(pins['accelerator']['device']['torch_device'])
     if device.type == 'mps':
         torch.mps.set_per_process_memory_fraction(MPS_MEMORY_FRACTION)
-    with deterministic_updates(), staged_files(recovery, run.tenant_id, run.project_id) as directory:
-        model = _recipe_model(directory, run.recipe_type, run.initialization_seed, training=True).to(device)
-        trainable = [p for p in model.parameters() if p.requires_grad]
-        optimizer = torch.optim.AdamW(trainable, lr=OPTIMIZER['learning_rate'],
-            betas=(OPTIMIZER['beta1'], OPTIMIZER['beta2']), eps=OPTIMIZER['epsilon'], weight_decay=OPTIMIZER['weight_decay'], foreach=False)
-        if latest:
-            _restore_optimizer(model, optimizer, directory, latest.step)
-        for step in range(run.current_step + 1, run.total_steps + 1):
-            if not context.heartbeat(progress=(step - 1) / run.total_steps):
-                return
-            sample = inputs['samples'][(step - 1) % len(inputs['samples'])]
-            ids = torch.tensor([sample['token_ids']], device=device, dtype=torch.long)
-            backend = pins['accelerator']['device']['backend']
-            api = getattr(torch, 'cuda' if backend == 'rocm' else backend)
-            if backend != 'mps':
-                api.reset_peak_memory_stats(device)
-            cpu_started, wall_started = time.process_time(), time.perf_counter()
-            optimizer.zero_grad()
-            loss = model(input_ids=ids, labels=ids).loss
-            loss.backward()
-            if loss.device != device or not torch.isfinite(loss).item() or any(
-                    p.device != device or p.grad is None or not torch.isfinite(p.grad).all().item() for p in trainable):
-                raise ValueError('Training gradients are non-finite or left the selected GPU.')
-            if any(p.grad is not None for p in model.parameters() if not p.requires_grad):
-                raise ValueError('Frozen base parameters unexpectedly acquired gradients.')
-            grad_norm = torch.linalg.vector_norm(torch.stack([torch.linalg.vector_norm(p.grad.detach()) for p in trainable])).item()
-            optimizer.step()
-            with torch.no_grad():
-                post_loss = model(input_ids=ids, labels=ids).loss.item()
-            if not torch.isfinite(torch.tensor(post_loss)).item():
-                raise ValueError('GPU update produced non-finite loss.')
-            api.synchronize() if backend == 'mps' else api.synchronize(device)
-            metrics = {'step': step, 'loss': loss.item(), 'post_update_loss': post_loss, 'sample_id': sample['sample_id'],
-                       'training_pairs': len(sample['token_ids']) - 1, 'cpu_seconds': time.process_time() - cpu_started,
-                       'engine_wall_seconds': time.perf_counter() - wall_started, 'gpu_backend': backend,
-                       'gpu_device': str(device), 'device_residency_checked': True,
-                       'gradient_norm': grad_norm, 'trainable_parameters': sum(p.numel() for p in trainable),
-                       'total_parameters': sum(p.numel() for p in model.parameters()), 'measured_at': timezone.now().isoformat(),
-                       'peak_allocated_bytes': None if backend == 'mps' else api.max_memory_allocated(device),
-                       'peak_reserved_bytes': None if backend == 'mps' else api.max_memory_reserved(device),
-                       'gpu_allocated_bytes': api.current_allocated_memory() if backend == 'mps' else api.memory_allocated(device)}
-            metrics['tokens_per_second'] = metrics['training_pairs'] / metrics['engine_wall_seconds']
-            metrics['gpu_utilization_percent'] = None  # No portable utilization measurement is available in this runtime.
-            if backend == 'mps':
-                metrics['unified_memory'] = mps_memory()
-            # Hugging Face preserves its expected tied embedding key; generic save_model does not.
-            model.save_pretrained(str(directory), safe_serialization=True,
-                **({'save_embedding_layers': False} if run.recipe_type == 'lora_adapter' else {}))
-            save_file(_optimizer_state(model, optimizer), str(directory / 'optimizer.safetensors'))
-            if not context.heartbeat(progress=(step - 1) / run.total_steps):
-                return
-            with transaction.atomic():
-                locked = _locked_live_run(context, run.run_id)
-                if locked.current_step != step - 1:
-                    raise ValueError('GPU training cursor changed; publication refused.')
-                if run.recipe_type == 'lora_adapter':
-                    saved_files = {**files, **{n: _store_file(directory / n, run, context, step)
-                        for n in ['adapter_model.safetensors', 'adapter_config.json']}}
-                else:
-                    saved_files = {**files, 'model.safetensors': _store_file(directory / 'model.safetensors', run, context, step)}
-                adam_ref = _store_file(directory / 'optimizer.safetensors', run, context, step)
-                _locked_live_run(context, run.run_id)  # Recheck expiry/cancellation after bounded storage writes.
-                state = {'run_id': str(run.run_id), 'step': step, 'pins': pins,
-                    'files': saved_files, 'adam': adam_ref,
-                    'optimizer': {**OPTIMIZER, 'updates': step}, 'tokenizer': inputs['tokenizer'], 'metrics': metrics,
-                    'attempt_id': str(context.attempt.attempt_id), 'fencing_token': context.fencing_token}
-                TrainingCheckpoint.all_objects.create(tenant_id=run.tenant_id, training_run=locked,
-                    step=step, state_digest=digest(state), weights_manifest=state, metrics=metrics)
-                locked.current_step, locked.latest_loss = step, metrics['loss']
-                locked.metrics_log = [*locked.metrics_log, metrics]; locked.status = TrainingRun.Status.RUNNING
-                locked.started_at = locked.started_at or timezone.now()
-                locked.save(update_fields=['current_step', 'latest_loss', 'metrics_log', 'status', 'started_at', 'updated_at'])
+    with device_lease(pins['accelerator']['device']['id']), deterministic_updates():
+        try:
+            _execute_updates(run, context, inputs, device, recovery, files, latest)
+        finally:
+            import gc
+            gc.collect()
+            api = getattr(torch, 'cuda' if device.type == 'cuda' else device.type)
+            api.empty_cache()
+
+
+def _execute_updates(run, context, inputs, device, recovery, files, latest):
+    import torch
+    from safetensors.torch import save_file
+    from modelanvil.runners.models import TrainingCheckpoint, TrainingRun
+    pins = run.hardware_config['pins']
+    model = optimizer = loss = ids = None
+    trainable = []
+    try:
+        with staged_files(recovery, run.tenant_id, run.project_id) as directory:
+            model = _recipe_model(directory, run.recipe_type, run.initialization_seed, training=True).to(device)
+            trainable = [p for p in model.parameters() if p.requires_grad]
+            optimizer = torch.optim.AdamW(trainable, lr=OPTIMIZER['learning_rate'],
+                betas=(OPTIMIZER['beta1'], OPTIMIZER['beta2']), eps=OPTIMIZER['epsilon'], weight_decay=OPTIMIZER['weight_decay'], foreach=False)
+            if latest:
+                _restore_optimizer(model, optimizer, directory, latest.step)
+            for step in range(run.current_step + 1, run.total_steps + 1):
+                if not context.heartbeat(progress=(step - 1) / run.total_steps):
+                    return
+                sample = inputs['samples'][(step - 1) % len(inputs['samples'])]
+                ids = torch.tensor([sample['token_ids']], device=device, dtype=torch.long)
+                backend = pins['accelerator']['device']['backend']
+                api = getattr(torch, 'cuda' if backend == 'rocm' else backend)
+                if backend != 'mps':
+                    api.reset_peak_memory_stats(device)
+                cpu_started, wall_started = time.process_time(), time.perf_counter()
+                optimizer.zero_grad()
+                loss = model(input_ids=ids, labels=ids).loss
+                loss.backward()
+                if loss.device != device or not torch.isfinite(loss).item() or any(
+                        p.device != device or p.grad is None or not torch.isfinite(p.grad).all().item() for p in trainable):
+                    raise ValueError('Training gradients are non-finite or left the selected GPU.')
+                if any(p.grad is not None for p in model.parameters() if not p.requires_grad):
+                    raise ValueError('Frozen base parameters unexpectedly acquired gradients.')
+                grad_norm = torch.linalg.vector_norm(torch.stack([torch.linalg.vector_norm(p.grad.detach()) for p in trainable])).item()
+                optimizer.step()
+                with torch.no_grad():
+                    post_loss = model(input_ids=ids, labels=ids).loss.item()
+                if not torch.isfinite(torch.tensor(post_loss)).item():
+                    raise ValueError('GPU update produced non-finite loss.')
+                api.synchronize() if backend == 'mps' else api.synchronize(device)
+                metrics = {'step': step, 'loss': loss.item(), 'post_update_loss': post_loss, 'sample_id': sample['sample_id'],
+                           'training_pairs': len(sample['token_ids']) - 1, 'cpu_seconds': time.process_time() - cpu_started,
+                           'engine_wall_seconds': time.perf_counter() - wall_started, 'gpu_backend': backend,
+                           'gpu_device': str(device), 'device_residency_checked': True,
+                           'gradient_norm': grad_norm, 'trainable_parameters': sum(p.numel() for p in trainable),
+                           'total_parameters': sum(p.numel() for p in model.parameters()), 'measured_at': timezone.now().isoformat(),
+                           'peak_allocated_bytes': None if backend == 'mps' else api.max_memory_allocated(device),
+                           'peak_reserved_bytes': None if backend == 'mps' else api.max_memory_reserved(device),
+                           'gpu_allocated_bytes': api.current_allocated_memory() if backend == 'mps' else api.memory_allocated(device)}
+                metrics['tokens_per_second'] = metrics['training_pairs'] / metrics['engine_wall_seconds']
+                metrics['gpu_utilization_percent'] = None  # No portable utilization measurement is available in this runtime.
+                if backend == 'mps':
+                    metrics['unified_memory'] = mps_memory()
+                # Hugging Face preserves its expected tied embedding key; generic save_model does not.
+                model.save_pretrained(str(directory), safe_serialization=True,
+                    **({'save_embedding_layers': False} if run.recipe_type == 'lora_adapter' else {}))
+                save_file(_optimizer_state(model, optimizer), str(directory / 'optimizer.safetensors'))
+                if not context.heartbeat(progress=(step - 1) / run.total_steps):
+                    return
+                with transaction.atomic():
+                    locked = _locked_live_run(context, run.run_id)
+                    if locked.current_step != step - 1:
+                        raise ValueError('GPU training cursor changed; publication refused.')
+                    if run.recipe_type == 'lora_adapter':
+                        saved_files = {**files, **{n: _store_file(directory / n, run, context, step)
+                            for n in ['adapter_model.safetensors', 'adapter_config.json']}}
+                    else:
+                        saved_files = {**files, 'model.safetensors': _store_file(directory / 'model.safetensors', run, context, step)}
+                    adam_ref = _store_file(directory / 'optimizer.safetensors', run, context, step)
+                    _locked_live_run(context, run.run_id)  # Recheck expiry/cancellation after bounded storage writes.
+                    state = {'run_id': str(run.run_id), 'step': step, 'pins': pins,
+                        'files': saved_files, 'adam': adam_ref,
+                        'optimizer': {**OPTIMIZER, 'updates': step}, 'tokenizer': inputs['tokenizer'], 'metrics': metrics,
+                        'attempt_id': str(context.attempt.attempt_id), 'fencing_token': context.fencing_token}
+                    TrainingCheckpoint.all_objects.create(tenant_id=run.tenant_id, training_run=locked,
+                        step=step, state_digest=digest(state), weights_manifest=state, metrics=metrics)
+                    locked.current_step, locked.latest_loss = step, metrics['loss']
+                    locked.metrics_log = [*locked.metrics_log, metrics]; locked.status = TrainingRun.Status.RUNNING
+                    locked.started_at = locked.started_at or timezone.now()
+                    locked.save(update_fields=['current_step', 'latest_loss', 'metrics_log', 'status', 'started_at', 'updated_at'])
+
+    except Exception as exc:
+        import traceback
+        traceback.clear_frames(exc.__traceback__)
+        raise
+    finally:
+        if optimizer is not None:
+            optimizer.state.clear()
+            optimizer.param_groups.clear()
+        trainable.clear()
+        model = optimizer = loss = ids = None
 
 
 def finalize_job(job, status):

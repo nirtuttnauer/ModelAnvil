@@ -66,11 +66,19 @@ samples=args.output / 'samples.jsonl';samples.write_text(''.join(json.dumps(r)+'
 output=io.StringIO()
 call_command('setup_gpu_training',tenant_id=tenant.pk,project_id=project.pk,name=name,model_dir=args.model_dir,samples=samples,device=args.device,steps=3,stdout=output)
 installed=json.loads(output.getvalue())
+from modelanvil.device_admission import device_available, device_lease
 installed['launch']['recipe_type'] = args.recipe
 weight_name = 'adapter_model.safetensors' if args.recipe == 'lora_adapter' else 'model.safetensors'
 secret,hashed=generate_api_key()
 ApiKey.objects.create(tenant=tenant,name='qualification',role=Role.ENGINEER,secret_hash=hashed)
 client=APIClient();client.credentials(HTTP_AUTHORIZATION=f'Bearer {secret}')
+with device_lease(args.device):
+ blocked = client.post('/api/v1/training-runs/preflight/', installed['launch'], format='json')
+ assert blocked.status_code == 200 and 'device-admission' in blocked.data['blocking_checks'], blocked.data
+ refused = client.post('/api/v1/training-runs/', installed['launch'], format='json', HTTP_IDEMPOTENCY_KEY='busy-device')
+ assert refused.status_code == 400, refused.data
+ assert TrainingRun.all_objects.count() == 0 and BudgetReservation.all_objects.count() == 0
+print('busy device rejected before job and budget allocation', flush=True)
 preview=client.post('/api/v1/training-runs/preflight/',installed['launch'],format='json')
 assert preview.status_code==200 and preview.data['status']=='approved',preview.data
 before_jobs = Job.all_objects.filter(tenant_id=tenant.pk).count()
@@ -90,6 +98,7 @@ print('launched',run.run_id,flush=True)
 descriptor=claim_job(worker);assert descriptor
 outcome=execute_claim(worker,descriptor,training_worker_executor)
 run.refresh_from_db();print('outcome',outcome,'error',JobAttempt.all_objects.get(job=run.job).error,flush=True)
+assert device_available(args.device), 'Training retained its device lease after exit'
 assert outcome['committed'] and outcome['status']=='succeeded' and run.status=='completed'
 bundle=checkpoint_bundle(run,run.checkpoints.get(step=run.total_steps))
 download=client.get(f'/api/v1/training-runs/{run.run_id}/download/')

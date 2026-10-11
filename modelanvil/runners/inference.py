@@ -1,7 +1,7 @@
 """Bounded local generation from verified, project-scoped snapshots."""
 from __future__ import annotations
 
-from contextlib import contextmanager
+from contextlib import contextmanager, ExitStack
 import gc
 import hashlib
 import json
@@ -14,6 +14,7 @@ import uuid
 from modelanvil.artifacts.models import Artifact, DeletionTombstone
 from modelanvil.artifacts.storage import artifact_storage_backend
 from modelanvil.identity.models import check_resource_access
+from modelanvil.device_admission import device_lease
 
 _allocation = threading.Lock()
 MAX_BYTES = 8 * 1024**3
@@ -140,12 +141,13 @@ def rendered_prompt(tokenizer, messages, prompt_format='model'):
 
 @contextmanager
 def local_session(version, *, tenant, project, device='cpu'):
-    """One allocation per API process; disconnect/close always unloads its model."""
+    """One model per process and exclusive local device use; close always unloads."""
     plan = snapshot(version, tenant, project)
     if not _allocation.acquire(blocking=False):
         raise ValueError('Local inference is busy; retry after the current request finishes.')
-    model, session = None, {}
+    model, session, admission = None, {}, ExitStack()
     try:
+        admission.enter_context(device_lease(device))
         with staged_snapshot(plan['files'], tenant, project) as directory:
             if plan['format'] == 'gguf':
                 if device != 'cpu':
@@ -244,8 +246,17 @@ def local_session(version, *, tenant, project, device='cpu'):
                     model.close()
                 del model
             gc.collect()
+            if plan['format'] == 'mlx' and 'mx' in locals():
+                mx.clear_cache()
+            elif plan['format'] == 'safetensors' and 'torch' in locals() and device != 'cpu':
+                api = getattr(torch, 'cuda' if device.startswith('rocm:') else device.split(':')[0], None)
+                if api is not None and hasattr(api, 'empty_cache'):
+                    api.empty_cache()
         finally:
-            _allocation.release()
+            try:
+                admission.close()
+            finally:
+                _allocation.release()
 
 
 def generate(session, messages, *, max_tokens=128, temperature=0.0, seed=42, prompt_format='model', cancelled=lambda: False):

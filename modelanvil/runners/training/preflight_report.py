@@ -156,6 +156,13 @@ def build_preflight_report(*, recipe_type, tokenizer_version, base_model_version
                         'optimizer': inputs['pins']['optimizer'], 'cpu_slots': 1, 'memory_bytes': module.LIMITS['memory_bytes'],
                         'storage_bytes': required, 'storage_assumption': 'One full checkpoint per step, candidate copies and 64 KiB overhead per state; shared local host.'}
         if inputs['pins'].get('accelerator'):
+            from modelanvil.device_admission import device_available
+            try:
+                available = device_available(inputs['pins']['accelerator']['device']['id'])
+                check('device-admission', 'capacity', available, 'The named local device must be idle across cooperating API and training processes.',
+                    'Wait for the current device user to finish, then preview again.')
+            except (ValueError, OSError) as exc:
+                check('device-admission', 'capacity', False, str(exc), 'Configure the same private device admission directory for local API and workers.')
             requirements.update(gpu_count=1, accelerator=inputs['pins']['accelerator'], precision=module.CONTRACT['precision'],
                 storage_assumption='FP32 weights, two FP32 Adam moments, per-step checkpoints and staging/candidate headroom; shared local host.')
             if recipe_type == 'lora_adapter':

@@ -162,6 +162,20 @@ class ModelWorkspaceTests(TestCase):
         path.write_bytes(b'corrupted')
         self.assertEqual(self.client.post('/api/v1/inference/chat/completions', body, format='json').status_code, 400)
 
+    def test_device_contention_refuses_allocation_and_close_releases_admission(self):
+        from modelanvil.device_admission import device_available, device_lease
+        imported = self.import_model()
+        body = {'model': imported.data['candidate_id'], 'messages': [{'role': 'user', 'content': 'hello'}], 'max_tokens': 2}
+        with device_lease('cpu'):
+            failed = self.client.post('/api/v1/inference/chat/completions', body, format='json')
+            self.assertEqual(failed.status_code, 400, failed.content)
+        stream = self.client.post('/api/v1/inference/chat/completions', {**body, 'stream': True}, format='json')
+        self.assertEqual(stream.status_code, 200)
+        self.assertFalse(device_available('cpu'))
+        stream.close()
+        self.assertTrue(device_available('cpu'))
+        self.assertEqual(self.client.post('/api/v1/inference/chat/completions', body, format='json').status_code, 200)
+
     def test_disconnect_releases_model_and_conversations_use_revision_checks(self):
         imported = self.import_model()
         body = {'model': imported.data['candidate_id'], 'messages': [{'role': 'user', 'content': 'hello'}], 'max_tokens': 2, 'stream': True}
