@@ -100,7 +100,12 @@
       "source_ids": [
         "text-oasst1",
         "text-dolly15k",
-        "math-gsm8k"
+        "math-gsm8k",
+        "text-smol-magpie-ultra",
+        "text-ultrachat-200k",
+        "text-squad",
+        "preference-ultrafeedback-binarized",
+        "image-clevr"
       ]
     },
     {
@@ -113,7 +118,8 @@
       ],
       "source_ids": [
         "preference-hh-rlhf",
-        "text-oasst1"
+        "text-oasst1",
+        "preference-ultrafeedback-binarized"
       ]
     },
     {
@@ -138,7 +144,9 @@
         "yaml"
       ],
       "source_ids": [
-        "tools-xlam"
+        "tools-xlam",
+        "tools-glaive-v2",
+        "image-clevr"
       ]
     },
     {
@@ -152,7 +160,8 @@
       ],
       "source_ids": [
         "image-dsprites",
-        "image-fashion-mnist"
+        "image-fashion-mnist",
+        "image-clevr"
       ]
     },
     {
@@ -166,7 +175,9 @@
       ],
       "source_ids": [
         "audio-libritts",
-        "audio-librispeech"
+        "audio-librispeech",
+        "audio-vctk",
+        "audio-libritts-r"
       ]
     },
     {
@@ -193,7 +204,9 @@
         "hdf5"
       ],
       "source_ids": [
-        "numeric-electricity"
+        "numeric-electricity",
+        "numeric-iris",
+        "numeric-wine-quality"
       ]
     },
     {
@@ -1711,6 +1724,557 @@
         "transport_status": "not_download_tested"
       },
       "split_policy": "Use chronological cutoffs and prevent overlapping forecasting windows across splits.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "numeric"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "text-smol-magpie-ultra",
+      "name": "SmolTalk: Smol-Magpie-Ultra",
+      "category": "language_and_alignment",
+      "source_kind": "published_dataset",
+      "description": "Synthetic multi-turn instruction conversations from the Smol-Magpie-Ultra subset.",
+      "source_url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk",
+      "modalities": [
+        "text"
+      ],
+      "use_cases": [
+        "instruction_following"
+      ],
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "applies_to": "selected dataset configuration as declared by its publisher",
+        "evidence_urls": [
+          "https://huggingface.co/datasets/HuggingFaceTB/smoltalk"
+        ],
+        "upstream_declaration_checked_on": "2026-10-11",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Scope strictly to smol-magpie-ultra, one of the publisher's new Apache-2.0 subsets. The all configuration mixes separately licensed third-party datasets and is excluded. Preserve notices and synthetic-generation provenance."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "huggingface_dataset_snapshot",
+        "repo_id": "HuggingFaceTB/smoltalk",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "configuration": "smol-magpie-ultra",
+        "allow_dataset_remote_code": false,
+        "file_selection_status": "data_files_and_splits_to_qualify"
+      },
+      "split_policy": "Preserve official train/test and keep whole conversations together; deduplicate prompts before mixing sources.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "text"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "text-ultrachat-200k",
+      "name": "UltraChat 200k",
+      "category": "language_and_alignment",
+      "source_kind": "published_dataset",
+      "description": "Filtered synthetic multi-turn conversations for supervised instruction tuning.",
+      "source_url": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k",
+      "modalities": [
+        "text"
+      ],
+      "use_cases": [
+        "instruction_following"
+      ],
+      "license": {
+        "spdx_expression": "MIT",
+        "applies_to": "selected dataset configuration as declared by its publisher",
+        "evidence_urls": [
+          "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k"
+        ],
+        "upstream_declaration_checked_on": "2026-10-11",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve MIT notice and UltraChat attribution. Retain message roles, prompt IDs, and synthetic origin. Use train_sft for SFT; generation splits serve a different task."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "huggingface_dataset_snapshot",
+        "repo_id": "HuggingFaceH4/ultrachat_200k",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "configuration": null,
+        "allow_dataset_remote_code": false,
+        "file_selection_status": "data_files_and_splits_to_qualify"
+      },
+      "split_policy": "Preserve train_sft/test_sft and train_gen/test_gen; group shared prompt IDs across views and check cross-source duplicates.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "text"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "text-squad",
+      "name": "SQuAD 1.1",
+      "category": "language_and_alignment",
+      "source_kind": "published_dataset",
+      "description": "Wikipedia passages with questions and answer spans for extractive question answering.",
+      "source_url": "https://huggingface.co/datasets/rajpurkar/squad",
+      "modalities": [
+        "text"
+      ],
+      "use_cases": [
+        "extractive_question_answering"
+      ],
+      "license": {
+        "spdx_expression": "CC-BY-SA-4.0",
+        "applies_to": "selected dataset configuration as declared by its publisher",
+        "evidence_urls": [
+          "https://huggingface.co/datasets/rajpurkar/squad"
+        ],
+        "upstream_declaration_checked_on": "2026-10-11",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": true,
+        "notes": "Preserve dataset and Wikipedia attribution, article provenance, and share-alike obligations for redistributed adaptations. Requires explicit project opt-in. Validate answer offsets after any text normalization."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "huggingface_dataset_snapshot",
+        "repo_id": "rajpurkar/squad",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "configuration": null,
+        "allow_dataset_remote_code": false,
+        "file_selection_status": "data_files_and_splits_to_qualify"
+      },
+      "split_policy": "Preserve official train/validation; group duplicate passages and article identities when creating additional splits. Keep evaluation questions out of training seeds.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "text"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "preference-ultrafeedback-binarized",
+      "name": "UltraFeedback Binarized",
+      "category": "language_and_alignment",
+      "source_kind": "published_dataset",
+      "description": "Synthetic chosen/rejected conversations and scores for preference optimization and SFT.",
+      "source_url": "https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized",
+      "modalities": [
+        "text"
+      ],
+      "use_cases": [
+        "preference_optimization"
+      ],
+      "license": {
+        "spdx_expression": "MIT",
+        "applies_to": "selected dataset configuration as declared by its publisher",
+        "evidence_urls": [
+          "https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized"
+        ],
+        "upstream_declaration_checked_on": "2026-10-11",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve MIT notice and UltraFeedback attribution. Qualify a revision containing the documented label and TruthfulQA-contamination fixes. Retain chosen/rejected roles, scores, and synthetic judge provenance."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "huggingface_dataset_snapshot",
+        "repo_id": "HuggingFaceH4/ultrafeedback_binarized",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "configuration": null,
+        "allow_dataset_remote_code": false,
+        "file_selection_status": "data_files_and_splits_to_qualify"
+      },
+      "split_policy": "Preserve official SFT, preference, and generation splits; group prompt_id across views so the same prompt cannot enter both training and evaluation.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "preference",
+        "text"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "tools-glaive-v2",
+      "name": "Glaive function calling v2",
+      "category": "language_and_alignment",
+      "source_kind": "published_dataset",
+      "description": "Synthetic conversations with function schemas and tool-call turns.",
+      "source_url": "https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2",
+      "modalities": [
+        "text",
+        "structured"
+      ],
+      "use_cases": [
+        "function_calling"
+      ],
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "applies_to": "selected dataset configuration as declared by its publisher",
+        "evidence_urls": [
+          "https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2"
+        ],
+        "upstream_declaration_checked_on": "2026-10-11",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve license and notices. Parse system and chat fields into validated roles, function schemas, calls, and results; keep refusal/no-call cases. Schema examples are data and must never invoke real tools."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "huggingface_dataset_snapshot",
+        "repo_id": "glaiveai/glaive-function-calling-v2",
+        "ref_hint": "main",
+        "resolve_to_immutable_commit": true,
+        "configuration": null,
+        "allow_dataset_remote_code": false,
+        "file_selection_status": "data_files_and_splits_to_qualify"
+      },
+      "split_policy": "Create versioned splits grouped by normalized function schema and conversation; deduplicate prompt variants across sources.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "structured"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "image-clevr",
+      "name": "CLEVR v1.0",
+      "category": "image",
+      "source_kind": "published_dataset",
+      "description": "Synthetic scenes paired with visual questions, answers, scene graphs, and reasoning programs.",
+      "source_url": "https://cs.stanford.edu/people/jcjohns/clevr/",
+      "modalities": [
+        "image",
+        "text",
+        "structured"
+      ],
+      "use_cases": [
+        "visual_question_answering"
+      ],
+      "license": {
+        "spdx_expression": "CC-BY-4.0",
+        "applies_to": "selected dataset configuration as declared by its publisher",
+        "evidence_urls": [
+          "https://cs.stanford.edu/people/jcjohns/clevr/"
+        ],
+        "upstream_declaration_checked_on": "2026-10-11",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve author attribution and the data license. Join questions and scene annotations by image identity. This is synthetic visual reasoning data; do not represent it as natural-image captions."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "http_archive",
+        "discovery_url": "https://cs.stanford.edu/people/jcjohns/clevr/",
+        "version_strategy": "archive_hash_and_release_metadata",
+        "compute_local_sha256": true,
+        "file_selection_status": "official_archive_and_data_files_to_qualify",
+        "transport_status": "not_download_tested",
+        "download_url": "https://dl.fbaipublicfiles.com/clevr/CLEVR_v1.0.zip",
+        "release_hint": "1.0",
+        "configuration": "main"
+      },
+      "split_policy": "Preserve official train/validation/test; keep all questions for one image together. Treat CoGenT as a separate configuration and retain its generalization conditions.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "raster",
+        "text",
+        "structured"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "audio-vctk",
+      "name": "CSTR VCTK 0.92",
+      "category": "audio",
+      "source_kind": "published_dataset",
+      "description": "English speech from multiple speakers and accents with transcript files.",
+      "source_url": "https://datashare.ed.ac.uk/handle/10283/3443",
+      "modalities": [
+        "audio",
+        "text"
+      ],
+      "use_cases": [
+        "text_to_speech"
+      ],
+      "license": {
+        "spdx_expression": "CC-BY-4.0",
+        "applies_to": "selected dataset configuration as declared by its publisher",
+        "evidence_urls": [
+          "https://datashare.ed.ac.uk/items/30e7453c-9ea8-48b4-8e18-f96d0dc62928/full"
+        ],
+        "upstream_declaration_checked_on": "2026-10-11",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Attribute Yamagishi, Veaux, and MacDonald and retain license_text.txt. Select one microphone view or group both recordings of each utterance. Exclude unaligned samples, including p315 with missing transcripts, from paired tasks."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "http_archive",
+        "discovery_url": "https://datashare.ed.ac.uk/handle/10283/3443",
+        "version_strategy": "archive_hash_and_release_metadata",
+        "compute_local_sha256": true,
+        "file_selection_status": "official_archive_and_data_files_to_qualify",
+        "transport_status": "not_download_tested",
+        "release_hint": "0.92"
+      },
+      "split_policy": "Create versioned speaker-disjoint splits; keep both microphone views and repeated passage variants together when evaluating text generalization.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "speech"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "audio-libritts-r",
+      "name": "LibriTTS-R",
+      "category": "audio",
+      "source_kind": "published_dataset",
+      "description": "Restored English speech aligned with text for multi-speaker speech synthesis.",
+      "source_url": "https://www.openslr.org/141/",
+      "modalities": [
+        "audio",
+        "text"
+      ],
+      "use_cases": [
+        "text_to_speech"
+      ],
+      "license": {
+        "spdx_expression": "CC-BY-4.0",
+        "applies_to": "selected dataset configuration as declared by its publisher",
+        "evidence_urls": [
+          "https://www.openslr.org/141/"
+        ],
+        "upstream_declaration_checked_on": "2026-10-11",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve attribution and restoration provenance; inspect the published restoration-failure lists. Utterances match LibriTTS, so restored and original audio must share split assignments. Check LibriSpeech overlap too."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "http_archive",
+        "discovery_url": "https://www.openslr.org/141/",
+        "version_strategy": "archive_hash_and_release_metadata",
+        "compute_local_sha256": true,
+        "file_selection_status": "official_archive_and_data_files_to_qualify",
+        "transport_status": "not_download_tested",
+        "default_subset": "train_clean_100",
+        "download_url": "https://openslr.trmal.net/resources/141/train_clean_100.tar.gz"
+      },
+      "split_policy": "Preserve official train/dev/test and speaker boundaries; group source utterance IDs across LibriTTS-R, LibriTTS, and LibriSpeech.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "speech"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "numeric-iris",
+      "name": "Iris",
+      "category": "numeric",
+      "source_kind": "published_dataset",
+      "description": "Small labeled flower-measurement table for classification and tabular pipeline checks.",
+      "source_url": "https://archive.ics.uci.edu/dataset/53/iris",
+      "modalities": [
+        "numeric",
+        "tabular"
+      ],
+      "use_cases": [
+        "tabular_classification"
+      ],
+      "license": {
+        "spdx_expression": "CC-BY-4.0",
+        "applies_to": "selected dataset configuration as declared by its publisher",
+        "evidence_urls": [
+          "https://archive.ics.uci.edu/dataset/53/iris"
+        ],
+        "upstream_declaration_checked_on": "2026-10-11",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve UCI/Fisher attribution and feature units. Parse numeric measurements separately from the species target. This small fixture does not establish broad tabular model quality."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "http_archive",
+        "discovery_url": "https://archive.ics.uci.edu/dataset/53/iris",
+        "version_strategy": "archive_hash_and_release_metadata",
+        "compute_local_sha256": true,
+        "file_selection_status": "official_archive_and_data_files_to_qualify",
+        "transport_status": "not_download_tested"
+      },
+      "split_policy": "Create deterministic stratified splits, grouping duplicate feature rows; fit scaling and other learned preprocessing on training rows only.",
+      "size_bytes": null,
+      "record_count": null,
+      "publication_status": "draft_catalog_not_download_enabled",
+      "output_group_ids": [
+        "numeric"
+      ],
+      "acquisition": {
+        "status": "unqualified",
+        "qualified_on": "",
+        "connector": "",
+        "upstream_repository": "",
+        "pinned_revision": "",
+        "include_patterns": [],
+        "license_paths": [],
+        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+      }
+    },
+    {
+      "id": "numeric-wine-quality",
+      "name": "Wine Quality",
+      "category": "numeric",
+      "source_kind": "published_dataset",
+      "description": "Red and white wine chemistry tables with quality scores for regression or classification.",
+      "source_url": "https://archive.ics.uci.edu/dataset/186/wine+quality",
+      "modalities": [
+        "numeric",
+        "tabular"
+      ],
+      "use_cases": [
+        "tabular_regression"
+      ],
+      "license": {
+        "spdx_expression": "CC-BY-4.0",
+        "applies_to": "selected dataset configuration as declared by its publisher",
+        "evidence_urls": [
+          "https://archive.ics.uci.edu/dataset/186/wine+quality"
+        ],
+        "upstream_declaration_checked_on": "2026-10-11",
+        "reviewed_revision": null,
+        "retain_license_and_notices": true,
+        "share_alike": false,
+        "notes": "Preserve Cortez and coauthor attribution. Parse semicolon-separated files, retain red/white type, and treat quality as the target. Do not infer consumer preferences or a time series from these measurements."
+      },
+      "eligibility": "open_license_candidate",
+      "connector_status": "planned_not_implemented",
+      "fetch": {
+        "kind": "http_archive",
+        "discovery_url": "https://archive.ics.uci.edu/dataset/186/wine+quality",
+        "version_strategy": "archive_hash_and_release_metadata",
+        "compute_local_sha256": true,
+        "file_selection_status": "official_archive_and_data_files_to_qualify",
+        "transport_status": "not_download_tested"
+      },
+      "split_policy": "Create versioned splits stratified by wine type and target; group duplicate measurements and fit learned preprocessing on training rows only.",
       "size_bytes": null,
       "record_count": null,
       "publication_status": "draft_catalog_not_download_enabled",

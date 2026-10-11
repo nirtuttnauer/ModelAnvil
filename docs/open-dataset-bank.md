@@ -1,12 +1,12 @@
 # ModelAnvil open dataset source bank
 
-Research date: 8 October 2026. Status: Initial catalog and product specification; download connectors are not implemented or qualified.
+Research dates: 8 and 11 October 2026. Status: Expanded candidate catalog; Lucide alone is qualified for bounded acquisition. Other connectors remain planned and unqualified.
 
 ## Recommendation
 
 Add a searchable Dataset Bank to ModelAnvil. A user chooses a task preset such as SVG starter, previews a small sample, and downloads the selected source snapshots into authorized storage. Preparation recipes turn raw sources into versioned datasets with retained provenance and license records.
 
-This catalog contains 23 sources: 10 SVG asset collections and 13 datasets or media fixtures across text, preferences, reasoning, code, tool calls, images, speech, video, and numeric outputs. SVG collections are useful source corpora, but they are not equivalent to datasets of verified natural-language instructions paired with SVG code. A source's storage format is separate from the intended model output. Container conversion does not supply missing task labels or qualify a training recipe.
+This catalog contains 33 sources: 10 SVG asset collections and 23 datasets or media fixtures across text, preferences, reasoning, code, tool calls, images, speech, video, and numeric outputs. SVG collections are useful source corpora, but they are not equivalent to datasets of verified natural-language instructions paired with SVG code. A source's storage format is separate from the intended model output. Container conversion does not supply missing task labels or qualify a training recipe.
 
 ## Open license policy
 
@@ -14,7 +14,7 @@ For this bank, open means a declared license permits reuse, modification, and re
 
 The listed licenses are publisher declarations inspected on the research date. Each production connector must still qualify its selected assets at an immutable revision and check exceptions. A code repository license must not be substituted for a dataset or graphics license. Inclusion here is a research candidate status, not a blanket rights clearance for future revisions or generated models.
 
-## Initial source catalog
+## Source catalog
 
 | Source | Type | Declared asset or dataset license | Acquisition design | Useful for |
 | --- | --- | --- | --- | --- |
@@ -42,6 +42,17 @@ The listed licenses are publisher declarations inspected on the research date. E
 | [Big Buck Bunny](https://peach.blender.org/download/) | Dataset | [CC-BY-3.0](https://peach.blender.org/about/) | HTTP archive | Open movie for video decoding, clip preparation, and limited generation experiments; not a diverse captioned corpus. |
 | [ElectricityLoadDiagrams20112014](https://archive.ics.uci.edu/dataset/321/electricityloaddiagrams20112014) | Dataset | [CC-BY-4.0](https://archive.ics.uci.edu/dataset/321/electricityloaddiagrams20112014) | HTTP archive | Electricity consumption series for numeric forecasting and table-output adapters. |
 
+| [SmolTalk: Smol-Magpie-Ultra](https://huggingface.co/datasets/HuggingFaceTB/smoltalk) | Dataset | [Apache-2.0](https://huggingface.co/datasets/HuggingFaceTB/smoltalk) | HF snapshot | Synthetic multi-turn instruction conversations from the Smol-Magpie-Ultra subset. |
+| [UltraChat 200k](https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k) | Dataset | [MIT](https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k) | HF snapshot | Filtered synthetic multi-turn conversations for supervised instruction tuning. |
+| [SQuAD 1.1](https://huggingface.co/datasets/rajpurkar/squad) | Dataset | [CC-BY-SA-4.0](https://huggingface.co/datasets/rajpurkar/squad) | HF snapshot | Wikipedia passages with questions and answer spans for extractive question answering. |
+| [UltraFeedback Binarized](https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized) | Dataset | [MIT](https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized) | HF snapshot | Synthetic chosen/rejected conversations and scores for preference optimization and SFT. |
+| [Glaive function calling v2](https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2) | Dataset | [Apache-2.0](https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2) | HF snapshot | Synthetic conversations with function schemas and tool-call turns. |
+| [CLEVR v1.0](https://cs.stanford.edu/people/jcjohns/clevr/) | Dataset | [CC-BY-4.0](https://cs.stanford.edu/people/jcjohns/clevr/) | HTTP archive | Synthetic scenes paired with visual questions, answers, scene graphs, and reasoning programs. |
+| [CSTR VCTK 0.92](https://datashare.ed.ac.uk/handle/10283/3443) | Dataset | [CC-BY-4.0](https://datashare.ed.ac.uk/items/30e7453c-9ea8-48b4-8e18-f96d0dc62928/full) | HTTP archive | English speech from multiple speakers and accents with transcript files. |
+| [LibriTTS-R](https://www.openslr.org/141/) | Dataset | [CC-BY-4.0](https://www.openslr.org/141/) | HTTP archive | Restored English speech aligned with text for multi-speaker speech synthesis. |
+| [Iris](https://archive.ics.uci.edu/dataset/53/iris) | Dataset | [CC-BY-4.0](https://archive.ics.uci.edu/dataset/53/iris) | HTTP archive | Small labeled flower-measurement table for classification and tabular pipeline checks. |
+| [Wine Quality](https://archive.ics.uci.edu/dataset/186/wine+quality) | Dataset | [CC-BY-4.0](https://archive.ics.uci.edu/dataset/186/wine+quality) | HTTP archive | Red and white wine chemistry tables with quality scores for regression or classification. |
+
 ## Source specific preparation
 
 - **Lucide:** Lucide uses ISC; the license also identifies Feather-derived icons under MIT. Preserve both notices. Deduplicate against Feather.
@@ -68,17 +79,28 @@ The listed licenses are publisher declarations inspected on the research date. E
 - **Big Buck Bunny:** Scope to the released movie under the official CC BY 3.0 declaration and retain Blender Foundation credit. Exclude separately released isolated score and unrelated site files; their terms can differ. No prompt/clip captions are assumed.
 - **ElectricityLoadDiagrams20112014:** Preserve Artur Trindade attribution. Parse semicolon delimiters and documented numeric conventions. Account for Portuguese time and daylight-saving encoding; zero may mark a client not yet present.
 
+- **SmolTalk: Smol-Magpie-Ultra:** Scope strictly to smol-magpie-ultra, one of the publisher's new Apache-2.0 subsets. The all configuration mixes separately licensed third-party datasets and is excluded. Preserve notices and synthetic-generation provenance. Preserve official train/test and keep whole conversations together; deduplicate prompts before mixing sources.
+- **UltraChat 200k:** Preserve MIT notice and UltraChat attribution. Retain message roles, prompt IDs, and synthetic origin. Use train_sft for SFT; generation splits serve a different task. Preserve train_sft/test_sft and train_gen/test_gen; group shared prompt IDs across views and check cross-source duplicates.
+- **SQuAD 1.1:** Preserve dataset and Wikipedia attribution, article provenance, and share-alike obligations for redistributed adaptations. Requires explicit project opt-in. Validate answer offsets after any text normalization. Preserve official train/validation; group duplicate passages and article identities when creating additional splits. Keep evaluation questions out of training seeds.
+- **UltraFeedback Binarized:** Preserve MIT notice and UltraFeedback attribution. Qualify a revision containing the documented label and TruthfulQA-contamination fixes. Retain chosen/rejected roles, scores, and synthetic judge provenance. Preserve official SFT, preference, and generation splits; group prompt_id across views so the same prompt cannot enter both training and evaluation.
+- **Glaive function calling v2:** Preserve license and notices. Parse system and chat fields into validated roles, function schemas, calls, and results; keep refusal/no-call cases. Schema examples are data and must never invoke real tools. Create versioned splits grouped by normalized function schema and conversation; deduplicate prompt variants across sources.
+- **CLEVR v1.0:** Preserve author attribution and the data license. Join questions and scene annotations by image identity. This is synthetic visual reasoning data; do not represent it as natural-image captions. Preserve official train/validation/test; keep all questions for one image together. Treat CoGenT as a separate configuration and retain its generalization conditions.
+- **CSTR VCTK 0.92:** Attribute Yamagishi, Veaux, and MacDonald and retain license_text.txt. Select one microphone view or group both recordings of each utterance. Exclude unaligned samples, including p315 with missing transcripts, from paired tasks. Create versioned speaker-disjoint splits; keep both microphone views and repeated passage variants together when evaluating text generalization.
+- **LibriTTS-R:** Preserve attribution and restoration provenance; inspect the published restoration-failure lists. Utterances match LibriTTS, so restored and original audio must share split assignments. Check LibriSpeech overlap too. Preserve official train/dev/test and speaker boundaries; group source utterance IDs across LibriTTS-R, LibriTTS, and LibriSpeech.
+- **Iris:** Preserve UCI/Fisher attribution and feature units. Parse numeric measurements separately from the species target. This small fixture does not establish broad tabular model quality. Create deterministic stratified splits, grouping duplicate feature rows; fit scaling and other learned preprocessing on training rows only.
+- **Wine Quality:** Preserve Cortez and coauthor attribution. Parse semicolon-separated files, retain red/white type, and treat quality as the target. Do not infer consumer preferences or a time series from these measurements. Create versioned splits stratified by wine type and target; group duplicate measurements and fit learned preprocessing on training rows only.
+
 ## Sources by intended output
 
 - **SVG vector graphics (svg):** [Lucide](https://github.com/lucide-icons/lucide), [Tabler Icons](https://github.com/tabler/tabler-icons), [Heroicons](https://github.com/tailwindlabs/heroicons), [Bootstrap Icons](https://github.com/twbs/icons), [Phosphor Icons](https://github.com/phosphor-icons/core), [Feather Icons](https://github.com/feathericons/feather), [Material Design Icons](https://github.com/google/material-design-icons), [Twemoji graphics](https://github.com/jdecked/twemoji), [OpenMoji](https://github.com/hfg-gmuend/openmoji), [Game Icons](https://github.com/game-icons/icons)
-- **Prose chat and reasoning (txt, md, jsonl):** [OpenAssistant OASST1](https://huggingface.co/datasets/OpenAssistant/oasst1), [Databricks Dolly 15k](https://huggingface.co/datasets/databricks/databricks-dolly-15k), [GSM8K](https://huggingface.co/datasets/openai/gsm8k)
-- **Rankings and reward scores (json, jsonl, parquet):** [Anthropic HH RLHF](https://huggingface.co/datasets/Anthropic/hh-rlhf), [OpenAssistant OASST1](https://huggingface.co/datasets/OpenAssistant/oasst1)
+- **Prose chat and reasoning (txt, md, jsonl):** [OpenAssistant OASST1](https://huggingface.co/datasets/OpenAssistant/oasst1), [Databricks Dolly 15k](https://huggingface.co/datasets/databricks/databricks-dolly-15k), [GSM8K](https://huggingface.co/datasets/openai/gsm8k), [SmolTalk: Smol-Magpie-Ultra](https://huggingface.co/datasets/HuggingFaceTB/smoltalk), [UltraChat 200k](https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k), [SQuAD 1.1](https://huggingface.co/datasets/rajpurkar/squad), [UltraFeedback Binarized](https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized), [CLEVR v1.0](https://cs.stanford.edu/people/jcjohns/clevr/)
+- **Rankings and reward scores (json, jsonl, parquet):** [Anthropic HH RLHF](https://huggingface.co/datasets/Anthropic/hh-rlhf), [OpenAssistant OASST1](https://huggingface.co/datasets/OpenAssistant/oasst1), [UltraFeedback Binarized](https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized)
 - **Code and notebooks (py, source_files, ipynb):** [Mostly Basic Python Problems](https://huggingface.co/datasets/google-research-datasets/mbpp), [HumanEval](https://github.com/openai/human-eval)
-- **Structured records and tool calls (json, jsonl, yaml):** [xLAM function-calling 60k](https://huggingface.co/datasets/Salesforce/xlam-function-calling-60k)
-- **Raster images (png, jpeg, webp, tiff):** [dSprites](https://github.com/google-deepmind/dsprites-dataset), [Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist)
-- **Speech audio (wav, flac, mp3, ogg):** [LibriTTS](https://www.openslr.org/60/), [LibriSpeech](https://www.openslr.org/12)
+- **Structured records and tool calls (json, jsonl, yaml):** [xLAM function-calling 60k](https://huggingface.co/datasets/Salesforce/xlam-function-calling-60k), [Glaive function calling v2](https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2), [CLEVR v1.0](https://cs.stanford.edu/people/jcjohns/clevr/)
+- **Raster images (png, jpeg, webp, tiff):** [dSprites](https://github.com/google-deepmind/dsprites-dataset), [Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist), [CLEVR v1.0](https://cs.stanford.edu/people/jcjohns/clevr/)
+- **Speech audio (wav, flac, mp3, ogg):** [LibriTTS](https://www.openslr.org/60/), [LibriSpeech](https://www.openslr.org/12), [CSTR VCTK 0.92](https://datashare.ed.ac.uk/handle/10283/3443), [LibriTTS-R](https://www.openslr.org/141/)
 - **Video (mp4, webm, mov):** [Big Buck Bunny](https://peach.blender.org/download/)
-- **Tables and time series (csv, tsv, parquet, arrow, npy, hdf5):** [ElectricityLoadDiagrams20112014](https://archive.ics.uci.edu/dataset/321/electricityloaddiagrams20112014)
+- **Tables and time series (csv, tsv, parquet, arrow, npy, hdf5):** [ElectricityLoadDiagrams20112014](https://archive.ics.uci.edu/dataset/321/electricityloaddiagrams20112014), [Iris](https://archive.ics.uci.edu/dataset/53/iris), [Wine Quality](https://archive.ics.uci.edu/dataset/186/wine+quality)
 - **Documents presentations and web pages (html, pdf, docx, pptx, epub):** No dedicated document-layout output corpus qualified; use a separately licensed synthetic template recipe.
 - **Custom formats 3D and other modalities (custom):** No approved generic corpus; requires task-specific source review and a validated adapter.
 
@@ -110,4 +132,4 @@ Mixed-license aggregation sites also need per-asset checks rather than a single 
 
 ## What has been prepared
 
-The accompanying JSON catalog records source identities, output groups, license evidence URLs, download connector designs, preparation requirements, and three SVG presets. Fields for precise revisions, byte sizes, and counts remain unset until qualification. Connector paths are candidates to test against the selected snapshot. HumanEval is evaluation-only by default; xLAM requires user-approved gated access. FineVideo stays held pending license and access-term review. No bulk datasets have been downloaded, and the catalog does not yet implement a clickable interface or fetcher.
+The accompanying JSON catalog records source identities, output groups, license evidence URLs, download connector designs, preparation requirements, and three SVG presets. For unqualified candidates, fields for precise revisions, byte sizes, and counts remain unset until qualification. Connector paths are candidates to test against the selected snapshot. HumanEval is evaluation-only by default; xLAM requires user-approved gated access. FineVideo stays held pending license and access-term review. The Dataset Bank interface and a bounded Lucide acquisition connector now exist. The ten additions reviewed on 11 October remain unqualified research candidates; their sizes, counts, and revisions are unset until measured qualification. SmolTalk is scoped to Smol-Magpie-Ultra; no license is asserted for its full mixture.
