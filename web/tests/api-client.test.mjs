@@ -64,3 +64,19 @@ test('malformed resource lists and aborted requests do not look empty or success
   await withFetch(async () => json({ detail: 'wrong shape' }), async () => await assert.rejects(apiPage('/api/v1/models/', token), /invalid resource list/));
   await withFetch(async () => { throw new DOMException('Aborted', 'AbortError'); }, async () => await assert.rejects(apiRequest('/api/v1/models/', token), e => e.name === 'AbortError'));
 });
+
+test('model archive download scopes credentials and rejects unsafe paths and response formats', async () => {
+  const { apiDownload, setActiveProjectId } = await import('../src/api/client.ts');
+  setActiveProjectId('archive-project');
+  try {
+    await withFetch(async (url, init) => {
+      assert.equal(url, '/api/v1/training-runs/run/download/');
+      assert.equal(init.headers.get('Authorization'), `Bearer ${token}`);
+      assert.equal(init.headers.get('X-Project-ID'), 'archive-project');
+      assert.equal(init.redirect, 'error');
+      return new Response('verified archive bytes', { headers: { 'Content-Type': 'application/zip' } });
+    }, async () => assert.equal(await (await apiDownload('/api/v1/training-runs/run/download/', token)).text(), 'verified archive bytes'));
+    await withFetch(async () => json({}), async () => await assert.rejects(apiDownload('/api/v1/training-runs/run/download/', token), /model archive/));
+    await assert.rejects(apiDownload('https://outside.invalid/api/v1/download/', token), /Invalid API path/);
+  } finally { setActiveProjectId(null); }
+});

@@ -91,8 +91,8 @@ class ModelVersionSerializer(serializers.ModelSerializer):
     model_name = serializers.CharField(source="model.name", read_only=True)
 
     def validate(self, attrs):
-        if self.instance and self.instance.metadata.get('imported'):
-            raise serializers.ValidationError('Imported model snapshots are immutable; import a new version.')
+        if self.instance and (self.instance.metadata.get('imported') or self.instance.source_training_run.exists()):
+            raise serializers.ValidationError('Imported and trained model snapshots are immutable; create a new version.')
         if attrs.get('metadata', {}).get('imported'):
             raise serializers.ValidationError('Acquire model snapshots through the model-imports API.')
         return attrs

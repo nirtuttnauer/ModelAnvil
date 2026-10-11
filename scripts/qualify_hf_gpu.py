@@ -14,6 +14,8 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--model-dir', type=Path, required=True, help='Verified pinned local SmolLM2 snapshot')
 parser.add_argument('--device', required=True, help='Explicit mps:0, cuda:N, rocm:N or xpu:N')
 parser.add_argument('--output', type=Path, required=True, help='New directory for isolated state and evidence')
+parser.add_argument('--recipe', choices=['full_sft', 'lora_adapter'], default='full_sft')
+parser.add_argument('--samples', type=Path, help='Optional real versioned canonical text corpus; otherwise use synthetic correctness fixtures')
 args = parser.parse_args()
 args.model_dir = args.model_dir.resolve()
 args.output = args.output.resolve()
@@ -58,10 +60,14 @@ text=['ModelAnvil verifies training inputs and saves durable checkpoints.',
 rows=[{'schema_version':'1.0','sample_id':str(uuid.uuid4()),'source_group_id':str(i),
        'blocks':[{'block_id':'text','type':'text','text':s}],
        'provenance':{'source_snapshot_ref':'explicit-local-qualification-fixture','source_record_key':str(i),'content_sha256':hashlib.sha256(s.encode()).hexdigest()}} for i,s in enumerate(text)]
+if args.samples:
+ rows=[json.loads(line) for line in args.samples.read_text().splitlines() if line.strip()]
 samples=args.output / 'samples.jsonl';samples.write_text(''.join(json.dumps(r)+'\n' for r in rows))
 output=io.StringIO()
 call_command('setup_gpu_training',tenant_id=tenant.pk,project_id=project.pk,name=name,model_dir=args.model_dir,samples=samples,device=args.device,steps=3,stdout=output)
 installed=json.loads(output.getvalue())
+installed['launch']['recipe_type'] = args.recipe
+weight_name = 'adapter_model.safetensors' if args.recipe == 'lora_adapter' else 'model.safetensors'
 secret,hashed=generate_api_key()
 ApiKey.objects.create(tenant=tenant,name='qualification',role=Role.ENGINEER,secret_hash=hashed)
 client=APIClient();client.credentials(HTTP_AUTHORIZATION=f'Bearer {secret}')
@@ -69,7 +75,7 @@ preview=client.post('/api/v1/training-runs/preflight/',installed['launch'],forma
 assert preview.status_code==200 and preview.data['status']=='approved',preview.data
 before_jobs = Job.all_objects.filter(tenant_id=tenant.pk).count()
 before_reservations = BudgetReservation.all_objects.filter(tenant_id=tenant.pk).count()
-for options in ({'precision':'bf16'}, {'precision':'fp16'}, {'adapter':'lora'}, {'quantization':'int4'}):
+for options in ({'precision':'bf16'}, {'precision':'fp16'}, {'adapter':'invalid'}, {'quantization':'int4'}):
     for endpoint in ('/api/v1/training-runs/preflight/', '/api/v1/training-runs/'):
         rejected = client.post(endpoint, {**installed['launch'], **options}, format='json', HTTP_IDEMPOTENCY_KEY=uuid.uuid4().hex)
         assert rejected.status_code == 400, rejected.data
@@ -86,6 +92,20 @@ outcome=execute_claim(worker,descriptor,training_worker_executor)
 run.refresh_from_db();print('outcome',outcome,'error',JobAttempt.all_objects.get(job=run.job).error,flush=True)
 assert outcome['committed'] and outcome['status']=='succeeded' and run.status=='completed'
 bundle=checkpoint_bundle(run,run.checkpoints.get(step=run.total_steps))
+download=client.get(f'/api/v1/training-runs/{run.run_id}/download/')
+assert download.status_code == 200, download.content if not download.streaming else 'Expected model ZIP'
+archive_path=args.output / 'modelanvil-candidate.zip'
+with archive_path.open('wb') as target:
+ for block in download.streaming_content: target.write(block)
+download.close()
+import zipfile
+with zipfile.ZipFile(archive_path) as archive:
+ assert set(archive.namelist()) == set(bundle['files']) | {'modelanvil-provenance.json'}
+ for filename,ref in bundle['files'].items():
+  with archive.open(filename) as source:
+   sha=hashlib.sha256()
+   while block:=source.read(1024*1024): sha.update(block)
+   assert sha.hexdigest()==ref['sha256']
 with staged_files(bundle['files'],run.tenant_id,run.project_id) as directory:
  import shutil
  destination=args.output / 'candidate';destination.mkdir()
@@ -93,11 +113,11 @@ with staged_files(bundle['files'],run.tenant_id,run.project_id) as directory:
 report={'run_id':str(run.run_id),'tenant_id':str(tenant.pk),'project_id':str(project.pk),'installed':installed,
         'preflight':dict(preview.data),'metrics':run.metrics_log,'pins':run.hardware_config['pins'],
         'hardware': hardware_report(),
-        'checkpoints':[{'step':c.step,'state_digest':c.state_digest,'weights_sha256':c.weights_manifest['files']['model.safetensors']['sha256']} for c in run.checkpoints.all()],
+        'checkpoints':[{'step':c.step,'state_digest':c.state_digest,'weights_sha256':c.weights_manifest['files'][weight_name]['sha256']} for c in run.checkpoints.all()],
         'candidate':str(run.output_model_version.model_version_id),'bundle':bundle,
         'usage':[{'quantity':str(u.quantity),'unit':u.unit,'detail':u.detail} for u in UsageEvent.all_objects.filter(tenant_id=tenant.pk)],
         'budget':[{'reserved':str(b.estimated_amount),'settled':str(b.settled_amount)} for b in BudgetReservation.all_objects.filter(tenant_id=tenant.pk)],
-        'scope':f'One local {args.device} SmolLM2 FP32 full-SFT pilot; synthetic qualification corpus; no quality, cross-vendor or production claim.'}
+        'scope':f'One local {args.device} SmolLM2 FP32 {args.recipe} pilot; {"operator-supplied versioned text" if args.samples else "synthetic correctness corpus"}; no cross-vendor or production claim.'}
 (args.output / 'task13-gpu-pilot.json').write_text(json.dumps(report,indent=2,default=str)+'\n')
 print('saved real GPU report',flush=True)
 
@@ -117,6 +137,27 @@ assert gpu_result['execution']['backend'] == args.device.split(':')[0]
 assert gpu_result['execution']['device_residency_checked'] and not gpu_result['consumer_imported_modelanvil_or_django']
 (args.output / 'gpu-independent-inference.json').write_text(json.dumps(gpu_result, indent=2)+'\n')
 print('GPU inference matches CPU candidate reload', flush=True)
+
+if args.samples:
+ from modelanvil.runners.training.runtime import read_artifact
+ prepared=json.loads(read_artifact(run.dataset_revision.manifest_artifact,run.tenant_id,run.project_id))
+ consumed={m['sample_id'] for m in run.metrics_log}
+ split_by_id={identifier:split for split,identifiers in prepared['split_manifest'].items() for identifier in identifiers}
+ quality_samples=[]
+ for row in prepared['rows']:
+  split=split_by_id[row['sample_id']]
+  if split=='train' and row['sample_id'] not in consumed:continue
+  quality_samples.append({'sample_id':row['sample_id'],'source_group_id':row['source_group_id'],
+   'split':'train_consumed' if split=='train' else split,'text':'\n'.join(b['text'] for b in row['blocks'])})
+ quality_path=args.output/'quality-samples.json'
+ quality_path.write_text(json.dumps({'dataset_digest':run.dataset_revision.manifest_digest,'samples':quality_samples}))
+ measured=subprocess.run([sys.executable,str(root/'scripts/hf_candidate_score.py'),'--base-dir',str(args.model_dir),
+  '--candidate-dir',str(destination),'--samples',str(quality_path)],capture_output=True,text=True,check=True,timeout=240)
+ quality=json.loads(measured.stdout)
+ assert not quality['consumer_imported_modelanvil_or_django']
+ (args.output/'quality-verification.json').write_text(json.dumps(quality,indent=2)+'\n')
+ print('Independent protected-corpus quality checks:',quality['checks'],flush=True)
+ assert quality['passed'], 'Independent protected-corpus quality target failed; inspect quality-verification.json'
 
 from datetime import timedelta
 from unittest.mock import patch
@@ -152,7 +193,7 @@ assert not out['committed'] and run.current_step==1 and not run.output_model_ver
 print('expired lease stopped at committed step 1',flush=True)
 reconcile_expired_leases();_,out=execute(run)
 assert out['status']=='succeeded' and run.current_step==3,out
-recovered=run.checkpoints.get(step=3).weights_manifest['files']['model.safetensors']['sha256']
+recovered=run.checkpoints.get(step=3).weights_manifest['files'][weight_name]['sha256']
 assert recovered==pilot['checkpoints'][-1]['weights_sha256'],'Recovery changed final model weights'
 assert UsageEvent.all_objects.filter(reservation__job_id=run.job.job_id).count()==1
 assert not execute_claim(worker,descriptor,training_worker_executor)['committed']

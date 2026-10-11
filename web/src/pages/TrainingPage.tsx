@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Plus, XCircle, Play, CheckCircle, RefreshCw } from 'lucide-react';
-import { ApiRequestError, apiPage, apiRequest, errorMessage } from '../api/client';
+import { ApiRequestError, apiPage, apiRequest, apiDownload, errorMessage } from '../api/client';
 import { ResourceState } from '../components/ResourceState';
 import {
   RegisterTokenizerModal,
@@ -67,7 +67,7 @@ interface Checkpoint {
 }
 
 interface Run {
-  runtime?: { execution_mode?: string };
+  runtime?: { execution_mode?: string; pins?: { runtime?: string } };
   execution_evidence?: { level: string; source: string };
   run_id: string;
   recipe_type: string;
@@ -83,7 +83,8 @@ interface Run {
   checkpoints: Checkpoint[];
   tokenizer_version: number;
   base_model_version: number | null;
-  metrics_log?: Array<{ step: number; loss: number }>;
+  metrics_log?: Array<{ step: number; loss: number; measured_at?: string; gradient_norm?: number; tokens_per_second?: number;
+    gpu_allocated_bytes?: number; peak_allocated_bytes?: number | null; gpu_utilization_percent?: number | null; trainable_parameters?: number; total_parameters?: number }>;
   output_model_version?: number | null;
   created_at: string;
 }
@@ -352,9 +353,11 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
   async function downloadExport(runId: string) {
     setBusy(true); setError(null);
     try {
-      const result = await apiRequest<{ bundle: unknown }>(`/api/v1/training-runs/${runId}/export/`, token, { method: 'POST' });
-      const url = URL.createObjectURL(new Blob([JSON.stringify(result.bundle)], { type: 'application/json' }));
-      const link = document.createElement('a'); link.href = url; link.download = `cpu-sft-${runId}.json`;
+      const transformer = runs.find(r => r.run_id === runId)?.runtime?.pins?.runtime === 'modelanvil.smollm2-gpu-sft.v1';
+      const blob = transformer ? await apiDownload(`/api/v1/training-runs/${runId}/download/`, token) :
+        new Blob([JSON.stringify((await apiRequest<{ bundle: unknown }>(`/api/v1/training-runs/${runId}/export/`, token, { method: 'POST' })).bundle)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a'); link.href = url; link.download = `modelanvil-${runId}.${transformer ? 'zip' : 'json'}`;
       link.click(); URL.revokeObjectURL(url);
     } catch (e) { setError(errorMessage(e)); }
     finally { setBusy(false); }
@@ -435,6 +438,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
               Recipe type
               <select value={recipe} onChange={(e) => setRecipe(e.target.value)}>
                 <option value="full_sft">Full parameter SFT</option>
+                {mode === 'worker' && <option value="lora_adapter">GPU LoRA · pinned SmolLM2 profile</option>}
                 {mode === 'simulation' && <>
                   <option value="lora_adapter">LoRA adapter fixture</option>
                   <option value="continued_pretraining">Continued pretraining fixture</option>
@@ -674,6 +678,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
           <ChartPanel title="Training loss" description={focusRun ? `${focusRun.run_id.slice(0, 8)} · ${focusRun.execution_evidence?.level || 'unknown evidence'}` : 'Loss from committed training measurements.'}><LineChart series={[{ name: 'Training loss', points: lossPoints }]} xLabel="Committed step" yLabel="Loss" /></ChartPanel>
           <ChartPanel title="Checkpoint timeline" description="Saved artifacts from the selected run.">{focusRun ? <><div className="ml-run-progress"><span>Committed steps</span><strong>{focusRun.current_step} / {focusRun.total_steps}</strong><progress value={focusRun.current_step} max={focusRun.total_steps || 1} aria-label="Selected run committed steps" /></div>{focusRun.checkpoints.length ? <EventTimeline events={focusRun.checkpoints.slice(-5).map(c => ({ label: `Checkpoint · step ${c.step}`, detail: c.state_digest.slice(0, 18) + '…', status: c.is_valid ? 'completed' : 'failed' }))} /> : <ChartEmpty message="No checkpoint artifacts have been recorded for this run." />}</> : <ChartEmpty message="Create a training run to inspect committed steps and checkpoints." />}</ChartPanel>
         </div>
+        {focusRun?.metrics_log?.some(m => m.measured_at) && <div className="table-scroll" tabIndex={0}><table className="resource-table"><caption>Measured GPU optimizer steps; throughput includes the post-update loss pass. Missing metrics are not estimated.</caption><thead><tr><th>Step / timestamp</th><th>Gradient norm</th><th>Prediction tokens/sec</th><th>Allocated / peak MiB</th><th>GPU utilization</th><th>Trainable / total parameters</th></tr></thead><tbody>{focusRun.metrics_log.slice(-10).map(m => <tr key={m.step}><td>{m.step}<br />{m.measured_at || 'Not reported'}</td><td>{m.gradient_norm?.toFixed(4) ?? 'Not reported'}</td><td>{m.tokens_per_second?.toFixed(2) ?? 'Not reported'}</td><td>{m.gpu_allocated_bytes == null ? 'Not reported' : (m.gpu_allocated_bytes / 1024**2).toFixed(1)} / {m.peak_allocated_bytes == null ? 'Not reported' : (m.peak_allocated_bytes / 1024**2).toFixed(1)}</td><td>{m.gpu_utilization_percent == null ? 'Not reported' : `${m.gpu_utilization_percent}%`}</td><td>{m.trainable_parameters?.toLocaleString() ?? 'Not reported'} / {m.total_parameters?.toLocaleString() ?? 'Not reported'}</td></tr>)}</tbody></table></div>}
         <div className="ml-section-heading"><div><h3>Run history</h3><p>Inspect inputs, download candidates, and open the durable execution record.</p></div></div>
         {!loading && !error && !runs.length && <p className="muted">No training runs yet.</p>}
         {!!runs.length && (

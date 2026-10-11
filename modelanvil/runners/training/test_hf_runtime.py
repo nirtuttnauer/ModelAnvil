@@ -210,3 +210,65 @@ class IndependentGPUSelectionTests(TestCase):
         with patch.dict('os.environ', {'PYTORCH_ENABLE_MPS_FALLBACK':'0'}):
             with self.assertRaisesRegex(ValueError, 'headroom'):
                 self.consumer.selected_device('mps:0')
+
+
+class RealLoRACheckpointTests(TestCase):
+    def test_deterministic_update_policy_restores_on_failure(self):
+        import torch
+        previous = torch.are_deterministic_algorithms_enabled()
+        warning = torch.is_deterministic_algorithms_warn_only_enabled()
+        with self.assertRaisesRegex(ValueError, 'test failure'):
+            with gpu.deterministic_updates():
+                self.assertTrue(torch.are_deterministic_algorithms_enabled())
+                self.assertFalse(torch.is_deterministic_algorithms_warn_only_enabled())
+                raise ValueError('test failure')
+        self.assertEqual(torch.are_deterministic_algorithms_enabled(), previous)
+        self.assertEqual(torch.is_deterministic_algorithms_warn_only_enabled(), warning)
+
+    def test_adapter_updates_frozen_base_and_optimizer_recovery(self):
+        import importlib.util
+        if not all(importlib.util.find_spec(n) for n in ['torch', 'peft', 'transformers']):
+            self.skipTest('Optional adapter runtime is not installed')
+        import torch
+        from pathlib import Path
+        from safetensors.torch import save_file
+        from transformers import LlamaConfig, LlamaForCausalLM
+        with tempfile.TemporaryDirectory() as temp:
+            directory = Path(temp)
+            with torch.random.fork_rng():
+                torch.manual_seed(42)
+                base = LlamaForCausalLM(LlamaConfig(vocab_size=8, hidden_size=16, intermediate_size=32,
+                    num_hidden_layers=1, num_attention_heads=2, num_key_value_heads=2))
+            base.save_pretrained(temp, safe_serialization=True)
+            for name in gpu.FILE_HASHES:
+                if not (directory / name).exists():
+                    (directory / name).write_text('{}')
+            with patch('requests.sessions.Session.request', side_effect=AssertionError('Adapter loader must stay offline')) as network:
+                model = gpu._recipe_model(directory, 'lora_adapter', 42, training=True)
+                frozen = {n: p.detach().clone() for n, p in model.named_parameters() if not p.requires_grad}
+                adapter = {n: p.detach().clone() for n, p in model.named_parameters() if p.requires_grad}
+                optimizer = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad], lr=0.001, foreach=False)
+                def update(model, optimizer):
+                    optimizer.zero_grad()
+                    ids = torch.tensor([[1, 3, 4, 5]])
+                    loss = model(input_ids=ids, labels=ids).loss
+                    loss.backward(); optimizer.step()
+                    self.assertTrue(torch.isfinite(loss).item())
+                update(model, optimizer)
+                self.assertTrue(any(not torch.equal(adapter[n], p) for n, p in model.named_parameters() if p.requires_grad))
+                self.assertTrue(all(torch.equal(frozen[n], p) for n, p in model.named_parameters() if not p.requires_grad))
+                model.save_pretrained(temp, safe_serialization=True, save_embedding_layers=False)
+                save_file(gpu._optimizer_state(model, optimizer), str(directory / 'optimizer.safetensors'))
+                recovered = gpu._recipe_model(directory, 'lora_adapter', 42, training=True)
+                restored = torch.optim.AdamW([p for p in recovered.parameters() if p.requires_grad], lr=0.001, foreach=False)
+                gpu._restore_optimizer(recovered, restored, directory, 1)
+                update(model, optimizer); update(recovered, restored)
+                expected = dict(model.named_parameters())
+                self.assertTrue(all(torch.equal(p, expected[n]) for n, p in recovered.named_parameters()))
+                from safetensors.torch import load_file
+                saved = load_file(str(directory / 'adapter_model.safetensors'))
+                name = next(iter(saved)); saved[name].fill_(float('nan'))
+                save_file(saved, str(directory / 'adapter_model.safetensors'))
+                with self.assertRaisesRegex(ValueError, 'non-finite'):
+                    gpu._recipe_model(directory, 'lora_adapter', 42, training=True)
+                network.assert_not_called()

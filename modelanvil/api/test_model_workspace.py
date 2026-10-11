@@ -213,6 +213,34 @@ class ModelWorkspaceTests(TestCase):
             download_file(item, 'model.safetensors', {**pin, 'sha256': '0' * 64}, SimpleNamespace(heartbeat=lambda: True))
         self.assertFalse(path.exists())
 
+    def test_download_contains_actual_verified_weights_and_fails_on_corruption(self):
+        import zipfile
+        from modelanvil.runners.models import TrainingRun
+        from modelanvil.runners.training import hf_runtime
+        imported = self.import_model()
+        version = ModelVersion.all_objects.get(model_version_id=imported.data['candidate_id'])
+        run = TrainingRun.all_objects.create(tenant_id=self.tenant.pk, project=self.project,
+            tokenizer_version=version.tokenizer, base_model_version=version, status='completed',
+            hardware_config={'execution_mode': 'worker', 'pins': {'runtime': hf_runtime.RUNTIME_ID}})
+        bundle = {'files': {n: r for n, r in self.files.items() if n in hf_runtime.FILE_HASHES},
+                  'provenance.json': {'run_id': str(run.run_id)}}
+        path = f'/api/v1/training-runs/{run.run_id}/download/'
+        with patch('modelanvil.api.views.training_views.TrainingRunViewSet._worker_bundle', return_value=bundle):
+            response = self.client.get(path)
+            self.assertEqual(response.status_code, 200)
+            raw = b''.join(response.streaming_content); response.close()
+            with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+                self.assertEqual(archive.read('model.safetensors'), (Path(self.fixture.name) / 'model.safetensors').read_bytes())
+                self.assertEqual(json.loads(archive.read('modelanvil-provenance.json')), bundle)
+            artifact = Artifact.all_objects.get(artifact_id=self.files['model.safetensors']['artifact_id'])
+            from modelanvil.artifacts.storage import artifact_storage_backend
+            artifact_storage_backend()._path(self.tenant.pk, artifact.object_key, create_parent=False).write_bytes(b'corrupt')
+            self.assertEqual(self.client.get(path).status_code, 400)
+            secret, hashed = generate_api_key()
+            ApiKey.objects.create(tenant=self.tenant, project=self.other, name='other download key', role=Role.ENGINEER, secret_hash=hashed)
+            other = APIClient(); other.credentials(HTTP_AUTHORIZATION=f'Bearer {secret}')
+            self.assertEqual(other.get(path).status_code, 404)
+
     def test_expired_import_attempt_cannot_publish_a_candidate(self):
         from modelanvil.runners.model_catalog import launch_import
         from django.utils import timezone
@@ -234,3 +262,62 @@ class ModelWorkspaceTests(TestCase):
         item.refresh_from_db()
         self.assertIsNone(item.candidate)
         self.assertEqual(ModelVersion.all_objects.count(), 0)
+
+    def test_completed_adapter_candidate_chat_uses_verified_base_and_rejects_lineage_changes(self):
+        import torch
+        import shutil
+        from safetensors.torch import save_file
+        from modelanvil.runners.models import Model, TrainingRun, TrainingCheckpoint
+        from modelanvil.runners.training import hf_runtime as hf
+        from modelanvil.runners.training.runtime import digest
+        imported = self.import_model()
+        base = ModelVersion.all_objects.get(model_version_id=imported.data['candidate_id'])
+        # A small real tensor fixture exercises candidate publication, not hardware qualification.
+        ModelVersion.all_objects.filter(pk=base.pk).update(architecture_ref=hf.RUNTIME_ID)
+        base.refresh_from_db()
+        files = {n: self.files[n] for n in hf.FILE_HASHES}
+        with tempfile.TemporaryDirectory() as temp:
+            directory = Path(temp)
+            for name in files:
+                shutil.copyfile(Path(self.fixture.name) / name, directory / name)
+            adapter = hf._recipe_model(directory, 'lora_adapter', training=True)
+            optimizer = torch.optim.AdamW([p for p in adapter.parameters() if p.requires_grad], lr=0.001, foreach=False)
+            ids = torch.tensor([[3, 4, 3, 4]])
+            adapter(input_ids=ids, labels=ids).loss.backward(); optimizer.step()
+            adapter.save_pretrained(temp, safe_serialization=True, save_embedding_layers=False)
+            save_file(hf._optimizer_state(adapter, optimizer), str(directory / 'optimizer.safetensors'))
+            for name in ('adapter_config.json', 'adapter_model.safetensors', 'optimizer.safetensors'):
+                with (directory / name).open('rb') as source:
+                    ref = _store(source, tenant=self.tenant.pk, project=self.project.pk, name=name)
+                if name == 'optimizer.safetensors':
+                    adam = ref
+                else:
+                    files[name] = ref
+        pool = WorkerPool.objects.create(tenant_id=self.tenant.pk, name='candidate-fixture')
+        job = Job.objects.create(tenant_id=self.tenant.pk, pool=pool, name='Completed tensor fixture', status='succeeded')
+        pins = {'runtime': hf.RUNTIME_ID, 'recipe': 'lora_adapter', 'config': json.loads((Path(self.fixture.name) / 'config.json').read_text())}
+        run = TrainingRun.all_objects.create(tenant_id=self.tenant.pk, project=self.project, job=job,
+            tokenizer_version=base.tokenizer, base_model_version=base, status='completed', recipe_type='lora_adapter',
+            current_step=1, total_steps=1, hardware_config={'execution_mode': 'worker', 'pins': pins})
+        state = {'pins': pins, 'step': 1, 'run_id': str(run.run_id), 'files': files, 'adam': adam,
+            'tokenizer': {}, 'optimizer': {**hf.OPTIMIZER, 'updates': 1}, 'metrics': {}}
+        checkpoint = TrainingCheckpoint.all_objects.create(tenant_id=self.tenant.pk, training_run=run,
+            step=1, weights_manifest=state, state_digest=digest(state))
+        bundle = hf.checkpoint_bundle(run, checkpoint)
+        manifest = _store(io.BytesIO(json.dumps(bundle).encode()), tenant=self.tenant.pk, project=self.project.pk, name='candidate.json')
+        model = Model.all_objects.create(tenant_id=self.tenant.pk, project=self.project, name='Trained adapter')
+        candidate = ModelVersion.all_objects.create(tenant_id=self.tenant.pk, project=self.project, model=model,
+            tokenizer=base.tokenizer, architecture_ref=hf.RUNTIME_ID, artifact_manifest_id=manifest['artifact_id'],
+            metadata={'source_run_id': str(run.run_id), 'checkpoint_digest': checkpoint.state_digest})
+        run.output_model_version = candidate; run.save()
+        self.assertIn(str(candidate.model_version_id), [m['id'] for m in self.client.get('/api/v1/inference/models/').data['data']])
+        body = {'model': str(candidate.model_version_id), 'messages': [{'role': 'user', 'content': 'hello world'}], 'max_tokens': 2}
+        with patch('requests.sessions.Session.request', side_effect=AssertionError('Candidate chat must stay offline')) as network:
+            response = self.client.post('/api/v1/inference/chat/completions', body, format='json')
+            self.assertEqual(response.status_code, 200, response.content)
+            self.assertEqual(response.data['usage']['prompt_tokens'], 2)
+            network.assert_not_called()
+        self.assertEqual(self.client.patch(f'/api/v1/model-versions/{candidate.model_version_id}/', {'metadata': {}}, format='json').status_code, 400)
+        candidate.metadata = {}; self.assertRaises(ValidationError, candidate.save)
+        TrainingCheckpoint.all_objects.filter(pk=checkpoint.pk).update(state_digest='0' * 64)
+        self.assertEqual(self.client.post('/api/v1/inference/chat/completions', body, format='json').status_code, 400)

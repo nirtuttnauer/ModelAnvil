@@ -3987,6 +3987,47 @@
           }
         ]
       }
+    },
+    "/training-runs/{run_id}/download/": {
+      "get": {
+        "summary": "Download verified Safetensors or LoRA candidate files with provenance",
+        "tags": [
+          "Training"
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ZIP of actual verified weights, model/tokenizer files and ModelAnvil provenance; optimizer state stays in checkpoints",
+            "content": {
+              "application/zip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Incomplete or incompatible run, corrupt/missing bytes"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "404": {
+            "description": "Run unavailable in this project"
+          }
+        }
+      }
     }
   },
   "components": {

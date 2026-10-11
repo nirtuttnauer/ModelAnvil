@@ -1,4 +1,4 @@
-"""Bounded local GPU full SFT for one immutable SmolLM2 snapshot.
+"""Bounded local GPU full SFT and LoRA for one immutable SmolLM2 snapshot.
 
 Optional framework imports are delayed. CPU references remain separate runtimes.
 No remote code, pickle, implicit model download, mixed precision or GPU fallback.
@@ -38,16 +38,32 @@ LIMITS = {'rows': 1000, 'steps': 1000, 'sequence_tokens': 128, 'memory_bytes': 8
           'gpu_memory_bytes': 4 * 1024**3, 'weight_bytes': 1024**3, 'aux_bytes': 8 * 1024**2}
 OPTIMIZER = {'algorithm': 'adamw', 'learning_rate': 0.00001, 'beta1': 0.9, 'beta2': 0.999,
              'epsilon': 1e-8, 'weight_decay': 0.0}
+LORA = {'r': 8, 'lora_alpha': 16, 'target_modules': ['q_proj', 'v_proj'], 'lora_dropout': 0.0,
+        'bias': 'none', 'task_type': 'CAUSAL_LM'}
 CONTRACT = {'runtime': RUNTIME_ID, 'source': SOURCE, 'file_hashes': FILE_HASHES, 'packages': PACKAGES,
             'recipe': 'full_sft', 'precision': 'fp32', 'optimizer': OPTIMIZER, 'limits': LIMITS,
-            'dropout': 'disabled', 'placement': 'one_trusted_local_worker'}
+            'dropout': 'disabled', 'placement': 'one_trusted_local_worker',
+            'recipes': ['full_sft', 'lora_adapter'], 'lora': LORA, 'adapter_package': {'peft': '0.17.1'},
+            'lora_gradient_checkpointing': 'non_reentrant', 'deterministic_algorithms': True}
 CONTRACT_DIGEST = digest(CONTRACT)
 MPS_MEMORY_FRACTION = 0.9
 
 
-def validate_options(*, precision='fp32', adapter=None, quantization=None):
-    if precision != 'fp32' or adapter not in (None, 'none') or quantization not in (None, 'none'):
+def validate_options(*, precision='fp32', adapter=None, quantization=None, recipe_type='full_sft'):
+    allowed = (None, 'lora') if recipe_type == 'lora_adapter' else (None, 'none')
+    if precision != 'fp32' or adapter not in allowed or quantization not in (None, 'none'):
+        if recipe_type == 'lora_adapter':
+            raise ValueError('This GPU LoRA profile supports FP32 rank-8 q/v adapters only; QLoRA and mixed precision remain unqualified.')
         raise ValueError('This GPU recipe supports FP32 full SFT only; disable adapters, quantization and mixed precision.')
+
+
+def require_adapter_package():
+    try:
+        installed = importlib.metadata.version('peft')
+    except importlib.metadata.PackageNotFoundError:
+        installed = None
+    if installed != '0.17.1':
+        raise ValueError('Install peft==0.17.1 for the pinned FP32 LoRA recipe; QLoRA is not qualified here.')
 
 
 def mps_memory():
@@ -72,9 +88,9 @@ def runner_manifest():
                           'disk_bytes': 2 * 1024**3, 'distributed': False},
             'permissions': {'network_hosts': [], 'artifact_access': ['read_job_inputs', 'write_attempt_staging'], 'secret_kinds': []},
             'dependencies': [],
-            'limitations': ['One pinned SmolLM2-135M model, text full SFT, FP32, deterministic manifest-order samples.',
+            'limitations': ['One pinned SmolLM2-135M model, text full SFT or rank-8 q/v LoRA, FP32, deterministic manifest-order samples.',
                            'One trusted local GPU worker per pool; cross-worker device reservations require TASK-42.',
-                           'No LoRA, QLoRA, quantization, distributed or remote worker support; each device needs qualification.']}
+                           'No QLoRA, quantization, distributed or remote worker support; each device needs qualification.']}
 
 
 def build_digest():
@@ -141,7 +157,7 @@ def _artifact(ref, tenant, project, *, weight=False):
 @contextlib.contextmanager
 def staged_files(files, tenant, project):
     """Only verified bytes enter a library loader; filenames are server allowlisted."""
-    allowed = set(FILE_HASHES) | {'optimizer.safetensors'}
+    allowed = set(FILE_HASHES) | {'optimizer.safetensors', 'adapter_model.safetensors', 'adapter_config.json'}
     if not isinstance(files, dict) or not files or set(files) - allowed:
         raise ValueError('Model file manifest contains missing or unsupported filenames.')
     backend = artifact_storage_backend()
@@ -188,6 +204,44 @@ def _load_model(directory):
     return model
 
 
+def _recipe_model(directory, recipe_type='full_sft', seed=42, *, training=False):
+    if recipe_type == 'full_sft':
+        return _load_model(directory)
+    require_adapter_package()
+    import torch
+    from peft import LoraConfig, PeftModel, get_peft_model, get_peft_model_state_dict
+    # Transformers auto-detects adapter_config.json; isolate the verified base to prevent implicit Hub loading.
+    base = directory / 'base'; base.mkdir(exist_ok=True)
+    for filename in FILE_HASHES:
+        if not (base / filename).exists():
+            os.link(directory / filename, base / filename)
+    model = _load_model(base)
+    if (directory / 'adapter_model.safetensors').exists():
+        config = json.loads((directory / 'adapter_config.json').read_text())
+        if any(config.get(k) != value for k, value in LORA.items() if k != 'target_modules') or set(config.get('target_modules', [])) != set(LORA['target_modules']):
+            raise ValueError('Adapter configuration differs from the pinned LoRA profile.')
+        model = PeftModel.from_pretrained(model, str(directory), is_trainable=training, local_files_only=True)
+        from safetensors.torch import load_file
+        saved = load_file(str(directory / 'adapter_model.safetensors'))
+        expected = get_peft_model_state_dict(model, save_embedding_layers=False)
+        if set(saved) != set(expected) or any(saved[n].shape != p.shape or not torch.isfinite(saved[n]).all().item() for n, p in expected.items()):
+            raise ValueError('Adapter checkpoint has missing, unexpected or non-finite tensors.')
+    else:
+        with torch.random.fork_rng():
+            torch.manual_seed(seed)
+            model = get_peft_model(model, LoraConfig(**LORA))
+    model.peft_config['default'].base_model_name_or_path = SOURCE['repo_id']
+    model.peft_config['default'].revision = SOURCE['revision']
+    if training:
+        model.train()
+        model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': False})
+    else:
+        model.eval()
+    if any(p.requires_grad and '.lora_' not in name for name, p in model.named_parameters()):
+        raise ValueError('LoRA may update only its adapter parameters.')
+    return model
+
+
 def _training_samples(dataset, tokenizer, tenant, project):
     from contracts import validate_envelope
     if dataset.state != 'published' or not dataset.manifest_artifact_id:
@@ -227,9 +281,14 @@ def _training_samples(dataset, tokenizer, tenant, project):
     return samples, {'consumed': 'train', 'train_rows': len(samples), 'excluded_rows': {n: len(ids) for n, ids in splits.items() if n != 'train'}, 'excluded_digest': digest(sorted(held))}
 
 
-def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, steps, require_capacity=True):
+def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, steps, require_capacity=True,
+                   recipe_type='full_sft', initialization_seed=42):
     from modelanvil.jobs.models import Worker
     require_packages()
+    if recipe_type not in CONTRACT['recipes'] or type(initialization_seed) is not int or not 0 <= initialization_seed <= 2147483647:
+        raise ValueError('Select full_sft or lora_adapter with a seed from 0 to 2147483647.')
+    if recipe_type == 'lora_adapter':
+        require_adapter_package()
     if type(steps) is not int or not 1 <= steps <= LIMITS['steps']:
         raise ValueError('GPU full SFT supports 1–1000 optimizer steps.')
     if not all([dataset, base, tokenizer, runner, pool]) or any(not check_resource_access(r, project, tenant) for r in [dataset, base, tokenizer, runner, pool]):
@@ -276,8 +335,16 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
             'runner_id': str(runner.manifest_id), 'runner_digest': runner.digest, 'pool_id': pool.pk,
             'steps': steps, 'config': {**config, 'runtime': RUNTIME_ID}, 'optimizer': OPTIMIZER,
             'sample_digest': digest(samples), 'splits': splits, 'accelerator': observed, 'worker_id': worker.pk}
+    pins['recipe'] = recipe_type
+    if recipe_type == 'lora_adapter':
+        pins.update(adapter=LORA, initialization_seed=initialization_seed, adapter_package={'peft': '0.17.1'})
     # BF16 base becomes FP32 weights + two FP32 Adam moments, with staging/candidate headroom.
     checkpoint_bytes = 6 * files['model.safetensors']['byte_size'] + 1024**2
+    if recipe_type == 'lora_adapter':
+        adapter_parameters = config['num_hidden_layers'] * LORA['r'] * (
+            3 * config['hidden_size'] + config['num_key_value_heads'] * config['hidden_size'] // config['num_attention_heads'])
+        pins['trainable_parameters'] = adapter_parameters
+        checkpoint_bytes = 12 * adapter_parameters + 1024**2
     return {'pins': pins, 'bundle': bundle, 'tokenizer': {'kind': 'huggingface', 'source': SOURCE},
             'samples': samples, 'sequences': [s['token_ids'] for s in samples], 'checkpoint_bytes': checkpoint_bytes}
 
@@ -293,7 +360,8 @@ def checkpoint_bundle(run, checkpoint):
             or state.get('optimizer') != {**OPTIMIZER, 'updates': checkpoint.step} or state.get('metrics') != checkpoint.metrics):
         raise ValueError('GPU checkpoint checksum, cursor or pinned optimizer changed.')
     bundle = {'config.json': state['pins']['config'], 'files': state['files'], 'source': SOURCE,
-              'weights_manifest.json': {'weights_sha256': state['files']['model.safetensors']['sha256']},
+              'weights_manifest.json': {'weights_sha256': state['files'].get('adapter_model.safetensors', state['files']['model.safetensors'])['sha256'],
+                                        'base_weights_sha256': state['files']['model.safetensors']['sha256']},
               'tokenizer_config.json': state['tokenizer'],
               'provenance.json': {'tenant_id': str(run.tenant_id), 'project_id': str(run.project_id) if run.project_id else None,
                                   'run_id': str(run.run_id), 'pins': state['pins'], 'step': checkpoint.step}}
@@ -319,6 +387,8 @@ def _optimizer_state(model, optimizer):
     import torch
     tensors = {}
     for name, parameter in model.named_parameters():
+        if not parameter.requires_grad:
+            continue
         state = optimizer.state[parameter]
         for key in ['exp_avg', 'exp_avg_sq']:
             tensors[f'{key}:{name}'] = state[key].detach().to('cpu').contiguous()
@@ -330,10 +400,12 @@ def _restore_optimizer(model, optimizer, directory, step):
     import torch
     from safetensors.torch import load_file
     saved = load_file(str(directory / 'optimizer.safetensors'))
-    expected = {f'{key}:{name}' for name, _ in model.named_parameters() for key in ['exp_avg', 'exp_avg_sq', 'step']}
+    expected = {f'{key}:{name}' for name, p in model.named_parameters() if p.requires_grad for key in ['exp_avg', 'exp_avg_sq', 'step']}
     if set(saved) != expected:
         raise ValueError('Optimizer checkpoint has missing or unexpected tensors.')
     for name, parameter in model.named_parameters():
+        if not parameter.requires_grad:
+            continue
         value = saved[f'step:{name}']
         if value.numel() != 1 or value.item() != step:
             raise ValueError('Optimizer checkpoint update count changed.')
@@ -346,6 +418,18 @@ def _restore_optimizer(model, optimizer, directory, step):
             state[key] = value.to(parameter.device)
 
 
+@contextlib.contextmanager
+def deterministic_updates():
+    import torch
+    previous = torch.are_deterministic_algorithms_enabled()
+    warn_only = torch.is_deterministic_algorithms_warn_only_enabled()
+    torch.use_deterministic_algorithms(True)
+    try:
+        yield
+    finally:
+        torch.use_deterministic_algorithms(previous, warn_only=warn_only)
+
+
 def execute_training(run, context):
     import torch
     from safetensors.torch import save_file
@@ -355,8 +439,9 @@ def execute_training(run, context):
         return
     runner = RunnerManifest.all_objects.get(manifest_id=pins['runner_id'], tenant_id=run.tenant_id)
     inputs = resolve_inputs(dataset=run.dataset_revision, base=run.base_model_version, tokenizer=run.tokenizer_version,
-        runner=runner, pool=run.pool, tenant=run.tenant_id, project=run.project_id, steps=run.total_steps, require_capacity=False)
-    if inputs['pins'] != pins or run.recipe_type != 'full_sft' or context.attempt.worker_id != pins['worker_id']:
+        runner=runner, pool=run.pool, tenant=run.tenant_id, project=run.project_id, steps=run.total_steps, require_capacity=False,
+        recipe_type=run.recipe_type, initialization_seed=run.initialization_seed)
+    if inputs['pins'] != pins or context.attempt.worker_id != pins['worker_id']:
         raise ValueError('Pinned GPU inputs, placement or runtime changed; create a new run.')
     latest = run.checkpoints.order_by('-step').first()
     if (latest and latest.step != run.current_step) or (run.current_step and not latest):
@@ -366,9 +451,10 @@ def execute_training(run, context):
     device = torch.device(pins['accelerator']['device']['torch_device'])
     if device.type == 'mps':
         torch.mps.set_per_process_memory_fraction(MPS_MEMORY_FRACTION)
-    with staged_files(recovery, run.tenant_id, run.project_id) as directory:
-        model = _load_model(directory).to(device)
-        optimizer = torch.optim.AdamW(model.parameters(), lr=OPTIMIZER['learning_rate'],
+    with deterministic_updates(), staged_files(recovery, run.tenant_id, run.project_id) as directory:
+        model = _recipe_model(directory, run.recipe_type, run.initialization_seed, training=True).to(device)
+        trainable = [p for p in model.parameters() if p.requires_grad]
+        optimizer = torch.optim.AdamW(trainable, lr=OPTIMIZER['learning_rate'],
             betas=(OPTIMIZER['beta1'], OPTIMIZER['beta2']), eps=OPTIMIZER['epsilon'], weight_decay=OPTIMIZER['weight_decay'], foreach=False)
         if latest:
             _restore_optimizer(model, optimizer, directory, latest.step)
@@ -377,30 +463,42 @@ def execute_training(run, context):
                 return
             sample = inputs['samples'][(step - 1) % len(inputs['samples'])]
             ids = torch.tensor([sample['token_ids']], device=device, dtype=torch.long)
+            backend = pins['accelerator']['device']['backend']
+            api = getattr(torch, 'cuda' if backend == 'rocm' else backend)
+            if backend != 'mps':
+                api.reset_peak_memory_stats(device)
             cpu_started, wall_started = time.process_time(), time.perf_counter()
             optimizer.zero_grad()
             loss = model(input_ids=ids, labels=ids).loss
             loss.backward()
             if loss.device != device or not torch.isfinite(loss).item() or any(
-                    p.device != device or p.grad is None or not torch.isfinite(p.grad).all().item() for p in model.parameters()):
+                    p.device != device or p.grad is None or not torch.isfinite(p.grad).all().item() for p in trainable):
                 raise ValueError('Training gradients are non-finite or left the selected GPU.')
+            if any(p.grad is not None for p in model.parameters() if not p.requires_grad):
+                raise ValueError('Frozen base parameters unexpectedly acquired gradients.')
+            grad_norm = torch.linalg.vector_norm(torch.stack([torch.linalg.vector_norm(p.grad.detach()) for p in trainable])).item()
             optimizer.step()
             with torch.no_grad():
                 post_loss = model(input_ids=ids, labels=ids).loss.item()
             if not torch.isfinite(torch.tensor(post_loss)).item():
                 raise ValueError('GPU update produced non-finite loss.')
-            backend = pins['accelerator']['device']['backend']
-            api = getattr(torch, 'cuda' if backend == 'rocm' else backend)
             api.synchronize() if backend == 'mps' else api.synchronize(device)
             metrics = {'step': step, 'loss': loss.item(), 'post_update_loss': post_loss, 'sample_id': sample['sample_id'],
                        'training_pairs': len(sample['token_ids']) - 1, 'cpu_seconds': time.process_time() - cpu_started,
                        'engine_wall_seconds': time.perf_counter() - wall_started, 'gpu_backend': backend,
                        'gpu_device': str(device), 'device_residency_checked': True,
+                       'gradient_norm': grad_norm, 'trainable_parameters': sum(p.numel() for p in trainable),
+                       'total_parameters': sum(p.numel() for p in model.parameters()), 'measured_at': timezone.now().isoformat(),
+                       'peak_allocated_bytes': None if backend == 'mps' else api.max_memory_allocated(device),
+                       'peak_reserved_bytes': None if backend == 'mps' else api.max_memory_reserved(device),
                        'gpu_allocated_bytes': api.current_allocated_memory() if backend == 'mps' else api.memory_allocated(device)}
+            metrics['tokens_per_second'] = metrics['training_pairs'] / metrics['engine_wall_seconds']
+            metrics['gpu_utilization_percent'] = None  # No portable utilization measurement is available in this runtime.
             if backend == 'mps':
                 metrics['unified_memory'] = mps_memory()
             # Hugging Face preserves its expected tied embedding key; generic save_model does not.
-            model.save_pretrained(str(directory), safe_serialization=True)
+            model.save_pretrained(str(directory), safe_serialization=True,
+                **({'save_embedding_layers': False} if run.recipe_type == 'lora_adapter' else {}))
             save_file(_optimizer_state(model, optimizer), str(directory / 'optimizer.safetensors'))
             if not context.heartbeat(progress=(step - 1) / run.total_steps):
                 return
@@ -408,11 +506,15 @@ def execute_training(run, context):
                 locked = _locked_live_run(context, run.run_id)
                 if locked.current_step != step - 1:
                     raise ValueError('GPU training cursor changed; publication refused.')
-                model_ref = _store_file(directory / 'model.safetensors', run, context, step)
+                if run.recipe_type == 'lora_adapter':
+                    saved_files = {**files, **{n: _store_file(directory / n, run, context, step)
+                        for n in ['adapter_model.safetensors', 'adapter_config.json']}}
+                else:
+                    saved_files = {**files, 'model.safetensors': _store_file(directory / 'model.safetensors', run, context, step)}
                 adam_ref = _store_file(directory / 'optimizer.safetensors', run, context, step)
                 _locked_live_run(context, run.run_id)  # Recheck expiry/cancellation after bounded storage writes.
                 state = {'run_id': str(run.run_id), 'step': step, 'pins': pins,
-                    'files': {**files, 'model.safetensors': model_ref}, 'adam': adam_ref,
+                    'files': saved_files, 'adam': adam_ref,
                     'optimizer': {**OPTIMIZER, 'updates': step}, 'tokenizer': inputs['tokenizer'], 'metrics': metrics,
                     'attempt_id': str(context.attempt.attempt_id), 'fencing_token': context.fencing_token}
                 TrainingCheckpoint.all_objects.create(tenant_id=run.tenant_id, training_run=locked,
@@ -434,7 +536,7 @@ def generate_candidate_completion(bundle, prompt, max_new_tokens=8):
         raise ValueError('Use a text prompt up to 4096 characters and 1–32 new tokens.')
     provenance = bundle['provenance.json']
     with staged_files(bundle['files'], provenance['tenant_id'], provenance['project_id']) as directory:
-        model, tokenizer = _load_model(directory), _tokenizer(directory)
+        model, tokenizer = _recipe_model(directory, bundle['provenance.json']['pins'].get('recipe', 'full_sft')), _tokenizer(directory)
         ids = tokenizer.encode(prompt, add_special_tokens=True)
         if not 1 <= len(ids) <= LIMITS['sequence_tokens']:
             raise ValueError('Prompt must encode to 1–128 tokens; inputs are never silently truncated.')
@@ -450,6 +552,6 @@ def generate_candidate_completion(bundle, prompt, max_new_tokens=8):
 
 def verify_external_loadable(bundle):
     result = generate_candidate_completion(bundle, 'Once upon a time', max_new_tokens=1)
-    return {'is_loadable': True, 'format': 'huggingface_safetensors', 'model_instantiated': True,
+    return {'is_loadable': True, 'format': 'peft_lora_safetensors' if bundle['provenance.json']['pins'].get('recipe') == 'lora_adapter' else 'huggingface_safetensors', 'model_instantiated': True,
             'weights_sha256': result['weights_sha256'], 'verification_scope': result['verification_scope'],
             'independent_runtime_verified': False, 'production_qualified': False}

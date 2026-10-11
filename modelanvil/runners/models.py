@@ -184,11 +184,11 @@ class ModelVersion(TenantContextModel):
             self.project = self.model.project
         if self.pk:
             previous = type(self).all_objects.filter(pk=self.pk).first()
-            if previous and previous.metadata.get('imported'):
+            if previous and (previous.metadata.get('imported') or previous.source_training_run.exists()):
                 fields = ('tenant_id', 'project_id', 'model_id', 'tokenizer_id', 'processor_id',
                           'revision_no', 'architecture_ref', 'artifact_manifest_id', 'metadata', 'license_evidence')
                 if any(getattr(previous, f) != getattr(self, f) for f in fields):
-                    raise ValidationError('Imported model snapshots are immutable; import a new version.')
+                    raise ValidationError('Imported and trained model snapshots are immutable; create a new version.')
         self.clean()
         super().save(*args, **kwargs)
 

@@ -92,7 +92,7 @@ def estimate_from_pilot(inputs, *, tenant, pool, project):
 
 def build_preflight_report(*, recipe_type, tokenizer_version, base_model_version=None, dataset_revision=None,
                            pool=None, runner=None, total_steps=100, budget_policy=None,
-                           execution_mode='worker', tenant=None, project=None):
+                           execution_mode='worker', tenant=None, project=None, initialization_seed=42):
     checks = []
     inputs = None
 
@@ -101,9 +101,11 @@ def build_preflight_report(*, recipe_type, tokenizer_version, base_model_version
                        'blocking': not ok, 'reason': reason, 'corrective_action': None if ok else action,
                        'detail': detail or {}})
 
-    check('recipe-execution-mode', 'compatibility', execution_mode == 'worker' and recipe_type == 'full_sft',
-          'Worker preflight requires full_sft.', 'Choose full_sft in worker mode. Simulation allocates no compute.')
     module = runtime_for_architecture(getattr(base_model_version, 'architecture_ref', None))
+    recipes = module.CONTRACT.get('recipes', [module.CONTRACT['recipe']]) if module else ['full_sft']
+    supported_recipe = recipe_type in recipes
+    check('recipe-execution-mode', 'compatibility', execution_mode == 'worker' and supported_recipe,
+          'Worker recipe must match the selected runtime.', 'Choose a supported worker recipe: ' + ', '.join(recipes) + '.')
     for key, resource in [('dataset_revision', dataset_revision), ('base_model_version', base_model_version),
                           ('tokenizer_version', tokenizer_version), ('runner_manifest', runner), ('pool', pool)]:
         check(key, 'compatibility', resource is not None, f'{key}: selected accessible resource.' if resource else f'{key}: missing or inaccessible.',
@@ -118,10 +120,11 @@ def build_preflight_report(*, recipe_type, tokenizer_version, base_model_version
         check('runner-contract', 'compatibility', runner.enabled and runner.digest == digest(module.runner_manifest())
               and runner.manifest == module.runner_manifest() and runner.compatibility.get('contract_digest') == module.CONTRACT_DIGEST,
               'Runner must be enabled and match the qualified runtime contract.', 'Register or select the enabled exact runtime manifest.')
-    if execution_mode == 'worker' and recipe_type == 'full_sft' and all((dataset_revision, base_model_version, tokenizer_version, runner, pool)):
+    if execution_mode == 'worker' and supported_recipe and all((dataset_revision, base_model_version, tokenizer_version, runner, pool)):
         try:
             inputs = resolve_inputs(dataset=dataset_revision, base=base_model_version, tokenizer=tokenizer_version,
-                                    runner=runner, pool=pool, tenant=tenant, project=project, steps=total_steps, require_capacity=False)
+                                    runner=runner, pool=pool, tenant=tenant, project=project, steps=total_steps, require_capacity=False,
+                                    recipe_type=recipe_type, initialization_seed=initialization_seed)
             check('pinned-inputs', 'compatibility', True, 'Verified dataset bytes, base weights, tokenizer encoding and runner contract.')
         except (ValueError, TypeError, KeyError) as exc:
             category, action = classify_reason(str(exc))
@@ -155,6 +158,9 @@ def build_preflight_report(*, recipe_type, tokenizer_version, base_model_version
         if inputs['pins'].get('accelerator'):
             requirements.update(gpu_count=1, accelerator=inputs['pins']['accelerator'], precision=module.CONTRACT['precision'],
                 storage_assumption='FP32 weights, two FP32 Adam moments, per-step checkpoints and staging/candidate headroom; shared local host.')
+            if recipe_type == 'lora_adapter':
+                requirements.update(adapter=inputs['pins']['adapter'], trainable_parameters=inputs['pins']['trainable_parameters'],
+                    storage_assumption='Immutable shared base references plus FP32 adapter weights and Adam moments per step; shared local host.')
         try:
             space = storage_capacity(required)
             check('storage', 'capacity', all(v['available_bytes'] >= required for v in space.values()),

@@ -45,6 +45,10 @@ def resolve_inputs(**kwargs):
     module = runtime_for_architecture(getattr(base, 'architecture_ref', None) or base)
     if module is None:
         raise ValueError('The selected base model architecture is not a supported training runtime.')
+    if module is not hf_runtime:
+        if kwargs.pop('recipe_type', 'full_sft') != 'full_sft':
+            raise ValueError('This reference runtime supports full_sft only.')
+        kwargs.pop('initialization_seed', None)
     return module.resolve_inputs(**kwargs)
 
 

@@ -75,3 +75,13 @@ export function nextPagePath(next: string, resource: string): string {
 export function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'The request failed. Please try again.';
 }
+
+export async function apiDownload(path: string, token: string): Promise<Blob> {
+  if (!token.trim()) throw new Error('Connect to your workspace before downloading.');
+  const headers = new Headers({ Authorization: `Bearer ${token.trim()}` });
+  if (activeProjectId) headers.set('X-Project-ID', activeProjectId);
+  const response = await fetch(apiPath(path), { headers, redirect: 'error' });
+  if (!response.ok) throw new ApiRequestError(`Download failed (HTTP ${response.status}).`, response.status);
+  if (!response.headers.get('Content-Type')?.startsWith('application/zip')) throw new Error('The API did not return a model archive.');
+  return response.blob();
+}

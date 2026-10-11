@@ -1,0 +1,862 @@
+{
+  "date": "2026-10-11",
+  "source": {
+    "repo_id": "HuggingFaceTB/SmolLM2-135M",
+    "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+    "license": "Apache-2.0"
+  },
+  "corpus": {
+    "repository_commit": "98b930c3785799098c3a119f74729b646cbecfff",
+    "sources": [
+      {
+        "path": "docs/engineering/README.md",
+        "file_sha256": "3262e4fbd331a79b5531c398c52baf027fdf33c4d941e9ef70d54b1812c129c1",
+        "sample_sha256": "e75013ca3a3d689a1052127a6bc4e597c35e4d57009adeecd72be4f899b261ed"
+      },
+      {
+        "path": "docs/engineering/accelerators.md",
+        "file_sha256": "4c4c3647b1ab34401bdae1a470340168785d807baa4ac697e98576f1accb17fb",
+        "sample_sha256": "cad8b0f6d75ec991bc701ec96e432341c20e39736ef7241770a391562cad1abb"
+      },
+      {
+        "path": "docs/engineering/accounting.md",
+        "file_sha256": "ea0284d6331cd6f2e9e3c3a526d4e9aebf9b94b7881ac67b05f18008f400baf8",
+        "sample_sha256": "9714fb616df8d33a55c5cafa191d032e341c94746f37ad13a57b632227e7f4db"
+      },
+      {
+        "path": "docs/engineering/action-resource-authorization-matrix.md",
+        "file_sha256": "77ba5c669392f087e3b2b223bd75dc9303b19607d1c10f1ea35a293ddbe02bb2",
+        "sample_sha256": "79c5ec75b0dca64fae92ba0be83844ed34df45ee29b47d960aee2cb0f98b20f3"
+      },
+      {
+        "path": "docs/engineering/app-flows.md",
+        "file_sha256": "83a1d4cf5f2aae140d464354fbba99f97b51699be19c9230daa70537f5127b9a",
+        "sample_sha256": "88b800f60ff2e239b932c071042e5ecf9d0feedf8dc113cc18c1b9eb6ad10d94"
+      },
+      {
+        "path": "docs/engineering/apple-gpu-host.md",
+        "file_sha256": "ad1dcc0301d2372a2dc238ea13f721d9cb8620935a7c70412cfd340e46dc09be",
+        "sample_sha256": "ff573c920482734333c1b5372c53e05089e567b19c7c8c0d2fb71ff4cf199a3f"
+      },
+      {
+        "path": "docs/engineering/backend-frontend-support.md",
+        "file_sha256": "7f82eb90b4bfeb0c136794abf4f3d9e42701325af09f8d7ee352a25d336c4502",
+        "sample_sha256": "cc3f490fa6884ea2de6a593176762987808e494677583394123ce27fbfccb57c"
+      },
+      {
+        "path": "docs/engineering/backend-schema.md",
+        "file_sha256": "7a058d8624e2398c209f02afbc6aeea0845948f7b8df6f37ea6b6ea9e0d1a9ee",
+        "sample_sha256": "16cc510755ed48092c4ca367e88ee1ea212b62253cfe2d9d59e67837958863e0"
+      },
+      {
+        "path": "docs/engineering/capability-evidence.md",
+        "file_sha256": "48af5e614e7403ec38b321fc58eb76c0f1b3e1fdaf5bded6cfc63f604a61ade1",
+        "sample_sha256": "4838e8b06d26c6fd0dc397321e3427b869369991e447f8f6e5b566dcac041829"
+      },
+      {
+        "path": "docs/engineering/cpu-character-alignment.md",
+        "file_sha256": "a7a0b87360f0cd96cf1be102328f65cdd0952d0187bee4c0d0abce6c949ba356",
+        "sample_sha256": "19280a82a63e21d18bf3924a83ec1c2d33002b33a33bb242eae10e7ac174e558"
+      },
+      {
+        "path": "docs/engineering/design-brief.md",
+        "file_sha256": "9caa03c5e1d0785bc00960dc84908173b2f0d0aad1c6e34fd3c65954798a5d30",
+        "sample_sha256": "e7d15732534401739aed1f2997384653fe53288cf6939981b063f0f99797ca81"
+      },
+      {
+        "path": "docs/engineering/frontend-workspace.md",
+        "file_sha256": "09b83180d05f3a3876a1625e25db4e400902182703c7347b9acc6c13732ec3c7",
+        "sample_sha256": "055d2c55f1140126ad1327b4d83e753f9b120d782c58f83d7587a1e26bc4b001"
+      },
+      {
+        "path": "docs/engineering/implementation-plan.md",
+        "file_sha256": "0e87485aba2b73a2bf8e99e0ac4546b57307737cf0f8bf3b20e1591218cec426",
+        "sample_sha256": "06ea8ca22b87c3e58bee64ca9a680e8f35b458375810856f51128b2f3b11d92a"
+      },
+      {
+        "path": "docs/engineering/model-workspace.md",
+        "file_sha256": "0182b59f939d6a024f4f1ddb106af0a2eb2b1a174ced3eafbf28363510edc118",
+        "sample_sha256": "7a3a54ed3ca308e78e08dce5efee62e860d6d463952723482bc2c9f64a5e70d4"
+      },
+      {
+        "path": "docs/engineering/qualification-reports/text-finetuning-runtime.md",
+        "file_sha256": "e797b3e3dce19dc316edc160abffe94c04e8526c9eb91bfe9b1617e4c3ef9529",
+        "sample_sha256": "2f6dd654019866977e98cdf057e28a4beb352c7ef7cd124477ec30207fa7350c"
+      },
+      {
+        "path": "docs/engineering/smollm2-gpu-training.md",
+        "file_sha256": "f7be576467e503823ea7caea439c858e9ca918fd70f23a3b34f7480185914765",
+        "sample_sha256": "2253f4111cb8a8c8f6f72f696eedebbb202f23a9b7cf580485b64bcc3a50224c"
+      },
+      {
+        "path": "docs/engineering/status.md",
+        "file_sha256": "09b67e1ab86238a79fd27f3ec265d3e75fb17cb86b9bfdd7ac4b5a0015fedc35",
+        "sample_sha256": "1a810c9515438a7b9765239e968241316902fd2add2c87289362547a7449b1c9"
+      },
+      {
+        "path": "docs/engineering/worker-artifact-client.md",
+        "file_sha256": "5f9a361b4b3d1beefa4f47eb23383dd2409ff4f98016d6208e5b4b64e0d71ff6",
+        "sample_sha256": "ecd02f4e3ce33c4de1db92ad3cd696fd7a7875e678e8219f3817ad143690d3f1"
+      },
+      {
+        "path": "docs/engineering/worker-artifact-grants.md",
+        "file_sha256": "37b6207911855ae8dfc2630fbbe374e1928ed4bb6cd22b7d9653df525025a6cf",
+        "sample_sha256": "fec8124ed727a0a7fa8b1a7860557ad7bd2d3c7b43744d5a551862c3b7d21df5"
+      },
+      {
+        "path": "docs/engineering/worker-result-egress.md",
+        "file_sha256": "6bb5673c233fdc1b5bd31d5abe939b453706a754ea46182c35063ee0c03cbdb3",
+        "sample_sha256": "a40de4751d2312ea0a15b544ba7be9b1b0fe9ec2089a45cc4691881602e54c42"
+      }
+    ],
+    "rows": 20,
+    "window": "At most 64 words of the first prose paragraph per file; explicitly bounded to 128 tokenizer tokens.",
+    "grouping": "Exact duplicate text removed before file-group-protected publication.",
+    "sha256": "c9bd493caf8b618eb7b0f444e9ca0b7fcb2d5417f905fbcbd3611cff5a37c91e"
+  },
+  "quality_target": {
+    "training_loss": "decreased",
+    "maximum_held_out_loss_regression_percent": 5,
+    "selection": "User delegated corpus and target selection."
+  },
+  "recovery_correction": "An initial full-SFT documentation pilot exposed a nondeterministic recovery mismatch. Strict deterministic operations were added to the pinned runtime contract. Final pilots below recovered byte-identical weights.",
+  "lora": {
+    "hardware": {
+      "device": {
+        "id": "mps:0",
+        "backend": "mps",
+        "torch_device": "mps:0",
+        "name": "Metal Performance Shaders device",
+        "vendor": "Apple",
+        "total_memory_bytes": null,
+        "memory_scope": "shared_unified",
+        "runtime_recommended_memory_bytes": 40200896512
+      },
+      "framework": {
+        "name": "torch",
+        "version": "2.9.0",
+        "cuda_version": null,
+        "hip_version": null
+      },
+      "packages": {
+        "torch": "2.9.0",
+        "transformers": "4.57.1",
+        "safetensors": "0.6.2",
+        "tokenizers": "0.22.2"
+      },
+      "capacity_source": "MPS recommended shared-memory budget"
+    },
+    "runtime_pins": {
+      "runtime": "modelanvil.smollm2-gpu-sft.v1",
+      "contract_digest": "99cd981325f366458e4c1269b2485ea75a185e113ef9f1ad2f724191c2f33900",
+      "build_digest": "0fb8c0b55c113253af90f1bcaaa1bef358f388e47b7a8532f79fe91cd818007f",
+      "dataset_digest": "4503af0b23cabbfdf2e62692ba4f17a0cdd5c517b2c1f399a3e8e2ede35a5ca8",
+      "steps": 3,
+      "recipe": "lora_adapter"
+    },
+    "metrics": [
+      {
+        "step": 1,
+        "loss": 5.919243812561035,
+        "post_update_loss": 5.917852401733398,
+        "sample_id": "69412026-7dda-5382-835b-63a8411f252b",
+        "training_pairs": 41,
+        "cpu_seconds": 0.4446070000000004,
+        "engine_wall_seconds": 0.5120530409622006,
+        "gpu_backend": "mps",
+        "gpu_device": "mps:0",
+        "device_residency_checked": true,
+        "gradient_norm": 0.7962563037872314,
+        "trainable_parameters": 460800,
+        "total_parameters": 134975808,
+        "measured_at": "2026-10-11T20:47:48.387820+00:00",
+        "peak_allocated_bytes": null,
+        "peak_reserved_bytes": null,
+        "gpu_allocated_bytes": 570285824,
+        "tokens_per_second": 80.06983011556139,
+        "gpu_utilization_percent": null,
+        "unified_memory": {
+          "recommended_bytes": 40200896512,
+          "process_limit_bytes": 36180806860,
+          "driver_allocated_bytes": 1187856384,
+          "process_headroom_bytes": 34992950476,
+          "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+        }
+      },
+      {
+        "step": 2,
+        "loss": 4.8615522384643555,
+        "post_update_loss": 4.861126899719238,
+        "sample_id": "600d9bd9-4a30-56f0-9e1a-65e593845939",
+        "training_pairs": 90,
+        "cpu_seconds": 0.2972710000000003,
+        "engine_wall_seconds": 0.37908849999075755,
+        "gpu_backend": "mps",
+        "gpu_device": "mps:0",
+        "device_residency_checked": true,
+        "gradient_norm": 0.4101465344429016,
+        "trainable_parameters": 460800,
+        "total_parameters": 134975808,
+        "measured_at": "2026-10-11T20:47:48.855603+00:00",
+        "peak_allocated_bytes": null,
+        "peak_reserved_bytes": null,
+        "gpu_allocated_bytes": 568278016,
+        "tokens_per_second": 237.41158067890285,
+        "gpu_utilization_percent": null,
+        "unified_memory": {
+          "recommended_bytes": 40200896512,
+          "process_limit_bytes": 36180806860,
+          "driver_allocated_bytes": 1211105280,
+          "process_headroom_bytes": 34969701580,
+          "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+        }
+      },
+      {
+        "step": 3,
+        "loss": 4.1196136474609375,
+        "post_update_loss": 4.118933200836182,
+        "sample_id": "f8e72f03-853e-594b-90d8-42454c45fc85",
+        "training_pairs": 24,
+        "cpu_seconds": 0.2847299999999997,
+        "engine_wall_seconds": 0.3515946249826811,
+        "gpu_backend": "mps",
+        "gpu_device": "mps:0",
+        "device_residency_checked": true,
+        "gradient_norm": 0.7547912001609802,
+        "trainable_parameters": 460800,
+        "total_parameters": 134975808,
+        "measured_at": "2026-10-11T20:47:49.285760+00:00",
+        "peak_allocated_bytes": null,
+        "peak_reserved_bytes": null,
+        "gpu_allocated_bytes": 568124672,
+        "tokens_per_second": 68.26042918370038,
+        "gpu_utilization_percent": null,
+        "unified_memory": {
+          "recommended_bytes": 40200896512,
+          "process_limit_bytes": 36180806860,
+          "driver_allocated_bytes": 1216151552,
+          "process_headroom_bytes": 34964655308,
+          "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+        }
+      }
+    ],
+    "checkpoints": [
+      {
+        "step": 1,
+        "state_digest": "cd36198c592edd7424c28957220514eae0ae8cdc4cf1ccab2f13d3b899bac6e4",
+        "weights_sha256": "3fa1227a6da87035850821ecab9f2fd5c43cdcaf24129275d0b99d3ea53d7cc7"
+      },
+      {
+        "step": 2,
+        "state_digest": "9fbb40d648759852235e74d365bbb8a50814e2350a4e1d58368c3afd7ca67fdb",
+        "weights_sha256": "a55ab60fe4b5cd904a62ab67c4b70a719958505034eda17e169376a674cc43d2"
+      },
+      {
+        "step": 3,
+        "state_digest": "4f5c46ac7571106961353f384190524eca4639e7f29e2f05083724f86fc73560",
+        "weights_sha256": "ff084231649dc9af277534e5467c62686d473f72ca523080408e21b972c8eee6"
+      }
+    ],
+    "quality": {
+      "samples_sha256": "1a2f89de4f8497cecbcddc25bf264da3f9118dc70e34337c8bb8c907d3b1c38d",
+      "dataset_digest": "4503af0b23cabbfdf2e62692ba4f17a0cdd5c517b2c1f399a3e8e2ede35a5ca8",
+      "source_groups": {
+        "docs/engineering/README.md": "validation",
+        "docs/engineering/accelerators.md": "test",
+        "docs/engineering/accounting.md": "train_consumed",
+        "docs/engineering/action-resource-authorization-matrix.md": "train_consumed",
+        "docs/engineering/app-flows.md": "train_consumed",
+        "docs/engineering/backend-schema.md": "validation",
+        "docs/engineering/capability-evidence.md": "validation",
+        "docs/engineering/design-brief.md": "test",
+        "docs/engineering/qualification-reports/text-finetuning-runtime.md": "validation",
+        "docs/engineering/status.md": "test",
+        "docs/engineering/worker-artifact-client.md": "validation",
+        "docs/engineering/worker-artifact-grants.md": "test",
+        "docs/engineering/worker-result-egress.md": "test"
+      },
+      "base": {
+        "validation": {
+          "negative_log_likelihood": 1564.4343888759613,
+          "prediction_tokens": 333,
+          "samples": 5,
+          "loss": 4.698001167795679
+        },
+        "test": {
+          "negative_log_likelihood": 1395.5390758514404,
+          "prediction_tokens": 279,
+          "samples": 5,
+          "loss": 5.001932171510539
+        },
+        "train_consumed": {
+          "negative_log_likelihood": 779.1004333496094,
+          "prediction_tokens": 155,
+          "samples": 3,
+          "loss": 5.026454408707157
+        }
+      },
+      "candidate": {
+        "validation": {
+          "negative_log_likelihood": 1564.3486239910126,
+          "prediction_tokens": 333,
+          "samples": 5,
+          "loss": 4.697743615588626
+        },
+        "test": {
+          "negative_log_likelihood": 1395.4495515823364,
+          "prediction_tokens": 279,
+          "samples": 5,
+          "loss": 5.001611295994038
+        },
+        "train_consumed": {
+          "negative_log_likelihood": 778.8999552726746,
+          "prediction_tokens": 155,
+          "samples": 3,
+          "loss": 5.025161001759191
+        }
+      },
+      "checks": {
+        "consumed_training_loss_decreased": true,
+        "validation_regression_within_five_percent": true,
+        "test_regression_within_five_percent": true
+      },
+      "passed": true,
+      "consumer_imported_modelanvil_or_django": false,
+      "scope": "Independent CPU FP32 token-weighted loss on explicit consumed train and file-group-held-out text. This bounded corpus/three-step pilot does not establish broader task quality or production qualification."
+    },
+    "independent_cpu": {
+      "weights_sha256": "ff084231649dc9af277534e5467c62686d473f72ca523080408e21b972c8eee6",
+      "prompt": "Once upon a time",
+      "file_hashes": {
+        "adapter_model.safetensors": "ff084231649dc9af277534e5467c62686d473f72ca523080408e21b972c8eee6",
+        "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+        "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+        "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+        "model.safetensors": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+        "adapter_config.json": "31fc8aa94636dbc23df0f3afd75c0c523e5513e9200aac23f7d2700ff5a27223"
+      },
+      "generated_token_ids": [
+        28,
+        665,
+        436,
+        253,
+        1838,
+        8180,
+        3365,
+        14176
+      ],
+      "completion": ", there was a little girl named Lily",
+      "parameter_count": 134975808,
+      "execution": {
+        "backend": "cpu",
+        "device": "cpu",
+        "precision": "fp32",
+        "device_residency_checked": true,
+        "wall_seconds": 0.101191291003488,
+        "allocated_bytes": null
+      },
+      "consumer_imported_modelanvil_or_django": false,
+      "scope": "Independent process, cpu FP32 inference from actual GPU-produced candidate; no quality or production claim."
+    },
+    "independent_gpu": {
+      "weights_sha256": "ff084231649dc9af277534e5467c62686d473f72ca523080408e21b972c8eee6",
+      "prompt": "Once upon a time",
+      "file_hashes": {
+        "adapter_model.safetensors": "ff084231649dc9af277534e5467c62686d473f72ca523080408e21b972c8eee6",
+        "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+        "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+        "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+        "model.safetensors": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+        "adapter_config.json": "31fc8aa94636dbc23df0f3afd75c0c523e5513e9200aac23f7d2700ff5a27223"
+      },
+      "generated_token_ids": [
+        28,
+        665,
+        436,
+        253,
+        1838,
+        8180,
+        3365,
+        14176
+      ],
+      "completion": ", there was a little girl named Lily",
+      "parameter_count": 134975808,
+      "execution": {
+        "backend": "mps",
+        "device": "mps:0",
+        "precision": "fp32",
+        "device_residency_checked": true,
+        "wall_seconds": 0.4975157909793779,
+        "allocated_bytes": 540425984,
+        "driver_allocated_bytes": 1351565312,
+        "recommended_bytes": 40200896512,
+        "process_headroom_bytes": 34829241548
+      },
+      "consumer_imported_modelanvil_or_django": false,
+      "scope": "Independent process, mps:0 FP32 inference from actual GPU-produced candidate; no quality or production claim."
+    },
+    "candidate_chat": {
+      "candidate_id": "7775d350-d8d2-489d-8b23-5e43361e00d1",
+      "recipe": "lora_adapter",
+      "outputs": {
+        "cpu": {
+          "id": "chatcmpl-000bc1bc6a6e402b9770c1c505e614a0",
+          "created": 1791751799,
+          "model": "7775d350-d8d2-489d-8b23-5e43361e00d1",
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": ", there was a little girl named Lily"
+              },
+              "finish_reason": "length"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 4,
+            "completion_tokens": 8,
+            "total_tokens": 12
+          },
+          "modelanvil": {
+            "device": "cpu",
+            "elapsed_seconds": 0.10631424997700378
+          }
+        },
+        "mps:0": {
+          "id": "chatcmpl-77fef12e30114af79c1c69f8676403eb",
+          "created": 1791751800,
+          "model": "7775d350-d8d2-489d-8b23-5e43361e00d1",
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": ", there was a little girl named Lily"
+              },
+              "finish_reason": "length"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 4,
+            "completion_tokens": 8,
+            "total_tokens": 12
+          },
+          "modelanvil": {
+            "device": "mps:0",
+            "elapsed_seconds": 0.6342079160385765
+          }
+        }
+      },
+      "matches_independent_consumer": true,
+      "candidate_mutation_rejected": true,
+      "scope": "Actual completed isolated-pilot candidate through local CPU and named GPU chat API. No broader quality or production claim."
+    },
+    "recovery": {
+      "recovery": {
+        "run_id": "16f12d85-7db4-42a5-a5fd-d17769325131",
+        "attempts": 2,
+        "final_weights_sha256": "ff084231649dc9af277534e5467c62686d473f72ca523080408e21b972c8eee6",
+        "exactly_matches_uninterrupted": true,
+        "steps": 3
+      },
+      "cancel": {
+        "run_id": "4b27a0fc-0b7e-4625-b328-322a65a003b0",
+        "steps": 1,
+        "settled": "1.000000",
+        "candidate": null
+      },
+      "corruption": {
+        "run_id": "e4df47ba-5968-4312-874e-53f3120d418a",
+        "steps": 0,
+        "settled": "0",
+        "candidate": null
+      },
+      "scope": "Real mps:0 SmolLM2 GPU worker, isolated database, live fencing/cancellation/corruption/accounting. Does not qualify other vendors or production scheduling."
+    },
+    "archive": {
+      "bytes": 273037767,
+      "file_hashes": {
+        "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+        "model.safetensors": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+        "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+        "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+        "adapter_model.safetensors": "ff084231649dc9af277534e5467c62686d473f72ca523080408e21b972c8eee6",
+        "adapter_config.json": "31fc8aa94636dbc23df0f3afd75c0c523e5513e9200aac23f7d2700ff5a27223"
+      },
+      "all_hashes_match": true
+    }
+  },
+  "full_sft": {
+    "hardware": {
+      "device": {
+        "id": "mps:0",
+        "backend": "mps",
+        "torch_device": "mps:0",
+        "name": "Metal Performance Shaders device",
+        "vendor": "Apple",
+        "total_memory_bytes": null,
+        "memory_scope": "shared_unified",
+        "runtime_recommended_memory_bytes": 40200896512
+      },
+      "framework": {
+        "name": "torch",
+        "version": "2.9.0",
+        "cuda_version": null,
+        "hip_version": null
+      },
+      "packages": {
+        "torch": "2.9.0",
+        "transformers": "4.57.1",
+        "safetensors": "0.6.2",
+        "tokenizers": "0.22.2"
+      },
+      "capacity_source": "MPS recommended shared-memory budget"
+    },
+    "runtime_pins": {
+      "runtime": "modelanvil.smollm2-gpu-sft.v1",
+      "contract_digest": "99cd981325f366458e4c1269b2485ea75a185e113ef9f1ad2f724191c2f33900",
+      "build_digest": "0fb8c0b55c113253af90f1bcaaa1bef358f388e47b7a8532f79fe91cd818007f",
+      "dataset_digest": "4503af0b23cabbfdf2e62692ba4f17a0cdd5c517b2c1f399a3e8e2ede35a5ca8",
+      "steps": 3,
+      "recipe": "full_sft"
+    },
+    "metrics": [
+      {
+        "step": 1,
+        "loss": 5.919243812561035,
+        "post_update_loss": 5.623647689819336,
+        "sample_id": "69412026-7dda-5382-835b-63a8411f252b",
+        "training_pairs": 41,
+        "cpu_seconds": 0.6534960000000001,
+        "engine_wall_seconds": 1.0053064590319991,
+        "gpu_backend": "mps",
+        "gpu_device": "mps:0",
+        "device_residency_checked": true,
+        "gradient_norm": 30.05413818359375,
+        "trainable_parameters": 134515008,
+        "total_parameters": 134515008,
+        "measured_at": "2026-10-11T20:46:35.443590+00:00",
+        "peak_allocated_bytes": null,
+        "peak_reserved_bytes": null,
+        "gpu_allocated_bytes": 2261415680,
+        "tokens_per_second": 40.783583584530575,
+        "gpu_utilization_percent": null,
+        "unified_memory": {
+          "recommended_bytes": 40200896512,
+          "process_limit_bytes": 36180806860,
+          "driver_allocated_bytes": 3805642752,
+          "process_headroom_bytes": 32375164108,
+          "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+        }
+      },
+      {
+        "step": 2,
+        "loss": 4.858638763427734,
+        "post_update_loss": 4.763582229614258,
+        "sample_id": "600d9bd9-4a30-56f0-9e1a-65e593845939",
+        "training_pairs": 90,
+        "cpu_seconds": 0.34867699999999946,
+        "engine_wall_seconds": 0.5042883750284091,
+        "gpu_backend": "mps",
+        "gpu_device": "mps:0",
+        "device_residency_checked": true,
+        "gradient_norm": 13.239792823791504,
+        "trainable_parameters": 134515008,
+        "total_parameters": 134515008,
+        "measured_at": "2026-10-11T20:46:37.803502+00:00",
+        "peak_allocated_bytes": null,
+        "peak_reserved_bytes": null,
+        "gpu_allocated_bytes": 2250360832,
+        "tokens_per_second": 178.4693133069543,
+        "gpu_utilization_percent": null,
+        "unified_memory": {
+          "recommended_bytes": 40200896512,
+          "process_limit_bytes": 36180806860,
+          "driver_allocated_bytes": 4038672384,
+          "process_headroom_bytes": 32142134476,
+          "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+        }
+      },
+      {
+        "step": 3,
+        "loss": 4.125551223754883,
+        "post_update_loss": 3.9557323455810547,
+        "sample_id": "f8e72f03-853e-594b-90d8-42454c45fc85",
+        "training_pairs": 24,
+        "cpu_seconds": 0.3403539999999996,
+        "engine_wall_seconds": 0.465213917021174,
+        "gpu_backend": "mps",
+        "gpu_device": "mps:0",
+        "device_residency_checked": true,
+        "gradient_norm": 48.215457916259766,
+        "trainable_parameters": 134515008,
+        "total_parameters": 134515008,
+        "measured_at": "2026-10-11T20:46:40.065851+00:00",
+        "peak_allocated_bytes": null,
+        "peak_reserved_bytes": null,
+        "gpu_allocated_bytes": 2251100672,
+        "tokens_per_second": 51.58917031905486,
+        "gpu_utilization_percent": null,
+        "unified_memory": {
+          "recommended_bytes": 40200896512,
+          "process_limit_bytes": 36180806860,
+          "driver_allocated_bytes": 4157014016,
+          "process_headroom_bytes": 32023792844,
+          "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+        }
+      }
+    ],
+    "checkpoints": [
+      {
+        "step": 1,
+        "state_digest": "3c24dc1c1a48b70af1227acfc75db6a898a6fcea3760be815b15e5c741ff179d",
+        "weights_sha256": "6e112eeb656539eb69548b9d1733abc2d2cad898bbb24e0a423435cfa0418a54"
+      },
+      {
+        "step": 2,
+        "state_digest": "fc17eae5569d991fb303f5cc65c10f0b123c46ec3e161bdaf9272863bf41bffa",
+        "weights_sha256": "e8fb91c591fba3f3eefe3dc6bb77b0b41ab290544adfe2526a1e080a983fb508"
+      },
+      {
+        "step": 3,
+        "state_digest": "e62318eb4581eb5419d6c4afa065402f8afc6992f3285fd5effe0c9767f81147",
+        "weights_sha256": "3eaf15824fce577485c230610456e80ed5cbadb1b1bf02eb3ebd22815984a325"
+      }
+    ],
+    "quality": {
+      "samples_sha256": "1a2f89de4f8497cecbcddc25bf264da3f9118dc70e34337c8bb8c907d3b1c38d",
+      "dataset_digest": "4503af0b23cabbfdf2e62692ba4f17a0cdd5c517b2c1f399a3e8e2ede35a5ca8",
+      "source_groups": {
+        "docs/engineering/README.md": "validation",
+        "docs/engineering/accelerators.md": "test",
+        "docs/engineering/accounting.md": "train_consumed",
+        "docs/engineering/action-resource-authorization-matrix.md": "train_consumed",
+        "docs/engineering/app-flows.md": "train_consumed",
+        "docs/engineering/backend-schema.md": "validation",
+        "docs/engineering/capability-evidence.md": "validation",
+        "docs/engineering/design-brief.md": "test",
+        "docs/engineering/qualification-reports/text-finetuning-runtime.md": "validation",
+        "docs/engineering/status.md": "test",
+        "docs/engineering/worker-artifact-client.md": "validation",
+        "docs/engineering/worker-artifact-grants.md": "test",
+        "docs/engineering/worker-result-egress.md": "test"
+      },
+      "base": {
+        "validation": {
+          "negative_log_likelihood": 1564.4343888759613,
+          "prediction_tokens": 333,
+          "samples": 5,
+          "loss": 4.698001167795679
+        },
+        "test": {
+          "negative_log_likelihood": 1395.5390758514404,
+          "prediction_tokens": 279,
+          "samples": 5,
+          "loss": 5.001932171510539
+        },
+        "train_consumed": {
+          "negative_log_likelihood": 779.1004333496094,
+          "prediction_tokens": 155,
+          "samples": 3,
+          "loss": 5.026454408707157
+        }
+      },
+      "candidate": {
+        "validation": {
+          "negative_log_likelihood": 1553.9714467525482,
+          "prediction_tokens": 333,
+          "samples": 5,
+          "loss": 4.666580921178824
+        },
+        "test": {
+          "negative_log_likelihood": 1386.747230052948,
+          "prediction_tokens": 279,
+          "samples": 5,
+          "loss": 4.9704201794012475
+        },
+        "train_consumed": {
+          "negative_log_likelihood": 738.2006397247314,
+          "prediction_tokens": 155,
+          "samples": 3,
+          "loss": 4.762584772417622
+        }
+      },
+      "checks": {
+        "consumed_training_loss_decreased": true,
+        "validation_regression_within_five_percent": true,
+        "test_regression_within_five_percent": true
+      },
+      "passed": true,
+      "consumer_imported_modelanvil_or_django": false,
+      "scope": "Independent CPU FP32 token-weighted loss on explicit consumed train and file-group-held-out text. This bounded corpus/three-step pilot does not establish broader task quality or production qualification."
+    },
+    "independent_cpu": {
+      "weights_sha256": "3eaf15824fce577485c230610456e80ed5cbadb1b1bf02eb3ebd22815984a325",
+      "prompt": "Once upon a time",
+      "file_hashes": {
+        "model.safetensors": "3eaf15824fce577485c230610456e80ed5cbadb1b1bf02eb3ebd22815984a325",
+        "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+        "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+        "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3"
+      },
+      "generated_token_ids": [
+        28,
+        665,
+        436,
+        253,
+        1838,
+        8180,
+        3365,
+        14176
+      ],
+      "completion": ", there was a little girl named Lily",
+      "parameter_count": 134515008,
+      "execution": {
+        "backend": "cpu",
+        "device": "cpu",
+        "precision": "fp32",
+        "device_residency_checked": true,
+        "wall_seconds": 0.09738550003385171,
+        "allocated_bytes": null
+      },
+      "consumer_imported_modelanvil_or_django": false,
+      "scope": "Independent process, cpu FP32 inference from actual GPU-produced candidate; no quality or production claim."
+    },
+    "independent_gpu": {
+      "weights_sha256": "3eaf15824fce577485c230610456e80ed5cbadb1b1bf02eb3ebd22815984a325",
+      "prompt": "Once upon a time",
+      "file_hashes": {
+        "model.safetensors": "3eaf15824fce577485c230610456e80ed5cbadb1b1bf02eb3ebd22815984a325",
+        "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+        "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+        "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3"
+      },
+      "generated_token_ids": [
+        28,
+        665,
+        436,
+        253,
+        1838,
+        8180,
+        3365,
+        14176
+      ],
+      "completion": ", there was a little girl named Lily",
+      "parameter_count": 134515008,
+      "execution": {
+        "backend": "mps",
+        "device": "mps:0",
+        "precision": "fp32",
+        "device_residency_checked": true,
+        "wall_seconds": 0.37360958399949595,
+        "allocated_bytes": 538060544,
+        "driver_allocated_bytes": 1351565312,
+        "recommended_bytes": 40200896512,
+        "process_headroom_bytes": 34829241548
+      },
+      "consumer_imported_modelanvil_or_django": false,
+      "scope": "Independent process, mps:0 FP32 inference from actual GPU-produced candidate; no quality or production claim."
+    },
+    "candidate_chat": {
+      "candidate_id": "0b660e41-2a40-4bc3-9306-53c52d1e521e",
+      "recipe": "full_sft",
+      "outputs": {
+        "cpu": {
+          "id": "chatcmpl-a9f2f612591d4f9a9a6531398bc04db0",
+          "created": 1791751839,
+          "model": "0b660e41-2a40-4bc3-9306-53c52d1e521e",
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": ", there was a little girl named Lily"
+              },
+              "finish_reason": "length"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 4,
+            "completion_tokens": 8,
+            "total_tokens": 12
+          },
+          "modelanvil": {
+            "device": "cpu",
+            "elapsed_seconds": 0.090693750011269
+          }
+        },
+        "mps:0": {
+          "id": "chatcmpl-35237bc2c5f84f2b81f0a30bbd745ae7",
+          "created": 1791751841,
+          "model": "0b660e41-2a40-4bc3-9306-53c52d1e521e",
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": ", there was a little girl named Lily"
+              },
+              "finish_reason": "length"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 4,
+            "completion_tokens": 8,
+            "total_tokens": 12
+          },
+          "modelanvil": {
+            "device": "mps:0",
+            "elapsed_seconds": 0.334783292026259
+          }
+        }
+      },
+      "matches_independent_consumer": true,
+      "candidate_mutation_rejected": true,
+      "scope": "Actual completed isolated-pilot candidate through local CPU and named GPU chat API. No broader quality or production claim."
+    },
+    "recovery": {
+      "recovery": {
+        "run_id": "a80236a5-298d-4590-be73-3734a1d86f15",
+        "attempts": 2,
+        "final_weights_sha256": "3eaf15824fce577485c230610456e80ed5cbadb1b1bf02eb3ebd22815984a325",
+        "exactly_matches_uninterrupted": true,
+        "steps": 3
+      },
+      "cancel": {
+        "run_id": "92fc8991-491d-483b-b5d2-4b8d026eff54",
+        "steps": 1,
+        "settled": "1.000000",
+        "candidate": null
+      },
+      "corruption": {
+        "run_id": "93ed076f-b898-4f8e-8ca4-287aa27117da",
+        "steps": 0,
+        "settled": "0",
+        "candidate": null
+      },
+      "scope": "Real mps:0 SmolLM2 GPU worker, isolated database, live fencing/cancellation/corruption/accounting. Does not qualify other vendors or production scheduling."
+    },
+    "archive": {
+      "bytes": 540206882,
+      "file_hashes": {
+        "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+        "model.safetensors": "3eaf15824fce577485c230610456e80ed5cbadb1b1bf02eb3ebd22815984a325",
+        "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+        "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424"
+      },
+      "all_hashes_match": true
+    }
+  },
+  "limits": "Three actual optimizer updates on this Mac; bounded deduplicated source-file-held-out documentation corpus. No controlled speedup or production quality claim. QLoRA, quantization and other GPU qualification remain pending."
+}

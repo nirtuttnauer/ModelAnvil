@@ -5,6 +5,8 @@ import json
 import os
 import re
 import time
+import tempfile
+import shutil
 from pathlib import Path
 
 import torch
@@ -41,6 +43,34 @@ def selected_device(selector):
     return torch.device(f"{'cuda' if backend == 'rocm' else backend}:{index}"), backend
 
 
+def load_candidate(directory):
+    """Offline complete finite Safetensors/PEFT reload shared by independent consumers."""
+    adapter = (directory / 'adapter_config.json').exists()
+    with tempfile.TemporaryDirectory(prefix='verified-base-') as temp:
+        base_directory = Path(temp) if adapter else directory
+        if adapter:
+            for name in ('model.safetensors', 'config.json', 'tokenizer.json', 'tokenizer_config.json', 'special_tokens_map.json'):
+                shutil.copyfile(directory / name, base_directory / name)
+        model, info = LlamaForCausalLM.from_pretrained(str(base_directory), local_files_only=True,
+            use_safetensors=True, dtype=torch.float32, attn_implementation='eager', output_loading_info=True)
+        if adapter:
+            from peft import PeftModel, get_peft_model_state_dict
+            config = json.loads((directory / 'adapter_config.json').read_text())
+            if config.get('r') != 8 or config.get('lora_alpha') != 16 or set(config.get('target_modules', [])) != {'q_proj', 'v_proj'} or config.get('lora_dropout') != 0:
+                raise ValueError('Candidate adapter does not match the declared rank-8 q/v profile.')
+            model = PeftModel.from_pretrained(model, str(directory), local_files_only=True)
+            from safetensors.torch import load_file
+            saved = load_file(str(directory / 'adapter_model.safetensors'))
+            expected = get_peft_model_state_dict(model, save_embedding_layers=False)
+            if set(saved) != set(expected) or any(saved[n].shape != p.shape for n, p in expected.items()):
+                raise ValueError('Candidate adapter tensors are incomplete or have incompatible shapes.')
+    if any(info[k] for k in ['missing_keys', 'unexpected_keys', 'mismatched_keys', 'error_msgs']):
+        raise ValueError('Candidate tensors do not completely match the transformer.')
+    if any(p.is_meta or not torch.isfinite(p).all().item() for p in model.parameters()):
+        raise ValueError('Candidate did not load complete finite weights.')
+    return model
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('model_dir', type=Path)
@@ -54,12 +84,8 @@ def main():
     device, backend = selected_device(args.device)
     torch.set_num_threads(4)
     tokenizer = AutoTokenizer.from_pretrained(str(args.model_dir), local_files_only=True, trust_remote_code=False)
-    model, info = LlamaForCausalLM.from_pretrained(str(args.model_dir), local_files_only=True,
-        use_safetensors=True, dtype=torch.float32, attn_implementation='eager', output_loading_info=True)
-    if any(info[k] for k in ['missing_keys', 'unexpected_keys', 'mismatched_keys', 'error_msgs']):
-        raise ValueError('Candidate tensors do not completely match the transformer.')
-    if any(p.is_meta or not torch.isfinite(p).all().item() for p in model.parameters()):
-        raise ValueError('Candidate did not load complete finite weights.')
+    adapter = (args.model_dir / 'adapter_config.json').exists()
+    model = load_candidate(args.model_dir)
     model.to(device).eval()
     if any(p.device != device for p in model.parameters()):
         raise ValueError('Candidate weights left the explicitly selected device.')
@@ -82,12 +108,13 @@ def main():
         measured.update(driver_allocated_bytes=api.driver_allocated_memory(), recommended_bytes=api.recommended_max_memory(),
             process_headroom_bytes=max(0, int(api.recommended_max_memory() * 0.9) - api.driver_allocated_memory()))
     sha = hashlib.sha256()
-    with (args.model_dir / 'model.safetensors').open('rb') as stream:
+    weight_name = 'adapter_model.safetensors' if adapter else 'model.safetensors'
+    with (args.model_dir / weight_name).open('rb') as stream:
         while block := stream.read(1024 * 1024):
             sha.update(block)
     import sys
-    hashes = {'model.safetensors': sha.hexdigest()}
-    for name in ('config.json', 'tokenizer.json', 'tokenizer_config.json', 'special_tokens_map.json'):
+    hashes = {weight_name: sha.hexdigest()}
+    for name in ('config.json', 'tokenizer.json', 'tokenizer_config.json', 'special_tokens_map.json', *(['model.safetensors', 'adapter_config.json'] if adapter else [])):
         hashes[name] = hashlib.sha256((args.model_dir / name).read_bytes()).hexdigest()
     print(json.dumps({'weights_sha256': sha.hexdigest(), 'prompt': args.prompt,
         'file_hashes': hashes,

@@ -75,6 +75,26 @@ def snapshot(version, tenant, project):
         raise ValueError('Model or tokenizer is outside this project.')
     import io
     ref = version.metadata.get('snapshot_manifest')
+    if not ref:
+        from modelanvil.runners.models import TrainingRun
+        from modelanvil.runners.training import hf_runtime
+        from modelanvil.runners.training.runtime import digest
+        run = TrainingRun.all_objects.filter(output_model_version=version, tenant_id=tenant,
+            status='completed', job__status='succeeded', base_model_version__architecture_ref=hf_runtime.RUNTIME_ID).first()
+        if run is None or not check_resource_access(run, project, tenant) or run.tokenizer_version_id != version.tokenizer_id:
+            raise ValueError('Import a snapshot or complete a supported transformer training run before inference.')
+        checkpoint = run.checkpoints.filter(step=run.total_steps).first()
+        if checkpoint is None or version.metadata.get('checkpoint_digest') != checkpoint.state_digest:
+            raise ValueError('Candidate checkpoint lineage changed; inference refused.')
+        bundle = hf_runtime.checkpoint_bundle(run, checkpoint)
+        artifact = Artifact.all_objects.filter(artifact_id=version.artifact_manifest_id, tenant_id=tenant).first()
+        if artifact is None or artifact.byte_size > 1024**2:
+            raise ValueError('Candidate manifest is unavailable or exceeds its size limit.')
+        from modelanvil.runners.training.hf_runtime import file_ref
+        target = io.BytesIO(); copy_verified(file_ref(artifact), tenant, project, target)
+        if digest(json.loads(target.getvalue())) != digest(bundle):
+            raise ValueError('Candidate manifest differs from its committed checkpoint.')
+        return {'format': 'safetensors', 'files': bundle['files'], 'recipe': run.recipe_type, 'trained': True}
     if not ref or str(ref.get('artifact_id')) != version.artifact_manifest_id:
         raise ValueError('Import a pinned model snapshot before local inference.')
     artifact = verified_artifact(ref, tenant, project)
@@ -198,9 +218,16 @@ def local_session(version, *, tenant, project, device='cpu'):
                     raise ValueError('This FP32 runtime loads at most 300 million parameters.')
                 del shape_model
                 tokenizer = AutoTokenizer.from_pretrained(str(directory), local_files_only=True, trust_remote_code=False)
-                model, info = AutoModelForCausalLM.from_pretrained(str(directory), local_files_only=True,
-                    trust_remote_code=False, use_safetensors=True, dtype=torch.float32,
-                    attn_implementation='eager', output_loading_info=True)
+                if 'adapter_config.json' in plan['files']:
+                    if not plan.get('trained') or plan.get('recipe') != 'lora_adapter':
+                        raise ValueError('Adapter inference requires a completed verified ModelAnvil LoRA candidate and pinned local base.')
+                    from modelanvil.runners.training.hf_runtime import _recipe_model
+                    model = _recipe_model(directory, 'lora_adapter')
+                    info = {key: [] for key in ['missing_keys', 'unexpected_keys', 'mismatched_keys', 'error_msgs']}
+                else:
+                    model, info = AutoModelForCausalLM.from_pretrained(str(directory), local_files_only=True,
+                        trust_remote_code=False, use_safetensors=True, dtype=torch.float32,
+                        attn_implementation='eager', output_loading_info=True)
                 if any(info[k] for k in ['missing_keys', 'unexpected_keys', 'mismatched_keys', 'error_msgs']):
                     raise ValueError('Snapshot weights do not completely match its architecture.')
                 if any(p.is_meta or not torch.isfinite(p).all().item() for p in model.parameters()):
