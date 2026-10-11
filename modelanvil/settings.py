@@ -10,9 +10,19 @@ PostgreSQL via ``DATABASE_URL``-style env vars.
 from __future__ import annotations
 
 import os
+import json
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+import tempfile
+MODELANVIL_DEVICE_LOCK_ROOT = os.environ.get('MODELANVIL_DEVICE_LOCK_ROOT',
+    str(Path(tempfile.gettempdir()) / f'modelanvil-devices-{os.getuid() if hasattr(os, "getuid") else "local"}'))
+
+# Operator secrets are keyed by tenant UUID:project UUID; ambient Hub credentials are ignored.
+MODELANVIL_HUB_TOKENS = json.loads(os.environ.get('MODELANVIL_HUB_TOKENS', '{}'))
+if not isinstance(MODELANVIL_HUB_TOKENS, dict) or any(not isinstance(v, str) or not v for v in MODELANVIL_HUB_TOKENS.values()):
+    raise ValueError('MODELANVIL_HUB_TOKENS must map tenant:project identifiers to nonempty tokens.')
 
 # ---------------------------------------------------------------------------
 # Secrets & environment

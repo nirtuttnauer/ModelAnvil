@@ -1,0 +1,83 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "parser": "pypdf==6.20.0",
+  "files": [
+    {
+      "file": "docs/engineering/design-brief.pdf",
+      "source_sha256": "8d2c70d46cccf12b5b9649e1ebd3c04dbfa29ceceff2cc9602473f8a31263d5f",
+      "input_bytes": 78364,
+      "pages": 4,
+      "text_characters": 12391,
+      "elapsed_seconds": 0.08300854195840657,
+      "page_numbers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "source_group_count": 1,
+      "rows_digest": "315c3fffa59dd4dfd781e4fb4a79ffde6f92a5fbb3c44a48ba1c68e58ecb96d1"
+    },
+    {
+      "file": "docs/engineering/technical-requirements.pdf",
+      "source_sha256": "9401948418d89bd37aeb5e3a9522c0f37b4c5aa1ae2ff3894e387becb3115e3e",
+      "input_bytes": 92549,
+      "pages": 8,
+      "text_characters": 24693,
+      "elapsed_seconds": 0.12112216599052772,
+      "page_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_group_count": 1,
+      "rows_digest": "dd196d1ff57445ed2c59ff1deffc2173fda845faf6ba6140876703e15ddc725a"
+    }
+  ],
+  "date": "2026-10-12",
+  "branch": "codex/modelanvil-feature-parity",
+  "ticket": "TASK-21",
+  "status": "partial",
+  "verification": {
+    "backend": {
+      "tests": 61,
+      "passed": 60,
+      "skipped": 1,
+      "skip_reason": "Existing PostgreSQL concurrency check on SQLite"
+    },
+    "frontend": {
+      "tests_passed": 133,
+      "build": "passed"
+    },
+    "http": "Exact frontend upload client publishes binary PDF and verifies downloaded manifest text, hashes and source references",
+    "browser": {
+      "dataset": "Engineering PDF source pilot",
+      "revision_id": "764424e3-de13-4839-8542-58f133c0ce5b",
+      "row_count": 4,
+      "input_sha256": "8d2c70d46cccf12b5b9649e1ebd3c04dbfa29ceceff2cc9602473f8a31263d5f",
+      "manifest_digest": "0a98f625e24a8d0041a825612be21d1636027f47d27a868abf0ea486f94c7dd9",
+      "recipe_digest": "bb928546ffad451ff4e147b254476c1092c6c238ac61432099bafb9a853aeed3",
+      "screenshot": "/private/tmp/modelanvil-pdf-import-published.png"
+    }
+  },
+  "process_limits": {
+    "cpu_seconds": 10,
+    "parent_timeout_seconds": 15,
+    "decoded_page_bytes": 1048576,
+    "aggregate_decoded_and_output_bytes": 8388608,
+    "pages": 100,
+    "macos_hard_address_space_limit": false,
+    "macos_limit_reason": "Host rejects RLIMIT_AS; stream/page limits and separate parser process apply"
+  },
+  "remaining": [
+    "OCR, chunking and reading-order/layout qualification",
+    "Visual/list recipe composition and real synthetic inference",
+    "Budgeted recoverable recipe worker",
+    "Human acceptance; no general sandbox or production qualification claim"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-12",
+  "branch": "codex/modelanvil-feature-parity",
+  "ticket": "TASK-3",
+  "status": "partial",
+  "verification": {
+    "frontend_build": "passed",
+    "frontend_tests": { "passed": 131, "failed": 0 },
+    "browser": {
+      "project": "gpu-fbd31cc6",
+      "database": "isolated native adapter qualification database",
+      "prerequisites": "7 of 7 recorded from published dataset, actual model artifact registrations, matching worker/runner and enabled step budget",
+      "reload": "expanded state and seven recorded prerequisites persisted",
+      "keyboard": "Enter on Import or initialize model opened Models acquisition screen",
+      "error_state": "wrong worker endpoint produced visible HTTP 404 and retry; corrected to worker-inventory",
+      "screenshot": "/private/tmp/modelanvil-setup-readiness.png"
+    }
+  },
+  "limits": [
+    "Counts describe loaded inventory pages; preflight verifies bytes, current runtime, device and remaining budget.",
+    "Fresh workspace timing/abandonment and browser project-switch pilot remain pending.",
+    "Missing worker and budget registration still requires an operator.",
+    "Human ticket acceptance remains pending."
+  ]
+}

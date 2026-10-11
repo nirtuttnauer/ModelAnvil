@@ -1,5 +1,6 @@
 """Real HTTP acceptance using the exact frontend dataset client, not mocks."""
 import hashlib
+import base64
 import json
 import shutil
 import subprocess
@@ -74,3 +75,36 @@ class DatasetPreparationHttpTests(LiveServerTestCase):
         self.assertFalse(DatasetRevision.all_objects.filter(tenant_id=self.tenant.pk).exists())
         self.assertEqual(Dataset.all_objects.filter(tenant_id=self.tenant.pk, current_revision=None).count(), 1)
         self.assertEqual(Artifact.all_objects.filter(tenant_id=self.tenant.pk, state=Artifact.State.COMMITTED).count(), 1)
+
+    def test_actual_frontend_client_imports_csv_json_and_binary_docx_over_http(self):
+        from modelanvil.data.test_source_import import docx
+        text = "Actual source text 日本語"
+        sources = [("csv", f'text\n{text}\n'.encode()),
+                   ("json", json.dumps([{"text": text}], ensure_ascii=False).encode()),
+                   ("docx", docx(f'<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>{text}</w:t></w:r></w:p></w:body></w:document>'))]
+        for fmt, raw in sources:
+            result = subprocess.run([shutil.which("node"), str(Path(settings.BASE_DIR) / "scripts/dataset_client_http.mjs")],
+                cwd=settings.BASE_DIR, input=json.dumps({"base": self.live_server_url, "token": self.secret,
+                    "raw_base64": base64.b64encode(raw).decode(), "source_format": fmt, "expected_texts": [text],
+                    "name": f"HTTP {fmt} source"}), text=True, capture_output=True, timeout=30)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            report = json.loads(result.stdout)
+            self.assertEqual(report["state"], "published")
+            self.assertEqual(report["row_count"], 1)
+            self.assertEqual(report["request_count"], 8)
+
+    def test_actual_frontend_client_imports_pdf_and_pins_parser_revision(self):
+        from modelanvil.data.test_pdf_import import HAS_PDF, pdf
+        if not HAS_PDF:
+            self.skipTest("Install requirements.documents.txt for actual PDF HTTP checks")
+        raw = pdf(["Real PDF page one", "Real PDF page two"], compressed=True)
+        result = subprocess.run([shutil.which("node"), str(Path(settings.BASE_DIR) / "scripts/dataset_client_http.mjs")],
+            cwd=settings.BASE_DIR, input=json.dumps({"base": self.live_server_url, "token": self.secret,
+                "raw_base64": base64.b64encode(raw).decode(), "source_format": "pdf",
+                "expected_texts": ["Real PDF page one", "Real PDF page two"], "name": "HTTP PDF source"}),
+            text=True, capture_output=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        report = json.loads(result.stdout)
+        self.assertEqual(report["row_count"], 2)
+        revision = DatasetRevision.all_objects.get(revision_id=report["revision_id"])
+        self.assertEqual(revision.metadata["recipe"]["extraction"]["pdf_parser"], "pypdf==6.20.0")

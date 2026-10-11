@@ -81,6 +81,9 @@ class JobSerializer(serializers.ModelSerializer):
         read_only_fields = ("job_id", "status", "desired_action", "attempt_count", "created_at", "updated_at")
 
     def validate(self, attrs):
+        if (attrs.get('payload', {}).get('type') == 'model_import' or
+                (self.instance and self.instance.payload.get('type') == 'model_import')):
+            raise serializers.ValidationError('Manage model acquisition through the model-imports API.')
         if (self.instance and self.instance.training_runs.filter(hardware_config__execution_mode='worker').exists()):
             raise serializers.ValidationError('Training jobs are immutable; manage the associated training run.')
         if attrs.get('payload', {}).get('type') == 'qualified_training':
@@ -519,6 +522,9 @@ class DatasetViewSet(ScopedViewSet):
 
 class DatasetPreparationSerializer(serializers.Serializer):
     input_artifact_id = serializers.UUIDField()
+    source_format = serializers.ChoiceField(choices=("jsonl", "csv", "json", "docx", "pdf"), required=False, default="jsonl")
+    text_field = serializers.CharField(required=False, default="text", max_length=128, trim_whitespace=False)
+    group_field = serializers.CharField(required=False, default=None, allow_null=True, max_length=128, trim_whitespace=False)
     split_seed = serializers.JSONField(required=False, default="0")
     validation_percent = serializers.JSONField(required=False, default=10)
     test_percent = serializers.JSONField(required=False, default=10)

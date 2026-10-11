@@ -1,0 +1,2 @@
+# Optional bounded PDF source extraction. Other source formats use the standard library.
+pypdf==6.20.0

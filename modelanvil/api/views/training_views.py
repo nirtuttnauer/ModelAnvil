@@ -75,6 +75,8 @@ class TrainingRunSerializer(serializers.ModelSerializer):
         if self.instance and is_worker_run(self.instance):
             raise serializers.ValidationError('Dispatched training configuration is immutable; launch a new run.')
         recipe = attrs.get("recipe_type", getattr(self.instance, "recipe_type", None))
+        if recipe == TrainingRun.RecipeType.QLORA_ADAPTER and attrs.get("execution_mode", "worker") != "worker":
+            raise serializers.ValidationError({"execution_mode": "QLoRA requires the native Metal worker; no simulation profile is provided."})
         base_model = attrs.get("base_model_version", getattr(self.instance, "base_model_version", None))
         tokenizer = attrs.get("tokenizer_version", getattr(self.instance, "tokenizer_version", None))
         dataset_rev = attrs.get("dataset_revision", getattr(self.instance, "dataset_revision", None))
@@ -100,12 +102,18 @@ class TrainingRunSerializer(serializers.ModelSerializer):
         return attrs
 
     def validate_gpu_options(self, attrs):
-        from modelanvil.runners.training import hf_runtime
+        from modelanvil.runners.training import hf_runtime, mlx_runtime
+        from modelanvil.runners.training.registry import runtime_for_architecture
         base = attrs.get('base_model_version', getattr(self.instance, 'base_model_version', None))
-        if base and base.architecture_ref == hf_runtime.RUNTIME_ID:
+        module = runtime_for_architecture(base.architecture_ref) if base else None
+        if module in (hf_runtime, mlx_runtime):
+            unknown = set(self.initial_data) - set(self.fields) - {'precision', 'adapter', 'quantization'}
+            if unknown:
+                raise serializers.ValidationError({'gpu_options': 'Unsupported training options: ' + ', '.join(sorted(unknown))})
             try:
-                hf_runtime.validate_options(**{name: self.initial_data[name] for name in
-                    ('precision', 'adapter', 'quantization') if name in self.initial_data})
+                module.validate_options(**{name: self.initial_data[name] for name in
+                    ('precision', 'adapter', 'quantization') if name in self.initial_data},
+                    recipe_type=attrs.get('recipe_type', getattr(self.instance, 'recipe_type', 'full_sft')))
             except ValueError as exc:
                 raise serializers.ValidationError({'gpu_options': str(exc)}) from exc
 
@@ -155,7 +163,8 @@ class TrainingRunViewSet(TenantScopedViewSet):
             tokenizer_version=attrs.get('tokenizer_version'), base_model_version=attrs.get('base_model_version'),
             dataset_revision=attrs.get('dataset_revision'), pool=attrs.get('pool'), runner=attrs.get('runner_manifest'),
             total_steps=attrs.get('total_steps', 100), budget_policy=policy,
-            execution_mode=attrs.get('execution_mode', 'worker'), tenant=tenant, project=project)
+            execution_mode=attrs.get('execution_mode', 'worker'), tenant=tenant, project=project,
+            initialization_seed=attrs.get('initialization_seed', 42))
         return report, policy
 
     def get_queryset(self):
@@ -248,7 +257,7 @@ class TrainingRunViewSet(TenantScopedViewSet):
             requirements = {'training_runtime': pins['contract_digest'], 'slots': 1}
             if gpu:
                 requirements.update(gpu_backend=gpu['backend'], gpu_device=gpu['id'])
-            job = Job.objects.create(tenant_id=tenant, pool=run.pool, name=f'Text SFT: {run.run_id}',
+            job = Job.objects.create(tenant_id=tenant, pool=run.pool, name=f'{run.recipe_type}: {run.run_id}',
                 payload={'type': 'qualified_training', 'run_id': str(run.run_id)},
                 requirements=requirements, max_attempts=3)
             try:
@@ -315,6 +324,37 @@ class TrainingRunViewSet(TenantScopedViewSet):
             "bundle": bundle,
             "verification": verification,
         }, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path='download')
+    def download(self, request, *args, **kwargs):
+        """Download actual verified transformer files; checkpoints keep optimizer state separately."""
+        from django.http import FileResponse
+        from modelanvil.runners.training import hf_runtime, mlx_runtime
+        from modelanvil.runners.training.registry import runtime_for_run, is_worker_run
+        import tempfile
+        import zipfile
+        import shutil
+        run = self.get_object()
+        module = runtime_for_run(run)
+        if not is_worker_run(run) or module not in (hf_runtime, mlx_runtime):
+            raise serializers.ValidationError('File download requires a completed transformer worker run; use the JSON export for reference fixtures.')
+        bundle = self._worker_bundle(run)
+        output = tempfile.TemporaryFile()
+        try:
+            with module.staged_files(bundle['files'], run.tenant_id, run.project_id) as directory:
+                with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_STORED, allowZip64=True) as archive:
+                    for name in bundle['files']:
+                        with (directory / name).open('rb') as source, archive.open(name, 'w', force_zip64=True) as target:
+                            shutil.copyfileobj(source, target, length=1024 * 1024)
+                    archive.writestr('modelanvil-provenance.json', json.dumps(bundle, indent=2, allow_nan=False))
+            output.seek(0)
+            return FileResponse(output, as_attachment=True, filename=f'modelanvil-{run.recipe_type}-{run.run_id}.zip', content_type='application/zip')
+        except (ValueError, OSError) as exc:
+            output.close()
+            raise serializers.ValidationError(str(exc)) from exc
+        except Exception:
+            output.close()
+            raise
 
     @action(detail=True, methods=["post"], url_path="cancel")
     @transaction.atomic

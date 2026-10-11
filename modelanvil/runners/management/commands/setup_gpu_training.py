@@ -15,7 +15,7 @@ from modelanvil.data.publication import publish_prepared_dataset
 from modelanvil.identity.models import Project
 from modelanvil.jobs.models import Worker, WorkerPool
 from modelanvil.runners.models import Model, ModelVersion, RunnerManifest, TokenizerVersion
-from modelanvil.runners.training import hf_runtime as runtime
+from modelanvil.runners.training import hf_runtime, mlx_runtime
 from modelanvil.runners.training.hardware import total_memory_bytes
 
 
@@ -28,11 +28,13 @@ class Command(BaseCommand):
         parser.add_argument('--name', required=True)
         parser.add_argument('--model-dir', type=Path, required=True)
         parser.add_argument('--samples', type=Path, required=True, help='Canonical text sample-envelope JSONL')
-        parser.add_argument('--device', required=True, help='Explicit cuda:N, rocm:N, xpu:N or mps:0')
+        parser.add_argument('--device', required=True, help='Explicit cuda:N, rocm:N, xpu:N, mps:0 or native mlx:0')
+        parser.add_argument('--recipe', choices=['full_sft', 'lora_adapter', 'qlora_adapter', 'continued_pretraining'], default='full_sft')
         parser.add_argument('--steps', type=int, default=3)
 
     @transaction.atomic
     def handle(self, *args, **options):
+        runtime = mlx_runtime if options['recipe'] == 'qlora_adapter' else hf_runtime
         tenant, project, name = options['tenant_id'], options['project_id'], options['name'].strip()
         if not name or len(name) > 80 or not 1 <= options['steps'] <= runtime.LIMITS['steps']:
             raise CommandError('Use a unique 1–80 character name and 1–1000 steps.')
@@ -111,9 +113,9 @@ class Command(BaseCommand):
         policy = BudgetPolicy.all_objects.create(tenant_id=tenant, name=f'{name}-steps', period='lifetime',
             unit='training_steps', limit_amount=options['steps'])
         runtime.resolve_inputs(dataset=revision, base=base, tokenizer=tok, runner=runner, pool=pool,
-            tenant=tenant, project=project, steps=options['steps'])
+            tenant=tenant, project=project, steps=options['steps'], recipe_type=options['recipe'])
         self.stdout.write(json.dumps({'worker_id': worker.pk, 'accelerator': observed, 'source': runtime.SOURCE,
-            'launch': {'project': str(project), 'execution_mode': 'worker', 'recipe_type': 'full_sft',
+            'launch': {'project': str(project), 'execution_mode': 'worker', 'recipe_type': options['recipe'],
                        'base_model_version': base.pk, 'tokenizer_version': tok.pk, 'dataset_revision': revision.pk,
                        'runner_manifest': runner.pk, 'pool': pool.pk, 'budget_policy_id': str(policy.policy_id),
                        'total_steps': options['steps']}}, indent=2))

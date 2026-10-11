@@ -1,0 +1,389 @@
+{
+  "date": "2026-10-12",
+  "scope": "Native Metal SmolLM2-135M four-bit affine group-32 linear layers, FP32 tied token embeddings, FP32 rank-eight q/v adapters. Implementation checks pass; overall candidate quality fails the recorded five-percent validation tolerance. Other GPUs and production qualification remain pending.",
+  "runtime": "modelanvil.smollm2-mlx-qlora.v1",
+  "contract_digest": "4a6135a6afddcfcdd24676d9150c33ec9b1ed7cf103674531b22b1910a5f0a7a",
+  "build_digest": "8d38431a955c3217a97dd6f5d162e1b7546599f7de10d9ba99907693c04cfe76",
+  "source": {
+    "repo_id": "HuggingFaceTB/SmolLM2-135M",
+    "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+    "license": "Apache-2.0"
+  },
+  "profile": {
+    "recipe": "qlora_adapter",
+    "adapter": {
+      "rank": 8,
+      "scale": 2.0,
+      "dropout": 0.0,
+      "keys": [
+        "self_attn.q_proj",
+        "self_attn.v_proj"
+      ]
+    },
+    "quantization": {
+      "group_size": 32,
+      "bits": 4,
+      "mode": "affine"
+    },
+    "initialization_seed": 42,
+    "adapter_package": {
+      "torch": "2.9.0",
+      "transformers": "4.57.1",
+      "safetensors": "0.6.2",
+      "tokenizers": "0.22.2",
+      "mlx": "0.32.3",
+      "mlx-metal": "0.32.3",
+      "mlx-lm": "0.29.1"
+    },
+    "trainable_parameters": 460800,
+    "accelerator": {
+      "device": {
+        "id": "mlx:0",
+        "backend": "mlx",
+        "name": "Apple M5 Pro",
+        "runtime_recommended_memory_bytes": 40200896512,
+        "process_headroom_bytes": 40200896512,
+        "memory_scope": "shared_unified"
+      },
+      "framework": {
+        "name": "mlx",
+        "version": "0.32.3"
+      },
+      "packages": {
+        "torch": "2.9.0",
+        "transformers": "4.57.1",
+        "safetensors": "0.6.2",
+        "tokenizers": "0.22.2",
+        "mlx": "0.32.3",
+        "mlx-metal": "0.32.3",
+        "mlx-lm": "0.29.1"
+      },
+      "capacity_source": "MLX recommended process working set, not system-wide free memory"
+    },
+    "dataset_digest": "4503af0b23cabbfdf2e62692ba4f17a0cdd5c517b2c1f399a3e8e2ede35a5ca8",
+    "sample_digest": "a8951fca9ecbeefd85df48cd0d9bbf7cac020f4bd179b634c9fd52499fa4b4c8",
+    "splits": {
+      "consumed": "train",
+      "train_rows": 10,
+      "excluded_rows": {
+        "test": 5,
+        "validation": 5
+      },
+      "excluded_digest": "ef69e3cbd30fa0df498d22016896fd87cc0bb917530b810f68a8b5967a68b1d7"
+    }
+  },
+  "tests": {
+    "focused_backend_with_real_frozen_base_and_exact_optimizer_recovery": 43,
+    "training_and_tenancy_regressions": 134,
+    "frontend": 129
+  },
+  "checkpoints": [
+    {
+      "step": 1,
+      "state_digest": "911d10e6d608d3e50fa28a812f0e6e444035faddab52e4dbf7cd397ae440e11a",
+      "weights_sha256": "b60e9364b9a94498bde0a54805d25d085f10d07601ed844e58312b80f61e2a80"
+    },
+    {
+      "step": 2,
+      "state_digest": "b90fe82c1fdf3d80e23adfff64382f78cd5df8e7ac7e8e4a8b2288b9f2311894",
+      "weights_sha256": "e1a5989599fb3a89aafdaca88dd98fe0290c22b180bd21e5e341a312b6018b7d"
+    },
+    {
+      "step": 3,
+      "state_digest": "746ffaf757ff50ca5844faf788c6643d3a4e008ffb91dc146548f61abf8a3734",
+      "weights_sha256": "48039df4bb46276a379518e7f6cb22a7a263aa7dd1cde87d2b2faa6442bba8a6"
+    }
+  ],
+  "metrics": [
+    {
+      "step": 1,
+      "loss": 6.307729244232178,
+      "post_update_loss": 6.303176403045654,
+      "sample_id": "69412026-7dda-5382-835b-63a8411f252b",
+      "training_pairs": 41,
+      "cpu_seconds": 0.04942000000000002,
+      "engine_wall_seconds": 0.05975575000047684,
+      "gpu_backend": "mlx",
+      "gpu_device": "mlx:0",
+      "device_residency_checked": true,
+      "gradient_norm": 0.8382362127304077,
+      "trainable_parameters": 460800,
+      "gpu_allocated_bytes": 208833264,
+      "peak_allocated_bytes": 346824137,
+      "peak_reserved_bytes": null,
+      "gpu_utilization_percent": null,
+      "tokens_per_second": 686.1264397095314,
+      "measured_at": "2026-10-11T21:25:42.428550+00:00",
+      "quantization": {
+        "group_size": 32,
+        "bits": 4,
+        "mode": "affine"
+      }
+    },
+    {
+      "step": 2,
+      "loss": 5.018303394317627,
+      "post_update_loss": 5.016141891479492,
+      "sample_id": "600d9bd9-4a30-56f0-9e1a-65e593845939",
+      "training_pairs": 90,
+      "cpu_seconds": 0.0461330000000002,
+      "engine_wall_seconds": 0.05464329198002815,
+      "gpu_backend": "mlx",
+      "gpu_device": "mlx:0",
+      "device_residency_checked": true,
+      "gradient_norm": 0.446900337934494,
+      "trainable_parameters": 460800,
+      "gpu_allocated_bytes": 208850588,
+      "peak_allocated_bytes": 531406136,
+      "peak_reserved_bytes": null,
+      "gpu_utilization_percent": null,
+      "tokens_per_second": 1647.0457166617002,
+      "measured_at": "2026-10-11T21:25:42.664421+00:00",
+      "quantization": {
+        "group_size": 32,
+        "bits": 4,
+        "mode": "affine"
+      }
+    },
+    {
+      "step": 3,
+      "loss": 4.052867889404297,
+      "post_update_loss": 4.049467086791992,
+      "sample_id": "f8e72f03-853e-594b-90d8-42454c45fc85",
+      "training_pairs": 24,
+      "cpu_seconds": 0.036926000000000236,
+      "engine_wall_seconds": 0.04485337500227615,
+      "gpu_backend": "mlx",
+      "gpu_device": "mlx:0",
+      "device_residency_checked": true,
+      "gradient_norm": 0.9107615947723389,
+      "trainable_parameters": 460800,
+      "gpu_allocated_bytes": 208823616,
+      "peak_allocated_bytes": 265237129,
+      "peak_reserved_bytes": null,
+      "gpu_utilization_percent": null,
+      "tokens_per_second": 535.0767918530564,
+      "measured_at": "2026-10-11T21:25:42.725356+00:00",
+      "quantization": {
+        "group_size": 32,
+        "bits": 4,
+        "mode": "affine"
+      }
+    }
+  ],
+  "accounting": {
+    "usage": [
+      {
+        "quantity": "3.000000",
+        "unit": "training_steps",
+        "detail": {
+          "runtime": "modelanvil.smollm2-mlx-qlora.v1",
+          "cpu_seconds": 0.13247900000000046,
+          "training_pairs": 155,
+          "status": "completed"
+        }
+      }
+    ],
+    "budget": [
+      {
+        "reserved": "3.000000",
+        "settled": "3.000000"
+      }
+    ]
+  },
+  "quality": {
+    "runtime": "mlx",
+    "unquantized_base": {
+      "validation": {
+        "negative_log_likelihood": 1564.218046426773,
+        "prediction_tokens": 333,
+        "samples": 5,
+        "loss": 4.697351490771091
+      },
+      "test": {
+        "negative_log_likelihood": 1395.303237438202,
+        "prediction_tokens": 279,
+        "samples": 5,
+        "loss": 5.001086872538358
+      },
+      "train_consumed": {
+        "negative_log_likelihood": 779.0316939353943,
+        "prediction_tokens": 155,
+        "samples": 3,
+        "loss": 5.026010928615447
+      }
+    },
+    "quantization_checks_within_five_percent": {
+      "validation": false,
+      "test": true
+    },
+    "overall_quality_passed": false,
+    "samples_sha256": "1a2f89de4f8497cecbcddc25bf264da3f9118dc70e34337c8bb8c907d3b1c38d",
+    "dataset_digest": "4503af0b23cabbfdf2e62692ba4f17a0cdd5c517b2c1f399a3e8e2ede35a5ca8",
+    "source_groups": {
+      "docs/engineering/README.md": "validation",
+      "docs/engineering/accelerators.md": "test",
+      "docs/engineering/accounting.md": "train_consumed",
+      "docs/engineering/action-resource-authorization-matrix.md": "train_consumed",
+      "docs/engineering/app-flows.md": "train_consumed",
+      "docs/engineering/backend-schema.md": "validation",
+      "docs/engineering/capability-evidence.md": "validation",
+      "docs/engineering/design-brief.md": "test",
+      "docs/engineering/qualification-reports/text-finetuning-runtime.md": "validation",
+      "docs/engineering/status.md": "test",
+      "docs/engineering/worker-artifact-client.md": "validation",
+      "docs/engineering/worker-artifact-grants.md": "test",
+      "docs/engineering/worker-result-egress.md": "test"
+    },
+    "base": {
+      "validation": {
+        "negative_log_likelihood": 1645.1683514118195,
+        "prediction_tokens": 333,
+        "samples": 5,
+        "loss": 4.940445499735193
+      },
+      "test": {
+        "negative_log_likelihood": 1447.2932834625244,
+        "prediction_tokens": 279,
+        "samples": 5,
+        "loss": 5.187431123521593
+      },
+      "train_consumed": {
+        "negative_log_likelihood": 807.5266165733337,
+        "prediction_tokens": 155,
+        "samples": 3,
+        "loss": 5.209849139182798
+      }
+    },
+    "candidate": {
+      "validation": {
+        "negative_log_likelihood": 1644.6349077224731,
+        "prediction_tokens": 333,
+        "samples": 5,
+        "loss": 4.938843566734153
+      },
+      "test": {
+        "negative_log_likelihood": 1446.9096674919128,
+        "prediction_tokens": 279,
+        "samples": 5,
+        "loss": 5.186056155884993
+      },
+      "train_consumed": {
+        "negative_log_likelihood": 806.6340370178223,
+        "prediction_tokens": 155,
+        "samples": 3,
+        "loss": 5.204090561405305
+      }
+    },
+    "checks": {
+      "consumed_training_loss_decreased": true,
+      "validation_regression_within_five_percent": true,
+      "test_regression_within_five_percent": true
+    },
+    "passed": true,
+    "consumer_imported_modelanvil_or_django": false,
+    "scope": "Independent offline token-weighted loss on explicit consumed train and file-group-held-out text. This bounded corpus/three-step pilot does not establish broader task quality or production qualification."
+  },
+  "recovery": {
+    "recovery": {
+      "run_id": "059c4bac-e29a-485a-b181-53ae552b9a52",
+      "attempts": 2,
+      "final_weights_sha256": "48039df4bb46276a379518e7f6cb22a7a263aa7dd1cde87d2b2faa6442bba8a6",
+      "exactly_matches_uninterrupted": true,
+      "steps": 3
+    },
+    "cancel": {
+      "run_id": "3da55aa6-a33a-4073-adce-d51ed4bcac17",
+      "steps": 1,
+      "settled": "1.000000",
+      "candidate": null
+    },
+    "corruption": {
+      "run_id": "6f1a6efb-77d6-41a9-81b8-919dbc53d511",
+      "steps": 0,
+      "settled": "0",
+      "candidate": null
+    },
+    "scope": "Real mlx:0 SmolLM2 GPU worker, isolated database, live fencing/cancellation/corruption/accounting. Does not qualify other vendors or production scheduling."
+  },
+  "candidate_chat": {
+    "candidate_id": "a0ee96e9-555d-439c-8b43-e4b8fd7bcabc",
+    "recipe": "qlora_adapter",
+    "outputs": {
+      "mlx:0": {
+        "id": "chatcmpl-f725db66ece14a1882842ea73905d283",
+        "created": 1791754266,
+        "model": "a0ee96e9-555d-439c-8b43-e4b8fd7bcabc",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": ", the world was a very different place"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 4,
+          "completion_tokens": 8,
+          "total_tokens": 12
+        },
+        "modelanvil": {
+          "device": "mlx:0",
+          "elapsed_seconds": 1.2833267080131918
+        }
+      }
+    },
+    "matches_independent_consumer": true,
+    "candidate_mutation_rejected": true,
+    "scope": "Actual completed isolated-pilot candidate through local CPU and named GPU chat API. No broader quality or production claim."
+  },
+  "independent_inference": {
+    "prompt": "Once upon a time",
+    "completion": ", the world was a very different place",
+    "generated_token_ids": [
+      28,
+      260,
+      905,
+      436,
+      253,
+      1035,
+      896,
+      1379
+    ],
+    "weights_sha256": "48039df4bb46276a379518e7f6cb22a7a263aa7dd1cde87d2b2faa6442bba8a6",
+    "execution": {
+      "backend": "cpu",
+      "device_residency_checked": true
+    },
+    "consumer_imported_modelanvil_or_django": false
+  },
+  "independent_metal_inference": {
+    "prompt": "Once upon a time",
+    "completion": ", the world was a very different place",
+    "generated_token_ids": [
+      28,
+      260,
+      905,
+      436,
+      253,
+      1035,
+      896,
+      1379
+    ],
+    "weights_sha256": "48039df4bb46276a379518e7f6cb22a7a263aa7dd1cde87d2b2faa6442bba8a6",
+    "execution": {
+      "backend": "mlx",
+      "device_residency_checked": true
+    },
+    "consumer_imported_modelanvil_or_django": false
+  },
+  "source_report_sha256": {
+    "task13-gpu-pilot.json": "872cbf76cb6aef4b12e6bab2cdda8a9cc604a7e2b556fd48496df97cc17d83c2",
+    "quality-verification.json": "570027d69fe32880eb89fd72fda97cb4150b7b090196daf9a908ff9c673a71cf",
+    "task13-gpu-recovery.json": "40f38c52b9d4f5fb2563cc3634b59fd86a1a5141044ae7ba42227a4941a5e9a6",
+    "candidate-api-verification.json": "edf89764e68c76261bb5f3b21561c69defba0d76c795ce34b9d278c637a6d5f3"
+  }
+}

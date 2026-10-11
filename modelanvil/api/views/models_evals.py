@@ -36,6 +36,11 @@ class TokenizerVersionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Compatibility must be a JSON object.')
         return value
 
+    def validate(self, attrs):
+        if self.instance and self.instance.compatibility.get('immutable_import'):
+            raise serializers.ValidationError('Imported tokenizer snapshots are immutable; import a new version.')
+        return attrs
+
     class Meta:
         model = TokenizerVersion
         fields = (
@@ -84,6 +89,13 @@ class ModelVersionSerializer(serializers.ModelSerializer):
 
 
     model_name = serializers.CharField(source="model.name", read_only=True)
+
+    def validate(self, attrs):
+        if self.instance and (self.instance.metadata.get('imported') or self.instance.source_training_run.exists()):
+            raise serializers.ValidationError('Imported and trained model snapshots are immutable; create a new version.')
+        if attrs.get('metadata', {}).get('imported'):
+            raise serializers.ValidationError('Acquire model snapshots through the model-imports API.')
+        return attrs
 
     def validate_state(self, value):
         if value == ModelVersion.State.QUALIFIED:

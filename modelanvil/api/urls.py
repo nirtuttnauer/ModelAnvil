@@ -18,6 +18,7 @@ from modelanvil.api.views import health as api_health
 from modelanvil.api.views import identity as identity_views
 from modelanvil.api.views import jobs_artifacts as resource_views
 from modelanvil.api.views import models_evals
+from modelanvil.api.views import model_workspace
 from modelanvil.api.views import openapi as openapi_views
 from modelanvil.api.views import rag_views
 from modelanvil.api.views import registries as registry_views
@@ -65,6 +66,10 @@ router.register("worker-inventory", infrastructure_views.WorkerViewSet, basename
 
 # Models & Evaluations
 router.register("models", models_evals.ModelViewSet, basename="model")
+router.register("model-imports", model_workspace.ModelImportViewSet, basename="model-import")
+router.register("chat-conversations", model_workspace.ConversationViewSet, basename="chat-conversation")
+router.register("chat-comparisons", model_workspace.ComparisonViewSet, basename="chat-comparison")
+router.register("inference/models", model_workspace.InferenceViewSet, basename="inference-model")
 router.register("model-versions", models_evals.ModelVersionViewSet, basename="model-version")
 router.register("tokenizers", models_evals.TokenizerVersionViewSet, basename="tokenizer")
 router.register("evaluation-suites", models_evals.EvaluationSuiteViewSet, basename="evaluation-suite")
@@ -88,6 +93,8 @@ router.register("release-versions", release_views.ReleaseVersionViewSet, basenam
 router.register("serving-endpoints", release_views.ServingEndpointViewSet, basename="serving-endpoint")
 
 urlpatterns = [
+    path("inference/models", model_workspace.InferenceViewSet.as_view({'get': 'list'}), name="local-inference-models"),
+    path("inference/chat/completions", model_workspace.InferenceViewSet.as_view({'post': 'completions'}), name="local-chat-completions"),
     path("health/", api_health.health, name="api-health"),
     path("openapi.json", openapi_views.openapi_spec, name="api-openapi"),
     path("workers/artifact-grants/", worker_artifact_views.issue, name="worker-artifact-grant-issue"),

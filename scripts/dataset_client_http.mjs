@@ -20,7 +20,9 @@ try {
     requestCount++;
     return fetch(target, { ...init, signal: AbortSignal.timeout(10000) });
   };
-  const options = { file: new File([input.raw], 'canonical.jsonl', { type: 'application/x-ndjson' }),
+  const sourceFormat = input.source_format || 'jsonl';
+  const raw = input.raw_base64 ? Buffer.from(input.raw_base64, 'base64') : input.raw;
+  const options = { file: new File([raw], `source.${sourceFormat}`), sourceFormat,
     name: input.name, token: input.token, splitSeed: 'http-fixture', fetchImpl };
   if (input.invalid) {
     await assert.rejects(prepareUploadedDataset(options), error => error instanceof DatasetClientError
@@ -52,8 +54,19 @@ try {
     assert.equal(bytes.length, manifest.byte_size);
     assert.equal(createHash('sha256').update(bytes).digest('hex'), revision.manifest_digest);
     const prepared = JSON.parse(bytes.toString('utf8'));
-    const documents = input.raw.trimEnd().split('\n').map(line => JSON.parse(line));
-    assert.deepEqual(prepared.rows, documents);
+    const documents = sourceFormat === 'jsonl' ? input.raw.trimEnd().split('\n').map(line => JSON.parse(line)) : prepared.rows;
+    if (sourceFormat === 'jsonl') assert.deepEqual(prepared.rows, documents);
+    else {
+      assert.deepEqual(prepared.rows.map(row => row.blocks[0].text), input.expected_texts);
+      const sourceDigest = createHash('sha256').update(raw).digest('hex');
+      assert.equal(prepared.recipe.extraction.input_sha256, sourceDigest);
+      assert.equal(prepared.recipe.extraction.source_format, sourceFormat);
+      for (const row of prepared.rows) {
+        assert.equal(row.provenance.source_snapshot_ref, `sha256:${sourceDigest}`);
+        assert.equal(row.provenance.content_sha256, createHash('sha256').update(row.blocks[0].text).digest('hex'));
+        assert.ok(row.blocks[0].location.source_path);
+      }
+    }
     assert.equal(prepared.row_count, documents.length);
     assert.equal(prepared.recipe_digest, revision.recipe_digest);
     const ids = Object.values(prepared.split_manifest).flat();

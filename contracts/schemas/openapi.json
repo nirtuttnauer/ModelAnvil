@@ -1001,7 +1001,7 @@
           "Datasets"
         ],
         "summary": "Execute preparation pipeline on input artifact and publish revision",
-        "description": "Performs pure kernel PII/quality/dedup/protected-set detection, group splits, and publishes a new revision.",
+        "description": "Verify committed local source bytes and publish a bounded canonical dataset revision. Supports JSONL envelopes, CSV/JSON string text records, DOCX main-body paragraphs, and PDF text pages through a pinned isolated parser, preserving source locations and protected source-group splits. Scanned/encrypted PDFs are refused. This synchronous path is not a durable recipe worker.",
         "parameters": [
           {
             "$ref": "#/components/parameters/DatasetId"
@@ -3679,6 +3679,632 @@
         }
       }
     },
+    "/model-imports/": {
+      "get": {
+        "summary": "List project model imports",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped result"
+          },
+          "400": {
+            "description": "Unsupported or invalid inputs"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        }
+      },
+      "post": {
+        "summary": "Import an immutable Hub or local snapshot",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped result"
+          },
+          "400": {
+            "description": "Unsupported or invalid inputs"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModelImportInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/model-imports/search/": {
+      "get": {
+        "summary": "Search public Hub model metadata",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped result"
+          },
+          "400": {
+            "description": "Unsupported or invalid inputs"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          }
+        ]
+      }
+    },
+    "/model-imports/inspect/": {
+      "post": {
+        "summary": "Inspect a pinned Hub revision before import",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped result"
+          },
+          "400": {
+            "description": "Unsupported or invalid inputs"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        }
+      }
+    },
+    "/model-imports/upload-file/": {
+      "post": {
+        "summary": "Upload and verify one local model file",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped result"
+          },
+          "400": {
+            "description": "Unsupported or invalid inputs"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/model-imports/{import_id}/": {
+      "get": {
+        "summary": "Inspect import job and verified file progress",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped result"
+          },
+          "400": {
+            "description": "Unsupported or invalid inputs"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "import_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/inference/models": {
+      "get": {
+        "summary": "List accessible imported models and real load evidence",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped result"
+          },
+          "400": {
+            "description": "Unsupported or invalid inputs"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        }
+      }
+    },
+    "/inference/chat/completions": {
+      "post": {
+        "summary": "Generate bounded local chat completions with optional SSE",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "type": "string",
+                  "description": "OpenAI-compatible delta chunks, optional actual usage and [DONE]."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported or invalid inputs"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocalCompletionInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chat-conversations/": {
+      "get": {
+        "summary": "List project conversations",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped result"
+          },
+          "400": {
+            "description": "Unsupported or invalid inputs"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        }
+      },
+      "post": {
+        "summary": "Save a versioned conversation",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped result"
+          },
+          "400": {
+            "description": "Unsupported or invalid inputs"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        }
+      }
+    },
+    "/chat-conversations/{conversation_id}/": {
+      "get": {
+        "summary": "Read a project conversation",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped result"
+          },
+          "400": {
+            "description": "Unsupported or invalid inputs"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      },
+      "patch": {
+        "summary": "Save only the current conversation revision",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped result"
+          },
+          "400": {
+            "description": "Unsupported or invalid inputs"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete a conversation",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped result"
+          },
+          "400": {
+            "description": "Unsupported or invalid inputs"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/training-runs/{run_id}/download/": {
+      "get": {
+        "summary": "Download verified Safetensors or LoRA candidate files with provenance",
+        "tags": [
+          "Training"
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ZIP of actual verified weights, model/tokenizer files and ModelAnvil provenance; optimizer state stays in checkpoints",
+            "content": {
+              "application/zip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Incomplete or incompatible run, corrupt/missing bytes"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "404": {
+            "description": "Run unavailable in this project"
+          }
+        }
+      }
+    },
+    "/api/v1/chat-comparisons/": {
+      "get": {
+        "tags": [
+          "Local inference"
+        ],
+        "summary": "List project-scoped saved arena comparisons",
+        "responses": {
+          "200": {
+            "description": "Paired text with stable A/B assignment; model identity hidden until preference is recorded"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Local inference"
+        ],
+        "summary": "Save two completed measured responses for identical input and generation settings",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "conversation_id",
+                  "messages",
+                  "responses"
+                ],
+                "properties": {
+                  "conversation_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "messages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "responses": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "request_id",
+                        "text"
+                      ],
+                      "properties": {
+                        "request_id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "text": {
+                          "type": "string",
+                          "maxLength": 32000
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Comparison saved"
+          },
+          "200": {
+            "description": "Existing response pair returned"
+          },
+          "400": {
+            "description": "Unverified output, mismatched input/settings or inaccessible requests"
+          }
+        }
+      }
+    },
+    "/api/v1/chat-comparisons/{comparison_id}/": {
+      "get": {
+        "tags": [
+          "Local inference"
+        ],
+        "summary": "Read a saved scoped comparison",
+        "parameters": [
+          {
+            "name": "comparison_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saved comparison"
+          },
+          "404": {
+            "description": "Comparison unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/chat-comparisons/{comparison_id}/vote/": {
+      "post": {
+        "tags": [
+          "Local inference"
+        ],
+        "summary": "Record one preference and reveal model identities",
+        "parameters": [
+          {
+            "name": "comparison_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "vote"
+                ],
+                "properties": {
+                  "vote": {
+                    "type": "string",
+                    "enum": [
+                      "A",
+                      "B",
+                      "tie",
+                      "neither"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Preference saved or exact same-voter retry"
+          },
+          "409": {
+            "description": "Preference already recorded"
+          },
+          "404": {
+            "description": "Comparison unavailable"
+          }
+        }
+      }
+    },
     "/dataset-bank/sources/{source_id}/upstream/": {
       "get": {
         "tags": [
@@ -4829,30 +5455,74 @@
             "minimum": 0,
             "maximum": 99
           },
-          "detect_pii": {
-            "type": "boolean",
-            "default": false
+          "source_format": {
+            "type": "string",
+            "enum": [
+              "jsonl",
+              "csv",
+              "json",
+              "docx",
+              "pdf"
+            ],
+            "default": "jsonl"
           },
-          "detect_quality": {
-            "type": "boolean",
-            "default": false
+          "text_field": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "default": "text"
           },
-          "detect_duplicates": {
-            "type": "boolean",
-            "default": false
+          "group_field": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 128,
+            "default": null
           },
-          "detect_protected_eval": {
-            "type": "boolean",
-            "default": false
+          "detect": {
+            "type": [
+              "boolean",
+              "object",
+              "null"
+            ],
+            "default": null
           },
-          "drop_report": {
-            "type": "boolean",
-            "default": false
+          "dedup": {
+            "type": [
+              "boolean",
+              "object",
+              "null"
+            ],
+            "default": null
+          },
+          "protected": {
+            "type": [
+              "object",
+              "array",
+              "null"
+            ],
+            "default": null
+          },
+          "near_threshold": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 3
+          },
+          "min_text_chars": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "default": null
           }
         },
         "required": [
           "input_artifact_id"
-        ]
+        ],
+        "additionalProperties": false
       },
       "DatasetPage": {
         "$ref": "#/components/schemas/Page"
@@ -6457,7 +7127,7 @@
             "maximum": 1000000
           }
         },
-        "description": "Required for verifier_rl. Targets come from chosen responses; sampled completions receive actual rule rewards. Tolerance must be finite and within 0\u20131000000."
+        "description": "Required for verifier_rl. Targets come from chosen responses; sampled completions receive actual rule rewards. Tolerance must be finite and within 0–1000000."
       },
       "PreferencePair": {
         "type": "object",
@@ -6656,6 +7326,135 @@
           "stop_reason": {
             "type": "string",
             "readOnly": true
+          }
+        }
+      },
+      "LocalCompletionInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "model",
+          "messages"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "messages": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 64,
+            "items": {
+              "type": "object",
+              "required": [
+                "role",
+                "content"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "role": {
+                  "enum": [
+                    "system",
+                    "user",
+                    "assistant"
+                  ]
+                },
+                "content": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "max_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 256,
+            "default": 128
+          },
+          "temperature": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 2,
+            "default": 0
+          },
+          "seed": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647,
+            "default": 42
+          },
+          "device": {
+            "type": "string",
+            "default": "cpu"
+          },
+          "stream": {
+            "type": "boolean",
+            "default": false
+          },
+          "stream_options": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "include_usage": {
+                "type": "boolean"
+              }
+            }
+          },
+          "prompt_format": {
+            "enum": [
+              "model",
+              "plain",
+              "chatml"
+            ],
+            "default": "model"
+          }
+        }
+      },
+      "ModelImportInput": {
+        "type": "object",
+        "required": [
+          "name",
+          "accepted_license",
+          "idempotency_key"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 180
+          },
+          "repo_id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{40}$"
+          },
+          "format": {
+            "enum": [
+              "safetensors",
+              "gguf",
+              "mlx"
+            ]
+          },
+          "filename": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "integer"
+          },
+          "accepted_license": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "idempotency_key": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "files": {
+            "type": "object",
+            "description": "Local verified artifact references keyed by supported filenames."
           }
         }
       },

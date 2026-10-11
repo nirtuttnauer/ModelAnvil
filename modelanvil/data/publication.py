@@ -5,9 +5,12 @@ Database publication is transactional; filesystem writes are not a database
 transaction and may leave an unreferenced unique output after a later failure.
 """
 import hashlib
+import csv
 import io
 import json
 import uuid
+import zipfile
+from xml.etree.ElementTree import ParseError
 
 from django.conf import settings
 from django.db import transaction
@@ -51,7 +54,7 @@ def _documents(raw):
 
 def _read_verified_input(artifact, backend):
     if artifact.byte_size < 1 or artifact.byte_size > MAX_INPUT_BYTES:
-        raise DatasetPreparationError("Input must contain 1 byte to 16 MiB of JSONL.")
+        raise DatasetPreparationError("Input must contain 1 byte to 16 MiB of source data.")
     digest = hashlib.sha256()
     raw = bytearray()
     try:
@@ -76,7 +79,8 @@ def _read_verified_input(artifact, backend):
 @transaction.atomic
 def publish_prepared_dataset(dataset, artifact, *, split_seed="0", validation_percent=10, test_percent=10,
                              detect=None, dedup=None, protected=None,
-                             near_threshold=3, min_text_chars=None):
+                             near_threshold=3, min_text_chars=None,
+                             source_format="jsonl", text_field="text", group_field=None):
     # Serialize revision numbering/publication per dataset and pin input state
     # until publication. All callers acquire locks in this order.
     dataset = Dataset.all_objects.select_for_update().get(pk=dataset.pk, tenant_id=dataset.tenant_id)
@@ -86,20 +90,34 @@ def publish_prepared_dataset(dataset, artifact, *, split_seed="0", validation_pe
     backend = artifact_storage_backend()
     if artifact.storage_location_id != "local" or artifact.object_version is not None:
         raise DatasetPreparationError("Preparation currently supports only unversioned local storage artifacts.")
-    if artifact.media_type != "application/x-ndjson":
-        raise DatasetPreparationError("Preparation requires canonical sample-envelope JSONL.")
+    from modelanvil.data.source_import import MEDIA_TYPES, VERSION, PDF_VERSION, SourceImportError, extract_source
+    if artifact.media_type != {"jsonl": "application/x-ndjson", **MEDIA_TYPES}.get(source_format):
+        raise DatasetPreparationError("Source format does not match the committed media type.")
+    if source_format == "jsonl" and (text_field != "text" or group_field is not None):
+        raise DatasetPreparationError("Canonical envelopes do not support field mappings.")
     raw = _read_verified_input(artifact, backend)
     # The independent, pure kernel is deliberately imported only at execution.
     from modelanvil.data.preparation import prepare_envelopes
     try:
-        prepared = prepare_envelopes(_documents(raw), split_seed=split_seed,
+        documents = _documents(raw) if source_format == "jsonl" else extract_source(raw,
+            source_format=source_format, text_field=text_field, group_field=group_field)
+        prepared = prepare_envelopes(documents, split_seed=split_seed,
             validation_percent=validation_percent, test_percent=test_percent, max_rows=MAX_ROWS,
             detect=detect, dedup=dedup, protected=protected,
             near_threshold=near_threshold, min_text_chars=min_text_chars)
+        if source_format != "jsonl":
+            prepared["recipe"]["extraction"] = {"version": VERSION, "source_format": source_format,
+                "input_sha256": artifact.sha256, "text_field": text_field, "group_field": group_field}
+            if source_format == "pdf":
+                prepared["recipe"]["extraction"]["pdf_parser"] = f"pypdf=={PDF_VERSION}"
+            prepared["recipe_digest"] = hashlib.sha256(json.dumps(prepared["recipe"], sort_keys=True,
+                separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode("utf-8")).hexdigest()
         payload = json.dumps(prepared, sort_keys=True, separators=(",", ":"),
                              ensure_ascii=False, allow_nan=False).encode("utf-8")
-    except (ValueError, TypeError, UnicodeError, RecursionError):
-        raise DatasetPreparationError("Input or split recipe is invalid for bounded canonical preparation.") from None
+    except SourceImportError as exc:
+        raise DatasetPreparationError(str(exc)) from None
+    except (ValueError, TypeError, UnicodeError, RecursionError, KeyError, zipfile.BadZipFile, ParseError, RuntimeError, OSError, csv.Error):
+        raise DatasetPreparationError("Input or split recipe is invalid for bounded source preparation.") from None
     manifest = Artifact.all_objects.create(
         tenant_id=dataset.tenant_id, project_id=dataset.project_id, storage_location_id="local",
         object_key=f"datasets/{dataset.dataset_id}/{uuid.uuid4()}.json",
@@ -109,7 +127,7 @@ def publish_prepared_dataset(dataset, artifact, *, split_seed="0", validation_pe
     latest = DatasetRevision.all_objects.filter(dataset=dataset, tenant_id=dataset.tenant_id).aggregate(
         number=Max("revision_no"))["number"] or 0
     revision_metadata = {
-        "preparation_kind": "bounded_local_jsonl_v1",
+        "preparation_kind": "bounded_local_jsonl_v1" if source_format == "jsonl" else VERSION,
         "input_artifact_id": str(artifact.artifact_id),
         "input_sha256": artifact.sha256,
         "recipe": prepared["recipe"],
