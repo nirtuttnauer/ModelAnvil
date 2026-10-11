@@ -1,5 +1,5 @@
 import React from 'react';
-import { apiRequest, errorMessage } from '../api/client';
+import { apiRequest, errorMessage, saveArtifact } from '../api/client';
 import { allResources } from '../api/resources';
 import { ResourceState } from '../components/ResourceState';
 import { BarChart, ChartPanel, EventTimeline } from '../components/Charts';
@@ -13,12 +13,15 @@ interface BankSource {
   eligibility: string; download_enabled: boolean; acquisition_available: boolean;
   acquisition_status: string; acquisition_blocked_reason: string; pinned_revision: string;
   acquisition_record_limit?: number;
+  full_acquisition_available?: boolean;
+  full_acquisition?: { pinned_revision: string; measured_selected_bytes: number; record_limit: number };
   size_bytes: number | null; is_size_measured: boolean;
 }
 interface BudgetPolicy { policy_id: string; name: string; unit: string; currency: string; enabled: boolean }
 interface Acquisition {
   snapshot_id: string; source_id: string; state: string; verified_records: number; planned_records: number;
   transferred_bytes: number; planned_bytes: number; row_count: number | null; revision_id: string | null;
+  download_scope?: string; source_files?: { path: string; artifact_id: string; size: number; sha256: string }[]; manifest_artifact_id?: string;
   revision_no: number | null; manifest_digest: string; failures: unknown[]; job: { status: string; desired_action: string } | null;
 }
 
@@ -39,18 +42,31 @@ export function DatasetBankPage({ token, onImportSuccess, refreshKey = 0 }: Data
   const [budgetPolicyId, setBudgetPolicyId] = React.useState('');
   const [estimatedAmount, setEstimatedAmount] = React.useState('');
   const [shareAlikeSourceId, setShareAlikeSourceId] = React.useState('');
+  const [downloadScope, setDownloadScope] = React.useState('sample');
+  const [storageQuota, setStorageQuota] = React.useState('');
+  const acquisitionKey = (source: BankSource) => source.id + (downloadScope === 'full' ? ':full' : '');
+  const available = (source: BankSource) => downloadScope === 'full' ? source.full_acquisition_available : source.acquisition_available;
+  const qualifiedBytes = (source: BankSource) => downloadScope === 'full' ? source.full_acquisition?.measured_selected_bytes : source.size_bytes;
+  const qualifiedCount = (source: BankSource) => downloadScope === 'full' ? source.full_acquisition?.record_limit : source.acquisition_record_limit;
+  const storageBytes = (source: BankSource) => storageQuota ? Number(storageQuota) : 2 * (qualifiedBytes(source) || 0);
+  const storageReady = (source: BankSource) => downloadScope !== 'full' || Number.isSafeInteger(storageBytes(source)) && storageBytes(source) >= 2 * (qualifiedBytes(source) || 0);
   const selectedBudget = budgetPolicies.find(policy => policy.policy_id === budgetPolicyId);
   const validEstimate = /^\d{1,18}(?:\.\d{1,6})?$/.test(estimatedAmount.trim()) && Number(estimatedAmount) > 0;
   const budgetReady = !budgetLoading && !budgetError && (!budgetPolicies.length || (selectedBudget?.unit === 'bank_acquisition_records' && validEstimate));
   const budgetBody = budgetPolicies.length ? { budget_policy_id: budgetPolicyId, estimated_amount: estimatedAmount.trim() } : {};
   const licenseReady = (source: BankSource) => source.eligibility === 'eligible' || (source.eligibility === 'opt_in_required' && shareAlikeSourceId === source.id);
-  const acquisitionBody = (source: BankSource) => ({ ...budgetBody, ...(source.eligibility === 'opt_in_required' ? { project_policy: { allow_share_alike: true } } : {}) });
+  const scopeBody = (source: BankSource) => ({ ...(downloadScope === 'full' ? { download_scope: 'full' } : {}),
+    ...(source.eligibility === 'opt_in_required' || downloadScope === 'full' ? { project_policy: {
+      ...(source.eligibility === 'opt_in_required' ? { allow_share_alike: true } : {}),
+      ...(downloadScope === 'full' ? { max_storage_quota_bytes: storageBytes(source) } : {}),
+    } } : {}) });
+  const acquisitionBody = (source: BankSource) => ({ ...budgetBody, ...scopeBody(source) });
   const acquisitionRequest = React.useRef<AbortController | null>(null);
   const currentToken = React.useRef(token);
   currentToken.current = token;
 
   React.useEffect(() => {
-    setAcquisitions({}); setImportStatus({}); setImportingId(null); setBudgetPolicyId(''); setEstimatedAmount(''); setShareAlikeSourceId('');
+    setAcquisitions({}); setImportStatus({}); setImportingId(null); setBudgetPolicyId(''); setEstimatedAmount(''); setShareAlikeSourceId(''); setDownloadScope('sample'); setStorageQuota('');
     return () => { acquisitionRequest.current?.abort(); acquisitionRequest.current = null; };
   }, [token]);
   React.useEffect(() => {
@@ -80,27 +96,27 @@ export function DatasetBankPage({ token, onImportSuccess, refreshKey = 0 }: Data
   }, [token, refreshKey, budgetRetry]);
 
   async function handleImport(source: BankSource) {
-    if (!token?.trim() || acquisitionRequest.current || !budgetReady || !source.acquisition_available || !source.download_enabled || !licenseReady(source)) return;
+    if (!token?.trim() || acquisitionRequest.current || !budgetReady || !available(source) || !storageReady(source) || !source.download_enabled || !licenseReady(source)) return;
     const requestToken = token;
     const controller = new AbortController();
     acquisitionRequest.current = controller;
     const isCurrent = () => !controller.signal.aborted && acquisitionRequest.current === controller && currentToken.current === requestToken;
     setImportingId(source.id);
     try {
-      await apiRequest(`/api/v1/dataset-bank/sources/${source.id}/preflight/`, token, { method: 'POST', body: JSON.stringify(source.eligibility === 'opt_in_required' ? { project_policy: { allow_share_alike: true } } : {}), signal: controller.signal });
+      await apiRequest(`/api/v1/dataset-bank/sources/${source.id}/preflight/`, token, { method: 'POST', body: JSON.stringify(scopeBody(source)), signal: controller.signal });
       if (!isCurrent()) return;
       const data = await apiRequest<Acquisition>(`/api/v1/dataset-bank/sources/${source.id}/acquisitions/`, token, { method: 'POST', body: JSON.stringify(acquisitionBody(source)), signal: controller.signal });
       if (!isCurrent()) return;
-      setAcquisitions(previous => ({ ...previous, [source.id]: data }));
-      setImportStatus(prev => ({ ...prev, [source.id]: { success: true, message: data.revision_id ? `Published revision ${data.revision_no} · ${data.row_count?.toLocaleString()} canonical samples` : 'Acquisition queued. A registered worker will download, verify, and publish the samples.' } }));
+      setAcquisitions(previous => ({ ...previous, [acquisitionKey(source)]: data }));
+      setImportStatus(prev => ({ ...prev, [acquisitionKey(source)]: { success: true, message: data.revision_id ? `Published revision ${data.revision_no} · ${data.row_count?.toLocaleString()} canonical samples` : downloadScope === 'full' ? 'Full download queued. A worker will verify every release file.' : 'Acquisition queued. A registered worker will download, verify, and publish the samples.' } }));
       if (data.revision_id) onImportSuccess?.();
     } catch (err) {
-      if (isCurrent()) setImportStatus(prev => ({ ...prev, [source.id]: { success: false, message: errorMessage(err) } }));
+      if (isCurrent()) setImportStatus(prev => ({ ...prev, [acquisitionKey(source)]: { success: false, message: errorMessage(err) } }));
     } finally { if (isCurrent()) { acquisitionRequest.current = null; setImportingId(null); } }
   }
 
   async function updateAcquisition(source: BankSource, action?: 'cancel' | 'resume') {
-    const acquisition = acquisitions[source.id];
+    const acquisition = acquisitions[acquisitionKey(source)];
     if (!acquisition || !token?.trim() || acquisitionRequest.current || (action === 'resume' && !budgetReady)) return;
     const requestToken = token;
     const controller = new AbortController();
@@ -110,20 +126,30 @@ export function DatasetBankPage({ token, onImportSuccess, refreshKey = 0 }: Data
     try {
       const data = await apiRequest<Acquisition>(`/api/v1/dataset-bank/acquisitions/${acquisition.snapshot_id}/${action ? `${action}/` : ''}`, token, action ? { method: 'POST', body: JSON.stringify(action === 'resume' ? budgetBody : {}), signal: controller.signal } : { signal: controller.signal });
       if (!isCurrent()) return;
-      setAcquisitions(previous => ({ ...previous, [source.id]: data }));
-      setImportStatus(previous => ({ ...previous, [source.id]: { success: data.state !== 'failed', message: data.revision_id ? `Published revision ${data.revision_no} · ${data.row_count?.toLocaleString()} canonical samples` : `Acquisition ${data.state.replaceAll('_', ' ')} · ${data.verified_records}/${data.planned_records} records verified` } }));
+      setAcquisitions(previous => ({ ...previous, [acquisitionKey(source)]: data }));
+      setImportStatus(previous => ({ ...previous, [acquisitionKey(source)]: { success: data.state !== 'failed', message: data.revision_id ? `Published revision ${data.revision_no} · ${data.row_count?.toLocaleString()} canonical samples` : `Acquisition ${data.state.replaceAll('_', ' ')} · ${data.verified_records}/${data.planned_records} ${data.download_scope === 'full' ? 'files' : 'records'} verified` } }));
       if (data.revision_id && !acquisition.revision_id) onImportSuccess?.();
     } catch (err) {
-      if (isCurrent()) setImportStatus(previous => ({ ...previous, [source.id]: { success: false, message: errorMessage(err) } }));
+      if (isCurrent()) setImportStatus(previous => ({ ...previous, [acquisitionKey(source)]: { success: false, message: errorMessage(err) } }));
     } finally { if (isCurrent()) { acquisitionRequest.current = null; setImportingId(null); } }
+  }
+
+  async function downloadFile(artifactId: string, name: string) {
+    if (!token || acquisitionRequest.current) return;
+    const controller = new AbortController();
+    acquisitionRequest.current = controller;
+    setImportingId(selected.id);
+    try { await saveArtifact(artifactId, name, token, controller.signal); }
+    catch (err) { if (!controller.signal.aborted) setImportStatus(previous => ({ ...previous, [acquisitionKey(selected)]: { success: false, message: errorMessage(err) } })); }
+    finally { if (acquisitionRequest.current === controller) { acquisitionRequest.current = null; setImportingId(null); } }
   }
 
   const modalities = [...new Set(sources.flatMap(source => source.modalities || []))].sort();
   const filtered = sources.filter(source => [source.name, source.description, source.license].some(value => value.toLowerCase().includes(query.toLowerCase()))
     && (selectedModality === 'all' || source.modalities?.includes(selectedModality)));
   const selected = filtered.find(source => source.id === selectedId) || filtered[0];
-  const status = selected ? importStatus[selected.id] : undefined;
-  const acquisition = selected ? acquisitions[selected.id] : undefined;
+  const status = selected ? importStatus[acquisitionKey(selected)] : undefined;
+  const acquisition = selected ? acquisitions[acquisitionKey(selected)] : undefined;
 
   return <div className="data-workspace dataset-bank-page">
     <ResourceState loading={loading} error={error} />
@@ -141,15 +167,16 @@ export function DatasetBankPage({ token, onImportSuccess, refreshKey = 0 }: Data
         <div className="visualization-grid equal"><ChartPanel title="Catalog composition" description="Source counts in the loaded catalog. A source can have multiple modalities."><BarChart data={modalities.map(modality => ({ label: modality, value: sources.filter(source => source.modalities?.includes(modality)).length }))} unit="Sources" emptyMessage="Connect to load the curated catalog." /></ChartPanel>
           <ChartPanel title="Import eligibility" description="Catalog policy status; sample counts are available after import."><BarChart data={[...new Set(sources.map(source => source.eligibility))].map(eligibility => ({ label: eligibility.replaceAll('_', ' '), value: sources.filter(source => source.eligibility === eligibility).length }))} unit="Sources" emptyMessage="Eligibility will appear when the catalog is loaded." /></ChartPanel></div>
       </div>
-      <section className="panel data-source-inspector"><div className="panel-title"><h2>Source details</h2><ShieldCheck size={19} aria-hidden="true" /></div><div className="panel-body">{selected ? <><span className="data-source-icon large"><Database size={24} aria-hidden="true" /></span><h3>{selected.name}</h3><p className="muted">{selected.description}</p><dl className="data-facts"><div><dt>License</dt><dd>{selected.license || 'Not provided'}</dd></div><div><dt>Category</dt><dd>{selected.category}</dd></div><div><dt>Source kind</dt><dd>{selected.source_kind.replaceAll('_', ' ')}</dd></div><div><dt>Modalities</dt><dd>{selected.modalities?.join(', ') || 'Not provided'}</dd></div><div><dt>Eligibility</dt><dd>{selected.eligibility.replaceAll('_', ' ')}</dd></div><div><dt>Acquisition</dt><dd>{selected.acquisition_available ? 'Qualified' : 'Unavailable'}</dd></div><div><dt>Qualified scope</dt><dd>{selected.acquisition_record_limit ? `${selected.acquisition_record_limit} records` : 'Not qualified'}</dd></div><div><dt>Pinned revision</dt><dd><code>{selected.pinned_revision || 'Not qualified'}</code></dd></div><div><dt>Qualified transfer size</dt><dd>{selected.is_size_measured && selected.size_bytes !== null ? `${selected.size_bytes.toLocaleString()} measured bytes` : 'Not measured'}</dd></div></dl>
+      <section className="panel data-source-inspector"><div className="panel-title"><h2>Source details</h2><ShieldCheck size={19} aria-hidden="true" /></div><div className="panel-body">{selected ? <><span className="data-source-icon large"><Database size={24} aria-hidden="true" /></span><h3>{selected.name}</h3><p className="muted">{selected.description}</p><dl className="data-facts"><div><dt>License</dt><dd>{selected.license || 'Not provided'}</dd></div><div><dt>Category</dt><dd>{selected.category}</dd></div><div><dt>Source kind</dt><dd>{selected.source_kind.replaceAll('_', ' ')}</dd></div><div><dt>Modalities</dt><dd>{selected.modalities?.join(', ') || 'Not provided'}</dd></div><div><dt>Eligibility</dt><dd>{selected.eligibility.replaceAll('_', ' ')}</dd></div><div><dt>Acquisition</dt><dd>{available(selected) ? 'Qualified' : 'Unavailable'}</dd></div><div><dt>Qualified scope</dt><dd>{qualifiedCount(selected) ? `${qualifiedCount(selected)} ${downloadScope === 'full' ? 'source files' : 'records'}` : 'Not qualified'}</dd></div><div><dt>Pinned revision</dt><dd><code>{(downloadScope === 'full' ? selected.full_acquisition?.pinned_revision : selected.pinned_revision) || 'Not qualified'}</code></dd></div><div><dt>Qualified transfer size</dt><dd>{qualifiedBytes(selected) != null ? `${qualifiedBytes(selected)?.toLocaleString()} measured bytes` : 'Not measured'}</dd></div></dl>
         {!!selected.use_cases?.length && <div className="data-inspector-section"><h4>Use cases</h4><div className="data-tags">{selected.use_cases.map(useCase => <span className="badge" key={useCase}>{useCase.replaceAll('_', ' ')}</span>)}</div></div>}
-        <p className="muted">Downloads are limited to the qualified sample scope. Larger imports require qualification.</p><div className="data-inspector-section"><h4>Provenance</h4><a href={selected.source_url} target="_blank" rel="noopener noreferrer" className="data-source-link">View original source <ExternalLink size={14} aria-hidden="true" /></a><p className="muted">Source sample lengths and token distributions are not reported by the catalog.</p></div>
-        <div className="data-inspector-section"><h4>Preparation stages</h4><EventTimeline events={[{ label: 'Catalog metadata loaded', detail: 'License, modality, and policy status available.', status: 'ready' }, { label: acquisition?.revision_id ? 'Canonical revision published' : 'Acquire canonical samples', detail: acquisition?.revision_id ? `Revision ${acquisition.revision_no} · ${acquisition.row_count?.toLocaleString()} samples` : acquisition ? `${acquisition.verified_records}/${acquisition.planned_records} records verified · ${acquisition.job?.status || acquisition.state}` : 'A qualified source is downloaded and verified by a worker.', status: acquisition?.revision_id ? 'completed' : acquisition?.state || 'pending' }]} /></div>
+        <label>Download scope<select value={downloadScope} disabled={importingId !== null} onChange={event => { setDownloadScope(event.target.value); setStorageQuota(''); }}><option value="sample">Qualified samples</option><option value="full" disabled={!selected.full_acquisition_available}>Complete source release</option></select></label>
+        {downloadScope === 'full' && <><p className="muted">Download every original release file and split. These files can be saved after verification; training preparation is separate.</p><label>Storage allowance (bytes)<input type="number" min={2 * (qualifiedBytes(selected) || 0)} step="1" value={storageQuota || String(2 * (qualifiedBytes(selected) || 0))} disabled={importingId !== null} onChange={event => setStorageQuota(event.target.value)} aria-invalid={!storageReady(selected)} /></label><p className="muted">Allow at least {(2 * (qualifiedBytes(selected) || 0)).toLocaleString()} bytes for the completed files and retained resumable parts.</p></>}<div className="data-inspector-section"><h4>Provenance</h4><a href={selected.source_url} target="_blank" rel="noopener noreferrer" className="data-source-link">View original source <ExternalLink size={14} aria-hidden="true" /></a><p className="muted">Source sample lengths and token distributions are not reported by the catalog.</p></div>
+        <div className="data-inspector-section"><h4>Preparation stages</h4><EventTimeline events={[{ label: 'Catalog metadata loaded', detail: 'License, modality, and policy status available.', status: 'ready' }, { label: downloadScope === 'full' ? (acquisition?.state === 'ready' ? 'Complete release verified' : 'Download complete release') : acquisition?.revision_id ? 'Canonical revision published' : 'Acquire canonical samples', detail: acquisition?.revision_id ? `Revision ${acquisition.revision_no} · ${acquisition.row_count?.toLocaleString()} samples` : acquisition ? `${acquisition.verified_records}/${acquisition.planned_records} ${downloadScope === 'full' ? 'files' : 'records'} verified · ${acquisition.job?.status || acquisition.state}` : 'A qualified source is downloaded and verified by a worker.', status: acquisition?.revision_id || acquisition?.state === 'ready' ? 'completed' : acquisition?.state || 'pending' }]} /></div>
         {status && <div className={`notice ${status.success ? 'success' : 'error'}`} role={status.success ? 'status' : 'alert'}>{status.message}</div>}
-        {(selected.acquisition_available || acquisition) && <div className="data-inspector-section"><h4>Acquisition budget</h4>{budgetLoading ? <p className="muted" role="status">Checking enabled budget policies…</p> : budgetError ? <div><p className="notice error" role="alert">Budget policies could not be checked: {budgetError}</p><button disabled={importingId !== null} onClick={() => setBudgetRetry(value => value + 1)}>Retry budget policies</button></div> : budgetPolicies.length ? <><p className="muted">{budgetPolicies.some(policy => policy.unit === 'bank_acquisition_records') ? `Planned scope: ${selected.acquisition_record_limit ?? 'check source preflight'} records.` : 'No compatible policy is enabled. Ask an administrator to configure a bank_acquisition_records budget policy.'}</p><label>Enabled budget policy<select disabled={importingId !== null} value={budgetPolicyId} onChange={event => { setBudgetPolicyId(event.target.value); setEstimatedAmount(''); }}><option value="">Choose a budget policy</option>{budgetPolicies.filter(policy => policy.unit === 'bank_acquisition_records').map(policy => <option value={policy.policy_id} key={policy.policy_id}>{policy.name} · {policy.unit}{policy.currency ? ` · ${policy.currency}` : ''}</option>)}</select></label><label style={{ marginTop: 12 }}>Estimated reservation{selectedBudget ? ` (${selectedBudget.unit}${selectedBudget.currency ? ` · ${selectedBudget.currency}` : ''})` : ''}<input disabled={importingId !== null} type="number" min="0.000001" step="0.000001" inputMode="decimal" value={estimatedAmount} onChange={event => setEstimatedAmount(event.target.value)} aria-invalid={!!estimatedAmount && !validEstimate} placeholder="Positive amount to reserve" /></label><p className="muted">Use a bank_acquisition_records policy and reserve at least the planned record count. Resuming reserves only records still to transfer. The backend checks the remaining limit.</p></> : <p className="muted">No enabled tenant budget policies. This acquisition does not require a reservation.</p>}</div>}
-        {!acquisition && selected.eligibility === 'opt_in_required' && selected.acquisition_available && <label className="data-license-consent"><input type="checkbox" checked={shareAlikeSourceId === selected.id} disabled={importingId !== null} onChange={event => setShareAlikeSourceId(event.target.checked ? selected.id : '')} /><span>I allow this source’s share-alike license obligations for this acquisition.</span></label>}
-        {acquisition ? <div className="data-acquisition"><dl className="data-facts"><div><dt>Transfer state</dt><dd>{acquisition.state.replaceAll('_', ' ')}</dd></div><div><dt>Job</dt><dd>{acquisition.job?.status || 'Not recorded'}</dd></div>{acquisition.job?.desired_action && <div><dt>Requested action</dt><dd>{acquisition.job.desired_action.replaceAll('_', ' ')}</dd></div>}<div><dt>Verified records</dt><dd>{acquisition.verified_records} / {acquisition.planned_records}</dd></div><div><dt>Verified bytes</dt><dd>{acquisition.transferred_bytes.toLocaleString()} / {acquisition.planned_bytes.toLocaleString()}</dd></div></dl><progress value={acquisition.verified_records} max={acquisition.planned_records || 1} aria-label="Verified acquisition records" /><div className="actions"><button disabled={importingId !== null} onClick={() => void updateAcquisition(selected)}>Refresh transfer</button>{!acquisition.revision_id && acquisition.state === 'ingesting' && <button disabled={importingId !== null || acquisition.job?.desired_action === 'cancel'} onClick={() => void updateAcquisition(selected, 'cancel')}>{acquisition.job?.desired_action === 'cancel' ? 'Cancellation requested' : 'Cancel transfer'}</button>}{['failed', 'cancelled'].includes(acquisition.state) && <button disabled={importingId !== null || !budgetReady} onClick={() => void updateAcquisition(selected, 'resume')}>Resume transfer</button>}</div>{!!acquisition.failures?.length && <details><summary>Recorded transfer failures</summary><pre>{JSON.stringify(acquisition.failures, null, 2)}</pre></details>}{acquisition.revision_id && <a href="#datasets" className="data-source-link">Inspect published dataset</a>}</div> : <button className="primary data-import-button" onClick={() => void handleImport(selected)} disabled={!token?.trim() || importingId !== null || !budgetReady || !selected.download_enabled || !selected.acquisition_available || !licenseReady(selected)}><Download size={16} aria-hidden="true" />{importingId === selected.id ? 'Checking & queueing…' : 'Acquire to workspace'}</button>}
-        {!selected.acquisition_available && <p className="muted">{selected.acquisition_blocked_reason || 'This source has no qualified acquisition connector.'}</p>}
+        {(available(selected) || acquisition) && <div className="data-inspector-section"><h4>Acquisition budget</h4>{budgetLoading ? <p className="muted" role="status">Checking enabled budget policies…</p> : budgetError ? <div><p className="notice error" role="alert">Budget policies could not be checked: {budgetError}</p><button disabled={importingId !== null} onClick={() => setBudgetRetry(value => value + 1)}>Retry budget policies</button></div> : budgetPolicies.length ? <><p className="muted">{budgetPolicies.some(policy => policy.unit === 'bank_acquisition_records') ? `Planned scope: ${qualifiedCount(selected) ?? 'check source preflight'} ${downloadScope === 'full' ? 'source files' : 'records'}.` : 'No compatible policy is enabled. Ask an administrator to configure a bank_acquisition_records budget policy.'}</p><label>Enabled budget policy<select disabled={importingId !== null} value={budgetPolicyId} onChange={event => { setBudgetPolicyId(event.target.value); setEstimatedAmount(''); }}><option value="">Choose a budget policy</option>{budgetPolicies.filter(policy => policy.unit === 'bank_acquisition_records').map(policy => <option value={policy.policy_id} key={policy.policy_id}>{policy.name} · {policy.unit}{policy.currency ? ` · ${policy.currency}` : ''}</option>)}</select></label><label style={{ marginTop: 12 }}>Estimated reservation{selectedBudget ? ` (${selectedBudget.unit}${selectedBudget.currency ? ` · ${selectedBudget.currency}` : ''})` : ''}<input disabled={importingId !== null} type="number" min="0.000001" step="0.000001" inputMode="decimal" value={estimatedAmount} onChange={event => setEstimatedAmount(event.target.value)} aria-invalid={!!estimatedAmount && !validEstimate} placeholder="Positive amount to reserve" /></label><p className="muted">Use a bank_acquisition_records policy and reserve at least the planned record count. Full releases count source files. Resuming reserves only items still to transfer. The backend checks the remaining limit.</p></> : <p className="muted">No enabled tenant budget policies. This acquisition does not require a reservation.</p>}</div>}
+        {!acquisition && selected.eligibility === 'opt_in_required' && available(selected) && <label className="data-license-consent"><input type="checkbox" checked={shareAlikeSourceId === selected.id} disabled={importingId !== null} onChange={event => setShareAlikeSourceId(event.target.checked ? selected.id : '')} /><span>I allow this source’s share-alike license obligations for this acquisition.</span></label>}
+        {acquisition ? <div className="data-acquisition"><dl className="data-facts"><div><dt>Transfer state</dt><dd>{acquisition.state.replaceAll('_', ' ')}</dd></div><div><dt>Job</dt><dd>{acquisition.job?.status || 'Not recorded'}</dd></div>{acquisition.job?.desired_action && <div><dt>Requested action</dt><dd>{acquisition.job.desired_action.replaceAll('_', ' ')}</dd></div>}<div><dt>{downloadScope === 'full' ? 'Verified files' : 'Verified records'}</dt><dd>{acquisition.verified_records} / {acquisition.planned_records}</dd></div><div><dt>Verified bytes</dt><dd>{acquisition.transferred_bytes.toLocaleString()} / {acquisition.planned_bytes.toLocaleString()}</dd></div></dl><progress value={acquisition.transferred_bytes} max={acquisition.planned_bytes || 1} aria-label="Verified acquisition bytes" /><div className="actions"><button disabled={importingId !== null} onClick={() => void updateAcquisition(selected)}>Refresh transfer</button>{!acquisition.revision_id && acquisition.state === 'ingesting' && <button disabled={importingId !== null || acquisition.job?.desired_action === 'cancel'} onClick={() => void updateAcquisition(selected, 'cancel')}>{acquisition.job?.desired_action === 'cancel' ? 'Cancellation requested' : 'Cancel transfer'}</button>}{['failed', 'cancelled'].includes(acquisition.state) && <button disabled={importingId !== null || !budgetReady} onClick={() => void updateAcquisition(selected, 'resume')}>Resume transfer</button>}</div>{!!acquisition.failures?.length && <details><summary>Recorded transfer failures</summary><pre>{JSON.stringify(acquisition.failures, null, 2)}</pre></details>}{acquisition.state === 'ready' && acquisition.download_scope === 'full' && <div className="data-inspector-section"><h4>Verified release files</h4>{acquisition.source_files?.map(file => <p key={file.path}><button disabled={importingId !== null} onClick={() => void downloadFile(file.artifact_id, file.path.split('/').at(-1) || 'dataset')}>Save {file.path}</button> · {file.size.toLocaleString()} bytes</p>)}{acquisition.manifest_artifact_id && <button disabled={importingId !== null} onClick={() => void downloadFile(acquisition.manifest_artifact_id!, 'full-release.json')}>Save verification manifest</button>}</div>}{acquisition.revision_id && <a href="#datasets" className="data-source-link">Inspect published dataset</a>}</div> : <button className="primary data-import-button" onClick={() => void handleImport(selected)} disabled={!token?.trim() || importingId !== null || !budgetReady || !selected.download_enabled || !available(selected) || !storageReady(selected) || !licenseReady(selected)}><Download size={16} aria-hidden="true" />{importingId === selected.id ? 'Checking & queueing…' : 'Acquire to workspace'}</button>}
+        {!available(selected) && <p className="muted">{selected.acquisition_blocked_reason || 'This source has no qualified acquisition connector.'}</p>}
       </> : <div className="empty-state"><Database size={28} aria-hidden="true" /><h3>Select a catalog source</h3><p>Inspect its license, provenance, and import eligibility.</p></div>}</div></section>
     </div>
   </div>;

@@ -1,0 +1,650 @@
+{
+  "schema_version": "1.0",
+  "source_id": "text-smol-magpie-ultra",
+  "download_scope": "full",
+  "upstream": {
+    "repository": "HuggingFaceTB/smoltalk",
+    "commit": "5feaf2fd3ffca7c237fc38d1861bc30365d48ffa"
+  },
+  "scope": "Every train and test shard of the Smol-Magpie-Ultra configuration; other SmolTalk configurations are separate sources.",
+  "files": [
+    {
+      "path": "data/smol-magpie-ultra/test-00000-of-00001.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk/resolve/5feaf2fd3ffca7c237fc38d1861bc30365d48ffa/data/smol-magpie-ultra/test-00000-of-00001.parquet",
+      "size": 73225731,
+      "publisher_sha256": "5669ea1ca03fb1405fad0e927cc270f2f99dbd51e98232f3b9beb63ccbd61583",
+      "format": "parquet",
+      "sha256": "5669ea1ca03fb1405fad0e927cc270f2f99dbd51e98232f3b9beb63ccbd61583",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "05833ef1c4f583b9086a6289c866f77ffb6680b2f2425a3b2ca8d7229de847fa"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "be54c895185779f3749d22a15fcf8437b746b5c44e2282e5701f81a426c5d37c"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "e244ffe556ec8f04ac148d203a98598a2324ae0db18a86301288c9ca2c48ec3a"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "e858d1f0d3f945137b69cd8edce6121cca0925673850d38f911f92a34f320101"
+        },
+        {
+          "start": 67108864,
+          "length": 6116867,
+          "sha256": "b3c987155da4b9b605ec1e19d5f63e483058452cf5b4fdea295428adcabd0338"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 21555,
+        "row_groups": 22,
+        "columns": [
+          "messages",
+          "category",
+          "difficulty",
+          "quality",
+          "reward_model_score",
+          "conversation_tokens"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00000-of-00006.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk/resolve/5feaf2fd3ffca7c237fc38d1861bc30365d48ffa/data/smol-magpie-ultra/train-00000-of-00006.parquet",
+      "size": 232402904,
+      "publisher_sha256": "512cb90bf3c8a6772e97c43977d10177b2726118a107eaf8de4797a604e09df8",
+      "format": "parquet",
+      "sha256": "512cb90bf3c8a6772e97c43977d10177b2726118a107eaf8de4797a604e09df8",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "cbbddce2b7c60acf4ba5a81389bc89d4697fab9f97ee1dd21f59ced742e7d08a"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "d08a2153e8393b94336468b103766d7bf34329d0cfc269cc098c09d453d81f01"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "df05621efb71c7414ab980f649e1e5346d5c81292d3c89317cc37a2e4fe12e51"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "2a1f265b97b546fbd13232b38e3bfb7bb5366ef84f9df948bc13eed017404af2"
+        },
+        {
+          "start": 67108864,
+          "length": 16777216,
+          "sha256": "5afd34908cbe24620d9358f0257ff44ae1755dc5663ba84e74a31e55498d1710"
+        },
+        {
+          "start": 83886080,
+          "length": 16777216,
+          "sha256": "01d608bd086556c4f44f09e3ab69ee5973d73645572a4706c6705d1fdebe2f0f"
+        },
+        {
+          "start": 100663296,
+          "length": 16777216,
+          "sha256": "a6063095ef76170b5ed3009f2394fbf4c2af682ada01b43afe6d125203f8a4c2"
+        },
+        {
+          "start": 117440512,
+          "length": 16777216,
+          "sha256": "4e2f985d2c1ae2a9da02ee164f1e913568bf1169d96223692254696c6080ae05"
+        },
+        {
+          "start": 134217728,
+          "length": 16777216,
+          "sha256": "4a11f06ae03dc37ade457646afed85d38c5d082dbe868f34add513b783584b58"
+        },
+        {
+          "start": 150994944,
+          "length": 16777216,
+          "sha256": "752e0942a2dae34eeb5b54488eb1733284c2f76cfb232e708c383702ab37a019"
+        },
+        {
+          "start": 167772160,
+          "length": 16777216,
+          "sha256": "fb11c3c17549c27a803ae5e4db2d5fa42af5a75413dc4756ff78163b0623a6b3"
+        },
+        {
+          "start": 184549376,
+          "length": 16777216,
+          "sha256": "a6853df74068bd9d4ed8ac5e55ad20d089f99842cdf2d8eb89546699c708412e"
+        },
+        {
+          "start": 201326592,
+          "length": 16777216,
+          "sha256": "4b1b37f627002054b5ab4c9be773fa1080534ca8f9094a94ea02b1cac61e2425"
+        },
+        {
+          "start": 218103808,
+          "length": 14299096,
+          "sha256": "80f609e355e21d031a41d49a80ee67396dc05a526f76ca7e2730ab80b0d65a18"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 68257,
+        "row_groups": 69,
+        "columns": [
+          "messages",
+          "category",
+          "difficulty",
+          "quality",
+          "reward_model_score",
+          "conversation_tokens"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00001-of-00006.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk/resolve/5feaf2fd3ffca7c237fc38d1861bc30365d48ffa/data/smol-magpie-ultra/train-00001-of-00006.parquet",
+      "size": 233035425,
+      "publisher_sha256": "abd9a7addee6a33448a887dfa8f2d405f3ad5ad25ed7a87b6bbebdce1232d0ab",
+      "format": "parquet",
+      "sha256": "abd9a7addee6a33448a887dfa8f2d405f3ad5ad25ed7a87b6bbebdce1232d0ab",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "ef6c47ee9f7c7c04b9c20d9535ba0ce4937eed68797f17d813f432ca0a3cb824"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "dfe2b4ffb205126720c56d3f72f03b18f1bb3199f4df246ed59c057faf430b4a"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "2a1862d29aeee105086aeffe634df2bf84121741630e0f1cdb65874341d758bb"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "43ddde90a825ffd3cc77c03c005e2392d1f247b43f4117a985b38ca1f7147dd3"
+        },
+        {
+          "start": 67108864,
+          "length": 16777216,
+          "sha256": "90c1295600de299335b52568365783eb0b92ce6704fa429b5534955fbeb45084"
+        },
+        {
+          "start": 83886080,
+          "length": 16777216,
+          "sha256": "3bc19be9e1526e58eee923185164473d7f77a3f1044c331266b41c5f05741ef5"
+        },
+        {
+          "start": 100663296,
+          "length": 16777216,
+          "sha256": "c304b97061b08ae1851dd9da3d45dcf5e3b307003aa12a1d7bbdf74ccb031e89"
+        },
+        {
+          "start": 117440512,
+          "length": 16777216,
+          "sha256": "37312b041c86e8b9b1408c8aba5ffef52e6b263ec60457be643d01db6c192e6a"
+        },
+        {
+          "start": 134217728,
+          "length": 16777216,
+          "sha256": "6a986f1a8071f8208f298a04a519eb8ceba2fb11acaac99a0eae7e941bba2164"
+        },
+        {
+          "start": 150994944,
+          "length": 16777216,
+          "sha256": "c14233f18e350b4268c54965d252e3622ed893c5421758cdcd21f02412089ff3"
+        },
+        {
+          "start": 167772160,
+          "length": 16777216,
+          "sha256": "a5e50305a246342333b3a62133eef68b0ee31e0d7a112165ce2d9b191c4680ae"
+        },
+        {
+          "start": 184549376,
+          "length": 16777216,
+          "sha256": "43ea3de43bd94ded696b331d30a566f352949431d1e4a06e7d76cc407ef52e9a"
+        },
+        {
+          "start": 201326592,
+          "length": 16777216,
+          "sha256": "c9d3cb54afcac8b05ca846449a1401e6759dbd0d4be7ed4636af6138f8d4c7e0"
+        },
+        {
+          "start": 218103808,
+          "length": 14931617,
+          "sha256": "7049f11c18a2493edb16104068b81be282748357e7dff4f1e9ebb54b3ae45edd"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 68256,
+        "row_groups": 69,
+        "columns": [
+          "messages",
+          "category",
+          "difficulty",
+          "quality",
+          "reward_model_score",
+          "conversation_tokens"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00002-of-00006.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk/resolve/5feaf2fd3ffca7c237fc38d1861bc30365d48ffa/data/smol-magpie-ultra/train-00002-of-00006.parquet",
+      "size": 232992813,
+      "publisher_sha256": "f4271506f5ece9c1c1a5bcbaa9c5a39c7334be6830a2a25c1597985578751172",
+      "format": "parquet",
+      "sha256": "f4271506f5ece9c1c1a5bcbaa9c5a39c7334be6830a2a25c1597985578751172",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "0d1f178f751ed3a829524730ce7f6720094cb942346826ec883d624ba5d8e18d"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "7af4fcf01fde1dcbdab8066ca4ddef900e4a3337359724730a9249c4fb531d59"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "3c9a210427bee82f255a9b0f03c4a03e36f9a139e273fd07998267a6f2a79c76"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "c66eb2627fac125b954aea5bc957b2926ebcd3fd691bb717633b6b040e02ca8e"
+        },
+        {
+          "start": 67108864,
+          "length": 16777216,
+          "sha256": "c716e11e67fd57263fcbea7071fab0638a339dd8e343b74f2466585567e752f3"
+        },
+        {
+          "start": 83886080,
+          "length": 16777216,
+          "sha256": "943bc935871f578bb2c6c8a451c5da3fdf28fa5cfc52112069a1b60bf43f0f1c"
+        },
+        {
+          "start": 100663296,
+          "length": 16777216,
+          "sha256": "f7ea39515910c1ae1acdf798c60982d56b11d368d0c469d5d68ef92e5b717b71"
+        },
+        {
+          "start": 117440512,
+          "length": 16777216,
+          "sha256": "cf1c2d0a9e7193315a21df1cf2d0c229b46f6ff9d1683fa6ae1670beeb8bab9b"
+        },
+        {
+          "start": 134217728,
+          "length": 16777216,
+          "sha256": "ed5a81700baefb56911432ba69de8ea82938bba7db67abee244f92f7b1a64caa"
+        },
+        {
+          "start": 150994944,
+          "length": 16777216,
+          "sha256": "91fa5302d2224d4ef73997885b239ab3bd6f4b4282608361f8618fedb11406c5"
+        },
+        {
+          "start": 167772160,
+          "length": 16777216,
+          "sha256": "2d85f2a0fd65c5c762a7049ce5f2102cc60497b044d410b45e4c0b347ffbcd71"
+        },
+        {
+          "start": 184549376,
+          "length": 16777216,
+          "sha256": "efca97a305d670673700f4a4b31f1fe80793ba024e312327d66d6935ce0fbff2"
+        },
+        {
+          "start": 201326592,
+          "length": 16777216,
+          "sha256": "627df7a953cd2394c70f6f2415fdb3c0222ec387d458506405f51b510fe84381"
+        },
+        {
+          "start": 218103808,
+          "length": 14889005,
+          "sha256": "5b93a5c2c250bb8f797e259b14a4c08f6fe81170182bd89116e7e1e05bfcd9fe"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 68256,
+        "row_groups": 69,
+        "columns": [
+          "messages",
+          "category",
+          "difficulty",
+          "quality",
+          "reward_model_score",
+          "conversation_tokens"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00003-of-00006.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk/resolve/5feaf2fd3ffca7c237fc38d1861bc30365d48ffa/data/smol-magpie-ultra/train-00003-of-00006.parquet",
+      "size": 232333293,
+      "publisher_sha256": "397604789df6e8c874a542a5f71db65838e829bdf0d61eeafeb119fed80bf517",
+      "format": "parquet",
+      "sha256": "397604789df6e8c874a542a5f71db65838e829bdf0d61eeafeb119fed80bf517",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "39fc5c7663c51522458715bb5c4249c34882fd5cfed7f3836b799730a4e5d71a"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "187a2b8b11babe00c7a9c0d9f51493e89618bde4f109d6baa89cb4543f148bb5"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "4b610b7036670edc84791753c86bcde1888822aaf54cc3904003b37cadaac6fe"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "e9f7ffaa801043857b74593f9a8defebfa39f82a121d23b0aeadf3c7a7b8bad0"
+        },
+        {
+          "start": 67108864,
+          "length": 16777216,
+          "sha256": "ede2dc25bbf76c4867c826e17e513ecd8b23c000f4e3d4a8eef0ef6ca18d6ec8"
+        },
+        {
+          "start": 83886080,
+          "length": 16777216,
+          "sha256": "6eb2f91844dc8c50de1a0c9f081a54e2a35f5ab9c2d2efe1f7c43b8d1ae7d389"
+        },
+        {
+          "start": 100663296,
+          "length": 16777216,
+          "sha256": "6ce8253fc1519a7d7d027a0a8f72c76a6e969c91ebdc1b1eac44721e0623a057"
+        },
+        {
+          "start": 117440512,
+          "length": 16777216,
+          "sha256": "c786d17e85e353d166e73839df196535d1db0d9dfbf68c6b9fd2c6f2feaa56c7"
+        },
+        {
+          "start": 134217728,
+          "length": 16777216,
+          "sha256": "02865e7b45d1743bebf34285f86c2566e45cf45a5d559766eb7f824e664d802f"
+        },
+        {
+          "start": 150994944,
+          "length": 16777216,
+          "sha256": "ac7c77d775146f9c3d1eaa622f76a5b6f1922c03244ee279eefa36813caf7b79"
+        },
+        {
+          "start": 167772160,
+          "length": 16777216,
+          "sha256": "98e0118c7b33fd945df60ab3ee1f19aa6782a8422cec4a32517dcec7a3aa8d46"
+        },
+        {
+          "start": 184549376,
+          "length": 16777216,
+          "sha256": "41c7f9cc13ebaceec3dfc586a33878b38cae1185107f378ea515fc586e3f820e"
+        },
+        {
+          "start": 201326592,
+          "length": 16777216,
+          "sha256": "093aaac608431d43882af18da6d459532fef885c82c8d6ca156f2269a613b44a"
+        },
+        {
+          "start": 218103808,
+          "length": 14229485,
+          "sha256": "eafaef7cd050154cee60acad6087cbf44e449bd0435d7bbddca352e01b093a73"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 68256,
+        "row_groups": 69,
+        "columns": [
+          "messages",
+          "category",
+          "difficulty",
+          "quality",
+          "reward_model_score",
+          "conversation_tokens"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00004-of-00006.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk/resolve/5feaf2fd3ffca7c237fc38d1861bc30365d48ffa/data/smol-magpie-ultra/train-00004-of-00006.parquet",
+      "size": 232585260,
+      "publisher_sha256": "f270bf6178b6f157907ff267cd7fe7f175513eeda5340b5cf7dbb439faaa3bae",
+      "format": "parquet",
+      "sha256": "f270bf6178b6f157907ff267cd7fe7f175513eeda5340b5cf7dbb439faaa3bae",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "9a35a0ec79112cae81855c23d087da7604a63de9ee55739a7717b92b9e8b0a5c"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "e171bfd8f6263dd932307a3d40fc9895ae097f538175b155c5552bc22ff3fd54"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "080eca752e72dc5ece90a804678d8b4c33ea1a63f847cb1667f731619f3e8839"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "3ecd73ed56993c47df214c1a065563f62c1ff653d0cff51234c35cfa7b09708e"
+        },
+        {
+          "start": 67108864,
+          "length": 16777216,
+          "sha256": "53f00846ffd26febb5fd259f9c9b5b772df14f9f77698c410e4a3ae46373ace8"
+        },
+        {
+          "start": 83886080,
+          "length": 16777216,
+          "sha256": "fa259edfe21d2675869462d4dc902083c7bdba46e91253c3cfa8188fe0eedb60"
+        },
+        {
+          "start": 100663296,
+          "length": 16777216,
+          "sha256": "b4069cd7a168472384e703c980ddfc95e541488d99a495aacc53deb1e2fb3d17"
+        },
+        {
+          "start": 117440512,
+          "length": 16777216,
+          "sha256": "a474ceb5533906a170d7743e073a12262172827c8d509513ae508d0ddd0f7c1b"
+        },
+        {
+          "start": 134217728,
+          "length": 16777216,
+          "sha256": "cbc4c0fe2414d904ec567f28cd433a3724587f030f55a1849d7c935a720967e9"
+        },
+        {
+          "start": 150994944,
+          "length": 16777216,
+          "sha256": "3ca3861bed392d29a397ee047417f1efd0128540399d10a28867683d8b040345"
+        },
+        {
+          "start": 167772160,
+          "length": 16777216,
+          "sha256": "c4f615c2cdfc04cd82d947aed3388fccb5fcd9e650d949ab693eed5d456255c6"
+        },
+        {
+          "start": 184549376,
+          "length": 16777216,
+          "sha256": "08b41a683fb93f53c2a325d4deb1810d9e1d3648c46fd86767a3dddc10bc7a4c"
+        },
+        {
+          "start": 201326592,
+          "length": 16777216,
+          "sha256": "e304a9af8557fd41974fe6dbf0703ed4225ffb6c79508fcdbcdb766e848fb692"
+        },
+        {
+          "start": 218103808,
+          "length": 14481452,
+          "sha256": "f1cbcf37437c24346df7d73eb664177d5389d8364b39aa8f758d119dab73a218"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 68256,
+        "row_groups": 69,
+        "columns": [
+          "messages",
+          "category",
+          "difficulty",
+          "quality",
+          "reward_model_score",
+          "conversation_tokens"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/smol-magpie-ultra/train-00005-of-00006.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk/resolve/5feaf2fd3ffca7c237fc38d1861bc30365d48ffa/data/smol-magpie-ultra/train-00005-of-00006.parquet",
+      "size": 232747231,
+      "publisher_sha256": "da97a3af7cff06a6f29f7f3791cc319b2c31a1795d74cf22d9abf1a074bf31c7",
+      "format": "parquet",
+      "sha256": "da97a3af7cff06a6f29f7f3791cc319b2c31a1795d74cf22d9abf1a074bf31c7",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "aee4f95ecfe14f1b24fd40856b3126c11cd88c0e281895922b92ef690ffbfd56"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "902afdf630585881968d0d881e6f27498868500334ff20246db8f821b7b8636a"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "ac17a412e9baf92be713c04f94ca1cf342cffb7db956feffb44cc8386170f71c"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "5888343e13d2aa11b4903400cede3359ad9c5bba89e6a01edc0e60d3bed6c7da"
+        },
+        {
+          "start": 67108864,
+          "length": 16777216,
+          "sha256": "42fecfd2408cfd05703eb7589a432648ab86eeb5eed6e9af627c1bc8c8c52593"
+        },
+        {
+          "start": 83886080,
+          "length": 16777216,
+          "sha256": "7860e2f705edd48aa3cba7168d3b718537606ff08cd35790f3897e10d86be527"
+        },
+        {
+          "start": 100663296,
+          "length": 16777216,
+          "sha256": "014c758b291ffca3e8fe3bc4a21d76d09221ee5471f147fa1b2ae43682176f51"
+        },
+        {
+          "start": 117440512,
+          "length": 16777216,
+          "sha256": "ca33f71e980589edf61f1d8d3674902fcd5592bebcd55b90894373df661d01a0"
+        },
+        {
+          "start": 134217728,
+          "length": 16777216,
+          "sha256": "144b73276dd54c1716e179032e88225220617f2453afeedac196cb322d09095c"
+        },
+        {
+          "start": 150994944,
+          "length": 16777216,
+          "sha256": "726fa29287ad76780577448ec2fd4d92bfa0a18417ccaca79f5228908673f0a5"
+        },
+        {
+          "start": 167772160,
+          "length": 16777216,
+          "sha256": "71701842569e948c84030bd85323a3e81f52007050b8277e903013ee2d180876"
+        },
+        {
+          "start": 184549376,
+          "length": 16777216,
+          "sha256": "5445d479ce3c9e34589ec7ca08115086f6493a9654a7e4c745d3ae14e00c5104"
+        },
+        {
+          "start": 201326592,
+          "length": 16777216,
+          "sha256": "34a916950377daa40b006dcf441de561d90ed90081d29e8f1787d2c61203be50"
+        },
+        {
+          "start": 218103808,
+          "length": 14643423,
+          "sha256": "36b7c14b537f3569419dc6aeaedddd1c67ad1f27f509906e1f72e4f9a132e707"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 68256,
+        "row_groups": 69,
+        "columns": [
+          "messages",
+          "category",
+          "difficulty",
+          "quality",
+          "reward_model_score",
+          "conversation_tokens"
+        ],
+        "all_rows_validated": true
+      }
+    }
+  ],
+  "licenses": [
+    {
+      "path": "notice/publisher-card",
+      "archive_name": "text-smol-magpie-ultra-publisher-card.txt",
+      "upstream_url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk/resolve/5feaf2fd3ffca7c237fc38d1861bc30365d48ffa/README.md",
+      "size": 9723,
+      "sha256": "b6ff197df18e272fe15361db889638f9679b8443f299034137b5234acd8d3487",
+      "blob_sha1": "a6c7236d6b8dd179b84d48ea95a5a0c1115b4686"
+    }
+  ],
+  "training_recipe_qualified": false
+}

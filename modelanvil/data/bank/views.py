@@ -35,6 +35,7 @@ from modelanvil.identity.models import Role
 
 
 class AcquisitionRequestSerializer(serializers.Serializer):
+    download_scope = serializers.ChoiceField(choices=("sample", "full"), default="sample")
     project_policy = serializers.DictField(required=False, default=dict)
     source_revision = serializers.CharField(required=False, allow_blank=False, max_length=255)
     record_limit = serializers.IntegerField(required=False, min_value=1)
@@ -136,6 +137,8 @@ class DatasetBankViewSet(viewsets.ViewSet):
                 "acquisition_blocked_reason": "" if s.acquisition.qualified else s.acquisition.blocked_reason,
                 "pinned_revision": s.acquisition.pinned_revision,
                 "acquisition_record_limit": s.acquisition.record_limit,
+                "full_acquisition_available": s.download_enabled and s.full_acquisition.qualified,
+                "full_acquisition": _qualification_payload(s.full_acquisition),
             }
             for s in results
         ]
@@ -178,6 +181,7 @@ class DatasetBankViewSet(viewsets.ViewSet):
             "record_count": s.record_count,
             "is_size_measured": s.is_size_measured,
             "acquisition": _qualification_payload(s.acquisition),
+            "full_acquisition": _qualification_payload(s.full_acquisition),
             "acquisition_available": s.acquisition_available,
         })
 
@@ -256,6 +260,7 @@ class DatasetBankViewSet(viewsets.ViewSet):
             result = self.catalog.preflight_download(
                 source_id, tenant_id=str(tenant_id), project_policy=policy,
                 source_revision=data.get("source_revision"),
+                download_scope=data["download_scope"],
             )
         except Exception as exc:
             return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
@@ -265,15 +270,18 @@ class DatasetBankViewSet(viewsets.ViewSet):
     def upstream_source(self, request: Request, source_id: str) -> Response:
         """Compare the pinned qualified revision with the current upstream head."""
         try:
-            source = self.catalog.assert_acquirable(source_id)
+            scope = request.query_params.get("download_scope", "sample")
+            if scope not in ("sample", "full"):
+                raise ValidationError("download_scope must be sample or full.")
+            source = self.catalog.source_for_full_download(source_id) if scope == "full" else self.catalog.assert_acquirable(source_id)
         except ValidationError as exc:
             return Response({"detail": str(exc)}, status=status.HTTP_409_CONFLICT)
-        if source.acquisition.connector == "qualified_http_subset_v1":
+        if source.acquisition.connector in ("qualified_http_subset_v1", "qualified_full_http_release_v1"):
             return Response({"source_id": source.id, "pinned_revision": source.acquisition.pinned_revision,
                 "upstream_head_revision": None, "moved": None,
                 "acquirable_revisions": source.acquisition.qualified_revisions,
                 "automatic_update_check_supported": False,
-                "note": "This source uses a frozen content-pinned subset. Requalification is required to admit new samples or upstream ranges."})
+                "note": "This scope uses a frozen content-pinned qualification. Requalification is required to admit new samples or upstream ranges."})
         try:
             head = upstream_head_revision(source)
         except Exception as exc:  # noqa: BLE001 - sanitized upstream failure
@@ -310,6 +318,7 @@ class DatasetBankViewSet(viewsets.ViewSet):
                 catalog=self.catalog,
                 project_policy=data.get("project_policy"),
                 source_revision=data.get("source_revision"),
+                download_scope=data["download_scope"],
                 record_limit=data.get("record_limit"),
                 split_seed=data["split_seed"],
                 budget_policy_id=data.get("budget_policy_id"),

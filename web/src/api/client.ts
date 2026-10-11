@@ -75,3 +75,20 @@ export function nextPagePath(next: string, resource: string): string {
 export function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'The request failed. Please try again.';
 }
+
+
+/** Stream large artifacts directly to disk with the workspace's current authorization. */
+export async function saveArtifact(id: string, name: string, token: string, signal?: AbortSignal): Promise<void> {
+  if (!token.trim()) throw new Error('Enter an API key to download files.');
+  const picker = (window as unknown as { showSaveFilePicker?: (options: { suggestedName: string }) => Promise<{ createWritable(): Promise<WritableStream> }> }).showSaveFilePicker;
+  if (!picker) throw new Error('Saving large files requires a browser with the file save picker, such as Chrome or Edge. You can also stream the artifact download API with an authenticated client.');
+  const project = getActiveProjectId();
+  const handle = await picker.call(window, { suggestedName: name });
+  if (signal?.aborted) return;
+  const headers = new Headers({ Authorization: `Bearer ${token.trim()}` });
+  if (project) headers.set('X-Project-ID', project);
+  const response = await fetch(apiPath(`/api/v1/artifacts/${encodeURIComponent(id)}/download/`), { headers, signal, redirect: 'error' });
+  if (!response.ok || !response.body) throw new Error(`Download failed (HTTP ${response.status}).`);
+  const writable = await handle.createWritable();
+  await response.body.pipeTo(writable, { signal });
+}

@@ -1845,6 +1845,164 @@
             "Publisher license declaration/notice bytes archived and digest-pinned."
           ]
         }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk",
+        "pinned_revision": "2bc6dd3b72139947f9810293c42d39b85700ef00453970d4f65ccd190397a818",
+        "qualified_revisions": [
+          "2bc6dd3b72139947f9810293c42d39b85700ef00453970d4f65ccd190397a818"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "data/smol-magpie-ultra/test-00000-of-00001.parquet",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet",
+          "data/smol-magpie-ultra/train-00001-of-00006.parquet",
+          "data/smol-magpie-ultra/train-00002-of-00006.parquet",
+          "data/smol-magpie-ultra/train-00003-of-00006.parquet",
+          "data/smol-magpie-ultra/train-00004-of-00006.parquet",
+          "data/smol-magpie-ultra/train-00005-of-00006.parquet"
+        ],
+        "license_paths": [
+          "text-smol-magpie-ultra-publisher-card.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 7,
+        "record_limit_max": 7,
+        "preview_limit": 0,
+        "measured_upstream_records": 7,
+        "measured_selected_records": 7,
+        "measured_upstream_bytes": 1469322657,
+        "measured_selected_bytes": 1469322657,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/text-smol-magpie-ultra.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 1469322657,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 21555,
+              "row_groups": 22,
+              "columns": [
+                "messages",
+                "category",
+                "difficulty",
+                "quality",
+                "reward_model_score",
+                "conversation_tokens"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 68257,
+              "row_groups": 69,
+              "columns": [
+                "messages",
+                "category",
+                "difficulty",
+                "quality",
+                "reward_model_score",
+                "conversation_tokens"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 68256,
+              "row_groups": 69,
+              "columns": [
+                "messages",
+                "category",
+                "difficulty",
+                "quality",
+                "reward_model_score",
+                "conversation_tokens"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 68256,
+              "row_groups": 69,
+              "columns": [
+                "messages",
+                "category",
+                "difficulty",
+                "quality",
+                "reward_model_score",
+                "conversation_tokens"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 68256,
+              "row_groups": 69,
+              "columns": [
+                "messages",
+                "category",
+                "difficulty",
+                "quality",
+                "reward_model_score",
+                "conversation_tokens"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 68256,
+              "row_groups": 69,
+              "columns": [
+                "messages",
+                "category",
+                "difficulty",
+                "quality",
+                "reward_model_score",
+                "conversation_tokens"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 68256,
+              "row_groups": 69,
+              "columns": [
+                "messages",
+                "category",
+                "difficulty",
+                "quality",
+                "reward_model_score",
+                "conversation_tokens"
+              ],
+              "all_rows_validated": true
+            }
+          ],
+          "scope": "Every train and test shard of the Smol-Magpie-Ultra configuration; other SmolTalk configurations are separate sources.",
+          "training_recipe_qualified": false
+        }
       }
     },
     {
@@ -1951,6 +2109,157 @@
             "Publisher license declaration/notice bytes archived and digest-pinned."
           ]
         }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k",
+        "pinned_revision": "136cb7d23de9fa6ad4831c9e3209ef081022d182c44c31cff7e671a0581816d4",
+        "qualified_revisions": [
+          "136cb7d23de9fa6ad4831c9e3209ef081022d182c44c31cff7e671a0581816d4"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "data/test_gen-00000-of-00001-3d4cd8309148a71f.parquet",
+          "data/test_sft-00000-of-00001-f7dfac4afe5b93f4.parquet",
+          "data/train_gen-00000-of-00003-a6c9fb894be3e50b.parquet",
+          "data/train_gen-00001-of-00003-d6a0402e417f35ca.parquet",
+          "data/train_gen-00002-of-00003-c0db75b92a2f48fd.parquet",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet",
+          "data/train_sft-00001-of-00003-0a1804bcb6ae68c6.parquet",
+          "data/train_sft-00002-of-00003-ee46ed25cfae92c6.parquet"
+        ],
+        "license_paths": [
+          "text-ultrachat-200k-publisher-card.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 8,
+        "record_limit_max": 8,
+        "preview_limit": 0,
+        "measured_upstream_records": 8,
+        "measured_selected_records": 8,
+        "measured_upstream_bytes": 1624049723,
+        "measured_selected_bytes": 1624049723,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/text-ultrachat-200k.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 1624049723,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 28304,
+              "row_groups": 29,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "messages"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 23110,
+              "row_groups": 24,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "messages"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 85344,
+              "row_groups": 86,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "messages"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 85344,
+              "row_groups": 86,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "messages"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 85344,
+              "row_groups": 86,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "messages"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 69289,
+              "row_groups": 70,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "messages"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 69288,
+              "row_groups": 70,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "messages"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 69288,
+              "row_groups": 70,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "messages"
+              ],
+              "all_rows_validated": true
+            }
+          ],
+          "scope": "All dataset files and splits at the pinned publisher revision.",
+          "training_recipe_qualified": false
+        }
       }
     },
     {
@@ -2056,6 +2365,77 @@
             "Independent refetch through pinned range reader reproduced every selected sample digest.",
             "Publisher license declaration/notice bytes archived and digest-pinned."
           ]
+        }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://huggingface.co/datasets/rajpurkar/squad",
+        "pinned_revision": "464f930999e9fb277595e40c527fd9bed5676c5c0d2c208edf136b66c471d0ff",
+        "qualified_revisions": [
+          "464f930999e9fb277595e40c527fd9bed5676c5c0d2c208edf136b66c471d0ff"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "plain_text/train-00000-of-00001.parquet",
+          "plain_text/validation-00000-of-00001.parquet"
+        ],
+        "license_paths": [
+          "text-squad-publisher-card.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 2,
+        "record_limit_max": 2,
+        "preview_limit": 0,
+        "measured_upstream_records": 2,
+        "measured_selected_records": 2,
+        "measured_upstream_bytes": 16278203,
+        "measured_selected_bytes": 16278203,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/text-squad.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 16278203,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 87599,
+              "row_groups": 88,
+              "columns": [
+                "id",
+                "title",
+                "context",
+                "question",
+                "answers"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 10570,
+              "row_groups": 11,
+              "columns": [
+                "id",
+                "title",
+                "context",
+                "question",
+                "answers"
+              ],
+              "all_rows_validated": true
+            }
+          ],
+          "scope": "All dataset files and splits at the pinned publisher revision.",
+          "training_recipe_qualified": false
         }
       }
     },
@@ -2164,6 +2544,153 @@
             "Publisher license declaration/notice bytes archived and digest-pinned."
           ]
         }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized",
+        "pinned_revision": "00d4ae5d7b2bd35d8c4f47cf7cd7238e311d2c2178fe42c7ebda458871a31dd3",
+        "qualified_revisions": [
+          "00d4ae5d7b2bd35d8c4f47cf7cd7238e311d2c2178fe42c7ebda458871a31dd3"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "data/test_gen-00000-of-00001.parquet",
+          "data/test_prefs-00000-of-00001.parquet",
+          "data/test_sft-00000-of-00001.parquet",
+          "data/train_gen-00000-of-00001.parquet",
+          "data/train_prefs-00000-of-00001.parquet",
+          "data/train_sft-00000-of-00001.parquet"
+        ],
+        "license_paths": [
+          "preference-ultrafeedback-binarized-publisher-card.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 6,
+        "record_limit_max": 6,
+        "preview_limit": 0,
+        "measured_upstream_records": 6,
+        "measured_selected_records": 6,
+        "measured_upstream_bytes": 649967196,
+        "measured_selected_bytes": 649967196,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/preference-ultrafeedback-binarized.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 649967196,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 1000,
+              "row_groups": 1,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "chosen",
+                "rejected",
+                "messages",
+                "score_chosen",
+                "score_rejected"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 2000,
+              "row_groups": 2,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "chosen",
+                "rejected",
+                "messages",
+                "score_chosen",
+                "score_rejected"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 1000,
+              "row_groups": 1,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "chosen",
+                "rejected",
+                "messages",
+                "score_chosen",
+                "score_rejected"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 61135,
+              "row_groups": 62,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "chosen",
+                "rejected",
+                "messages",
+                "score_chosen",
+                "score_rejected"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 61135,
+              "row_groups": 62,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "chosen",
+                "rejected",
+                "messages",
+                "score_chosen",
+                "score_rejected"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 61135,
+              "row_groups": 62,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "chosen",
+                "rejected",
+                "messages",
+                "score_chosen",
+                "score_rejected"
+              ],
+              "all_rows_validated": true
+            }
+          ],
+          "scope": "All dataset files and splits at the pinned publisher revision.",
+          "training_recipe_qualified": false
+        }
       }
     },
     {
@@ -2271,6 +2798,53 @@
             "Publisher license declaration/notice bytes archived and digest-pinned."
           ]
         }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2",
+        "pinned_revision": "66564bd8c31fb249b6b26bc5953bdfae8ae57a04a9511813ef8cf46bd68bc0ba",
+        "qualified_revisions": [
+          "66564bd8c31fb249b6b26bc5953bdfae8ae57a04a9511813ef8cf46bd68bc0ba"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "glaive-function-calling-v2.json"
+        ],
+        "license_paths": [
+          "tools-glaive-v2-publisher-card.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 1,
+        "record_limit_max": 1,
+        "preview_limit": 0,
+        "measured_upstream_records": 1,
+        "measured_selected_records": 1,
+        "measured_upstream_bytes": 271190065,
+        "measured_selected_bytes": 271190065,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/tools-glaive-v2.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 271190065,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "json",
+              "whole_file_sha256_verified": true,
+              "rows": 112960,
+              "all_rows_validated": true
+            }
+          ],
+          "scope": "All dataset files and splits at the pinned publisher revision.",
+          "training_recipe_qualified": false
+        }
       }
     },
     {
@@ -2374,6 +2948,66 @@
             "Independent refetch through pinned range reader reproduced every selected sample digest.",
             "Publisher license declaration/notice bytes archived and digest-pinned."
           ]
+        }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://cs.stanford.edu/people/jcjohns/clevr/",
+        "pinned_revision": "89fb64fa8136f58e96b59538da0045b2637448458cacf9da7858a633c1c0e349",
+        "qualified_revisions": [
+          "89fb64fa8136f58e96b59538da0045b2637448458cacf9da7858a633c1c0e349"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "CLEVR_v1.0.zip"
+        ],
+        "license_paths": [
+          "image-clevr-license.txt",
+          "image-clevr-copyright.txt",
+          "image-clevr-readme.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 1,
+        "record_limit_max": 1,
+        "preview_limit": 0,
+        "measured_upstream_records": 1,
+        "measured_selected_records": 1,
+        "measured_upstream_bytes": 19021600724,
+        "measured_selected_bytes": 19021600724,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/image-clevr.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 19021600724,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "zip",
+              "whole_file_sha256_verified": true,
+              "members": 100008,
+              "uncompressed_bytes": 20002875087,
+              "png_images": 100000,
+              "flac_recordings": 0,
+              "rows": 0,
+              "all_member_crc_verified": true,
+              "json_records": {
+                "CLEVR_v1.0/scenes/CLEVR_val_scenes.json": 15000,
+                "CLEVR_v1.0/scenes/CLEVR_train_scenes.json": 70000,
+                "CLEVR_v1.0/questions/CLEVR_test_questions.json": 149988,
+                "CLEVR_v1.0/questions/CLEVR_val_questions.json": 149991,
+                "CLEVR_v1.0/questions/CLEVR_train_questions.json": 699989
+              }
+            }
+          ],
+          "scope": "CLEVR v1.0 main release: train, validation and test images, questions, and available scenes; CoGenT is a separate source release.",
+          "training_recipe_qualified": false
         }
       }
     },
@@ -2482,6 +3116,60 @@
             "Publisher license declaration/notice bytes archived and digest-pinned."
           ]
         }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://datashare.ed.ac.uk/handle/10283/3443",
+        "pinned_revision": "31f515285efcc67d589b91bb97d1df691799c9eec4f43e25a7b8e77b69e470f4",
+        "qualified_revisions": [
+          "31f515285efcc67d589b91bb97d1df691799c9eec4f43e25a7b8e77b69e470f4"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "VCTK-Corpus-0.92.zip"
+        ],
+        "license_paths": [
+          "audio-vctk-publisher-declaration.txt",
+          "audio-vctk-full-readme.txt",
+          "audio-vctk-full-license.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 1,
+        "record_limit_max": 1,
+        "preview_limit": 0,
+        "measured_upstream_records": 1,
+        "measured_selected_records": 1,
+        "measured_upstream_bytes": 11747302977,
+        "measured_selected_bytes": 11747302977,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/audio-vctk.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 11747302977,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "zip",
+              "whole_file_sha256_verified": true,
+              "members": 132914,
+              "uncompressed_bytes": 11733299614,
+              "png_images": 0,
+              "flac_recordings": 88328,
+              "rows": 0,
+              "all_member_crc_verified": true,
+              "json_records": {}
+            }
+          ],
+          "scope": "VCTK 0.92 original full archive, both microphones, including publisher-documented missing transcripts/mic2 exceptions.",
+          "training_recipe_qualified": false
+        }
       }
     },
     {
@@ -2579,6 +3267,145 @@
             "Independent refetch through pinned range reader reproduced every selected sample digest.",
             "Publisher license declaration/notice bytes archived and digest-pinned."
           ]
+        }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://www.openslr.org/141/",
+        "pinned_revision": "21f037bbb7589a4895eb4073011666a57da4f1c41ffec51d952eb4d8528685bf",
+        "qualified_revisions": [
+          "21f037bbb7589a4895eb4073011666a57da4f1c41ffec51d952eb4d8528685bf"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "dev_clean.tar.gz",
+          "dev_other.tar.gz",
+          "doc.tar.gz",
+          "libritts_r_failed_speech_restoration_examples.tar.gz",
+          "test_clean.tar.gz",
+          "test_other.tar.gz",
+          "train_clean_100.tar.gz",
+          "train_clean_360.tar.gz",
+          "train_other_500.tar.gz"
+        ],
+        "license_paths": [
+          "audio-libritts-r-publisher-declaration.txt",
+          "audio-libritts-r-full-md5sum.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 9,
+        "record_limit_max": 9,
+        "preview_limit": 0,
+        "measured_upstream_records": 9,
+        "measured_selected_records": 9,
+        "measured_upstream_bytes": 88566937189,
+        "measured_selected_bytes": 88566937189,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/audio-libritts-r.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 88566937189,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 17400,
+              "uncompressed_bytes": 1549140608,
+              "wav_recordings": 5736,
+              "text_members": 11472,
+              "gzip_crc_verified": true
+            },
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 14017,
+              "uncompressed_bytes": 1110400071,
+              "wav_recordings": 4613,
+              "text_members": 9226,
+              "gzip_crc_verified": true
+            },
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 10,
+              "uncompressed_bytes": 1116921,
+              "wav_recordings": 0,
+              "text_members": 8,
+              "gzip_crc_verified": true
+            },
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 8,
+              "uncompressed_bytes": 913654,
+              "wav_recordings": 0,
+              "text_members": 8,
+              "gzip_crc_verified": true
+            },
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 14673,
+              "uncompressed_bytes": 1480324426,
+              "wav_recordings": 4837,
+              "text_members": 9674,
+              "gzip_crc_verified": true
+            },
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 15534,
+              "uncompressed_bytes": 1154992537,
+              "wav_recordings": 5120,
+              "text_members": 10240,
+              "gzip_crc_verified": true
+            },
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 100823,
+              "uncompressed_bytes": 9289478838,
+              "wav_recordings": 33232,
+              "text_members": 66473,
+              "gzip_crc_verified": true
+            },
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 353377,
+              "uncompressed_bytes": 33032398343,
+              "wav_recordings": 116462,
+              "text_members": 232915,
+              "gzip_crc_verified": true
+            },
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 620617,
+              "uncompressed_bytes": 53514706569,
+              "wav_recordings": 205035,
+              "text_members": 410070,
+              "gzip_crc_verified": true
+            }
+          ],
+          "scope": "All seven train/dev/test splits plus documentation and failed-restoration lists from OpenSLR 141.",
+          "training_recipe_qualified": false
         }
       }
     },
@@ -2685,6 +3512,58 @@
             "Independent refetch through pinned range reader reproduced every selected sample digest.",
             "Publisher license declaration/notice bytes archived and digest-pinned."
           ]
+        }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://archive.ics.uci.edu/dataset/53/iris",
+        "pinned_revision": "a477f8a13315c7dd807d4519d7cc56c1518bd4ef3da8b1cd29527679fdbe6107",
+        "qualified_revisions": [
+          "a477f8a13315c7dd807d4519d7cc56c1518bd4ef3da8b1cd29527679fdbe6107"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "iris.zip"
+        ],
+        "license_paths": [
+          "numeric-iris-publisher-declaration.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 1,
+        "record_limit_max": 1,
+        "preview_limit": 0,
+        "measured_upstream_records": 1,
+        "measured_selected_records": 1,
+        "measured_upstream_bytes": 3738,
+        "measured_selected_bytes": 3738,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/numeric-iris.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 3738,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "zip",
+              "whole_file_sha256_verified": true,
+              "members": 4,
+              "uncompressed_bytes": 12205,
+              "png_images": 0,
+              "flac_recordings": 0,
+              "rows": 300,
+              "all_member_crc_verified": true,
+              "json_records": {}
+            }
+          ],
+          "scope": "All dataset files and splits at the pinned publisher revision.",
+          "training_recipe_qualified": false
         }
       }
     },
@@ -2811,6 +3690,58 @@
             "Independent refetch through pinned range reader reproduced every selected sample digest.",
             "Publisher license declaration/notice bytes archived and digest-pinned."
           ]
+        }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://archive.ics.uci.edu/dataset/186/wine+quality",
+        "pinned_revision": "82b3b20a1ad7f783b88030811ab1c56608237a60582f1fa90bb9b6bc1ac60bc2",
+        "qualified_revisions": [
+          "82b3b20a1ad7f783b88030811ab1c56608237a60582f1fa90bb9b6bc1ac60bc2"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "wine-quality.zip"
+        ],
+        "license_paths": [
+          "numeric-wine-quality-publisher-declaration.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 1,
+        "record_limit_max": 1,
+        "preview_limit": 0,
+        "measured_upstream_records": 1,
+        "measured_selected_records": 1,
+        "measured_upstream_bytes": 91353,
+        "measured_selected_bytes": 91353,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/numeric-wine-quality.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 91353,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "zip",
+              "whole_file_sha256_verified": true,
+              "members": 3,
+              "uncompressed_bytes": 351930,
+              "png_images": 0,
+              "flac_recordings": 0,
+              "rows": 6497,
+              "all_member_crc_verified": true,
+              "json_records": {}
+            }
+          ],
+          "scope": "All dataset files and splits at the pinned publisher revision.",
+          "training_recipe_qualified": false
         }
       }
     }
