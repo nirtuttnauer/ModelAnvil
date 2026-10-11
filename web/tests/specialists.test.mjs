@@ -30,8 +30,10 @@ test('OCR upload sends original bytes and refuses oversized or unsupported files
     assert.equal(requests[0].init.signal, c.signal);
     assert.equal(requests[0].init.headers.get('Authorization'), 'Bearer test-token');
     assert.deepEqual(new Uint8Array(await requests[0].init.body.get('file').arrayBuffer()), bytes);
-    await assert.rejects(uploadOcrImage('test-token', new File(['x'], 'x.pdf', { type: 'application/pdf' })));
+    await uploadOcrImage('test-token', new File(['%PDF-fixture'], 'scan.pdf', { type: 'application/pdf' }));
+    assert.equal(await requests[1].init.body.get('file').text(),'%PDF-fixture');
+    await assert.rejects(uploadOcrImage('test-token', new File(['x'], 'x.gif', { type: 'image/gif' })));
     await assert.rejects(uploadOcrImage('test-token', new File([new Uint8Array(8 * 1024**2 + 1)], 'x.png', { type: 'image/png' })));
-    assert.equal(requests.length, 1);
+    assert.equal(requests.length, 2);
   } finally { globalThis.fetch = original; }
 });

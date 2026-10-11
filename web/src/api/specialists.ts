@@ -29,8 +29,8 @@ export function questionInput(type: 'choice' | 'score' | 'noul', instructions: s
 }
 
 export async function uploadOcrImage(token: string, file: File, signal?: AbortSignal) {
-  if (!file.size || file.size > 8 * 1024 * 1024 || !['image/png', 'image/jpeg'].includes(file.type)) {
-    throw new Error('Choose a PNG or JPEG of at most 8 MiB.');
+  if (!file.size || file.size > 8 * 1024 * 1024 || !['image/png', 'image/jpeg', 'application/pdf'].includes(file.type)) {
+    throw new Error('Choose a PNG, JPEG or PDF of at most 8 MiB.');
   }
   const data = new FormData(); data.set('file', file);
   return apiRequest<{ artifact_id: string }>('/api/v1/specialists/upload-image/', token, { method: 'POST', body: data, signal });

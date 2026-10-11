@@ -97,13 +97,13 @@ class SpecialistViewSet(TenantScopedViewSet):
         project = project_scope()
         file = request.data.get('file')
         if file is None or not hasattr(file, 'read') or not 0 < file.size <= 8 * 1024**2:
-            raise serializers.ValidationError('Upload a PNG or JPEG of at most 8 MiB.')
+            raise serializers.ValidationError('Upload a PNG, JPEG or PDF of at most 8 MiB.')
         header = file.read(8); file.seek(0)
-        if not (header.startswith(b'\x89PNG\r\n\x1a\n') or header.startswith(b'\xff\xd8\xff')):
-            raise serializers.ValidationError('Upload PNG or JPEG image bytes.')
+        if not (header.startswith(b'\x89PNG\r\n\x1a\n') or header.startswith(b'\xff\xd8\xff') or header.startswith(b'%PDF-')):
+            raise serializers.ValidationError('Upload PNG, JPEG or PDF source bytes.')
         try:
             ref = _store(file, tenant=get_active_tenant(), project=project.pk, name='image', size=file.size,
-                metadata={'kind': 'ocr_image'}, media_type='image/png' if header.startswith(b'\x89PNG') else 'image/jpeg')
+                metadata={'kind': 'ocr_image'}, media_type='application/pdf' if header.startswith(b'%PDF-') else 'image/png' if header.startswith(b'\x89PNG') else 'image/jpeg')
         except (ValueError, OSError):
             raise serializers.ValidationError('Image upload failed.') from None
         return Response(ref, status=201)
@@ -153,16 +153,22 @@ class SpecialistViewSet(TenantScopedViewSet):
     @transaction.atomic
     def _save_ocr(result, image, version, record, project):
         source = result['provenance']
-        identity = digest({'image': image.sha256, 'model': source['snapshot_sha256'], 'text': result['text']})
-        envelope = {'schema_version': '1.0', 'sample_id': str(uuid.uuid5(uuid.NAMESPACE_URL, f'ocr:{identity}')),
-            'source_group_id': f'source-sha256:{image.sha256}',
-            'blocks': [{'block_id': 'text', 'type': 'text', 'text': result['text'], 'location': {'source_path': 'image/1'}}],
-            'provenance': {'source_snapshot_ref': f'sha256:{image.sha256}', 'source_record_key': 'image/1',
-                'content_sha256': hashlib.sha256(result['text'].encode()).hexdigest(),
-                'transformation_revision_ref': 'modelanvil.glm-ocr.v1'},
-            'metadata': {'source_format': 'ocr', 'model': source, 'image_dimensions': result['image_dimensions'],
-                         'normalization': 'exif_transpose_rgb', 'review_required': True}}
-        payload = (json.dumps(envelope, ensure_ascii=False, allow_nan=False) + '\n').encode()
+        pages = result.get('pages', [{'page':1, 'text':result['text'], 'image_dimensions':result['image_dimensions']}])
+        rasterization = result.get('rasterization', {'source_format':'image', 'normalization':'exif_transpose_rgb'})
+        envelopes = []
+        for page in pages:
+            location = f"page/{page['page']}" if rasterization['source_format'] == 'pdf' else 'image/1'
+            identity = digest({'image': image.sha256, 'model': source['snapshot_sha256'], 'text': page['text'], 'location':location})
+            envelopes.append({'schema_version': '1.0', 'sample_id': str(uuid.uuid5(uuid.NAMESPACE_URL, f'ocr:{identity}')),
+                'source_group_id': f'source-sha256:{image.sha256}',
+                'blocks': [{'block_id': 'text', 'type': 'text', 'text': page['text'], 'location': {'source_path':location, 'page':page['page']}}],
+                'provenance': {'source_snapshot_ref': f'sha256:{image.sha256}', 'source_record_key':location,
+                    'content_sha256': hashlib.sha256(page['text'].encode()).hexdigest(),
+                    'transformation_revision_ref': 'modelanvil.glm-ocr.v2'},
+                'metadata': {'source_format':'ocr', 'model':source, 'rasterization':rasterization,
+                    'image_dimensions':page['image_dimensions'], 'raster_sha256':page.get('raster_sha256'),
+                    'runtime_versions':result.get('runtime_versions', {}), 'review_required':True}})
+        payload = ''.join(json.dumps(e, ensure_ascii=False, allow_nan=False) + '\n' for e in envelopes).encode()
         ref = _store(io.BytesIO(payload), tenant=image.tenant_id, project=project.pk, name='ocr.jsonl',
             metadata={'kind': 'ocr_dataset_input', 'inference_request_id': str(record.request_id)}, media_type='application/x-ndjson')
         output = Artifact.all_objects.get(artifact_id=ref['artifact_id'], tenant_id=image.tenant_id)
@@ -170,4 +176,4 @@ class SpecialistViewSet(TenantScopedViewSet):
         for parent, relation in ((image, 'ocr_text'), (manifest, 'ocr_model')):
             LineageEdge.all_objects.create(tenant_id=image.tenant_id, parent_artifact=parent, child_artifact=output,
                 relation=relation, detail={'request_id': str(record.request_id), 'input_digest': record.input_digest})
-        result.update(output_artifact=ref, envelope=envelope)
+        result.update(output_artifact=ref, envelope=envelopes[0], envelopes=envelopes)

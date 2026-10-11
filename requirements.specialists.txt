@@ -37,6 +37,7 @@ pycparser==3.11
 pydantic==2.14.1
 pydantic-core==2.50.1
 pygments==2.21.0
+pypdfium2==5.14.0
 python-multipart==0.0.32
 pyyaml==6.0.3
 regex==2026.9.29

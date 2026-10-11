@@ -4549,7 +4549,7 @@
     },
     "/specialists/upload-image/": {
       "post": {
-        "summary": "Upload project-scoped PNG/JPEG bytes of at most 8 MiB",
+        "summary": "Upload project-scoped PNG/JPEG/PDF source bytes of at most 8 MiB",
         "tags": [
           "Models"
         ],
@@ -7766,7 +7766,8 @@
             "maximum": 1024,
             "default": 512
           }
-        }
+        },
+        "description": "Per-page output limit; PDF sources allow 1\u20135 pages and 6 million total rendered pixels. Empty, encrypted or partial documents are refused."
       },
       "SpecialistAcquireInput": {
         "type": "object",

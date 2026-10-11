@@ -1,0 +1,584 @@
+{
+  "date": "2026-10-12",
+  "auth": "local_http_with_ephemeral_project_key",
+  "refusals": [
+    {
+      "kind": "oversize",
+      "status": 400,
+      "error": {
+        "error": {
+          "code": "validation_failed",
+          "message": "Validation failed.",
+          "details": [
+            {
+              "path": "(root)",
+              "message": "[ErrorDetail(string='OCR PDF sources must contain 1\u20135 pages.', code='invalid')]"
+            }
+          ],
+          "request_id": "52d99cca-bc41-45d5-bbc7-2c496c32c365"
+        }
+      }
+    },
+    {
+      "kind": "encrypted",
+      "status": 400,
+      "error": {
+        "error": {
+          "code": "validation_failed",
+          "message": "Validation failed.",
+          "details": [
+            {
+              "path": "(root)",
+              "message": "[ErrorDetail(string='Encrypted PDF sources are unsupported.', code='invalid')]"
+            }
+          ],
+          "request_id": "20f7ca74-a081-4f29-a9ba-c9733944fe3f"
+        }
+      }
+    },
+    {
+      "kind": "blank",
+      "status": 400,
+      "error": {
+        "error": {
+          "code": "validation_failed",
+          "message": "Validation failed.",
+          "details": [
+            {
+              "path": "(root)",
+              "message": "[ErrorDetail(string='Blank or nearly uniform OCR pages are unsupported; no text was published.', code='invalid')]"
+            }
+          ],
+          "request_id": "970ef52d-fea1-4f9c-a9fd-45d032029d39"
+        }
+      }
+    }
+  ],
+  "source_embedded_text": [
+    "",
+    ""
+  ],
+  "ocr": {
+    "text": "MODEL ANVIL RECEIPT\nInvoice 1042\nTotal: 38.50 USD\nPaid on 12 October 2026\n\nMAINTENANCE NOTE\nServer restart: 14:30 UTC\nOwner: Operations\nStatus: Complete",
+    "pages": [
+      {
+        "page": 1,
+        "image_dimensions": [
+          900,
+          350
+        ],
+        "raster_sha256": "02b4cc56e548a6d3529edb7cafcd85c30921771867d76a8c06a7a2110bca9b92",
+        "text": "MODEL ANVIL RECEIPT\nInvoice 1042\nTotal: 38.50 USD\nPaid on 12 October 2026"
+      },
+      {
+        "page": 2,
+        "image_dimensions": [
+          900,
+          350
+        ],
+        "raster_sha256": "379302bd55827724d36601964babc1e838c1a44a8b1daf726875cf7020a7c586",
+        "text": "MAINTENANCE NOTE\nServer restart: 14:30 UTC\nOwner: Operations\nStatus: Complete"
+      }
+    ],
+    "rasterization": {
+      "source_format": "pdf",
+      "renderer": "pypdfium2==5.14.0",
+      "max_scale": 2,
+      "normalization": "pdfium_rgb",
+      "page_count": 2
+    },
+    "device": "mlx:0",
+    "runtime_versions": {
+      "laya": "0.4.3",
+      "torch": "2.9.0",
+      "transformers": "5.14.0",
+      "mlx-vlm": "0.7.6",
+      "mlx": "0.32.3",
+      "Pillow": "12.2.0",
+      "safetensors": "0.8.0",
+      "pypdfium2": "5.14.0"
+    },
+    "image_dimensions": [
+      900,
+      350
+    ],
+    "usage": {
+      "input_tokens": 800,
+      "output_tokens": 65,
+      "total_tokens": 865,
+      "peak_memory_gb": 3.41206005
+    },
+    "finish_reason": "stop",
+    "elapsed_seconds": 3.8378,
+    "provenance": {
+      "source": {
+        "license": "mit",
+        "repo_id": "mlx-community/GLM-OCR-bf16",
+        "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+      },
+      "snapshot_sha256": "2b6ef14ca70dffa6365ca836345e3699cdf7d65f0455ce2bb384d6f4f84186a6",
+      "files": {
+        "chat_template.jinja": {
+          "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+          "byte_size": 4606
+        },
+        "config.json": {
+          "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+          "byte_size": 1875
+        },
+        "generation_config.json": {
+          "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+          "byte_size": 165
+        },
+        "model.safetensors": {
+          "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+          "byte_size": 2214872319
+        },
+        "model.safetensors.index.json": {
+          "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+          "byte_size": 39232
+        },
+        "preprocessor_config.json": {
+          "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+          "byte_size": 367
+        },
+        "processor_config.json": {
+          "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+          "byte_size": 597
+        },
+        "tokenizer.json": {
+          "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+          "byte_size": 6838609
+        },
+        "tokenizer_config.json": {
+          "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+          "byte_size": 1066
+        }
+      },
+      "image": {
+        "artifact_id": "c60c3227-7fba-44a2-ade6-d72aa61b78a7",
+        "sha256": "cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+        "byte_size": 44547
+      }
+    },
+    "request_id": "c38da4ac-acfe-4ee8-9f0f-718a544a51d8",
+    "output_artifact": {
+      "artifact_id": "6a51511e-1125-44f0-a6c2-5f2c77ad9ff8",
+      "sha256": "ab0ddd45c40ff44e558abb4cf33ab613b115f927395ae4b5d922c394c573ae94",
+      "byte_size": 5350
+    },
+    "envelope": {
+      "schema_version": "1.0",
+      "sample_id": "d49cf9d3-1c60-5a48-b887-a81e65fd4e1e",
+      "source_group_id": "source-sha256:cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+      "blocks": [
+        {
+          "block_id": "text",
+          "type": "text",
+          "text": "MODEL ANVIL RECEIPT\nInvoice 1042\nTotal: 38.50 USD\nPaid on 12 October 2026",
+          "location": {
+            "source_path": "page/1",
+            "page": 1
+          }
+        }
+      ],
+      "provenance": {
+        "source_snapshot_ref": "sha256:cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+        "source_record_key": "page/1",
+        "content_sha256": "3568d60558505b4f9df335d1cdd54235157851c136867376cf25f053d260ff76",
+        "transformation_revision_ref": "modelanvil.glm-ocr.v2"
+      },
+      "metadata": {
+        "source_format": "ocr",
+        "model": {
+          "source": {
+            "license": "mit",
+            "repo_id": "mlx-community/GLM-OCR-bf16",
+            "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+          },
+          "snapshot_sha256": "2b6ef14ca70dffa6365ca836345e3699cdf7d65f0455ce2bb384d6f4f84186a6",
+          "files": {
+            "chat_template.jinja": {
+              "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+              "byte_size": 4606
+            },
+            "config.json": {
+              "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+              "byte_size": 1875
+            },
+            "generation_config.json": {
+              "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+              "byte_size": 165
+            },
+            "model.safetensors": {
+              "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+              "byte_size": 2214872319
+            },
+            "model.safetensors.index.json": {
+              "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+              "byte_size": 39232
+            },
+            "preprocessor_config.json": {
+              "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+              "byte_size": 367
+            },
+            "processor_config.json": {
+              "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+              "byte_size": 597
+            },
+            "tokenizer.json": {
+              "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+              "byte_size": 6838609
+            },
+            "tokenizer_config.json": {
+              "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+              "byte_size": 1066
+            }
+          },
+          "image": {
+            "artifact_id": "c60c3227-7fba-44a2-ade6-d72aa61b78a7",
+            "sha256": "cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+            "byte_size": 44547
+          }
+        },
+        "rasterization": {
+          "source_format": "pdf",
+          "renderer": "pypdfium2==5.14.0",
+          "max_scale": 2,
+          "normalization": "pdfium_rgb",
+          "page_count": 2
+        },
+        "image_dimensions": [
+          900,
+          350
+        ],
+        "raster_sha256": "02b4cc56e548a6d3529edb7cafcd85c30921771867d76a8c06a7a2110bca9b92",
+        "runtime_versions": {
+          "laya": "0.4.3",
+          "torch": "2.9.0",
+          "transformers": "5.14.0",
+          "mlx-vlm": "0.7.6",
+          "mlx": "0.32.3",
+          "Pillow": "12.2.0",
+          "safetensors": "0.8.0",
+          "pypdfium2": "5.14.0"
+        },
+        "review_required": true
+      }
+    },
+    "envelopes": [
+      {
+        "schema_version": "1.0",
+        "sample_id": "d49cf9d3-1c60-5a48-b887-a81e65fd4e1e",
+        "source_group_id": "source-sha256:cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+        "blocks": [
+          {
+            "block_id": "text",
+            "type": "text",
+            "text": "MODEL ANVIL RECEIPT\nInvoice 1042\nTotal: 38.50 USD\nPaid on 12 October 2026",
+            "location": {
+              "source_path": "page/1",
+              "page": 1
+            }
+          }
+        ],
+        "provenance": {
+          "source_snapshot_ref": "sha256:cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+          "source_record_key": "page/1",
+          "content_sha256": "3568d60558505b4f9df335d1cdd54235157851c136867376cf25f053d260ff76",
+          "transformation_revision_ref": "modelanvil.glm-ocr.v2"
+        },
+        "metadata": {
+          "source_format": "ocr",
+          "model": {
+            "source": {
+              "license": "mit",
+              "repo_id": "mlx-community/GLM-OCR-bf16",
+              "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+            },
+            "snapshot_sha256": "2b6ef14ca70dffa6365ca836345e3699cdf7d65f0455ce2bb384d6f4f84186a6",
+            "files": {
+              "chat_template.jinja": {
+                "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+                "byte_size": 4606
+              },
+              "config.json": {
+                "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+                "byte_size": 1875
+              },
+              "generation_config.json": {
+                "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+                "byte_size": 165
+              },
+              "model.safetensors": {
+                "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+                "byte_size": 2214872319
+              },
+              "model.safetensors.index.json": {
+                "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+                "byte_size": 39232
+              },
+              "preprocessor_config.json": {
+                "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+                "byte_size": 367
+              },
+              "processor_config.json": {
+                "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+                "byte_size": 597
+              },
+              "tokenizer.json": {
+                "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+                "byte_size": 6838609
+              },
+              "tokenizer_config.json": {
+                "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+                "byte_size": 1066
+              }
+            },
+            "image": {
+              "artifact_id": "c60c3227-7fba-44a2-ade6-d72aa61b78a7",
+              "sha256": "cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+              "byte_size": 44547
+            }
+          },
+          "rasterization": {
+            "source_format": "pdf",
+            "renderer": "pypdfium2==5.14.0",
+            "max_scale": 2,
+            "normalization": "pdfium_rgb",
+            "page_count": 2
+          },
+          "image_dimensions": [
+            900,
+            350
+          ],
+          "raster_sha256": "02b4cc56e548a6d3529edb7cafcd85c30921771867d76a8c06a7a2110bca9b92",
+          "runtime_versions": {
+            "laya": "0.4.3",
+            "torch": "2.9.0",
+            "transformers": "5.14.0",
+            "mlx-vlm": "0.7.6",
+            "mlx": "0.32.3",
+            "Pillow": "12.2.0",
+            "safetensors": "0.8.0",
+            "pypdfium2": "5.14.0"
+          },
+          "review_required": true
+        }
+      },
+      {
+        "schema_version": "1.0",
+        "sample_id": "b432a11f-52bd-56e7-a02b-ca74125e0247",
+        "source_group_id": "source-sha256:cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+        "blocks": [
+          {
+            "block_id": "text",
+            "type": "text",
+            "text": "MAINTENANCE NOTE\nServer restart: 14:30 UTC\nOwner: Operations\nStatus: Complete",
+            "location": {
+              "source_path": "page/2",
+              "page": 2
+            }
+          }
+        ],
+        "provenance": {
+          "source_snapshot_ref": "sha256:cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+          "source_record_key": "page/2",
+          "content_sha256": "cb44cd8af221d2f452da1b07b2d0f9d5eed0302543ec28ad921c18ad1a238dfc",
+          "transformation_revision_ref": "modelanvil.glm-ocr.v2"
+        },
+        "metadata": {
+          "source_format": "ocr",
+          "model": {
+            "source": {
+              "license": "mit",
+              "repo_id": "mlx-community/GLM-OCR-bf16",
+              "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+            },
+            "snapshot_sha256": "2b6ef14ca70dffa6365ca836345e3699cdf7d65f0455ce2bb384d6f4f84186a6",
+            "files": {
+              "chat_template.jinja": {
+                "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+                "byte_size": 4606
+              },
+              "config.json": {
+                "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+                "byte_size": 1875
+              },
+              "generation_config.json": {
+                "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+                "byte_size": 165
+              },
+              "model.safetensors": {
+                "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+                "byte_size": 2214872319
+              },
+              "model.safetensors.index.json": {
+                "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+                "byte_size": 39232
+              },
+              "preprocessor_config.json": {
+                "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+                "byte_size": 367
+              },
+              "processor_config.json": {
+                "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+                "byte_size": 597
+              },
+              "tokenizer.json": {
+                "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+                "byte_size": 6838609
+              },
+              "tokenizer_config.json": {
+                "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+                "byte_size": 1066
+              }
+            },
+            "image": {
+              "artifact_id": "c60c3227-7fba-44a2-ade6-d72aa61b78a7",
+              "sha256": "cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+              "byte_size": 44547
+            }
+          },
+          "rasterization": {
+            "source_format": "pdf",
+            "renderer": "pypdfium2==5.14.0",
+            "max_scale": 2,
+            "normalization": "pdfium_rgb",
+            "page_count": 2
+          },
+          "image_dimensions": [
+            900,
+            350
+          ],
+          "raster_sha256": "379302bd55827724d36601964babc1e838c1a44a8b1daf726875cf7020a7c586",
+          "runtime_versions": {
+            "laya": "0.4.3",
+            "torch": "2.9.0",
+            "transformers": "5.14.0",
+            "mlx-vlm": "0.7.6",
+            "mlx": "0.32.3",
+            "Pillow": "12.2.0",
+            "safetensors": "0.8.0",
+            "pypdfium2": "5.14.0"
+          },
+          "review_required": true
+        }
+      }
+    ]
+  },
+  "source": {
+    "artifact_id": "c60c3227-7fba-44a2-ade6-d72aa61b78a7",
+    "sha256": "cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+    "byte_size": 44547
+  },
+  "expected_texts": [
+    "MODEL ANVIL RECEIPT\nInvoice 1042\nTotal: 38.50 USD\nPaid on 12 October 2026",
+    "MAINTENANCE NOTE\nServer restart: 14:30 UTC\nOwner: Operations\nStatus: Complete"
+  ],
+  "exact_pages": 2,
+  "publication": {
+    "id": 8,
+    "dataset_name": "Scanned OCR HTTP blank-guard verification 20261012",
+    "revision_id": "c7ac55bd-42dc-48c4-9d15-c4177d407680",
+    "project": "c78df1b6-86c5-417d-be7a-791c121d737e",
+    "dataset": 7,
+    "revision_no": 1,
+    "schema_version": "1.0",
+    "manifest_digest": "a2ee5c2ad539863f3086dbe29773d7959ed54a73dc67a10d973114816ca3f7d2",
+    "manifest_artifact": 77,
+    "recipe_digest": "b6cf9eb6281ef67a94163ac9ab67df3fdc28821ef110d826f90b6f2ab2dbad9c",
+    "source_snapshots": [],
+    "row_count": 2,
+    "state": "published",
+    "published_at": "2026-10-11T23:11:51.912963Z",
+    "metadata": {
+      "preparation_kind": "bounded_local_jsonl_v1",
+      "input_artifact_id": "6a51511e-1125-44f0-a6c2-5f2c77ad9ff8",
+      "input_sha256": "ab0ddd45c40ff44e558abb4cf33ab613b115f927395ae4b5d922c394c573ae94",
+      "recipe": {
+        "algorithm": "source_group_sha256_v1",
+        "seed": "0",
+        "validation_percent": 10,
+        "test_percent": 10,
+        "detect": {
+          "privacy": true,
+          "quality": true,
+          "min_text_chars": 8
+        },
+        "dedup": {
+          "exact": true,
+          "near": true,
+          "near_threshold": 3
+        },
+        "chunking": {
+          "version": "modelanvil.character-chunks.v1",
+          "character_limit": 128,
+          "source_recipe_digest": "f37f28b998eba7c8a8c54dbb204f68c9d221e4bbfb295a2a780b27beadbf69da"
+        }
+      },
+      "source_group_count": 1,
+      "split_counts": {
+        "train": 0,
+        "validation": 2,
+        "test": 0
+      },
+      "drop_report": {
+        "input_rows": 2,
+        "kept": 2,
+        "dropped": 0,
+        "drop_reason_counts": {}
+      },
+      "source_row_count": 2,
+      "source_drop_report": {
+        "input_rows": 2,
+        "kept": 2,
+        "dropped": 0,
+        "drop_reason_counts": {}
+      }
+    }
+  },
+  "no_partial_publication_on_refusal": true,
+  "qualification": "two-page synthetic image-only PDF smoke; representative OCR quality and layout pending",
+  "ephemeral_api_key_deactivated": true,
+  "initial_blank_probe": {
+    "actual_text": "www.helix.com",
+    "dataset_published": false,
+    "fix": "Uniform or nearly uniform page pixels are now refused before model allocation; identical blank-PDF HTTP regression returns 400."
+  },
+  "tests": {
+    "optional_native_rasterizer": {
+      "passed": 4
+    },
+    "base_phase_one": {
+      "passed": 716,
+      "skipped": 21,
+      "total": 737
+    },
+    "phase_one_frontend": {
+      "passed": 141,
+      "build": "passed"
+    },
+    "phase_one_github_checks": "all four push/PR backend/frontend checks passed",
+    "final_focused_clean_backend": {
+      "total": 50,
+      "passed": 46,
+      "skipped": 4,
+      "result": "passed; optional rasterizer also executed independently: 4 passed"
+    },
+    "final_frontend": {
+      "passed": 141,
+      "build": "passed"
+    },
+    "system_and_migration_checks": "passed"
+  },
+  "browser": {
+    "source": "two-page image-only PDF",
+    "published_revision_id": "d4f13a3e-ded2-4149-bdf4-95112ded6227",
+    "published_rows": 2,
+    "matched_authored_text": true,
+    "input_controls_locked_during_inference": true,
+    "screenshot": "/private/tmp/modelanvil-scanned-ocr-published.png",
+    "api_served_clean_snapshot": true
+  }
+}

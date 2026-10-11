@@ -1,20 +1,22 @@
 """Offline child runtime; optional dependencies never enter the API process."""
 import contextlib
 import importlib.metadata
+import hashlib
 import json
+import math
 from pathlib import Path
 import sys
 import warnings
 
 VERSIONS = {'laya': '0.4.3', 'torch': '2.9.0', 'transformers': '5.14.0',
-            'mlx-vlm': '0.7.6', 'mlx': '0.32.3', 'Pillow': '12.2.0', 'safetensors': '0.8.0'}
+            'mlx-vlm': '0.7.6', 'mlx': '0.32.3', 'Pillow': '12.2.0', 'safetensors': '0.8.0', 'pypdfium2': '5.14.0'}
 
 
 def validate_decision(inputs):
     if not isinstance(inputs, dict) or set(inputs) != {'state', 'questions'}:
         raise ValueError('Supply state and questions only.')
     state, questions = inputs['state'], inputs['questions']
-    if not isinstance(state, (str, dict)) or not state:
+    if not isinstance(state, (str, dict)) or not state or (isinstance(state, str) and not state.strip()):
         raise ValueError('State must be nonempty text or a JSON object.')
     try:
         size = len(json.dumps(inputs, allow_nan=False).encode())
@@ -100,11 +102,40 @@ def decide(directory, device, inputs):
     return result
 
 
-def recognize(directory, device, inputs, image):
-    validate_ocr(inputs)
+def render_sources(image):
     from PIL import Image, ImageOps
-    if device != 'mlx:0':
-        raise ValueError('GLM-OCR requires explicit mlx:0.')
+    if Path(image).stat().st_size > 8 * 1024**2:
+        raise ValueError('OCR source exceeds 8 MiB.')
+    with open(image, 'rb') as stream:
+        is_pdf = stream.read(5) == b'%PDF-'
+    pages = []
+    if is_pdf:
+        import pypdfium2 as pdfium
+        with pdfium.PdfDocument(image) as document:
+            if pdfium.raw.FPDF_GetSecurityHandlerRevision(document.raw) >= 0:
+                raise ValueError('Encrypted PDF sources are unsupported.')
+            if not 1 <= len(document) <= 5:
+                raise ValueError('OCR PDF sources must contain 1–5 pages.')
+            total_pixels = 0
+            for number in range(len(document)):
+                with contextlib.closing(document[number]) as page:
+                    width, height = page.get_size()
+                    if not all(math.isfinite(n) and 14 <= n <= 2000 for n in (width, height)):
+                        raise ValueError('PDF page dimensions are outside the bounded renderer.')
+                    scale = min(2, 2047 / max(width, height), math.sqrt(1_990_000 / (width * height)))
+                    pixels = math.ceil(width * scale) * math.ceil(height * scale)
+                    total_pixels += pixels
+                    if total_pixels > 6_000_000:
+                        raise ValueError('PDF rasterization exceeds the 6-million-pixel document limit.')
+                    with contextlib.closing(page.render(scale=scale, may_draw_forms=False)) as bitmap:
+                        normalized = bitmap.to_pil().convert('RGB')
+                        reject_flat_image(normalized)
+                        target = f'{image}-page-{number + 1}.png'
+                        normalized.save(target)
+                        pages.append({'page': number + 1, 'path': target, 'image_dimensions': list(normalized.size),
+                            'raster_sha256': hashlib.sha256(normalized.tobytes()).hexdigest()})
+        return pages, {'source_format': 'pdf', 'renderer': 'pypdfium2==5.14.0', 'max_scale': 2,
+                       'normalization': 'pdfium_rgb', 'page_count': len(pages)}
     Image.MAX_IMAGE_PIXELS = 2_000_000
     with warnings.catch_warnings():
         warnings.simplefilter('error', Image.DecompressionBombWarning)
@@ -115,8 +146,25 @@ def recognize(directory, device, inputs, image):
                 raise ValueError('OCR needs a single PNG/JPEG, 28–2048 pixels per edge and at most 2 million pixels.')
             source.load()
             normalized = ImageOps.exif_transpose(source).convert('RGB')
+            reject_flat_image(normalized)
             normalized.save(str(image) + '.png')
             dimensions = list(normalized.size)
+            pages.append({'page': 1, 'path': str(image) + '.png', 'image_dimensions': dimensions,
+                          'raster_sha256': hashlib.sha256(normalized.tobytes()).hexdigest()})
+    return pages, {'source_format': 'image', 'normalization': 'exif_transpose_rgb', 'page_count': 1}
+
+
+def reject_flat_image(image):
+    # The model invented a website on an all-white page in the qualification probe.
+    if all(high - low <= 2 for low, high in image.getextrema()):
+        raise ValueError('Blank or nearly uniform OCR pages are unsupported; no text was published.')
+
+
+def recognize(directory, device, inputs, image):
+    validate_ocr(inputs)
+    if device != 'mlx:0':
+        raise ValueError('GLM-OCR requires explicit mlx:0.')
+    pages, rasterization = render_sources(image)
     import mlx.core as mx
     from mlx_vlm import load, stream_generate
     from mlx_vlm.prompt_utils import apply_chat_template
@@ -129,22 +177,29 @@ def recognize(directory, device, inputs, image):
         raise ValueError('MLX process memory headroom is insufficient for OCR.')
     model, processor = load(str(directory), trust_remote_code=False, local_files_only=True)
     prompt = apply_chat_template(processor, model.config, 'Text Recognition:', num_images=1)
-    tensors = prepare_inputs(processor, images=[str(image) + '.png'], prompts=prompt,
-        image_token_index=getattr(model.config, 'image_token_index', None),
-        add_special_tokens=should_add_special_tokens(model.config.model_type, processor))
-    if tensors['input_ids'].size > 4096:
-        raise ValueError('OCR processor output exceeds the 4096-token image budget.')
-    tensors['mask'] = tensors.pop('attention_mask', None)
-    text, last = '', None
-    for part in stream_generate(model, processor, prompt, image=[str(image) + '.png'],
-                                max_tokens=inputs['max_tokens'], temperature=0, **tensors):
-        text += part.text
-        last = part
-    if last is None or last.finish_reason != 'stop' or not text.strip():
-        raise ValueError('OCR output is empty or reached its token limit; no partial text was published.')
-    return {'text': text, 'device': device, 'runtime_versions': VERSIONS, 'image_dimensions': dimensions,
-            'usage': {'input_tokens': last.prompt_tokens, 'output_tokens': last.generation_tokens,
-                      'total_tokens': last.total_tokens, 'peak_memory_gb': last.peak_memory}, 'finish_reason': 'stop'}
+    results, usage = [], {'input_tokens': 0, 'output_tokens': 0, 'total_tokens': 0, 'peak_memory_gb': 0}
+    for page in pages:
+        tensors = prepare_inputs(processor, images=[page['path']], prompts=prompt,
+            image_token_index=getattr(model.config, 'image_token_index', None),
+            add_special_tokens=should_add_special_tokens(model.config.model_type, processor))
+        if tensors['input_ids'].size > 4096:
+            raise ValueError('OCR processor output exceeds the 4096-token page budget.')
+        tensors['mask'] = tensors.pop('attention_mask', None)
+        text, last = '', None
+        for part in stream_generate(model, processor, prompt, image=[page['path']],
+                                    max_tokens=inputs['max_tokens'], temperature=0, **tensors):
+            text += part.text
+            last = part
+        if last is None or last.finish_reason != 'stop' or not text.strip():
+            raise ValueError('OCR output is empty or reached its token limit; no partial text was published.')
+        results.append({k: v for k, v in {**page, 'text': text}.items() if k != 'path'})
+        usage['input_tokens'] += last.prompt_tokens
+        usage['output_tokens'] += last.generation_tokens
+        usage['total_tokens'] += last.total_tokens
+        usage['peak_memory_gb'] = max(usage['peak_memory_gb'], last.peak_memory)
+    return {'text': '\n\n'.join(p['text'] for p in results), 'pages': results, 'rasterization': rasterization,
+            'device': device, 'runtime_versions': VERSIONS, 'image_dimensions': results[0]['image_dimensions'],
+            'usage': usage, 'finish_reason': 'stop'}
 
 
 def main():

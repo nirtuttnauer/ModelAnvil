@@ -2,6 +2,8 @@
 import io
 import json
 import tempfile
+import subprocess
+import sys
 from unittest.mock import patch
 
 from django.conf import settings
@@ -24,7 +26,7 @@ class SpecialistInputTests(SimpleTestCase):
             'urgency': {'type': 'score', 'instructions': 'How urgent?', 'criteria': ['low', 'high']},
             'refund': {'type': 'noul', 'instructions': 'Refund requested?'}}}
         validate_decision(good)
-        for bad in ({**good, 'state': float('nan')}, {**good, 'state': {'x': float('nan')}},
+        for bad in ({**good, 'state': float('nan')}, {**good, 'state': {'x': float('nan')}}, {**good,'state':'  '},
                     {**good, 'state': 'x' * 32001}, {**good, 'temperature': 1},
                     {**good, 'questions': {'x': {'type': 'choice', 'instructions': 'a', 'criteria': ['a','b']}}},
                     {**good, 'questions': {'x': {'type': 'noul', 'instructions': 'a', 'tool': 'execute'}}}):
@@ -146,3 +148,46 @@ class SpecialistApiTests(TestCase):
         bad = {**ref,'sha256':'f'*64}
         with self.assertRaises(ValueError):
             with staged_snapshot({'encoder/config.json':bad},self.tenant.pk,self.project.pk): pass
+
+    @patch('modelanvil.runners.specialists.execute')
+    def test_pdf_pages_keep_locations_and_one_source_group_in_immutable_jsonl(self, execute):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        uploaded = self.client.post('/api/v1/specialists/upload-image/',{'file':SimpleUploadedFile('scan.pdf',b'%PDF-fixture')},format='multipart')
+        self.assertEqual(uploaded.status_code,201,uploaded.data)
+        execute.return_value = {'text':'First scanned page\n\nSecond scanned page', 'usage':{'input_tokens':800,'output_tokens':30},
+            'elapsed_seconds':3,'image_dimensions':[400,200], 'rasterization':{'source_format':'pdf','renderer':'pypdfium2==5.14.0','page_count':2},
+            'pages':[{'page':1,'text':'First scanned page','image_dimensions':[400,200],'raster_sha256':'1'*64},
+                     {'page':2,'text':'Second scanned page','image_dimensions':[400,200],'raster_sha256':'2'*64}],
+            'provenance':{'source':{},'snapshot_sha256':'b'*64,'files':{}}}
+        result = self.client.post('/api/v1/specialists/ocr/',{'model':str(self.model.model_version_id),'image_artifact':uploaded.data['artifact_id']},format='json')
+        self.assertEqual(result.status_code,200,result.data)
+        rows = result.data['envelopes'];self.assertEqual(len(rows),2)
+        self.assertEqual(rows[0]['source_group_id'],rows[1]['source_group_id']);self.assertNotEqual(rows[0]['sample_id'],rows[1]['sample_id'])
+        self.assertEqual([r['blocks'][0]['location']['page'] for r in rows],[1,2])
+        self.assertEqual(rows[1]['provenance']['source_record_key'],'page/2')
+        dataset = Dataset.all_objects.create(tenant_id=self.tenant.pk,project=self.project,name='Scanned pages')
+        publication = self.client.post(f'/api/v1/datasets/{dataset.dataset_id}/prepare/',{'input_artifact_id':result.data['output_artifact']['artifact_id']},format='json')
+        self.assertEqual(publication.status_code,201,publication.data);self.assertEqual(publication.data['row_count'],2)
+
+    def test_child_timeout_has_isolated_environment_exact_code_and_releases_staging(self):
+        from pathlib import Path
+        from modelanvil.runners.specialists import execute, RUNTIME
+        from modelanvil.device_admission import device_lease
+        ref=_store(io.BytesIO(b'{}'),tenant=self.tenant.pk,project=self.project.pk,name='config.json')
+        inputs={'state':'Request','questions':{'question':{'type':'noul','instructions':'Refund requested?'}}}
+        observed={}
+        def timeout(command, **kwargs):
+            observed['work']=Path(kwargs['cwd'])
+            observed['model']=Path(json.loads(kwargs['input'])['directory'])
+            self.assertEqual(command[1],'-I')
+            self.assertEqual(Path(command[2]).read_bytes(),RUNTIME.read_bytes())
+            self.assertEqual(kwargs['env']['HF_HUB_OFFLINE'],'1')
+            self.assertEqual(kwargs['env']['PYTORCH_ENABLE_MPS_FALLBACK'],'0')
+            self.assertFalse({'HF_TOKEN','PYTHONPATH','AWS_SECRET_ACCESS_KEY'} & set(kwargs['env']))
+            self.assertEqual(kwargs['timeout'],120)
+            raise subprocess.TimeoutExpired(command,120)
+        with override_settings(MODELANVIL_SPECIALIST_PYTHON=sys.executable), patch('modelanvil.runners.specialists.snapshot',return_value={'source':{},'files':{'config.json':ref}}), patch('modelanvil.runners.specialists.subprocess.run',side_effect=timeout):
+            with self.assertRaisesRegex(ValueError,'runtime was terminated'):
+                execute(self.laya,tenant=self.tenant.pk,project=self.project.pk,kind='laya',device='cpu',inputs=inputs)
+        self.assertFalse(observed['work'].exists());self.assertFalse(observed['model'].exists())
+        with device_lease('cpu'):pass

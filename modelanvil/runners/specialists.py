@@ -96,9 +96,14 @@ def execute(version, *, tenant, project, kind, device, inputs, image=None):
         stack.enter_context(device_lease(device))
         directory = stack.enter_context(staged_snapshot(plan['files'], tenant, project))
         work = Path(stack.enter_context(tempfile.TemporaryDirectory(prefix='modelanvil-specialist-')))
+        runtime_bytes = RUNTIME.read_bytes()
+        if len(runtime_bytes) > 128 * 1024:
+            raise ValueError('Specialist runtime code exceeds its pinned execution limit.')
+        runtime_digest = hashlib.sha256(runtime_bytes).hexdigest()
+        (work / 'runtime.py').write_bytes(runtime_bytes)
         if kind == 'ocr':
             if image is None or image.byte_size > 8 * 1024**2:
-                raise ValueError('Select an accessible PNG or JPEG of at most 8 MiB.')
+                raise ValueError('Select an accessible PNG, JPEG or PDF of at most 8 MiB.')
             from modelanvil.runners.training.hf_runtime import file_ref
             with (work / 'image').open('wb') as target:
                 copy_verified(file_ref(image), tenant, project, target)
@@ -109,7 +114,7 @@ def execute(version, *, tenant, project, kind, device, inputs, image=None):
                'USE_TF': '0', 'PYTORCH_ENABLE_MPS_FALLBACK': '0', 'TOKENIZERS_PARALLELISM': 'false'}
         with (work / 'out').open('w+b') as stdout, (work / 'err').open('w+b') as stderr:
             try:
-                result = subprocess.run([python, '-I', str(RUNTIME)], input=json.dumps(request, allow_nan=False).encode(),
+                result = subprocess.run([python, '-I', str(work / 'runtime.py')], input=json.dumps(request, allow_nan=False).encode(),
                     cwd=work, env=env, stdout=stdout, stderr=stderr, timeout=120)
             except subprocess.TimeoutExpired:
                 raise ValueError('Specialist request exceeded 120 seconds; the runtime was terminated.') from None
@@ -125,5 +130,6 @@ def execute(version, *, tenant, project, kind, device, inputs, image=None):
                 raise ValueError(output.get('error', 'Specialist runtime failed.'))
     output.update(elapsed_seconds=round(time.monotonic() - started, 4),
                   provenance={'source': plan['source'], 'snapshot_sha256': version.metadata['snapshot_manifest']['sha256'],
+                              'runtime_code_sha256': runtime_digest,
                               'files': {n: {k: r[k] for k in ('sha256', 'byte_size')} for n, r in plan['files'].items()}})
     return output
