@@ -14,11 +14,11 @@ const published = { ...acquisition, state: 'ready', verified_records: 2, transfe
 const flush = () => new Promise(resolve => setImmediate(resolve));
 function deferred() { let resolve; const promise = new Promise(done => { resolve = done; }); return { promise, resolve }; }
 
-function fixture({ policies = [], policyId = '', estimate = '', existing = null, budgetLoading = false, budgetError = null, bankSource = source, allowShareAlike = false } = {}) {
+function fixture({ policies = [], policyId = '', estimate = '', existing = null, budgetLoading = false, budgetError = null, bankSource = source, allowShareAlike = false, downloadScope = 'sample', storageQuota = '' } = {}) {
   let stateIndex = 0, callbacks = 0;
   const effects = [], calls = [], resourceCalls = [], writes = [], first = deferred(), second = deferred();
   // Hook slots represent a loaded catalog and the requested budget configuration.
-  const states = { 1: [bankSource], 2: false, 8: existing ? { [source.id]: existing } : {}, 9: policies, 10: budgetLoading, 11: budgetError, 13: policyId, 14: estimate, 15: allowShareAlike ? bankSource.id : '' };
+  const states = { 1: [bankSource], 2: false, 8: existing ? { [source.id + (downloadScope === 'full' ? ':full' : '')]: existing } : {}, 9: policies, 10: budgetLoading, 11: budgetError, 13: policyId, 14: estimate, 15: allowShareAlike ? bankSource.id : '', 16: downloadScope, 17: storageQuota };
   const jsx = (type, props) => ({ type, props });
   const React = {
     useState(initial) { const index = stateIndex++; return [Object.hasOwn(states, index) ? states[index] : initial, value => writes.push({ index, value })]; },
@@ -119,4 +119,28 @@ test('share-alike acquisition remains blocked until explicit opt-in and carries 
   assert.deepEqual(JSON.parse(allowed.calls.at(-1).init.body), { project_policy: { allow_share_alike: true } });
   allowed.second.resolve(published); await flush();
   assert.equal(allowed.callbacks(), 1);
+});
+
+
+test('complete releases send full scope and twice the exact measured file bytes', async () => {
+  const bankSource = { ...source, full_acquisition_available: true, full_acquisition: { pinned_revision: 'full', measured_selected_bytes: 123456789, record_limit: 3 } };
+  const f = fixture({ bankSource, downloadScope: 'full' }); f.click('Acquire to workspace');
+  const body = { download_scope: 'full', project_policy: { max_storage_quota_bytes: 246913578 } };
+  assert.deepEqual(JSON.parse(f.calls.at(-1).init.body), body);
+  f.first.resolve({ status: 'approved' }); await flush();
+  assert.deepEqual(JSON.parse(f.calls.at(-1).init.body), body);
+  f.second.resolve({ ...acquisition, download_scope: 'full' }); await flush();
+  const write = f.writes.findLast(write => write.index === 8);
+  assert.equal(write.value({})[source.id + ':full'].download_scope, 'full');
+  f.unmount();
+});
+
+test('full releases refuse unqualified sources and insufficient or fractional storage allowances', () => {
+  const bankSource = { ...source, full_acquisition_available: true, full_acquisition: { measured_selected_bytes: 100, record_limit: 1 } };
+  for (const storageQuota of ['100', '200.1', '-1', 'NaN']) {
+    const f = fixture({ bankSource, downloadScope: 'full', storageQuota });
+    assert.equal(f.button('Acquire to workspace').props.disabled, true);
+    f.click('Acquire to workspace'); assert.equal(f.calls.length, 1); f.unmount();
+  }
+  const f = fixture({ downloadScope: 'full' }); assert.equal(f.button('Acquire to workspace').props.disabled, true); f.unmount();
 });

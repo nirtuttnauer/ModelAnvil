@@ -1,0 +1,125 @@
+{
+  "schema_version": "1.0",
+  "source_id": "tools-glaive-v2",
+  "download_scope": "full",
+  "upstream": {
+    "repository": "glaiveai/glaive-function-calling-v2",
+    "commit": "e7f4b6456019f5d8bcb991ef0dd67d8ff23221ac"
+  },
+  "scope": "All dataset files and splits at the pinned publisher revision.",
+  "files": [
+    {
+      "path": "glaive-function-calling-v2.json",
+      "url": "https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2/resolve/e7f4b6456019f5d8bcb991ef0dd67d8ff23221ac/glaive-function-calling-v2.json",
+      "size": 271190065,
+      "publisher_sha256": "e9b5d671812b5ca2fbd7b625a37d5c99a19576c37252cdc806defe256aea6dad",
+      "format": "json",
+      "sha256": "e9b5d671812b5ca2fbd7b625a37d5c99a19576c37252cdc806defe256aea6dad",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "dedb2e929bacb1d111b6dbd4ae12dd7b3f25710a309e02fd3d796b6c9ca37d05"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "ce018ee7324b5ee790d412a6840d9302d02271292a7dcf0d924b9db99d4674f6"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "ebcccd1b903113499c06a20cf350ff250b56550bba70282f8101f7ca68885925"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "a55965c085bb1932fae505e8323e8a8fffaa353c219c62349323595d92996a48"
+        },
+        {
+          "start": 67108864,
+          "length": 16777216,
+          "sha256": "56e0f6ae1a4d9ea953d9826105a62a9992fc450b09d76c517546e69a3bca9cba"
+        },
+        {
+          "start": 83886080,
+          "length": 16777216,
+          "sha256": "638bab266cbbba19082e49ba27ac456be69a9adf1d60ebd2ab94cfa4947b233b"
+        },
+        {
+          "start": 100663296,
+          "length": 16777216,
+          "sha256": "d65ea477abb2637fac86b52ff2352e1f048a88f8dbda54ebf77d94f916215dfa"
+        },
+        {
+          "start": 117440512,
+          "length": 16777216,
+          "sha256": "20fde0fb9542b19cbf6113f322a0aa3b06913e5df4aca99ce59ded65726178fa"
+        },
+        {
+          "start": 134217728,
+          "length": 16777216,
+          "sha256": "e4b923d751bc320802d6c69f74a9ca0983a84fa4ce494dbd5967680e52671a1a"
+        },
+        {
+          "start": 150994944,
+          "length": 16777216,
+          "sha256": "ed43fc22809a69b4b689060140f57863f1cc4fb129b80059c674a67081c6bfde"
+        },
+        {
+          "start": 167772160,
+          "length": 16777216,
+          "sha256": "86db7ab22bfc88e2ffa77bd08f4e6f20cb62476b6b9187c745b77a3246366d82"
+        },
+        {
+          "start": 184549376,
+          "length": 16777216,
+          "sha256": "8ee88ee47820aaff690bc18a33be70bab5e222b83560e20598bf83c820329b88"
+        },
+        {
+          "start": 201326592,
+          "length": 16777216,
+          "sha256": "36509290f005d234d7874052892238d5226bed71ae0b6c55d3a3e40a1421a3f0"
+        },
+        {
+          "start": 218103808,
+          "length": 16777216,
+          "sha256": "563168f8fee90f67b2f3dc3d39b8113a9b1a94004fd2a097233e0acaa68ba565"
+        },
+        {
+          "start": 234881024,
+          "length": 16777216,
+          "sha256": "5ade71444fe64a3b6c55e5ae1c5d361305fcadecfb24b1f295675622c2b43fb5"
+        },
+        {
+          "start": 251658240,
+          "length": 16777216,
+          "sha256": "1dc8580cb1b93cbdcec0caac91c8d1a493249a761700534ca8d8b9b77f422e8c"
+        },
+        {
+          "start": 268435456,
+          "length": 2754609,
+          "sha256": "26d56a2d9bea45ba592704039c4867829f5b151d6d07e92e19fe276c2023e261"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "json",
+        "whole_file_sha256_verified": true,
+        "rows": 112960,
+        "all_rows_validated": true
+      }
+    }
+  ],
+  "licenses": [
+    {
+      "path": "notice/publisher-card",
+      "archive_name": "tools-glaive-v2-publisher-card.txt",
+      "upstream_url": "https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2/resolve/e7f4b6456019f5d8bcb991ef0dd67d8ff23221ac/README.md",
+      "size": 106,
+      "sha256": "39c78f1f56b86fcd159cadeb8feda8a9333db6ef5ca0ce6830731ac3c666838e",
+      "blob_sha1": "c2cdc700e244012c7dc11ba3d3d841d3b2271200"
+    }
+  ],
+  "training_recipe_qualified": false
+}

@@ -1,0 +1,395 @@
+{
+  "schema_version": "1.0",
+  "source_id": "preference-ultrafeedback-binarized",
+  "download_scope": "full",
+  "upstream": {
+    "repository": "HuggingFaceH4/ultrafeedback_binarized",
+    "commit": "3949bf5f8c17c394422ccfab0c31ea9c20bdeb85"
+  },
+  "scope": "All dataset files and splits at the pinned publisher revision.",
+  "files": [
+    {
+      "path": "data/test_gen-00000-of-00001.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized/resolve/3949bf5f8c17c394422ccfab0c31ea9c20bdeb85/data/test_gen-00000-of-00001.parquet",
+      "size": 3022752,
+      "publisher_sha256": "e9cb46caa2348fa6c0577c1e4fa4da6f07cb6672d0b686db34db504817cc5562",
+      "format": "parquet",
+      "sha256": "e9cb46caa2348fa6c0577c1e4fa4da6f07cb6672d0b686db34db504817cc5562",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 3022752,
+          "sha256": "e9cb46caa2348fa6c0577c1e4fa4da6f07cb6672d0b686db34db504817cc5562"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 1000,
+        "row_groups": 1,
+        "columns": [
+          "prompt",
+          "prompt_id",
+          "chosen",
+          "rejected",
+          "messages",
+          "score_chosen",
+          "score_rejected"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/test_prefs-00000-of-00001.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized/resolve/3949bf5f8c17c394422ccfab0c31ea9c20bdeb85/data/test_prefs-00000-of-00001.parquet",
+      "size": 7291160,
+      "publisher_sha256": "e9dab2789f419d4204d73ec2c860af6d88d466b906e0109e69b96075467eb389",
+      "format": "parquet",
+      "sha256": "e9dab2789f419d4204d73ec2c860af6d88d466b906e0109e69b96075467eb389",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 7291160,
+          "sha256": "e9dab2789f419d4204d73ec2c860af6d88d466b906e0109e69b96075467eb389"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 2000,
+        "row_groups": 2,
+        "columns": [
+          "prompt",
+          "prompt_id",
+          "chosen",
+          "rejected",
+          "messages",
+          "score_chosen",
+          "score_rejected"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/test_sft-00000-of-00001.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized/resolve/3949bf5f8c17c394422ccfab0c31ea9c20bdeb85/data/test_sft-00000-of-00001.parquet",
+      "size": 3719085,
+      "publisher_sha256": "f54e1c8df3d3831b6b70711fcd9225931da12964b73f33fe99317b4ebe5d7e09",
+      "format": "parquet",
+      "sha256": "f54e1c8df3d3831b6b70711fcd9225931da12964b73f33fe99317b4ebe5d7e09",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 3719085,
+          "sha256": "f54e1c8df3d3831b6b70711fcd9225931da12964b73f33fe99317b4ebe5d7e09"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 1000,
+        "row_groups": 1,
+        "columns": [
+          "prompt",
+          "prompt_id",
+          "chosen",
+          "rejected",
+          "messages",
+          "score_chosen",
+          "score_rejected"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/train_gen-00000-of-00001.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized/resolve/3949bf5f8c17c394422ccfab0c31ea9c20bdeb85/data/train_gen-00000-of-00001.parquet",
+      "size": 184150527,
+      "publisher_sha256": "afce818aa1a58ef451aeec396251ac4e7c8c2e6c5f9649cf9106f62eb6368fcc",
+      "format": "parquet",
+      "sha256": "afce818aa1a58ef451aeec396251ac4e7c8c2e6c5f9649cf9106f62eb6368fcc",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "6e33bee5164dbcd12fe98aa10e88394d020bb5a6005db782419e141a1dd96945"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "d31f247db210a64a1b173727ede00fc46bdfc1e4c222be3071b3699fb85a8918"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "66f8ede6f3ece75e70326fe1b1df61fdef35bb656d4bb986774fa3f362d565d6"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "196c82b46733db7897641fa661c7abbb5a402999bef484dd520b02d81268d670"
+        },
+        {
+          "start": 67108864,
+          "length": 16777216,
+          "sha256": "1a6491aa3c7ca0ade9cf58c980fb07d7cfccd718a86d027c94b75326e05b6534"
+        },
+        {
+          "start": 83886080,
+          "length": 16777216,
+          "sha256": "4a9b96592c8f90b78854f8cff16fef4505a4846682ad6f102010ad2c721e55bd"
+        },
+        {
+          "start": 100663296,
+          "length": 16777216,
+          "sha256": "3d7ff0723cb83ec819559ffde00dfd6301b1434c17746f3618ae4fbf99bb1b50"
+        },
+        {
+          "start": 117440512,
+          "length": 16777216,
+          "sha256": "0a441874b35a8eed40ae109e286fb07b38f1a186592358d8c045737cb1d56c59"
+        },
+        {
+          "start": 134217728,
+          "length": 16777216,
+          "sha256": "6a1f7e1e4ec2bbe772559f0447dae9822540ee451720c0de67bd5c220ac594e1"
+        },
+        {
+          "start": 150994944,
+          "length": 16777216,
+          "sha256": "2575c79a72f13e087895576a094fdb8d2c9ee71748ce73c2acbfb9c29ef599d6"
+        },
+        {
+          "start": 167772160,
+          "length": 16378367,
+          "sha256": "b2910e8784b3a9159e48d9de4520c5bf6ac3fadeb949f892dc4b0cafffa65799"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 61135,
+        "row_groups": 62,
+        "columns": [
+          "prompt",
+          "prompt_id",
+          "chosen",
+          "rejected",
+          "messages",
+          "score_chosen",
+          "score_rejected"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/train_prefs-00000-of-00001.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized/resolve/3949bf5f8c17c394422ccfab0c31ea9c20bdeb85/data/train_prefs-00000-of-00001.parquet",
+      "size": 225891836,
+      "publisher_sha256": "0f951ca4502001d31f3e4c70716ae51d20e4ce4f847d12b6a6695a40d4d353a8",
+      "format": "parquet",
+      "sha256": "0f951ca4502001d31f3e4c70716ae51d20e4ce4f847d12b6a6695a40d4d353a8",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "c3220df37195cdda75548579e19d7ccb24cf47d5d0474aa392a7c524d51add63"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "0f91de3a2c0f7f88d922b2f24ea74d2816c52182ac9d1368cf3c1b6da8b2210b"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "42f865441be5b43bd39d18b903e548f49b6656487aea09350d51dabe0f0b392d"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "42b7cdb5d356a9160857513353938699c398023e61f4b8029b2d3cf117899c3f"
+        },
+        {
+          "start": 67108864,
+          "length": 16777216,
+          "sha256": "1e38b0ee2848152fd2c85e13c53bbd67ca650a6e6a0df0627523dba9cf851081"
+        },
+        {
+          "start": 83886080,
+          "length": 16777216,
+          "sha256": "bc8af52aebb70c0dc0c1188211b634b4c726829265ef5ece77c48d8f6bba4115"
+        },
+        {
+          "start": 100663296,
+          "length": 16777216,
+          "sha256": "3045d301586ab998b1009df505ef8c2979882a810db8a4965bf81362de3399d9"
+        },
+        {
+          "start": 117440512,
+          "length": 16777216,
+          "sha256": "53a317d6990e0cfd2ee3c2e3acf2944446d6ecb83c10789cb212ad5aed8eeba0"
+        },
+        {
+          "start": 134217728,
+          "length": 16777216,
+          "sha256": "658426dcc0cafad1e13a82f34e9d5818cfb72f03c738c333494a8b47b0b21ea6"
+        },
+        {
+          "start": 150994944,
+          "length": 16777216,
+          "sha256": "47a7c3166bb5329bf6b7461f59c1ba7664c202cbad6f1d0403857c7b75cbe6f6"
+        },
+        {
+          "start": 167772160,
+          "length": 16777216,
+          "sha256": "ed77b1997a8623ed0ac036d30c7139356ce3fc5b8fc3a35ac6af5f85d7318987"
+        },
+        {
+          "start": 184549376,
+          "length": 16777216,
+          "sha256": "cf2293f0d3359643bb5561e69c3a630ce9a41bd95f4a7147807bbc19f8a4121f"
+        },
+        {
+          "start": 201326592,
+          "length": 16777216,
+          "sha256": "3beb5b0c97ecac5dca145ebcd86e460b35e7283b611878944561863fa41f9b0e"
+        },
+        {
+          "start": 218103808,
+          "length": 7788028,
+          "sha256": "4fa440b50585fcf75b31d274717e3db4f688935e6068ec4a359681eca8bee5f3"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 61135,
+        "row_groups": 62,
+        "columns": [
+          "prompt",
+          "prompt_id",
+          "chosen",
+          "rejected",
+          "messages",
+          "score_chosen",
+          "score_rejected"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/train_sft-00000-of-00001.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized/resolve/3949bf5f8c17c394422ccfab0c31ea9c20bdeb85/data/train_sft-00000-of-00001.parquet",
+      "size": 225891836,
+      "publisher_sha256": "0f951ca4502001d31f3e4c70716ae51d20e4ce4f847d12b6a6695a40d4d353a8",
+      "format": "parquet",
+      "sha256": "0f951ca4502001d31f3e4c70716ae51d20e4ce4f847d12b6a6695a40d4d353a8",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "c3220df37195cdda75548579e19d7ccb24cf47d5d0474aa392a7c524d51add63"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "0f91de3a2c0f7f88d922b2f24ea74d2816c52182ac9d1368cf3c1b6da8b2210b"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "42f865441be5b43bd39d18b903e548f49b6656487aea09350d51dabe0f0b392d"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "42b7cdb5d356a9160857513353938699c398023e61f4b8029b2d3cf117899c3f"
+        },
+        {
+          "start": 67108864,
+          "length": 16777216,
+          "sha256": "1e38b0ee2848152fd2c85e13c53bbd67ca650a6e6a0df0627523dba9cf851081"
+        },
+        {
+          "start": 83886080,
+          "length": 16777216,
+          "sha256": "bc8af52aebb70c0dc0c1188211b634b4c726829265ef5ece77c48d8f6bba4115"
+        },
+        {
+          "start": 100663296,
+          "length": 16777216,
+          "sha256": "3045d301586ab998b1009df505ef8c2979882a810db8a4965bf81362de3399d9"
+        },
+        {
+          "start": 117440512,
+          "length": 16777216,
+          "sha256": "53a317d6990e0cfd2ee3c2e3acf2944446d6ecb83c10789cb212ad5aed8eeba0"
+        },
+        {
+          "start": 134217728,
+          "length": 16777216,
+          "sha256": "658426dcc0cafad1e13a82f34e9d5818cfb72f03c738c333494a8b47b0b21ea6"
+        },
+        {
+          "start": 150994944,
+          "length": 16777216,
+          "sha256": "47a7c3166bb5329bf6b7461f59c1ba7664c202cbad6f1d0403857c7b75cbe6f6"
+        },
+        {
+          "start": 167772160,
+          "length": 16777216,
+          "sha256": "ed77b1997a8623ed0ac036d30c7139356ce3fc5b8fc3a35ac6af5f85d7318987"
+        },
+        {
+          "start": 184549376,
+          "length": 16777216,
+          "sha256": "cf2293f0d3359643bb5561e69c3a630ce9a41bd95f4a7147807bbc19f8a4121f"
+        },
+        {
+          "start": 201326592,
+          "length": 16777216,
+          "sha256": "3beb5b0c97ecac5dca145ebcd86e460b35e7283b611878944561863fa41f9b0e"
+        },
+        {
+          "start": 218103808,
+          "length": 7788028,
+          "sha256": "4fa440b50585fcf75b31d274717e3db4f688935e6068ec4a359681eca8bee5f3"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 61135,
+        "row_groups": 62,
+        "columns": [
+          "prompt",
+          "prompt_id",
+          "chosen",
+          "rejected",
+          "messages",
+          "score_chosen",
+          "score_rejected"
+        ],
+        "all_rows_validated": true
+      }
+    }
+  ],
+  "licenses": [
+    {
+      "path": "notice/publisher-card",
+      "archive_name": "preference-ultrafeedback-binarized-publisher-card.txt",
+      "upstream_url": "https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized/resolve/3949bf5f8c17c394422ccfab0c31ea9c20bdeb85/README.md",
+      "size": 6529,
+      "sha256": "c774e58776969093f0dad0a3ddf031e943f36aeabd34471d29b21fac36469d25",
+      "blob_sha1": "d935fe2718dd5da429fc82a9c9ecad7cee4b72a9"
+    }
+  ],
+  "training_recipe_qualified": false
+}

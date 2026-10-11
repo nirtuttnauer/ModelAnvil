@@ -25,6 +25,7 @@ ALLOWED_HOSTS = {
     "dl.fbaipublicfiles.com",
     "datashare.ed.ac.uk",
     "openslr.trmal.net",
+    "openslr.elda.org",
     "archive.ics.uci.edu",
 }
 

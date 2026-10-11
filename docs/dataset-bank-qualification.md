@@ -1,5 +1,7 @@
 # Qualified Dataset Bank downloads
 
+Complete releases have separate evidence and download scope; see [full-download qualification](dataset-bank-full-downloads.md). This page records the sample qualification.
+
 Qualified on 11 October 2026. The ten additions have frozen, tested inventories totaling 200 samples. They now support actual previews, queued acquisition, verified publication, and authenticated artifact downloads. The existing Lucide connector remains available.
 
 | Source | Qualified samples | Upstream selection | Pinned range bytes |

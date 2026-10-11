@@ -446,13 +446,14 @@ def launch_acquisition(
     project_policy: Optional[dict[str, Any]] = None,
     source_revision: Optional[str] = None,
     record_limit: Optional[int] = None,
+    download_scope: str = "sample",
     split_seed: str = "0",
     budget_policy_id: Any = None,
     estimated_amount: Any = None,
     pool_name: Optional[str] = None,
     transport: Optional[Transport] = None,
 ) -> AcquisitionLaunch:
-    """Preflight, plan, and queue one bounded acquisition of a qualified source."""
+    """Preflight, plan, and queue a qualified sample or complete release."""
     catalog = catalog or DatasetBankCatalog.load_from_file()
     transport = transport or https_transport
     policy = dict(project_policy or {})
@@ -460,20 +461,27 @@ def launch_acquisition(
         policy["record_limit"] = int(record_limit)
     preflight = catalog.preflight_download(
         source_id, tenant_id=str(tenant_id), project_policy=policy, source_revision=source_revision,
+        download_scope=download_scope,
     )
-    source = catalog.get_source(source_id)
-    limit = int(policy.get("record_limit") or source.acquisition.record_limit)
+    source = catalog.source_for_full_download(source_id) if download_scope == "full" else catalog.get_source(source_id)
+    limit = int(preflight["scope"]["record_limit"])
     _validate_budget(tenant_id, budget_policy_id, estimated_amount, limit)
     pool = _acquisition_pool(tenant_id, pool_name)
-    inventory, licenses = list_inventory(source, transport=transport)
-    selected = select_records(inventory, limit)
+    if download_scope == "full":
+        from modelanvil.data.bank.full_download import load_manifest as load_full_manifest
+        full_manifest = load_full_manifest(source)
+        selected = [{"path": f["path"], "size": f["size"], "sha256": f["sha256"]} for f in full_manifest["files"]]
+        licenses = []
+    else:
+        inventory, licenses = list_inventory(source, transport=transport)
+        selected = select_records(inventory, limit)
 
     with transaction.atomic():
         downloader = ResumablePresetDownloader(catalog)
         snapshot = downloader.initiate_download(
             tenant_id=tenant_id, source_id=source_id,
             project_id=project_id,
-            revision=preflight["source_revision"], project_policy=policy,
+            revision=preflight["source_revision"], project_policy=policy, download_scope=download_scope,
         )
         snapshot = SourceSnapshot.all_objects.select_for_update().get(pk=snapshot.pk, tenant_id=tenant_id)
         if snapshot.state == SourceSnapshot.State.READY:
@@ -490,10 +498,11 @@ def launch_acquisition(
         plan = dict(detail.get("acquisition") or {})
         plan.setdefault("source_id", source_id)
         plan["source_revision"] = preflight["source_revision"]
+        plan["download_scope"] = download_scope
         plan["connector"] = source.acquisition.connector
         plan["record_selection"] = source.acquisition.record_selection
         plan["record_limit"] = len(selected)
-        plan["records"] = [record.as_dict() for record in selected]
+        plan["records"] = selected if download_scope == "full" else [record.as_dict() for record in selected]
         plan["license_records"] = [record.as_dict() for record in licenses]
         plan.setdefault("verified", {})
         plan.setdefault("failures", [])
@@ -522,6 +531,7 @@ def launch_acquisition(
                 "project_id": str(snapshot.project_id) if snapshot.project_id else None,
                 "snapshot_id": str(snapshot.snapshot_id),
                 "source_id": source_id,
+                "download_scope": download_scope,
                 "source_revision": preflight["source_revision"],
                 "record_limit": len(selected),
                 "split_seed": split_seed,
@@ -590,6 +600,7 @@ def resume_acquisition(
                 "project_id": str(snapshot.project_id) if snapshot.project_id else None,
                 "snapshot_id": str(snapshot.snapshot_id),
                 "source_id": plan.get("source_id"),
+                "download_scope": plan.get("download_scope", "sample"),
                 "source_revision": plan.get("source_revision"),
                 "record_limit": plan.get("record_limit"),
                 "split_seed": plan.get("split_seed", "0"),
@@ -635,9 +646,11 @@ def acquisition_state(snapshot: SourceSnapshot) -> dict[str, Any]:
         ).order_by("-reserved_at").first()
     published_revision = plan.get("published_revision") or None
     total_bytes = sum(int(record.get("size", 0)) for record in records)
-    transferred_bytes = sum(int(entry.get("size", 0)) for entry in verified.values())
+    transferred_bytes = sum(int(entry.get("size", 0)) for entry in verified.values()) + int(plan.get("partial_bytes") or 0)
     return {
         "snapshot_id": str(snapshot.snapshot_id),
+        "download_scope": plan.get("download_scope", "sample"),
+        "source_files": [{"path": path, **entry} for path, entry in verified.items()] if plan.get("download_scope") == "full" and snapshot.state == SourceSnapshot.State.READY else [],
         "source_id": plan.get("source_id") or detail.get("source_id"),
         "source_revision": plan.get("source_revision") or snapshot.source_revision,
         "state": snapshot.state,
@@ -664,7 +677,7 @@ def acquisition_state(snapshot: SourceSnapshot) -> dict[str, Any]:
         "dataset_id": plan.get("dataset_id"),
         "revision_id": published_revision.get("revision_id") if isinstance(published_revision, dict) else None,
         "revision_no": published_revision.get("revision_no") if isinstance(published_revision, dict) else None,
-        "manifest_artifact_id": published_revision.get("manifest_artifact_id") if isinstance(published_revision, dict) else None,
+        "manifest_artifact_id": published_revision.get("manifest_artifact_id") if isinstance(published_revision, dict) else plan.get("manifest_artifact_id"),
         "row_count": published_revision.get("row_count") if isinstance(published_revision, dict) else None,
         "recipe_digest": published_revision.get("recipe_digest") if isinstance(published_revision, dict) else None,
         "rejection_report": published_revision.get("rejection_report") if isinstance(published_revision, dict) else None,
@@ -672,7 +685,7 @@ def acquisition_state(snapshot: SourceSnapshot) -> dict[str, Any]:
     }
 
 
-def _settle_budget(job_id: Any, tenant_id: Any, verified_records: int) -> None:
+def _settle_budget(job_id: Any, tenant_id: Any, verified_records: int, *, download_scope: str = "sample") -> None:
     """Settle a reservation with the verified record count, or release it when nothing moved."""
     if not job_id:
         return
@@ -691,9 +704,9 @@ def _settle_budget(job_id: Any, tenant_id: Any, verified_records: int) -> None:
         provider_event_key=f"bank-acquisition-{job_id}",
         quantity=amount, unit=reservation.policy.unit, reservation=reservation,
         detail={
-            "unit_kind": "bank_acquisition_verified_records",
+            "unit_kind": "bank_acquisition_verified_files" if download_scope == "full" else "bank_acquisition_verified_records",
             "snapshot_ref": reservation.job_id and str(reservation.job_id),
-            "quantity_basis": "verified upstream records at the pinned revision",
+            "quantity_basis": "verified complete source files" if download_scope == "full" else "verified upstream records at the pinned revision",
         },
     )
 
@@ -856,14 +869,23 @@ def _publish(
     )
 
 
+def _execution_snapshot(descriptor):
+    payload = descriptor.get("payload") or {}
+    query = SourceSnapshot.all_objects.filter(snapshot_id=payload.get("snapshot_id"))
+    if payload.get("download_scope") == "full":
+        job = Job.all_objects.filter(job_id=descriptor.get("job_id")).first()
+        if job is None or job.payload.get("snapshot_id") != payload.get("snapshot_id"):
+            return None
+        query = query.filter(tenant_id=job.tenant_id, project_id=job.payload.get("project_id"))
+    return query.first()
+
+
 def _execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, Any]:
     """Transfer, verify, prepare and publish one queued bank acquisition."""
     payload = descriptor.get("payload") or {}
     if payload.get("type") != JOB_TYPE:
         raise ValueError("Unsupported job type for the bank acquisition executor.")
-    snapshot = SourceSnapshot.all_objects.filter(
-        snapshot_id=payload.get("snapshot_id"),
-    ).first()
+    snapshot = _execution_snapshot(descriptor)
     if snapshot is None:
         raise UpstreamError("The queued source snapshot no longer exists.")
     tenant_id = snapshot.tenant_id
@@ -877,6 +899,12 @@ def _execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, 
     source = catalog.get_source(payload.get("source_id") or "")
     if source is None:
         raise UpstreamError("The queued source is no longer in the catalog.")
+    if payload.get("download_scope") == "full":
+        from modelanvil.data.bank.full_download import execute
+        source = catalog.source_for_full_download(source.id)
+        if payload.get("source_revision") != source.acquisition.pinned_revision or snapshot.source_revision != source.acquisition.pinned_revision:
+            raise UpstreamError("Full-download revision differs from its qualification.")
+        return execute(descriptor, context, source, snapshot)
     catalog.assert_acquirable(source.id, source_revision=payload.get("source_revision"))
 
     detail = dict(snapshot.detail or {})
@@ -1120,21 +1148,21 @@ def execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, A
         return _execute_acquisition(descriptor, context)
     except AcquisitionCancelled:
         payload = descriptor.get("payload") or {}
-        snapshot = SourceSnapshot.all_objects.filter(snapshot_id=payload.get("snapshot_id")).first()
+        snapshot = _execution_snapshot(descriptor)
         if snapshot is not None and snapshot.state != SourceSnapshot.State.READY:
             snapshot.state = SourceSnapshot.State.CANCELLED
             snapshot.save(update_fields=["state", "updated_at"])
             plan = (snapshot.detail or {}).get("acquisition") or {}
             count = max(0, len(plan.get("verified") or {}) - int(payload.get("resumed_from_records") or 0))
-            _settle_budget(descriptor.get("job_id"), snapshot.tenant_id, count)
+            _settle_budget(descriptor.get("job_id"), snapshot.tenant_id, count, download_scope=payload.get("download_scope", "sample"))
         raise
     except (UpstreamError, ValueError, OSError):
         payload = descriptor.get("payload") or {}
-        snapshot = SourceSnapshot.all_objects.filter(snapshot_id=payload.get("snapshot_id")).first()
+        snapshot = _execution_snapshot(descriptor)
         if snapshot is not None and snapshot.state == SourceSnapshot.State.INGESTING:
             detail = dict(snapshot.detail or {})
             plan = dict(detail.get("acquisition") or {})
             _fail(snapshot, detail, plan, "Acquisition failed before publication; resume verified records to retry.")
             count = max(0, len(plan.get("verified") or {}) - int(payload.get("resumed_from_records") or 0))
-            _settle_budget(descriptor.get("job_id"), snapshot.tenant_id, count)
+            _settle_budget(descriptor.get("job_id"), snapshot.tenant_id, count, download_scope=payload.get("download_scope", "sample"))
         raise
