@@ -29,15 +29,17 @@ Show state transitions honestly. Cancellation requested, backend stopped, and re
 
 ## 3 Visual direction
 
-Use a quiet, precise workspace with neutral surfaces, strong text hierarchy, and restrained blue for navigation and primary actions. Avoid decorative industrial textures or anvil imagery in dense product screens. The ModelAnvil name can inform the wordmark; the symbol and brand identity remain a separate design exercise.
+Use a quiet, precise workspace with neutral surfaces, strong text hierarchy, and the logo’s orange for navigation and primary actions. Avoid decorative industrial textures or anvil imagery in dense product screens. Use the approved assets in `web/public/brand` for the symbol and wordmark.
 
 | Token group | Initial design proposal |
 | --- | --- |
 | Background | Canvas `#F6F8FB`; surface `#FFFFFF`; raised surface with subtle border |
 | Text | Primary `#172033`; secondary `#475569`; muted only after contrast validation |
 | Borders | `#CBD5E1` for controls; `#E2E8F0` for nonessential dividers |
-| Primary action | Blue `#1D4ED8`; hover `#1E40AF`; white text |
-| Status | Success `#166534`; caution `#92400E`; error `#B91C1C`; information blue |
+| Primary action | Logo orange `#D65A31` (light), `#ED8057` (dark); hover `#E16B43` / `#F29370`; dark text `#111111` |
+| Primary foreground | `#B84623` on light surfaces for readable links and labels; `#ED8057` on dark surfaces |
+| Primary surface / border | `#FFF4EF` / `#EDB19D` (light); `#3A261F` / `#885342` (dark) |
+| Status | Success `#166534`; caution `#92400E`; error `#B91C1C`; information uses primary orange |
 | Type | System UI sans; native SF on Mac; system monospace for code, hashes, and exact inputs |
 | Scale | Body 14–16 px, labels 12–14 px, section 18–20 px, page title 24–28 px; code 13–14 px |
 | Spacing | 4 px base with 8, 12, 16, 24, 32 px steps |
