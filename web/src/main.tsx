@@ -5,7 +5,6 @@ import {
   Bot,
   Building2,
   FolderGit2,
-  Command,
   ChevronRight,
   ArrowUpRight,
   RefreshCw,
@@ -378,12 +377,9 @@ export function App() {
       </a>
       <aside className="navigation-rail" aria-label="Workspace navigation">
         <a className="brand" href="#overview" aria-label="ModelAnvil Model Workspace overview">
-          <span className="mark">
-            <Command size={21} aria-hidden="true" />
-          </span>
-          <span className="brand-name">
-            ModelAnvil{' '}<span className="brand-subtitle">MODEL WORKSPACE</span>
-          </span>
+          <img className="brand-logo" src={`${import.meta.env.BASE_URL}brand/modelanvil-logo-reversed.svg`} alt="" width="1088" height="240" />
+          <img className="brand-icon" src={`${import.meta.env.BASE_URL}brand/modelanvil-icon.svg`} alt="" width="256" height="256" />
+          <span className="brand-subtitle">MODEL WORKSPACE</span>
         </a>
         <div
           className="workspace"
@@ -492,6 +488,9 @@ export function App() {
             <strong className="breadcrumb-page">{active}</strong>
           </div>
           <div className="header-actions">
+            <a className="mobile-brand" href="#overview" aria-label="ModelAnvil overview">
+              <img src={`${import.meta.env.BASE_URL}brand/modelanvil-icon.svg`} alt="" width="32" height="32" />
+            </a>
             <WorkspaceSearch pages={pages.filter(p => p.name !== 'Run Detail').map(p => p.name)} onNavigate={name => load(name as Page)} />
             <ThemeControl />
             <button

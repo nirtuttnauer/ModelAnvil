@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="logo-title logo-desc">
+  <title id="logo-title">ModelAnvil icon</title>
+  <desc id="logo-desc">Three interlocking orange segments surrounding an open hexagonal center.</desc>
+  <g fill="#D65A31">
+    <path d="M137.498 19.494 211.821 62.405 211.821 136.154 149.728 172.003 137.498 164.941 168.544 147.017 168.544 87.390 96.102 45.566Z"/>
+    <path d="M217.220 190.478 142.896 233.388 79.028 196.514 79.028 124.816 91.259 117.755 91.259 153.604 142.897 183.417 215.339 141.593Z"/>
+    <path d="M29.283 174.028 29.283 88.206 93.151 51.332 155.244 87.182 155.243 101.304 124.197 83.379 72.559 113.193 72.559 196.841Z"/>
+  </g>
+</svg>
