@@ -19,7 +19,7 @@ function usePlotWidth() {
   return { ref, width };
 }
 
-const colors = ['var(--chart-blue)', 'var(--chart-teal)', 'var(--chart-violet)', 'var(--chart-amber)', 'var(--chart-gray)'];
+const colors = ['var(--chart-primary)', 'var(--chart-teal)', 'var(--chart-violet)', 'var(--chart-amber)', 'var(--chart-gray)'];
 
 export function ChartPanel({ title, description, children, action }: { title: string; description?: string; children: ReactNode; action?: ReactNode }) {
   return <section className="chart-panel"><div className="chart-heading"><div><h3>{title}</h3>{description && <p>{description}</p>}</div>{action}</div>{children}</section>;
