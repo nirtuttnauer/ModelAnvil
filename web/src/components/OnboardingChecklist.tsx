@@ -216,7 +216,7 @@ export function OnboardingChecklist({
       className="panel onboarding-panel"
       aria-labelledby="onboarding-heading"
       style={{
-        border: '1px solid var(--blue-border)',
+        border: '1px solid var(--primary-border)',
         background: 'var(--surface)',
         marginBottom: '24px',
       }}
@@ -233,7 +233,7 @@ export function OnboardingChecklist({
       >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Sparkles size={18} style={{ color: 'var(--primary)' }} aria-hidden="true" />
+            <Sparkles size={18} style={{ color: 'var(--primary-text)' }} aria-hidden="true" />
             <h2 id="onboarding-heading" style={{ margin: 0, fontSize: '16px' }}>
               Workspace Setup & Prerequisites
             </h2>

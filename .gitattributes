@@ -1,0 +1,2 @@
+# Preserve archived publisher evidence byte-for-byte for pinned SHA-256 checks.
+catalog/qualified-datasets/notices/** -text -whitespace

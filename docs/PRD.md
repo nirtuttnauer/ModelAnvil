@@ -609,7 +609,7 @@ Official project documentation reviewed on 8 October 2026. These references supp
 
 ### 16 1 Catalog policy and readiness
 
-This initial catalog contains 23 publisher-declared open source candidates, reviewed on 8 October 2026. Open here means the declared content license permits reuse, modification, and redistribution, including commercial use, subject to its obligations. Noncommercial-only, no-derivatives, research-only, and unclear asset licensing are excluded. Attribution must be preserved. Share-alike sources remain open but require an explicit project policy choice. License obligations for adapted data and released weights require scope-specific assessment; the platform must not invent a universal rule.
+This catalog contains 33 publisher-declared open source candidates: 23 initially reviewed on 8 October 2026 and ten added on 11 October 2026. The [source bank](open-dataset-bank.md) records preparation and split requirements for the expansion. Open here means the declared content license permits reuse, modification, and redistribution, including commercial use, subject to its obligations. Noncommercial-only, no-derivatives, research-only, and unclear asset licensing are excluded. Attribution must be preserved. Share-alike sources remain open but require an explicit project policy choice. License obligations for adapted data and released weights require scope-specific assessment; the platform must not invent a universal rule.
 
 Each source below links to its publisher and license evidence. Candidate status records the inspected declaration, not a rights guarantee for every future revision or a qualified connector. Before enabling download, pin the revision or archive hash, inspect selected-asset exceptions, archive notices, measure sizes, validate a sample, and publish the connector's qualification report. Source code licensing alone is insufficient evidence for separately gathered data. Gated access is displayed separately from content licensing and cannot be accepted silently.
 
@@ -643,6 +643,11 @@ Output formats: txt, md, jsonl.
 | [OpenAssistant OASST1](https://huggingface.co/datasets/OpenAssistant/oasst1) | [Apache-2.0](https://huggingface.co/datasets/OpenAssistant/oasst1) | Human conversation trees and ranking signals for supervised and preference training. |
 | [Databricks Dolly 15k](https://huggingface.co/datasets/databricks/databricks-dolly-15k) | [CC-BY-SA-3.0](https://huggingface.co/datasets/databricks/databricks-dolly-15k) | Instruction following, question answering, and summarization examples. |
 | [GSM8K](https://huggingface.co/datasets/openai/gsm8k) | [MIT](https://huggingface.co/datasets/openai/gsm8k) | Grade-school math problems with worked answers for training and held-out evaluation. |
+| [SmolTalk: Smol-Magpie-Ultra](https://huggingface.co/datasets/HuggingFaceTB/smoltalk) | [Apache-2.0](https://huggingface.co/datasets/HuggingFaceTB/smoltalk) | Synthetic multi-turn instruction conversations from the Smol-Magpie-Ultra subset. |
+| [UltraChat 200k](https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k) | [MIT](https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k) | Filtered synthetic multi-turn conversations for supervised instruction tuning. |
+| [SQuAD 1.1](https://huggingface.co/datasets/rajpurkar/squad) | [CC-BY-SA-4.0](https://huggingface.co/datasets/rajpurkar/squad) | Wikipedia passages with questions and answer spans for extractive question answering. |
+| [UltraFeedback Binarized](https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized) | [MIT](https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized) | Synthetic chosen/rejected conversations and scores for preference optimization and SFT. |
+| [CLEVR v1.0](https://cs.stanford.edu/people/jcjohns/clevr/) | [CC-BY-4.0](https://cs.stanford.edu/people/jcjohns/clevr/) | Synthetic scenes paired with visual questions, answers, scene graphs, and reasoning programs. |
 
 OASST1 needs tree reconstruction and tree-grouped splits. Dolly is a share-alike opt-in. GSM8K training examples can support reasoning; its official test split is reserved for evaluation and excluded from synthetic-data seeds. These small instruction sources do not meet broad scratch-pretraining scale or coverage.
 
@@ -653,6 +658,7 @@ Output formats: json, jsonl, parquet.
 | Source | Declared license | Intended use |
 | --- | --- | --- |
 | [Anthropic HH RLHF](https://huggingface.co/datasets/Anthropic/hh-rlhf) | [MIT](https://huggingface.co/datasets/Anthropic/hh-rlhf) | Chosen and rejected conversations for preference optimization and reward modeling. |
+| [UltraFeedback Binarized](https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized) | [MIT](https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized) | Synthetic chosen/rejected conversations and scores for preference optimization and SFT. |
 | [OpenAssistant OASST1](https://huggingface.co/datasets/OpenAssistant/oasst1) | [Apache-2.0](https://huggingface.co/datasets/OpenAssistant/oasst1) | Human conversation trees and ranking signals for supervised and preference training. |
 
 HH supplies chosen/rejected pairs; OASST1 includes ranking signals that require task-specific reconstruction. Rankings are supervision for preference or reward training, not calibrated numeric ground-truth rewards. Maintain held-out prompts and preserve ties or missing judgments.
@@ -675,6 +681,8 @@ Output formats: json, jsonl, yaml.
 | Source | Declared license | Intended use |
 | --- | --- | --- |
 | [xLAM function-calling 60k](https://huggingface.co/datasets/Salesforce/xlam-function-calling-60k) | [CC-BY-4.0](https://huggingface.co/datasets/Salesforce/xlam-function-calling-60k) | Queries, tool schemas, and structured function-call answers. |
+| [Glaive function calling v2](https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2) | [Apache-2.0](https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2) | Synthetic conversations with function schemas and tool-call turns. |
+| [CLEVR v1.0](https://cs.stanford.edu/people/jcjohns/clevr/) | [CC-BY-4.0](https://cs.stanford.edu/people/jcjohns/clevr/) | Synthetic scenes paired with visual questions, answers, scene graphs, and reasoning programs. |
 
 xLAM is declared CC BY 4.0 but currently gated: the user must review current conditions and authorize scoped credentials before access. It is not an anonymous one-click default. Preserve tool schemas and validate calls against them. JSON-to-YAML conversion alone does not create general structured-data expertise.
 
@@ -686,6 +694,7 @@ Output formats: png, jpeg, webp, tiff.
 | --- | --- | --- |
 | [dSprites](https://github.com/google-deepmind/dsprites-dataset) | [Apache-2.0](https://github.com/google-deepmind/dsprites-dataset/blob/master/LICENSE) | Synthetic binary shape images with known factors; small image-generation and conversion fixture. |
 | [Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist) | [MIT](https://github.com/zalandoresearch/fashion-mnist#license) | Small grayscale clothing images and class labels for pipeline smoke tests. |
+| [CLEVR v1.0](https://cs.stanford.edu/people/jcjohns/clevr/) | [CC-BY-4.0](https://cs.stanford.edu/people/jcjohns/clevr/) | Synthetic scenes paired with visual questions, answers, scene graphs, and reasoning programs. |
 
 dSprites contains simple binary shapes and known factors, useful for small controlled generation experiments. Fashion MNIST is an image/class-label smoke-test fixture, not a captioned image-generation corpus. SVG renders supply an additional narrow image source. This bank does not yet include a diverse verified open natural-image/caption corpus.
 
@@ -697,6 +706,8 @@ Output formats: wav, flac, mp3, ogg.
 | --- | --- | --- |
 | [LibriTTS](https://www.openslr.org/60/) | [CC-BY-4.0](https://www.openslr.org/60/) | English speech and text designed for text-to-speech research. |
 | [LibriSpeech](https://www.openslr.org/12) | [CC-BY-4.0](https://www.openslr.org/12) | Read English speech aligned with transcripts. |
+| [CSTR VCTK 0.92](https://datashare.ed.ac.uk/handle/10283/3443) | [CC-BY-4.0](https://datashare.ed.ac.uk/items/30e7453c-9ea8-48b4-8e18-f96d0dc62928/full) | English speech from multiple speakers and accents with transcript files. |
+| [LibriTTS-R](https://www.openslr.org/141/) | [CC-BY-4.0](https://www.openslr.org/141/) | Restored English speech aligned with text for multi-speaker speech synthesis. |
 
 LibriTTS supports text-to-speech examples; LibriSpeech primarily supports speech-to-text and alignment, where the generated output is text. Audio codecs are export choices, not new task supervision. Preserve speaker splits and check shared origin before mixing these related corpora. Music, sound effects, and multilingual speech generation need additional sources and model recipes.
 
@@ -717,6 +728,8 @@ Output formats: csv, tsv, parquet, arrow, npy, hdf5.
 | Source | Declared license | Intended use |
 | --- | --- | --- |
 | [UCI Electricity Load Diagrams](https://archive.ics.uci.edu/dataset/321/electricityloaddiagrams20112014) | [CC-BY-4.0](https://archive.ics.uci.edu/dataset/321/electricityloaddiagrams20112014) | Electricity consumption series for numeric forecasting and table-output adapters. |
+| [Iris](https://archive.ics.uci.edu/dataset/53/iris) | [CC-BY-4.0](https://archive.ics.uci.edu/dataset/53/iris) | Small labeled flower-measurement table for classification and tabular pipeline checks. |
+| [Wine Quality](https://archive.ics.uci.edu/dataset/186/wine+quality) | [CC-BY-4.0](https://archive.ics.uci.edu/dataset/186/wine+quality) | Red and white wine chemistry tables with quality scores for regression or classification. |
 
 The UCI source provides real numeric sequences for forecasting and table adapters. Use chronological splits with non-overlapping windows; preserve numeric and daylight-saving conventions. It does not supply universal CSV-generation or scientific reasoning supervision.
 

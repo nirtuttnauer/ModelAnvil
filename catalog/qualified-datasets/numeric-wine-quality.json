@@ -1,0 +1,1316 @@
+{
+  "schema_version": "1.0",
+  "source_id": "numeric-wine-quality",
+  "upstream": {
+    "release_url": "https://archive.ics.uci.edu/static/public/186/wine+quality.zip",
+    "archive_size": 91353,
+    "archive_etag": null,
+    "full_archive_checksum_verified": false
+  },
+  "containers": {
+    "data": {
+      "url": "https://archive.ics.uci.edu/static/public/186/wine+quality.zip",
+      "size": 91353,
+      "transfer_mode": "whole_file",
+      "segments": [
+        {
+          "start": 0,
+          "length": 91353,
+          "sha256": "3ed56667f4b828242bd732d7d1dd7f2861e54432239d7fa63877014cbb0304d4"
+        }
+      ]
+    }
+  },
+  "records": [
+    {
+      "path": "winequality-red.csv#row=0",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 0
+      },
+      "source_group_id": "numeric-wine-quality:features:678363a12776bf9461577b281dc91f4e3c06f4e56b62703fe28a67da6495c287",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 228,
+      "sha256": "a226669089a107cde49473ecf22f532c43d6e86b0bf360fb8064d9a904772215",
+      "blob_sha1": "730c6aed7d484f9dd5460c92e652e1dc63730d0d"
+    },
+    {
+      "path": "winequality-red.csv#row=84",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 84
+      },
+      "source_group_id": "numeric-wine-quality:features:a64d02d3d9c899ff48df7427bcc57d973f164957acb35c532ea860bf70d8ba72",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 230,
+      "sha256": "51b6a18b8773aa7a3172e6f2f912f1a38ccf3c311371bb9b389ec551fbc84147",
+      "blob_sha1": "ec4af8b81be84fb6ca7034120fc62739e9976148"
+    },
+    {
+      "path": "winequality-red.csv#row=168",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 168
+      },
+      "source_group_id": "numeric-wine-quality:features:4d5820be416ceb05ab68c7da76d719836846d8b661dd473ac9b6886f76e63b86",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 231,
+      "sha256": "f2fa9058db91e1c46042da3c90c0519bcf0c36bcf9fb964b50747a8f432bce04",
+      "blob_sha1": "d856321b6b4f4f7288a27dc2c574fda633985b16"
+    },
+    {
+      "path": "winequality-red.csv#row=252",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 252
+      },
+      "source_group_id": "numeric-wine-quality:features:81f289b17cb5ce0305a75a09bd5900113e810e05fced8eb00f2e74b39cab3bf8",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 230,
+      "sha256": "85041ad63cb3541d60e8eeb879e22841bcb71ca7f0a7b63057bb6200e70e3581",
+      "blob_sha1": "32faf2d5caf12169c55bbfb7e687934aaf9eea7b"
+    },
+    {
+      "path": "winequality-red.csv#row=336",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 336
+      },
+      "source_group_id": "numeric-wine-quality:features:c814c3b4927039f84845d41f8e7716d0462e66d14a4261aefc42ce17924104d4",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 229,
+      "sha256": "36886cb1e974ac7f9f20fb0f34dd7d43f054d1d3c6eba24b2fc7d482d0eeb2d0",
+      "blob_sha1": "ea74d821cdf4cb4377af77adeed37e7c98db3e73"
+    },
+    {
+      "path": "winequality-red.csv#row=420",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 420
+      },
+      "source_group_id": "numeric-wine-quality:features:8155eef5744e32b2ecc47460db8279925839c72d90337bae6b83df81a52a15e2",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 231,
+      "sha256": "178f7ce3460b49091390a17c101c56e0277b65cb297e2de19094212a1e5127b8",
+      "blob_sha1": "55c004af54ff8e195a31cb13abd4d8795ac78c26"
+    },
+    {
+      "path": "winequality-red.csv#row=504",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 504
+      },
+      "source_group_id": "numeric-wine-quality:features:ab9ac89c13aca0dc1de261340c80587c3a4dfa3fc39af6cead3008db238653a8",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 231,
+      "sha256": "72c7c987e26ac6ae853a2425625b293d9a695f4aeb7c48c54cb1c512a10793d4",
+      "blob_sha1": "41ddea1a55436432b9176608334fd18a1b3bdeb2"
+    },
+    {
+      "path": "winequality-red.csv#row=588",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 588
+      },
+      "source_group_id": "numeric-wine-quality:features:cd2fe63dbd03a6395b46242c25a4ff0aa3756c0381eacb85c33ee29891dbeaef",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 230,
+      "sha256": "08a9f99ed2ed9b9d7699e9ec746a735fa17ff5776164ee45bc0ff76531ce564d",
+      "blob_sha1": "15c56b54ff1ec5dc11418373c90c0deabaed95ee"
+    },
+    {
+      "path": "winequality-red.csv#row=672",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 672
+      },
+      "source_group_id": "numeric-wine-quality:features:c0485c35ff8396702b7e17fef1578833054c461d6da9f964be27ef02dafb873c",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 230,
+      "sha256": "b903daaa2fd82f5babf2e32dc5fcfbec0bc60db4358bafe680e08fe3a8e4f29a",
+      "blob_sha1": "4a82d5097dc855dee84cfb0754a51393c4ffe694"
+    },
+    {
+      "path": "winequality-red.csv#row=756",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 756
+      },
+      "source_group_id": "numeric-wine-quality:features:b0126491cc11b2acfb36fe3b698c176d4e402aa49be34e5942407fc14e619a7c",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 231,
+      "sha256": "5dcc461c66ac2ca06f7ac2e3c86a83c9693e57102f3d0d1cb6177b6d995d16cf",
+      "blob_sha1": "721708985060ab0054bd3c47e0312ca3adb7b31a"
+    },
+    {
+      "path": "winequality-red.csv#row=841",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 841
+      },
+      "source_group_id": "numeric-wine-quality:features:95cdcde87133129525aa3ab5e88bafc469d4486c10c5a1327be51afe04623896",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 231,
+      "sha256": "c036a3a07af059820e888112a33dc8e9be41729b64ec3c0fad8a12401fe31a35",
+      "blob_sha1": "7d410bebad7273707744c6b1edd1ff7b4ed27eed"
+    },
+    {
+      "path": "winequality-red.csv#row=925",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 925
+      },
+      "source_group_id": "numeric-wine-quality:features:b04a928088cf9fecc1bab1933bb97e5f5054b2d5873991c3bdd8919431c8ece4",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 232,
+      "sha256": "d7d2684437da330d760d2f069fe04e015b716190c012e9c15bad93713bf25c73",
+      "blob_sha1": "b05257d1c65d77a4bc0973f27aa3c3124f4d2020"
+    },
+    {
+      "path": "winequality-red.csv#row=1009",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 1009
+      },
+      "source_group_id": "numeric-wine-quality:features:f62133568cdb0f8d9410352c483e61560313353d95675c4bd41b068311fb604b",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 231,
+      "sha256": "409df26016ce1fc91ccfbf37415b7165d30b0c04a1b9a6265eb941dc34804f14",
+      "blob_sha1": "0c3c4742249f1c8b7e94b168cc2a721ba62636b9"
+    },
+    {
+      "path": "winequality-red.csv#row=1093",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 1093
+      },
+      "source_group_id": "numeric-wine-quality:features:42040e8e62566a82760a31e3dbcb2b5b659d1cff912ed56f2091b96d7dcd0d55",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 232,
+      "sha256": "c3865b85107fda750e99a7b32237da142ed4234c724fdce0e4b1e33d783cf288",
+      "blob_sha1": "a59a6d6e4bad112a1215060049cfa456920d5c6e"
+    },
+    {
+      "path": "winequality-red.csv#row=1177",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 1177
+      },
+      "source_group_id": "numeric-wine-quality:features:8a260c52b7c1ba8fe5b9022cfc881929632d7310e3a4dd3c4c8f42b31f3728a6",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 230,
+      "sha256": "56154ba5aedb7bcfa16dff2c35fc3e7f5b64736bef7888efca6a3bb186d8378a",
+      "blob_sha1": "66e1c6a71887c542ad4c683f1204b2f45088737e"
+    },
+    {
+      "path": "winequality-red.csv#row=1261",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 1261
+      },
+      "source_group_id": "numeric-wine-quality:features:cda96f3556197c03bec798044c070d410a6d575b4ab90055f090321e61a4d563",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 231,
+      "sha256": "0f736fa1b95048566a6d52949456290efdd991d66c9c75c42a62b029ab1aa8c4",
+      "blob_sha1": "7503512e0c35e49ec374e956fc71a7541828cf2a"
+    },
+    {
+      "path": "winequality-red.csv#row=1345",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 1345
+      },
+      "source_group_id": "numeric-wine-quality:features:e505114660d6c64f88686e96c7c9abd04722d0d23b3a57a030aaf3866070659f",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 232,
+      "sha256": "7b7d005b26e47c83e7190ef741fac5995d054e4cd8019a82f953556a0e4dc0c5",
+      "blob_sha1": "2d34a42e1abf6218bd7dc4bb725df6ef76d76a28"
+    },
+    {
+      "path": "winequality-red.csv#row=1429",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 1429
+      },
+      "source_group_id": "numeric-wine-quality:features:8736ed2a090a28fcfb18169f152dd68acd35c75dfb64ce704a1ef40408b9cd15",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 229,
+      "sha256": "9c21d13eb889cbb5010d0884035152c88db8be8a94f98c1713eaa82a63c1a3ae",
+      "blob_sha1": "70ab71a8e826d5f6c26815fe6e7c53c38389a29d"
+    },
+    {
+      "path": "winequality-red.csv#row=1513",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 1513
+      },
+      "source_group_id": "numeric-wine-quality:features:2fdb4761891a7d7fd7696da5375ecf43d644bf99fc25657608508325b89ba322",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 231,
+      "sha256": "bb126237a4daf247c4b5f114027dcf9a89fa5e6360eaecd2ba8d0d4b007c377a",
+      "blob_sha1": "5331f7bed48e3e81641bbb022926d534fe8fec54"
+    },
+    {
+      "path": "winequality-red.csv#row=1598",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-red.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 1598
+      },
+      "source_group_id": "numeric-wine-quality:features:f5656eda4928a2855fc4755e74c2fa1ecc28a6ae16ec527cd3e37489d3838c76",
+      "metadata": {
+        "wine_type": "red"
+      },
+      "size": 232,
+      "sha256": "628fa6ea0842e49ae912504ce51117e547caa069d3639f7abfa708f0ce8307be",
+      "blob_sha1": "def081038a5b3221d5dcd0542ede85b80fbfb05a"
+    },
+    {
+      "path": "winequality-white.csv#row=0",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 0
+      },
+      "source_group_id": "numeric-wine-quality:features:15771e5576a2ba4b35afb9518e6bd13f05c8271d6e5a71e68c6c548b2c6d2c51",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 230,
+      "sha256": "6f3a150a00d6e2030e33f17686c460aa3c49e3f46e8aaf1f9f1b3d1bfd62aff8",
+      "blob_sha1": "8921dfe7aa31fcf0336f24fb3d30ec07122ae57a"
+    },
+    {
+      "path": "winequality-white.csv#row=257",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 257
+      },
+      "source_group_id": "numeric-wine-quality:features:7da4234351d12796cd68e8b26a04ce6ffd5477637b3a11b3579c72b6e5b4c757",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 229,
+      "sha256": "901fb4c096fbd9c6c20cfb075b23732540e160d5bd5d7ce517e74e27a1304805",
+      "blob_sha1": "90e49a8f74758b433eb048d727276504248eef77"
+    },
+    {
+      "path": "winequality-white.csv#row=515",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 515
+      },
+      "source_group_id": "numeric-wine-quality:features:df4c1579756dbb03fb0dfe076704f7e24d5da0f56cd500fe918182d625369be3",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 232,
+      "sha256": "d99bf378625771fc6983e7cd8fd030e67b2c6da1b072a92e8d51b65b8081cb36",
+      "blob_sha1": "a94a147617ab9f7f3a9e695fe090c58dd7794517"
+    },
+    {
+      "path": "winequality-white.csv#row=773",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 773
+      },
+      "source_group_id": "numeric-wine-quality:features:7b85d87a77b0721676c6e462bd031be4c09c531e61f73fca79e66ffd377a2209",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 231,
+      "sha256": "17a25dca2c557ae748d02450e600ede35bfef04bf8fb3cae634edaa292d13fa7",
+      "blob_sha1": "b1a79fd23ec3f947140fd3c4eebf0728fee3d8b6"
+    },
+    {
+      "path": "winequality-white.csv#row=1030",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 1030
+      },
+      "source_group_id": "numeric-wine-quality:features:6c743b7f0708d03d501670a9aa0007b0014e221ff4f2588e7b1af42a33c1d565",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 231,
+      "sha256": "8cae0c4347b9231b21427faac7928f71d5e358617c73a34a8bc82f9405ee2d33",
+      "blob_sha1": "9d0ab37432e2c26b48f9b45589188f687111fb86"
+    },
+    {
+      "path": "winequality-white.csv#row=1288",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 1288
+      },
+      "source_group_id": "numeric-wine-quality:features:cba444104997827df3007eb0c82afad823b62481bc93026a05f82652683db53e",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 232,
+      "sha256": "82645be592eeca9cd22a6040ccb21f90ec6b63e9fbc8ef91be4b43a43afd5d26",
+      "blob_sha1": "cc892d9a4b55fb7b41f738bbd3c6377ec624b90f"
+    },
+    {
+      "path": "winequality-white.csv#row=1546",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 1546
+      },
+      "source_group_id": "numeric-wine-quality:features:fbc4c5d060585d54a62668e5c2d48f15daa8e6fa6de957a8b6064b70401eae47",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 231,
+      "sha256": "a94d9e0499b8641d3e1881da69528ff8319c0d5857b251fb78d1632a265c69a4",
+      "blob_sha1": "ee95af72331f55133b5c510d3c9cd25dedeb3616"
+    },
+    {
+      "path": "winequality-white.csv#row=1804",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 1804
+      },
+      "source_group_id": "numeric-wine-quality:features:23144e691a742080d5f6ffc62de2d46ec85021b672249158b55c96a7adf13dcc",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 230,
+      "sha256": "4b3ff77fa9332c3e2cb969c5dcd3bb00f2caa22deb9a2e395da290d1d24257f7",
+      "blob_sha1": "fdb2fc9bff4cb6d7dd5b73c694dde18c0cb22318"
+    },
+    {
+      "path": "winequality-white.csv#row=2061",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 2061
+      },
+      "source_group_id": "numeric-wine-quality:features:731923026a0b27088f740d6215a74cece5f94718319833ba1ced6d2f53686063",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 230,
+      "sha256": "3b83b93b9e1005ffa4f4743d89ee903b331a7693b5b43b8fee706c7a55009b32",
+      "blob_sha1": "a1f55d08285bdc9652a6e54f5c21cc81f1cbd562"
+    },
+    {
+      "path": "winequality-white.csv#row=2319",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 2319
+      },
+      "source_group_id": "numeric-wine-quality:features:ba73bd09a6c62db896d1fc938f3a0657ef7ceafe0c4c069a69b6051686b73562",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 231,
+      "sha256": "e4b4d08f31714b340a5631bd76879638085edbcdae26829940117f57f046edcf",
+      "blob_sha1": "3be26383b6f97861e6e562b4aab47d554058b4a8"
+    },
+    {
+      "path": "winequality-white.csv#row=2577",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 2577
+      },
+      "source_group_id": "numeric-wine-quality:features:919742bf9ab936d716560baee5cdeecd6c575393b53a3890800c3dfa65aeeff2",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 231,
+      "sha256": "3400dfb7a2e191e0709b7e2d7473cd251a2e2c47883ada229ad82db07c099f40",
+      "blob_sha1": "f150ba5bfd1ba9023f4c9d0d44003b84a1d00200"
+    },
+    {
+      "path": "winequality-white.csv#row=2835",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 2835
+      },
+      "source_group_id": "numeric-wine-quality:features:f268eee8674448e81c2dd47113c75d4df9637460c1a7fd238262a9dac9d426cd",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 232,
+      "sha256": "b4e6cd2c5dcdb190277834269626f951c40338a491f9c85527fb126539d77233",
+      "blob_sha1": "dcffd74ece8d21f843e756f923f54f660da82d00"
+    },
+    {
+      "path": "winequality-white.csv#row=3092",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 3092
+      },
+      "source_group_id": "numeric-wine-quality:features:bae8438ce715f2837246828bc172ef470599b80ef36ca517f65696763d3f283d",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 233,
+      "sha256": "2e9e2d49d8aac3dc964f2d7044bb038e80b244ed1ebf167c705fc89f2d3cc2cf",
+      "blob_sha1": "0a3cca69f21c27be13b7df80736442509ff6934c"
+    },
+    {
+      "path": "winequality-white.csv#row=3350",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 3350
+      },
+      "source_group_id": "numeric-wine-quality:features:ea837378cb5de7933eca1068151703cba6fb013888ec757949b2b926ac51ea2a",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 231,
+      "sha256": "db09b63da72dde53d0ecb4c452898bf75c2d2dd690ada9f20124494d2663fd34",
+      "blob_sha1": "420110e78a911eab76d10a88ec87591fd6d51582"
+    },
+    {
+      "path": "winequality-white.csv#row=3608",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 3608
+      },
+      "source_group_id": "numeric-wine-quality:features:a3e69b6dad07e8f978af637f29a3ec338622137414b84a1a01488f0bd3f32c49",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 231,
+      "sha256": "dd4c55a0f1f0e246201dc03aa8fe24e0fcd6d8f16f6d4eeac23948b40d524a6a",
+      "blob_sha1": "dc7a0c6280b6bb21aadb05a2e94ab0a7023a8dca"
+    },
+    {
+      "path": "winequality-white.csv#row=3866",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 3866
+      },
+      "source_group_id": "numeric-wine-quality:features:ac624495108b65ec8747e1493c38e9e83d178d8cee238b7a59ab58e45e39b718",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 232,
+      "sha256": "1503c02a750f3bd5e8b57f9a9acc141f6518a2be672a155144c5b45f262a0045",
+      "blob_sha1": "4e64cd0d9350766b66eb6dd8639b8d6a61c4f993"
+    },
+    {
+      "path": "winequality-white.csv#row=4123",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 4123
+      },
+      "source_group_id": "numeric-wine-quality:features:36b52eea6b82b6fcc6b4eab908d94646fcd1e8bbb25fddd0e032494db9e46ec2",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 231,
+      "sha256": "9a48a3004375eb03dbaab7c39c235e0ec96f96c5c1937e5b0dadfe18f88c8aca",
+      "blob_sha1": "0e14614a3e83e1fe7cb4be5152de6f5ea459f236"
+    },
+    {
+      "path": "winequality-white.csv#row=4381",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 4381
+      },
+      "source_group_id": "numeric-wine-quality:features:ecec76ce131a91e691b140421ea74349dfbadd203b5785a201b54dd848c38c04",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 232,
+      "sha256": "4c22472855a4a3e49a8a01129571abc0b59dcffd742b866d61588b73c2e3c2d9",
+      "blob_sha1": "415cc77eda0329b60b2ed82541f4a912c28b408b"
+    },
+    {
+      "path": "winequality-white.csv#row=4639",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 4639
+      },
+      "source_group_id": "numeric-wine-quality:features:e69360f6d5c311188b1b5735f096bd03a2fa8d42e9af07f13736ff604dc3e772",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 234,
+      "sha256": "7278412c0a64fbb0ab252a023658e10899b466800cad2ab518d3eb126553ba81",
+      "blob_sha1": "ebf1bf7cf46aa4144f7f56d3bf4cea65aa6a2fde"
+    },
+    {
+      "path": "winequality-white.csv#row=4897",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "winequality-white.csv",
+        "delimiter": ";",
+        "fieldnames": null,
+        "numeric_fields": [
+          "fixed acidity",
+          "volatile acidity",
+          "citric acid",
+          "residual sugar",
+          "chlorides",
+          "free sulfur dioxide",
+          "total sulfur dioxide",
+          "density",
+          "pH",
+          "sulphates",
+          "alcohol",
+          "quality"
+        ],
+        "row_index": 4897
+      },
+      "source_group_id": "numeric-wine-quality:features:2828bb327980bef0561c7d8b2007806126e1f3c88b0d8c73394a93f865b433e5",
+      "metadata": {
+        "wine_type": "white"
+      },
+      "size": 231,
+      "sha256": "f0014b0db1e6082f739077de7a450735b96c88a23a85f322ab1c686bd499071c",
+      "blob_sha1": "3e872cbc8210072759bc59926707a7c64bb00c75"
+    }
+  ],
+  "licenses": [
+    {
+      "path": "notice/publisher-declaration",
+      "archive_name": "numeric-wine-quality-publisher-declaration.txt",
+      "upstream_url": "https://archive.ics.uci.edu/dataset/186/wine+quality",
+      "size": 169230,
+      "sha256": "7465cf9b5a61acc6a0a3bc5aeaa02af3ab902d347373ad050d5db28e69d06fe4",
+      "blob_sha1": "dfa9822799de2040462cbcf1bc496216a7fd2f76"
+    }
+  ]
+}

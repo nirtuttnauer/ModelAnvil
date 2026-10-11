@@ -1,0 +1,402 @@
+{
+  "schema_version": "1.0",
+  "source_id": "text-ultrachat-200k",
+  "upstream": {
+    "repository": "HuggingFaceH4/ultrachat_200k",
+    "commit": "8049631c405ae6576f93f445c6b8166f76f5505a",
+    "file": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet",
+    "file_size": 243999189,
+    "publisher_lfs_sha256": "afa8fa7426081b2a0e732fb50dbb5cd402a28ad5f0dbe66c0d996d63e7220727",
+    "full_file_checksum_verified": false
+  },
+  "containers": {
+    "data": {
+      "url": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k/resolve/8049631c405ae6576f93f445c6b8166f76f5505a/data/train_sft-00000-of-00003-a3ecf92756993583.parquet",
+      "size": 243999189,
+      "segments": [
+        {
+          "start": 243933653,
+          "length": 65536,
+          "sha256": "85ce6543b0a880784ff4bae4f364c5a8e13bce7b4a7e15a553fb2d9b64ac14b2"
+        },
+        {
+          "start": 243725976,
+          "length": 273205,
+          "sha256": "a10b995c13c67cf823b796fe38b877715a00d2f8328a953bbbe8051d3ac45765"
+        },
+        {
+          "start": 4,
+          "length": 3511437,
+          "sha256": "1f7ec4c8bb17387c94ce4aa3f85f18b18bbf3ed7b2402d6a62e366e9120ce875"
+        },
+        {
+          "start": 81096474,
+          "length": 3498613,
+          "sha256": "c785782c5f73b32b13aae8379ca2e2971c757a0936a5aa10700ecc801c85fb0f"
+        },
+        {
+          "start": 162014021,
+          "length": 3553141,
+          "sha256": "b08572e0b331dc7ab3b5358fffd4a09388ee1a10885638af5d48189e1610b00f"
+        },
+        {
+          "start": 242683796,
+          "length": 1042078,
+          "sha256": "ef7fab73632afdce212c7d885e0468ad53dfaaef28854f719d3f700f03266a07"
+        }
+      ]
+    }
+  },
+  "records": [
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=0&row=0",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 0
+      },
+      "source_group_id": "prompt:f0e37e9f7800261167ce91143f98f511f768847236f133f2d0aed60b444ebe57",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 4042,
+      "sha256": "85efa763a318fb27f8d476cb174bdafbb666f19dc44ecaf52afa7f7ae7944a1a",
+      "blob_sha1": "b0e8db0e7969073b5752ac87beac7bcfc5c3b144"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=0&row=249",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 249
+      },
+      "source_group_id": "prompt:b3b92d103b0747994b0b4c0a32c7faf672f46dc0da4b6f0d3a61b278b9ad7d8e",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 4560,
+      "sha256": "e97617d3aadc78c91cb9a0002fc0e3a019ec77e74a8b5dee102cc32573ab057a",
+      "blob_sha1": "2cb5a7330e9e9fddb34c09d4e2a63014051987c1"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=0&row=499",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 499
+      },
+      "source_group_id": "prompt:41ddb98eb83e9fe6eb1e457bd5ef972743da0a5cdb5d4d6843036bf10f16907d",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 8353,
+      "sha256": "c2cb5ae652185789fb3efe7e02bfd35fe4fd9159961713e84c5cf40a74365367",
+      "blob_sha1": "0215905a2e81b465dee94335b90ac58f535d7e76"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=0&row=749",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 749
+      },
+      "source_group_id": "prompt:3da3ff70c4f0a451d1f0704a21e9ab5892e36bb95b6ae81dfd55318a0722b59b",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 3077,
+      "sha256": "9ea44034a222148371865caa2081b147f989f5831de2de8d9bf4830800093fe0",
+      "blob_sha1": "801e53c99b4cc3776ec52a7d5091a124cda28c17"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=0&row=999",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 999
+      },
+      "source_group_id": "prompt:bd654a5b8431ca6351797e6baa775c981131c7a212ac2fa64e6989928891bc7b",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 7478,
+      "sha256": "a033125757ca2d59dc85f79dbe65b41107ac06d641b1d8dbe5f5299d4d1c3cd8",
+      "blob_sha1": "9ff0b6d72e027816c758859c666bb12e77f1a0d3"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=23&row=0",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 23,
+        "row_index": 0
+      },
+      "source_group_id": "prompt:3428263f9e09606b889a8f9ae088fa554437171478dbfd2401e84cb7406f2429",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 5872,
+      "sha256": "6029e59d4a75d7d3e96ac904ce1fa9263a40a02b25e540179bf4837172f4118f",
+      "blob_sha1": "05c7e7bce7402e2759dd5c342a2bfdad248824bf"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=23&row=249",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 23,
+        "row_index": 249
+      },
+      "source_group_id": "prompt:6ff91e65c97aa545d336cce692a971dd69de54b42caf100f98516d810337f08b",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 10097,
+      "sha256": "b570184e4735e888872b120fa99313a470df9c2d1458767db8a8ebdc38c7a85b",
+      "blob_sha1": "ee7e8f01a7c30657e9193543be183bbae5bf7bb2"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=23&row=499",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 23,
+        "row_index": 499
+      },
+      "source_group_id": "prompt:bd230e47ae379a304072fbbd5f0efa95524b0d946587c217ec59df009cff267c",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 3775,
+      "sha256": "e13f49ea1f3c43b3f125bc6e2a4484b25832b52ca113e675bcd0dd89298237e8",
+      "blob_sha1": "ec4f9896f6a40065e03fb57bcb508f211836acf8"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=23&row=749",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 23,
+        "row_index": 749
+      },
+      "source_group_id": "prompt:153f89c3baa2663ca412da9d96798553125ee9d070c208c4925fb305f2cada57",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 9719,
+      "sha256": "7493fd6c9e4d814c8bb5be6c617683fb477dfdb26940058881fadb7ac32201b7",
+      "blob_sha1": "bf48cfb813e572f73998d7759e34376c5edf3609"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=23&row=999",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 23,
+        "row_index": 999
+      },
+      "source_group_id": "prompt:2c4320413eb33be554a63553d8173e0efdbf37515009d2b96e1ab03acb50e8da",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 9711,
+      "sha256": "31267d0043b1799cb8d137ba600b4ca8d2dc48ebac707e8e7b895a9c1ee10673",
+      "blob_sha1": "9c70fbe1adf0ab31c8360e3c9abb02ee1e2a7a46"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=46&row=0",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 46,
+        "row_index": 0
+      },
+      "source_group_id": "prompt:6b5719a7b9163c45a1f65b0e8a051f02ff3715d58488dd4e33feaf7134566265",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 6960,
+      "sha256": "a1f08476259fad66a8c1e20981eba54327a8a74b9cf8a6ddea55d7c668005fd3",
+      "blob_sha1": "4a514022a20fc02dd566509836b0279e96663ce1"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=46&row=249",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 46,
+        "row_index": 249
+      },
+      "source_group_id": "prompt:8cab773634ffd2e995812428cbe76082ea3a959380af62986409cf3daac73816",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 16623,
+      "sha256": "ed028cf6aa58a0be131ff5f3dea004cee527037730a16636a8dbaaf91059797e",
+      "blob_sha1": "bc8d017b94dc8dc7f430449be0fa1523b843dc2d"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=46&row=499",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 46,
+        "row_index": 499
+      },
+      "source_group_id": "prompt:59f657fc2630c07aad7c6c75779af1da89b139a803204982d06ba6481b2e1963",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 2423,
+      "sha256": "e807f400bc1188086c2d70cf46ca2242faf4de9e37503e29e0b7e01c93f1ff83",
+      "blob_sha1": "b21e68c339329d942a255f3dbd8d7a3141dd68c4"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=46&row=749",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 46,
+        "row_index": 749
+      },
+      "source_group_id": "prompt:272d81260c980961f5bef9706ebca739b722125a96488da4ab045764f07eb038",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 8685,
+      "sha256": "651036b410aecc08177314471656dc3f0182f8f3bf06266cc27ac149d7ded008",
+      "blob_sha1": "2111dbcc40e92c66320f01a025abe3c1baa3a166"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=46&row=999",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 46,
+        "row_index": 999
+      },
+      "source_group_id": "prompt:0123c994e9c36d0e0a6c9e6a7f327d41446e66a30bd29bfc75938c79ce985851",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 3643,
+      "sha256": "7f2167631f7a4b542f3990860fa4475d90d1d1bd999e2e09535ed435fa8a13b7",
+      "blob_sha1": "5992470544c7d6fb619cfaed46aaab945dee09b7"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=69&row=0",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 69,
+        "row_index": 0
+      },
+      "source_group_id": "prompt:b163464380676b1c7e820862d0bb591918c661b8e293d02a177a56b5fa873a5d",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 6046,
+      "sha256": "5a53f7efac8fdf06f506018262341b137960e09b37a1a0982dd0f552e812a767",
+      "blob_sha1": "08ac0f2a1fdc1441ce3ae9aac875053e67ff872f"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=69&row=72",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 69,
+        "row_index": 72
+      },
+      "source_group_id": "prompt:1abf7b6792968552ddda4eb264ebba10e448450ee7e69c95fc63ac3a6772033b",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 3588,
+      "sha256": "4f7b67acdd4f8c5d11329fd10226fe68a892d4bf364874cb1d9a3b541bad8d3d",
+      "blob_sha1": "aaa7cdd1e1db41d8eece3669b38fc23178341d3f"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=69&row=144",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 69,
+        "row_index": 144
+      },
+      "source_group_id": "prompt:da4afd5e7e5a93c35b361f4522de4ccb4b8a5edb9bf40595d484e88d896ef418",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 3742,
+      "sha256": "4ebb123a96cefb97e6f8e203b7180c117bd23e650cd442cb98a4f09fdefe404a",
+      "blob_sha1": "a1e2244773fe3aa460535380c3a264414948d43b"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=69&row=216",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 69,
+        "row_index": 216
+      },
+      "source_group_id": "prompt:0af73b920e53456c3b5a11486c4ad849ff61bc39ec8a64e7a9f36b9be0a2f737",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 5318,
+      "sha256": "1bd9adf2a1f19ddcea822a60f2eacccacdff6cd9f8a79ce4c632d093f2bd9cf9",
+      "blob_sha1": "9d571ac451d0f9b09f28792629a9b82af65d91d5"
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=69&row=288",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 69,
+        "row_index": 288
+      },
+      "source_group_id": "prompt:aa937ce8db7066db518c037561db25fa3dc113a8c8b858ae84492f512a73da8e",
+      "metadata": {
+        "upstream_split": "train_sft",
+        "configuration": null
+      },
+      "size": 4746,
+      "sha256": "3380ffc9ad55763a6f8898ad1609794a33a75e9e04ec840d414678445874aa40",
+      "blob_sha1": "3ff9e330aa8f34b84d14f5f2dd668edd7bbd0ca7"
+    }
+  ],
+  "licenses": [
+    {
+      "path": "notice/publisher-card",
+      "archive_name": "text-ultrachat-200k-publisher-card.txt",
+      "upstream_url": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k/resolve/8049631c405ae6576f93f445c6b8166f76f5505a/README.md",
+      "size": 3899,
+      "sha256": "d2b3bf76702b85b28172f4dd971ae80c03348cd3fee518c7e6e6f4d43dd33431",
+      "blob_sha1": "cb66122fec9b9bb2fc4dd7f5717f48aa22b12d0b"
+    }
+  ]
+}

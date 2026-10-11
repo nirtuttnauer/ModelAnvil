@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "source_id": "numeric-iris",
+  "download_scope": "full",
+  "upstream": {
+    "release_url": "https://archive.ics.uci.edu/static/public/53/iris.zip",
+    "archive_size": 3738
+  },
+  "scope": "All dataset files and splits at the pinned publisher revision.",
+  "files": [
+    {
+      "path": "iris.zip",
+      "url": "https://archive.ics.uci.edu/static/public/53/iris.zip",
+      "size": 3738,
+      "format": "zip",
+      "sha256": "d11fe30213d36434a0879aab7cb00ce3c812eb7ba2495874438abff7b7b762e9",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 3738,
+          "sha256": "d11fe30213d36434a0879aab7cb00ce3c812eb7ba2495874438abff7b7b762e9"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "zip",
+        "whole_file_sha256_verified": true,
+        "members": 4,
+        "uncompressed_bytes": 12205,
+        "png_images": 0,
+        "flac_recordings": 0,
+        "rows": 300,
+        "all_member_crc_verified": true,
+        "json_records": {}
+      }
+    }
+  ],
+  "licenses": [
+    {
+      "path": "notice/publisher-declaration",
+      "archive_name": "numeric-iris-publisher-declaration.txt",
+      "upstream_url": "https://archive.ics.uci.edu/dataset/53/iris",
+      "size": 585454,
+      "sha256": "e2dabb076017582312951e918cf6caedb7ff8335cc60ed3979673252316cee47",
+      "blob_sha1": "9e6adedf079d2d0077c5945a048ca87d9e5884ba"
+    }
+  ],
+  "training_recipe_qualified": false
+}

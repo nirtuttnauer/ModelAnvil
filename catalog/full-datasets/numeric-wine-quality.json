@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "source_id": "numeric-wine-quality",
+  "download_scope": "full",
+  "upstream": {
+    "release_url": "https://archive.ics.uci.edu/static/public/186/wine+quality.zip",
+    "archive_size": 91353
+  },
+  "scope": "All dataset files and splits at the pinned publisher revision.",
+  "files": [
+    {
+      "path": "wine-quality.zip",
+      "url": "https://archive.ics.uci.edu/static/public/186/wine+quality.zip",
+      "size": 91353,
+      "format": "zip",
+      "sha256": "3ed56667f4b828242bd732d7d1dd7f2861e54432239d7fa63877014cbb0304d4",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 91353,
+          "sha256": "3ed56667f4b828242bd732d7d1dd7f2861e54432239d7fa63877014cbb0304d4"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "zip",
+        "whole_file_sha256_verified": true,
+        "members": 3,
+        "uncompressed_bytes": 351930,
+        "png_images": 0,
+        "flac_recordings": 0,
+        "rows": 6497,
+        "all_member_crc_verified": true,
+        "json_records": {}
+      }
+    }
+  ],
+  "licenses": [
+    {
+      "path": "notice/publisher-declaration",
+      "archive_name": "numeric-wine-quality-publisher-declaration.txt",
+      "upstream_url": "https://archive.ics.uci.edu/dataset/186/wine+quality",
+      "size": 169230,
+      "sha256": "7465cf9b5a61acc6a0a3bc5aeaa02af3ab902d347373ad050d5db28e69d06fe4",
+      "blob_sha1": "dfa9822799de2040462cbcf1bc496216a7fd2f76"
+    }
+  ],
+  "training_recipe_qualified": false
+}

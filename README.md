@@ -1,5 +1,11 @@
 # ModelAnvil
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="web/public/brand/modelanvil-logo-reversed.svg">
+  <source media="(prefers-color-scheme: light)" srcset="web/public/brand/modelanvil-logo.svg">
+  <img src="web/public/brand/modelanvil-logo.svg" alt="ModelAnvil logo" width="420">
+</picture>
+
 [![CI](https://github.com/nirtuttnauer/ModelAnvil/actions/workflows/ci.yml/badge.svg)](https://github.com/nirtuttnauer/ModelAnvil/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 An open-source workspace for datasets, model training, alignment and evaluation. Built with Django and React, with a local development setup and a self-hosted control plane.

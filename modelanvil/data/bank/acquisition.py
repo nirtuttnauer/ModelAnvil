@@ -37,12 +37,16 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.utils import timezone
 
-from modelanvil.artifacts.models import Artifact, Dataset, DatasetRevision
+from modelanvil.artifacts.models import Artifact, Dataset, DatasetRevision, LineageEdge
 from modelanvil.artifacts.storage import artifact_storage_backend, upload_staged_artifact
 from modelanvil.budgets.models import BudgetPolicy, BudgetReservation, UsageEvent
 from modelanvil.data.bank.catalog import DatasetBankCatalog, SourceCard
 from modelanvil.data.bank.downloader import ResumablePresetDownloader
 from modelanvil.data.bank.svg_starter import prepare_svg_record
+from modelanvil.data.bank.http_snapshot import (
+    CONNECTOR as HTTP_SUBSET_CONNECTOR, MAX_TRANSFER_BYTES, SnapshotError,
+    cached_transport, fetch_qualified_record, load_manifest, record_url, validate_sample,
+)
 from modelanvil.data.models import SourceSnapshot
 from modelanvil.data.publication import publish_prepared_dataset
 from modelanvil.jobs.models import Job, Worker, WorkerPool
@@ -144,7 +148,10 @@ def https_transport(url: str, headers: dict[str, str]) -> "tuple[int, bytes, dic
     request = urllib.request.Request(url, headers=headers, method="GET")
     try:
         with urllib.request.urlopen(request, timeout=UPSTREAM_TIMEOUT_SECONDS) as response:
-            return response.status, response.read(), dict(response.headers)
+            body = response.read(MAX_TRANSFER_BYTES + 1)
+            if len(body) > MAX_TRANSFER_BYTES:
+                raise UpstreamError("Upstream response exceeds the bounded transfer size.")
+            return response.status, body, dict(response.headers)
     except urllib.error.HTTPError as exc:
         raise UpstreamError(f"Upstream returned HTTP {exc.code}.") from None
     except (urllib.error.URLError, TimeoutError, OSError):
@@ -231,6 +238,11 @@ def list_inventory(
     """Return (selected-pattern records, license-path records) at the pinned revision."""
     transport = transport or https_transport
     card = source.acquisition
+    if card.connector == HTTP_SUBSET_CONNECTOR:
+        manifest = load_manifest(source)
+        records = [UpstreamRecord(entry["path"], entry["blob_sha1"], entry["size"]) for entry in manifest["records"]]
+        notices = [UpstreamRecord(entry["path"], entry["blob_sha1"], entry["size"]) for entry in manifest["licenses"]]
+        return sorted(records, key=lambda record: record.path), notices
     base = _repository_api_base(card.upstream_repository)
     payload = _read_json(f"{base}/git/trees/{card.pinned_revision}?recursive=1", transport)
     if payload.get("truncated"):
@@ -271,6 +283,14 @@ def fetch_record(
 ) -> bytes:
     """Fetch one blob at the pinned revision and verify its Git object id."""
     transport = transport or https_transport
+    if source.acquisition.connector == HTTP_SUBSET_CONNECTOR:
+        try:
+            body = fetch_qualified_record(source, record, transport)
+            if not record.path.startswith("notice/"):
+                validate_sample(source.id, body)
+            return body
+        except SnapshotError as exc:
+            raise UpstreamError(str(exc)) from None
     raw_base = _raw_base(source.acquisition.upstream_repository, source.acquisition.pinned_revision)
     url = raw_base + quote(record.path)
     status, body, _headers = transport(url, {"User-Agent": USER_AGENT})
@@ -293,7 +313,7 @@ def preview_samples(
     inventory: Optional[tuple[list[UpstreamRecord], list[UpstreamRecord]]] = None,
 ) -> list[dict[str, Any]]:
     """Fetch real bounded records from the pinned upstream revision."""
-    transport = transport or https_transport
+    transport = cached_transport(transport or https_transport)
     card = source.acquisition
     inventory = inventory or list_inventory(source, transport=transport)
     count = limit or card.preview_limit or 5
@@ -301,6 +321,16 @@ def preview_samples(
     samples: list[dict[str, Any]] = []
     for record in selected:
         payload = fetch_record(source, record, transport=transport)
+        if card.connector == HTTP_SUBSET_CONNECTOR:
+            content = json.loads(payload)
+            for field in ("image_hex", "audio_hex"):
+                if field in content:
+                    media = bytes.fromhex(content.pop(field))
+                    content[field.removesuffix("_hex")] = {"byte_size": len(media), "sha256": hashlib.sha256(media).hexdigest()}
+            samples.append({"upstream_path": record.path, "upstream_url": _record_url(source, record.path),
+                "byte_size": record.size, "content_sha256": hashlib.sha256(payload).hexdigest(),
+                "digest_verified": True, "license": source.license_expression, "content": content})
+            continue
         item = prepare_svg_record(
             source_library=source.id.split("-", 1)[-1],
             icon_name=record.path.rsplit("/", 1)[-1].rsplit(".", 1)[0],
@@ -416,13 +446,14 @@ def launch_acquisition(
     project_policy: Optional[dict[str, Any]] = None,
     source_revision: Optional[str] = None,
     record_limit: Optional[int] = None,
+    download_scope: str = "sample",
     split_seed: str = "0",
     budget_policy_id: Any = None,
     estimated_amount: Any = None,
     pool_name: Optional[str] = None,
     transport: Optional[Transport] = None,
 ) -> AcquisitionLaunch:
-    """Preflight, plan, and queue one bounded acquisition of a qualified source."""
+    """Preflight, plan, and queue a qualified sample or complete release."""
     catalog = catalog or DatasetBankCatalog.load_from_file()
     transport = transport or https_transport
     policy = dict(project_policy or {})
@@ -430,20 +461,27 @@ def launch_acquisition(
         policy["record_limit"] = int(record_limit)
     preflight = catalog.preflight_download(
         source_id, tenant_id=str(tenant_id), project_policy=policy, source_revision=source_revision,
+        download_scope=download_scope,
     )
-    source = catalog.get_source(source_id)
-    limit = int(policy.get("record_limit") or source.acquisition.record_limit)
+    source = catalog.source_for_full_download(source_id) if download_scope == "full" else catalog.get_source(source_id)
+    limit = int(preflight["scope"]["record_limit"])
     _validate_budget(tenant_id, budget_policy_id, estimated_amount, limit)
     pool = _acquisition_pool(tenant_id, pool_name)
-    inventory, licenses = list_inventory(source, transport=transport)
-    selected = select_records(inventory, limit)
+    if download_scope == "full":
+        from modelanvil.data.bank.full_download import load_manifest as load_full_manifest
+        full_manifest = load_full_manifest(source)
+        selected = [{"path": f["path"], "size": f["size"], "sha256": f["sha256"]} for f in full_manifest["files"]]
+        licenses = []
+    else:
+        inventory, licenses = list_inventory(source, transport=transport)
+        selected = select_records(inventory, limit)
 
     with transaction.atomic():
         downloader = ResumablePresetDownloader(catalog)
         snapshot = downloader.initiate_download(
             tenant_id=tenant_id, source_id=source_id,
             project_id=project_id,
-            revision=preflight["source_revision"], project_policy=policy,
+            revision=preflight["source_revision"], project_policy=policy, download_scope=download_scope,
         )
         snapshot = SourceSnapshot.all_objects.select_for_update().get(pk=snapshot.pk, tenant_id=tenant_id)
         if snapshot.state == SourceSnapshot.State.READY:
@@ -460,10 +498,11 @@ def launch_acquisition(
         plan = dict(detail.get("acquisition") or {})
         plan.setdefault("source_id", source_id)
         plan["source_revision"] = preflight["source_revision"]
+        plan["download_scope"] = download_scope
         plan["connector"] = source.acquisition.connector
         plan["record_selection"] = source.acquisition.record_selection
         plan["record_limit"] = len(selected)
-        plan["records"] = [record.as_dict() for record in selected]
+        plan["records"] = selected if download_scope == "full" else [record.as_dict() for record in selected]
         plan["license_records"] = [record.as_dict() for record in licenses]
         plan.setdefault("verified", {})
         plan.setdefault("failures", [])
@@ -492,6 +531,7 @@ def launch_acquisition(
                 "project_id": str(snapshot.project_id) if snapshot.project_id else None,
                 "snapshot_id": str(snapshot.snapshot_id),
                 "source_id": source_id,
+                "download_scope": download_scope,
                 "source_revision": preflight["source_revision"],
                 "record_limit": len(selected),
                 "split_seed": split_seed,
@@ -560,6 +600,7 @@ def resume_acquisition(
                 "project_id": str(snapshot.project_id) if snapshot.project_id else None,
                 "snapshot_id": str(snapshot.snapshot_id),
                 "source_id": plan.get("source_id"),
+                "download_scope": plan.get("download_scope", "sample"),
                 "source_revision": plan.get("source_revision"),
                 "record_limit": plan.get("record_limit"),
                 "split_seed": plan.get("split_seed", "0"),
@@ -605,9 +646,11 @@ def acquisition_state(snapshot: SourceSnapshot) -> dict[str, Any]:
         ).order_by("-reserved_at").first()
     published_revision = plan.get("published_revision") or None
     total_bytes = sum(int(record.get("size", 0)) for record in records)
-    transferred_bytes = sum(int(entry.get("size", 0)) for entry in verified.values())
+    transferred_bytes = sum(int(entry.get("size", 0)) for entry in verified.values()) + int(plan.get("partial_bytes") or 0)
     return {
         "snapshot_id": str(snapshot.snapshot_id),
+        "download_scope": plan.get("download_scope", "sample"),
+        "source_files": [{"path": path, **entry} for path, entry in verified.items()] if plan.get("download_scope") == "full" and snapshot.state == SourceSnapshot.State.READY else [],
         "source_id": plan.get("source_id") or detail.get("source_id"),
         "source_revision": plan.get("source_revision") or snapshot.source_revision,
         "state": snapshot.state,
@@ -634,7 +677,7 @@ def acquisition_state(snapshot: SourceSnapshot) -> dict[str, Any]:
         "dataset_id": plan.get("dataset_id"),
         "revision_id": published_revision.get("revision_id") if isinstance(published_revision, dict) else None,
         "revision_no": published_revision.get("revision_no") if isinstance(published_revision, dict) else None,
-        "manifest_artifact_id": published_revision.get("manifest_artifact_id") if isinstance(published_revision, dict) else None,
+        "manifest_artifact_id": published_revision.get("manifest_artifact_id") if isinstance(published_revision, dict) else plan.get("manifest_artifact_id"),
         "row_count": published_revision.get("row_count") if isinstance(published_revision, dict) else None,
         "recipe_digest": published_revision.get("recipe_digest") if isinstance(published_revision, dict) else None,
         "rejection_report": published_revision.get("rejection_report") if isinstance(published_revision, dict) else None,
@@ -642,7 +685,7 @@ def acquisition_state(snapshot: SourceSnapshot) -> dict[str, Any]:
     }
 
 
-def _settle_budget(job_id: Any, tenant_id: Any, verified_records: int) -> None:
+def _settle_budget(job_id: Any, tenant_id: Any, verified_records: int, *, download_scope: str = "sample") -> None:
     """Settle a reservation with the verified record count, or release it when nothing moved."""
     if not job_id:
         return
@@ -661,9 +704,9 @@ def _settle_budget(job_id: Any, tenant_id: Any, verified_records: int) -> None:
         provider_event_key=f"bank-acquisition-{job_id}",
         quantity=amount, unit=reservation.policy.unit, reservation=reservation,
         detail={
-            "unit_kind": "bank_acquisition_verified_records",
+            "unit_kind": "bank_acquisition_verified_files" if download_scope == "full" else "bank_acquisition_verified_records",
             "snapshot_ref": reservation.job_id and str(reservation.job_id),
-            "quantity_basis": "verified upstream records at the pinned revision",
+            "quantity_basis": "verified complete source files" if download_scope == "full" else "verified upstream records at the pinned revision",
         },
     )
 
@@ -681,11 +724,65 @@ def _fail(snapshot: SourceSnapshot, detail: dict[str, Any], plan: dict[str, Any]
     snapshot.save(update_fields=["state", "detail", "updated_at"])
 
 
+def _record_url(source: SourceCard, path: str) -> str:
+    if source.acquisition.connector == HTTP_SUBSET_CONNECTOR:
+        manifest = load_manifest(source)
+        entry = next(item for item in manifest["records"] + manifest["licenses"] if item["path"] == path)
+        return record_url(manifest, entry)
+    return _raw_base(source.acquisition.upstream_repository, source.acquisition.pinned_revision) + quote(path)
+
+
+def _http_envelopes(source, snapshot, records, verified, stored):
+    manifest = load_manifest(source)
+    expected = {record["path"]: record for record in manifest["records"]}
+    envelopes = []
+    for record in records:
+        entry = expected[record["path"]]
+        raw = bytes.fromhex(stored[record["path"]]["payload_hex"])
+        if hashlib.sha256(raw).hexdigest() != entry["sha256"] or verified[record["path"]]["sha256"] != entry["sha256"]:
+            raise UpstreamError("Checkpoint bytes differ from the qualified sample.")
+        value = validate_sample(source.id, raw)
+        blocks = []
+        for field, kind, media_type in (("image_hex", "image", "image/png"), ("audio_hex", "audio", "audio/flac" if source.id == "audio-vctk" else "audio/wav")):
+            if field not in value:
+                continue
+            media = bytes.fromhex(value.pop(field))
+            media_sha256 = hashlib.sha256(media).hexdigest()
+            artifact, _ = Artifact.all_objects.get_or_create(
+                tenant_id=snapshot.tenant_id, storage_location_id="local",
+                object_key=f"bank/{source.id}/{snapshot.snapshot_id}/media/{media_sha256}",
+                defaults={"project_id": snapshot.project_id, "sha256": media_sha256,
+                    "byte_size": len(media), "media_type": media_type, "state": Artifact.State.STAGING,
+                    "metadata": {"kind": "dataset_bank_media", "source_id": source.id,
+                        "source_revision": source.acquisition.pinned_revision, "snapshot_ref": str(snapshot.snapshot_id)}},
+            )
+            if artifact.project_id != snapshot.project_id or artifact.sha256 != media_sha256 or artifact.byte_size != len(media):
+                raise UpstreamError("Media artifact differs from the authorized verified sample.")
+            if artifact.state != Artifact.State.COMMITTED:
+                upload_staged_artifact(artifact, io.BytesIO(media), backend=artifact_storage_backend())
+            blocks.append({"block_id": kind, "type": kind, "asset_ref": f"sha256:{media_sha256}",
+                "media_type": media_type, "metadata": {"artifact_ref": str(artifact.artifact_id), "byte_size": len(media), "sha256": media_sha256}})
+        blocks.append({"block_id": "upstream-record", "type": "table" if source.category == "numeric" else "json", "value": value})
+        envelopes.append({"schema_version": "1.0",
+            "sample_id": str(uuid.uuid5(ENVELOPE_NAMESPACE, f"{snapshot.snapshot_id}:{record['path']}")),
+            "source_group_id": entry["source_group_id"], "blocks": blocks,
+            "provenance": {"source_snapshot_ref": str(snapshot.snapshot_id),
+                "source_record_key": record["path"], "content_sha256": entry["sha256"],
+                "transformation_revision_ref": HTTP_SUBSET_CONNECTOR},
+            "metadata": {**entry["metadata"], "license": source.license_expression,
+                "upstream_url": record_url(manifest, entry), "source_revision": source.acquisition.pinned_revision,
+                "source_id": source.id, "training_recipe_qualified": False},
+        })
+    return envelopes
+
+
 def _build_envelopes(
     source: SourceCard, snapshot: SourceSnapshot, records: list[dict[str, Any]],
     verified: dict[str, dict[str, Any]], stored: dict[str, dict[str, Any]], *, raw_base: str,
 ) -> list[dict[str, Any]]:
     """Map verified upstream records to canonical sample envelopes with real provenance."""
+    if source.acquisition.connector == HTTP_SUBSET_CONNECTOR:
+        return _http_envelopes(source, snapshot, records, verified, stored)
     library = source.id.split("-", 1)[-1]
     envelopes: list[dict[str, Any]] = []
     for record in records:
@@ -772,14 +869,23 @@ def _publish(
     )
 
 
+def _execution_snapshot(descriptor):
+    payload = descriptor.get("payload") or {}
+    query = SourceSnapshot.all_objects.filter(snapshot_id=payload.get("snapshot_id"))
+    if payload.get("download_scope") == "full":
+        job = Job.all_objects.filter(job_id=descriptor.get("job_id")).first()
+        if job is None or job.payload.get("snapshot_id") != payload.get("snapshot_id"):
+            return None
+        query = query.filter(tenant_id=job.tenant_id, project_id=job.payload.get("project_id"))
+    return query.first()
+
+
 def _execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, Any]:
     """Transfer, verify, prepare and publish one queued bank acquisition."""
     payload = descriptor.get("payload") or {}
     if payload.get("type") != JOB_TYPE:
         raise ValueError("Unsupported job type for the bank acquisition executor.")
-    snapshot = SourceSnapshot.all_objects.filter(
-        snapshot_id=payload.get("snapshot_id"),
-    ).first()
+    snapshot = _execution_snapshot(descriptor)
     if snapshot is None:
         raise UpstreamError("The queued source snapshot no longer exists.")
     tenant_id = snapshot.tenant_id
@@ -793,6 +899,12 @@ def _execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, 
     source = catalog.get_source(payload.get("source_id") or "")
     if source is None:
         raise UpstreamError("The queued source is no longer in the catalog.")
+    if payload.get("download_scope") == "full":
+        from modelanvil.data.bank.full_download import execute
+        source = catalog.source_for_full_download(source.id)
+        if payload.get("source_revision") != source.acquisition.pinned_revision or snapshot.source_revision != source.acquisition.pinned_revision:
+            raise UpstreamError("Full-download revision differs from its qualification.")
+        return execute(descriptor, context, source, snapshot)
     catalog.assert_acquirable(source.id, source_revision=payload.get("source_revision"))
 
     detail = dict(snapshot.detail or {})
@@ -806,7 +918,8 @@ def _execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, 
         path: entry for path, entry in verified.items()
         if stored.get(path, {}).get("sha256") == entry.get("sha256")
     }
-    raw_base = _raw_base(source.acquisition.upstream_repository, source.acquisition.pinned_revision)
+    raw_base = "" if source.acquisition.connector == HTTP_SUBSET_CONNECTOR else _raw_base(source.acquisition.upstream_repository, source.acquisition.pinned_revision)
+    transport = cached_transport(https_transport)
     total_bytes = sum(int(record.get("size", 0)) for record in records) or 1
     transferred = sum(int(entry.get("size", 0)) for entry in verified.values())
 
@@ -825,7 +938,7 @@ def _execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, 
                 snapshot.save(update_fields=["state", "updated_at"])
                 settle(len(verified))
                 raise AcquisitionCancelled("Transfer cancelled before completion.")
-            record_bytes = fetch_record(source, UpstreamRecord(**record))
+            record_bytes = fetch_record(source, UpstreamRecord(**record), transport=transport)
             content_sha256 = hashlib.sha256(record_bytes).hexdigest()
             store.append(
                 snapshot_ref, record["path"], record_bytes,
@@ -855,10 +968,10 @@ def _execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, 
 
     notices = []
     for record in plan.get("license_records") or []:
-        notice = fetch_record(source, UpstreamRecord(**record))
+        notice = fetch_record(source, UpstreamRecord(**record), transport=transport)
         notices.append({
             "path": record["path"],
-            "upstream_url": raw_base + record["path"],
+            "upstream_url": _record_url(source, record["path"]),
             "upstream_blob_sha1": record["blob_sha1"],
             "content_sha256": hashlib.sha256(notice).hexdigest(),
             "byte_size": len(notice),
@@ -894,6 +1007,14 @@ def _execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, 
     staged.refresh_from_db()
     if staged.state != Artifact.State.COMMITTED or staged.sha256 != digest:
         raise UpstreamError("Acquired artifact bytes were not committed with the verified digest.")
+
+    for envelope in envelopes:
+        for block in envelope["blocks"]:
+            media_ref = block.get("metadata", {}).get("artifact_ref")
+            if media_ref:
+                media = Artifact.all_objects.get(artifact_id=media_ref, tenant_id=tenant_id, project_id=snapshot.project_id, state=Artifact.State.COMMITTED)
+                LineageEdge.all_objects.get_or_create(tenant_id=tenant_id, parent_artifact=media, child_artifact=staged,
+                    relation="bank_media", defaults={"detail": {"source_revision": source.acquisition.pinned_revision}})
 
     manifest_hasher = hashlib.sha256()
     for record in records:
@@ -944,6 +1065,12 @@ def _execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, 
              "detail": ("Rows held out by the previous published version were dropped from this version."
                         if protected else "No earlier published version required protection.")},
         ]
+        if source.acquisition.connector == HTTP_SUBSET_CONNECTOR:
+            transformations = [
+                {"step": "qualified_sha256_verification", "detail": "Every downloaded range, decoded sample, and archived notice matched the content-pinned subset manifest."},
+                {"step": "canonical_source_record_import", "detail": "Source fields are retained as JSON/table blocks. Paired image/audio bytes are committed as tenant/project-scoped artifacts with content-addressed asset references. Training adapters are not qualified."},
+                {"step": "source_group_split_enforcement", "detail": "Qualified prompt, passage, image, speaker, or feature groups stay within one local split. Only the qualified upstream split/configuration is admitted."},
+            ]
         history = list(dataset.metadata.get("acquisition") or [])
         history.append({
             "revision_no": revision.revision_no, "revision_id": str(revision.revision_id),
@@ -1021,21 +1148,21 @@ def execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, A
         return _execute_acquisition(descriptor, context)
     except AcquisitionCancelled:
         payload = descriptor.get("payload") or {}
-        snapshot = SourceSnapshot.all_objects.filter(snapshot_id=payload.get("snapshot_id")).first()
+        snapshot = _execution_snapshot(descriptor)
         if snapshot is not None and snapshot.state != SourceSnapshot.State.READY:
             snapshot.state = SourceSnapshot.State.CANCELLED
             snapshot.save(update_fields=["state", "updated_at"])
             plan = (snapshot.detail or {}).get("acquisition") or {}
             count = max(0, len(plan.get("verified") or {}) - int(payload.get("resumed_from_records") or 0))
-            _settle_budget(descriptor.get("job_id"), snapshot.tenant_id, count)
+            _settle_budget(descriptor.get("job_id"), snapshot.tenant_id, count, download_scope=payload.get("download_scope", "sample"))
         raise
     except (UpstreamError, ValueError, OSError):
         payload = descriptor.get("payload") or {}
-        snapshot = SourceSnapshot.all_objects.filter(snapshot_id=payload.get("snapshot_id")).first()
+        snapshot = _execution_snapshot(descriptor)
         if snapshot is not None and snapshot.state == SourceSnapshot.State.INGESTING:
             detail = dict(snapshot.detail or {})
             plan = dict(detail.get("acquisition") or {})
             _fail(snapshot, detail, plan, "Acquisition failed before publication; resume verified records to retry.")
             count = max(0, len(plan.get("verified") or {}) - int(payload.get("resumed_from_records") or 0))
-            _settle_budget(descriptor.get("job_id"), snapshot.tenant_id, count)
+            _settle_budget(descriptor.get("job_id"), snapshot.tenant_id, count, download_scope=payload.get("download_scope", "sample"))
         raise

@@ -1,0 +1,335 @@
+{
+  "schema_version": "1.0",
+  "source_id": "audio-libritts-r",
+  "upstream": {
+    "release_url": "https://openslr.trmal.net/resources/141/train_clean_100.tar.gz",
+    "archive_size": 8129817509,
+    "archive_etag": "\"1e4932ba5-5feb28fef1f00\"",
+    "full_archive_checksum_verified": false
+  },
+  "containers": {
+    "data": {
+      "url": "https://openslr.trmal.net/resources/141/train_clean_100.tar.gz",
+      "size": 8129817509,
+      "segments": [
+        {
+          "start": 0,
+          "length": 8388608,
+          "sha256": "ae73315a0d05d61d329fffc32988f4d01ef14278d627245a397a3fb8cd472c17"
+        }
+      ]
+    }
+  },
+  "records": [
+    {
+      "path": "730_358_000000_000000",
+      "reader": {
+        "kind": "tar_bundle",
+        "container": "data",
+        "prefix_bytes": 8388608,
+        "members": [
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000000_000000.wav",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000000_000000.normalized.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "libri:speaker:730",
+      "metadata": {
+        "speaker_id": "730",
+        "utterance_id": "730_358_000000_000000",
+        "upstream_split": "train-clean-100",
+        "restored_audio": true
+      },
+      "size": 92288,
+      "sha256": "540035eb9a692d597b305dc3bacab0ed3036b2e4dc72f998780c2b68dea24c05",
+      "blob_sha1": "3d25baec22f2589c2a60fe17f316d1e9e81225be"
+    },
+    {
+      "path": "730_358_000001_000002",
+      "reader": {
+        "kind": "tar_bundle",
+        "container": "data",
+        "prefix_bytes": 8388608,
+        "members": [
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000001_000002.wav",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000001_000002.normalized.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "libri:speaker:730",
+      "metadata": {
+        "speaker_id": "730",
+        "utterance_id": "730_358_000001_000002",
+        "upstream_split": "train-clean-100",
+        "restored_audio": true
+      },
+      "size": 902663,
+      "sha256": "2b3ed88e551e0c4444b6acd6f8b438e744c7dfaae30cf0909172e279d52c12c9",
+      "blob_sha1": "5beca67ac9c491658eeee5fcdd93d0593cbb8c57"
+    },
+    {
+      "path": "730_358_000001_000004",
+      "reader": {
+        "kind": "tar_bundle",
+        "container": "data",
+        "prefix_bytes": 8388608,
+        "members": [
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000001_000004.wav",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000001_000004.normalized.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "libri:speaker:730",
+      "metadata": {
+        "speaker_id": "730",
+        "utterance_id": "730_358_000001_000004",
+        "upstream_split": "train-clean-100",
+        "restored_audio": true
+      },
+      "size": 718326,
+      "sha256": "a42cc09f2d278687f03a9b73733bfcc574444496f9e7872ae3bba576f58fc938",
+      "blob_sha1": "427ba09e69e60e01eee1d22bc1e7fc34d2d09c31"
+    },
+    {
+      "path": "730_358_000001_000005",
+      "reader": {
+        "kind": "tar_bundle",
+        "container": "data",
+        "prefix_bytes": 8388608,
+        "members": [
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000001_000005.wav",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000001_000005.normalized.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "libri:speaker:730",
+      "metadata": {
+        "speaker_id": "730",
+        "utterance_id": "730_358_000001_000005",
+        "upstream_split": "train-clean-100",
+        "restored_audio": true
+      },
+      "size": 810498,
+      "sha256": "4633dd70cb93817546e53063900510c5dbd0aaa96106f263ebaef81ca008e913",
+      "blob_sha1": "613dd318b73cfff10eb5d299b69cc5856cbbb1db"
+    },
+    {
+      "path": "730_358_000002_000000",
+      "reader": {
+        "kind": "tar_bundle",
+        "container": "data",
+        "prefix_bytes": 8388608,
+        "members": [
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000002_000000.wav",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000002_000000.normalized.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "libri:speaker:730",
+      "metadata": {
+        "speaker_id": "730",
+        "utterance_id": "730_358_000002_000000",
+        "upstream_split": "train-clean-100",
+        "restored_audio": true
+      },
+      "size": 806635,
+      "sha256": "d7edafef92b029e22d1fb069c55291f7815cb266d564b319e273bb4b47f96e6a",
+      "blob_sha1": "5e5cdf092e4ce307cb2323b6d6a93abc8853f50d"
+    },
+    {
+      "path": "730_358_000002_000001",
+      "reader": {
+        "kind": "tar_bundle",
+        "container": "data",
+        "prefix_bytes": 8388608,
+        "members": [
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000002_000001.wav",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000002_000001.normalized.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "libri:speaker:730",
+      "metadata": {
+        "speaker_id": "730",
+        "utterance_id": "730_358_000002_000001",
+        "upstream_split": "train-clean-100",
+        "restored_audio": true
+      },
+      "size": 891159,
+      "sha256": "889a98345ffd4a3e548d48e4ab2ace9e05fa4072a464fd006bbb3d651f48aa67",
+      "blob_sha1": "75b9fe56d228b32918184c042d68098403e2c3af"
+    },
+    {
+      "path": "730_358_000003_000002",
+      "reader": {
+        "kind": "tar_bundle",
+        "container": "data",
+        "prefix_bytes": 8388608,
+        "members": [
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000003_000002.wav",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000003_000002.normalized.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "libri:speaker:730",
+      "metadata": {
+        "speaker_id": "730",
+        "utterance_id": "730_358_000003_000002",
+        "upstream_split": "train-clean-100",
+        "restored_audio": true
+      },
+      "size": 280475,
+      "sha256": "ac6204bdfba1824b0199832035940ff3cb966bc1f0f1c053710412d4f921116e",
+      "blob_sha1": "4ea7044daf9a143d73d3d466a73b52e917ae61ad"
+    },
+    {
+      "path": "730_358_000004_000001",
+      "reader": {
+        "kind": "tar_bundle",
+        "container": "data",
+        "prefix_bytes": 8388608,
+        "members": [
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000004_000001.wav",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000004_000001.normalized.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "libri:speaker:730",
+      "metadata": {
+        "speaker_id": "730",
+        "utterance_id": "730_358_000004_000001",
+        "upstream_split": "train-clean-100",
+        "restored_audio": true
+      },
+      "size": 633831,
+      "sha256": "eeb0b3171e805d4cddb1e40b6f763d08c796403dee0a4caf9108c79a2215fb9e",
+      "blob_sha1": "3b3359c5956001c348c82f9aa5c57fe78fa7da2a"
+    },
+    {
+      "path": "730_358_000005_000000",
+      "reader": {
+        "kind": "tar_bundle",
+        "container": "data",
+        "prefix_bytes": 8388608,
+        "members": [
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000005_000000.wav",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000005_000000.normalized.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "libri:speaker:730",
+      "metadata": {
+        "speaker_id": "730",
+        "utterance_id": "730_358_000005_000000",
+        "upstream_split": "train-clean-100",
+        "restored_audio": true
+      },
+      "size": 664562,
+      "sha256": "a54fff19f17c9d9af633b4025593b255b4ec0c1b16183b7bec17e9f7bc3c8781",
+      "blob_sha1": "39dd028bfe8dc2a5630c042c18a9e6ba8b5536f5"
+    },
+    {
+      "path": "730_358_000006_000001",
+      "reader": {
+        "kind": "tar_bundle",
+        "container": "data",
+        "prefix_bytes": 8388608,
+        "members": [
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000006_000001.wav",
+            "field": "audio_hex",
+            "encoding": "hex"
+          },
+          {
+            "name": "LibriTTS_R/train-clean-100/730/358/730_358_000006_000001.normalized.txt",
+            "field": "text",
+            "encoding": "text"
+          }
+        ]
+      },
+      "source_group_id": "libri:speaker:730",
+      "metadata": {
+        "speaker_id": "730",
+        "utterance_id": "730_358_000006_000001",
+        "upstream_split": "train-clean-100",
+        "restored_audio": true
+      },
+      "size": 530132,
+      "sha256": "13d58b0404b11a3531179f7dc704761a34d5545315d8616c44009a62aee529fb",
+      "blob_sha1": "a2a142cb8aeb36bbad8c25d100dbd6e83bae3207"
+    }
+  ],
+  "licenses": [
+    {
+      "path": "notice/publisher-declaration",
+      "archive_name": "audio-libritts-r-publisher-declaration.txt",
+      "upstream_url": "https://www.openslr.org/141/",
+      "size": 8094,
+      "sha256": "6b0262043e82cadfce2bdb514b09f17d04a20895f0deb4eae8a74e9ade83ba60",
+      "blob_sha1": "bd8ff65191db1676c6c3ccd429f5e4ec45ecf83d"
+    }
+  ]
+}

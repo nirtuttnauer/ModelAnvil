@@ -42,7 +42,27 @@ class DatasetBankAPITests(APITestCase):
         data = response.json()
         self.assertIn("sources", data)
         self.assertGreater(data["count"], 0)
-        self.assertEqual(data["qualified_count"], 1)
+        self.assertEqual(data["qualified_count"], 11)
+
+    def test_squad_requires_boolean_share_alike_opt_in(self):
+        path = "/api/v1/dataset-bank/sources/text-squad/preflight/"
+        for value in (False, "true", "false", 1):
+            response = self.client.post(path, {"project_policy": {"allow_share_alike": value}},
+                format="json", **self.auth_headers)
+            self.assertEqual(response.status_code, 400, response.content)
+        response = self.client.post(path, {"project_policy": {"allow_share_alike": True}},
+            format="json", **self.auth_headers)
+        self.assertEqual(response.status_code, 200, response.content)
+        self.assertTrue(response.json()["access"]["share_alike_opt_in"])
+
+    def test_http_subset_upstream_status_requires_requalification(self):
+        with patch("modelanvil.data.bank.views.upstream_head_revision") as lookup:
+            response = self.client.get("/api/v1/dataset-bank/sources/numeric-iris/upstream/", **self.auth_headers)
+        self.assertEqual(response.status_code, 200, response.content)
+        self.assertIsNone(response.json()["upstream_head_revision"])
+        self.assertIsNone(response.json()["moved"])
+        self.assertFalse(response.json()["automatic_update_check_supported"])
+        lookup.assert_not_called()
 
     def test_list_sources_marks_unqualified_sources_unavailable(self):
         response = self.client.get("/api/v1/dataset-bank/sources/?q=tabler", **self.auth_headers)
@@ -377,9 +397,9 @@ class DatasetBankAcquisitionJourneyTests(APITestCase):
         from modelanvil.data.bank.acquisition import fetch_record
         launched = self.launch(record_limit=4).json()
         count = 0
-        def cancelling_fetch(source, record):
+        def cancelling_fetch(source, record, **kwargs):
             nonlocal count
-            payload = fetch_record(source, record)
+            payload = fetch_record(source, record, **kwargs)
             if record.path.endswith(".svg"):
                 count += 1
                 if count == 2:

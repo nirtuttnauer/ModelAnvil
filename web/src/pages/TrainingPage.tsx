@@ -841,11 +841,11 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
                     <strong>Candidate Weights SHA-256:</strong>{' '}
                     <code>{inferResult.verification.weights_sha256}</code>
                   </div>
-                  <div style={{ padding: '8px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '4px', fontFamily: 'monospace', fontSize: '13px' }}>
+                  <div style={{ padding: '8px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '4px', fontFamily: 'monospace', fontSize: '13px' }}>
                     <strong>Prompt:</strong> {inferResult.inference.prompt}
                     <br />
                     <strong>Completion:</strong>{' '}
-                    <span style={{ color: 'var(--color-primary, #0969da)' }}>
+                    <span style={{ color: 'var(--primary-text)' }}>
                       {inferResult.inference.completion}
                     </span>
                   </div>

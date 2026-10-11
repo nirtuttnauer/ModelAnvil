@@ -49,8 +49,9 @@ def _stored_part_digest(backend: StorageBackend, tenant_id, object_key: str) -> 
 class _PartStream:
     """Read ordered part objects as one bounded-memory stream."""
 
-    def __init__(self, backend: StorageBackend, tenant_id, object_keys: list[str]):
+    def __init__(self, backend: StorageBackend, tenant_id, object_keys: list[str], heartbeat=None):
         self.backend = backend
+        self.heartbeat = heartbeat
         self.tenant_id = tenant_id
         self.object_keys = iter(object_keys)
         self.current = None
@@ -69,6 +70,8 @@ class _PartStream:
         return True
 
     def read(self, size: int = -1) -> bytes:
+        if self.heartbeat:
+            self.heartbeat()
         if size == 0 or self.finished:
             return b""
         if size < 0:
@@ -191,6 +194,7 @@ def complete_transfer(
     transfer: TransferSession,
     *,
     backend: StorageBackend,
+    heartbeat=None,
 ) -> TransferSession:
     """Verify ordered part manifest and atomically publish the target artifact."""
     expired = False
@@ -221,7 +225,7 @@ def complete_transfer(
             if current.bytes_verified != current.artifact.byte_size:
                 raise TransferConflict("Verified part sizes do not match the target artifact size.")
             keys = [current.part_manifest[str(number)]["object_key"] for number in ordered_numbers]
-            stream = _PartStream(backend, current.tenant_id, keys)
+            stream = _PartStream(backend, current.tenant_id, keys, heartbeat=heartbeat)
             observed: dict[str, int | str] = {}
             try:
                 try:
