@@ -33,12 +33,40 @@ class DatasetBankCatalogTests(TestCase):
     def setUp(self):
         self.catalog = DatasetBankCatalog.load_from_file()
 
-    def test_catalog_loads_all_23_candidate_manifests(self):
+    def test_catalog_loads_all_candidate_manifests(self):
         sources = self.catalog.list_sources()
-        self.assertEqual(len(sources), 23)
+        self.assertEqual(len(sources), 33)
         self.assertTrue(self.catalog.schema_version in ("1.0", "0.1.0"))
         self.assertGreaterEqual(len(self.catalog.list_presets()), 3)
         self.assertGreaterEqual(len(self.catalog.held_candidates), 2)
+
+    def test_catalog_references_are_unique_and_output_groups_are_consistent(self):
+        path = Path(__file__).resolve().parents[3] / "catalog" / "dataset-presets.json"
+        data = json.loads(path.read_text(encoding="utf-8"))
+        sources = {source["id"]: source for source in data["sources"]}
+        self.assertEqual(len(sources), len(data["sources"]))
+        groups = {group["id"]: group for group in data["output_groups"]}
+        for group_id, group in groups.items():
+            self.assertEqual(len(group["source_ids"]), len(set(group["source_ids"])))
+            for source_id in group["source_ids"]:
+                self.assertIn(source_id, sources)
+                self.assertIn(group_id, sources[source_id]["output_group_ids"])
+        for source in sources.values():
+            for group_id in source["output_group_ids"]:
+                self.assertIn(group_id, groups)
+                self.assertIn(source["id"], groups[group_id]["source_ids"])
+        for preset in data["presets"]:
+            self.assertTrue(set(preset["source_ids"]) <= sources.keys())
+
+    def test_expansion_preserves_subset_scope_and_share_alike_opt_in(self):
+        smol = self.catalog.get_source("text-smol-magpie-ultra")
+        self.assertEqual(smol.fetch["configuration"], "smol-magpie-ultra")
+        squad = self.catalog.get_source("text-squad")
+        self.assertEqual(squad.eligibility, "opt_in_required")
+        with self.assertRaisesMessage(ValidationError, "share-alike"):
+            self.catalog.preflight_download(
+                squad.id, tenant_id="tenant-1", project_policy={"allow_share_alike": False},
+            )
 
     def test_search_svg_returns_curated_candidates(self):
         results = self.catalog.search("svg")
@@ -50,7 +78,9 @@ class DatasetBankCatalogTests(TestCase):
 
     def test_only_a_qualified_source_is_acquirable(self):
         qualified = {source.id for source in self.catalog.qualified_sources()}
-        self.assertEqual(qualified, {"svg-lucide"})
+        self.assertEqual(qualified, {"svg-lucide", "text-smol-magpie-ultra", "text-ultrachat-200k", "text-squad",
+            "preference-ultrafeedback-binarized", "tools-glaive-v2", "image-clevr", "audio-vctk",
+            "audio-libritts-r", "numeric-iris", "numeric-wine-quality"})
         for source in self.catalog.list_sources():
             if source.id in qualified:
                 continue

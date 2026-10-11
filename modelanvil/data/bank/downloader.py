@@ -35,6 +35,7 @@ class ResumablePresetDownloader:
         revision: Optional[str] = None,
         project_policy: Optional[dict[str, Any]] = None,
         source_revision: Optional[str] = None,
+        download_scope: str = "sample",
     ) -> SourceSnapshot:
         """Initiate or get existing immutable snapshot for a given source and revision.
 
@@ -49,17 +50,17 @@ class ResumablePresetDownloader:
         #    and acquisition qualification with its pinned upstream revision)
         preflight = self.catalog.preflight_download(
             source_id, tenant_id=str(tid), project_policy=project_policy,
-            source_revision=requested_revision,
+            source_revision=requested_revision, download_scope=download_scope,
         )
         resolved_revision = preflight.get("source_revision") or revision
 
         # 2. Get or create tenant-scoped DataSource
-        source_card = self.catalog.get_source(source_id)
+        source_card = self.catalog.source_for_full_download(source_id) if download_scope == "full" else self.catalog.get_source(source_id)
         source_name = source_card.name if source_card else source_id
 
         data_source, _ = DataSource.all_objects.get_or_create(
             tenant_id=tid,
-            name=f"bank-{source_id}" + (f"@{project_id}" if project_id else ""),
+            name=f"bank-{source_id}" + ("-full" if download_scope == "full" else "") + (f"@{project_id}" if project_id else ""),
             defaults={
                 "project_id": project_id,
                 "kind": DataSource.Kind.REPOSITORY,

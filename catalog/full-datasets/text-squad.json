@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0",
+  "source_id": "text-squad",
+  "download_scope": "full",
+  "upstream": {
+    "repository": "rajpurkar/squad",
+    "commit": "7b6d24c440a36b6815f21b70d25016731768db1f"
+  },
+  "scope": "All dataset files and splits at the pinned publisher revision.",
+  "files": [
+    {
+      "path": "plain_text/train-00000-of-00001.parquet",
+      "url": "https://huggingface.co/datasets/rajpurkar/squad/resolve/7b6d24c440a36b6815f21b70d25016731768db1f/plain_text/train-00000-of-00001.parquet",
+      "size": 14458314,
+      "publisher_sha256": "ea7f52bac024f6b1bdc7aaa2a4ee302cba8c2fdc8d4a235cf18a9a5196b6175b",
+      "format": "parquet",
+      "sha256": "ea7f52bac024f6b1bdc7aaa2a4ee302cba8c2fdc8d4a235cf18a9a5196b6175b",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 14458314,
+          "sha256": "ea7f52bac024f6b1bdc7aaa2a4ee302cba8c2fdc8d4a235cf18a9a5196b6175b"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 87599,
+        "row_groups": 88,
+        "columns": [
+          "id",
+          "title",
+          "context",
+          "question",
+          "answers"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "plain_text/validation-00000-of-00001.parquet",
+      "url": "https://huggingface.co/datasets/rajpurkar/squad/resolve/7b6d24c440a36b6815f21b70d25016731768db1f/plain_text/validation-00000-of-00001.parquet",
+      "size": 1819889,
+      "publisher_sha256": "8c6646d36bd5a95061e076788cf3161d11f6f3e7d625dac7a83bbed0a49f69f7",
+      "format": "parquet",
+      "sha256": "8c6646d36bd5a95061e076788cf3161d11f6f3e7d625dac7a83bbed0a49f69f7",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 1819889,
+          "sha256": "8c6646d36bd5a95061e076788cf3161d11f6f3e7d625dac7a83bbed0a49f69f7"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 10570,
+        "row_groups": 11,
+        "columns": [
+          "id",
+          "title",
+          "context",
+          "question",
+          "answers"
+        ],
+        "all_rows_validated": true
+      }
+    }
+  ],
+  "licenses": [
+    {
+      "path": "notice/publisher-card",
+      "archive_name": "text-squad-publisher-card.txt",
+      "upstream_url": "https://huggingface.co/datasets/rajpurkar/squad/resolve/7b6d24c440a36b6815f21b70d25016731768db1f/README.md",
+      "size": 7620,
+      "sha256": "fb89c5d06573a2c7b7fb671ad60f5c1f3be2ccd7a63162f41b9e613abca0f0b8",
+      "blob_sha1": "1cfb3ead8da0573949c9990a89ed01f909646358"
+    }
+  ],
+  "training_recipe_qualified": false
+}

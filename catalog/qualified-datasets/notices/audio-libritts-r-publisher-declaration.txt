@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="description" content="Open Speech and Language Resources."/>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/openslr_ico.png"/>
+    <link rel="stylesheet" type="text/css" href="/style.css"/>
+    <title>openslr.org</title>
+
+  </head>
+  <body>
+    <div class="container">
+      <div id="centeredContainer">
+        <div id="headerBar">
+         <div id="headerLeft"> <image id="logoImage" src="/openslr.png">  </div>
+         <div id="headerRight"><h2 class="slrStyle">Open Speech and Language Resources</h2></div>
+        </div>
+        <hr/>
+        <div id="topBar">
+          <a class="topButtons" href="/index.html">Home</a>
+          <a class="topButtons" href="/resources.php">Resources</a>
+        </div>
+        <hr/>
+        <div id="rightCol">
+          <div class = "contact_info">
+
+          </div>
+        </div>
+        <div id="mainContent">
+
+          <div class="container" >
+<h2 class="slrStyle"> LibriTTS-R
+ </h2>
+<p class="resource"> <b>Identifier:</b> SLR141 </p>
+<p class="resource"> <b>Summary:</b> Sound quality improved version of the LibriTTS corpus which is a large-scale corpus of English speech designed for TTS use
+ </p>
+<p class="resource"> <b>Category:</b> Speech
+ </p>
+<p class="resource"> <b>License:</b> CC BY 4.0
+ </p>
+<p class="resource"> <b>Downloads (use a mirror closer to you):</b> <br>
+<a href="https://openslr.trmal.net/resources/141/doc.tar.gz"> doc.tar.gz </a> [318K] &nbsp; (Documents of LibriTTS-R
+) &nbsp;  Mirrors: 
+<a href="https://openslr.trmal.net/resources/141/doc.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.elda.org/resources/141/doc.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.magicdatatech.com/resources/141/doc.tar.gz"> [CN] </a> &nbsp;
+<br><a href="https://openslr.trmal.net/resources/141/dev_clean.tar.gz"> dev_clean.tar.gz </a> [1.3G] &nbsp; (Development set, clean speech
+) &nbsp;  Mirrors: 
+<a href="https://openslr.trmal.net/resources/141/dev_clean.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.elda.org/resources/141/dev_clean.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.magicdatatech.com/resources/141/dev_clean.tar.gz"> [CN] </a> &nbsp;
+<br><a href="https://openslr.trmal.net/resources/141/dev_other.tar.gz"> dev_other.tar.gz </a> [975M] &nbsp; (Development set, more challenging speech
+) &nbsp;  Mirrors: 
+<a href="https://openslr.trmal.net/resources/141/dev_other.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.elda.org/resources/141/dev_other.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.magicdatatech.com/resources/141/dev_other.tar.gz"> [CN] </a> &nbsp;
+<br><a href="https://openslr.trmal.net/resources/141/test_clean.tar.gz"> test_clean.tar.gz </a> [1.2G] &nbsp; (Test set, "clean" speech
+) &nbsp;  Mirrors: 
+<a href="https://openslr.trmal.net/resources/141/test_clean.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.elda.org/resources/141/test_clean.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.magicdatatech.com/resources/141/test_clean.tar.gz"> [CN] </a> &nbsp;
+<br><a href="https://openslr.trmal.net/resources/141/test_other.tar.gz"> test_other.tar.gz </a> [1.0G] &nbsp; (Test set, "other" speech 
+) &nbsp;  Mirrors: 
+<a href="https://openslr.trmal.net/resources/141/test_other.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.elda.org/resources/141/test_other.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.magicdatatech.com/resources/141/test_other.tar.gz"> [CN] </a> &nbsp;
+<br><a href="https://openslr.trmal.net/resources/141/train_clean_100.tar.gz"> train_clean_100.tar.gz </a> [8.1G] &nbsp; (Training set derived from the original materials of the train-clean-100 subset of LibriSpeech 
+) &nbsp;  Mirrors: 
+<a href="https://openslr.trmal.net/resources/141/train_clean_100.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.elda.org/resources/141/train_clean_100.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.magicdatatech.com/resources/141/train_clean_100.tar.gz"> [CN] </a> &nbsp;
+<br><a href="https://openslr.trmal.net/resources/141/train_clean_360.tar.gz"> train_clean_360.tar.gz </a> [28G] &nbsp; (Training set derived from the original materials of the train-clean-360 subset of LibriSpeech
+) &nbsp;  Mirrors: 
+<a href="https://openslr.trmal.net/resources/141/train_clean_360.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.elda.org/resources/141/train_clean_360.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.magicdatatech.com/resources/141/train_clean_360.tar.gz"> [CN] </a> &nbsp;
+<br><a href="https://openslr.trmal.net/resources/141/train_other_500.tar.gz"> train_other_500.tar.gz </a> [46G] &nbsp; (Training set derived from the original materials of the train-other-500 subset of LibriSpeech
+) &nbsp;  Mirrors: 
+<a href="https://openslr.trmal.net/resources/141/train_other_500.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.elda.org/resources/141/train_other_500.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.magicdatatech.com/resources/141/train_other_500.tar.gz"> [CN] </a> &nbsp;
+<br><a href="https://openslr.trmal.net/resources/141/libritts_r_failed_speech_restoration_examples.tar.gz"> libritts_r_failed_speech_restoration_examples.tar.gz </a> [106K] &nbsp; (Lists of files where speech restoration failed
+) &nbsp;  Mirrors: 
+<a href="https://openslr.trmal.net/resources/141/libritts_r_failed_speech_restoration_examples.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.elda.org/resources/141/libritts_r_failed_speech_restoration_examples.tar.gz"> [EU] </a> &nbsp;
+<a href="https://openslr.magicdatatech.com/resources/141/libritts_r_failed_speech_restoration_examples.tar.gz"> [CN] </a> &nbsp;
+<br><a href="https://openslr.trmal.net/resources/141/md5sum.txt"> md5sum.txt </a> [509 bytes] &nbsp; (Checksums of the individual files
+) &nbsp;  Mirrors: 
+<a href="https://openslr.trmal.net/resources/141/md5sum.txt"> [EU] </a> &nbsp;
+<a href="https://openslr.elda.org/resources/141/md5sum.txt"> [EU] </a> &nbsp;
+<a href="https://openslr.magicdatatech.com/resources/141/md5sum.txt"> [CN] </a> &nbsp;
+<br><br></p><p class="resource"><b>About this resource:</b></p><div id="about">LibriTTS-R [1] is a sound quality improved version of the <a href="http://www.openslr.org/60">LibriTTS corpus (http://www.openslr.org/60/)</a> which is a multi-speaker English corpus of approximately 585 hours of read English speech at 24kHz sampling rate, published in 2019. The constituent samples of LibriTTS-R are identical to those of LibriTTS, with only the sound quality improved. To improve sound quality, a speech restoration model, Miipher proposed by Yuma Koizumi [2], was used.
+
+<p>
+For more information, refer to the paper [1]. If you use the LibriTTS-R corpus in your work, please cite the dataset paper [1] where it was introduced.
+
+<p>
+Audio samples of the ground-truth and TTS generated samples are available at the demo page: <a href="https://google.github.io/df-conformer/librittsr/">https://google.github.io/df-conformer/librittsr/</a>
+
+<p>
+[1] Yuma Koizumi, Heiga Zen, Shigeki Karita, Yifan Ding, Kohei Yatabe, Nobuyuki Morioka, Michiel Bacchiani, Yu Zhang, Wei Han, and Ankur Bapna, "LibriTTS-R: A Restored Multi-Speaker Text-to-Speech Corpus," arXiv, 2023.<br>
+[2] Yuma Koizumi, Heiga Zen, Shigeki Karita, Yifan Ding, Kohei Yatabe, Nobuyuki Morioka, Yu Zhang, Wei Han, Ankur Bapna, and Michiel Bacchiani, "Miipher: A Robust Speech Restoration Model Integrating Self-Supervised Speech and Text Representations," arXiv, 2023.
+
+</div>
+            <div style="height:300px"> </div>
+
+          </div>
+
+        </div>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <div style="clear: both"></div>
+
+        <div id="footer">
+          <p>
+                <a href="https://jigsaw.w3.org/css-validator/check/referer">
+                  <img style="border:0;width:88px;height:31px"
+                   src="https://jigsaw.w3.org/css-validator/images/vcss-blue"
+                   alt="Valid CSS!" />
+                </a>
+          </p>
+        </div>
+      </div>
+  </body>
+</html>
+

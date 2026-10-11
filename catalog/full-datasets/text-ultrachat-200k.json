@@ -1,0 +1,707 @@
+{
+  "schema_version": "1.0",
+  "source_id": "text-ultrachat-200k",
+  "download_scope": "full",
+  "upstream": {
+    "repository": "HuggingFaceH4/ultrachat_200k",
+    "commit": "8049631c405ae6576f93f445c6b8166f76f5505a"
+  },
+  "scope": "All dataset files and splits at the pinned publisher revision.",
+  "files": [
+    {
+      "path": "data/test_gen-00000-of-00001-3d4cd8309148a71f.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k/resolve/8049631c405ae6576f93f445c6b8166f76f5505a/data/test_gen-00000-of-00001-3d4cd8309148a71f.parquet",
+      "size": 80359907,
+      "publisher_sha256": "937211dbe6e7db6315cd894efaedfe0231198a211ed5a1f856b0553a4b3844c0",
+      "format": "parquet",
+      "sha256": "937211dbe6e7db6315cd894efaedfe0231198a211ed5a1f856b0553a4b3844c0",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "3ba030097ad6f69e2c365a726513ea786cac96dc78b6f16be67377e1ec42fe9d"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "735c4687eb62d871bc67c3401eedfc6872856a47070ecd45a90305dd980ea914"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "a1517e547a9c142f011ed2497f60694769b2bc8d32258cc1667d68a6620fdefb"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "8284710a13a817100958df22aa8b641a3634cb0bde93a92574ced2cc6c117078"
+        },
+        {
+          "start": 67108864,
+          "length": 13251043,
+          "sha256": "76df44659ce3708fad92e07be6c96422c856e597892a9e81814f8a790601156a"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 28304,
+        "row_groups": 29,
+        "columns": [
+          "prompt",
+          "prompt_id",
+          "messages"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/test_sft-00000-of-00001-f7dfac4afe5b93f4.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k/resolve/8049631c405ae6576f93f445c6b8166f76f5505a/data/test_sft-00000-of-00001-f7dfac4afe5b93f4.parquet",
+      "size": 81176553,
+      "publisher_sha256": "c18fd6e77395577652bdefbc5a87044ea799e989451ecfca5c6cf977ae5c6f70",
+      "format": "parquet",
+      "sha256": "c18fd6e77395577652bdefbc5a87044ea799e989451ecfca5c6cf977ae5c6f70",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "4c17358f8821d8993cdcc768261476a106995340086372d7d287ceb0fb41510c"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "2fb6799c5e6a6cf13f5fc5cca6890d784a2fbf81f51e850f711a9aacc42abae7"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "844a397ce4e95d075f132b1de6201d7092b416b5eb07406e8742fba131b17e0c"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "534241dd750504c6e44e001778674080f0893b64c50e5290df330a76b381b7f7"
+        },
+        {
+          "start": 67108864,
+          "length": 14067689,
+          "sha256": "d21730e666c0b28458aa1372c981689ec52912ae28e638a199978e56be107c09"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 23110,
+        "row_groups": 24,
+        "columns": [
+          "prompt",
+          "prompt_id",
+          "messages"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/train_gen-00000-of-00003-a6c9fb894be3e50b.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k/resolve/8049631c405ae6576f93f445c6b8166f76f5505a/data/train_gen-00000-of-00003-a6c9fb894be3e50b.parquet",
+      "size": 243687391,
+      "publisher_sha256": "8172417116ff18bb0d1ecc2166a658ebabf79a6c9cf02d8cad411fa764548663",
+      "format": "parquet",
+      "sha256": "8172417116ff18bb0d1ecc2166a658ebabf79a6c9cf02d8cad411fa764548663",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "8f3e4517e0c656dc7b27f8e741164cb87d9d87ecd6d7b6b782fcd618cf87d64a"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "5d1fe9da7bcb880b7cd710a12135d6cf75e39ba5168c1c5ba4112e83505f788f"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "850408f0eb7f4880a86abad5878d8e2e20f6e674531a55e66f7cf8080a2abd23"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "641d627445a6cadd54327aaa1afdedec6b8e3ec58daa11bf95b9a75fdd34316a"
+        },
+        {
+          "start": 67108864,
+          "length": 16777216,
+          "sha256": "262ba05255a392265f6571c891c3cc3ca7e1353ccad5d4c123731b2046f60ccb"
+        },
+        {
+          "start": 83886080,
+          "length": 16777216,
+          "sha256": "31b3dacaae1e4c11c38434f001ef1ff5012d1a5acab231f1a4a6bb56bb86d1e4"
+        },
+        {
+          "start": 100663296,
+          "length": 16777216,
+          "sha256": "7f1183a0185f66155ca0836d46b5b3e858acd9229e3737ac805c2f13a5cccce5"
+        },
+        {
+          "start": 117440512,
+          "length": 16777216,
+          "sha256": "bcc9e0126676363ec08aea615145f85938d977c882e5255e860d26717a9adfeb"
+        },
+        {
+          "start": 134217728,
+          "length": 16777216,
+          "sha256": "80126635f6f49757c384ea178fd543416eb4f53757799e2b35ff1eea3d948a74"
+        },
+        {
+          "start": 150994944,
+          "length": 16777216,
+          "sha256": "c3a436b9d501609103c762b6aa7becb360ada68968894eed86419ca979de8563"
+        },
+        {
+          "start": 167772160,
+          "length": 16777216,
+          "sha256": "74dac80f23e21c2d39f0c251464dfe8d4b49537ee0f5316527008afce09f7c56"
+        },
+        {
+          "start": 184549376,
+          "length": 16777216,
+          "sha256": "1e138d8314e4b5c526080431dd124909a9b134288a33898e6005ebfb45fc4771"
+        },
+        {
+          "start": 201326592,
+          "length": 16777216,
+          "sha256": "63609c5463d9a7a1438c38397fba712a239a6503d4da63451154d68f1582b7d4"
+        },
+        {
+          "start": 218103808,
+          "length": 16777216,
+          "sha256": "8cd05ee31ec1f1eabe190e0d4eaa5d5f555516e5fd23e1e6d87a2ef712e1c8c7"
+        },
+        {
+          "start": 234881024,
+          "length": 8806367,
+          "sha256": "6becf81f4ecfc38ad65c76fd7ece67d674602561411b7a19a4ddeb3dfba381b6"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 85344,
+        "row_groups": 86,
+        "columns": [
+          "prompt",
+          "prompt_id",
+          "messages"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/train_gen-00001-of-00003-d6a0402e417f35ca.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k/resolve/8049631c405ae6576f93f445c6b8166f76f5505a/data/train_gen-00001-of-00003-d6a0402e417f35ca.parquet",
+      "size": 243300397,
+      "publisher_sha256": "8b9e9ce202df576400e6727fcabb027bc92449767bec00871190d81f1b330de1",
+      "format": "parquet",
+      "sha256": "8b9e9ce202df576400e6727fcabb027bc92449767bec00871190d81f1b330de1",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "666d6ef72a6782eb2c688ec6cfe3972f7d4aee66ec4a077109c1f8d680e6ef02"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "fb4ede8f1363cceffe52c87b1152dc025ff52645d3c61d868490b7aa5259efd5"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "a76a17c4a19eb38e007f54d9887fb9d8badd9d1c5c4d3d12b206a264ad68c2e1"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "991b8eccf1f05054d54113b1e6bec948479b56bdce23f44c3c9616f2f030ae80"
+        },
+        {
+          "start": 67108864,
+          "length": 16777216,
+          "sha256": "04576c9fd591780465d9ad37fc5f689e5e19f4d4aca7e8324098b7c21192270d"
+        },
+        {
+          "start": 83886080,
+          "length": 16777216,
+          "sha256": "b9b1578f1b9685e22b2de5a5b54750812071d5bd5c740764e40df0c803150fe7"
+        },
+        {
+          "start": 100663296,
+          "length": 16777216,
+          "sha256": "918681060d66104b80954dce21383edffcfbf979ba255f9ba6c20eb545882a63"
+        },
+        {
+          "start": 117440512,
+          "length": 16777216,
+          "sha256": "b050333b626d4e22c91a4863342b982d71765bfb26b22d4c5cbf158066577ac1"
+        },
+        {
+          "start": 134217728,
+          "length": 16777216,
+          "sha256": "ec5efd68da9c3f115ea5d200573828a57318b22ce0cf355514eb5d428619670f"
+        },
+        {
+          "start": 150994944,
+          "length": 16777216,
+          "sha256": "99786a7bba784803058ddea88c30e8f07bcd43df795c37f25734a4bede541d0b"
+        },
+        {
+          "start": 167772160,
+          "length": 16777216,
+          "sha256": "b599541bb10d5b2947f326a77fab7061f8ee8af426188cb969f81fb35aaf5d37"
+        },
+        {
+          "start": 184549376,
+          "length": 16777216,
+          "sha256": "0377f9ba17de61d0e373ff47c6f8fa941b54e40c9ac71c9386ec7ca1559bb30f"
+        },
+        {
+          "start": 201326592,
+          "length": 16777216,
+          "sha256": "e1c7274fc8394397d587d911e0a0e06e02f7e7b17d605d955639f57cf7a41413"
+        },
+        {
+          "start": 218103808,
+          "length": 16777216,
+          "sha256": "2a966c72df57eba32162c588142d241d460bc4df9f78910759a745e1705e5f67"
+        },
+        {
+          "start": 234881024,
+          "length": 8419373,
+          "sha256": "bcff39f062fe274888eda58d1be525e5940762ed2719eab4e9ff85b46485a802"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 85344,
+        "row_groups": 86,
+        "columns": [
+          "prompt",
+          "prompt_id",
+          "messages"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/train_gen-00002-of-00003-c0db75b92a2f48fd.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k/resolve/8049631c405ae6576f93f445c6b8166f76f5505a/data/train_gen-00002-of-00003-c0db75b92a2f48fd.parquet",
+      "size": 243497356,
+      "publisher_sha256": "1fe9ba24c1bc2be447041e93aaca4689342e25470e6dedd4101019decf151922",
+      "format": "parquet",
+      "sha256": "1fe9ba24c1bc2be447041e93aaca4689342e25470e6dedd4101019decf151922",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "15e036bfc2ecbbe098a5157e119093b14af1217004060cce4a672ac6b8ca903a"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "aea52ba357af4cbcc193e918b9a1ccd50c61aec170dabdc4a755ce90e02e6066"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "9869c0e0a572085c30bb7feed418f0e0309335356fec92a20f52ee62c9179967"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "8dcf991238eb5b7fa617eee26c38b7044876deba1ef0aefacb9f77f52a448beb"
+        },
+        {
+          "start": 67108864,
+          "length": 16777216,
+          "sha256": "64e887bba7c2d863879b0ca2190036258716f27df1cd51b45391529674c7e2ab"
+        },
+        {
+          "start": 83886080,
+          "length": 16777216,
+          "sha256": "645a68eb94b0c8e20ded651ddd9f142b239e4dbae3a52bc17cf9d2f0fb43ad7f"
+        },
+        {
+          "start": 100663296,
+          "length": 16777216,
+          "sha256": "912f86cc6f1d9436d0166d645d66e508a44c9349b411810d97886dad9ca8b652"
+        },
+        {
+          "start": 117440512,
+          "length": 16777216,
+          "sha256": "a0b68f856a3dea304a1a386307f22862d1da61cd9ce767fd0c414fc5ed856227"
+        },
+        {
+          "start": 134217728,
+          "length": 16777216,
+          "sha256": "bf4d5a8aaaff972ed021a25cfe0a0fc3f446230ea51bf663d9cbb3f492e85c22"
+        },
+        {
+          "start": 150994944,
+          "length": 16777216,
+          "sha256": "12b5f847aba39b978220b721e4046b85f9eaee6744acc484d67f4237840e6124"
+        },
+        {
+          "start": 167772160,
+          "length": 16777216,
+          "sha256": "3370f0971c9ae2ed31024962a36ffa77b2719a3cc907a064f82443cec2203445"
+        },
+        {
+          "start": 184549376,
+          "length": 16777216,
+          "sha256": "0c0d6b2901d7050880b6b1ba23abde2a3266af151886f60d863e39aca32b994d"
+        },
+        {
+          "start": 201326592,
+          "length": 16777216,
+          "sha256": "8079fedf30101fbe7c1bf6078f69d5b3f0ed79d906514ed3e27cc68264df800e"
+        },
+        {
+          "start": 218103808,
+          "length": 16777216,
+          "sha256": "7be4c9fca10cd5840a2de196b1261c59ad7f94b5f8191420a3ea1986f54b1a26"
+        },
+        {
+          "start": 234881024,
+          "length": 8616332,
+          "sha256": "1e8687ed19c341ed1c70728335e609a8d16896b9fbd6966130faad18a930a16d"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 85344,
+        "row_groups": 86,
+        "columns": [
+          "prompt",
+          "prompt_id",
+          "messages"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/train_sft-00000-of-00003-a3ecf92756993583.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k/resolve/8049631c405ae6576f93f445c6b8166f76f5505a/data/train_sft-00000-of-00003-a3ecf92756993583.parquet",
+      "size": 243999189,
+      "publisher_sha256": "afa8fa7426081b2a0e732fb50dbb5cd402a28ad5f0dbe66c0d996d63e7220727",
+      "format": "parquet",
+      "sha256": "afa8fa7426081b2a0e732fb50dbb5cd402a28ad5f0dbe66c0d996d63e7220727",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "2e5b993e6dade084e111a1edab1ff8c87cb8e925699968bfc531436179a1ec04"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "4aad0ba85a4f404710230c55aff699a6212023cb7ddc7955d7833deaad24d372"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "9ac7aa1b48ccdc22bbaf248a29de63d6cc5341f2ded2840ac833c264732afced"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "53673170528ce691beac22e0a965fe63cae6182913aef222492a8bd688ebb2ec"
+        },
+        {
+          "start": 67108864,
+          "length": 16777216,
+          "sha256": "c27f43fc04b6f214bd5cffaa5f576482f3776f0d97a43fc90593ae52860df26b"
+        },
+        {
+          "start": 83886080,
+          "length": 16777216,
+          "sha256": "a45859b633a504b2ad7bb5755f528fe482d2c06c75bceea9ec7ffd3e71f2ef7f"
+        },
+        {
+          "start": 100663296,
+          "length": 16777216,
+          "sha256": "dd773afbddd0364aff7e6a68d37757f65f627756525417079c49e19c43b6e4db"
+        },
+        {
+          "start": 117440512,
+          "length": 16777216,
+          "sha256": "28bf1df4a1f14f382aba8f772f8aa6e0d8332a04e16e8bdcc9195d2e3de185d7"
+        },
+        {
+          "start": 134217728,
+          "length": 16777216,
+          "sha256": "0dcb1086e657e94c60b05fde6ad6845756065b83d5c7a15a2a6f6ce9f79fe375"
+        },
+        {
+          "start": 150994944,
+          "length": 16777216,
+          "sha256": "2979fff44cd0b3b0aaf414997dbe467619353c5430d86951032917c6a0a178d9"
+        },
+        {
+          "start": 167772160,
+          "length": 16777216,
+          "sha256": "904b094373e68b5d00a5e780dc50b0e94cc4045b6543172a006d1390fcb4b6bf"
+        },
+        {
+          "start": 184549376,
+          "length": 16777216,
+          "sha256": "24e6670d675b6b79dd42f556e53ea5d5801944358cc5d631af32e29774a8cddf"
+        },
+        {
+          "start": 201326592,
+          "length": 16777216,
+          "sha256": "b0dde50229031c49bc1646963370a68ac45f7b9e3306c9ca10aaf041de9917b7"
+        },
+        {
+          "start": 218103808,
+          "length": 16777216,
+          "sha256": "a18c9aef48b56681c94c4ea0f7b876c4bc746d448392576b857d52568c8d4790"
+        },
+        {
+          "start": 234881024,
+          "length": 9118165,
+          "sha256": "368ec94b58c2ebf08c4db588e1fb976a775606350e3796715c121482d4016b69"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 69289,
+        "row_groups": 70,
+        "columns": [
+          "prompt",
+          "prompt_id",
+          "messages"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/train_sft-00001-of-00003-0a1804bcb6ae68c6.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k/resolve/8049631c405ae6576f93f445c6b8166f76f5505a/data/train_sft-00001-of-00003-0a1804bcb6ae68c6.parquet",
+      "size": 243897199,
+      "publisher_sha256": "c8230190bc8b29084c974ff32f05589b458fad1908fc4b2fb2b9e1e9f7921f03",
+      "format": "parquet",
+      "sha256": "c8230190bc8b29084c974ff32f05589b458fad1908fc4b2fb2b9e1e9f7921f03",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "60b6e9573b560372854a91a21f0ecf8e7f90b51bdbf020b83dd7da5b4456bddd"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "fb1a74dcf20bd8dcfa730bb1541a7aa41bef7870621c05f19c605d98d8562a2e"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "ad9270e1c40d35597422c330ebd8838c85c66c1236161f53938d7119b4046304"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "c10bc20414727503cd177d68ba179d7451a74cc97db5440ce9eae17daed6f3a9"
+        },
+        {
+          "start": 67108864,
+          "length": 16777216,
+          "sha256": "8f48483ca2c4ee9ca4218f2d07b159c9dbaa62f87043d8417ca0e2d6e9673b3a"
+        },
+        {
+          "start": 83886080,
+          "length": 16777216,
+          "sha256": "153e8bad1b229f1ab14871772f315d35b9a2f6fa778096ba6c8d9d2ef2e45332"
+        },
+        {
+          "start": 100663296,
+          "length": 16777216,
+          "sha256": "100d912535e6b17a7db559d0955d9c48e116df5e45333154c4a44ba0a988cfaf"
+        },
+        {
+          "start": 117440512,
+          "length": 16777216,
+          "sha256": "34427ce10079451e3fd8fe13fa7d626df40d815973a23b0518d355d58b1f29b6"
+        },
+        {
+          "start": 134217728,
+          "length": 16777216,
+          "sha256": "21b3554efc3b5e5f2ae38d377c69153c16ec7cb6e589324c5d5824c4498f7b54"
+        },
+        {
+          "start": 150994944,
+          "length": 16777216,
+          "sha256": "d697ce90abec6e44fd622b7d2f8ca3dd81e1ba4c508842e98b0b44dff0e015a7"
+        },
+        {
+          "start": 167772160,
+          "length": 16777216,
+          "sha256": "740bf0d026e28cc2daafab33c60e6a6954a89880addd6f286eb7f8775ab0d0d6"
+        },
+        {
+          "start": 184549376,
+          "length": 16777216,
+          "sha256": "cba3806f9205cafd8323f1b7696437bebfce65fc2c7169b11f90d50ebaa021d2"
+        },
+        {
+          "start": 201326592,
+          "length": 16777216,
+          "sha256": "eba8aae5bd6c76a15e67b5e4e78c6c2b33a3a4d64c75be854d63e30ec06be51f"
+        },
+        {
+          "start": 218103808,
+          "length": 16777216,
+          "sha256": "ada74006ef03b87da966a0e01027d5c94ba9df4d21533c830d97a2f2e6a1b96b"
+        },
+        {
+          "start": 234881024,
+          "length": 9016175,
+          "sha256": "59ccbfe365060cbb0c8a1ba8af5853f791ad304694f8f75d784483f94ae013c3"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 69288,
+        "row_groups": 70,
+        "columns": [
+          "prompt",
+          "prompt_id",
+          "messages"
+        ],
+        "all_rows_validated": true
+      }
+    },
+    {
+      "path": "data/train_sft-00002-of-00003-ee46ed25cfae92c6.parquet",
+      "url": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k/resolve/8049631c405ae6576f93f445c6b8166f76f5505a/data/train_sft-00002-of-00003-ee46ed25cfae92c6.parquet",
+      "size": 244131731,
+      "publisher_sha256": "6fe7d2a5e95cf660f972ecaf304aa5632d7f53384e4b0e0d0f44d9c96733c03e",
+      "format": "parquet",
+      "sha256": "6fe7d2a5e95cf660f972ecaf304aa5632d7f53384e4b0e0d0f44d9c96733c03e",
+      "chunks": [
+        {
+          "start": 0,
+          "length": 16777216,
+          "sha256": "bd524cf6ada1ae1a15b64f826dba45ea0912ebc68545aa9400dd6d0b502236f3"
+        },
+        {
+          "start": 16777216,
+          "length": 16777216,
+          "sha256": "5e122c823440cb77803fc2895be44174e62ef428f9b169d9f0f0ba5cf76af2ea"
+        },
+        {
+          "start": 33554432,
+          "length": 16777216,
+          "sha256": "f4a39f59b5d2f62923e303e5a753b84c84a816c78a63a57dd339032777de04a7"
+        },
+        {
+          "start": 50331648,
+          "length": 16777216,
+          "sha256": "b0203c139e9a91dfdb6d5c9381180897312fef60d663136272f1b2b26719dc99"
+        },
+        {
+          "start": 67108864,
+          "length": 16777216,
+          "sha256": "75f911eaf2dc279eadc3f6fc96e330bb2687adf293670ee3d5a276457748bd16"
+        },
+        {
+          "start": 83886080,
+          "length": 16777216,
+          "sha256": "9fbe5ea2479c2e69d6f87206649db329a57ce70b1cd7c828ca4060bb958d100f"
+        },
+        {
+          "start": 100663296,
+          "length": 16777216,
+          "sha256": "8674f43992758205f1b372aa2351e63b3abebcc6b95547b81a4658acda03d066"
+        },
+        {
+          "start": 117440512,
+          "length": 16777216,
+          "sha256": "2436951c6d7cc13865394b24e489a91d2d5ec0c590c8db8ddc06e45aa27d6c80"
+        },
+        {
+          "start": 134217728,
+          "length": 16777216,
+          "sha256": "36f4334ba1b5b93354561cb73eb918d678907e7c81ce3696552f2cc2a45e1a9b"
+        },
+        {
+          "start": 150994944,
+          "length": 16777216,
+          "sha256": "578bb176b90b62be9e577774970e956ed8f2ea35f23b7da1a1571234f0175ea5"
+        },
+        {
+          "start": 167772160,
+          "length": 16777216,
+          "sha256": "b6f9ec5e860cab8a62cbbf6d044843a8f1c632fd048132d6a8d97db81e73f217"
+        },
+        {
+          "start": 184549376,
+          "length": 16777216,
+          "sha256": "2affaf04cca86164d8534b1dcd13e4a5d985af0302fba6af00ac91e0529106c6"
+        },
+        {
+          "start": 201326592,
+          "length": 16777216,
+          "sha256": "da0305a5a191e84b1c12317a3d1a648795b39974766490b685d35bf4d32f3dc3"
+        },
+        {
+          "start": 218103808,
+          "length": 16777216,
+          "sha256": "63841f6ae1dd48e7547e385af24f56d75fad10d1496a209e28b198b54d972aef"
+        },
+        {
+          "start": 234881024,
+          "length": 9250707,
+          "sha256": "9fbb1a861bb60ea13b124308aa1de1581045f4e7f46cc191c05fb46444eaf786"
+        }
+      ],
+      "validation": {
+        "all_content_read": true,
+        "format": "parquet",
+        "whole_file_sha256_verified": true,
+        "rows": 69288,
+        "row_groups": 70,
+        "columns": [
+          "prompt",
+          "prompt_id",
+          "messages"
+        ],
+        "all_rows_validated": true
+      }
+    }
+  ],
+  "licenses": [
+    {
+      "path": "notice/publisher-card",
+      "archive_name": "text-ultrachat-200k-publisher-card.txt",
+      "upstream_url": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k/resolve/8049631c405ae6576f93f445c6b8166f76f5505a/README.md",
+      "size": 3899,
+      "sha256": "d2b3bf76702b85b28172f4dd971ae80c03348cd3fee518c7e6e6f4d43dd33431",
+      "blob_sha1": "cb66122fec9b9bb2fc4dd7f5717f48aa22b12d0b"
+    }
+  ],
+  "training_recipe_qualified": false
+}
