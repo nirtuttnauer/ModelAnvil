@@ -3562,6 +3562,206 @@
           }
         }
       }
+    },
+    "/dataset-bank/sources/{source_id}/upstream/": {
+      "get": {
+        "tags": [
+          "Dataset Bank"
+        ],
+        "summary": "Inspect the qualified revision and supported update check",
+        "parameters": [
+          {
+            "name": "source_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "download_scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "sample",
+                "full"
+              ],
+              "default": "sample"
+            },
+            "description": "Select the qualified sample or frozen complete-release content pin."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Git source head comparison, or a frozen HTTP sample/full release with no automatic update check. New content requires requalification.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "source_id": {
+                      "type": "string"
+                    },
+                    "pinned_revision": {
+                      "type": "string"
+                    },
+                    "upstream_head_revision": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "moved": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "acquirable_revisions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "automatic_update_check_supported": {
+                      "type": "boolean"
+                    },
+                    "note": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Source is unqualified or its pinned qualification manifest is invalid."
+          }
+        }
+      }
+    },
+    "/dataset-bank/sources/{source_id}/preflight/": {
+      "post": {
+        "tags": [
+          "Dataset Bank"
+        ],
+        "summary": "Preflight sample or full-release download",
+        "parameters": [
+          {
+            "name": "source_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAcquisitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Approved scope with byte/storage bounds",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unqualified scope, licensing, revision or storage allowance refused"
+          },
+          "409": {
+            "description": "No acquisition worker capacity"
+          }
+        }
+      }
+    },
+    "/dataset-bank/sources/{source_id}/acquisitions/": {
+      "post": {
+        "tags": [
+          "Dataset Bank"
+        ],
+        "summary": "Queue a qualified sample or complete source release",
+        "parameters": [
+          {
+            "name": "source_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAcquisitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Queued acquisition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAcquisitionState"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unqualified scope, licensing, revision or storage allowance refused"
+          },
+          "409": {
+            "description": "No acquisition worker capacity"
+          }
+        }
+      }
+    },
+    "/dataset-bank/acquisitions/{snapshot_id}/": {
+      "get": {
+        "tags": [
+          "Dataset Bank"
+        ],
+        "summary": "Inspect resumable acquisition state and verified full-release downloads",
+        "parameters": [
+          {
+            "name": "snapshot_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tenant/project-scoped acquisition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAcquisitionState"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -6241,6 +6441,149 @@
           "stop_reason": {
             "type": "string",
             "readOnly": true
+          }
+        }
+      },
+      "BankAcquisitionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "download_scope": {
+            "type": "string",
+            "enum": [
+              "sample",
+              "full"
+            ],
+            "default": "sample",
+            "description": "full includes every original file and split in the content-pinned full-release manifest. Samples keep the existing bounded training preparation."
+          },
+          "source_revision": {
+            "type": "string"
+          },
+          "record_limit": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Sample bound; full downloads require the exact full-release source-file count."
+          },
+          "project_policy": {
+            "type": "object",
+            "properties": {
+              "max_storage_quota_bytes": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Full downloads require twice the release byte size for final objects and retained resumable parts."
+              },
+              "allow_share_alike": {
+                "type": "boolean"
+              },
+              "gated_credentials_accepted": {
+                "type": "boolean"
+              },
+              "record_limit": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "split_seed": {
+            "type": "string",
+            "default": "0"
+          },
+          "budget_policy_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "estimated_amount": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "Positive bank_acquisition_records reservation; full releases count verified source files."
+          },
+          "pool": {
+            "type": "string"
+          }
+        }
+      },
+      "BankAcquisitionState": {
+        "type": "object",
+        "properties": {
+          "snapshot_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "source_revision": {
+            "type": "string"
+          },
+          "download_scope": {
+            "type": "string",
+            "enum": [
+              "sample",
+              "full"
+            ]
+          },
+          "state": {
+            "type": "string"
+          },
+          "planned_records": {
+            "type": "integer",
+            "description": "Source files for full releases, samples for sample acquisition."
+          },
+          "verified_records": {
+            "type": "integer"
+          },
+          "planned_bytes": {
+            "type": "integer"
+          },
+          "transferred_bytes": {
+            "type": "integer",
+            "description": "Verified complete files plus verified resumable parts of the current file."
+          },
+          "source_files": {
+            "type": "array",
+            "description": "Ready full releases only. Download each artifact through the tenant/project-authorized streaming artifact endpoint.",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "artifact_id",
+                "size",
+                "sha256"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "artifact_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "size": {
+                  "type": "integer"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            }
+          },
+          "manifest_artifact_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "revision_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Full raw releases do not publish a canonical training revision."
           }
         }
       }

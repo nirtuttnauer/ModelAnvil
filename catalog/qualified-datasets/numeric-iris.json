@@ -1,0 +1,636 @@
+{
+  "schema_version": "1.0",
+  "source_id": "numeric-iris",
+  "upstream": {
+    "release_url": "https://archive.ics.uci.edu/static/public/53/iris.zip",
+    "archive_size": 3738,
+    "archive_etag": null,
+    "full_archive_checksum_verified": false
+  },
+  "containers": {
+    "data": {
+      "url": "https://archive.ics.uci.edu/static/public/53/iris.zip",
+      "size": 3738,
+      "transfer_mode": "whole_file",
+      "segments": [
+        {
+          "start": 0,
+          "length": 3738,
+          "sha256": "d11fe30213d36434a0879aab7cb00ce3c812eb7ba2495874438abff7b7b762e9"
+        }
+      ]
+    }
+  },
+  "records": [
+    {
+      "path": "iris.data#row=0",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 0
+      },
+      "source_group_id": "numeric-iris:features:ec19986d9453324ee7edd81537e6862ce33806a997f8bf419398ef8e8196ec77",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 99,
+      "sha256": "9232e539336d111aaf3af54389d1b460175d3664830f3957d72afd4967204def",
+      "blob_sha1": "7c5eeb9f054e0061ff97c423464baf9a88564e7f"
+    },
+    {
+      "path": "iris.data#row=7",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 7
+      },
+      "source_group_id": "numeric-iris:features:09ed239a3778d41e8f8cf6da1f56b964fb4ac961caef27eed8fe4061dd2c1c34",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 99,
+      "sha256": "a37bc326d7e6fb8534fd5f3850d6fc6fd4367de9431bf9d2fc54fded1875d13e",
+      "blob_sha1": "80c03df58476a7d25b74bfcc31e31d0880a86d24"
+    },
+    {
+      "path": "iris.data#row=15",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 15
+      },
+      "source_group_id": "numeric-iris:features:0835121777394be822bae27c1ea5ef30f4ef7a54f98dc581e62551e3dd0caf85",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 99,
+      "sha256": "330a46d5dd9fcccbe7ceb4cf9d824a5d73c35fffb08aa0d969cca67e21f2990f",
+      "blob_sha1": "611c71a39519d63c0e16fbb587cd1c1606c7326c"
+    },
+    {
+      "path": "iris.data#row=23",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 23
+      },
+      "source_group_id": "numeric-iris:features:729beb948b4b7157da6d909715fac78c2a52c52abd83d279f5c800767eeaa19a",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 99,
+      "sha256": "3a5508ce74d71414aec40f3607161f5db3db6cf23343e172b2b7b36559da9e95",
+      "blob_sha1": "569b90c48174394858657bfef7b8a3aae2229908"
+    },
+    {
+      "path": "iris.data#row=31",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 31
+      },
+      "source_group_id": "numeric-iris:features:ffae00b3edfaa7f4d04770718ebdb33500917e9623488aa368109816037882a2",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 99,
+      "sha256": "772c11a4a6ddcbdc37f1454e6c1c2da842eb69fafa65a17165de6da6beb5acf9",
+      "blob_sha1": "f25d64e3568956a65d88f4aa8b09edf8c3aa141e"
+    },
+    {
+      "path": "iris.data#row=39",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 39
+      },
+      "source_group_id": "numeric-iris:features:571320d9aceac2f12a1be5ff518aa81c9973e1738b45bc382c128f1f1fabb880",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 99,
+      "sha256": "9f65344776678e7df0479f809a2cb50e62ea093502e5b4252024115f7d9e8712",
+      "blob_sha1": "79256dc65408ef4bc384c23442430d90eb54c59f"
+    },
+    {
+      "path": "iris.data#row=47",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 47
+      },
+      "source_group_id": "numeric-iris:features:770c1395905d38fd7adefe9639fc79c77a47dcf044922fb11d25ef4f807f6410",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 99,
+      "sha256": "9f07206146165b942fcb090cb4be54189dd2eda761e579909829d28b64c719ea",
+      "blob_sha1": "f492a14549ce0fccec8bf5e8aa688ef9eba17f0e"
+    },
+    {
+      "path": "iris.data#row=54",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 54
+      },
+      "source_group_id": "numeric-iris:features:961611ede8b5f57af2da894b04e7f24dfa378e3836e7044c1f9f3cb60d41f2e4",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 103,
+      "sha256": "b3af511ac1b57c0a374e091d3ced67866b28eaced6257f0ad2b98baf746a023c",
+      "blob_sha1": "9451f96090a5c9e33deca3d84cbad4fb3b58af92"
+    },
+    {
+      "path": "iris.data#row=62",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 62
+      },
+      "source_group_id": "numeric-iris:features:04953ac7ad0f776a4121dbf67294df4cb20fe2062204caf440b29ed3103c8350",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 103,
+      "sha256": "fae617e1dd3d527fa884d6432a7143273c6f2e82f06dc68bdc57b2e62c120aec",
+      "blob_sha1": "3be5b9602f628a9db44c013879d876b060c5bb64"
+    },
+    {
+      "path": "iris.data#row=70",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 70
+      },
+      "source_group_id": "numeric-iris:features:c93c403c81f15a302d40eec8b3c7b3036e9437e49ed35fc969276e1716a58ed7",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 103,
+      "sha256": "2e929b59ebe4732c6c1610effb9c4c18353cf91eb59030b74cded28498ebfcc3",
+      "blob_sha1": "886dd577d6daa05d8af38d7e95c70a8978874dd6"
+    },
+    {
+      "path": "iris.data#row=78",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 78
+      },
+      "source_group_id": "numeric-iris:features:630bb3742af963b0bb43cc80a22879c0992ac03db4ee79e2808c8c371ad868d0",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 103,
+      "sha256": "29405245e4c9f258d961836e4acc83f87c22286daac27023183d2e5e61fb536e",
+      "blob_sha1": "bf3885f4657d6f85dab4419e91161a2c118b5f6f"
+    },
+    {
+      "path": "iris.data#row=86",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 86
+      },
+      "source_group_id": "numeric-iris:features:a9e768cd3c7492afdb01316712bb918564cb5b265376c99013b1bd8ec2e6ce0b",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 103,
+      "sha256": "95b775ba482315844932ff7115d14e001e4f10bbb09aed6db351247a416b78f3",
+      "blob_sha1": "5e0aa0069d8247b6bcff37cf2ea23526823ad4aa"
+    },
+    {
+      "path": "iris.data#row=94",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 94
+      },
+      "source_group_id": "numeric-iris:features:5f01745064c87ab32d2bc0bbb3ae95b68e9f616d0a916b15c650f1fd73e405ff",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 103,
+      "sha256": "d32fe70f7d3cd2ab6202f8593c47df102da3335922f96a00532f6550fa62074a",
+      "blob_sha1": "72ce1d52658e2bbac98889787cce91df5e144b1e"
+    },
+    {
+      "path": "iris.data#row=101",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 101
+      },
+      "source_group_id": "numeric-iris:features:eb449d4960a880bd10e36da07fe00f9fd04dd3e5aab6bc1081451af358ca6506",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 102,
+      "sha256": "42fc52e380eea4f71024278a3a811b8409337ad88519082426e8a56955c60a89",
+      "blob_sha1": "12a54eedbb5d15d3a85061af10b6e2742f3e79e2"
+    },
+    {
+      "path": "iris.data#row=109",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 109
+      },
+      "source_group_id": "numeric-iris:features:7e6f5703ec027e67ac4fd2c76c647cfd383d99582428f660720fffffaeba142c",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 102,
+      "sha256": "abc5827c4385cbf88ed04aa670d8e63c2ac5e3d858f9452a283f793cbea73b76",
+      "blob_sha1": "d488432c0c16d5c2089176786f2fa25e6133e2e5"
+    },
+    {
+      "path": "iris.data#row=117",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 117
+      },
+      "source_group_id": "numeric-iris:features:ea4cbd0442b85bd6a33047f9069c7c25fc6885c13fb28d697311b6b0a4d11f28",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 102,
+      "sha256": "179bb8e127a7efea718809cf21968a4ebc8f088023c868181dfbb0996f93a100",
+      "blob_sha1": "1cfa3d711b073866d1c42ef0e4404b248ef97d3c"
+    },
+    {
+      "path": "iris.data#row=125",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 125
+      },
+      "source_group_id": "numeric-iris:features:21625ddb5d6dbcdc0ddba0ca647e376ea879c8b0396ca8b81633685aed5242e9",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 102,
+      "sha256": "f42411a75699b620b17104a33b2a7dc8609fe8285fb68a6a0e0bfeac121f4f28",
+      "blob_sha1": "0aaa975b76891118f07e76c1ad8b48f828b5924d"
+    },
+    {
+      "path": "iris.data#row=133",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 133
+      },
+      "source_group_id": "numeric-iris:features:29e3590085b98e3d956acbe852569df59e47063a7940af40ec40b1afe86d24cd",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 102,
+      "sha256": "22f20a11660ba24af1b23f0379636102f99f95cc649b6bcbf551a2bce9e6c15f",
+      "blob_sha1": "dbf9f57632576be8504ab4cbf9b44deaad78f12f"
+    },
+    {
+      "path": "iris.data#row=141",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 141
+      },
+      "source_group_id": "numeric-iris:features:32d0bb26a8e14594c690f004ef907d61fca8d50f0fa5d4a05bf7ee8b6f9f2b90",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 102,
+      "sha256": "3e199a6ca20f8f6111fd36613a6a4b50795fe597bceb570ebabb1bdb17b0b464",
+      "blob_sha1": "aa9189e2e325cf8e127d9537347dacddd4086c5a"
+    },
+    {
+      "path": "iris.data#row=149",
+      "reader": {
+        "kind": "zip_csv_row",
+        "container": "data",
+        "member": "iris.data",
+        "delimiter": ",",
+        "fieldnames": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width",
+          "species"
+        ],
+        "numeric_fields": [
+          "sepal_length",
+          "sepal_width",
+          "petal_length",
+          "petal_width"
+        ],
+        "row_index": 149
+      },
+      "source_group_id": "numeric-iris:features:0c9a0e17a2a43abd7e9213d5a7eb3042d21b3f792204618a3a83d7eb14e8623c",
+      "metadata": {
+        "feature_units": "cm"
+      },
+      "size": 102,
+      "sha256": "6628d0d7d94dea68774623973a33a8ec286b1aa52e9fe7a0f647231a28248b00",
+      "blob_sha1": "7d5e7321193b4c6d521d414985654aaf59601386"
+    }
+  ],
+  "licenses": [
+    {
+      "path": "notice/publisher-declaration",
+      "archive_name": "numeric-iris-publisher-declaration.txt",
+      "upstream_url": "https://archive.ics.uci.edu/dataset/53/iris",
+      "size": 585454,
+      "sha256": "e2dabb076017582312951e918cf6caedb7ff8335cc60ed3979673252316cee47",
+      "blob_sha1": "9e6adedf079d2d0077c5945a048ca87d9e5884ba"
+    }
+  ]
+}

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Optional
 
@@ -91,6 +91,7 @@ class SourceCard:
     fetch: dict[str, Any] = field(default_factory=dict)
     preparation: dict[str, Any] = field(default_factory=dict)
     acquisition: AcquisitionCard = field(default_factory=AcquisitionCard)
+    full_acquisition: AcquisitionCard = field(default_factory=AcquisitionCard)
 
     @property
     def is_size_measured(self) -> bool:
@@ -267,6 +268,7 @@ class DatasetBankCatalog:
             fetch=raw.get("fetch", {}),
             preparation=raw.get("preparation", {}),
             acquisition=cls._parse_acquisition_card(raw.get("acquisition") or {}),
+            full_acquisition=cls._parse_acquisition_card(raw.get("full_acquisition") or {"blocked_reason": "Complete-release bytes have not been qualified."}),
         )
 
     @staticmethod
@@ -351,6 +353,17 @@ class DatasetBankCatalog:
             results.append(source)
         return results
 
+    def source_for_full_download(self, source_id: str) -> SourceCard:
+        source = self.get_source(source_id)
+        if source is None or not source.download_enabled or not source.full_acquisition.qualified:
+            raise ValidationError("This source has no qualified full release.")
+        card = source.full_acquisition
+        from modelanvil.data.bank.full_download import load_manifest
+        full = replace(source, acquisition=card, size_bytes=card.measured_selected_bytes,
+                       record_count=card.measured_selected_records)
+        load_manifest(full)
+        return full
+
     def qualified_sources(self) -> list[SourceCard]:
         """Sources with a connector that has actually fetched and verified upstream bytes."""
         return [source for source in self._sources.values() if source.acquisition.qualified]
@@ -362,8 +375,19 @@ class DatasetBankCatalog:
         tenant_id: str,
         project_policy: Optional[dict[str, Any]] = None,
         source_revision: Optional[str] = None,
+        download_scope: str = "sample",
     ) -> dict[str, Any]:
         """Validate destination, scope, and policy conditions before launching transfer (BANK03, BANK04)."""
+        if download_scope == "full":
+            from modelanvil.data.bank.full_download import preflight
+            from modelanvil.data.bank.http_snapshot import SnapshotError
+            try:
+                return preflight(self, source_id, tenant_id=tenant_id,
+                                 project_policy=project_policy, source_revision=source_revision)
+            except SnapshotError as exc:
+                raise ValidationError(str(exc)) from None
+        if download_scope != "sample":
+            raise ValidationError("download_scope must be sample or full.")
         policy = project_policy or {}
 
         # 1. Check if source is in held candidates
@@ -386,14 +410,14 @@ class DatasetBankCatalog:
             )
 
         # 2. Check share-alike requirements
-        if source.obligations.share_alike and not policy.get("allow_share_alike", False):
+        if source.obligations.share_alike and policy.get("allow_share_alike") is not True:
             raise ValidationError(
                 f"Source {source.name!r} is under share-alike license ({source.license_expression}). "
                 "Project policy must explicitly set allow_share_alike=True to enable download."
             )
 
         # 3. Check gated access requirements
-        if source.obligations.gated and not policy.get("gated_credentials_accepted", False):
+        if source.obligations.gated and policy.get("gated_credentials_accepted") is not True:
             raise ValidationError(
                 f"Source {source.name!r} requires accepted user agreement and access credentials."
             )
@@ -482,6 +506,14 @@ class DatasetBankCatalog:
             raise ValidationError(
                 f"Source {source.name!r} is not qualified for acquisition: {card.blocked_reason}"
             )
+        if card.connector == "qualified_http_subset_v1":
+            from modelanvil.data.bank.http_snapshot import load_manifest, SnapshotError
+            try:
+                manifest = load_manifest(source)
+                if card.record_limit_max > len(manifest["records"]):
+                    raise SnapshotError("Acquisition scope exceeds the pinned subset inventory.")
+            except SnapshotError as exc:
+                raise ValidationError(str(exc)) from None
         if source_revision and not card.revision_is_qualified(str(source_revision)):
             raise ValidationError(
                 f"Upstream revision {source_revision!r} of {source.name!r} is not qualified. "

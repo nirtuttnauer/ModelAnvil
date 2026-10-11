@@ -23,7 +23,7 @@
       "preserve_attribution",
       "apply_project_distribution_policy"
     ],
-    "readiness_note": "svg-lucide is qualified for bounded acquisition at commit 70562c1ee1c4fdcf736fe97bc893fb8511927934. Every other source stays explicitly unavailable: no connector is implemented for it and no upstream bytes were fetched.",
+    "readiness_note": "Lucide and the ten sources added on 11 October are qualified for explicitly bounded acquisition. HTTP source revisions pin frozen subset manifests, observed byte ranges, decoded samples and archived publisher notices. Full corpora, full archive/shard checksums and training recipes are not qualified.",
     "qualification_note": "A source is qualified only when an implemented connector has fetched upstream bytes at a pinned immutable revision, verified per-record digests and archived the license notice at that revision. License eligibility alone never enables acquisition.",
     "budget_quantity_note": "Dataset Bank acquisition budgets are reserved in the policy unit and settled with the number of verified upstream records transferred."
   },
@@ -1761,13 +1761,13 @@
           "https://huggingface.co/datasets/HuggingFaceTB/smoltalk"
         ],
         "upstream_declaration_checked_on": "2026-10-11",
-        "reviewed_revision": null,
+        "reviewed_revision": "cc999c830ffc2f6281a1ff8f4179c071eb698996a629a357e3ecff63ef8ce497",
         "retain_license_and_notices": true,
         "share_alike": false,
         "notes": "Scope strictly to smol-magpie-ultra, one of the publisher's new Apache-2.0 subsets. The all configuration mixes separately licensed third-party datasets and is excluded. Preserve notices and synthetic-generation provenance."
       },
       "eligibility": "open_license_candidate",
-      "connector_status": "planned_not_implemented",
+      "connector_status": "implemented_qualified_bounded_subset",
       "fetch": {
         "kind": "huggingface_dataset_snapshot",
         "repo_id": "HuggingFaceTB/smoltalk",
@@ -1778,21 +1778,231 @@
         "file_selection_status": "data_files_and_splits_to_qualify"
       },
       "split_policy": "Preserve official train/test and keep whole conversations together; deduplicate prompts before mixing sources.",
-      "size_bytes": null,
-      "record_count": null,
-      "publication_status": "draft_catalog_not_download_enabled",
+      "size_bytes": 11334890,
+      "record_count": 20,
+      "publication_status": "qualified_bounded_download_enabled",
       "output_group_ids": [
         "text"
       ],
       "acquisition": {
-        "status": "unqualified",
-        "qualified_on": "",
-        "connector": "",
-        "upstream_repository": "",
-        "pinned_revision": "",
-        "include_patterns": [],
-        "license_paths": [],
-        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+        "status": "qualified",
+        "qualified_on": "2026-10-11",
+        "connector": "qualified_http_subset_v1",
+        "upstream_repository": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk",
+        "pinned_revision": "cc999c830ffc2f6281a1ff8f4179c071eb698996a629a357e3ecff63ef8ce497",
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of the frozen subset manifest: observed upstream ranges, decoded samples, and archived publisher license notices. Full archives/shards are not qualified.",
+        "qualified_revisions": [
+          "cc999c830ffc2f6281a1ff8f4179c071eb698996a629a357e3ecff63ef8ce497"
+        ],
+        "include_patterns": [
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=0&row=0",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=0&row=249",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=0&row=499",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=0&row=749",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=0&row=999",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=22&row=0",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=22&row=249",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=22&row=499",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=22&row=749",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=22&row=999",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=45&row=0",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=45&row=249",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=45&row=499",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=45&row=749",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=45&row=999",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=68&row=0",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=68&row=64",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=68&row=128",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=68&row=192",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet#group=68&row=256"
+        ],
+        "license_paths": [
+          "notice/publisher-card"
+        ],
+        "record_selection": "deterministic evenly spaced selection of the frozen, explicitly qualified sample inventory",
+        "record_limit": 20,
+        "record_limit_max": 20,
+        "preview_limit": 3,
+        "measured_upstream_records": 20,
+        "measured_upstream_bytes": 11334890,
+        "measured_selected_records": 20,
+        "measured_selected_bytes": 134616,
+        "measured_transfer_seconds": 17,
+        "measurement_environment": "macOS arm64; CPython 3.12; PyArrow 26.0.0; public HTTPS byte-range downloads and independent refetch through the runtime decoder.",
+        "verified_record_digests": true,
+        "blocked_reason": "",
+        "evidence": {
+          "manifest_path": "catalog/qualified-datasets/text-smol-magpie-ultra.json",
+          "manifest_sha256": "cc999c830ffc2f6281a1ff8f4179c071eb698996a629a357e3ecff63ef8ce497",
+          "download_range_bytes": 11325167,
+          "decoded_sample_bytes": 134616,
+          "full_corpus_qualified": false,
+          "checks": [
+            "Actual upstream bytes fetched over HTTPS; every admitted range SHA-256 recorded.",
+            "Each selected sample decoded without executing remote dataset code.",
+            "Independent refetch through pinned range reader reproduced every selected sample digest.",
+            "Publisher license declaration/notice bytes archived and digest-pinned."
+          ]
+        }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk",
+        "pinned_revision": "2bc6dd3b72139947f9810293c42d39b85700ef00453970d4f65ccd190397a818",
+        "qualified_revisions": [
+          "2bc6dd3b72139947f9810293c42d39b85700ef00453970d4f65ccd190397a818"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "data/smol-magpie-ultra/test-00000-of-00001.parquet",
+          "data/smol-magpie-ultra/train-00000-of-00006.parquet",
+          "data/smol-magpie-ultra/train-00001-of-00006.parquet",
+          "data/smol-magpie-ultra/train-00002-of-00006.parquet",
+          "data/smol-magpie-ultra/train-00003-of-00006.parquet",
+          "data/smol-magpie-ultra/train-00004-of-00006.parquet",
+          "data/smol-magpie-ultra/train-00005-of-00006.parquet"
+        ],
+        "license_paths": [
+          "text-smol-magpie-ultra-publisher-card.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 7,
+        "record_limit_max": 7,
+        "preview_limit": 0,
+        "measured_upstream_records": 7,
+        "measured_selected_records": 7,
+        "measured_upstream_bytes": 1469322657,
+        "measured_selected_bytes": 1469322657,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/text-smol-magpie-ultra.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 1469322657,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 21555,
+              "row_groups": 22,
+              "columns": [
+                "messages",
+                "category",
+                "difficulty",
+                "quality",
+                "reward_model_score",
+                "conversation_tokens"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 68257,
+              "row_groups": 69,
+              "columns": [
+                "messages",
+                "category",
+                "difficulty",
+                "quality",
+                "reward_model_score",
+                "conversation_tokens"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 68256,
+              "row_groups": 69,
+              "columns": [
+                "messages",
+                "category",
+                "difficulty",
+                "quality",
+                "reward_model_score",
+                "conversation_tokens"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 68256,
+              "row_groups": 69,
+              "columns": [
+                "messages",
+                "category",
+                "difficulty",
+                "quality",
+                "reward_model_score",
+                "conversation_tokens"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 68256,
+              "row_groups": 69,
+              "columns": [
+                "messages",
+                "category",
+                "difficulty",
+                "quality",
+                "reward_model_score",
+                "conversation_tokens"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 68256,
+              "row_groups": 69,
+              "columns": [
+                "messages",
+                "category",
+                "difficulty",
+                "quality",
+                "reward_model_score",
+                "conversation_tokens"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 68256,
+              "row_groups": 69,
+              "columns": [
+                "messages",
+                "category",
+                "difficulty",
+                "quality",
+                "reward_model_score",
+                "conversation_tokens"
+              ],
+              "all_rows_validated": true
+            }
+          ],
+          "scope": "Every train and test shard of the Smol-Magpie-Ultra configuration; other SmolTalk configurations are separate sources.",
+          "training_recipe_qualified": false
+        }
       }
     },
     {
@@ -1815,13 +2025,13 @@
           "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k"
         ],
         "upstream_declaration_checked_on": "2026-10-11",
-        "reviewed_revision": null,
+        "reviewed_revision": "6cd301848f1d55d15f631cb4c29037eee4e3f521e918e8ffb619874ac1c54354",
         "retain_license_and_notices": true,
         "share_alike": false,
         "notes": "Preserve MIT notice and UltraChat attribution. Retain message roles, prompt IDs, and synthetic origin. Use train_sft for SFT; generation splits serve a different task."
       },
       "eligibility": "open_license_candidate",
-      "connector_status": "planned_not_implemented",
+      "connector_status": "implemented_qualified_bounded_subset",
       "fetch": {
         "kind": "huggingface_dataset_snapshot",
         "repo_id": "HuggingFaceH4/ultrachat_200k",
@@ -1832,21 +2042,224 @@
         "file_selection_status": "data_files_and_splits_to_qualify"
       },
       "split_policy": "Preserve train_sft/test_sft and train_gen/test_gen; group shared prompt IDs across views and check cross-source duplicates.",
-      "size_bytes": null,
-      "record_count": null,
-      "publication_status": "draft_catalog_not_download_enabled",
+      "size_bytes": 11947909,
+      "record_count": 20,
+      "publication_status": "qualified_bounded_download_enabled",
       "output_group_ids": [
         "text"
       ],
       "acquisition": {
-        "status": "unqualified",
-        "qualified_on": "",
-        "connector": "",
-        "upstream_repository": "",
-        "pinned_revision": "",
-        "include_patterns": [],
-        "license_paths": [],
-        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+        "status": "qualified",
+        "qualified_on": "2026-10-11",
+        "connector": "qualified_http_subset_v1",
+        "upstream_repository": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k",
+        "pinned_revision": "6cd301848f1d55d15f631cb4c29037eee4e3f521e918e8ffb619874ac1c54354",
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of the frozen subset manifest: observed upstream ranges, decoded samples, and archived publisher license notices. Full archives/shards are not qualified.",
+        "qualified_revisions": [
+          "6cd301848f1d55d15f631cb4c29037eee4e3f521e918e8ffb619874ac1c54354"
+        ],
+        "include_patterns": [
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=0&row=0",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=0&row=249",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=0&row=499",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=0&row=749",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=0&row=999",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=23&row=0",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=23&row=249",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=23&row=499",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=23&row=749",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=23&row=999",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=46&row=0",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=46&row=249",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=46&row=499",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=46&row=749",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=46&row=999",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=69&row=0",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=69&row=72",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=69&row=144",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=69&row=216",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet#group=69&row=288"
+        ],
+        "license_paths": [
+          "notice/publisher-card"
+        ],
+        "record_selection": "deterministic evenly spaced selection of the frozen, explicitly qualified sample inventory",
+        "record_limit": 20,
+        "record_limit_max": 20,
+        "preview_limit": 3,
+        "measured_upstream_records": 20,
+        "measured_upstream_bytes": 11947909,
+        "measured_selected_records": 20,
+        "measured_selected_bytes": 128458,
+        "measured_transfer_seconds": 14,
+        "measurement_environment": "macOS arm64; CPython 3.12; PyArrow 26.0.0; public HTTPS byte-range downloads and independent refetch through the runtime decoder.",
+        "verified_record_digests": true,
+        "blocked_reason": "",
+        "evidence": {
+          "manifest_path": "catalog/qualified-datasets/text-ultrachat-200k.json",
+          "manifest_sha256": "6cd301848f1d55d15f631cb4c29037eee4e3f521e918e8ffb619874ac1c54354",
+          "download_range_bytes": 11944010,
+          "decoded_sample_bytes": 128458,
+          "full_corpus_qualified": false,
+          "checks": [
+            "Actual upstream bytes fetched over HTTPS; every admitted range SHA-256 recorded.",
+            "Each selected sample decoded without executing remote dataset code.",
+            "Independent refetch through pinned range reader reproduced every selected sample digest.",
+            "Publisher license declaration/notice bytes archived and digest-pinned."
+          ]
+        }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k",
+        "pinned_revision": "136cb7d23de9fa6ad4831c9e3209ef081022d182c44c31cff7e671a0581816d4",
+        "qualified_revisions": [
+          "136cb7d23de9fa6ad4831c9e3209ef081022d182c44c31cff7e671a0581816d4"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "data/test_gen-00000-of-00001-3d4cd8309148a71f.parquet",
+          "data/test_sft-00000-of-00001-f7dfac4afe5b93f4.parquet",
+          "data/train_gen-00000-of-00003-a6c9fb894be3e50b.parquet",
+          "data/train_gen-00001-of-00003-d6a0402e417f35ca.parquet",
+          "data/train_gen-00002-of-00003-c0db75b92a2f48fd.parquet",
+          "data/train_sft-00000-of-00003-a3ecf92756993583.parquet",
+          "data/train_sft-00001-of-00003-0a1804bcb6ae68c6.parquet",
+          "data/train_sft-00002-of-00003-ee46ed25cfae92c6.parquet"
+        ],
+        "license_paths": [
+          "text-ultrachat-200k-publisher-card.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 8,
+        "record_limit_max": 8,
+        "preview_limit": 0,
+        "measured_upstream_records": 8,
+        "measured_selected_records": 8,
+        "measured_upstream_bytes": 1624049723,
+        "measured_selected_bytes": 1624049723,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/text-ultrachat-200k.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 1624049723,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 28304,
+              "row_groups": 29,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "messages"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 23110,
+              "row_groups": 24,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "messages"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 85344,
+              "row_groups": 86,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "messages"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 85344,
+              "row_groups": 86,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "messages"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 85344,
+              "row_groups": 86,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "messages"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 69289,
+              "row_groups": 70,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "messages"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 69288,
+              "row_groups": 70,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "messages"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 69288,
+              "row_groups": 70,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "messages"
+              ],
+              "all_rows_validated": true
+            }
+          ],
+          "scope": "All dataset files and splits at the pinned publisher revision.",
+          "training_recipe_qualified": false
+        }
       }
     },
     {
@@ -1869,13 +2282,13 @@
           "https://huggingface.co/datasets/rajpurkar/squad"
         ],
         "upstream_declaration_checked_on": "2026-10-11",
-        "reviewed_revision": null,
+        "reviewed_revision": "417075401972dbfa86e1cecd89045cbf8c5c2769ad36578b8d50124ce174e6de",
         "retain_license_and_notices": true,
         "share_alike": true,
         "notes": "Preserve dataset and Wikipedia attribution, article provenance, and share-alike obligations for redistributed adaptations. Requires explicit project opt-in. Validate answer offsets after any text normalization."
       },
       "eligibility": "open_license_candidate",
-      "connector_status": "planned_not_implemented",
+      "connector_status": "implemented_qualified_bounded_subset",
       "fetch": {
         "kind": "huggingface_dataset_snapshot",
         "repo_id": "rajpurkar/squad",
@@ -1886,21 +2299,144 @@
         "file_selection_status": "data_files_and_splits_to_qualify"
       },
       "split_policy": "Preserve official train/validation; group duplicate passages and article identities when creating additional splits. Keep evaluation questions out of training seeds.",
-      "size_bytes": null,
-      "record_count": null,
-      "publication_status": "draft_catalog_not_download_enabled",
+      "size_bytes": 831779,
+      "record_count": 20,
+      "publication_status": "qualified_bounded_download_enabled",
       "output_group_ids": [
         "text"
       ],
       "acquisition": {
-        "status": "unqualified",
-        "qualified_on": "",
-        "connector": "",
-        "upstream_repository": "",
-        "pinned_revision": "",
-        "include_patterns": [],
-        "license_paths": [],
-        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+        "status": "qualified",
+        "qualified_on": "2026-10-11",
+        "connector": "qualified_http_subset_v1",
+        "upstream_repository": "https://huggingface.co/datasets/rajpurkar/squad",
+        "pinned_revision": "417075401972dbfa86e1cecd89045cbf8c5c2769ad36578b8d50124ce174e6de",
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of the frozen subset manifest: observed upstream ranges, decoded samples, and archived publisher license notices. Full archives/shards are not qualified.",
+        "qualified_revisions": [
+          "417075401972dbfa86e1cecd89045cbf8c5c2769ad36578b8d50124ce174e6de"
+        ],
+        "include_patterns": [
+          "plain_text/train-00000-of-00001.parquet#group=0&row=0",
+          "plain_text/train-00000-of-00001.parquet#group=0&row=249",
+          "plain_text/train-00000-of-00001.parquet#group=0&row=499",
+          "plain_text/train-00000-of-00001.parquet#group=0&row=749",
+          "plain_text/train-00000-of-00001.parquet#group=0&row=999",
+          "plain_text/train-00000-of-00001.parquet#group=29&row=0",
+          "plain_text/train-00000-of-00001.parquet#group=29&row=249",
+          "plain_text/train-00000-of-00001.parquet#group=29&row=499",
+          "plain_text/train-00000-of-00001.parquet#group=29&row=749",
+          "plain_text/train-00000-of-00001.parquet#group=29&row=999",
+          "plain_text/train-00000-of-00001.parquet#group=58&row=0",
+          "plain_text/train-00000-of-00001.parquet#group=58&row=249",
+          "plain_text/train-00000-of-00001.parquet#group=58&row=499",
+          "plain_text/train-00000-of-00001.parquet#group=58&row=749",
+          "plain_text/train-00000-of-00001.parquet#group=58&row=999",
+          "plain_text/train-00000-of-00001.parquet#group=87&row=0",
+          "plain_text/train-00000-of-00001.parquet#group=87&row=149",
+          "plain_text/train-00000-of-00001.parquet#group=87&row=299",
+          "plain_text/train-00000-of-00001.parquet#group=87&row=448",
+          "plain_text/train-00000-of-00001.parquet#group=87&row=598"
+        ],
+        "license_paths": [
+          "notice/publisher-card"
+        ],
+        "record_selection": "deterministic evenly spaced selection of the frozen, explicitly qualified sample inventory",
+        "record_limit": 20,
+        "record_limit_max": 20,
+        "preview_limit": 3,
+        "measured_upstream_records": 20,
+        "measured_upstream_bytes": 831779,
+        "measured_selected_records": 20,
+        "measured_selected_bytes": 19821,
+        "measured_transfer_seconds": 10,
+        "measurement_environment": "macOS arm64; CPython 3.12; PyArrow 26.0.0; public HTTPS byte-range downloads and independent refetch through the runtime decoder.",
+        "verified_record_digests": true,
+        "blocked_reason": "",
+        "evidence": {
+          "manifest_path": "catalog/qualified-datasets/text-squad.json",
+          "manifest_sha256": "417075401972dbfa86e1cecd89045cbf8c5c2769ad36578b8d50124ce174e6de",
+          "download_range_bytes": 824159,
+          "decoded_sample_bytes": 19821,
+          "full_corpus_qualified": false,
+          "checks": [
+            "Actual upstream bytes fetched over HTTPS; every admitted range SHA-256 recorded.",
+            "Each selected sample decoded without executing remote dataset code.",
+            "Independent refetch through pinned range reader reproduced every selected sample digest.",
+            "Publisher license declaration/notice bytes archived and digest-pinned."
+          ]
+        }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://huggingface.co/datasets/rajpurkar/squad",
+        "pinned_revision": "464f930999e9fb277595e40c527fd9bed5676c5c0d2c208edf136b66c471d0ff",
+        "qualified_revisions": [
+          "464f930999e9fb277595e40c527fd9bed5676c5c0d2c208edf136b66c471d0ff"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "plain_text/train-00000-of-00001.parquet",
+          "plain_text/validation-00000-of-00001.parquet"
+        ],
+        "license_paths": [
+          "text-squad-publisher-card.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 2,
+        "record_limit_max": 2,
+        "preview_limit": 0,
+        "measured_upstream_records": 2,
+        "measured_selected_records": 2,
+        "measured_upstream_bytes": 16278203,
+        "measured_selected_bytes": 16278203,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/text-squad.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 16278203,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 87599,
+              "row_groups": 88,
+              "columns": [
+                "id",
+                "title",
+                "context",
+                "question",
+                "answers"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 10570,
+              "row_groups": 11,
+              "columns": [
+                "id",
+                "title",
+                "context",
+                "question",
+                "answers"
+              ],
+              "all_rows_validated": true
+            }
+          ],
+          "scope": "All dataset files and splits at the pinned publisher revision.",
+          "training_recipe_qualified": false
+        }
       }
     },
     {
@@ -1923,13 +2459,13 @@
           "https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized"
         ],
         "upstream_declaration_checked_on": "2026-10-11",
-        "reviewed_revision": null,
+        "reviewed_revision": "f7d72aceadb1091a401dbde5f15986a917c25c90d6cc6d37c6d0b07d7a710381",
         "retain_license_and_notices": true,
         "share_alike": false,
         "notes": "Preserve MIT notice and UltraFeedback attribution. Qualify a revision containing the documented label and TruthfulQA-contamination fixes. Retain chosen/rejected roles, scores, and synthetic judge provenance."
       },
       "eligibility": "open_license_candidate",
-      "connector_status": "planned_not_implemented",
+      "connector_status": "implemented_qualified_bounded_subset",
       "fetch": {
         "kind": "huggingface_dataset_snapshot",
         "repo_id": "HuggingFaceH4/ultrafeedback_binarized",
@@ -1940,22 +2476,221 @@
         "file_selection_status": "data_files_and_splits_to_qualify"
       },
       "split_policy": "Preserve official SFT, preference, and generation splits; group prompt_id across views so the same prompt cannot enter both training and evaluation.",
-      "size_bytes": null,
-      "record_count": null,
-      "publication_status": "draft_catalog_not_download_enabled",
+      "size_bytes": 11912940,
+      "record_count": 20,
+      "publication_status": "qualified_bounded_download_enabled",
       "output_group_ids": [
         "preference",
         "text"
       ],
       "acquisition": {
-        "status": "unqualified",
-        "qualified_on": "",
-        "connector": "",
-        "upstream_repository": "",
-        "pinned_revision": "",
-        "include_patterns": [],
-        "license_paths": [],
-        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+        "status": "qualified",
+        "qualified_on": "2026-10-11",
+        "connector": "qualified_http_subset_v1",
+        "upstream_repository": "https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized",
+        "pinned_revision": "f7d72aceadb1091a401dbde5f15986a917c25c90d6cc6d37c6d0b07d7a710381",
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of the frozen subset manifest: observed upstream ranges, decoded samples, and archived publisher license notices. Full archives/shards are not qualified.",
+        "qualified_revisions": [
+          "f7d72aceadb1091a401dbde5f15986a917c25c90d6cc6d37c6d0b07d7a710381"
+        ],
+        "include_patterns": [
+          "data/train_prefs-00000-of-00001.parquet#group=0&row=0",
+          "data/train_prefs-00000-of-00001.parquet#group=0&row=249",
+          "data/train_prefs-00000-of-00001.parquet#group=0&row=499",
+          "data/train_prefs-00000-of-00001.parquet#group=0&row=749",
+          "data/train_prefs-00000-of-00001.parquet#group=0&row=999",
+          "data/train_prefs-00000-of-00001.parquet#group=20&row=0",
+          "data/train_prefs-00000-of-00001.parquet#group=20&row=249",
+          "data/train_prefs-00000-of-00001.parquet#group=20&row=499",
+          "data/train_prefs-00000-of-00001.parquet#group=20&row=749",
+          "data/train_prefs-00000-of-00001.parquet#group=20&row=999",
+          "data/train_prefs-00000-of-00001.parquet#group=40&row=0",
+          "data/train_prefs-00000-of-00001.parquet#group=40&row=249",
+          "data/train_prefs-00000-of-00001.parquet#group=40&row=499",
+          "data/train_prefs-00000-of-00001.parquet#group=40&row=749",
+          "data/train_prefs-00000-of-00001.parquet#group=40&row=999",
+          "data/train_prefs-00000-of-00001.parquet#group=61&row=0",
+          "data/train_prefs-00000-of-00001.parquet#group=61&row=33",
+          "data/train_prefs-00000-of-00001.parquet#group=61&row=67",
+          "data/train_prefs-00000-of-00001.parquet#group=61&row=100",
+          "data/train_prefs-00000-of-00001.parquet#group=61&row=134"
+        ],
+        "license_paths": [
+          "notice/publisher-card"
+        ],
+        "record_selection": "deterministic evenly spaced selection of the frozen, explicitly qualified sample inventory",
+        "record_limit": 20,
+        "record_limit_max": 20,
+        "preview_limit": 3,
+        "measured_upstream_records": 20,
+        "measured_upstream_bytes": 11912940,
+        "measured_selected_records": 20,
+        "measured_selected_bytes": 139957,
+        "measured_transfer_seconds": 14,
+        "measurement_environment": "macOS arm64; CPython 3.12; PyArrow 26.0.0; public HTTPS byte-range downloads and independent refetch through the runtime decoder.",
+        "verified_record_digests": true,
+        "blocked_reason": "",
+        "evidence": {
+          "manifest_path": "catalog/qualified-datasets/preference-ultrafeedback-binarized.json",
+          "manifest_sha256": "f7d72aceadb1091a401dbde5f15986a917c25c90d6cc6d37c6d0b07d7a710381",
+          "download_range_bytes": 11906411,
+          "decoded_sample_bytes": 139957,
+          "full_corpus_qualified": false,
+          "checks": [
+            "Actual upstream bytes fetched over HTTPS; every admitted range SHA-256 recorded.",
+            "Each selected sample decoded without executing remote dataset code.",
+            "Independent refetch through pinned range reader reproduced every selected sample digest.",
+            "Publisher license declaration/notice bytes archived and digest-pinned."
+          ]
+        }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized",
+        "pinned_revision": "00d4ae5d7b2bd35d8c4f47cf7cd7238e311d2c2178fe42c7ebda458871a31dd3",
+        "qualified_revisions": [
+          "00d4ae5d7b2bd35d8c4f47cf7cd7238e311d2c2178fe42c7ebda458871a31dd3"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "data/test_gen-00000-of-00001.parquet",
+          "data/test_prefs-00000-of-00001.parquet",
+          "data/test_sft-00000-of-00001.parquet",
+          "data/train_gen-00000-of-00001.parquet",
+          "data/train_prefs-00000-of-00001.parquet",
+          "data/train_sft-00000-of-00001.parquet"
+        ],
+        "license_paths": [
+          "preference-ultrafeedback-binarized-publisher-card.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 6,
+        "record_limit_max": 6,
+        "preview_limit": 0,
+        "measured_upstream_records": 6,
+        "measured_selected_records": 6,
+        "measured_upstream_bytes": 649967196,
+        "measured_selected_bytes": 649967196,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/preference-ultrafeedback-binarized.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 649967196,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 1000,
+              "row_groups": 1,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "chosen",
+                "rejected",
+                "messages",
+                "score_chosen",
+                "score_rejected"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 2000,
+              "row_groups": 2,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "chosen",
+                "rejected",
+                "messages",
+                "score_chosen",
+                "score_rejected"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 1000,
+              "row_groups": 1,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "chosen",
+                "rejected",
+                "messages",
+                "score_chosen",
+                "score_rejected"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 61135,
+              "row_groups": 62,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "chosen",
+                "rejected",
+                "messages",
+                "score_chosen",
+                "score_rejected"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 61135,
+              "row_groups": 62,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "chosen",
+                "rejected",
+                "messages",
+                "score_chosen",
+                "score_rejected"
+              ],
+              "all_rows_validated": true
+            },
+            {
+              "all_content_read": true,
+              "format": "parquet",
+              "whole_file_sha256_verified": true,
+              "rows": 61135,
+              "row_groups": 62,
+              "columns": [
+                "prompt",
+                "prompt_id",
+                "chosen",
+                "rejected",
+                "messages",
+                "score_chosen",
+                "score_rejected"
+              ],
+              "all_rows_validated": true
+            }
+          ],
+          "scope": "All dataset files and splits at the pinned publisher revision.",
+          "training_recipe_qualified": false
+        }
       }
     },
     {
@@ -1979,13 +2714,13 @@
           "https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2"
         ],
         "upstream_declaration_checked_on": "2026-10-11",
-        "reviewed_revision": null,
+        "reviewed_revision": "574a4d2b754298b2cba4747b6304f6d449d5b03b841c046a5216a006e8823112",
         "retain_license_and_notices": true,
         "share_alike": false,
         "notes": "Preserve license and notices. Parse system and chat fields into validated roles, function schemas, calls, and results; keep refusal/no-call cases. Schema examples are data and must never invoke real tools."
       },
       "eligibility": "open_license_candidate",
-      "connector_status": "planned_not_implemented",
+      "connector_status": "implemented_qualified_bounded_subset",
       "fetch": {
         "kind": "huggingface_dataset_snapshot",
         "repo_id": "glaiveai/glaive-function-calling-v2",
@@ -1996,21 +2731,120 @@
         "file_selection_status": "data_files_and_splits_to_qualify"
       },
       "split_policy": "Create versioned splits grouped by normalized function schema and conversation; deduplicate prompt variants across sources.",
-      "size_bytes": null,
-      "record_count": null,
-      "publication_status": "draft_catalog_not_download_enabled",
+      "size_bytes": 312096,
+      "record_count": 20,
+      "publication_status": "qualified_bounded_download_enabled",
       "output_group_ids": [
         "structured"
       ],
       "acquisition": {
-        "status": "unqualified",
-        "qualified_on": "",
-        "connector": "",
-        "upstream_repository": "",
-        "pinned_revision": "",
-        "include_patterns": [],
-        "license_paths": [],
-        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+        "status": "qualified",
+        "qualified_on": "2026-10-11",
+        "connector": "qualified_http_subset_v1",
+        "upstream_repository": "https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2",
+        "pinned_revision": "574a4d2b754298b2cba4747b6304f6d449d5b03b841c046a5216a006e8823112",
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of the frozen subset manifest: observed upstream ranges, decoded samples, and archived publisher license notices. Full archives/shards are not qualified.",
+        "qualified_revisions": [
+          "574a4d2b754298b2cba4747b6304f6d449d5b03b841c046a5216a006e8823112"
+        ],
+        "include_patterns": [
+          "glaive-function-calling-v2.json#row=0",
+          "glaive-function-calling-v2.json#row=1",
+          "glaive-function-calling-v2.json#row=2",
+          "glaive-function-calling-v2.json#row=3",
+          "glaive-function-calling-v2.json#row=4",
+          "glaive-function-calling-v2.json#row=5",
+          "glaive-function-calling-v2.json#row=6",
+          "glaive-function-calling-v2.json#row=7",
+          "glaive-function-calling-v2.json#row=8",
+          "glaive-function-calling-v2.json#row=9",
+          "glaive-function-calling-v2.json#row=10",
+          "glaive-function-calling-v2.json#row=11",
+          "glaive-function-calling-v2.json#row=12",
+          "glaive-function-calling-v2.json#row=13",
+          "glaive-function-calling-v2.json#row=14",
+          "glaive-function-calling-v2.json#row=15",
+          "glaive-function-calling-v2.json#row=16",
+          "glaive-function-calling-v2.json#row=17",
+          "glaive-function-calling-v2.json#row=18",
+          "glaive-function-calling-v2.json#row=19"
+        ],
+        "license_paths": [
+          "notice/publisher-card"
+        ],
+        "record_selection": "deterministic evenly spaced selection of the frozen, explicitly qualified sample inventory",
+        "record_limit": 20,
+        "record_limit_max": 20,
+        "preview_limit": 3,
+        "measured_upstream_records": 20,
+        "measured_upstream_bytes": 312096,
+        "measured_selected_records": 20,
+        "measured_selected_bytes": 49339,
+        "measured_transfer_seconds": 15,
+        "measurement_environment": "macOS arm64; CPython 3.12; PyArrow 26.0.0; public HTTPS byte-range downloads and independent refetch through the runtime decoder.",
+        "verified_record_digests": true,
+        "blocked_reason": "",
+        "evidence": {
+          "manifest_path": "catalog/qualified-datasets/tools-glaive-v2.json",
+          "manifest_sha256": "574a4d2b754298b2cba4747b6304f6d449d5b03b841c046a5216a006e8823112",
+          "download_range_bytes": 311990,
+          "decoded_sample_bytes": 49339,
+          "full_corpus_qualified": false,
+          "checks": [
+            "Actual upstream bytes fetched over HTTPS; every admitted range SHA-256 recorded.",
+            "Each selected sample decoded without executing remote dataset code.",
+            "Independent refetch through pinned range reader reproduced every selected sample digest.",
+            "Publisher license declaration/notice bytes archived and digest-pinned."
+          ]
+        }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2",
+        "pinned_revision": "66564bd8c31fb249b6b26bc5953bdfae8ae57a04a9511813ef8cf46bd68bc0ba",
+        "qualified_revisions": [
+          "66564bd8c31fb249b6b26bc5953bdfae8ae57a04a9511813ef8cf46bd68bc0ba"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "glaive-function-calling-v2.json"
+        ],
+        "license_paths": [
+          "tools-glaive-v2-publisher-card.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 1,
+        "record_limit_max": 1,
+        "preview_limit": 0,
+        "measured_upstream_records": 1,
+        "measured_selected_records": 1,
+        "measured_upstream_bytes": 271190065,
+        "measured_selected_bytes": 271190065,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/tools-glaive-v2.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 271190065,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "json",
+              "whole_file_sha256_verified": true,
+              "rows": 112960,
+              "all_rows_validated": true
+            }
+          ],
+          "scope": "All dataset files and splits at the pinned publisher revision.",
+          "training_recipe_qualified": false
+        }
       }
     },
     {
@@ -2035,13 +2869,13 @@
           "https://cs.stanford.edu/people/jcjohns/clevr/"
         ],
         "upstream_declaration_checked_on": "2026-10-11",
-        "reviewed_revision": null,
+        "reviewed_revision": "0adb6b57ae86b250cac27008f034714bf4cc5db79a141619503677eb4e655921",
         "retain_license_and_notices": true,
         "share_alike": false,
         "notes": "Preserve author attribution and the data license. Join questions and scene annotations by image identity. This is synthetic visual reasoning data; do not represent it as natural-image captions."
       },
       "eligibility": "open_license_candidate",
-      "connector_status": "planned_not_implemented",
+      "connector_status": "implemented_qualified_bounded_subset",
       "fetch": {
         "kind": "http_archive",
         "discovery_url": "https://cs.stanford.edu/people/jcjohns/clevr/",
@@ -2054,23 +2888,127 @@
         "configuration": "main"
       },
       "split_policy": "Preserve official train/validation/test; keep all questions for one image together. Treat CoGenT as a separate configuration and retain its generalization conditions.",
-      "size_bytes": null,
-      "record_count": null,
-      "publication_status": "draft_catalog_not_download_enabled",
+      "size_bytes": 16440842,
+      "record_count": 10,
+      "publication_status": "qualified_bounded_download_enabled",
       "output_group_ids": [
         "raster",
         "text",
         "structured"
       ],
       "acquisition": {
-        "status": "unqualified",
-        "qualified_on": "",
-        "connector": "",
-        "upstream_repository": "",
-        "pinned_revision": "",
-        "include_patterns": [],
-        "license_paths": [],
-        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+        "status": "qualified",
+        "qualified_on": "2026-10-11",
+        "connector": "qualified_http_subset_v1",
+        "upstream_repository": "https://cs.stanford.edu/people/jcjohns/clevr/",
+        "pinned_revision": "0adb6b57ae86b250cac27008f034714bf4cc5db79a141619503677eb4e655921",
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of the frozen subset manifest: observed upstream ranges, decoded samples, and archived publisher license notices. Full archives/shards are not qualified.",
+        "qualified_revisions": [
+          "0adb6b57ae86b250cac27008f034714bf4cc5db79a141619503677eb4e655921"
+        ],
+        "include_patterns": [
+          "CLEVR_v1.0/images/train/CLEVR_train_000000.png",
+          "CLEVR_v1.0/images/train/CLEVR_train_000001.png",
+          "CLEVR_v1.0/images/train/CLEVR_train_000002.png",
+          "CLEVR_v1.0/images/train/CLEVR_train_000003.png",
+          "CLEVR_v1.0/images/train/CLEVR_train_000004.png",
+          "CLEVR_v1.0/images/train/CLEVR_train_000005.png",
+          "CLEVR_v1.0/images/train/CLEVR_train_000006.png",
+          "CLEVR_v1.0/images/train/CLEVR_train_000007.png",
+          "CLEVR_v1.0/images/train/CLEVR_train_000008.png",
+          "CLEVR_v1.0/images/train/CLEVR_train_000009.png"
+        ],
+        "license_paths": [
+          "notice/license",
+          "notice/copyright",
+          "notice/readme"
+        ],
+        "record_selection": "deterministic evenly spaced selection of the frozen, explicitly qualified sample inventory",
+        "record_limit": 10,
+        "record_limit_max": 10,
+        "preview_limit": 3,
+        "measured_upstream_records": 10,
+        "measured_upstream_bytes": 16440842,
+        "measured_selected_records": 10,
+        "measured_selected_bytes": 3839055,
+        "measured_transfer_seconds": 42,
+        "measurement_environment": "macOS arm64; CPython 3.12; PyArrow 26.0.0; public HTTPS byte-range downloads and independent refetch through the runtime decoder.",
+        "verified_record_digests": true,
+        "blocked_reason": "",
+        "evidence": {
+          "manifest_path": "catalog/qualified-datasets/image-clevr.json",
+          "manifest_sha256": "0adb6b57ae86b250cac27008f034714bf4cc5db79a141619503677eb4e655921",
+          "download_range_bytes": 16418346,
+          "decoded_sample_bytes": 3839055,
+          "full_corpus_qualified": false,
+          "checks": [
+            "Actual upstream bytes fetched over HTTPS; every admitted range SHA-256 recorded.",
+            "Each selected sample decoded without executing remote dataset code.",
+            "Independent refetch through pinned range reader reproduced every selected sample digest.",
+            "Publisher license declaration/notice bytes archived and digest-pinned."
+          ]
+        }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://cs.stanford.edu/people/jcjohns/clevr/",
+        "pinned_revision": "89fb64fa8136f58e96b59538da0045b2637448458cacf9da7858a633c1c0e349",
+        "qualified_revisions": [
+          "89fb64fa8136f58e96b59538da0045b2637448458cacf9da7858a633c1c0e349"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "CLEVR_v1.0.zip"
+        ],
+        "license_paths": [
+          "image-clevr-license.txt",
+          "image-clevr-copyright.txt",
+          "image-clevr-readme.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 1,
+        "record_limit_max": 1,
+        "preview_limit": 0,
+        "measured_upstream_records": 1,
+        "measured_selected_records": 1,
+        "measured_upstream_bytes": 19021600724,
+        "measured_selected_bytes": 19021600724,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/image-clevr.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 19021600724,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "zip",
+              "whole_file_sha256_verified": true,
+              "members": 100008,
+              "uncompressed_bytes": 20002875087,
+              "png_images": 100000,
+              "flac_recordings": 0,
+              "rows": 0,
+              "all_member_crc_verified": true,
+              "json_records": {
+                "CLEVR_v1.0/scenes/CLEVR_val_scenes.json": 15000,
+                "CLEVR_v1.0/scenes/CLEVR_train_scenes.json": 70000,
+                "CLEVR_v1.0/questions/CLEVR_test_questions.json": 149988,
+                "CLEVR_v1.0/questions/CLEVR_val_questions.json": 149991,
+                "CLEVR_v1.0/questions/CLEVR_train_questions.json": 699989
+              }
+            }
+          ],
+          "scope": "CLEVR v1.0 main release: train, validation and test images, questions, and available scenes; CoGenT is a separate source release.",
+          "training_recipe_qualified": false
+        }
       }
     },
     {
@@ -2094,13 +3032,13 @@
           "https://datashare.ed.ac.uk/items/30e7453c-9ea8-48b4-8e18-f96d0dc62928/full"
         ],
         "upstream_declaration_checked_on": "2026-10-11",
-        "reviewed_revision": null,
+        "reviewed_revision": "61c96a3357e430d1354ed692f310330f92f507ee9e83a65f48ba576862d2ba33",
         "retain_license_and_notices": true,
         "share_alike": false,
         "notes": "Attribute Yamagishi, Veaux, and MacDonald and retain license_text.txt. Select one microphone view or group both recordings of each utterance. Exclude unaligned samples, including p315 with missing transcripts, from paired tasks."
       },
       "eligibility": "open_license_candidate",
-      "connector_status": "planned_not_implemented",
+      "connector_status": "implemented_qualified_bounded_subset",
       "fetch": {
         "kind": "http_archive",
         "discovery_url": "https://datashare.ed.ac.uk/handle/10283/3443",
@@ -2111,21 +3049,127 @@
         "release_hint": "0.92"
       },
       "split_policy": "Create versioned speaker-disjoint splits; keep both microphone views and repeated passage variants together when evaluating text generalization.",
-      "size_bytes": null,
-      "record_count": null,
-      "publication_status": "draft_catalog_not_download_enabled",
+      "size_bytes": 16400133,
+      "record_count": 20,
+      "publication_status": "qualified_bounded_download_enabled",
       "output_group_ids": [
         "speech"
       ],
       "acquisition": {
-        "status": "unqualified",
-        "qualified_on": "",
-        "connector": "",
-        "upstream_repository": "",
-        "pinned_revision": "",
-        "include_patterns": [],
-        "license_paths": [],
-        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+        "status": "qualified",
+        "qualified_on": "2026-10-11",
+        "connector": "qualified_http_subset_v1",
+        "upstream_repository": "https://datashare.ed.ac.uk/handle/10283/3443",
+        "pinned_revision": "61c96a3357e430d1354ed692f310330f92f507ee9e83a65f48ba576862d2ba33",
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of the frozen subset manifest: observed upstream ranges, decoded samples, and archived publisher license notices. Full archives/shards are not qualified.",
+        "qualified_revisions": [
+          "61c96a3357e430d1354ed692f310330f92f507ee9e83a65f48ba576862d2ba33"
+        ],
+        "include_patterns": [
+          "p225_001",
+          "p225_002",
+          "p226_001",
+          "p226_002",
+          "p227_001",
+          "p227_002",
+          "p228_001",
+          "p228_002",
+          "p229_001",
+          "p229_002",
+          "p230_001",
+          "p230_002",
+          "p231_001",
+          "p231_002",
+          "p232_001",
+          "p232_002",
+          "p233_001",
+          "p233_002",
+          "p234_001",
+          "p234_002"
+        ],
+        "license_paths": [
+          "notice/publisher-declaration"
+        ],
+        "record_selection": "deterministic evenly spaced selection of the frozen, explicitly qualified sample inventory",
+        "record_limit": 20,
+        "record_limit_max": 20,
+        "preview_limit": 3,
+        "measured_upstream_records": 20,
+        "measured_upstream_bytes": 16400133,
+        "measured_selected_records": 20,
+        "measured_selected_bytes": 5817612,
+        "measured_transfer_seconds": 127,
+        "measurement_environment": "macOS arm64; CPython 3.12; PyArrow 26.0.0; public HTTPS byte-range downloads and independent refetch through the runtime decoder.",
+        "verified_record_digests": true,
+        "blocked_reason": "",
+        "evidence": {
+          "manifest_path": "catalog/qualified-datasets/audio-vctk.json",
+          "manifest_sha256": "61c96a3357e430d1354ed692f310330f92f507ee9e83a65f48ba576862d2ba33",
+          "download_range_bytes": 15888546,
+          "decoded_sample_bytes": 5817612,
+          "full_corpus_qualified": false,
+          "checks": [
+            "Actual upstream bytes fetched over HTTPS; every admitted range SHA-256 recorded.",
+            "Each selected sample decoded without executing remote dataset code.",
+            "Independent refetch through pinned range reader reproduced every selected sample digest.",
+            "Publisher license declaration/notice bytes archived and digest-pinned."
+          ]
+        }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://datashare.ed.ac.uk/handle/10283/3443",
+        "pinned_revision": "31f515285efcc67d589b91bb97d1df691799c9eec4f43e25a7b8e77b69e470f4",
+        "qualified_revisions": [
+          "31f515285efcc67d589b91bb97d1df691799c9eec4f43e25a7b8e77b69e470f4"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "VCTK-Corpus-0.92.zip"
+        ],
+        "license_paths": [
+          "audio-vctk-publisher-declaration.txt",
+          "audio-vctk-full-readme.txt",
+          "audio-vctk-full-license.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 1,
+        "record_limit_max": 1,
+        "preview_limit": 0,
+        "measured_upstream_records": 1,
+        "measured_selected_records": 1,
+        "measured_upstream_bytes": 11747302977,
+        "measured_selected_bytes": 11747302977,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/audio-vctk.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 11747302977,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "zip",
+              "whole_file_sha256_verified": true,
+              "members": 132914,
+              "uncompressed_bytes": 11733299614,
+              "png_images": 0,
+              "flac_recordings": 88328,
+              "rows": 0,
+              "all_member_crc_verified": true,
+              "json_records": {}
+            }
+          ],
+          "scope": "VCTK 0.92 original full archive, both microphones, including publisher-documented missing transcripts/mic2 exceptions.",
+          "training_recipe_qualified": false
+        }
       }
     },
     {
@@ -2149,13 +3193,13 @@
           "https://www.openslr.org/141/"
         ],
         "upstream_declaration_checked_on": "2026-10-11",
-        "reviewed_revision": null,
+        "reviewed_revision": "17844ad4e8097a26c16c2410db6ddd41c4da147a2f4a6f296c76b3fbe6aea3a3",
         "retain_license_and_notices": true,
         "share_alike": false,
         "notes": "Preserve attribution and restoration provenance; inspect the published restoration-failure lists. Utterances match LibriTTS, so restored and original audio must share split assignments. Check LibriSpeech overlap too."
       },
       "eligibility": "open_license_candidate",
-      "connector_status": "planned_not_implemented",
+      "connector_status": "implemented_qualified_bounded_subset",
       "fetch": {
         "kind": "http_archive",
         "discovery_url": "https://www.openslr.org/141/",
@@ -2167,21 +3211,202 @@
         "download_url": "https://openslr.trmal.net/resources/141/train_clean_100.tar.gz"
       },
       "split_policy": "Preserve official train/dev/test and speaker boundaries; group source utterance IDs across LibriTTS-R, LibriTTS, and LibriSpeech.",
-      "size_bytes": null,
-      "record_count": null,
-      "publication_status": "draft_catalog_not_download_enabled",
+      "size_bytes": 8396702,
+      "record_count": 10,
+      "publication_status": "qualified_bounded_download_enabled",
       "output_group_ids": [
         "speech"
       ],
       "acquisition": {
-        "status": "unqualified",
-        "qualified_on": "",
-        "connector": "",
-        "upstream_repository": "",
-        "pinned_revision": "",
-        "include_patterns": [],
-        "license_paths": [],
-        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+        "status": "qualified",
+        "qualified_on": "2026-10-11",
+        "connector": "qualified_http_subset_v1",
+        "upstream_repository": "https://www.openslr.org/141/",
+        "pinned_revision": "17844ad4e8097a26c16c2410db6ddd41c4da147a2f4a6f296c76b3fbe6aea3a3",
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of the frozen subset manifest: observed upstream ranges, decoded samples, and archived publisher license notices. Full archives/shards are not qualified.",
+        "qualified_revisions": [
+          "17844ad4e8097a26c16c2410db6ddd41c4da147a2f4a6f296c76b3fbe6aea3a3"
+        ],
+        "include_patterns": [
+          "730_358_000000_000000",
+          "730_358_000001_000002",
+          "730_358_000001_000004",
+          "730_358_000001_000005",
+          "730_358_000002_000000",
+          "730_358_000002_000001",
+          "730_358_000003_000002",
+          "730_358_000004_000001",
+          "730_358_000005_000000",
+          "730_358_000006_000001"
+        ],
+        "license_paths": [
+          "notice/publisher-declaration"
+        ],
+        "record_selection": "deterministic evenly spaced selection of the frozen, explicitly qualified sample inventory",
+        "record_limit": 10,
+        "record_limit_max": 10,
+        "preview_limit": 3,
+        "measured_upstream_records": 10,
+        "measured_upstream_bytes": 8396702,
+        "measured_selected_records": 10,
+        "measured_selected_bytes": 6330569,
+        "measured_transfer_seconds": 9,
+        "measurement_environment": "macOS arm64; CPython 3.12; PyArrow 26.0.0; public HTTPS byte-range downloads and independent refetch through the runtime decoder.",
+        "verified_record_digests": true,
+        "blocked_reason": "",
+        "evidence": {
+          "manifest_path": "catalog/qualified-datasets/audio-libritts-r.json",
+          "manifest_sha256": "17844ad4e8097a26c16c2410db6ddd41c4da147a2f4a6f296c76b3fbe6aea3a3",
+          "download_range_bytes": 8388608,
+          "decoded_sample_bytes": 6330569,
+          "full_corpus_qualified": false,
+          "checks": [
+            "Actual upstream bytes fetched over HTTPS; every admitted range SHA-256 recorded.",
+            "Each selected sample decoded without executing remote dataset code.",
+            "Independent refetch through pinned range reader reproduced every selected sample digest.",
+            "Publisher license declaration/notice bytes archived and digest-pinned."
+          ]
+        }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://www.openslr.org/141/",
+        "pinned_revision": "21f037bbb7589a4895eb4073011666a57da4f1c41ffec51d952eb4d8528685bf",
+        "qualified_revisions": [
+          "21f037bbb7589a4895eb4073011666a57da4f1c41ffec51d952eb4d8528685bf"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "dev_clean.tar.gz",
+          "dev_other.tar.gz",
+          "doc.tar.gz",
+          "libritts_r_failed_speech_restoration_examples.tar.gz",
+          "test_clean.tar.gz",
+          "test_other.tar.gz",
+          "train_clean_100.tar.gz",
+          "train_clean_360.tar.gz",
+          "train_other_500.tar.gz"
+        ],
+        "license_paths": [
+          "audio-libritts-r-publisher-declaration.txt",
+          "audio-libritts-r-full-md5sum.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 9,
+        "record_limit_max": 9,
+        "preview_limit": 0,
+        "measured_upstream_records": 9,
+        "measured_selected_records": 9,
+        "measured_upstream_bytes": 88566937189,
+        "measured_selected_bytes": 88566937189,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/audio-libritts-r.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 88566937189,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 17400,
+              "uncompressed_bytes": 1549140608,
+              "wav_recordings": 5736,
+              "text_members": 11472,
+              "gzip_crc_verified": true
+            },
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 14017,
+              "uncompressed_bytes": 1110400071,
+              "wav_recordings": 4613,
+              "text_members": 9226,
+              "gzip_crc_verified": true
+            },
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 10,
+              "uncompressed_bytes": 1116921,
+              "wav_recordings": 0,
+              "text_members": 8,
+              "gzip_crc_verified": true
+            },
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 8,
+              "uncompressed_bytes": 913654,
+              "wav_recordings": 0,
+              "text_members": 8,
+              "gzip_crc_verified": true
+            },
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 14673,
+              "uncompressed_bytes": 1480324426,
+              "wav_recordings": 4837,
+              "text_members": 9674,
+              "gzip_crc_verified": true
+            },
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 15534,
+              "uncompressed_bytes": 1154992537,
+              "wav_recordings": 5120,
+              "text_members": 10240,
+              "gzip_crc_verified": true
+            },
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 100823,
+              "uncompressed_bytes": 9289478838,
+              "wav_recordings": 33232,
+              "text_members": 66473,
+              "gzip_crc_verified": true
+            },
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 353377,
+              "uncompressed_bytes": 33032398343,
+              "wav_recordings": 116462,
+              "text_members": 232915,
+              "gzip_crc_verified": true
+            },
+            {
+              "all_content_read": true,
+              "format": "tar.gz",
+              "whole_file_sha256_verified": true,
+              "members": 620617,
+              "uncompressed_bytes": 53514706569,
+              "wav_recordings": 205035,
+              "text_members": 410070,
+              "gzip_crc_verified": true
+            }
+          ],
+          "scope": "All seven train/dev/test splits plus documentation and failed-restoration lists from OpenSLR 141.",
+          "training_recipe_qualified": false
+        }
       }
     },
     {
@@ -2205,13 +3430,13 @@
           "https://archive.ics.uci.edu/dataset/53/iris"
         ],
         "upstream_declaration_checked_on": "2026-10-11",
-        "reviewed_revision": null,
+        "reviewed_revision": "21d6eb41c7dc6ca8e57d9b7ec0449d43b1ad3153d5d46c175939f0231096ffa8",
         "retain_license_and_notices": true,
         "share_alike": false,
         "notes": "Preserve UCI/Fisher attribution and feature units. Parse numeric measurements separately from the species target. This small fixture does not establish broad tabular model quality."
       },
       "eligibility": "open_license_candidate",
-      "connector_status": "planned_not_implemented",
+      "connector_status": "implemented_qualified_bounded_subset",
       "fetch": {
         "kind": "http_archive",
         "discovery_url": "https://archive.ics.uci.edu/dataset/53/iris",
@@ -2221,21 +3446,125 @@
         "transport_status": "not_download_tested"
       },
       "split_policy": "Create deterministic stratified splits, grouping duplicate feature rows; fit scaling and other learned preprocessing on training rows only.",
-      "size_bytes": null,
-      "record_count": null,
-      "publication_status": "draft_catalog_not_download_enabled",
+      "size_bytes": 589192,
+      "record_count": 20,
+      "publication_status": "qualified_bounded_download_enabled",
       "output_group_ids": [
         "numeric"
       ],
       "acquisition": {
-        "status": "unqualified",
-        "qualified_on": "",
-        "connector": "",
-        "upstream_repository": "",
-        "pinned_revision": "",
-        "include_patterns": [],
-        "license_paths": [],
-        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+        "status": "qualified",
+        "qualified_on": "2026-10-11",
+        "connector": "qualified_http_subset_v1",
+        "upstream_repository": "https://archive.ics.uci.edu/dataset/53/iris",
+        "pinned_revision": "21d6eb41c7dc6ca8e57d9b7ec0449d43b1ad3153d5d46c175939f0231096ffa8",
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of the frozen subset manifest: observed upstream ranges, decoded samples, and archived publisher license notices. Full archives/shards are not qualified.",
+        "qualified_revisions": [
+          "21d6eb41c7dc6ca8e57d9b7ec0449d43b1ad3153d5d46c175939f0231096ffa8"
+        ],
+        "include_patterns": [
+          "iris.data#row=0",
+          "iris.data#row=7",
+          "iris.data#row=15",
+          "iris.data#row=23",
+          "iris.data#row=31",
+          "iris.data#row=39",
+          "iris.data#row=47",
+          "iris.data#row=54",
+          "iris.data#row=62",
+          "iris.data#row=70",
+          "iris.data#row=78",
+          "iris.data#row=86",
+          "iris.data#row=94",
+          "iris.data#row=101",
+          "iris.data#row=109",
+          "iris.data#row=117",
+          "iris.data#row=125",
+          "iris.data#row=133",
+          "iris.data#row=141",
+          "iris.data#row=149"
+        ],
+        "license_paths": [
+          "notice/publisher-declaration"
+        ],
+        "record_selection": "deterministic evenly spaced selection of the frozen, explicitly qualified sample inventory",
+        "record_limit": 20,
+        "record_limit_max": 20,
+        "preview_limit": 3,
+        "measured_upstream_records": 20,
+        "measured_upstream_bytes": 589192,
+        "measured_selected_records": 20,
+        "measured_selected_bytes": 2025,
+        "measured_transfer_seconds": 5,
+        "measurement_environment": "macOS arm64; CPython 3.12; PyArrow 26.0.0; public HTTPS byte-range downloads and independent refetch through the runtime decoder.",
+        "verified_record_digests": true,
+        "blocked_reason": "",
+        "evidence": {
+          "manifest_path": "catalog/qualified-datasets/numeric-iris.json",
+          "manifest_sha256": "21d6eb41c7dc6ca8e57d9b7ec0449d43b1ad3153d5d46c175939f0231096ffa8",
+          "download_range_bytes": 3738,
+          "decoded_sample_bytes": 2025,
+          "full_corpus_qualified": false,
+          "checks": [
+            "Actual upstream bytes fetched over HTTPS; every admitted range SHA-256 recorded.",
+            "Each selected sample decoded without executing remote dataset code.",
+            "Independent refetch through pinned range reader reproduced every selected sample digest.",
+            "Publisher license declaration/notice bytes archived and digest-pinned."
+          ]
+        }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://archive.ics.uci.edu/dataset/53/iris",
+        "pinned_revision": "a477f8a13315c7dd807d4519d7cc56c1518bd4ef3da8b1cd29527679fdbe6107",
+        "qualified_revisions": [
+          "a477f8a13315c7dd807d4519d7cc56c1518bd4ef3da8b1cd29527679fdbe6107"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "iris.zip"
+        ],
+        "license_paths": [
+          "numeric-iris-publisher-declaration.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 1,
+        "record_limit_max": 1,
+        "preview_limit": 0,
+        "measured_upstream_records": 1,
+        "measured_selected_records": 1,
+        "measured_upstream_bytes": 3738,
+        "measured_selected_bytes": 3738,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/numeric-iris.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 3738,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "zip",
+              "whole_file_sha256_verified": true,
+              "members": 4,
+              "uncompressed_bytes": 12205,
+              "png_images": 0,
+              "flac_recordings": 0,
+              "rows": 300,
+              "all_member_crc_verified": true,
+              "json_records": {}
+            }
+          ],
+          "scope": "All dataset files and splits at the pinned publisher revision.",
+          "training_recipe_qualified": false
+        }
       }
     },
     {
@@ -2259,13 +3588,13 @@
           "https://archive.ics.uci.edu/dataset/186/wine+quality"
         ],
         "upstream_declaration_checked_on": "2026-10-11",
-        "reviewed_revision": null,
+        "reviewed_revision": "190ed41317253c9e2addfca27c64af3e06137922ca44018c6192bababd44a97a",
         "retain_license_and_notices": true,
         "share_alike": false,
         "notes": "Preserve Cortez and coauthor attribution. Parse semicolon-separated files, retain red/white type, and treat quality as the target. Do not infer consumer preferences or a time series from these measurements."
       },
       "eligibility": "open_license_candidate",
-      "connector_status": "planned_not_implemented",
+      "connector_status": "implemented_qualified_bounded_subset",
       "fetch": {
         "kind": "http_archive",
         "discovery_url": "https://archive.ics.uci.edu/dataset/186/wine+quality",
@@ -2275,21 +3604,145 @@
         "transport_status": "not_download_tested"
       },
       "split_policy": "Create versioned splits stratified by wine type and target; group duplicate measurements and fit learned preprocessing on training rows only.",
-      "size_bytes": null,
-      "record_count": null,
-      "publication_status": "draft_catalog_not_download_enabled",
+      "size_bytes": 260583,
+      "record_count": 40,
+      "publication_status": "qualified_bounded_download_enabled",
       "output_group_ids": [
         "numeric"
       ],
       "acquisition": {
-        "status": "unqualified",
-        "qualified_on": "",
-        "connector": "",
-        "upstream_repository": "",
-        "pinned_revision": "",
-        "include_patterns": [],
-        "license_paths": [],
-        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+        "status": "qualified",
+        "qualified_on": "2026-10-11",
+        "connector": "qualified_http_subset_v1",
+        "upstream_repository": "https://archive.ics.uci.edu/dataset/186/wine+quality",
+        "pinned_revision": "190ed41317253c9e2addfca27c64af3e06137922ca44018c6192bababd44a97a",
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of the frozen subset manifest: observed upstream ranges, decoded samples, and archived publisher license notices. Full archives/shards are not qualified.",
+        "qualified_revisions": [
+          "190ed41317253c9e2addfca27c64af3e06137922ca44018c6192bababd44a97a"
+        ],
+        "include_patterns": [
+          "winequality-red.csv#row=0",
+          "winequality-red.csv#row=84",
+          "winequality-red.csv#row=168",
+          "winequality-red.csv#row=252",
+          "winequality-red.csv#row=336",
+          "winequality-red.csv#row=420",
+          "winequality-red.csv#row=504",
+          "winequality-red.csv#row=588",
+          "winequality-red.csv#row=672",
+          "winequality-red.csv#row=756",
+          "winequality-red.csv#row=841",
+          "winequality-red.csv#row=925",
+          "winequality-red.csv#row=1009",
+          "winequality-red.csv#row=1093",
+          "winequality-red.csv#row=1177",
+          "winequality-red.csv#row=1261",
+          "winequality-red.csv#row=1345",
+          "winequality-red.csv#row=1429",
+          "winequality-red.csv#row=1513",
+          "winequality-red.csv#row=1598",
+          "winequality-white.csv#row=0",
+          "winequality-white.csv#row=257",
+          "winequality-white.csv#row=515",
+          "winequality-white.csv#row=773",
+          "winequality-white.csv#row=1030",
+          "winequality-white.csv#row=1288",
+          "winequality-white.csv#row=1546",
+          "winequality-white.csv#row=1804",
+          "winequality-white.csv#row=2061",
+          "winequality-white.csv#row=2319",
+          "winequality-white.csv#row=2577",
+          "winequality-white.csv#row=2835",
+          "winequality-white.csv#row=3092",
+          "winequality-white.csv#row=3350",
+          "winequality-white.csv#row=3608",
+          "winequality-white.csv#row=3866",
+          "winequality-white.csv#row=4123",
+          "winequality-white.csv#row=4381",
+          "winequality-white.csv#row=4639",
+          "winequality-white.csv#row=4897"
+        ],
+        "license_paths": [
+          "notice/publisher-declaration"
+        ],
+        "record_selection": "deterministic evenly spaced selection of the frozen, explicitly qualified sample inventory",
+        "record_limit": 40,
+        "record_limit_max": 40,
+        "preview_limit": 3,
+        "measured_upstream_records": 40,
+        "measured_upstream_bytes": 260583,
+        "measured_selected_records": 40,
+        "measured_selected_bytes": 9237,
+        "measured_transfer_seconds": 6,
+        "measurement_environment": "macOS arm64; CPython 3.12; PyArrow 26.0.0; public HTTPS byte-range downloads and independent refetch through the runtime decoder.",
+        "verified_record_digests": true,
+        "blocked_reason": "",
+        "evidence": {
+          "manifest_path": "catalog/qualified-datasets/numeric-wine-quality.json",
+          "manifest_sha256": "190ed41317253c9e2addfca27c64af3e06137922ca44018c6192bababd44a97a",
+          "download_range_bytes": 91353,
+          "decoded_sample_bytes": 9237,
+          "full_corpus_qualified": false,
+          "checks": [
+            "Actual upstream bytes fetched over HTTPS; every admitted range SHA-256 recorded.",
+            "Each selected sample decoded without executing remote dataset code.",
+            "Independent refetch through pinned range reader reproduced every selected sample digest.",
+            "Publisher license declaration/notice bytes archived and digest-pinned."
+          ]
+        }
+      },
+      "full_acquisition": {
+        "status": "qualified",
+        "qualified_on": "2026-10-12",
+        "connector": "qualified_full_http_release_v1",
+        "upstream_repository": "https://archive.ics.uci.edu/dataset/186/wine+quality",
+        "pinned_revision": "82b3b20a1ad7f783b88030811ab1c56608237a60582f1fa90bb9b6bc1ac60bc2",
+        "qualified_revisions": [
+          "82b3b20a1ad7f783b88030811ab1c56608237a60582f1fa90bb9b6bc1ac60bc2"
+        ],
+        "revision_resolved_on": "2026-10-11",
+        "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
+        "include_patterns": [
+          "wine-quality.zip"
+        ],
+        "license_paths": [
+          "numeric-wine-quality-publisher-declaration.txt"
+        ],
+        "record_selection": "Every original release file and split, without row/member truncation",
+        "record_limit": 1,
+        "record_limit_max": 1,
+        "preview_limit": 0,
+        "measured_upstream_records": 1,
+        "measured_selected_records": 1,
+        "measured_upstream_bytes": 91353,
+        "measured_selected_bytes": 91353,
+        "verified_record_digests": true,
+        "measurement_environment": "Actual full HTTPS downloads (including publisher-listed OpenSLR mirrors); SHA-256 for every byte and range; publisher LFS SHA-256/OpenSLR MD5 where available; complete row/archive validation on local filesystem. Source-file counts, not canonical training sample counts.",
+        "blocked_reason": "",
+        "evidence": {
+          "qualification_manifest": "catalog/full-datasets/numeric-wine-quality.json",
+          "all_release_files_verified": true,
+          "all_splits_included": true,
+          "record_unit": "source_files",
+          "complete_release_bytes": 91353,
+          "content_validation": [
+            {
+              "all_content_read": true,
+              "format": "zip",
+              "whole_file_sha256_verified": true,
+              "members": 3,
+              "uncompressed_bytes": 351930,
+              "png_images": 0,
+              "flac_recordings": 0,
+              "rows": 6497,
+              "all_member_crc_verified": true,
+              "json_records": {}
+            }
+          ],
+          "scope": "All dataset files and splits at the pinned publisher revision.",
+          "training_recipe_qualified": false
+        }
       }
     }
   ],
