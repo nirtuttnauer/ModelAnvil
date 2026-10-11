@@ -44,7 +44,7 @@ LORA = {'r': 8, 'lora_alpha': 16, 'target_modules': ['q_proj', 'v_proj'], 'lora_
 CONTRACT = {'runtime': RUNTIME_ID, 'source': SOURCE, 'file_hashes': FILE_HASHES, 'packages': PACKAGES,
             'recipe': 'full_sft', 'precision': 'fp32', 'optimizer': OPTIMIZER, 'limits': LIMITS,
             'dropout': 'disabled', 'placement': 'one_trusted_local_worker',
-            'recipes': ['full_sft', 'lora_adapter'], 'lora': LORA, 'adapter_package': {'peft': '0.17.1'},
+            'recipes': ['full_sft', 'lora_adapter', 'continued_pretraining'], 'lora': LORA, 'adapter_package': {'peft': '0.17.1'},
             'lora_gradient_checkpointing': 'non_reentrant', 'deterministic_algorithms': True,
             'device_admission': 'exclusive_posix_user_host_v1'}
 CONTRACT_DIGEST = digest(CONTRACT)
@@ -90,7 +90,7 @@ def runner_manifest():
                           'disk_bytes': 2 * 1024**3, 'distributed': False},
             'permissions': {'network_hosts': [], 'artifact_access': ['read_job_inputs', 'write_attempt_staging'], 'secret_kinds': []},
             'dependencies': [],
-            'limitations': ['One pinned SmolLM2-135M model, text full SFT or rank-8 q/v LoRA, FP32, deterministic manifest-order samples.',
+            'limitations': ['One pinned SmolLM2-135M model, text full SFT, rank-8 q/v LoRA or continued pretraining, FP32, deterministic manifest-order samples.',
                            'One trusted local GPU worker per pool; cross-worker device reservations require TASK-42.',
                            'No QLoRA, quantization, distributed or remote worker support; each device needs qualification.']}
 
@@ -207,7 +207,7 @@ def _load_model(directory):
 
 
 def _recipe_model(directory, recipe_type='full_sft', seed=42, *, training=False):
-    if recipe_type == 'full_sft':
+    if recipe_type in {'full_sft', 'continued_pretraining'}:
         return _load_model(directory)
     require_adapter_package()
     import torch
@@ -244,7 +244,9 @@ def _recipe_model(directory, recipe_type='full_sft', seed=42, *, training=False)
     return model
 
 
-def _training_samples(dataset, tokenizer, tenant, project):
+def _training_samples(dataset, tokenizer, tenant, project, *, split='train'):
+    if split not in {'train', 'validation'}:
+        raise ValueError('The training runtime never consumes the protected test split.')
     from contracts import validate_envelope
     if dataset.state != 'published' or not dataset.manifest_artifact_id:
         raise ValueError('Publish a prepared text dataset before GPU training.')
@@ -260,16 +262,22 @@ def _training_samples(dataset, tokenizer, tenant, project):
     if not splits.get('train') or any(not isinstance(ids, list) or any(not isinstance(i, str) for i in ids) for ids in splits.values()):
         raise ValueError('Prepared splits require a nonempty train list and valid sample identifiers.')
     train = splits['train']; held = [i for name, ids in splits.items() if name != 'train' for i in ids]
-    if len(set(train)) != len(train) or set(train) & set(held):
+    if len(set(train + held)) != len(train + held):
         raise ValueError('Protected split contamination or duplicate train identifiers; republish the dataset.')
-    seen, samples = set(), []
+    selected = splits.get(split, [])
+    seen, samples, groups = set(), [], {}
     for row in rows:
         validate_envelope(row)
         identifier = row['sample_id']
         if identifier in seen:
             raise ValueError('Prepared samples must have unique identifiers.')
         seen.add(identifier)
-        if identifier not in train:
+        group = row.get('source_group_id', identifier)
+        named_split = next((name for name, identifiers in splits.items() if identifier in identifiers), None)
+        if group in groups and groups[group] != named_split:
+            raise ValueError('A source group crosses protected dataset splits.')
+        groups[group] = named_split
+        if identifier not in selected:
             continue
         if any(b['type'] != 'text' or b.get('role') for b in row['blocks']):
             raise ValueError('GPU full SFT accepts text-only samples without chat roles.')
@@ -280,7 +288,7 @@ def _training_samples(dataset, tokenizer, tenant, project):
         samples.append({'sample_id': identifier, 'text': text, 'token_ids': ids})
     if not samples or (set(train) | set(held)) - seen:
         raise ValueError('Published split identifiers do not resolve to actual samples.')
-    return samples, {'consumed': 'train', 'train_rows': len(samples), 'excluded_rows': {n: len(ids) for n, ids in splits.items() if n != 'train'}, 'excluded_digest': digest(sorted(held))}
+    return samples, {'consumed': split, 'train_rows': len(train), 'excluded_rows': {n: len(ids) for n, ids in splits.items() if n != 'train'}, 'excluded_digest': digest(sorted(held))}
 
 
 def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, steps, require_capacity=True,
@@ -333,6 +341,7 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
         if len(spec) != tokenizer.vocabulary_size or config['vocab_size'] != tokenizer.vocabulary_size:
             raise ValueError('Tokenizer vocabulary does not match the pinned transformer.')
         samples, splits = _training_samples(dataset, spec, tenant, project)
+        validation = _training_samples(dataset, spec, tenant, project, split='validation')[0] if recipe_type == 'continued_pretraining' else []
     pins = {'runtime': profile.RUNTIME_ID, 'contract_digest': profile.CONTRACT_DIGEST, 'build_digest': profile.build_digest(),
             'dataset_id': str(dataset.revision_id), 'dataset_digest': dataset.manifest_digest,
             'base_id': str(base.model_version_id), 'base_artifact_id': str(artifact.artifact_id),
@@ -344,6 +353,11 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
     pins['recipe'] = recipe_type
     if recipe_type == 'lora_adapter':
         pins.update(adapter=LORA, initialization_seed=initialization_seed, adapter_package={'peft': '0.17.1'})
+    if recipe_type == 'continued_pretraining':
+        pins.update(objective='causal_next_token_continued_pretraining', initialization='pinned_pretrained_weights',
+            corpus={'components': [{'revision_id': str(dataset.revision_id), 'manifest_digest': dataset.manifest_digest, 'weight': 1.0}],
+                'ordering': 'published_manifest_order_cyclic', 'sample_order_digest': digest([r['sample_id'] for r in samples]),
+                'validation_digest': digest(validation), 'sampler_rng': 'none_dropout_disabled'})
     # BF16 base becomes FP32 weights + two FP32 Adam moments, with staging/candidate headroom.
     checkpoint_bytes = 6 * files['model.safetensors']['byte_size'] + 1024**2
     if recipe_type in {'lora_adapter', 'qlora_adapter'}:
@@ -355,7 +369,7 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
         pins.update(adapter=profile.LORA, quantization=profile.QUANTIZATION, initialization_seed=initialization_seed, adapter_package=profile.PACKAGES)
         checkpoint_bytes += files['model.safetensors']['byte_size']
     return {'pins': pins, 'bundle': bundle, 'tokenizer': {'kind': 'huggingface', 'source': SOURCE},
-            'samples': samples, 'sequences': [s['token_ids'] for s in samples], 'checkpoint_bytes': checkpoint_bytes}
+            'samples': samples, 'sequences': [s['token_ids'] for s in samples], 'validation_samples': validation, 'checkpoint_bytes': checkpoint_bytes}
 
 
 def is_worker_run(run):
@@ -469,6 +483,21 @@ def execute_training(run, context):
             api.empty_cache()
 
 
+def _validation_loss(model, samples, device):
+    import torch
+    pairs, total = 0, 0.0
+    with torch.no_grad():
+        for sample in samples:
+            ids = torch.tensor([sample['token_ids']], device=device, dtype=torch.long)
+            value = model(input_ids=ids, labels=ids).loss
+            if not torch.isfinite(value).item():
+                raise ValueError('Protected validation produced non-finite loss.')
+            count = len(sample['token_ids']) - 1
+            pairs += count
+            total += value.item() * count
+    return {'loss': total / pairs, 'prediction_tokens': pairs, 'samples': len(samples)}
+
+
 def _execute_updates(run, context, inputs, device, recovery, files, latest):
     import torch
     from safetensors.torch import save_file
@@ -484,6 +513,7 @@ def _execute_updates(run, context, inputs, device, recovery, files, latest):
                 betas=(OPTIMIZER['beta1'], OPTIMIZER['beta2']), eps=OPTIMIZER['epsilon'], weight_decay=OPTIMIZER['weight_decay'], foreach=False)
             if latest:
                 _restore_optimizer(model, optimizer, directory, latest.step)
+            validation_before = _validation_loss(model, inputs['validation_samples'], device) if inputs['validation_samples'] else None
             for step in range(run.current_step + 1, run.total_steps + 1):
                 if not context.heartbeat(progress=(step - 1) / run.total_steps):
                     return
@@ -522,6 +552,14 @@ def _execute_updates(run, context, inputs, device, recovery, files, latest):
                 metrics['gpu_utilization_percent'] = None  # No portable utilization measurement is available in this runtime.
                 if backend == 'mps':
                     metrics['unified_memory'] = mps_memory()
+                if validation_before is not None:
+                    validation_started = time.perf_counter()
+                    after = _validation_loss(model, inputs['validation_samples'], device)
+                    metrics.update(validation_loss_before_update=validation_before['loss'], validation_loss=after['loss'],
+                        validation_prediction_tokens=after['prediction_tokens'], validation_samples=after['samples'],
+                        validation_wall_seconds=time.perf_counter() - validation_started,
+                        cumulative_training_prediction_tokens=sum(len(inputs['samples'][i % len(inputs['samples'])]['token_ids']) - 1 for i in range(step)))
+                    validation_before = after
                 # Hugging Face preserves its expected tied embedding key; generic save_model does not.
                 model.save_pretrained(str(directory), safe_serialization=True,
                     **({'save_embedding_layers': False} if run.recipe_type == 'lora_adapter' else {}))

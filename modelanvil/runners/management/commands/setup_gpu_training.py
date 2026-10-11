@@ -29,7 +29,7 @@ class Command(BaseCommand):
         parser.add_argument('--model-dir', type=Path, required=True)
         parser.add_argument('--samples', type=Path, required=True, help='Canonical text sample-envelope JSONL')
         parser.add_argument('--device', required=True, help='Explicit cuda:N, rocm:N, xpu:N, mps:0 or native mlx:0')
-        parser.add_argument('--recipe', choices=['full_sft', 'lora_adapter', 'qlora_adapter'], default='full_sft')
+        parser.add_argument('--recipe', choices=['full_sft', 'lora_adapter', 'qlora_adapter', 'continued_pretraining'], default='full_sft')
         parser.add_argument('--steps', type=int, default=3)
 
     @transaction.atomic

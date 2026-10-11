@@ -28,7 +28,7 @@ def training_evidence(run):
                           else 'Budgeted CPU worker job awaiting checkpoint evidence')
             if pins.get('accelerator'):
                 backend = pins['accelerator']['device']['backend']
-                recipe = {'lora_adapter': 'LoRA', 'qlora_adapter': 'four-bit QLoRA'}.get(pins.get('recipe'), 'full SFT')
+                recipe = {'lora_adapter': 'LoRA', 'qlora_adapter': 'four-bit QLoRA', 'continued_pretraining': 'continued pretraining'}.get(pins.get('recipe'), 'full SFT')
                 source = (f'Pinned SmolLM2 {backend} {recipe}; measured GPU metrics and fenced checkpoints'
                           if run.current_step else f'Budgeted {backend} GPU worker job awaiting checkpoint evidence')
             result = evidence('integrated_execution' if run.current_step else 'configuration_only', source)

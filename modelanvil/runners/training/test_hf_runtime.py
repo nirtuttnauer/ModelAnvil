@@ -147,6 +147,25 @@ class GPUInputTests(TestCase):
                 with self.assertRaisesRegex(ValueError, 'contamination|do not resolve'):
                     gpu._training_samples(revision, SimpleNamespace(encode=lambda *a,**k:[1,2,3]), self.tenant.pk, self.project.pk)
 
+    def test_continued_pretraining_validation_never_consumes_train_or_test(self):
+        revision = self.published()
+        prepared = json.loads(gpu.read_artifact(revision.manifest_artifact, self.tenant.pk, self.project.pk))
+        identifiers = [r['sample_id'] for r in prepared['rows']]
+        prepared['split_manifest'] = {'train': identifiers[:1], 'validation': identifiers[1:2], 'test': identifiers[2:]}
+        raw = json.dumps(prepared).encode(); revision.manifest_digest = hashlib.sha256(raw).hexdigest()
+        tokenizer = SimpleNamespace(encode=lambda *a, **k: [1, 2, 3])
+        with patch.object(gpu, 'read_artifact', return_value=raw):
+            samples, summary = gpu._training_samples(revision, tokenizer, self.tenant.pk, self.project.pk, split='validation')
+            self.assertEqual([s['sample_id'] for s in samples], identifiers[1:2])
+            self.assertEqual(summary['consumed'], 'validation')
+            with self.assertRaisesRegex(ValueError, 'never consumes'):
+                gpu._training_samples(revision, tokenizer, self.tenant.pk, self.project.pk, split='test')
+        prepared['rows'][1]['source_group_id'] = prepared['rows'][0]['source_group_id']
+        raw = json.dumps(prepared).encode(); revision.manifest_digest = hashlib.sha256(raw).hexdigest()
+        with patch.object(gpu, 'read_artifact', return_value=raw):
+            with self.assertRaisesRegex(ValueError, 'source group'):
+                gpu._training_samples(revision, tokenizer, self.tenant.pk, self.project.pk)
+
     def test_encoded_samples_are_never_silently_truncated(self):
         revision = self.published()
         for tokens in ([1], list(range(129))):
