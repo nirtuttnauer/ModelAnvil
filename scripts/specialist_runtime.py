@@ -204,6 +204,9 @@ def recognize(directory, device, inputs, image):
 
 def main():
     import resource
+    import signal
+    # An orphaned GPU child must release its inherited device lease even if the API dies.
+    signal.alarm(120)
     resource.setrlimit(resource.RLIMIT_CPU, (115, 115))
     resource.setrlimit(resource.RLIMIT_FSIZE, (2 * 1024**2, 2 * 1024**2))
     # macOS does not provide a usable RLIMIT_AS for Metal; input/model/output caps apply.

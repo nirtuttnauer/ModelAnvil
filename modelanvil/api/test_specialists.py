@@ -185,6 +185,8 @@ class SpecialistApiTests(TestCase):
             self.assertEqual(kwargs['env']['PYTORCH_ENABLE_MPS_FALLBACK'],'0')
             self.assertFalse({'HF_TOKEN','PYTHONPATH','AWS_SECRET_ACCESS_KEY'} & set(kwargs['env']))
             self.assertEqual(kwargs['timeout'],120)
+            self.assertEqual(len(kwargs['pass_fds']),1)
+            self.assertFalse(__import__('os').get_inheritable(kwargs['pass_fds'][0]))
             raise subprocess.TimeoutExpired(command,120)
         with override_settings(MODELANVIL_SPECIALIST_PYTHON=sys.executable), patch('modelanvil.runners.specialists.snapshot',return_value={'source':{},'files':{'config.json':ref}}), patch('modelanvil.runners.specialists.subprocess.run',side_effect=timeout):
             with self.assertRaisesRegex(ValueError,'runtime was terminated'):

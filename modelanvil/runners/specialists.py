@@ -93,7 +93,7 @@ def execute(version, *, tenant, project, kind, device, inputs, image=None):
     plan = snapshot(version, tenant, project, kind)
     started = time.monotonic()
     with ExitStack() as stack:
-        stack.enter_context(device_lease(device))
+        admission = stack.enter_context(device_lease(device, pass_descriptor=True))
         directory = stack.enter_context(staged_snapshot(plan['files'], tenant, project))
         work = Path(stack.enter_context(tempfile.TemporaryDirectory(prefix='modelanvil-specialist-')))
         runtime_bytes = RUNTIME.read_bytes()
@@ -115,7 +115,7 @@ def execute(version, *, tenant, project, kind, device, inputs, image=None):
         with (work / 'out').open('w+b') as stdout, (work / 'err').open('w+b') as stderr:
             try:
                 result = subprocess.run([python, '-I', str(work / 'runtime.py')], input=json.dumps(request, allow_nan=False).encode(),
-                    cwd=work, env=env, stdout=stdout, stderr=stderr, timeout=120)
+                    cwd=work, env=env, stdout=stdout, stderr=stderr, timeout=120, pass_fds=(admission,))
             except subprocess.TimeoutExpired:
                 raise ValueError('Specialist request exceeded 120 seconds; the runtime was terminated.') from None
             stdout.seek(0)

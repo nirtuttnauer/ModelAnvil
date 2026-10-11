@@ -580,5 +580,17 @@
     "input_controls_locked_during_inference": true,
     "screenshot": "/private/tmp/modelanvil-scanned-ocr-published.png",
     "api_served_clean_snapshot": true
+  },
+  "process_lifetime": {
+    "fix": "Child inherits the actual device-lock descriptor and retains it if the API closes/dies; independent child wall alarm is 120 seconds.",
+    "real_posix_regression": "Parent close keeps Apple admission busy; child SIGALRM deadline releases admission.",
+    "clean_base_tests": {
+      "passed": 14
+    },
+    "actual_mps_browser_result": {
+      "choice": "billing",
+      "elapsed_seconds": 6.71
+    },
+    "other_gpu_qualification": "pending"
   }
 }
