@@ -82,9 +82,11 @@ h3 { font-size: 16px; font-weight: 600; }
 p { line-height: 1.6; }
 .layout { min-height: 100vh; display: grid; grid-template-columns: 248px minmax(0, 1fr); }
 .navigation-rail { height: 100vh; position: sticky; top: 0; background: var(--surface); border-right: 1px solid var(--border); padding: 28px 16px 16px; display: flex; flex-direction: column; min-width: 0; }
-.brand { display: flex; align-items: center; gap: 11px; padding: 0 12px 25px; text-decoration: none; color: var(--text); font-size: 18px; font-weight: 700; letter-spacing: -.04em; }
-.mark { height: 35px; width: 35px; flex-shrink: 0; display: grid; place-items: center; border-radius: 8px; color: var(--on-primary); background: var(--primary); }
-.brand-subtitle { display: block; font-size: 9px; font-weight: 550; letter-spacing: .15em; color: var(--text-muted); margin-top: 2px; }
+.brand { display: block; padding: 0 12px 25px; text-decoration: none; }
+.brand-logo { display: block; width: 100%; height: auto; }
+.brand-icon { display: none; }
+.brand-subtitle { display: block; font-size: 9px; font-weight: 550; letter-spacing: .15em; color: var(--text-muted); margin: 2px 0 0 22.4%; }
+.mobile-brand { display: none; }
 .workspace { padding: 11px; margin-bottom: 22px; background: var(--surface-subtle); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; gap: 10px; }
 .workspace-avatar { display: grid; place-items: center; flex-shrink: 0; width: 30px; height: 30px; border: 1px solid var(--control-border); border-radius: 6px; color: var(--text-secondary); background: var(--surface); font-weight: 600; }
 .workspace>div { min-width: 0; flex: 1; }

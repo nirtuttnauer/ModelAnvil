@@ -4,7 +4,7 @@ const config: StorybookConfig = {
   stories: ['../src/stories/**/*.stories.tsx'],
   addons: ['@storybook/addon-a11y', 'msw-storybook-addon'],
   framework: '@storybook/react-vite',
-  staticDirs: ['./static'],
+  staticDirs: ['../public', './static'],
   core: { disableTelemetry: true },
   async viteFinal(config) {
     // Demo actions must never be forwarded to the application's backend.
