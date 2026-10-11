@@ -399,6 +399,7 @@ class TrainingRun(TenantContextModel):
         CONTINUED_PRETRAINING = "continued_pretraining", "Continued Pretraining"
         FULL_SFT = "full_sft", "Full Parameter SFT"
         LORA_ADAPTER = "lora_adapter", "LoRA Adapter"
+        QLORA_ADAPTER = "qlora_adapter", "Quantized LoRA Adapter"
 
     class Status(models.TextChoices):
         PENDING = "pending", "Pending"

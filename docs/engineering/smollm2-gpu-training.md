@@ -2,6 +2,8 @@
 
 TASK-13 implements an independent ModelAnvil runtime, `modelanvil.smollm2-gpu-sft.v1`, using PyTorch and Hugging Face Transformers. The existing CPU runtimes remain separate. The runtime supports full FP32 SFT and FP32 rank-8 q/v LoRA with AdamW, one text sample per step, 2–128 actual tokenizer tokens, 1–1000 steps and at most 1000 published rows. It consumes only the protected train split and rejects truncation, chat roles, incompatible inputs and unknown GPU memory capacity.
 
+Apple Silicon also has a separate [native four-bit adapter profile](native-apple-adapter-training.md), selected with `--device mlx:0 --recipe qlora_adapter`. Its exported weights and adapter files use the standard MLX format and its measured quantization quality limit is recorded explicitly.
+
 The source is [SmolLM2-135M](https://huggingface.co/HuggingFaceTB/SmolLM2-135M), Apache-2.0, pinned to commit `93efa2f097d58c2a74874c7e644dbc9b0cee75a2`. Five exact file digests are allowlisted in `hf_runtime.py`. Inputs are local committed tenant/project artifacts; checkpoints are verified Safetensors weight and Adam-moment artifacts. Loaders use local files only and cannot execute remote model code or load pickle weights.
 
 ## Environment and input preparation

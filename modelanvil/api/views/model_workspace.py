@@ -332,13 +332,13 @@ class InferenceViewSet(TenantScopedViewSet):
         selected_project()
         from django.db.models import Q
         from modelanvil.runners.models import TrainingRun
-        from modelanvil.runners.training.hf_runtime import RUNTIME_ID
+        from modelanvil.runners.training import hf_runtime, mlx_runtime
         trained = TrainingRun.objects.filter(status='completed', job__status='succeeded',
-            base_model_version__architecture_ref=RUNTIME_ID).values_list('output_model_version_id', flat=True)
+            base_model_version__architecture_ref__in=[hf_runtime.RUNTIME_ID, mlx_runtime.RUNTIME_ID]).values_list('output_model_version_id', flat=True)
         rows = self.get_queryset().filter(Q(metadata__imported=True) | Q(pk__in=trained))
         return Response({'object': 'list', 'data': [{'id': str(v.model_version_id), 'object': 'model',
             'created': int(v.created_at.timestamp()), 'owned_by': 'modelanvil', 'name': v.model.name,
-            'format': v.metadata.get('format', 'safetensors'), 'load_tested': v.inference_requests.filter(status='completed').exists(),
+            'format': v.metadata.get('format', 'mlx' if v.architecture_ref == mlx_runtime.RUNTIME_ID else 'safetensors'), 'load_tested': v.inference_requests.filter(status='completed').exists(),
             'has_chat_template': bool(v.tokenizer.chat_template), 'chat_template': v.tokenizer.chat_template} for v in rows]})
 
     @action(detail=False, methods=['post'], url_path='chat/completions')

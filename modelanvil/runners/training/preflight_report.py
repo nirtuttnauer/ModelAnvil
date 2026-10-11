@@ -165,9 +165,11 @@ def build_preflight_report(*, recipe_type, tokenizer_version, base_model_version
                 check('device-admission', 'capacity', False, str(exc), 'Configure the same private device admission directory for local API and workers.')
             requirements.update(gpu_count=1, accelerator=inputs['pins']['accelerator'], precision=module.CONTRACT['precision'],
                 storage_assumption='FP32 weights, two FP32 Adam moments, per-step checkpoints and staging/candidate headroom; shared local host.')
-            if recipe_type == 'lora_adapter':
+            if recipe_type in {'lora_adapter', 'qlora_adapter'}:
                 requirements.update(adapter=inputs['pins']['adapter'], trainable_parameters=inputs['pins']['trainable_parameters'],
                     storage_assumption='Immutable shared base references plus FP32 adapter weights and Adam moments per step; shared local host.')
+            if recipe_type == 'qlora_adapter':
+                requirements.update(quantization=inputs['pins']['quantization'], storage_assumption='Frozen four-bit base plus FP32 adapters and Adam moments per checkpoint; shared local host.')
         try:
             space = storage_capacity(required)
             check('storage', 'capacity', all(v['available_bytes'] >= required for v in space.values()),

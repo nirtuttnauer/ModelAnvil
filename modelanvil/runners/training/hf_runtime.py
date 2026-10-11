@@ -159,7 +159,7 @@ def _artifact(ref, tenant, project, *, weight=False):
 @contextlib.contextmanager
 def staged_files(files, tenant, project):
     """Only verified bytes enter a library loader; filenames are server allowlisted."""
-    allowed = set(FILE_HASHES) | {'optimizer.safetensors', 'adapter_model.safetensors', 'adapter_config.json'}
+    allowed = set(FILE_HASHES) | {'optimizer.safetensors', 'adapter_model.safetensors', 'adapters.safetensors', 'adapter_config.json'}
     if not isinstance(files, dict) or not files or set(files) - allowed:
         raise ValueError('Model file manifest contains missing or unsupported filenames.')
     backend = artifact_storage_backend()
@@ -284,22 +284,24 @@ def _training_samples(dataset, tokenizer, tenant, project):
 
 
 def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, steps, require_capacity=True,
-                   recipe_type='full_sft', initialization_seed=42):
+                   recipe_type='full_sft', initialization_seed=42, profile=None):
+    import sys
+    profile = profile or sys.modules[__name__]
     from modelanvil.jobs.models import Worker
-    require_packages()
-    if recipe_type not in CONTRACT['recipes'] or type(initialization_seed) is not int or not 0 <= initialization_seed <= 2147483647:
-        raise ValueError('Select full_sft or lora_adapter with a seed from 0 to 2147483647.')
+    profile.require_packages()
+    if recipe_type not in profile.CONTRACT['recipes'] or type(initialization_seed) is not int or not 0 <= initialization_seed <= 2147483647:
+        raise ValueError('Select a supported runtime recipe with a seed from 0 to 2147483647.')
     if recipe_type == 'lora_adapter':
         require_adapter_package()
-    if type(steps) is not int or not 1 <= steps <= LIMITS['steps']:
+    if type(steps) is not int or not 1 <= steps <= profile.LIMITS['steps']:
         raise ValueError('GPU full SFT supports 1–1000 optimizer steps.')
     if not all([dataset, base, tokenizer, runner, pool]) or any(not check_resource_access(r, project, tenant) for r in [dataset, base, tokenizer, runner, pool]):
         raise ValueError('Select accessible published data, base weights, tokenizer, runner and pool.')
-    if (base.architecture_ref != RUNTIME_ID or base.tokenizer_id != tokenizer.pk or tokenizer.chat_template
+    if (base.architecture_ref != profile.RUNTIME_ID or base.tokenizer_id != tokenizer.pk or tokenizer.chat_template
             or tokenizer.compatibility.get('hf_snapshot') != SOURCE):
         raise ValueError('Select the pinned SmolLM2 base and its unchanged text tokenizer.')
-    if (not runner.enabled or runner.manifest != runner_manifest() or runner.digest != digest(runner_manifest())
-            or runner.compatibility.get('contract_digest') != CONTRACT_DIGEST or pool.status != 'active'):
+    if (not runner.enabled or runner.manifest != profile.runner_manifest() or runner.digest != digest(profile.runner_manifest())
+            or runner.compatibility.get('contract_digest') != profile.CONTRACT_DIGEST or pool.status != 'active'):
         raise ValueError('Enable the exact GPU runtime manifest and activate its worker pool.')
     manifest = base.metadata.get('snapshot_manifest', {})
     artifact = _artifact({'artifact_id': str(base.artifact_manifest_id),
@@ -313,12 +315,12 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
             or any(not isinstance(files[n], dict) or files[n].get('sha256') != h for n, h in FILE_HASHES.items())):
         raise ValueError('Base must contain the exact immutable SmolLM2 snapshot files.')
     workers = list(Worker.all_objects.filter(tenant_id=tenant, pool=pool, status__in=['available', 'busy']))
-    matching = [w for w in workers if capable_worker(w)]
+    matching = [w for w in workers if profile.capable_worker(w)]
     # This first local runtime does not share GPUs between independently registered workers.
     if len(workers) != 1 or len(matching) != 1:
         raise ValueError('Use a dedicated pool with exactly one single-slot GPU worker for this contract.')
     worker = matching[0]
-    observed = observed_device(worker.capabilities['gpu_device'])
+    observed = profile.observed_device(worker.capabilities['gpu_device'])
     if observed['device']['backend'] != worker.capabilities['gpu_backend']:
         raise ValueError('GPU worker backend changed; re-register the worker before launch.')
     if require_capacity and worker.slots < 1:
@@ -331,24 +333,27 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
         if len(spec) != tokenizer.vocabulary_size or config['vocab_size'] != tokenizer.vocabulary_size:
             raise ValueError('Tokenizer vocabulary does not match the pinned transformer.')
         samples, splits = _training_samples(dataset, spec, tenant, project)
-    pins = {'runtime': RUNTIME_ID, 'contract_digest': CONTRACT_DIGEST, 'build_digest': build_digest(),
+    pins = {'runtime': profile.RUNTIME_ID, 'contract_digest': profile.CONTRACT_DIGEST, 'build_digest': profile.build_digest(),
             'dataset_id': str(dataset.revision_id), 'dataset_digest': dataset.manifest_digest,
             'base_id': str(base.model_version_id), 'base_artifact_id': str(artifact.artifact_id),
             'base_digest': hashlib.sha256(raw).hexdigest(), 'tokenizer_id': str(tokenizer.tokenizer_id),
             'tokenizer_digest': digest({n: files[n] for n in files if n != 'model.safetensors'}),
             'runner_id': str(runner.manifest_id), 'runner_digest': runner.digest, 'pool_id': pool.pk,
-            'steps': steps, 'config': {**config, 'runtime': RUNTIME_ID}, 'optimizer': OPTIMIZER,
+            'steps': steps, 'config': {**config, 'runtime': profile.RUNTIME_ID}, 'optimizer': profile.OPTIMIZER,
             'sample_digest': digest(samples), 'splits': splits, 'accelerator': observed, 'worker_id': worker.pk}
     pins['recipe'] = recipe_type
     if recipe_type == 'lora_adapter':
         pins.update(adapter=LORA, initialization_seed=initialization_seed, adapter_package={'peft': '0.17.1'})
     # BF16 base becomes FP32 weights + two FP32 Adam moments, with staging/candidate headroom.
     checkpoint_bytes = 6 * files['model.safetensors']['byte_size'] + 1024**2
-    if recipe_type == 'lora_adapter':
+    if recipe_type in {'lora_adapter', 'qlora_adapter'}:
         adapter_parameters = config['num_hidden_layers'] * LORA['r'] * (
             3 * config['hidden_size'] + config['num_key_value_heads'] * config['hidden_size'] // config['num_attention_heads'])
         pins['trainable_parameters'] = adapter_parameters
         checkpoint_bytes = 12 * adapter_parameters + 1024**2
+    if recipe_type == 'qlora_adapter':
+        pins.update(adapter=profile.LORA, quantization=profile.QUANTIZATION, initialization_seed=initialization_seed, adapter_package=profile.PACKAGES)
+        checkpoint_bytes += files['model.safetensors']['byte_size']
     return {'pins': pins, 'bundle': bundle, 'tokenizer': {'kind': 'huggingface', 'source': SOURCE},
             'samples': samples, 'sequences': [s['token_ids'] for s in samples], 'checkpoint_bytes': checkpoint_bytes}
 

@@ -35,7 +35,7 @@ def main():
             listed = client.get('/api/v1/inference/models/')
             assert listed.status_code == 200, listed.content
             assert report['candidate'] in {model['id'] for model in listed.data['data']}
-            for device in ('cpu', report['pins']['accelerator']['device']['id']):
+            for device in (('mlx:0',) if report['pins']['recipe'] == 'qlora_adapter' else ('cpu', report['pins']['accelerator']['device']['id'])):
                 response = client.post('/api/v1/inference/chat/completions', {'model': report['candidate'],
                     'messages': [{'role': 'user', 'content': expected['prompt']}],
                     'max_tokens': len(expected['generated_token_ids']), 'temperature': 0, 'device': device}, format='json')

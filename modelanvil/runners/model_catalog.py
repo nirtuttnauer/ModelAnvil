@@ -63,7 +63,7 @@ def search_models(query, tenant, project):
 
 def filename_allowed(name):
     return isinstance(name, str) and '/' not in name and '\\' not in name and '..' not in name and (
-        name in AUX_NAMES or re.fullmatch(r'(?:model(?:-\d{5}-of-\d{5})?|adapter_model)\.safetensors', name)
+        name in AUX_NAMES or re.fullmatch(r'(?:model(?:-\d{5}-of-\d{5})?|adapter_model|adapters)\.safetensors', name)
         or re.fullmatch(r'[A-Za-z0-9_.-]{1,160}\.gguf', name))
 
 

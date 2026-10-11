@@ -78,16 +78,17 @@ def snapshot(version, tenant, project):
     ref = version.metadata.get('snapshot_manifest')
     if not ref:
         from modelanvil.runners.models import TrainingRun
-        from modelanvil.runners.training import hf_runtime
+        from modelanvil.runners.training import hf_runtime, mlx_runtime
+        from modelanvil.runners.training.registry import runtime_for_run
         from modelanvil.runners.training.runtime import digest
         run = TrainingRun.all_objects.filter(output_model_version=version, tenant_id=tenant,
-            status='completed', job__status='succeeded', base_model_version__architecture_ref=hf_runtime.RUNTIME_ID).first()
+            status='completed', job__status='succeeded', base_model_version__architecture_ref__in=[hf_runtime.RUNTIME_ID, mlx_runtime.RUNTIME_ID]).first()
         if run is None or not check_resource_access(run, project, tenant) or run.tokenizer_version_id != version.tokenizer_id:
             raise ValueError('Import a snapshot or complete a supported transformer training run before inference.')
         checkpoint = run.checkpoints.filter(step=run.total_steps).first()
         if checkpoint is None or version.metadata.get('checkpoint_digest') != checkpoint.state_digest:
             raise ValueError('Candidate checkpoint lineage changed; inference refused.')
-        bundle = hf_runtime.checkpoint_bundle(run, checkpoint)
+        bundle = runtime_for_run(run).checkpoint_bundle(run, checkpoint)
         artifact = Artifact.all_objects.filter(artifact_id=version.artifact_manifest_id, tenant_id=tenant).first()
         if artifact is None or artifact.byte_size > 1024**2:
             raise ValueError('Candidate manifest is unavailable or exceeds its size limit.')
@@ -95,7 +96,7 @@ def snapshot(version, tenant, project):
         target = io.BytesIO(); copy_verified(file_ref(artifact), tenant, project, target)
         if digest(json.loads(target.getvalue())) != digest(bundle):
             raise ValueError('Candidate manifest differs from its committed checkpoint.')
-        return {'format': 'safetensors', 'files': bundle['files'], 'recipe': run.recipe_type, 'trained': True}
+        return {'format': 'mlx' if run.recipe_type == 'qlora_adapter' else 'safetensors', 'files': bundle['files'], 'recipe': run.recipe_type, 'trained': True}
     if not ref or str(ref.get('artifact_id')) != version.artifact_manifest_id:
         raise ValueError('Import a pinned model snapshot before local inference.')
     artifact = verified_artifact(ref, tenant, project)
@@ -176,6 +177,8 @@ def local_session(version, *, tenant, project, device='cpu'):
                     from mlx_lm import load
                 except ImportError:
                     raise ValueError('Install the optional MLX runtime in a process with Metal access.') from None
+                if not mx.metal.is_available() or mx.default_device() != mx.gpu:
+                    raise ValueError('MLX Metal must be available and selected; CPU fallback is disabled.')
                 config = json.loads((directory / 'config.json').read_text())
                 if config.get('model_type') not in {'llama', 'qwen2', 'mistral', 'gemma', 'gemma2'}:
                     raise ValueError('This MLX runtime supports Llama, Qwen2, Mistral and Gemma snapshots.')
@@ -183,7 +186,13 @@ def local_session(version, *, tenant, project, device='cpu'):
                 allowance = mx.device_info().get('max_recommended_working_set_size')
                 if type(allowance) is not int or allowance - mx.get_active_memory() < 2 * weight_bytes + 256 * 1024**2:
                     raise ValueError('MLX recommended process memory headroom is unknown or insufficient.')
-                model, tokenizer = load(str(directory), tokenizer_config={'local_files_only': True, 'trust_remote_code': False})
+                if 'adapters.safetensors' in plan['files']:
+                    if not plan.get('trained') or plan.get('recipe') != 'qlora_adapter':
+                        raise ValueError('Native adapter inference requires a completed verified QLoRA candidate.')
+                    from scripts.mlx_candidate_infer import load_candidate
+                    model, tokenizer, config, _ = load_candidate(directory)
+                else:
+                    model, tokenizer = load(str(directory), tokenizer_config={'local_files_only': True, 'trust_remote_code': False})
                 session.update(format='mlx', model=model, tokenizer=tokenizer, device=device, config=config)
                 yield session
             else:

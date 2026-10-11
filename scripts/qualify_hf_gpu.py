@@ -14,7 +14,7 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--model-dir', type=Path, required=True, help='Verified pinned local SmolLM2 snapshot')
 parser.add_argument('--device', required=True, help='Explicit mps:0, cuda:N, rocm:N or xpu:N')
 parser.add_argument('--output', type=Path, required=True, help='New directory for isolated state and evidence')
-parser.add_argument('--recipe', choices=['full_sft', 'lora_adapter'], default='full_sft')
+parser.add_argument('--recipe', choices=['full_sft', 'lora_adapter', 'qlora_adapter'], default='full_sft')
 parser.add_argument('--samples', type=Path, help='Optional real versioned canonical text corpus; otherwise use synthetic correctness fixtures')
 args = parser.parse_args()
 args.model_dir = args.model_dir.resolve()
@@ -37,7 +37,9 @@ from modelanvil.runners.models import TrainingRun
 from modelanvil.jobs.models import Worker,claim_job,JobAttempt,Job
 from modelanvil.jobs.executor import execute_claim
 from modelanvil.runners.training.executor import training_worker_executor
-from modelanvil.runners.training.hf_runtime import checkpoint_bundle,staged_files
+from modelanvil.runners.training import hf_runtime, mlx_runtime
+runtime = mlx_runtime if args.recipe == 'qlora_adapter' else hf_runtime
+checkpoint_bundle, staged_files = runtime.checkpoint_bundle, runtime.staged_files
 from modelanvil.runners.training.hardware import hardware_report
 from modelanvil.budgets.models import UsageEvent,BudgetReservation
 from rest_framework.test import APIClient
@@ -64,11 +66,11 @@ if args.samples:
  rows=[json.loads(line) for line in args.samples.read_text().splitlines() if line.strip()]
 samples=args.output / 'samples.jsonl';samples.write_text(''.join(json.dumps(r)+'\n' for r in rows))
 output=io.StringIO()
-call_command('setup_gpu_training',tenant_id=tenant.pk,project_id=project.pk,name=name,model_dir=args.model_dir,samples=samples,device=args.device,steps=3,stdout=output)
+call_command('setup_gpu_training',tenant_id=tenant.pk,project_id=project.pk,name=name,model_dir=args.model_dir,samples=samples,device=args.device,recipe=args.recipe,steps=3,stdout=output)
 installed=json.loads(output.getvalue())
 from modelanvil.device_admission import device_available, device_lease
 installed['launch']['recipe_type'] = args.recipe
-weight_name = 'adapter_model.safetensors' if args.recipe == 'lora_adapter' else 'model.safetensors'
+weight_name = 'adapters.safetensors' if args.recipe == 'qlora_adapter' else ('adapter_model.safetensors' if args.recipe == 'lora_adapter' else 'model.safetensors')
 secret,hashed=generate_api_key()
 ApiKey.objects.create(tenant=tenant,name='qualification',role=Role.ENGINEER,secret_hash=hashed)
 client=APIClient();client.credentials(HTTP_AUTHORIZATION=f'Bearer {secret}')
@@ -83,7 +85,7 @@ preview=client.post('/api/v1/training-runs/preflight/',installed['launch'],forma
 assert preview.status_code==200 and preview.data['status']=='approved',preview.data
 before_jobs = Job.all_objects.filter(tenant_id=tenant.pk).count()
 before_reservations = BudgetReservation.all_objects.filter(tenant_id=tenant.pk).count()
-for options in ({'precision':'bf16'}, {'precision':'fp16'}, {'adapter':'invalid'}, {'quantization':'int4'}):
+for options in ({'precision':'bf16'}, {'precision':'fp16'}, {'adapter':'invalid'}, {'quantization':'int8' if args.recipe == 'qlora_adapter' else 'int4'}):
     for endpoint in ('/api/v1/training-runs/preflight/', '/api/v1/training-runs/'):
         rejected = client.post(endpoint, {**installed['launch'], **options}, format='json', HTTP_IDEMPOTENCY_KEY=uuid.uuid4().hex)
         assert rejected.status_code == 400, rejected.data
@@ -126,18 +128,18 @@ report={'run_id':str(run.run_id),'tenant_id':str(tenant.pk),'project_id':str(pro
         'candidate':str(run.output_model_version.model_version_id),'bundle':bundle,
         'usage':[{'quantity':str(u.quantity),'unit':u.unit,'detail':u.detail} for u in UsageEvent.all_objects.filter(tenant_id=tenant.pk)],
         'budget':[{'reserved':str(b.estimated_amount),'settled':str(b.settled_amount)} for b in BudgetReservation.all_objects.filter(tenant_id=tenant.pk)],
-        'scope':f'One local {args.device} SmolLM2 FP32 {args.recipe} pilot; {"operator-supplied versioned text" if args.samples else "synthetic correctness corpus"}; no cross-vendor or production claim.'}
+        'scope':f'One local {args.device} SmolLM2 {runtime.CONTRACT['precision']} {args.recipe} pilot; {"operator-supplied versioned text" if args.samples else "synthetic correctness corpus"}; no cross-vendor or production claim.'}
 (args.output / 'task13-gpu-pilot.json').write_text(json.dumps(report,indent=2,default=str)+'\n')
 print('saved real GPU report',flush=True)
 
-inference = subprocess.run([sys.executable, str(root / 'scripts/hf_candidate_infer.py'),
-    str(destination)], capture_output=True, text=True, check=True, timeout=120)
+inference = subprocess.run([sys.executable, str(root / ('scripts/mlx_candidate_infer.py' if args.recipe == 'qlora_adapter' else 'scripts/hf_candidate_infer.py')),
+    str(destination), '--device', 'cpu'], capture_output=True, text=True, check=True, timeout=120)
 independent = json.loads(inference.stdout)
 assert independent['weights_sha256'] == report['checkpoints'][-1]['weights_sha256']
 assert independent['completion'] and not independent['consumer_imported_modelanvil_or_django']
 (args.output / 'task13-gpu-independent-inference.json').write_text(json.dumps(independent, indent=2)+'\n')
 print('independent inference passed', flush=True)
-gpu_inference = subprocess.run([sys.executable, str(root / 'scripts/hf_candidate_infer.py'),
+gpu_inference = subprocess.run([sys.executable, str(root / ('scripts/mlx_candidate_infer.py' if args.recipe == 'qlora_adapter' else 'scripts/hf_candidate_infer.py')),
     str(destination), '--device', args.device], capture_output=True, text=True, check=True, timeout=120)
 gpu_result = json.loads(gpu_inference.stdout)
 assert gpu_result['weights_sha256'] == independent['weights_sha256']
@@ -160,12 +162,14 @@ if args.samples:
    'split':'train_consumed' if split=='train' else split,'text':'\n'.join(b['text'] for b in row['blocks'])})
  quality_path=args.output/'quality-samples.json'
  quality_path.write_text(json.dumps({'dataset_digest':run.dataset_revision.manifest_digest,'samples':quality_samples}))
- measured=subprocess.run([sys.executable,str(root/'scripts/hf_candidate_score.py'),'--base-dir',str(args.model_dir),
+ measured=subprocess.run([sys.executable,str(root/'scripts/hf_candidate_score.py'), '--runtime', ('mlx' if args.recipe == 'qlora_adapter' else 'torch'),'--base-dir',str(args.model_dir),
   '--candidate-dir',str(destination),'--samples',str(quality_path)],capture_output=True,text=True,check=True,timeout=240)
  quality=json.loads(measured.stdout)
  assert not quality['consumer_imported_modelanvil_or_django']
  (args.output/'quality-verification.json').write_text(json.dumps(quality,indent=2)+'\n')
  print('Independent protected-corpus quality checks:',quality['checks'],flush=True)
+ if args.recipe == 'qlora_adapter':
+  print('Overall quantized-vs-unquantized quality target:', quality['overall_quality_passed'], quality['quantization_checks_within_five_percent'], flush=True)
  assert quality['passed'], 'Independent protected-corpus quality target failed; inspect quality-verification.json'
 
 from datetime import timedelta
@@ -185,13 +189,18 @@ def launch(key):
 def execute(run,hook=None):
  descriptor=claim_job(worker);assert descriptor
  if hook:
-  original=torch.optim.AdamW.step;calls=0
+  if args.recipe == 'qlora_adapter':
+   import mlx.optimizers as optim
+   optimizer_class, method = optim.AdamW, 'update'
+  else:
+   optimizer_class, method = torch.optim.AdamW, 'step'
+  original=getattr(optimizer_class, method);calls=0
   def wrapped(optimizer,*a,**kw):
    nonlocal calls
    out=original(optimizer,*a,**kw);calls+=1
    if calls==2:hook(descriptor)
    return out
-  with patch.object(torch.optim.AdamW,'step',wrapped):out=execute_claim(worker,descriptor,training_worker_executor)
+  with patch.object(optimizer_class,method,wrapped):out=execute_claim(worker,descriptor,training_worker_executor)
  else:out=execute_claim(worker,descriptor,training_worker_executor)
  run.refresh_from_db();return descriptor,out
 run=launch('gpu-recovery-'+uuid.uuid4().hex)

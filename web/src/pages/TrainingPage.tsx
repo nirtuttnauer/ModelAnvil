@@ -353,7 +353,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
   async function downloadExport(runId: string) {
     setBusy(true); setError(null);
     try {
-      const transformer = runs.find(r => r.run_id === runId)?.runtime?.pins?.runtime === 'modelanvil.smollm2-gpu-sft.v1';
+      const transformer = ['modelanvil.smollm2-gpu-sft.v1', 'modelanvil.smollm2-mlx-qlora.v1'].includes(runs.find(r => r.run_id === runId)?.runtime?.pins?.runtime || '');
       const blob = transformer ? await apiDownload(`/api/v1/training-runs/${runId}/download/`, token) :
         new Blob([JSON.stringify((await apiRequest<{ bundle: unknown }>(`/api/v1/training-runs/${runId}/export/`, token, { method: 'POST' })).bundle)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -439,6 +439,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
               <select value={recipe} onChange={(e) => setRecipe(e.target.value)}>
                 <option value="full_sft">Full parameter SFT</option>
                 {mode === 'worker' && <option value="lora_adapter">GPU LoRA · pinned SmolLM2 profile</option>}
+                {mode === 'worker' && <option value="qlora_adapter">Apple GPU QLoRA · four-bit SmolLM2 profile</option>}
                 {mode === 'simulation' && <>
                   <option value="lora_adapter">LoRA adapter fixture</option>
                   <option value="continued_pretraining">Continued pretraining fixture</option>
