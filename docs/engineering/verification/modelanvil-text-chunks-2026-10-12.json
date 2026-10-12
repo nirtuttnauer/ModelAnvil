@@ -1,0 +1,53 @@
+{
+  "revision_id": "6f5fa7f0-49b1-4855-a249-0fe0c5e6c1bd",
+  "manifest_digest": "f99b8e9807d93f68df7453f5bd79ab0014232da267f8e0922636a3db7ff0ca50",
+  "recipe_digest": "902dcb12b7fb7fd7473b10dcb81c6d6e11fc306cd19f3a7dd6bcfe8c6dc2e8fd",
+  "rows": 99,
+  "source_pages": 4,
+  "split_counts": {
+    "train": 99,
+    "validation": 0,
+    "test": 0
+  },
+  "exact_text_reconstruction": true,
+  "exact_source_spans_and_hashes": true,
+  "max_characters": 127,
+  "independent_tokenizer": {
+    "samples": 99,
+    "minimum_tokens": 20,
+    "maximum_tokens": 64,
+    "no_truncation": true
+  },
+  "date": "2026-10-12",
+  "branch": "codex/modelanvil-feature-parity",
+  "ticket": "TASK-21",
+  "status": "partial",
+  "pull_request": "https://github.com/nirtuttnauer/ModelAnvil/pull/7",
+  "verification": {
+    "source_chunk_checks": "57 checks, 56 passed with one existing PostgreSQL-only skip; real HTTP Unicode code-point reconstruction passed after consumer correction",
+    "browser_preflight": "Ready to launch; 99 real encoded samples, pinned dataset/base/tokenizer/runner, matching worker, device/storage admission and three-step budget checks passed. No training launched.",
+    "publication_screenshot": "/private/tmp/modelanvil-pdf-chunks-published.png",
+    "preflight_screenshot": "/private/tmp/modelanvil-pdf-chunks-preflight.png",
+    "clean_checkout": {
+      "commit": "9200701d4e6b2b74a6d7bdd4b2df3730b1c47910",
+      "backend": {
+        "tests": 90,
+        "passed": 89,
+        "skipped": 1,
+        "skip_reason": "Existing PostgreSQL concurrency check on SQLite"
+      },
+      "frontend": {
+        "passed": 139,
+        "failed": 0,
+        "build": "passed"
+      },
+      "excluded": "Other in-progress changes in the shared checkout"
+    }
+  },
+  "remaining": [
+    "OCR and visual reading-order/layout qualification",
+    "Visual/list recipe composition and real synthetic inference",
+    "Budgeted recoverable recipe worker",
+    "Human acceptance and model-quality qualification; single-source pilot has no held-out rows"
+  ]
+}

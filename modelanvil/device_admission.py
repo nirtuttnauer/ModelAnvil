@@ -25,7 +25,7 @@ def device_key(selector):
 
 
 @contextmanager
-def device_lease(selector):
+def device_lease(selector, *, pass_descriptor=False):
     key = device_key(selector)
     try:
         import fcntl
@@ -45,7 +45,7 @@ def device_lease(selector):
             fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
             raise DeviceBusy('This local device is busy in another inference or training process; retry when it finishes.') from None
-        yield key
+        yield descriptor if pass_descriptor else key
     finally:
         os.close(descriptor)  # The OS also releases the lock if a process dies.
 

@@ -1,0 +1,21 @@
+.specialist-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 20px; }
+.specialist-grid > section { min-width: 0; }
+.specialist-grid form { display: grid; gap: 16px; }
+.specialist-fields { display: grid; gap: 16px; border: 0; padding: 0; margin: 0; min-width: 0; }
+.specialist-grid label { display: grid; gap: 7px; font-size: 13px; }
+.specialist-grid textarea, .specialist-grid select, .specialist-grid input[type="file"] { width: 100%; min-width: 0; }
+.specialist-grid textarea { resize: vertical; }
+.specialist-page pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 420px; overflow: auto; }
+.specialist-page .checkbox-label { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.specialist-result { margin-top: 24px; border-top: 1px solid var(--border); padding-top: 16px; }
+.specialist-result > label { margin-bottom: 14px; }
+.specialist-page code { overflow-wrap: anywhere; }
+@media (max-width: 1000px) { .specialist-grid { grid-template-columns: minmax(0, 1fr); } }
+
+.specialist-jobs { margin: 20px 0; }
+.specialist-actions { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+.layout-regions svg { width: 100%; max-height: 280px; background: var(--surface, #fff); border: 1px solid var(--border, #cbd5e1); }
+.layout-regions rect { fill: #2563eb18; stroke: #2563eb; stroke-width: 2; }
+.layout-regions text { fill: #1d4ed8; font-size: 22px; font-weight: 700; }
+.layout-regions ol { padding-left: 24px; }
+.layout-regions li { margin: 12px 0; list-style: none; }

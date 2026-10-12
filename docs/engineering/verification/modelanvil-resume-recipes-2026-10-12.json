@@ -1,0 +1,3112 @@
+{
+  "date": "2026-10-12",
+  "scope": "isolated staged feature snapshot based on 4c55135",
+  "checks": {
+    "backend": {
+      "tests": 773,
+      "skipped": 25,
+      "result": "passed"
+    },
+    "frontend": {
+      "tests": 145,
+      "result": "passed"
+    },
+    "production_build": "passed",
+    "storybook_build": "passed",
+    "migration_consistency": "passed",
+    "fresh_database_migration": "passed"
+  },
+  "page_resume": {
+    "date": "2026-10-12",
+    "qualification": "Authored two-page Mac smoke; not representative document accuracy",
+    "request_id": "0f954b63-a483-4b93-802f-7f098b720f12",
+    "first_attempt": {
+      "claimed": true,
+      "committed": true,
+      "status": "failed"
+    },
+    "partial": {
+      "request_id": "0f954b63-a483-4b93-802f-7f098b720f12",
+      "job_id": "9f58db71-3769-47a3-b65f-e4bde42f4409",
+      "status": "failed",
+      "kind": "ocr",
+      "desired_action": "run",
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "progress": 0.0,
+      "error": "RuntimeError: Qualification interruption after persisted page; child has not received continuation acknowledgement.",
+      "completed_pages": [
+        1
+      ],
+      "page_count": 2,
+      "result": null
+    },
+    "resumed": {
+      "request_id": "0f954b63-a483-4b93-802f-7f098b720f12",
+      "job_id": "9f58db71-3769-47a3-b65f-e4bde42f4409",
+      "status": "succeeded",
+      "kind": "ocr",
+      "desired_action": "run",
+      "attempt_count": 2,
+      "max_attempts": 3,
+      "progress": 1.0,
+      "error": "",
+      "completed_pages": [
+        1,
+        2
+      ],
+      "page_count": 2,
+      "result": {
+        "text": "MODEL ANVIL RECEIPT\n\nInvoice 1042\n\nTotal: 38.50 USD\n\nPaid on 12 October 2026\n\nMAINTENANCE NOTE\n\nServer restart: 14:30 UTC\n\nOwner: Operations\n\nStatus: Complete",
+        "pages": [
+          {
+            "page": 1,
+            "image_dimensions": [
+              900,
+              350
+            ],
+            "raster_sha256": "02b4cc56e548a6d3529edb7cafcd85c30921771867d76a8c06a7a2110bca9b92",
+            "regions": [
+              {
+                "region_id": "page-1-region-1",
+                "order": 1,
+                "label": "text",
+                "confidence": 0.553816,
+                "box": [
+                  40.577,
+                  38.264,
+                  456.154,
+                  81.306
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  38,
+                  36,
+                  459,
+                  84
+                ],
+                "crop_sha256": "4367226865d46c5332c6a3e18afa4ef8497fdf76ae2d14eca6327b313bb3cf6e",
+                "text": "MODEL ANVIL RECEIPT"
+              },
+              {
+                "region_id": "page-1-region-2",
+                "order": 2,
+                "label": "text",
+                "confidence": 0.537423,
+                "box": [
+                  41.239,
+                  91.658,
+                  253.965,
+                  131.475
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  39,
+                  89,
+                  256,
+                  134
+                ],
+                "crop_sha256": "99586ec170ff413b92ed6d25d24d6dac1b66e898dce957c701d42ea4c10c322a",
+                "text": "Invoice 1042"
+              },
+              {
+                "region_id": "page-1-region-3",
+                "order": 3,
+                "label": "text",
+                "confidence": 0.560505,
+                "box": [
+                  42.14,
+                  141.331,
+                  325.54,
+                  183.194
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  40,
+                  139,
+                  328,
+                  186
+                ],
+                "crop_sha256": "cabf031b4e708ea014faf6c7522ec5a0efce47508c3711548d990105891cff6e",
+                "text": "Total: 38.50 USD"
+              },
+              {
+                "region_id": "page-1-region-4",
+                "order": 4,
+                "label": "text",
+                "confidence": 0.641459,
+                "box": [
+                  40.376,
+                  193.185,
+                  449.291,
+                  234.782
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  38,
+                  191,
+                  452,
+                  237
+                ],
+                "crop_sha256": "f8ea8e2f72f74fcd7f8a5e54f2539a4432cd894e276231a8a5a5251f4d67270b",
+                "text": "Paid on 12 October 2026"
+              }
+            ],
+            "text": "MODEL ANVIL RECEIPT\n\nInvoice 1042\n\nTotal: 38.50 USD\n\nPaid on 12 October 2026"
+          },
+          {
+            "page": 2,
+            "image_dimensions": [
+              900,
+              350
+            ],
+            "raster_sha256": "379302bd55827724d36601964babc1e838c1a44a8b1daf726875cf7020a7c586",
+            "regions": [
+              {
+                "region_id": "page-2-region-1",
+                "order": 1,
+                "label": "text",
+                "confidence": 0.562917,
+                "box": [
+                  40.145,
+                  39.372,
+                  422.254,
+                  81.059
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  38,
+                  37,
+                  425,
+                  84
+                ],
+                "crop_sha256": "9686a31e8256699b0579f7faa312c719683f8d01d94981ba239751d66890d01a",
+                "text": "MAINTENANCE NOTE"
+              },
+              {
+                "region_id": "page-2-region-2",
+                "order": 2,
+                "label": "text",
+                "confidence": 0.57876,
+                "box": [
+                  39.738,
+                  91.397,
+                  462.367,
+                  132.077
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  37,
+                  89,
+                  465,
+                  135
+                ],
+                "crop_sha256": "523fa2dd33a124434da67d29e5df712028ac65e6696a7ac09b53067c731dad65",
+                "text": "Server restart: 14:30 UTC"
+              },
+              {
+                "region_id": "page-2-region-3",
+                "order": 3,
+                "label": "text",
+                "confidence": 0.617369,
+                "box": [
+                  39.414,
+                  143.382,
+                  351.971,
+                  185.227
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  37,
+                  141,
+                  354,
+                  188
+                ],
+                "crop_sha256": "90ff656e9208b3776ae04700e426a577cb0f2c2a3f1a544db309f942385c2f2f",
+                "text": "Owner: Operations"
+              },
+              {
+                "region_id": "page-2-region-4",
+                "order": 4,
+                "label": "text",
+                "confidence": 0.663982,
+                "box": [
+                  39.56,
+                  194.673,
+                  325.286,
+                  235.818
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  37,
+                  192,
+                  328,
+                  238
+                ],
+                "crop_sha256": "80ffc2610ecd804d75b1ffe5b5af37f9573966497c1fc0d8691b75ca17096d51",
+                "text": "Status: Complete"
+              }
+            ],
+            "text": "MAINTENANCE NOTE\n\nServer restart: 14:30 UTC\n\nOwner: Operations\n\nStatus: Complete"
+          }
+        ],
+        "rasterization": {
+          "source_format": "pdf",
+          "renderer": "pypdfium2==5.14.0",
+          "max_scale": 2,
+          "normalization": "pdfium_rgb",
+          "page_count": 2
+        },
+        "device": "mlx:0",
+        "runtime_versions": {
+          "laya": "0.4.3",
+          "torch": "2.9.0",
+          "transformers": "5.14.0",
+          "mlx-vlm": "0.7.6",
+          "mlx": "0.32.3",
+          "Pillow": "12.2.0",
+          "safetensors": "0.8.0",
+          "pypdfium2": "5.14.0",
+          "torchvision": "0.24.0"
+        },
+        "image_dimensions": [
+          900,
+          350
+        ],
+        "usage": {
+          "input_tokens": 324,
+          "output_tokens": 65,
+          "total_tokens": 389,
+          "peak_memory_gb": 2.366809242
+        },
+        "finish_reason": "stop",
+        "resume": {
+          "reused_pages": [
+            1
+          ],
+          "processed_pages": [
+            2
+          ],
+          "page_count": 2
+        },
+        "elapsed_seconds": 8.9372,
+        "provenance": {
+          "source": {
+            "license": "mit",
+            "repo_id": "mlx-community/GLM-OCR-bf16",
+            "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+          },
+          "snapshot_sha256": "2b6ef14ca70dffa6365ca836345e3699cdf7d65f0455ce2bb384d6f4f84186a6",
+          "runtime_code_sha256": "a51006d9b2eee01d1f3b74fd289a90b3dee7268d86529b11e0e43c43e6328d0b",
+          "files": {
+            "chat_template.jinja": {
+              "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+              "byte_size": 4606
+            },
+            "config.json": {
+              "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+              "byte_size": 1875
+            },
+            "generation_config.json": {
+              "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+              "byte_size": 165
+            },
+            "model.safetensors": {
+              "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+              "byte_size": 2214872319
+            },
+            "model.safetensors.index.json": {
+              "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+              "byte_size": 39232
+            },
+            "preprocessor_config.json": {
+              "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+              "byte_size": 367
+            },
+            "processor_config.json": {
+              "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+              "byte_size": 597
+            },
+            "tokenizer.json": {
+              "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+              "byte_size": 6838609
+            },
+            "tokenizer_config.json": {
+              "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+              "byte_size": 1066
+            }
+          },
+          "layout_model": {
+            "source": {
+              "license": "Apache-2.0",
+              "repo_id": "PaddlePaddle/PP-DocLayoutV3_safetensors",
+              "revision": "e4f489dc536556fc1be02b973ba06756e0d4a2ac"
+            },
+            "snapshot_sha256": "45de39ec7801883d1b6a3a47b384f7a4698d830ad774b8c888efb84ffd926d6a",
+            "files": {
+              "config.json": {
+                "sha256": "3cf834b91d23a756b1519bce4db42c09e852f3e35c35092dd5a3e253a50c071a",
+                "byte_size": 2460
+              },
+              "model.safetensors": {
+                "sha256": "5ea422c6cc5fe759a47e1357c35639b58173508e025a3131cbe4b6ac59e2b85e",
+                "byte_size": 133270468
+              },
+              "preprocessor_config.json": {
+                "sha256": "519fe0187a43a1ca429e3ad8317bab8700f0d5e8fb3a6e3a0a413ffac078ba42",
+                "byte_size": 575
+              }
+            }
+          },
+          "image": {
+            "artifact_id": "95877e3f-00d2-401a-b85c-6b02bae419ea",
+            "sha256": "cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+            "byte_size": 44547
+          }
+        },
+        "request_id": "0f954b63-a483-4b93-802f-7f098b720f12",
+        "output_artifact": {
+          "artifact_id": "0762bc51-bd55-45da-be63-0f57818b1c5f",
+          "sha256": "eef50516dccbb05e5038ec6d8b55f183d6f9d5873ede790943ab143bbd4db070",
+          "byte_size": 13689
+        },
+        "envelope": {
+          "schema_version": "1.0",
+          "sample_id": "3e2a505e-0491-5c67-a5b6-f5abc355abca",
+          "source_group_id": "source-sha256:cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+          "blocks": [
+            {
+              "block_id": "page-1-region-1",
+              "type": "text",
+              "text": "MODEL ANVIL RECEIPT",
+              "location": {
+                "source_path": "page/1/page-1-region-1",
+                "page": 1,
+                "coordinates": [
+                  40.577,
+                  38.264,
+                  456.154,
+                  81.306
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+              },
+              "metadata": {
+                "region_id": "page-1-region-1",
+                "order": 1,
+                "label": "text",
+                "confidence": 0.553816,
+                "box": [
+                  40.577,
+                  38.264,
+                  456.154,
+                  81.306
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  38,
+                  36,
+                  459,
+                  84
+                ],
+                "crop_sha256": "4367226865d46c5332c6a3e18afa4ef8497fdf76ae2d14eca6327b313bb3cf6e"
+              }
+            },
+            {
+              "block_id": "page-1-region-2",
+              "type": "text",
+              "text": "Invoice 1042",
+              "location": {
+                "source_path": "page/1/page-1-region-2",
+                "page": 1,
+                "coordinates": [
+                  41.239,
+                  91.658,
+                  253.965,
+                  131.475
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+              },
+              "metadata": {
+                "region_id": "page-1-region-2",
+                "order": 2,
+                "label": "text",
+                "confidence": 0.537423,
+                "box": [
+                  41.239,
+                  91.658,
+                  253.965,
+                  131.475
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  39,
+                  89,
+                  256,
+                  134
+                ],
+                "crop_sha256": "99586ec170ff413b92ed6d25d24d6dac1b66e898dce957c701d42ea4c10c322a"
+              }
+            },
+            {
+              "block_id": "page-1-region-3",
+              "type": "text",
+              "text": "Total: 38.50 USD",
+              "location": {
+                "source_path": "page/1/page-1-region-3",
+                "page": 1,
+                "coordinates": [
+                  42.14,
+                  141.331,
+                  325.54,
+                  183.194
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+              },
+              "metadata": {
+                "region_id": "page-1-region-3",
+                "order": 3,
+                "label": "text",
+                "confidence": 0.560505,
+                "box": [
+                  42.14,
+                  141.331,
+                  325.54,
+                  183.194
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  40,
+                  139,
+                  328,
+                  186
+                ],
+                "crop_sha256": "cabf031b4e708ea014faf6c7522ec5a0efce47508c3711548d990105891cff6e"
+              }
+            },
+            {
+              "block_id": "page-1-region-4",
+              "type": "text",
+              "text": "Paid on 12 October 2026",
+              "location": {
+                "source_path": "page/1/page-1-region-4",
+                "page": 1,
+                "coordinates": [
+                  40.376,
+                  193.185,
+                  449.291,
+                  234.782
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+              },
+              "metadata": {
+                "region_id": "page-1-region-4",
+                "order": 4,
+                "label": "text",
+                "confidence": 0.641459,
+                "box": [
+                  40.376,
+                  193.185,
+                  449.291,
+                  234.782
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  38,
+                  191,
+                  452,
+                  237
+                ],
+                "crop_sha256": "f8ea8e2f72f74fcd7f8a5e54f2539a4432cd894e276231a8a5a5251f4d67270b"
+              }
+            }
+          ],
+          "provenance": {
+            "source_snapshot_ref": "sha256:cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+            "source_record_key": "page/1",
+            "content_sha256": "bd93cec4742e318087e1cabdf4d6d430f257a05af429fdd4207cf2973f6a42c3",
+            "transformation_revision_ref": "modelanvil.glm-ocr-layout.v1"
+          },
+          "metadata": {
+            "source_format": "ocr",
+            "model": {
+              "source": {
+                "license": "mit",
+                "repo_id": "mlx-community/GLM-OCR-bf16",
+                "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+              },
+              "snapshot_sha256": "2b6ef14ca70dffa6365ca836345e3699cdf7d65f0455ce2bb384d6f4f84186a6",
+              "runtime_code_sha256": "a51006d9b2eee01d1f3b74fd289a90b3dee7268d86529b11e0e43c43e6328d0b",
+              "files": {
+                "chat_template.jinja": {
+                  "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+                  "byte_size": 4606
+                },
+                "config.json": {
+                  "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+                  "byte_size": 1875
+                },
+                "generation_config.json": {
+                  "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+                  "byte_size": 165
+                },
+                "model.safetensors": {
+                  "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+                  "byte_size": 2214872319
+                },
+                "model.safetensors.index.json": {
+                  "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+                  "byte_size": 39232
+                },
+                "preprocessor_config.json": {
+                  "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+                  "byte_size": 367
+                },
+                "processor_config.json": {
+                  "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+                  "byte_size": 597
+                },
+                "tokenizer.json": {
+                  "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+                  "byte_size": 6838609
+                },
+                "tokenizer_config.json": {
+                  "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+                  "byte_size": 1066
+                }
+              },
+              "layout_model": {
+                "source": {
+                  "license": "Apache-2.0",
+                  "repo_id": "PaddlePaddle/PP-DocLayoutV3_safetensors",
+                  "revision": "e4f489dc536556fc1be02b973ba06756e0d4a2ac"
+                },
+                "snapshot_sha256": "45de39ec7801883d1b6a3a47b384f7a4698d830ad774b8c888efb84ffd926d6a",
+                "files": {
+                  "config.json": {
+                    "sha256": "3cf834b91d23a756b1519bce4db42c09e852f3e35c35092dd5a3e253a50c071a",
+                    "byte_size": 2460
+                  },
+                  "model.safetensors": {
+                    "sha256": "5ea422c6cc5fe759a47e1357c35639b58173508e025a3131cbe4b6ac59e2b85e",
+                    "byte_size": 133270468
+                  },
+                  "preprocessor_config.json": {
+                    "sha256": "519fe0187a43a1ca429e3ad8317bab8700f0d5e8fb3a6e3a0a413ffac078ba42",
+                    "byte_size": 575
+                  }
+                }
+              },
+              "image": {
+                "artifact_id": "95877e3f-00d2-401a-b85c-6b02bae419ea",
+                "sha256": "cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+                "byte_size": 44547
+              }
+            },
+            "rasterization": {
+              "source_format": "pdf",
+              "renderer": "pypdfium2==5.14.0",
+              "max_scale": 2,
+              "normalization": "pdfium_rgb",
+              "page_count": 2
+            },
+            "image_dimensions": [
+              900,
+              350
+            ],
+            "raster_sha256": "02b4cc56e548a6d3529edb7cafcd85c30921771867d76a8c06a7a2110bca9b92",
+            "regions": [
+              {
+                "region_id": "page-1-region-1",
+                "order": 1,
+                "label": "text",
+                "confidence": 0.553816,
+                "box": [
+                  40.577,
+                  38.264,
+                  456.154,
+                  81.306
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  38,
+                  36,
+                  459,
+                  84
+                ],
+                "crop_sha256": "4367226865d46c5332c6a3e18afa4ef8497fdf76ae2d14eca6327b313bb3cf6e",
+                "text": "MODEL ANVIL RECEIPT"
+              },
+              {
+                "region_id": "page-1-region-2",
+                "order": 2,
+                "label": "text",
+                "confidence": 0.537423,
+                "box": [
+                  41.239,
+                  91.658,
+                  253.965,
+                  131.475
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  39,
+                  89,
+                  256,
+                  134
+                ],
+                "crop_sha256": "99586ec170ff413b92ed6d25d24d6dac1b66e898dce957c701d42ea4c10c322a",
+                "text": "Invoice 1042"
+              },
+              {
+                "region_id": "page-1-region-3",
+                "order": 3,
+                "label": "text",
+                "confidence": 0.560505,
+                "box": [
+                  42.14,
+                  141.331,
+                  325.54,
+                  183.194
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  40,
+                  139,
+                  328,
+                  186
+                ],
+                "crop_sha256": "cabf031b4e708ea014faf6c7522ec5a0efce47508c3711548d990105891cff6e",
+                "text": "Total: 38.50 USD"
+              },
+              {
+                "region_id": "page-1-region-4",
+                "order": 4,
+                "label": "text",
+                "confidence": 0.641459,
+                "box": [
+                  40.376,
+                  193.185,
+                  449.291,
+                  234.782
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  38,
+                  191,
+                  452,
+                  237
+                ],
+                "crop_sha256": "f8ea8e2f72f74fcd7f8a5e54f2539a4432cd894e276231a8a5a5251f4d67270b",
+                "text": "Paid on 12 October 2026"
+              }
+            ],
+            "runtime_versions": {
+              "laya": "0.4.3",
+              "torch": "2.9.0",
+              "transformers": "5.14.0",
+              "mlx-vlm": "0.7.6",
+              "mlx": "0.32.3",
+              "Pillow": "12.2.0",
+              "safetensors": "0.8.0",
+              "pypdfium2": "5.14.0",
+              "torchvision": "0.24.0"
+            },
+            "review_required": true
+          }
+        },
+        "envelopes": [
+          {
+            "schema_version": "1.0",
+            "sample_id": "3e2a505e-0491-5c67-a5b6-f5abc355abca",
+            "source_group_id": "source-sha256:cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+            "blocks": [
+              {
+                "block_id": "page-1-region-1",
+                "type": "text",
+                "text": "MODEL ANVIL RECEIPT",
+                "location": {
+                  "source_path": "page/1/page-1-region-1",
+                  "page": 1,
+                  "coordinates": [
+                    40.577,
+                    38.264,
+                    456.154,
+                    81.306
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+                },
+                "metadata": {
+                  "region_id": "page-1-region-1",
+                  "order": 1,
+                  "label": "text",
+                  "confidence": 0.553816,
+                  "box": [
+                    40.577,
+                    38.264,
+                    456.154,
+                    81.306
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                  "crop_box": [
+                    38,
+                    36,
+                    459,
+                    84
+                  ],
+                  "crop_sha256": "4367226865d46c5332c6a3e18afa4ef8497fdf76ae2d14eca6327b313bb3cf6e"
+                }
+              },
+              {
+                "block_id": "page-1-region-2",
+                "type": "text",
+                "text": "Invoice 1042",
+                "location": {
+                  "source_path": "page/1/page-1-region-2",
+                  "page": 1,
+                  "coordinates": [
+                    41.239,
+                    91.658,
+                    253.965,
+                    131.475
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+                },
+                "metadata": {
+                  "region_id": "page-1-region-2",
+                  "order": 2,
+                  "label": "text",
+                  "confidence": 0.537423,
+                  "box": [
+                    41.239,
+                    91.658,
+                    253.965,
+                    131.475
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                  "crop_box": [
+                    39,
+                    89,
+                    256,
+                    134
+                  ],
+                  "crop_sha256": "99586ec170ff413b92ed6d25d24d6dac1b66e898dce957c701d42ea4c10c322a"
+                }
+              },
+              {
+                "block_id": "page-1-region-3",
+                "type": "text",
+                "text": "Total: 38.50 USD",
+                "location": {
+                  "source_path": "page/1/page-1-region-3",
+                  "page": 1,
+                  "coordinates": [
+                    42.14,
+                    141.331,
+                    325.54,
+                    183.194
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+                },
+                "metadata": {
+                  "region_id": "page-1-region-3",
+                  "order": 3,
+                  "label": "text",
+                  "confidence": 0.560505,
+                  "box": [
+                    42.14,
+                    141.331,
+                    325.54,
+                    183.194
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                  "crop_box": [
+                    40,
+                    139,
+                    328,
+                    186
+                  ],
+                  "crop_sha256": "cabf031b4e708ea014faf6c7522ec5a0efce47508c3711548d990105891cff6e"
+                }
+              },
+              {
+                "block_id": "page-1-region-4",
+                "type": "text",
+                "text": "Paid on 12 October 2026",
+                "location": {
+                  "source_path": "page/1/page-1-region-4",
+                  "page": 1,
+                  "coordinates": [
+                    40.376,
+                    193.185,
+                    449.291,
+                    234.782
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+                },
+                "metadata": {
+                  "region_id": "page-1-region-4",
+                  "order": 4,
+                  "label": "text",
+                  "confidence": 0.641459,
+                  "box": [
+                    40.376,
+                    193.185,
+                    449.291,
+                    234.782
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                  "crop_box": [
+                    38,
+                    191,
+                    452,
+                    237
+                  ],
+                  "crop_sha256": "f8ea8e2f72f74fcd7f8a5e54f2539a4432cd894e276231a8a5a5251f4d67270b"
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+              "source_record_key": "page/1",
+              "content_sha256": "bd93cec4742e318087e1cabdf4d6d430f257a05af429fdd4207cf2973f6a42c3",
+              "transformation_revision_ref": "modelanvil.glm-ocr-layout.v1"
+            },
+            "metadata": {
+              "source_format": "ocr",
+              "model": {
+                "source": {
+                  "license": "mit",
+                  "repo_id": "mlx-community/GLM-OCR-bf16",
+                  "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+                },
+                "snapshot_sha256": "2b6ef14ca70dffa6365ca836345e3699cdf7d65f0455ce2bb384d6f4f84186a6",
+                "runtime_code_sha256": "a51006d9b2eee01d1f3b74fd289a90b3dee7268d86529b11e0e43c43e6328d0b",
+                "files": {
+                  "chat_template.jinja": {
+                    "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+                    "byte_size": 4606
+                  },
+                  "config.json": {
+                    "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+                    "byte_size": 1875
+                  },
+                  "generation_config.json": {
+                    "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+                    "byte_size": 165
+                  },
+                  "model.safetensors": {
+                    "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+                    "byte_size": 2214872319
+                  },
+                  "model.safetensors.index.json": {
+                    "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+                    "byte_size": 39232
+                  },
+                  "preprocessor_config.json": {
+                    "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+                    "byte_size": 367
+                  },
+                  "processor_config.json": {
+                    "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+                    "byte_size": 597
+                  },
+                  "tokenizer.json": {
+                    "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+                    "byte_size": 6838609
+                  },
+                  "tokenizer_config.json": {
+                    "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+                    "byte_size": 1066
+                  }
+                },
+                "layout_model": {
+                  "source": {
+                    "license": "Apache-2.0",
+                    "repo_id": "PaddlePaddle/PP-DocLayoutV3_safetensors",
+                    "revision": "e4f489dc536556fc1be02b973ba06756e0d4a2ac"
+                  },
+                  "snapshot_sha256": "45de39ec7801883d1b6a3a47b384f7a4698d830ad774b8c888efb84ffd926d6a",
+                  "files": {
+                    "config.json": {
+                      "sha256": "3cf834b91d23a756b1519bce4db42c09e852f3e35c35092dd5a3e253a50c071a",
+                      "byte_size": 2460
+                    },
+                    "model.safetensors": {
+                      "sha256": "5ea422c6cc5fe759a47e1357c35639b58173508e025a3131cbe4b6ac59e2b85e",
+                      "byte_size": 133270468
+                    },
+                    "preprocessor_config.json": {
+                      "sha256": "519fe0187a43a1ca429e3ad8317bab8700f0d5e8fb3a6e3a0a413ffac078ba42",
+                      "byte_size": 575
+                    }
+                  }
+                },
+                "image": {
+                  "artifact_id": "95877e3f-00d2-401a-b85c-6b02bae419ea",
+                  "sha256": "cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+                  "byte_size": 44547
+                }
+              },
+              "rasterization": {
+                "source_format": "pdf",
+                "renderer": "pypdfium2==5.14.0",
+                "max_scale": 2,
+                "normalization": "pdfium_rgb",
+                "page_count": 2
+              },
+              "image_dimensions": [
+                900,
+                350
+              ],
+              "raster_sha256": "02b4cc56e548a6d3529edb7cafcd85c30921771867d76a8c06a7a2110bca9b92",
+              "regions": [
+                {
+                  "region_id": "page-1-region-1",
+                  "order": 1,
+                  "label": "text",
+                  "confidence": 0.553816,
+                  "box": [
+                    40.577,
+                    38.264,
+                    456.154,
+                    81.306
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                  "crop_box": [
+                    38,
+                    36,
+                    459,
+                    84
+                  ],
+                  "crop_sha256": "4367226865d46c5332c6a3e18afa4ef8497fdf76ae2d14eca6327b313bb3cf6e",
+                  "text": "MODEL ANVIL RECEIPT"
+                },
+                {
+                  "region_id": "page-1-region-2",
+                  "order": 2,
+                  "label": "text",
+                  "confidence": 0.537423,
+                  "box": [
+                    41.239,
+                    91.658,
+                    253.965,
+                    131.475
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                  "crop_box": [
+                    39,
+                    89,
+                    256,
+                    134
+                  ],
+                  "crop_sha256": "99586ec170ff413b92ed6d25d24d6dac1b66e898dce957c701d42ea4c10c322a",
+                  "text": "Invoice 1042"
+                },
+                {
+                  "region_id": "page-1-region-3",
+                  "order": 3,
+                  "label": "text",
+                  "confidence": 0.560505,
+                  "box": [
+                    42.14,
+                    141.331,
+                    325.54,
+                    183.194
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                  "crop_box": [
+                    40,
+                    139,
+                    328,
+                    186
+                  ],
+                  "crop_sha256": "cabf031b4e708ea014faf6c7522ec5a0efce47508c3711548d990105891cff6e",
+                  "text": "Total: 38.50 USD"
+                },
+                {
+                  "region_id": "page-1-region-4",
+                  "order": 4,
+                  "label": "text",
+                  "confidence": 0.641459,
+                  "box": [
+                    40.376,
+                    193.185,
+                    449.291,
+                    234.782
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                  "crop_box": [
+                    38,
+                    191,
+                    452,
+                    237
+                  ],
+                  "crop_sha256": "f8ea8e2f72f74fcd7f8a5e54f2539a4432cd894e276231a8a5a5251f4d67270b",
+                  "text": "Paid on 12 October 2026"
+                }
+              ],
+              "runtime_versions": {
+                "laya": "0.4.3",
+                "torch": "2.9.0",
+                "transformers": "5.14.0",
+                "mlx-vlm": "0.7.6",
+                "mlx": "0.32.3",
+                "Pillow": "12.2.0",
+                "safetensors": "0.8.0",
+                "pypdfium2": "5.14.0",
+                "torchvision": "0.24.0"
+              },
+              "review_required": true
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "sample_id": "91e21088-406b-589f-8ffc-aa45a64845d7",
+            "source_group_id": "source-sha256:cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+            "blocks": [
+              {
+                "block_id": "page-2-region-1",
+                "type": "text",
+                "text": "MAINTENANCE NOTE",
+                "location": {
+                  "source_path": "page/2/page-2-region-1",
+                  "page": 2,
+                  "coordinates": [
+                    40.145,
+                    39.372,
+                    422.254,
+                    81.059
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+                },
+                "metadata": {
+                  "region_id": "page-2-region-1",
+                  "order": 1,
+                  "label": "text",
+                  "confidence": 0.562917,
+                  "box": [
+                    40.145,
+                    39.372,
+                    422.254,
+                    81.059
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                  "crop_box": [
+                    38,
+                    37,
+                    425,
+                    84
+                  ],
+                  "crop_sha256": "9686a31e8256699b0579f7faa312c719683f8d01d94981ba239751d66890d01a"
+                }
+              },
+              {
+                "block_id": "page-2-region-2",
+                "type": "text",
+                "text": "Server restart: 14:30 UTC",
+                "location": {
+                  "source_path": "page/2/page-2-region-2",
+                  "page": 2,
+                  "coordinates": [
+                    39.738,
+                    91.397,
+                    462.367,
+                    132.077
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+                },
+                "metadata": {
+                  "region_id": "page-2-region-2",
+                  "order": 2,
+                  "label": "text",
+                  "confidence": 0.57876,
+                  "box": [
+                    39.738,
+                    91.397,
+                    462.367,
+                    132.077
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                  "crop_box": [
+                    37,
+                    89,
+                    465,
+                    135
+                  ],
+                  "crop_sha256": "523fa2dd33a124434da67d29e5df712028ac65e6696a7ac09b53067c731dad65"
+                }
+              },
+              {
+                "block_id": "page-2-region-3",
+                "type": "text",
+                "text": "Owner: Operations",
+                "location": {
+                  "source_path": "page/2/page-2-region-3",
+                  "page": 2,
+                  "coordinates": [
+                    39.414,
+                    143.382,
+                    351.971,
+                    185.227
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+                },
+                "metadata": {
+                  "region_id": "page-2-region-3",
+                  "order": 3,
+                  "label": "text",
+                  "confidence": 0.617369,
+                  "box": [
+                    39.414,
+                    143.382,
+                    351.971,
+                    185.227
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                  "crop_box": [
+                    37,
+                    141,
+                    354,
+                    188
+                  ],
+                  "crop_sha256": "90ff656e9208b3776ae04700e426a577cb0f2c2a3f1a544db309f942385c2f2f"
+                }
+              },
+              {
+                "block_id": "page-2-region-4",
+                "type": "text",
+                "text": "Status: Complete",
+                "location": {
+                  "source_path": "page/2/page-2-region-4",
+                  "page": 2,
+                  "coordinates": [
+                    39.56,
+                    194.673,
+                    325.286,
+                    235.818
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+                },
+                "metadata": {
+                  "region_id": "page-2-region-4",
+                  "order": 4,
+                  "label": "text",
+                  "confidence": 0.663982,
+                  "box": [
+                    39.56,
+                    194.673,
+                    325.286,
+                    235.818
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                  "crop_box": [
+                    37,
+                    192,
+                    328,
+                    238
+                  ],
+                  "crop_sha256": "80ffc2610ecd804d75b1ffe5b5af37f9573966497c1fc0d8691b75ca17096d51"
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+              "source_record_key": "page/2",
+              "content_sha256": "6092f7ff8af4d7cabf3b86e779387bd180ebb9ff729c0a255d287216e8b98e70",
+              "transformation_revision_ref": "modelanvil.glm-ocr-layout.v1"
+            },
+            "metadata": {
+              "source_format": "ocr",
+              "model": {
+                "source": {
+                  "license": "mit",
+                  "repo_id": "mlx-community/GLM-OCR-bf16",
+                  "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+                },
+                "snapshot_sha256": "2b6ef14ca70dffa6365ca836345e3699cdf7d65f0455ce2bb384d6f4f84186a6",
+                "runtime_code_sha256": "a51006d9b2eee01d1f3b74fd289a90b3dee7268d86529b11e0e43c43e6328d0b",
+                "files": {
+                  "chat_template.jinja": {
+                    "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+                    "byte_size": 4606
+                  },
+                  "config.json": {
+                    "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+                    "byte_size": 1875
+                  },
+                  "generation_config.json": {
+                    "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+                    "byte_size": 165
+                  },
+                  "model.safetensors": {
+                    "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+                    "byte_size": 2214872319
+                  },
+                  "model.safetensors.index.json": {
+                    "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+                    "byte_size": 39232
+                  },
+                  "preprocessor_config.json": {
+                    "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+                    "byte_size": 367
+                  },
+                  "processor_config.json": {
+                    "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+                    "byte_size": 597
+                  },
+                  "tokenizer.json": {
+                    "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+                    "byte_size": 6838609
+                  },
+                  "tokenizer_config.json": {
+                    "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+                    "byte_size": 1066
+                  }
+                },
+                "layout_model": {
+                  "source": {
+                    "license": "Apache-2.0",
+                    "repo_id": "PaddlePaddle/PP-DocLayoutV3_safetensors",
+                    "revision": "e4f489dc536556fc1be02b973ba06756e0d4a2ac"
+                  },
+                  "snapshot_sha256": "45de39ec7801883d1b6a3a47b384f7a4698d830ad774b8c888efb84ffd926d6a",
+                  "files": {
+                    "config.json": {
+                      "sha256": "3cf834b91d23a756b1519bce4db42c09e852f3e35c35092dd5a3e253a50c071a",
+                      "byte_size": 2460
+                    },
+                    "model.safetensors": {
+                      "sha256": "5ea422c6cc5fe759a47e1357c35639b58173508e025a3131cbe4b6ac59e2b85e",
+                      "byte_size": 133270468
+                    },
+                    "preprocessor_config.json": {
+                      "sha256": "519fe0187a43a1ca429e3ad8317bab8700f0d5e8fb3a6e3a0a413ffac078ba42",
+                      "byte_size": 575
+                    }
+                  }
+                },
+                "image": {
+                  "artifact_id": "95877e3f-00d2-401a-b85c-6b02bae419ea",
+                  "sha256": "cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+                  "byte_size": 44547
+                }
+              },
+              "rasterization": {
+                "source_format": "pdf",
+                "renderer": "pypdfium2==5.14.0",
+                "max_scale": 2,
+                "normalization": "pdfium_rgb",
+                "page_count": 2
+              },
+              "image_dimensions": [
+                900,
+                350
+              ],
+              "raster_sha256": "379302bd55827724d36601964babc1e838c1a44a8b1daf726875cf7020a7c586",
+              "regions": [
+                {
+                  "region_id": "page-2-region-1",
+                  "order": 1,
+                  "label": "text",
+                  "confidence": 0.562917,
+                  "box": [
+                    40.145,
+                    39.372,
+                    422.254,
+                    81.059
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                  "crop_box": [
+                    38,
+                    37,
+                    425,
+                    84
+                  ],
+                  "crop_sha256": "9686a31e8256699b0579f7faa312c719683f8d01d94981ba239751d66890d01a",
+                  "text": "MAINTENANCE NOTE"
+                },
+                {
+                  "region_id": "page-2-region-2",
+                  "order": 2,
+                  "label": "text",
+                  "confidence": 0.57876,
+                  "box": [
+                    39.738,
+                    91.397,
+                    462.367,
+                    132.077
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                  "crop_box": [
+                    37,
+                    89,
+                    465,
+                    135
+                  ],
+                  "crop_sha256": "523fa2dd33a124434da67d29e5df712028ac65e6696a7ac09b53067c731dad65",
+                  "text": "Server restart: 14:30 UTC"
+                },
+                {
+                  "region_id": "page-2-region-3",
+                  "order": 3,
+                  "label": "text",
+                  "confidence": 0.617369,
+                  "box": [
+                    39.414,
+                    143.382,
+                    351.971,
+                    185.227
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                  "crop_box": [
+                    37,
+                    141,
+                    354,
+                    188
+                  ],
+                  "crop_sha256": "90ff656e9208b3776ae04700e426a577cb0f2c2a3f1a544db309f942385c2f2f",
+                  "text": "Owner: Operations"
+                },
+                {
+                  "region_id": "page-2-region-4",
+                  "order": 4,
+                  "label": "text",
+                  "confidence": 0.663982,
+                  "box": [
+                    39.56,
+                    194.673,
+                    325.286,
+                    235.818
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                  "crop_box": [
+                    37,
+                    192,
+                    328,
+                    238
+                  ],
+                  "crop_sha256": "80ffc2610ecd804d75b1ffe5b5af37f9573966497c1fc0d8691b75ca17096d51",
+                  "text": "Status: Complete"
+                }
+              ],
+              "runtime_versions": {
+                "laya": "0.4.3",
+                "torch": "2.9.0",
+                "transformers": "5.14.0",
+                "mlx-vlm": "0.7.6",
+                "mlx": "0.32.3",
+                "Pillow": "12.2.0",
+                "safetensors": "0.8.0",
+                "pypdfium2": "5.14.0",
+                "torchvision": "0.24.0"
+              },
+              "review_required": true
+            }
+          }
+        ]
+      }
+    },
+    "quota": {
+      "settled": "2.000000",
+      "usage_events": 2
+    },
+    "page_1_reference_unchanged": true,
+    "usage_counts_saved_pages_once": true
+  },
+  "recipes": {
+    "date": "2026-10-12",
+    "device": "mps:0",
+    "qualification": "Authored engineering-note smoke; tiny-model quality is not representative",
+    "model_pins": {
+      "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+      "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+      "license": "Apache-2.0",
+      "files": {
+        "model.safetensors": {
+          "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+          "byte_size": 269060552
+        },
+        "config.json": {
+          "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+          "byte_size": 861
+        },
+        "tokenizer.json": {
+          "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+          "byte_size": 2104556
+        },
+        "tokenizer_config.json": {
+          "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+          "byte_size": 3764
+        },
+        "special_tokens_map.json": {
+          "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+          "byte_size": 655
+        },
+        "generation_config.json": {
+          "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+          "byte_size": 132
+        }
+      }
+    },
+    "cases": {
+      "text": {
+        "preview": {
+          "run_id": "c05a3468-3ace-4957-bde6-054949db05dc",
+          "job_id": "67ee0842-2a9c-48a4-ae69-190b0ac0dc8c",
+          "status": "succeeded",
+          "desired_action": "run",
+          "definition": {
+            "name": "Mac text recipe qualification",
+            "schema": "modelanvil.recipe.v1",
+            "steps": [
+              {
+                "format": "json",
+                "id": "source",
+                "type": "source"
+              },
+              {
+                "id": "sample",
+                "input": "source",
+                "limit": 2,
+                "seed": 42,
+                "type": "sample"
+              },
+              {
+                "id": "prompt",
+                "input": "sample",
+                "template": "Write one brief sentence about this note: {{value}}",
+                "type": "template"
+              },
+              {
+                "id": "generate",
+                "input": "prompt",
+                "max_tokens": 96,
+                "output": "text",
+                "seed": 42,
+                "type": "generate"
+              },
+              {
+                "id": "validate",
+                "input": "generate",
+                "min_characters": 1,
+                "type": "validate"
+              },
+              {
+                "id": "output",
+                "input": "validate",
+                "type": "output"
+              }
+            ]
+          },
+          "bindings": {
+            "recipe": "e4467581-1fbc-4852-919e-abfaf507c9c4",
+            "sources": {
+              "source": "a0398ea8-1b10-47b7-9b11-a1d86823b3d1"
+            },
+            "model": "9647c59c-53fc-43f1-9fcc-e98c6e4e6e1a",
+            "device": "mps:0",
+            "pool": 3,
+            "budget_policy": "b55e7bb2-0037-407b-8630-f66db00d9157",
+            "protected_sources": []
+          },
+          "attempt_count": 2,
+          "max_attempts": 3,
+          "preview": true,
+          "completed_steps": [
+            "source",
+            "sample",
+            "prompt",
+            "generate",
+            "validate",
+            "output"
+          ],
+          "saved_rows": 6,
+          "publication": {
+            "report": {
+              "artifact_id": "b747c8f9-eb4d-4d79-963a-c34edb291737",
+              "sha256": "97a2e68ca6b863c6c224d0fa7e4cc190998900bebed883b4a19ef563e9c99d33",
+              "byte_size": 2964
+            },
+            "row_count": 2,
+            "rejected_count": 0,
+            "preview": true,
+            "usage": {
+              "prompt_tokens": 96,
+              "completion_tokens": 59,
+              "total_tokens": 155,
+              "completed_generation_calls": 2
+            }
+          },
+          "result": {
+            "rows": [
+              {
+                "schema_version": "1.0",
+                "sample_id": "9455e567-e9dc-5768-9ce6-2e421c1246e5",
+                "source_group_id": "source-sha256:b133e767db954a1f3c4f3b7ee1d685aac1950f45c2f41ca6cba371bf7c10237f",
+                "blocks": [
+                  {
+                    "block_id": "generated",
+                    "type": "text",
+                    "text": "The note begins at 14:30 UTC, with the note's content and the date being the same as the note's content.",
+                    "location": {
+                      "source_path": "/0"
+                    }
+                  }
+                ],
+                "provenance": {
+                  "source_snapshot_ref": "sha256:b133e767db954a1f3c4f3b7ee1d685aac1950f45c2f41ca6cba371bf7c10237f",
+                  "source_record_key": "/0",
+                  "content_sha256": "284b7f2cfb3e7984d3636a4bba48af3eca46fc9c8c71a58c46bf7f634e68a53c",
+                  "transformation_revision_ref": "modelanvil.recipe.v1",
+                  "parent_sample_refs": [
+                    "ae2e8c49-cfe2-5957-b636-731ccd3c6543"
+                  ]
+                },
+                "metadata": {
+                  "recipe_sha256": "1f61b8cd6825a2a11484e7c598ef7ec52129233ed2a78792172150b70a9c0aae",
+                  "model_snapshot_sha256": "0feab2ee50f92f9df32085bbcfb5a062cea35262391fb967858399cc9db72765",
+                  "runtime_sha256": "b7fcb1551b3b161e9a9a4549dc0875be3df022d63f26384efe09369bd5a8782e",
+                  "steps": [
+                    "source",
+                    "prompt",
+                    "generate",
+                    "validate"
+                  ],
+                  "source_sample_id": "ae2e8c49-cfe2-5957-b636-731ccd3c6543",
+                  "generation_calls": {
+                    "b7efc0b5bde58c4c362199dc3bcbe50008cd8e4261ddaf4f7cbc3de4906b1b0d": {
+                      "usage": {
+                        "prompt_tokens": 49,
+                        "completion_tokens": 30,
+                        "total_tokens": 79
+                      },
+                      "finish_reason": "stop"
+                    }
+                  },
+                  "review_required": true,
+                  "source_locations": [
+                    {
+                      "source_path": "/0"
+                    }
+                  ]
+                }
+              },
+              {
+                "schema_version": "1.0",
+                "sample_id": "d62536ab-bcac-59da-af49-b8517c052f75",
+                "source_group_id": "source-sha256:b133e767db954a1f3c4f3b7ee1d685aac1950f45c2f41ca6cba371bf7c10237f",
+                "blocks": [
+                  {
+                    "block_id": "generated",
+                    "type": "text",
+                    "text": "The note is a collection of operational notes, which are a set of notes that are used to track and record the activities of a company.",
+                    "location": {
+                      "source_path": "/1"
+                    }
+                  }
+                ],
+                "provenance": {
+                  "source_snapshot_ref": "sha256:b133e767db954a1f3c4f3b7ee1d685aac1950f45c2f41ca6cba371bf7c10237f",
+                  "source_record_key": "/1",
+                  "content_sha256": "865c66c88103e9ea48ea59617ffbeaf194322e71cdd68538590b93d5895f8528",
+                  "transformation_revision_ref": "modelanvil.recipe.v1",
+                  "parent_sample_refs": [
+                    "63c450ea-6ea4-5011-8f13-f0490420e2ab"
+                  ]
+                },
+                "metadata": {
+                  "recipe_sha256": "1f61b8cd6825a2a11484e7c598ef7ec52129233ed2a78792172150b70a9c0aae",
+                  "model_snapshot_sha256": "0feab2ee50f92f9df32085bbcfb5a062cea35262391fb967858399cc9db72765",
+                  "runtime_sha256": "b7fcb1551b3b161e9a9a4549dc0875be3df022d63f26384efe09369bd5a8782e",
+                  "steps": [
+                    "source",
+                    "prompt",
+                    "generate",
+                    "validate"
+                  ],
+                  "source_sample_id": "63c450ea-6ea4-5011-8f13-f0490420e2ab",
+                  "generation_calls": {
+                    "63e74c20c0c443b6f5f5f184d44b3f40b8b40d5a04a2d7e8152f40ecae1a8d83": {
+                      "usage": {
+                        "prompt_tokens": 47,
+                        "completion_tokens": 29,
+                        "total_tokens": 76
+                      },
+                      "finish_reason": "stop"
+                    }
+                  },
+                  "review_required": true,
+                  "source_locations": [
+                    {
+                      "source_path": "/1"
+                    }
+                  ]
+                }
+              }
+            ],
+            "rejected": [],
+            "preview": true,
+            "usage": {
+              "prompt_tokens": 96,
+              "completion_tokens": 59,
+              "total_tokens": 155,
+              "completed_generation_calls": 2
+            }
+          },
+          "error": ""
+        },
+        "published": {
+          "run_id": "784e3d33-02f0-4dab-b95b-dc59bf8b73cf",
+          "job_id": "20213307-0518-4301-aa7f-910a842445f5",
+          "status": "succeeded",
+          "desired_action": "run",
+          "definition": {
+            "name": "Mac text recipe qualification",
+            "schema": "modelanvil.recipe.v1",
+            "steps": [
+              {
+                "format": "json",
+                "id": "source",
+                "type": "source"
+              },
+              {
+                "id": "sample",
+                "input": "source",
+                "limit": 2,
+                "seed": 42,
+                "type": "sample"
+              },
+              {
+                "id": "prompt",
+                "input": "sample",
+                "template": "Write one brief sentence about this note: {{value}}",
+                "type": "template"
+              },
+              {
+                "id": "generate",
+                "input": "prompt",
+                "max_tokens": 96,
+                "output": "text",
+                "seed": 42,
+                "type": "generate"
+              },
+              {
+                "id": "validate",
+                "input": "generate",
+                "min_characters": 1,
+                "type": "validate"
+              },
+              {
+                "id": "output",
+                "input": "validate",
+                "type": "output"
+              }
+            ]
+          },
+          "bindings": {
+            "recipe": "e4467581-1fbc-4852-919e-abfaf507c9c4",
+            "sources": {
+              "source": "a0398ea8-1b10-47b7-9b11-a1d86823b3d1"
+            },
+            "model": "9647c59c-53fc-43f1-9fcc-e98c6e4e6e1a",
+            "device": "mps:0",
+            "pool": 3,
+            "budget_policy": "b55e7bb2-0037-407b-8630-f66db00d9157",
+            "protected_sources": []
+          },
+          "attempt_count": 1,
+          "max_attempts": 3,
+          "preview": false,
+          "completed_steps": [
+            "source",
+            "sample",
+            "prompt",
+            "generate",
+            "validate",
+            "output"
+          ],
+          "saved_rows": 6,
+          "publication": {
+            "report": {
+              "artifact_id": "c2e340ab-c05b-4e9d-b2dd-e1325e845448",
+              "sha256": "fc38d27f296d042d9cbd5ecdb0f646ae410be9c9554d39762b02cc94a6613f21",
+              "byte_size": 2965
+            },
+            "row_count": 2,
+            "rejected_count": 0,
+            "preview": false,
+            "usage": {
+              "prompt_tokens": 96,
+              "completion_tokens": 59,
+              "total_tokens": 155,
+              "completed_generation_calls": 2
+            },
+            "output_artifact": {
+              "artifact_id": "2ccdeed6-9e03-4c92-aaa3-a38b9ce55be2",
+              "sha256": "f73a9b47bc1eea4816c0ef25c407151d44f0daf0e2d0007a8ce876059ec78f7f",
+              "byte_size": 2808
+            },
+            "revision_id": "a19eea5a-23c8-40a9-b395-587cb2723f0c"
+          },
+          "result": {
+            "rows": [
+              {
+                "schema_version": "1.0",
+                "sample_id": "9455e567-e9dc-5768-9ce6-2e421c1246e5",
+                "source_group_id": "source-sha256:b133e767db954a1f3c4f3b7ee1d685aac1950f45c2f41ca6cba371bf7c10237f",
+                "blocks": [
+                  {
+                    "block_id": "generated",
+                    "type": "text",
+                    "text": "The note begins at 14:30 UTC, with the note's content and the date being the same as the note's content.",
+                    "location": {
+                      "source_path": "/0"
+                    }
+                  }
+                ],
+                "provenance": {
+                  "source_snapshot_ref": "sha256:b133e767db954a1f3c4f3b7ee1d685aac1950f45c2f41ca6cba371bf7c10237f",
+                  "source_record_key": "/0",
+                  "content_sha256": "284b7f2cfb3e7984d3636a4bba48af3eca46fc9c8c71a58c46bf7f634e68a53c",
+                  "transformation_revision_ref": "modelanvil.recipe.v1",
+                  "parent_sample_refs": [
+                    "ae2e8c49-cfe2-5957-b636-731ccd3c6543"
+                  ]
+                },
+                "metadata": {
+                  "recipe_sha256": "1f61b8cd6825a2a11484e7c598ef7ec52129233ed2a78792172150b70a9c0aae",
+                  "model_snapshot_sha256": "0feab2ee50f92f9df32085bbcfb5a062cea35262391fb967858399cc9db72765",
+                  "runtime_sha256": "b7fcb1551b3b161e9a9a4549dc0875be3df022d63f26384efe09369bd5a8782e",
+                  "steps": [
+                    "source",
+                    "prompt",
+                    "generate",
+                    "validate"
+                  ],
+                  "source_sample_id": "ae2e8c49-cfe2-5957-b636-731ccd3c6543",
+                  "generation_calls": {
+                    "b7efc0b5bde58c4c362199dc3bcbe50008cd8e4261ddaf4f7cbc3de4906b1b0d": {
+                      "usage": {
+                        "prompt_tokens": 49,
+                        "completion_tokens": 30,
+                        "total_tokens": 79
+                      },
+                      "finish_reason": "stop"
+                    }
+                  },
+                  "review_required": true,
+                  "source_locations": [
+                    {
+                      "source_path": "/0"
+                    }
+                  ]
+                }
+              },
+              {
+                "schema_version": "1.0",
+                "sample_id": "d62536ab-bcac-59da-af49-b8517c052f75",
+                "source_group_id": "source-sha256:b133e767db954a1f3c4f3b7ee1d685aac1950f45c2f41ca6cba371bf7c10237f",
+                "blocks": [
+                  {
+                    "block_id": "generated",
+                    "type": "text",
+                    "text": "The note is a collection of operational notes, which are a set of notes that are used to track and record the activities of a company.",
+                    "location": {
+                      "source_path": "/1"
+                    }
+                  }
+                ],
+                "provenance": {
+                  "source_snapshot_ref": "sha256:b133e767db954a1f3c4f3b7ee1d685aac1950f45c2f41ca6cba371bf7c10237f",
+                  "source_record_key": "/1",
+                  "content_sha256": "865c66c88103e9ea48ea59617ffbeaf194322e71cdd68538590b93d5895f8528",
+                  "transformation_revision_ref": "modelanvil.recipe.v1",
+                  "parent_sample_refs": [
+                    "63c450ea-6ea4-5011-8f13-f0490420e2ab"
+                  ]
+                },
+                "metadata": {
+                  "recipe_sha256": "1f61b8cd6825a2a11484e7c598ef7ec52129233ed2a78792172150b70a9c0aae",
+                  "model_snapshot_sha256": "0feab2ee50f92f9df32085bbcfb5a062cea35262391fb967858399cc9db72765",
+                  "runtime_sha256": "b7fcb1551b3b161e9a9a4549dc0875be3df022d63f26384efe09369bd5a8782e",
+                  "steps": [
+                    "source",
+                    "prompt",
+                    "generate",
+                    "validate"
+                  ],
+                  "source_sample_id": "63c450ea-6ea4-5011-8f13-f0490420e2ab",
+                  "generation_calls": {
+                    "63e74c20c0c443b6f5f5f184d44b3f40b8b40d5a04a2d7e8152f40ecae1a8d83": {
+                      "usage": {
+                        "prompt_tokens": 47,
+                        "completion_tokens": 29,
+                        "total_tokens": 76
+                      },
+                      "finish_reason": "stop"
+                    }
+                  },
+                  "review_required": true,
+                  "source_locations": [
+                    {
+                      "source_path": "/1"
+                    }
+                  ]
+                }
+              }
+            ],
+            "rejected": [],
+            "preview": false,
+            "usage": {
+              "prompt_tokens": 96,
+              "completion_tokens": 59,
+              "total_tokens": 155,
+              "completed_generation_calls": 2
+            }
+          },
+          "error": ""
+        },
+        "saved_row_reused": true,
+        "retry_generation_calls": 1,
+        "started_attempts": 2,
+        "idempotent_publication": true
+      },
+      "json": {
+        "run_id": "6b00a6c4-d444-4c0f-a1c0-7150145ce6a9",
+        "job_id": "b55106ba-08d4-47fd-a1d1-abb39a094509",
+        "status": "succeeded",
+        "desired_action": "run",
+        "definition": {
+          "name": "Mac json recipe qualification",
+          "schema": "modelanvil.recipe.v1",
+          "steps": [
+            {
+              "format": "json",
+              "id": "source",
+              "type": "source"
+            },
+            {
+              "id": "sample",
+              "input": "source",
+              "limit": 2,
+              "seed": 42,
+              "type": "sample"
+            },
+            {
+              "id": "prompt",
+              "input": "sample",
+              "template": "Reply with exactly {\"status\":\"ready\"} and no other text.",
+              "type": "template"
+            },
+            {
+              "id": "generate",
+              "input": "prompt",
+              "max_tokens": 96,
+              "output": "json",
+              "seed": 42,
+              "type": "generate"
+            },
+            {
+              "id": "validate",
+              "input": "generate",
+              "min_characters": 1,
+              "required_keys": [
+                "status"
+              ],
+              "type": "validate"
+            },
+            {
+              "id": "output",
+              "input": "validate",
+              "type": "output"
+            }
+          ]
+        },
+        "bindings": {
+          "recipe": "95c2dccc-c759-43bb-9aa0-c07809c47a91",
+          "sources": {
+            "source": "e55f6e5d-8dca-43ae-b7be-06326c3b0254"
+          },
+          "model": "9647c59c-53fc-43f1-9fcc-e98c6e4e6e1a",
+          "device": "mps:0",
+          "pool": 3,
+          "budget_policy": "b55e7bb2-0037-407b-8630-f66db00d9157",
+          "protected_sources": []
+        },
+        "attempt_count": 1,
+        "max_attempts": 3,
+        "preview": true,
+        "completed_steps": [
+          "source",
+          "sample",
+          "prompt",
+          "generate",
+          "validate",
+          "output"
+        ],
+        "saved_rows": 2,
+        "publication": {
+          "report": {
+            "artifact_id": "7c6b0482-fcd5-4412-9f4e-f32cadb7ae5f",
+            "sha256": "85a8fc13c37692f0839301a652c2c618ca4559e75aed5bc990353aa263c4f4e4",
+            "byte_size": 617
+          },
+          "row_count": 0,
+          "rejected_count": 1,
+          "preview": true,
+          "usage": {
+            "prompt_tokens": 44,
+            "completion_tokens": 16,
+            "total_tokens": 60,
+            "completed_generation_calls": 1
+          }
+        },
+        "result": {
+          "rows": [],
+          "rejected": [
+            {
+              "source_sample_id": "2d0bf679-954a-5f26-9906-f2c32844343c",
+              "step": "generate",
+              "reason": "invalid_json_output",
+              "output": "\"Reply with exactly {\"status\":\"ready\"} and no other text.\"",
+              "usage": {
+                "prompt_tokens": 44,
+                "completion_tokens": 16,
+                "total_tokens": 60
+              },
+              "generation_calls": {
+                "52b236022b5a7b760c304b26fa01f10d2fd89b911c103115f9dd52ea7be3b608": {
+                  "usage": {
+                    "prompt_tokens": 44,
+                    "completion_tokens": 16,
+                    "total_tokens": 60
+                  },
+                  "finish_reason": "stop"
+                }
+              }
+            }
+          ],
+          "preview": true,
+          "usage": {
+            "prompt_tokens": 44,
+            "completion_tokens": 16,
+            "total_tokens": 60,
+            "completed_generation_calls": 1
+          }
+        },
+        "error": ""
+      },
+      "code": {
+        "run_id": "ce41e0ea-b065-42e7-86b1-d42183588c05",
+        "job_id": "f0fab8f0-c8fc-4dc7-8f7d-8fc7397aee4d",
+        "status": "succeeded",
+        "desired_action": "run",
+        "definition": {
+          "name": "Mac code recipe qualification",
+          "schema": "modelanvil.recipe.v1",
+          "steps": [
+            {
+              "format": "json",
+              "id": "source",
+              "type": "source"
+            },
+            {
+              "id": "sample",
+              "input": "source",
+              "limit": 2,
+              "seed": 42,
+              "type": "sample"
+            },
+            {
+              "id": "prompt",
+              "input": "sample",
+              "template": "Return only a Python assignment, without markdown or explanation: answer = 42",
+              "type": "template"
+            },
+            {
+              "id": "generate",
+              "input": "prompt",
+              "max_tokens": 96,
+              "output": "code",
+              "seed": 42,
+              "type": "generate"
+            },
+            {
+              "id": "validate",
+              "input": "generate",
+              "min_characters": 1,
+              "type": "validate"
+            },
+            {
+              "id": "output",
+              "input": "validate",
+              "type": "output"
+            }
+          ]
+        },
+        "bindings": {
+          "recipe": "0129e1a6-396c-4abc-890b-ce1ae65c5166",
+          "sources": {
+            "source": "6cd789f8-df1b-4648-8073-b6fb8d31dc06"
+          },
+          "model": "9647c59c-53fc-43f1-9fcc-e98c6e4e6e1a",
+          "device": "mps:0",
+          "pool": 3,
+          "budget_policy": "b55e7bb2-0037-407b-8630-f66db00d9157",
+          "protected_sources": []
+        },
+        "attempt_count": 1,
+        "max_attempts": 3,
+        "preview": true,
+        "completed_steps": [
+          "source",
+          "sample",
+          "prompt",
+          "generate",
+          "validate",
+          "output"
+        ],
+        "saved_rows": 3,
+        "publication": {
+          "report": {
+            "artifact_id": "fcb5f3d9-bcbd-43ac-9119-8b69ee5c3bc7",
+            "sha256": "2f5e4fe369f98708bd7542410331289f91f9add0fb00a3ee62bd3f5f0edb9489",
+            "byte_size": 1448
+          },
+          "row_count": 1,
+          "rejected_count": 0,
+          "preview": true,
+          "usage": {
+            "prompt_tokens": 47,
+            "completion_tokens": 6,
+            "total_tokens": 53,
+            "completed_generation_calls": 1
+          }
+        },
+        "result": {
+          "rows": [
+            {
+              "schema_version": "1.0",
+              "sample_id": "af736ffc-6176-548b-9ce5-aaa3a7cdb1c5",
+              "source_group_id": "source-sha256:ed88e8ca8622d6d13e5bdb7582ae84e4175b9e9d5c07de2cdeeb06d314269155",
+              "blocks": [
+                {
+                  "block_id": "generated",
+                  "type": "code",
+                  "text": "Answer = 42",
+                  "location": {
+                    "source_path": "/0"
+                  }
+                }
+              ],
+              "provenance": {
+                "source_snapshot_ref": "sha256:ed88e8ca8622d6d13e5bdb7582ae84e4175b9e9d5c07de2cdeeb06d314269155",
+                "source_record_key": "/0",
+                "content_sha256": "7afd7a8d3b80367226c79295b05cf054b326cebc3ff096ad70cfd063ccb15c9e",
+                "transformation_revision_ref": "modelanvil.recipe.v1",
+                "parent_sample_refs": [
+                  "2d0bf679-954a-5f26-9906-f2c32844343c"
+                ]
+              },
+              "metadata": {
+                "recipe_sha256": "b914389ed12a5e4cbbe486895ac5cbb71884f716ed3f723cf9cef15eaa7c53ce",
+                "model_snapshot_sha256": "0feab2ee50f92f9df32085bbcfb5a062cea35262391fb967858399cc9db72765",
+                "runtime_sha256": "b7fcb1551b3b161e9a9a4549dc0875be3df022d63f26384efe09369bd5a8782e",
+                "steps": [
+                  "source",
+                  "prompt",
+                  "generate",
+                  "validate"
+                ],
+                "source_sample_id": "2d0bf679-954a-5f26-9906-f2c32844343c",
+                "generation_calls": {
+                  "52b236022b5a7b760c304b26fa01f10d2fd89b911c103115f9dd52ea7be3b608": {
+                    "usage": {
+                      "prompt_tokens": 47,
+                      "completion_tokens": 6,
+                      "total_tokens": 53
+                    },
+                    "finish_reason": "stop"
+                  }
+                },
+                "review_required": true,
+                "source_locations": [
+                  {
+                    "source_path": "/0"
+                  }
+                ]
+              }
+            }
+          ],
+          "rejected": [],
+          "preview": true,
+          "usage": {
+            "prompt_tokens": 47,
+            "completion_tokens": 6,
+            "total_tokens": 53,
+            "completed_generation_calls": 1
+          }
+        },
+        "error": ""
+      }
+    }
+  },
+  "limits": "Authored Mac smoke; representative quality and non-Mac hardware remain pending.",
+  "source_format_recipes": {
+    "csv": {
+      "run_id": "515b3d18-860a-49e0-bbc5-328e29ee3c6a",
+      "job_id": "2e0929b3-b466-4cdd-b9a4-fefa72dfb37e",
+      "status": "succeeded",
+      "desired_action": "run",
+      "definition": {
+        "name": "Actual csv source recipe",
+        "schema": "modelanvil.recipe.v1",
+        "steps": [
+          {
+            "format": "csv",
+            "id": "source",
+            "type": "source"
+          },
+          {
+            "id": "clean",
+            "input": "source",
+            "operation": "strip",
+            "type": "expression"
+          },
+          {
+            "id": "output",
+            "input": "clean",
+            "type": "output"
+          }
+        ]
+      },
+      "bindings": {
+        "recipe": "1f9efd95-8550-4a78-9e45-cf301d5981d3",
+        "sources": {
+          "source": "cae9bacd-bdaa-4341-b03a-02086c7e12fe"
+        },
+        "model": null,
+        "device": "cpu",
+        "pool": 3,
+        "budget_policy": "b55e7bb2-0037-407b-8630-f66db00d9157",
+        "protected_sources": []
+      },
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "preview": true,
+      "completed_steps": [
+        "source",
+        "clean",
+        "output"
+      ],
+      "saved_rows": 2,
+      "publication": {
+        "report": {
+          "artifact_id": "c6e67f3a-98de-4046-84f4-371d1bca47ee",
+          "sha256": "1351a5bf0cc535b4755bf888946b79041ec18a67ffb2c34d409f2f5235c3d319",
+          "byte_size": 2330
+        },
+        "row_count": 2,
+        "rejected_count": 0,
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0,
+          "completed_generation_calls": 0
+        }
+      },
+      "result": {
+        "rows": [
+          {
+            "schema_version": "1.0",
+            "sample_id": "21708a21-fe25-5ca1-8a8a-5147a96022e1",
+            "source_group_id": "source-sha256:9f93cacbbb7aed9266c4b7f0fde8759358633af94bd40c59c79e2cc532a3dd2c",
+            "blocks": [
+              {
+                "block_id": "generated",
+                "type": "text",
+                "text": "Backups completed before the morning shift.",
+                "location": {
+                  "source_path": "record/1"
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:9f93cacbbb7aed9266c4b7f0fde8759358633af94bd40c59c79e2cc532a3dd2c",
+              "source_record_key": "record/1",
+              "content_sha256": "4cb0c10d0773424525fc36a2fb4d378c15c00985a9d4db316eb67efc059f78f8",
+              "transformation_revision_ref": "modelanvil.recipe.v1",
+              "parent_sample_refs": [
+                "16563f68-8e31-504d-b742-848c9d89f126"
+              ]
+            },
+            "metadata": {
+              "recipe_sha256": "05c0c491e04d29799d09ac6db36b645ee441f7e30480048245645126b0620aba",
+              "model_snapshot_sha256": null,
+              "runtime_sha256": "b7fcb1551b3b161e9a9a4549dc0875be3df022d63f26384efe09369bd5a8782e",
+              "steps": [
+                "source",
+                "clean"
+              ],
+              "source_sample_id": "16563f68-8e31-504d-b742-848c9d89f126",
+              "generation_calls": {},
+              "review_required": true,
+              "source_locations": [
+                {
+                  "source_path": "record/1"
+                }
+              ]
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "sample_id": "1978603e-c8c7-5052-803c-d39f02ab6bfa",
+            "source_group_id": "source-sha256:9f93cacbbb7aed9266c4b7f0fde8759358633af94bd40c59c79e2cc532a3dd2c",
+            "blocks": [
+              {
+                "block_id": "generated",
+                "type": "text",
+                "text": "Network switches use the approved settings.",
+                "location": {
+                  "source_path": "record/2"
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:9f93cacbbb7aed9266c4b7f0fde8759358633af94bd40c59c79e2cc532a3dd2c",
+              "source_record_key": "record/2",
+              "content_sha256": "0f0b030304f702ba6c5578e5abc39710f603107add1be12e9497a9ba5159d6b8",
+              "transformation_revision_ref": "modelanvil.recipe.v1",
+              "parent_sample_refs": [
+                "a1ce3974-b53d-551c-b05c-ce4bbccea9f4"
+              ]
+            },
+            "metadata": {
+              "recipe_sha256": "05c0c491e04d29799d09ac6db36b645ee441f7e30480048245645126b0620aba",
+              "model_snapshot_sha256": null,
+              "runtime_sha256": "b7fcb1551b3b161e9a9a4549dc0875be3df022d63f26384efe09369bd5a8782e",
+              "steps": [
+                "source",
+                "clean"
+              ],
+              "source_sample_id": "a1ce3974-b53d-551c-b05c-ce4bbccea9f4",
+              "generation_calls": {},
+              "review_required": true,
+              "source_locations": [
+                {
+                  "source_path": "record/2"
+                }
+              ]
+            }
+          }
+        ],
+        "rejected": [],
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0,
+          "completed_generation_calls": 0
+        }
+      },
+      "error": ""
+    },
+    "docx": {
+      "run_id": "b9790a1f-005d-484c-b7c6-35b18cd63fa5",
+      "job_id": "c8ec95fb-770b-44bd-8529-5713941ffb60",
+      "status": "succeeded",
+      "desired_action": "run",
+      "definition": {
+        "name": "Actual docx source recipe",
+        "schema": "modelanvil.recipe.v1",
+        "steps": [
+          {
+            "format": "docx",
+            "id": "source",
+            "type": "source"
+          },
+          {
+            "id": "clean",
+            "input": "source",
+            "operation": "strip",
+            "type": "expression"
+          },
+          {
+            "id": "output",
+            "input": "clean",
+            "type": "output"
+          }
+        ]
+      },
+      "bindings": {
+        "recipe": "d39d544b-ef0d-4ed0-b947-c7219cb7416b",
+        "sources": {
+          "source": "eb886588-2de7-41da-8977-6c982de2eb28"
+        },
+        "model": null,
+        "device": "cpu",
+        "pool": 3,
+        "budget_policy": "b55e7bb2-0037-407b-8630-f66db00d9157",
+        "protected_sources": []
+      },
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "preview": true,
+      "completed_steps": [
+        "source",
+        "clean",
+        "output"
+      ],
+      "saved_rows": 2,
+      "publication": {
+        "report": {
+          "artifact_id": "54d2e732-4242-44c4-b1c7-5f4d9d56fe54",
+          "sha256": "33d488624416d1e06d22cc20592fe25cd2b5350c8432e1fbc9abf154bb07a941",
+          "byte_size": 2455
+        },
+        "row_count": 2,
+        "rejected_count": 0,
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0,
+          "completed_generation_calls": 0
+        }
+      },
+      "result": {
+        "rows": [
+          {
+            "schema_version": "1.0",
+            "sample_id": "06c2b672-a08f-5f73-9343-88c9ca046eb9",
+            "source_group_id": "source-sha256:e6cc3f2343a1ce0687426ba8228fa51a2d0f405b08885b91b8ef133b869f3d82",
+            "blocks": [
+              {
+                "block_id": "generated",
+                "type": "text",
+                "text": "Cooling equipment inspection passed on Tuesday.",
+                "location": {
+                  "source_path": "word/document.xml/paragraph/1"
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:e6cc3f2343a1ce0687426ba8228fa51a2d0f405b08885b91b8ef133b869f3d82",
+              "source_record_key": "word/document.xml/paragraph/1",
+              "content_sha256": "fc27a565eb955651b95628d47c4c3b8204dcde0ac87828ca401ad01a21d1f341",
+              "transformation_revision_ref": "modelanvil.recipe.v1",
+              "parent_sample_refs": [
+                "99308b7f-fd34-5921-8a3c-8cbc264ac0ef"
+              ]
+            },
+            "metadata": {
+              "recipe_sha256": "389e52e9aab98f8d902673a5dd1eedd654a4ed4eff04baa6463a434a6b37e958",
+              "model_snapshot_sha256": null,
+              "runtime_sha256": "b7fcb1551b3b161e9a9a4549dc0875be3df022d63f26384efe09369bd5a8782e",
+              "steps": [
+                "source",
+                "clean"
+              ],
+              "source_sample_id": "99308b7f-fd34-5921-8a3c-8cbc264ac0ef",
+              "generation_calls": {},
+              "review_required": true,
+              "source_locations": [
+                {
+                  "source_path": "word/document.xml/paragraph/1"
+                }
+              ]
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "sample_id": "7a21e682-763c-5d10-b8f8-49ab3f0f8f8b",
+            "source_group_id": "source-sha256:e6cc3f2343a1ce0687426ba8228fa51a2d0f405b08885b91b8ef133b869f3d82",
+            "blocks": [
+              {
+                "block_id": "generated",
+                "type": "text",
+                "text": "Archive retention remains thirty days.",
+                "location": {
+                  "source_path": "word/document.xml/paragraph/2"
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:e6cc3f2343a1ce0687426ba8228fa51a2d0f405b08885b91b8ef133b869f3d82",
+              "source_record_key": "word/document.xml/paragraph/2",
+              "content_sha256": "724606ef1e9a1166ce49028af2aa2fa587634a73773cfdf9d0991519bd71ef5a",
+              "transformation_revision_ref": "modelanvil.recipe.v1",
+              "parent_sample_refs": [
+                "0c7a96fe-ce22-534a-9da6-162edbac962c"
+              ]
+            },
+            "metadata": {
+              "recipe_sha256": "389e52e9aab98f8d902673a5dd1eedd654a4ed4eff04baa6463a434a6b37e958",
+              "model_snapshot_sha256": null,
+              "runtime_sha256": "b7fcb1551b3b161e9a9a4549dc0875be3df022d63f26384efe09369bd5a8782e",
+              "steps": [
+                "source",
+                "clean"
+              ],
+              "source_sample_id": "0c7a96fe-ce22-534a-9da6-162edbac962c",
+              "generation_calls": {},
+              "review_required": true,
+              "source_locations": [
+                {
+                  "source_path": "word/document.xml/paragraph/2"
+                }
+              ]
+            }
+          }
+        ],
+        "rejected": [],
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0,
+          "completed_generation_calls": 0
+        }
+      },
+      "error": ""
+    },
+    "pdf": {
+      "run_id": "9f37e2e9-a127-4163-8ed6-ee79362fa7fa",
+      "job_id": "4147c83e-c0e4-4937-8d3a-5fa1a14e0651",
+      "status": "succeeded",
+      "desired_action": "run",
+      "definition": {
+        "name": "Actual pdf source recipe",
+        "schema": "modelanvil.recipe.v1",
+        "steps": [
+          {
+            "format": "pdf",
+            "id": "source",
+            "type": "source"
+          },
+          {
+            "id": "clean",
+            "input": "source",
+            "operation": "strip",
+            "type": "expression"
+          },
+          {
+            "id": "output",
+            "input": "clean",
+            "type": "output"
+          }
+        ]
+      },
+      "bindings": {
+        "recipe": "27e12a90-a421-474a-81eb-e00d37eae1b8",
+        "sources": {
+          "source": "f77c48d5-be19-42c0-b5e9-3ccd63044ffd"
+        },
+        "model": null,
+        "device": "cpu",
+        "pool": 3,
+        "budget_policy": "b55e7bb2-0037-407b-8630-f66db00d9157",
+        "protected_sources": []
+      },
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "preview": true,
+      "completed_steps": [
+        "source",
+        "clean",
+        "output"
+      ],
+      "saved_rows": 1,
+      "publication": {
+        "report": {
+          "artifact_id": "a61da94c-530f-4385-8d1f-4d542757bdc4",
+          "sha256": "c7bc7f27cfe7a3db168960beb678862dbb789131cfd2e0fe773343daadc5e430",
+          "byte_size": 1261
+        },
+        "row_count": 1,
+        "rejected_count": 0,
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0,
+          "completed_generation_calls": 0
+        }
+      },
+      "result": {
+        "rows": [
+          {
+            "schema_version": "1.0",
+            "sample_id": "fccbee2c-f90d-5826-b92a-0ae6d07ec8ed",
+            "source_group_id": "source-sha256:a029fc846ca6a570fd70789d5f485b557d4294900b0ba8e5027b856eb53428b5",
+            "blocks": [
+              {
+                "block_id": "generated",
+                "type": "text",
+                "text": "Power system is ready for scheduled maintenance.",
+                "location": {
+                  "source_path": "page/1",
+                  "page": 1
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:a029fc846ca6a570fd70789d5f485b557d4294900b0ba8e5027b856eb53428b5",
+              "source_record_key": "page/1",
+              "content_sha256": "f9bbf1b39fc1d6897c57d616f780a4448705ffeef9efbc4a155f51dbd94c9a36",
+              "transformation_revision_ref": "modelanvil.recipe.v1",
+              "parent_sample_refs": [
+                "04bc2d30-0b26-501f-bc07-c927f6f20ca3"
+              ]
+            },
+            "metadata": {
+              "recipe_sha256": "04e4b20031efd7f20b9e497aecdc4c8b847e3ec743a8b3d3fafe2a5c170f5b82",
+              "model_snapshot_sha256": null,
+              "runtime_sha256": "b7fcb1551b3b161e9a9a4549dc0875be3df022d63f26384efe09369bd5a8782e",
+              "steps": [
+                "source",
+                "clean"
+              ],
+              "source_sample_id": "04bc2d30-0b26-501f-bc07-c927f6f20ca3",
+              "generation_calls": {},
+              "review_required": true,
+              "source_locations": [
+                {
+                  "source_path": "page/1",
+                  "page": 1
+                }
+              ]
+            }
+          }
+        ],
+        "rejected": [],
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0,
+          "completed_generation_calls": 0
+        }
+      },
+      "error": ""
+    },
+    "jsonl": {
+      "run_id": "6fd220ad-f99e-464a-b24e-0c462434da41",
+      "job_id": "3f475470-92b8-40c6-8d24-c80829a630e2",
+      "status": "succeeded",
+      "desired_action": "run",
+      "definition": {
+        "name": "Actual jsonl source recipe",
+        "schema": "modelanvil.recipe.v1",
+        "steps": [
+          {
+            "format": "jsonl",
+            "id": "source",
+            "type": "source"
+          },
+          {
+            "id": "clean",
+            "input": "source",
+            "operation": "strip",
+            "type": "expression"
+          },
+          {
+            "id": "output",
+            "input": "clean",
+            "type": "output"
+          }
+        ]
+      },
+      "bindings": {
+        "recipe": "007e3043-bc31-4877-8b61-d675251cd9c9",
+        "sources": {
+          "source": "0762bc51-bd55-45da-be63-0f57818b1c5f"
+        },
+        "model": null,
+        "device": "cpu",
+        "pool": 3,
+        "budget_policy": "b55e7bb2-0037-407b-8630-f66db00d9157",
+        "protected_sources": []
+      },
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "preview": true,
+      "completed_steps": [
+        "source",
+        "clean",
+        "output"
+      ],
+      "saved_rows": 2,
+      "publication": {
+        "report": {
+          "artifact_id": "aadfa4a8-1329-4aab-a3e8-35093f98cce4",
+          "sha256": "292b01981504251e0b6ac5fa1a71334285cdb58f3674c29ed7d7229530de207a",
+          "byte_size": 3643
+        },
+        "row_count": 2,
+        "rejected_count": 0,
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0,
+          "completed_generation_calls": 0
+        }
+      },
+      "result": {
+        "rows": [
+          {
+            "schema_version": "1.0",
+            "sample_id": "27373a4e-4f08-5b92-a69e-3f84f6e2076f",
+            "source_group_id": "source-sha256:cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+            "blocks": [
+              {
+                "block_id": "generated",
+                "type": "text",
+                "text": "MODEL ANVIL RECEIPT\nInvoice 1042\nTotal: 38.50 USD\nPaid on 12 October 2026",
+                "location": {
+                  "source_path": "page/1",
+                  "page": 1
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+              "source_record_key": "page/1",
+              "content_sha256": "3568d60558505b4f9df335d1cdd54235157851c136867376cf25f053d260ff76",
+              "transformation_revision_ref": "modelanvil.recipe.v1",
+              "parent_sample_refs": [
+                "3e2a505e-0491-5c67-a5b6-f5abc355abca"
+              ]
+            },
+            "metadata": {
+              "recipe_sha256": "fa8630b76ce46343d9d8e9f648c4b25f9b4d332c7df25cae7430011c562d695d",
+              "model_snapshot_sha256": null,
+              "runtime_sha256": "b7fcb1551b3b161e9a9a4549dc0875be3df022d63f26384efe09369bd5a8782e",
+              "steps": [
+                "source",
+                "clean"
+              ],
+              "source_sample_id": "3e2a505e-0491-5c67-a5b6-f5abc355abca",
+              "generation_calls": {},
+              "review_required": true,
+              "source_locations": [
+                {
+                  "source_path": "page/1/page-1-region-1",
+                  "page": 1,
+                  "coordinates": [
+                    40.577,
+                    38.264,
+                    456.154,
+                    81.306
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+                },
+                {
+                  "source_path": "page/1/page-1-region-2",
+                  "page": 1,
+                  "coordinates": [
+                    41.239,
+                    91.658,
+                    253.965,
+                    131.475
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+                },
+                {
+                  "source_path": "page/1/page-1-region-3",
+                  "page": 1,
+                  "coordinates": [
+                    42.14,
+                    141.331,
+                    325.54,
+                    183.194
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+                },
+                {
+                  "source_path": "page/1/page-1-region-4",
+                  "page": 1,
+                  "coordinates": [
+                    40.376,
+                    193.185,
+                    449.291,
+                    234.782
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+                }
+              ]
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "sample_id": "998ac6ef-5705-5765-8491-46cf5e2fe6c3",
+            "source_group_id": "source-sha256:cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+            "blocks": [
+              {
+                "block_id": "generated",
+                "type": "text",
+                "text": "MAINTENANCE NOTE\nServer restart: 14:30 UTC\nOwner: Operations\nStatus: Complete",
+                "location": {
+                  "source_path": "page/2",
+                  "page": 2
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:cdd0db06472475681fc3dd1c086448407362cafda1bf915b564de8e42f8b16b9",
+              "source_record_key": "page/2",
+              "content_sha256": "cb44cd8af221d2f452da1b07b2d0f9d5eed0302543ec28ad921c18ad1a238dfc",
+              "transformation_revision_ref": "modelanvil.recipe.v1",
+              "parent_sample_refs": [
+                "91e21088-406b-589f-8ffc-aa45a64845d7"
+              ]
+            },
+            "metadata": {
+              "recipe_sha256": "fa8630b76ce46343d9d8e9f648c4b25f9b4d332c7df25cae7430011c562d695d",
+              "model_snapshot_sha256": null,
+              "runtime_sha256": "b7fcb1551b3b161e9a9a4549dc0875be3df022d63f26384efe09369bd5a8782e",
+              "steps": [
+                "source",
+                "clean"
+              ],
+              "source_sample_id": "91e21088-406b-589f-8ffc-aa45a64845d7",
+              "generation_calls": {},
+              "review_required": true,
+              "source_locations": [
+                {
+                  "source_path": "page/2/page-2-region-1",
+                  "page": 2,
+                  "coordinates": [
+                    40.145,
+                    39.372,
+                    422.254,
+                    81.059
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+                },
+                {
+                  "source_path": "page/2/page-2-region-2",
+                  "page": 2,
+                  "coordinates": [
+                    39.738,
+                    91.397,
+                    462.367,
+                    132.077
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+                },
+                {
+                  "source_path": "page/2/page-2-region-3",
+                  "page": 2,
+                  "coordinates": [
+                    39.414,
+                    143.382,
+                    351.971,
+                    185.227
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+                },
+                {
+                  "source_path": "page/2/page-2-region-4",
+                  "page": 2,
+                  "coordinates": [
+                    39.56,
+                    194.673,
+                    325.286,
+                    235.818
+                  ],
+                  "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+                }
+              ]
+            }
+          }
+        ],
+        "rejected": [],
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0,
+          "completed_generation_calls": 0
+        }
+      },
+      "error": ""
+    },
+    "merge": {
+      "run_id": "d15150b4-ab2d-40d7-abe0-70434a2a1a1e",
+      "job_id": "2956fe5e-6864-4ac6-90c9-9c46b7887bbe",
+      "status": "succeeded",
+      "desired_action": "run",
+      "definition": {
+        "name": "Actual CSV and DOCX merge recipe",
+        "schema": "modelanvil.recipe.v1",
+        "steps": [
+          {
+            "format": "csv",
+            "id": "csv",
+            "type": "source"
+          },
+          {
+            "format": "docx",
+            "id": "docx",
+            "type": "source"
+          },
+          {
+            "id": "merge",
+            "inputs": [
+              "csv",
+              "docx"
+            ],
+            "type": "merge"
+          },
+          {
+            "id": "output",
+            "input": "merge",
+            "type": "output"
+          }
+        ]
+      },
+      "bindings": {
+        "recipe": "6c5baf9d-dc95-4a00-a8bd-259baa857087",
+        "sources": {
+          "csv": "cae9bacd-bdaa-4341-b03a-02086c7e12fe",
+          "docx": "eb886588-2de7-41da-8977-6c982de2eb28"
+        },
+        "model": null,
+        "device": "cpu",
+        "pool": 3,
+        "budget_policy": "b55e7bb2-0037-407b-8630-f66db00d9157",
+        "protected_sources": []
+      },
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "preview": true,
+      "completed_steps": [
+        "csv",
+        "docx",
+        "merge",
+        "output"
+      ],
+      "saved_rows": 0,
+      "publication": {
+        "report": {
+          "artifact_id": "a853a9a4-f865-460e-a325-6b7ace3f39d8",
+          "sha256": "ca6130815425e8010b7b448f9db86ea118e0c41bbc1f7a039494f17727fedc21",
+          "byte_size": 4589
+        },
+        "row_count": 4,
+        "rejected_count": 0,
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0,
+          "completed_generation_calls": 0
+        }
+      },
+      "result": {
+        "rows": [
+          {
+            "schema_version": "1.0",
+            "sample_id": "1296785d-de16-507f-90af-8406481e7381",
+            "source_group_id": "source-sha256:9f93cacbbb7aed9266c4b7f0fde8759358633af94bd40c59c79e2cc532a3dd2c",
+            "blocks": [
+              {
+                "block_id": "generated",
+                "type": "text",
+                "text": "Backups completed before the morning shift.",
+                "location": {
+                  "source_path": "record/1"
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:9f93cacbbb7aed9266c4b7f0fde8759358633af94bd40c59c79e2cc532a3dd2c",
+              "source_record_key": "record/1",
+              "content_sha256": "4cb0c10d0773424525fc36a2fb4d378c15c00985a9d4db316eb67efc059f78f8",
+              "transformation_revision_ref": "modelanvil.recipe.v1",
+              "parent_sample_refs": [
+                "16563f68-8e31-504d-b742-848c9d89f126"
+              ]
+            },
+            "metadata": {
+              "recipe_sha256": "d3eee680f80b463c3466efca5dd4027f83bcf84fa79813c7c704df34e346e6ad",
+              "model_snapshot_sha256": null,
+              "runtime_sha256": "b7fcb1551b3b161e9a9a4549dc0875be3df022d63f26384efe09369bd5a8782e",
+              "steps": [
+                "csv"
+              ],
+              "source_sample_id": "16563f68-8e31-504d-b742-848c9d89f126",
+              "generation_calls": {},
+              "review_required": true,
+              "source_locations": [
+                {
+                  "source_path": "record/1"
+                }
+              ]
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "sample_id": "a3025ee0-7150-560b-a466-5b1611b4fc3d",
+            "source_group_id": "source-sha256:9f93cacbbb7aed9266c4b7f0fde8759358633af94bd40c59c79e2cc532a3dd2c",
+            "blocks": [
+              {
+                "block_id": "generated",
+                "type": "text",
+                "text": "Network switches use the approved settings.",
+                "location": {
+                  "source_path": "record/2"
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:9f93cacbbb7aed9266c4b7f0fde8759358633af94bd40c59c79e2cc532a3dd2c",
+              "source_record_key": "record/2",
+              "content_sha256": "0f0b030304f702ba6c5578e5abc39710f603107add1be12e9497a9ba5159d6b8",
+              "transformation_revision_ref": "modelanvil.recipe.v1",
+              "parent_sample_refs": [
+                "a1ce3974-b53d-551c-b05c-ce4bbccea9f4"
+              ]
+            },
+            "metadata": {
+              "recipe_sha256": "d3eee680f80b463c3466efca5dd4027f83bcf84fa79813c7c704df34e346e6ad",
+              "model_snapshot_sha256": null,
+              "runtime_sha256": "b7fcb1551b3b161e9a9a4549dc0875be3df022d63f26384efe09369bd5a8782e",
+              "steps": [
+                "csv"
+              ],
+              "source_sample_id": "a1ce3974-b53d-551c-b05c-ce4bbccea9f4",
+              "generation_calls": {},
+              "review_required": true,
+              "source_locations": [
+                {
+                  "source_path": "record/2"
+                }
+              ]
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "sample_id": "a4c3411d-b16e-5cb6-bf3c-f57bca190a40",
+            "source_group_id": "source-sha256:e6cc3f2343a1ce0687426ba8228fa51a2d0f405b08885b91b8ef133b869f3d82",
+            "blocks": [
+              {
+                "block_id": "generated",
+                "type": "text",
+                "text": "Cooling equipment inspection passed on Tuesday.",
+                "location": {
+                  "source_path": "word/document.xml/paragraph/1"
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:e6cc3f2343a1ce0687426ba8228fa51a2d0f405b08885b91b8ef133b869f3d82",
+              "source_record_key": "word/document.xml/paragraph/1",
+              "content_sha256": "fc27a565eb955651b95628d47c4c3b8204dcde0ac87828ca401ad01a21d1f341",
+              "transformation_revision_ref": "modelanvil.recipe.v1",
+              "parent_sample_refs": [
+                "99308b7f-fd34-5921-8a3c-8cbc264ac0ef"
+              ]
+            },
+            "metadata": {
+              "recipe_sha256": "d3eee680f80b463c3466efca5dd4027f83bcf84fa79813c7c704df34e346e6ad",
+              "model_snapshot_sha256": null,
+              "runtime_sha256": "b7fcb1551b3b161e9a9a4549dc0875be3df022d63f26384efe09369bd5a8782e",
+              "steps": [
+                "docx"
+              ],
+              "source_sample_id": "99308b7f-fd34-5921-8a3c-8cbc264ac0ef",
+              "generation_calls": {},
+              "review_required": true,
+              "source_locations": [
+                {
+                  "source_path": "word/document.xml/paragraph/1"
+                }
+              ]
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "sample_id": "7f0e1559-7429-5aca-9d8d-43078f88fcd3",
+            "source_group_id": "source-sha256:e6cc3f2343a1ce0687426ba8228fa51a2d0f405b08885b91b8ef133b869f3d82",
+            "blocks": [
+              {
+                "block_id": "generated",
+                "type": "text",
+                "text": "Archive retention remains thirty days.",
+                "location": {
+                  "source_path": "word/document.xml/paragraph/2"
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:e6cc3f2343a1ce0687426ba8228fa51a2d0f405b08885b91b8ef133b869f3d82",
+              "source_record_key": "word/document.xml/paragraph/2",
+              "content_sha256": "724606ef1e9a1166ce49028af2aa2fa587634a73773cfdf9d0991519bd71ef5a",
+              "transformation_revision_ref": "modelanvil.recipe.v1",
+              "parent_sample_refs": [
+                "0c7a96fe-ce22-534a-9da6-162edbac962c"
+              ]
+            },
+            "metadata": {
+              "recipe_sha256": "d3eee680f80b463c3466efca5dd4027f83bcf84fa79813c7c704df34e346e6ad",
+              "model_snapshot_sha256": null,
+              "runtime_sha256": "b7fcb1551b3b161e9a9a4549dc0875be3df022d63f26384efe09369bd5a8782e",
+              "steps": [
+                "docx"
+              ],
+              "source_sample_id": "0c7a96fe-ce22-534a-9da6-162edbac962c",
+              "generation_calls": {},
+              "review_required": true,
+              "source_locations": [
+                {
+                  "source_path": "word/document.xml/paragraph/2"
+                }
+              ]
+            }
+          }
+        ],
+        "rejected": [],
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0,
+          "completed_generation_calls": 0
+        }
+      },
+      "error": ""
+    }
+  },
+  "browser_publication": {
+    "run_id": "e442f53d-46a4-46f6-871a-7686e2767298",
+    "job_id": "c600a25c-bbd0-44c2-8d2b-ecec9bc77f7e",
+    "status": "completed",
+    "publication": {
+      "report": {
+        "artifact_id": "ab3b88bf-6697-4b87-9779-ff63f548e5d5",
+        "sha256": "fc38d27f296d042d9cbd5ecdb0f646ae410be9c9554d39762b02cc94a6613f21",
+        "byte_size": 2965
+      },
+      "row_count": 2,
+      "rejected_count": 0,
+      "preview": false,
+      "usage": {
+        "prompt_tokens": 96,
+        "completion_tokens": 59,
+        "total_tokens": 155,
+        "completed_generation_calls": 2
+      },
+      "output_artifact": {
+        "artifact_id": "28cca737-1ac6-4ff6-ad95-9347d25ed331",
+        "sha256": "f73a9b47bc1eea4816c0ef25c407151d44f0daf0e2d0007a8ce876059ec78f7f",
+        "byte_size": 2808
+      },
+      "revision_id": "57646dcb-d289-449c-aa6d-1d0f38c04fdb"
+    },
+    "screenshot": "/private/tmp/modelanvil-recipes-publication-verified.png"
+  }
+}

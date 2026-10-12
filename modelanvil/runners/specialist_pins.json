@@ -1,0 +1,102 @@
+{
+  "laya": {
+    "repo_id": "convaiinnovations/laya",
+    "revision": "7b928d828b7b0e022f929d9bd2e44165aa270148",
+    "files": {
+      "encoder/config.json": {
+        "sha256": "bf3ab80598fdccf414855a2ce80f22859e4492d06ca8a62ddd1cfb63972f8979",
+        "byte_size": 2083
+      },
+      "model.safetensors": {
+        "sha256": "891102d372688fc2a094dac56a384bc537b87c63f21f9f3dac0be2b7cbc8d86c",
+        "byte_size": 842609210
+      },
+      "rl_agent_config.json": {
+        "sha256": "ae287b56bbcf5f8c4f4541ae9dfd00c914c4c48b940b8398c3058af37ba92bbd",
+        "byte_size": 745
+      },
+      "tokenizer/tokenizer.json": {
+        "sha256": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+        "byte_size": 3583228
+      },
+      "tokenizer/tokenizer_config.json": {
+        "sha256": "50044de60daaa73df97d262e15a40d4faf0160e7d742df64b377877a1320dd12",
+        "byte_size": 308
+      }
+    },
+    "license": "apache-2.0",
+    "name": "Laya typed decisions",
+    "format": "safetensors",
+    "parameters_count": 421293827,
+    "task": "typed_decision"
+  },
+  "ocr": {
+    "repo_id": "mlx-community/GLM-OCR-bf16",
+    "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e",
+    "files": {
+      "chat_template.jinja": {
+        "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+        "byte_size": 4606
+      },
+      "config.json": {
+        "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+        "byte_size": 1875
+      },
+      "generation_config.json": {
+        "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+        "byte_size": 165
+      },
+      "model.safetensors": {
+        "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+        "byte_size": 2214872319
+      },
+      "model.safetensors.index.json": {
+        "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+        "byte_size": 39232
+      },
+      "preprocessor_config.json": {
+        "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+        "byte_size": 367
+      },
+      "processor_config.json": {
+        "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+        "byte_size": 597
+      },
+      "tokenizer.json": {
+        "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+        "byte_size": 6838609
+      },
+      "tokenizer_config.json": {
+        "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+        "byte_size": 1066
+      }
+    },
+    "license": "mit",
+    "name": "GLM-OCR",
+    "format": "mlx",
+    "parameters_count": null,
+    "task": "ocr"
+  },
+  "layout": {
+    "repo_id": "PaddlePaddle/PP-DocLayoutV3_safetensors",
+    "revision": "e4f489dc536556fc1be02b973ba06756e0d4a2ac",
+    "license": "Apache-2.0",
+    "files": {
+      "config.json": {
+        "sha256": "3cf834b91d23a756b1519bce4db42c09e852f3e35c35092dd5a3e253a50c071a",
+        "byte_size": 2460
+      },
+      "preprocessor_config.json": {
+        "sha256": "519fe0187a43a1ca429e3ad8317bab8700f0d5e8fb3a6e3a0a413ffac078ba42",
+        "byte_size": 575
+      },
+      "model.safetensors": {
+        "sha256": "5ea422c6cc5fe759a47e1357c35639b58173508e025a3131cbe4b6ac59e2b85e",
+        "byte_size": 133270468
+      }
+    },
+    "name": "PP-DocLayoutV3",
+    "task": "document_layout",
+    "parameters_count": 33175165
+  }
+}

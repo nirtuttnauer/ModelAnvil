@@ -233,6 +233,9 @@ class IndependentGPUSelectionTests(TestCase):
 
 class RealLoRACheckpointTests(TestCase):
     def test_deterministic_update_policy_restores_on_failure(self):
+        import importlib.util
+        if importlib.util.find_spec('torch') is None:
+            self.skipTest('Optional PyTorch runtime is not installed')
         import torch
         previous = torch.are_deterministic_algorithms_enabled()
         warning = torch.is_deterministic_algorithms_warn_only_enabled()

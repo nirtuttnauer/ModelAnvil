@@ -54,6 +54,7 @@ export interface PrepareUploadedDatasetOptions {
   sourceFormat?: DatasetSourceFormat;
   textField?: string;
   groupField?: string;
+  chunkCharacters?: number;
   fetchImpl?: typeof fetch;
 }
 
@@ -255,6 +256,7 @@ export async function fetchDatasetWorkspace(
 export async function prepareUploadedDataset({
   file, name, token, splitSeed = '0', validationPercent = 10, testPercent = 10,
   sourceFormat = 'jsonl', textField = 'text', groupField = '',
+  chunkCharacters,
   fetchImpl = fetch,
 }: PrepareUploadedDatasetOptions): Promise<PreparedDataset> {
   if (typeof name !== 'string' || !name.trim()) {
@@ -264,6 +266,9 @@ export async function prepareUploadedDataset({
     throw new DatasetClientError('Input validation', 'Dataset name cannot exceed 200 characters.');
   }
   validateToken(token);
+  if (chunkCharacters !== undefined && (!Number.isInteger(chunkCharacters) || chunkCharacters < 32 || chunkCharacters > 4096)) {
+    throw new DatasetClientError('Input validation', 'Chunk character limit must be an integer from 32 to 4096.');
+  }
   if (!(file instanceof File) || file.size === 0) {
     throw new DatasetClientError('Input validation', 'A nonempty file is required.');
   }
@@ -316,6 +321,7 @@ export async function prepareUploadedDataset({
     input_artifact_id: artifact.artifact_id, split_seed: splitSeed,
     validation_percent: validationPercent, test_percent: testPercent,
     ...(sourceFormat !== 'jsonl' ? { source_format: sourceFormat, text_field: textField, group_field: groupField || null } : {}),
+    ...(chunkCharacters !== undefined ? { chunk_characters: chunkCharacters } : {}),
   });
   if (!validRevision(revision) || revision.state !== 'published' || !revision.published_at
     || revision.row_count === null || revision.manifest_artifact === null || !revision.recipe_digest) {

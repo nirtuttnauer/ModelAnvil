@@ -4504,6 +4504,823 @@
           }
         }
       }
+    },
+    "/specialists/": {
+      "get": {
+        "summary": "List project-scoped OCR and typed-decision models and immutable catalog pins",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped measured result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported input, runtime, token or memory budget"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        }
+      }
+    },
+    "/specialists/acquire/": {
+      "post": {
+        "summary": "Acquire an exact licensed specialist snapshot through a fenced import worker",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "201": {
+            "description": "Scoped measured result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported input, runtime, token or memory budget"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpecialistAcquireInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/specialists/decisions/": {
+      "post": {
+        "summary": "Run bounded offline Laya typed decisions with measured usage",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped measured result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported input, runtime, token or memory budget"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpecialistDecisionInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/specialists/ocr/": {
+      "post": {
+        "summary": "Extract bounded image text and commit immutable OCR source/model lineage",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped measured result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported input, runtime, token or memory budget"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpecialistOcrInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/specialists/upload-image/": {
+      "post": {
+        "summary": "Upload project-scoped PNG/JPEG/PDF source bytes of at most 8 MiB",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "201": {
+            "description": "Scoped measured result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported input, runtime, token or memory budget"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/specialists/jobs/": {
+      "post": {
+        "summary": "Queue bounded OCR, layout or typed-decision work with recoverable fenced publication",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "400": {
+            "description": "Unsupported input, runtime, token or memory budget"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          },
+          "202": {
+            "description": "Durable request admitted with frozen inputs and attempt quota",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpecialistJobInput"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List the 20 most recent accessible durable specialist requests",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped measured result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported input, runtime, token or memory budget"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        }
+      }
+    },
+    "/specialists/jobs/{request_id}/": {
+      "get": {
+        "summary": "Read durable job status and restore a completed result",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped measured result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "completed_pages": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 5
+                      }
+                    },
+                    "page_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "minimum": 1,
+                      "maximum": 5
+                    }
+                  },
+                  "description": "Page checkpoints are acknowledged only after fenced persistence; retries verify input/raster/runtime identity and process unsaved pages."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported input, runtime, token or memory budget"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/specialists/jobs/{request_id}/cancel/": {
+      "post": {
+        "summary": "Request specialist cancellation before publication",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped measured result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported input, runtime, token or memory budget"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/specialists/jobs/{request_id}/retry/": {
+      "post": {
+        "summary": "Retry a failed specialist request within its original remaining attempt quota",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped measured result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported input, runtime, token or memory budget"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/recipes/": {
+      "get": {
+        "summary": "List up to 50 immutable accessible recipe versions",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        }
+      },
+      "post": {
+        "summary": "Import and validate an immutable typed recipe version",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "201": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeDefinition"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipes/versions/{version_id}/": {
+      "get": {
+        "summary": "Export verified immutable recipe definition",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/recipes/upload-source/": {
+      "post": {
+        "summary": "Upload original bounded source bytes for a typed recipe",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "201": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file",
+                  "format"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "1 byte\u201316 MiB"
+                  },
+                  "format": {
+                    "enum": [
+                      "jsonl",
+                      "json",
+                      "csv",
+                      "docx",
+                      "pdf"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipes/runs/": {
+      "get": {
+        "summary": "List up to 30 accessible recipe runs",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        }
+      },
+      "post": {
+        "summary": "Admit a preview or reviewed full durable recipe run",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "202": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeRunInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipes/runs/{run_id}/": {
+      "get": {
+        "summary": "Read progress, saved rows, bindings and bounded actual preview results",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/recipes/runs/{run_id}/cancel/": {
+      "post": {
+        "summary": "Cancel without publishing unfinished results",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/recipes/runs/{run_id}/retry/": {
+      "post": {
+        "summary": "Resume verified step and generation-row checkpoints within remaining attempt quota",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -5517,6 +6334,16 @@
             ],
             "minimum": 0,
             "default": null
+          },
+          "chunk_characters": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 32,
+            "maximum": 4096,
+            "default": null,
+            "description": "Optional deterministic character-bound chunking of single plain text blocks. Source-level privacy/protected checks run before chunking; tokenizer bounds remain preflight checks."
           }
         },
         "required": [
@@ -7127,7 +7954,7 @@
             "maximum": 1000000
           }
         },
-        "description": "Required for verifier_rl. Targets come from chosen responses; sampled completions receive actual rule rewards. Tolerance must be finite and within 0–1000000."
+        "description": "Required for verifier_rl. Targets come from chosen responses; sampled completions receive actual rule rewards. Tolerance must be finite and within 0\u20131000000."
       },
       "PreferencePair": {
         "type": "object",
@@ -7600,6 +8427,378 @@
             "description": "Full raw releases do not publish a canonical training revision."
           }
         }
+      },
+      "SpecialistDecisionInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "model",
+          "state",
+          "questions"
+        ],
+        "description": "At most 32,000 JSON bytes; token preflight refuses state, instruction or option truncation. English root checkpoint; domain calibration pending.",
+        "properties": {
+          "model": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "device": {
+            "type": "string",
+            "enum": [
+              "cpu",
+              "mps:0"
+            ],
+            "default": "cpu"
+          },
+          "state": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "object",
+                "minProperties": 1
+              }
+            ]
+          },
+          "questions": {
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 8,
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "instructions",
+                    "criteria"
+                  ],
+                  "properties": {
+                    "type": {
+                      "const": "choice"
+                    },
+                    "instructions": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 600
+                    },
+                    "criteria": {
+                      "type": "object",
+                      "minProperties": 2,
+                      "maxProperties": 8,
+                      "propertyNames": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60
+                      },
+                      "additionalProperties": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 240
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "instructions",
+                    "criteria"
+                  ],
+                  "properties": {
+                    "type": {
+                      "const": "score"
+                    },
+                    "instructions": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 600
+                    },
+                    "criteria": {
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 8,
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 240
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "instructions"
+                  ],
+                  "properties": {
+                    "type": {
+                      "const": "noul"
+                    },
+                    "instructions": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 600
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "SpecialistOcrInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "model",
+          "image_artifact"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "image_artifact": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "device": {
+            "type": "string",
+            "enum": [
+              "mlx:0"
+            ],
+            "default": "mlx:0"
+          },
+          "max_tokens": {
+            "type": "integer",
+            "minimum": 32,
+            "maximum": 1024,
+            "default": 512
+          },
+          "layout_model": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Optional pinned PP-DocLayoutV3 model for ordered region recognition."
+          }
+        },
+        "description": "Per-page output limit; PDF sources allow 1\u20135 pages and 6 million total rendered pixels. Empty, encrypted or partial documents are refused."
+      },
+      "SpecialistAcquireInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "name",
+          "pool",
+          "accepted_license",
+          "idempotency_key"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "ocr",
+              "laya",
+              "layout"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 180
+          },
+          "pool": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "accepted_license": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "idempotency_key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      },
+      "SpecialistJobInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "request",
+          "pool",
+          "budget_policy",
+          "idempotency_key"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "ocr",
+              "laya",
+              "layout"
+            ]
+          },
+          "request": {
+            "type": "object",
+            "description": "SpecialistOcrInput or SpecialistDecisionInput; layout-only runs use CPU placement."
+          },
+          "pool": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "budget_policy": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Enabled currency-free specialist_attempts policy. Three attempts reserved."
+          },
+          "idempotency_key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      },
+      "RecipeDefinition": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "name",
+          "steps"
+        ],
+        "properties": {
+          "schema": {
+            "const": "modelanvil.recipe.v1"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "steps": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 12,
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "type"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_-]{0,31}$"
+                },
+                "type": {
+                  "enum": [
+                    "source",
+                    "sample",
+                    "expression",
+                    "template",
+                    "generate",
+                    "validate",
+                    "merge",
+                    "output"
+                  ]
+                }
+              },
+              "description": "Typed step fields and dependencies are validated by the recipe compiler. Only earlier-step dependencies are permitted; all steps must contribute to the final output."
+            }
+          }
+        }
+      },
+      "RecipeRunInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "recipe",
+          "sources",
+          "pool",
+          "budget_policy",
+          "idempotency_key"
+        ],
+        "properties": {
+          "recipe": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sources": {
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 4,
+            "additionalProperties": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "model": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "device": {
+            "enum": [
+              "cpu",
+              "mps:0",
+              "mlx:0"
+            ],
+            "default": "cpu"
+          },
+          "pool": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "budget_policy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "preview": {
+            "type": "boolean",
+            "default": true
+          },
+          "dataset": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "preview_run": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "protected_sources": {
+            "type": "array",
+            "maxItems": 4,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "reviewed_preview": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "description": "Full runs require reviewed_preview and a completed preview with exactly matching recipe/source/model/runtime/protected bindings. Generation uses a registered pinned local worker."
       }
     }
   }

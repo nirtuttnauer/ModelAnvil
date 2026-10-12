@@ -1,0 +1,14 @@
+.recipe-toolbar { display:flex; flex-wrap:wrap; align-items:end; gap:12px; margin:18px 0; padding:0; border:0; }
+.recipe-toolbar label { min-width:200px; flex:1; }
+.recipe-editor { display:grid; grid-template-columns:minmax(180px,1fr) minmax(300px,2fr); gap:24px; margin:24px 0; }
+.recipe-graph { width:100%; max-height:900px; position:sticky; top:20px; }
+.recipe-graph rect { fill:var(--surface,#f8fafc); stroke:var(--border,#cbd5e1); }
+.recipe-graph path { fill:none; stroke:var(--accent,#c75b30); stroke-width:2; }
+.recipe-graph text { fill:var(--text,#1e293b); font-size:15px; }
+.recipe-step-list { margin:0; padding:0; list-style:none; }
+.recipe-step-list fieldset { display:grid; gap:12px; border:1px solid var(--border,#d1d5db); border-radius:10px; padding:16px; margin-bottom:16px; }
+.recipe-step-list legend { font-weight:600; padding:0 8px; }
+.recipe-step-list label, .recipe-page > label { display:grid; gap:6px; }
+.recipe-execution { border:0; padding:20px 0; }
+.recipe-page pre { max-height:500px; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; }
+@media (max-width:800px) { .recipe-editor { grid-template-columns:1fr; } .recipe-graph { position:static; max-height:350px; } }

@@ -89,6 +89,18 @@ test('explicit split settings preserve zero percentages and the exact string see
     splitSeed: ' 007 ', validationPercent: 0, testPercent: 0, fetchImpl: harness.fetchImpl });
 });
 
+test('chunking is explicit and invalid character limits are refused before upload', async () => {
+  const { prepareUploadedDataset } = await client();
+  const harness = successFetch((index, _url, init) => {
+    if (index === 3) assert.equal(JSON.parse(init.body).chunk_characters, 128);
+  });
+  await prepareUploadedDataset({ file: file(), name: dataset.name, token, chunkCharacters: 128, fetchImpl: harness.fetchImpl });
+  for (const limit of [0, 31, 4097, 128.5, NaN, '128']) {
+    await assert.rejects(prepareUploadedDataset({ file: file(), name: dataset.name, token, chunkCharacters: limit,
+      fetchImpl: async () => assert.fail('Unexpected upload') }), /Chunk character limit/);
+  }
+});
+
 test('CSV mappings and binary DOCX retain original bytes and media type', async () => {
   const { prepareUploadedDataset } = await client();
   for (const sourceFormat of ['csv', 'json', 'docx', 'pdf']) {
