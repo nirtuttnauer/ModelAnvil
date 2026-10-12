@@ -28,10 +28,10 @@ export function ExternalCompute({ token, refreshKey, onChange }: { token: string
     const controller = new AbortController();
     setLoading(true); setError('');
     Promise.all([
-      apiRequest<{ results: Plugin[] }>('/api/v1/compute-plugins/', token, { signal: controller.signal }),
-      allResources<Allocation>('/api/v1/compute-allocations/', token, controller.signal),
-      allResources<Pool>('/api/v1/worker-pools/', token, controller.signal),
-      allResources<Policy>('/api/v1/budget-policies/', token, controller.signal),
+      apiRequest<{ results: Plugin[] }>('/api/v1/compute-plugins/', token, { signal: controller.signal }, 'organization'),
+      allResources<Allocation>('/api/v1/compute-allocations/', token, controller.signal, 'organization'),
+      allResources<Pool>('/api/v1/worker-pools/', token, controller.signal, 'organization'),
+      allResources<Policy>('/api/v1/budget-policies/', token, controller.signal, 'organization'),
     ]).then(([p, a, poolRows, policyRows]) => {
       if (controller.signal.aborted) return;
       setPlugins(p.results); setAllocations(a); setPools(poolRows.filter(row => row.status === 'active'));
@@ -47,7 +47,7 @@ export function ExternalCompute({ token, refreshKey, onChange }: { token: string
     const controller = new AbortController(); setCatalog([]); setGPU(''); setDataCenter(''); setPolicy('');
     if (plugin?.kind !== 'compute') return () => controller.abort();
     setCatalogLoading(true);
-    apiRequest<{ results: GPU[] }>(`/api/v1/compute-plugins/${encodeURIComponent(plugin.id)}/catalog/`, token, { signal: controller.signal })
+    apiRequest<{ results: GPU[] }>(`/api/v1/compute-plugins/${encodeURIComponent(plugin.id)}/catalog/`, token, { signal: controller.signal }, 'organization')
       .then(data => { if (!controller.signal.aborted) setCatalog(data.results); })
       .catch(e => { if (!controller.signal.aborted) setError(errorMessage(e)); })
       .finally(() => { if (!controller.signal.aborted) setCatalogLoading(false); });
@@ -66,7 +66,7 @@ export function ExternalCompute({ token, refreshKey, onChange }: { token: string
       submission.current ??= { body: serialized, key: crypto.randomUUID() };
       const { key } = submission.current;
       if (plugin.kind === 'compute') {
-        const result = await apiRequest<Allocation>('/api/v1/compute-allocations/', token, { method: 'POST', body: JSON.stringify({ ...body, request_id: key }) });
+        const result = await apiRequest<Allocation>('/api/v1/compute-allocations/', token, { method: 'POST', body: JSON.stringify({ ...body, request_id: key }) }, 'organization');
         setNotice(`Allocation ${result.state}${result.error_code ? `: ${result.error_code}` : ''}. Use Refresh status to reconcile; a running pod may still be connecting.`);
       } else {
         await apiRequest('/api/v1/jobs/', token, { method: 'POST', headers: { 'Idempotency-Key': key }, body: serialized });
@@ -82,7 +82,7 @@ export function ExternalCompute({ token, refreshKey, onChange }: { token: string
   async function update(allocation: Allocation, action: 'refresh' | 'release') {
     setBusy(true); setError(''); setNotice('');
     try {
-      const result = await apiRequest<Allocation>(`/api/v1/compute-allocations/${allocation.allocation_id}/${action}/`, token, { method: 'POST', body: '{}' });
+      const result = await apiRequest<Allocation>(`/api/v1/compute-allocations/${allocation.allocation_id}/${action}/`, token, { method: 'POST', body: '{}' }, 'organization');
       setAllocations(rows => rows.map(row => row.allocation_id === result.allocation_id ? result : row));
       setNotice(`Allocation ${result.state}${result.error_code ? `: ${result.error_code}` : ''}.`); onChange();
     } catch (e) { setError(errorMessage(e)); } finally { setBusy(false); }

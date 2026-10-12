@@ -13,6 +13,8 @@ This implementation covers the provider control API and trusted worker protocol.
 5. Run `python manage.py reconcile_compute --loop` with the same database and provider configuration. The Compose profile `external-compute` adds this service: `docker compose --profile external-compute up --build`. Supply deployment-specific environment variables for custom provider credentials through an overlay. The local Compose API needs a suitable HTTPS deployment before remote workers can connect.
 6. Open Compute with an organization-scoped administrator key. Choose Runpod, a pool, an allocation budget, GPU, data center, disk size, and maximum rental duration. Choose the installed task plugin to submit a bounded job to its matching worker pool.
 
+Compute requests use organization scope even when a project is selected in the workspace. The browser's task jobs retain the selected project. A key intrinsically restricted to a project remains restricted and cannot provision or release organization compute.
+
 The bundled `uppercase` task proves the extension path by returning a canonical text sample. It does not perform GPU training. Replace it with an operator-installed remote-compatible executor to run your workload. Existing executors that access Django database records or local artifact paths cannot become remote-compatible simply by placing them in a Runpod container.
 
 ## API lifecycle

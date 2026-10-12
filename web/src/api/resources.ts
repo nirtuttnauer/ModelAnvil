@@ -1,13 +1,13 @@
 import { apiPage, apiRequest, nextPagePath, type ApiPage } from './client';
 
-export async function allResources<T>(path: string, token: string, signal?: AbortSignal): Promise<T[]> {
+export async function allResources<T>(path: string, token: string, signal?: AbortSignal, scope: 'project' | 'organization' = 'project'): Promise<T[]> {
   const items: T[] = [];
   const visited = new Set<string>();
   let next: string | null = path;
   while (next) {
     if (visited.has(next)) throw new Error('The API returned a repeated pagination cursor.');
     visited.add(next);
-    const page: ApiPage<T> = await apiPage<T>(next, token, signal);
+    const page: ApiPage<T> = await apiPage<T>(next, token, signal, scope);
     items.push(...page.results);
     next = page.next ? nextPagePath(page.next, path) : null;
   }

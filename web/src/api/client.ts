@@ -22,12 +22,14 @@ export function apiPath(path: string): string {
   return url.pathname + url.search;
 }
 
-export async function apiRequest<T>(path: string, token: string, init: RequestInit = {}): Promise<T> {
+export async function apiRequest<T>(path: string, token: string, init: RequestInit = {}, scope: 'project' | 'organization' = 'project'): Promise<T> {
   const safePath = apiPath(path);
   if (!token.trim()) throw new Error('Enter an API key to connect to this workspace.');
   const headers = new Headers(init.headers);
   headers.set('Authorization', `Bearer ${token.trim()}`);
-  if (activeProjectId) {
+  if (scope === 'organization') {
+    headers.delete('X-Project-ID'); headers.delete('X-Project');
+  } else if (activeProjectId) {
     headers.set('X-Project-ID', activeProjectId);
   }
   if (init.body && !(init.body instanceof FormData)) headers.set('Content-Type', 'application/json');
@@ -55,8 +57,8 @@ export async function apiRequest<T>(path: string, token: string, init: RequestIn
 }
 
 export interface ApiPage<T> { results: T[]; next?: string | null; previous?: string | null; count?: number }
-export async function apiPage<T>(path: string, token: string, signal?: AbortSignal): Promise<ApiPage<T>> {
-  const page = await apiRequest<ApiPage<T>>(path, token, { signal });
+export async function apiPage<T>(path: string, token: string, signal?: AbortSignal, scope: 'project' | 'organization' = 'project'): Promise<ApiPage<T>> {
+  const page = await apiRequest<ApiPage<T>>(path, token, { signal }, scope);
   if (!Array.isArray(page.results)) throw new Error('The API returned an invalid resource list.');
   return page;
 }

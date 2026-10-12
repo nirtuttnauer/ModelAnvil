@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { http, HttpResponse } from 'msw';
 import { ExternalCompute } from '../components/ExternalCompute';
+import { setActiveProjectId } from '../api/client';
 import '../style.css';
 import '../premium.css';
 import '../pages/operations.css';
@@ -16,9 +17,10 @@ const task = { id: 'uppercase', kind: 'task', name: 'Uppercase', digest: 'b'.rep
 const meta = {
   title: 'ModelAnvil/External Compute', component: ExternalCompute,
   args: { token: 'storybook-demo-only', refreshKey: 0, onChange: () => {} },
-  beforeEach() { allocations = []; submissions = []; failFirst = false; compute.can_manage = true; task.can_submit = true; },
+  beforeEach() { allocations = []; submissions = []; failFirst = false; compute.can_manage = true; task.can_submit = true; setActiveProjectId('selected-project'); },
   parameters: { msw: { handlers: [http.all('/api/v1/*', async ({ request }) => {
     const path = new URL(request.url).pathname;
+    if (path.startsWith('/api/v1/compute-') && request.headers.has('X-Project-ID')) throw new Error('Organization compute must omit the selected-project header.');
     if (request.method === 'GET') {
       const data: Record<string, unknown> = {
         '/api/v1/compute-plugins/': [compute, task], '/api/v1/compute-allocations/': allocations,

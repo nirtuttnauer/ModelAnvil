@@ -165,6 +165,7 @@ class ComputeApiTests(TestCase):
         self.provider.release.assert_not_called()
 
     def test_invalid_config_and_budget_refuse_before_provider_create(self):
+        self.assertEqual(self.allocate({**self.payload, "entrypoint": ["untrusted"]}).status_code, 400)
         for update in ({"gpu_count": 0}, {"image": "untrusted:latest"}, {"env": {"secret": "x"}}):
             response = self.allocate({**self.payload, "spec": {**self.payload["spec"], **update}})
             self.assertEqual(response.status_code, 400, response.content)

@@ -44,6 +44,11 @@ class AllocationRequest(serializers.Serializer):
     lifetime_seconds = serializers.IntegerField(min_value=60, max_value=86400)
     policy_id = serializers.UUIDField()
 
+    def validate(self, attrs):
+        if set(self.initial_data) - set(self.fields):
+            raise serializers.ValidationError("Unknown allocation fields are not accepted.")
+        return attrs
+
 
 class AllocationViewSet(TenantScopedViewSet):
     queryset = ComputeAllocation.objects.select_related("worker")
@@ -58,8 +63,6 @@ class AllocationViewSet(TenantScopedViewSet):
             raise PermissionDenied("Compute management requires an organization-scoped administrator key.")
 
     def create(self, request, *args, **kwargs):
-        if get_active_project():
-            raise PermissionDenied("Compute provisioning requires an organization-scoped administrator key.")
         serializer = AllocationRequest(data=request.data)
         serializer.fields["pool"].queryset = WorkerPool.all_objects.filter(tenant_id=get_active_tenant())
         serializer.is_valid(raise_exception=True)
@@ -75,8 +78,6 @@ class AllocationViewSet(TenantScopedViewSet):
 
     @action(detail=True, methods=["post"])
     def release(self, request, allocation_id=None):
-        if get_active_project():
-            raise PermissionDenied("Compute release requires an organization-scoped administrator key.")
         return Response(AllocationSerializer(reconcile(self.get_object(), release=True, **actor(request))).data)
 
 

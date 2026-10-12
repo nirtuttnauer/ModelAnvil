@@ -7,7 +7,7 @@
 - Fresh Python 3.12 environment with `requirements.txt`: full backend suite, **741 tests, 22 skips**. Optional training/inference packages are absent in this CI dependency set.
 - PostgreSQL 16 isolated container: **19 compute tests**, including concurrent replay creating one allocation and one provider resource, budget admission, tenant/role/project boundaries, uncertain creation recovery, identity checks, verified release, expiry cleanup, cancellation, and actual custom task result publication.
 - Worker, SDK and API regressions: **109 tests, one skip** in the development environment before the final additional compute cases.
-- Frontend: **138 tests**, production TypeScript/Vite build, and Storybook build.
+- Frontend: **139 tests**, including organization compute requests preserving project scope for task jobs, production TypeScript/Vite build, and Storybook build.
 - Storybook browser interactions: provision/release, custom task submission, replay of the same request UUID after an uncertain response, and disabled rental controls for viewers. These use synthetic HTTP handlers and never contact Runpod.
 - Responsive checks: 375×812 light layout and 812×375 dark layout, reduced motion, no page-level horizontal overflow. The allocation table scrolls within its container.
 - Django checks, migration consistency, clean migration/`bootstrap_dev`, smoke checks and diff whitespace validation.
