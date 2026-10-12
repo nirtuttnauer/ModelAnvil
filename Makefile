@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: check test test-broker-integration test-accounting-integration test-worker-integration test-dataset-integration test-web migrate migration-check smoke reconcile prune-transfer-parts web-install web-build up down logs
+.PHONY: check test test-broker-integration test-accounting-integration test-worker-integration test-dataset-integration test-web migrate migration-check smoke reconcile reconcile-compute prune-transfer-parts web-install web-build up down logs
 check:
 	DJANGO_SETTINGS_MODULE=modelanvil.settings PYTHONPATH=. $(PYTHON) manage.py check
 
@@ -49,6 +49,9 @@ smoke:
 
 reconcile:
 	DJANGO_SETTINGS_MODULE=modelanvil.settings PYTHONPATH=. $(PYTHON) manage.py reconcile_leases
+
+reconcile-compute:
+	DJANGO_SETTINGS_MODULE=modelanvil.settings PYTHONPATH=. $(PYTHON) manage.py reconcile_compute
 
 prune-transfer-parts:
 	@test -n "$(RETENTION_DAYS)" || { echo "Set RETENTION_DAYS to an approved retention period."; exit 2; }

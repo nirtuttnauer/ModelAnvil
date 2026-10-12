@@ -4388,6 +4388,276 @@
           }
         }
       }
+    },
+    "/compute-plugins/": {
+      "get": {
+        "tags": [
+          "Infrastructure"
+        ],
+        "summary": "List operator-installed plugins available to the tenant",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/InstalledPlugin"
+                      }
+                    },
+                    "next": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "results"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/compute-plugins/{id}/catalog/": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Infrastructure"
+        ],
+        "summary": "Read provider GPU catalog",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "next": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "results"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Plugin unavailable"
+          },
+          "502": {
+            "description": "Provider unavailable"
+          }
+        }
+      }
+    },
+    "/compute-allocations/": {
+      "get": {
+        "tags": [
+          "Infrastructure"
+        ],
+        "summary": "List tenant compute allocations",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ComputeAllocation"
+                      }
+                    },
+                    "next": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "results"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Infrastructure"
+        ],
+        "summary": "Reserve and provision compute once per tenant request UUID",
+        "description": "Requires an organization-scoped administrator and an allocation_seconds budget policy. Repeat the same request_id and body after an uncertain HTTP result. Provider failures remain recorded in the allocation.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ComputeAllocationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComputeAllocation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, conflicting request UUID or budget exceeded"
+          },
+          "403": {
+            "description": "Administrator role or organization scope required"
+          }
+        }
+      }
+    },
+    "/compute-allocations/{allocation_id}/": {
+      "parameters": [
+        {
+          "name": "allocation_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Infrastructure"
+        ],
+        "summary": "Inspect a tenant-owned compute allocation",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComputeAllocation"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Allocation not found"
+          }
+        }
+      }
+    },
+    "/compute-allocations/{allocation_id}/refresh/": {
+      "parameters": [
+        {
+          "name": "allocation_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "Infrastructure"
+        ],
+        "summary": "Refresh owned compute; reconcile uncertain provider state",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComputeAllocation"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Organization administrator required"
+          },
+          "404": {
+            "description": "Allocation not found"
+          }
+        }
+      }
+    },
+    "/compute-allocations/{allocation_id}/release/": {
+      "parameters": [
+        {
+          "name": "allocation_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "Infrastructure"
+        ],
+        "summary": "Release owned compute; reconcile uncertain provider state",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComputeAllocation"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Organization administrator required"
+          },
+          "404": {
+            "description": "Allocation not found"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -6912,7 +7182,7 @@
             "maximum": 1000000
           }
         },
-        "description": "Required for verifier_rl. Targets come from chosen responses; sampled completions receive actual rule rewards. Tolerance must be finite and within 0–1000000."
+        "description": "Required for verifier_rl. Targets come from chosen responses; sampled completions receive actual rule rewards. Tolerance must be finite and within 0\u20131000000."
       },
       "PreferencePair": {
         "type": "object",
@@ -7385,6 +7655,167 @@
             "description": "Full raw releases do not publish a canonical training revision."
           }
         }
+      },
+      "ComputeAllocation": {
+        "type": "object",
+        "properties": {
+          "allocation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "request_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "plugin_id": {
+            "type": "string"
+          },
+          "plugin_digest": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "integer"
+          },
+          "worker_id": {
+            "type": "integer"
+          },
+          "spec": {
+            "type": "object"
+          },
+          "provider_resource_id": {
+            "type": "string"
+          },
+          "provider_status": {
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "provisioning",
+              "active",
+              "uncertain",
+              "releasing",
+              "released",
+              "failed"
+            ]
+          },
+          "worker_connected": {
+            "type": "boolean"
+          },
+          "release_requested": {
+            "type": "boolean"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "released_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "error_code": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "allocation_id",
+          "request_id",
+          "plugin_id",
+          "plugin_digest",
+          "pool",
+          "worker_id",
+          "spec",
+          "provider_resource_id",
+          "provider_status",
+          "state",
+          "worker_connected",
+          "release_requested",
+          "expires_at",
+          "released_at",
+          "error_code",
+          "created_at"
+        ]
+      },
+      "ComputeAllocationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "plugin_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]{0,99}$"
+          },
+          "pool": {
+            "type": "integer"
+          },
+          "spec": {
+            "type": "object"
+          },
+          "lifetime_seconds": {
+            "type": "integer",
+            "minimum": 60,
+            "maximum": 86400
+          },
+          "policy_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "request_id",
+          "plugin_id",
+          "pool",
+          "spec",
+          "lifetime_seconds",
+          "policy_id"
+        ]
+      },
+      "InstalledPlugin": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "compute",
+              "task"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "configuration_schema": {
+            "type": "object"
+          },
+          "can_manage": {
+            "type": "boolean"
+          },
+          "can_submit": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "digest",
+          "configuration_schema",
+          "can_manage",
+          "can_submit"
+        ]
       }
     }
   }

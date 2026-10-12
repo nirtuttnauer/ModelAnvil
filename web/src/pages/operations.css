@@ -89,3 +89,6 @@
   .ops-release-lineage>div { padding: 14px; }
   .operations-page .panel-body { padding: 18px; }
 }
+.external-compute-form .toolbar label { display: grid; gap: 8px; flex: 1 1 180px; min-width: 0; }
+.external-compute-form input, .external-compute-form select, .external-compute-form textarea { width: 100%; min-height: 44px; }
+.external-compute-form > label { display: grid; gap: 8px; margin: 16px 0; }

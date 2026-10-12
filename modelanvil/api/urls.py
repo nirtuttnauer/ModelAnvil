@@ -11,6 +11,7 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from modelanvil.api.views import audit as audit_views
+from modelanvil.compute import views as compute_views
 from modelanvil.api.views import annotation_views
 from modelanvil.api.views import infrastructure_views
 from modelanvil.api.views import context_lab_views
@@ -30,6 +31,8 @@ from modelanvil.api.views import workers as worker_views
 from modelanvil.data.bank import views as bank_views
 
 router = DefaultRouter()
+router.register("compute-plugins", compute_views.PluginViewSet, basename="compute-plugin")
+router.register("compute-allocations", compute_views.AllocationViewSet, basename="compute-allocation")
 # Identity & Tenancy
 router.register("tenants", identity_views.TenantViewSet, basename="tenant")
 router.register("users", identity_views.UserViewSet, basename="user")

@@ -16,6 +16,8 @@ const updated = '2026-10-11T10:00:00Z';
 
 // List values stay as arrays; the Storybook API adapter supplies the pagination envelope.
 export const operationsResponses: Record<string, unknown> = {
+  '/api/v1/compute-plugins/': [],
+  '/api/v1/compute-allocations/': [],
   '/api/v1/jobs/': [
     {
       job_id: '40000000-0000-4000-8000-000000000001', name: 'Anvil Assistant · SFT demo', pool: 1,
