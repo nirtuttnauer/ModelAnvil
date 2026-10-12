@@ -32,4 +32,3 @@ class ComputeAllocation(TenantContextModel):
     class Meta:
         constraints = [models.UniqueConstraint(fields=("tenant_id", "request_id"), name="compute_request_tenant_unique")]
         ordering = ("-created_at", "-id")
-

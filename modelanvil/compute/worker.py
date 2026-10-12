@@ -12,4 +12,3 @@ if __name__ == "__main__":
         "--executor", os.environ["MODELANVIL_WORKER_EXECUTOR"],
         "--result-egress", os.environ["MODELANVIL_RESULT_EGRESS"],
     ]))
-

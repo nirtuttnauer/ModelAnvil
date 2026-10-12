@@ -13,7 +13,7 @@
 - [x] Test isolation, errors, idempotency, cancellation, and plugin execution.
 - [x] Document setup, contracts, and qualification limits.
 - [x] Run required checks; see [verification](verification/runpod-plugins-2026-10-12.md).
-- [ ] Open a PR against main.
+- [x] Open [PR 9](https://github.com/nirtuttnauer/ModelAnvil/pull/9) against main.
 
 ## Compute provider backlog
 

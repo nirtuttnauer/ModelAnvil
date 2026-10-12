@@ -107,4 +107,3 @@ def task_executor(plugin_id, configuration, *, tenant_id, digest):
         except Exception:
             raise PluginError("Custom task plugin failed.") from None
     return execute
-

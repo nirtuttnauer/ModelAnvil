@@ -188,4 +188,3 @@ def _reconcile(allocation, *, actor_id=None, actor_kind="system"):
                  input_snapshot={"state": allocation.state,
                      "release_requested": allocation.release_requested}, result="error" if allocation.error_code else "ok")
     return allocation
-
