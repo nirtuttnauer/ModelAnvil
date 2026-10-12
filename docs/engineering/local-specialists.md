@@ -46,3 +46,32 @@ Every successful/failed inference gets a principal-scoped request record with in
 `verification/modelanvil-specialists-2026-10-12.json` records real authenticated local HTTP execution: exact recovery of a four-line synthetic receipt on Metal, six correct department routes, all three decision primitives on MPS, explicit CPU execution, oversized/mask-token refusals, token-limited OCR refusal and immutable dataset publication. This is a small synthetic smoke suite, not representative OCR/model quality or probability calibration. The temporary qualification API key was deactivated. A second actual HTTP pilot is recorded in `verification/modelanvil-scanned-ocr-2026-10-12.json`: two image-only PDF pages contain no embedded text, both match their authored text exactly, and page-aware output publishes with lineage. Six-page, encrypted and blank PDFs are refused without partial publication.
 
 Layout extraction, larger independent OCR corpora, decision domain calibration, durable/cancellable budgeted specialist jobs, vision fine-tuning and other vendor GPU qualification remain pending. The selected Mac is the only accelerator used for these checks.
+
+## Layout extraction and durable specialist jobs
+
+The curated layout recipe uses [PaddlePaddle/PP-DocLayoutV3_safetensors](https://huggingface.co/PaddlePaddle/PP-DocLayoutV3_safetensors) at `e4f489dc536556fc1be02b973ba06756e0d4a2ac` (Apache-2.0). Its 133,270,468-byte weights and both configuration files are pinned in `specialist_pins.json`. The [Transformers implementation](https://huggingface.co/docs/transformers/model_doc/pp_doclayout_v3) provides model reading order; the application preserves that order instead of sorting boxes by their coordinates. The optional environment adds exact `torchvision==0.24.0`; the core API environment is unchanged.
+
+Acquire the layout recipe through `POST /api/v1/specialists/acquire/` with `kind=layout` and accept its displayed license. Supply its registered UUID as `layout_model` on OCR requests. The detector runs on CPU; region OCR runs on Metal with both cooperating device leases held through child lifetime. Coordinates refer to the normalized RGB page raster, in `[xmin, ymin, xmax, ymax]` pixels, after PDF rendering or EXIF normalization. The threshold is fixed at 0.5; up to 24 regions across the entire bounded document are accepted. Nonfinite/empty geometry, no detections, excess regions, empty recognition or token exhaustion refuses the whole result. Image, chart and seal regions retain geometry without inferred text. Text, table and formula crops use the corresponding recognition prompt. Table/formula output remains raw model text with its detected label; typed table/formula parsing is not qualified.
+
+Output includes each region's label, confidence, detector order, box, actual padded crop box, RGB crop digest and recognized text. Canonical dataset blocks retain region coordinates/order and original source groups, with model/layout/source/runtime hashes and layout-model lineage. Publication remains subject to source checks and human review. The page shows a spatial region map and the ordered text list; it does not pretend the map is the source image.
+
+### Run a durable worker
+
+Create an enabled, currency-free budget policy with unit `specialist_attempts` and an active envelope worker pool. Start an operator-controlled local worker with the same artifact storage/database and isolated runtime as the API:
+
+```sh
+MODELANVIL_SPECIALIST_PYTHON=/absolute/path/to/specialist-env/bin/python \
+  python manage.py run_specialists --pool-id POOL_ID --name local-ocr --device mlx:0
+```
+
+Use separate names/workers for `cpu` (layout-only/Laya CPU) and `mps:0` (Laya MPS). The command probes exact runtime dependencies/device availability before registration and advertises the exact execution-code digest. It refuses to repurpose an existing worker with different identity/capabilities. Queueing requires a matching registered worker; registration/probe is not a model-quality qualification.
+
+`POST /api/v1/specialists/jobs/` takes `kind`, a nested specialist `request`, `pool`, `budget_policy`, and `idempotency_key`. Inputs, model manifest, source bytes, optional layout manifest and runtime digest are frozen. Replays under the same principal/project/key return the original request; changed inputs conflict. Three attempt units are reserved before job creation in the same transaction. Each execution start writes an idempotent usage event keyed by the durable attempt UUID; successes and failures settle the started units and free unused quota. These units measure execution attempts, not monetary cost or tokens. Actual model token counters remain separate inference evidence. A retry reclaims the unused reservation only within the original budget period and available quota, with a maximum of three claims.
+
+`GET /api/v1/specialists/jobs/` lists the 20 latest accessible requests. `GET /api/v1/specialists/jobs/{request_id}/` returns status/attempt/error and restores a completed result. Dedicated `/cancel/` and `/retry/` actions preserve ownership and accounting. Generic job writes/deletion/cancellation are refused for specialist-owned jobs, and job/attempt APIs inherit the request's project restrictions.
+
+The child is supervised with renewable leases every 0.5 seconds, cancellation/fence checks and a 120-second deadline. Cancellation kills/reaps the child before admission is released. An API/worker crash leaves a durable job for reconciliation; an orphan child retains its device descriptor until it exits or its own deadline fires. A verified complete result checkpoint can be reused after a worker crashes between computation and commit. Publication and final accounting happen in the successful attempt's fence transaction; stale workers cannot publish, and cancellation wins over a staged success. Pool egress policy is checked again at checkpoint and publication.
+
+Recovery currently restarts an unfinished bounded document; it does not checkpoint individual partially recognized pages. A complete result checkpoint survives process loss. The worker runs independently of the API. Schedule the existing lease reconciler in the operator environment to recover dead workers.
+
+Qualification is a small authored Mac pilot. Representative multilingual documents, tables/formulas and Laya domain calibration remain pending, as do other GPU families.

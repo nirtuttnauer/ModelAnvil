@@ -1,6 +1,6 @@
 import { apiRequest } from './client.ts';
 
-export type SpecialistKind = 'ocr' | 'laya';
+export type SpecialistKind = 'ocr' | 'laya' | 'layout';
 export interface SpecialistModel { id: string; name: string; kind: SpecialistKind; load_tested: boolean }
 export interface SpecialistPin { name: string; repo_id: string; revision: string; license: string; byte_size: number }
 export interface SpecialistCatalog { models: SpecialistModel[]; catalog: Record<SpecialistKind, SpecialistPin> }
@@ -9,6 +9,16 @@ export interface SpecialistResult {
   text?: string; answers?: Record<string, Record<string, unknown>>;
   output_artifact?: { artifact_id: string; sha256: string }; envelope?: Record<string, unknown>;
   usage: Record<string, unknown>; provenance: Record<string, unknown>;
+  pages?: { page: number; image_dimensions: [number, number]; regions?: LayoutRegion[] }[];
+}
+
+export interface LayoutRegion { region_id: string; order: number; label: string; confidence: number; box: [number, number, number, number]; text?: string }
+export interface SpecialistJob { request_id: string; job_id: string; status: string; kind?: SpecialistKind; attempt_count: number; max_attempts: number; desired_action: string; error: string; result?: SpecialistResult | null }
+
+export async function queueSpecialist(token: string, kind: SpecialistKind, request: Record<string, unknown>, pool: string, policy: string, signal?: AbortSignal) {
+  if (!pool || !policy) throw new Error('Select a specialist worker pool and attempt quota.');
+  return apiRequest<SpecialistJob>('/api/v1/specialists/jobs/', token, { method: 'POST', signal,
+    body: JSON.stringify({ kind, request, pool: Number(pool), budget_policy: policy, idempotency_key: crypto.randomUUID() }) });
 }
 
 export function questionInput(type: 'choice' | 'score' | 'noul', instructions: string, options: string) {

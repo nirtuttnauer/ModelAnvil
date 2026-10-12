@@ -9,7 +9,8 @@ import sys
 import warnings
 
 VERSIONS = {'laya': '0.4.3', 'torch': '2.9.0', 'transformers': '5.14.0',
-            'mlx-vlm': '0.7.6', 'mlx': '0.32.3', 'Pillow': '12.2.0', 'safetensors': '0.8.0', 'pypdfium2': '5.14.0'}
+            'mlx-vlm': '0.7.6', 'mlx': '0.32.3', 'Pillow': '12.2.0', 'safetensors': '0.8.0', 'pypdfium2': '5.14.0',
+            'torchvision': '0.24.0'}
 
 
 def validate_decision(inputs):
@@ -160,11 +161,59 @@ def reject_flat_image(image):
         raise ValueError('Blank or nearly uniform OCR pages are unsupported; no text was published.')
 
 
-def recognize(directory, device, inputs, image):
+def layout_pages(directory, pages):
+    import torch
+    from PIL import Image
+    from transformers import AutoImageProcessor, AutoModelForObjectDetection
+    torch.set_num_threads(4)
+    torch.set_default_device('cpu')
+    processor = AutoImageProcessor.from_pretrained(str(directory), local_files_only=True, trust_remote_code=False)
+    model = AutoModelForObjectDetection.from_pretrained(str(directory), local_files_only=True, trust_remote_code=False).to('cpu').eval()
+    count = 0
+    for page in pages:
+        with Image.open(page['path']) as source:
+            with torch.inference_mode():
+                output = model(**processor(images=source, return_tensors='pt'))
+            result = processor.post_process_object_detection(output,
+                target_sizes=torch.tensor([source.size[::-1]]), threshold=0.5)[0]
+        regions = []
+        for order, (box, label, score) in enumerate(zip(result['boxes'], result['labels'], result['scores'])):
+            coordinates = box.tolist(); confidence = score.item()
+            if not all(math.isfinite(n) for n in [*coordinates, confidence]) or not 0.5 <= confidence <= 1:
+                raise ValueError('Layout detector returned nonfinite geometry.')
+            width, height = page['image_dimensions']
+            x1, y1, x2, y2 = [max(0, min(n, width if i % 2 == 0 else height)) for i, n in enumerate(coordinates)]
+            if x2 <= x1 or y2 <= y1:
+                raise ValueError('Layout detector returned an empty region.')
+            regions.append({'region_id': f"page-{page['page']}-region-{order + 1}", 'order': order + 1,
+                'label': model.config.id2label[label.item()], 'confidence': round(confidence, 6),
+                'box': [round(n, 3) for n in (x1, y1, x2, y2)],
+                'coordinate_system': 'normalized_page_rgb_pixels_xyxy'})
+        count += len(regions)
+        if not regions or count > 24:
+            raise ValueError('Layout extraction needs 1–24 detected regions per document; no partial result was published.')
+        page['regions'] = regions
+    return pages
+
+
+def detect_layout(directory, device, inputs, image):
+    validate_ocr(inputs)
+    if device != 'cpu':
+        raise ValueError('Layout detection requires explicit CPU placement.')
+    pages, rasterization = render_sources(image)
+    pages = layout_pages(directory, pages)
+    return {'pages': [{k:v for k,v in p.items() if k != 'path'} for p in pages], 'rasterization': rasterization,
+        'device': device, 'runtime_versions': VERSIONS, 'usage': {'pages':len(pages),
+        'regions':sum(len(p['regions']) for p in pages)}, 'layout_threshold':0.5}
+
+
+def recognize(directory, device, inputs, image, layout_directory=None):
     validate_ocr(inputs)
     if device != 'mlx:0':
         raise ValueError('GLM-OCR requires explicit mlx:0.')
     pages, rasterization = render_sources(image)
+    if layout_directory:
+        pages = layout_pages(Path(layout_directory), pages)
     import mlx.core as mx
     from mlx_vlm import load, stream_generate
     from mlx_vlm.prompt_utils import apply_chat_template
@@ -176,27 +225,45 @@ def recognize(directory, device, inputs, image):
     if allowance - mx.get_active_memory() < 2 * (directory / 'model.safetensors').stat().st_size + 512 * 1024**2:
         raise ValueError('MLX process memory headroom is insufficient for OCR.')
     model, processor = load(str(directory), trust_remote_code=False, local_files_only=True)
-    prompt = apply_chat_template(processor, model.config, 'Text Recognition:', num_images=1)
     results, usage = [], {'input_tokens': 0, 'output_tokens': 0, 'total_tokens': 0, 'peak_memory_gb': 0}
     for page in pages:
-        tensors = prepare_inputs(processor, images=[page['path']], prompts=prompt,
-            image_token_index=getattr(model.config, 'image_token_index', None),
-            add_special_tokens=should_add_special_tokens(model.config.model_type, processor))
-        if tensors['input_ids'].size > 4096:
-            raise ValueError('OCR processor output exceeds the 4096-token page budget.')
-        tensors['mask'] = tensors.pop('attention_mask', None)
-        text, last = '', None
-        for part in stream_generate(model, processor, prompt, image=[page['path']],
-                                    max_tokens=inputs['max_tokens'], temperature=0, **tensors):
-            text += part.text
-            last = part
-        if last is None or last.finish_reason != 'stop' or not text.strip():
-            raise ValueError('OCR output is empty or reached its token limit; no partial text was published.')
-        results.append({k: v for k, v in {**page, 'text': text}.items() if k != 'path'})
-        usage['input_tokens'] += last.prompt_tokens
-        usage['output_tokens'] += last.generation_tokens
-        usage['total_tokens'] += last.total_tokens
-        usage['peak_memory_gb'] = max(usage['peak_memory_gb'], last.peak_memory)
+        targets = page.get('regions', [{'label':'text'}]); texts = []
+        for region in targets:
+            if region['label'] in {'image', 'chart', 'seal'}:
+                continue
+            path = page['path']
+            if layout_directory:
+                from PIL import Image, ImageOps
+                width, height = page['image_dimensions']
+                x1,y1,x2,y2 = region['box']
+                crop_box = [max(0, math.floor(x1)-2), max(0, math.floor(y1)-2),
+                            min(width, math.ceil(x2)+2), min(height, math.ceil(y2)+2)]
+                with Image.open(path) as source:
+                    crop = source.crop(crop_box)
+                region.update(crop_box=crop_box, crop_sha256=hashlib.sha256(crop.tobytes()).hexdigest())
+                crop = ImageOps.expand(crop, border=(max(0, (28-crop.width+1)//2), max(0, (28-crop.height+1)//2)), fill='white')
+                path = f"{page['path']}-{region['order']}.png"; crop.save(path)
+            task = 'Table Recognition:' if region['label'] == 'table' else 'Formula Recognition:' if region['label'] == 'formula' else 'Text Recognition:'
+            prompt = apply_chat_template(processor, model.config, task, num_images=1)
+            tensors = prepare_inputs(processor, images=[path], prompts=prompt,
+                image_token_index=getattr(model.config, 'image_token_index', None),
+                add_special_tokens=should_add_special_tokens(model.config.model_type, processor))
+            if tensors['input_ids'].size > 4096:
+                raise ValueError('OCR processor output exceeds the 4096-token region budget.')
+            tensors['mask'] = tensors.pop('attention_mask', None)
+            text, last = '', None
+            for part in stream_generate(model, processor, prompt, image=[path],
+                                        max_tokens=inputs['max_tokens'], temperature=0, **tensors):
+                text += part.text; last = part
+            if last is None or last.finish_reason != 'stop' or not text.strip():
+                raise ValueError('OCR output is empty or reached its token limit; no partial text was published.')
+            region['text'] = text; texts.append(text)
+            for key, value in [('input_tokens', last.prompt_tokens), ('output_tokens', last.generation_tokens), ('total_tokens', last.total_tokens)]:
+                usage[key] += value
+            usage['peak_memory_gb'] = max(usage['peak_memory_gb'], last.peak_memory)
+        if not texts:
+            raise ValueError('No text regions were recognized; no dataset was published.')
+        results.append({k:v for k,v in {**page, 'text':'\n\n'.join(texts)}.items() if k != 'path'})
     return {'text': '\n\n'.join(p['text'] for p in results), 'pages': results, 'rasterization': rasterization,
             'device': device, 'runtime_versions': VERSIONS, 'image_dimensions': results[0]['image_dimensions'],
             'usage': usage, 'finish_reason': 'stop'}
@@ -214,6 +281,20 @@ def main():
         for name, version in VERSIONS.items():
             if importlib.metadata.version(name) != version:
                 raise ValueError('Install the exact pinned specialist runtime versions.')
+        if len(sys.argv) == 3 and sys.argv[1] == '--probe':
+            device = sys.argv[2]
+            if device == 'mps:0':
+                import torch
+                if not torch.backends.mps.is_available():
+                    raise ValueError('MPS is unavailable.')
+            elif device == 'mlx:0':
+                import mlx.core as mx
+                if not mx.metal.is_available():
+                    raise ValueError('MLX Metal is unavailable.')
+            elif device != 'cpu':
+                raise ValueError('Unknown device.')
+            sys.stdout.write(json.dumps({'device':device, 'runtime_versions':VERSIONS}))
+            return 0
         raw = sys.stdin.buffer.read(64000)
         request = json.loads(raw)
         with contextlib.redirect_stdout(sys.stderr):
@@ -221,7 +302,9 @@ def main():
             if request['kind'] == 'laya':
                 result = decide(directory, request['device'], request['inputs'])
             elif request['kind'] == 'ocr':
-                result = recognize(directory, request['device'], request['inputs'], request['image'])
+                result = recognize(directory, request['device'], request['inputs'], request['image'], request.get('layout_directory'))
+            elif request['kind'] == 'layout':
+                result = detect_layout(directory, request['device'], request['inputs'], request['image'])
             else:
                 raise ValueError('Unknown specialist kind.')
         sys.stdout.write(json.dumps(result, allow_nan=False))

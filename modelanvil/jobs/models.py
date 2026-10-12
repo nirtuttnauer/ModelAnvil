@@ -565,6 +565,11 @@ def commit_result(
             job_status = Job.Status.CANCELLED
         from modelanvil.runners.training.registry import finalize_job
         finalize_job(job, job_status)
+    if job.payload.get('type') == 'specialist_inference':
+        if job.desired_action == Job.DesiredAction.CANCEL:
+            job_status = Job.Status.CANCELLED
+        from modelanvil.runners.specialist_jobs import finalize_job as finalize_specialist
+        finalize_specialist(job, job_status)
     job.status = job_status
     job.lease_expires_at = None
     job.claimed_by = None
@@ -635,5 +640,8 @@ def reconcile_expired_leases() -> int:
         if current_job_attempt and job.status in (Job.Status.FAILED, Job.Status.INTERRUPTED) and job.payload.get('type') == 'qualified_training':
             from modelanvil.runners.training.registry import finalize_job
             finalize_job(job, job.status)
+        if current_job_attempt and job.status in (Job.Status.FAILED, Job.Status.INTERRUPTED) and job.payload.get('type') == 'specialist_inference':
+            from modelanvil.runners.specialist_jobs import finalize_job as finalize_specialist
+            finalize_specialist(job, job.status)
         count += 1
     return count

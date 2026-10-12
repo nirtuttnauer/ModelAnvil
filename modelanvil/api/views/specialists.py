@@ -37,7 +37,7 @@ class StrictInput(serializers.Serializer):
 
 
 class AcquireInput(StrictInput):
-    kind = serializers.ChoiceField(choices=['laya', 'ocr'])
+    kind = serializers.ChoiceField(choices=['laya', 'ocr', 'layout'])
     name = serializers.CharField(max_length=180)
     pool = serializers.IntegerField(min_value=1)
     accepted_license = serializers.CharField(max_length=64)
@@ -56,11 +56,20 @@ class OcrInput(StrictInput):
     image_artifact = serializers.UUIDField()
     device = serializers.ChoiceField(choices=['mlx:0'], default='mlx:0')
     max_tokens = serializers.IntegerField(min_value=32, max_value=1024, default=512)
+    layout_model = serializers.UUIDField(required=False)
+
+
+class JobInput(StrictInput):
+    kind = serializers.ChoiceField(choices=['laya', 'ocr', 'layout'])
+    request = serializers.JSONField()
+    pool = serializers.IntegerField(min_value=1)
+    budget_policy = serializers.UUIDField()
+    idempotency_key = serializers.CharField(max_length=128)
 
 
 class SpecialistViewSet(TenantScopedViewSet):
     queryset = ModelVersion.objects.select_related('model', 'tokenizer').filter(
-        architecture_ref__in=['modelanvil.laya.v1', 'modelanvil.ocr.v1']).exclude(state__in=['archived', 'rejected'])
+        architecture_ref__in=['modelanvil.laya.v1', 'modelanvil.ocr.v1', 'modelanvil.layout.v1']).exclude(state__in=['archived', 'rejected'])
     serializer_class = None
     http_method_names = ['get', 'post', 'head', 'options']
 
@@ -116,6 +125,85 @@ class SpecialistViewSet(TenantScopedViewSet):
     def ocr(self, request):
         return self._infer(request, 'ocr', OcrInput)
 
+    @action(detail=False, methods=['get', 'post'])
+    def jobs(self, request):
+        from modelanvil.runners import specialist_jobs
+        project = project_scope()
+        if request.method == 'GET':
+            from modelanvil.identity.models import get_accessible_queryset
+            records = get_accessible_queryset(InferenceRequest).filter(configuration__job_id__isnull=False).order_by('-created_at')[:20]
+            return Response([{'request_id':str(r.request_id), 'job_id':r.configuration['job_id'],
+                'kind':r.configuration['kind'], 'status':r.status, 'created_at':r.created_at} for r in records])
+        form = JobInput(data=request.data); form.is_valid(raise_exception=True)
+        value = form.validated_data; kind = value['kind']
+        if kind == 'layout':
+            class LayoutInput(OcrInput):
+                device = serializers.ChoiceField(choices=['cpu'], default='cpu')
+            inputs_form = LayoutInput(data=value['request'])
+        else:
+            inputs_form = (DecisionInput if kind == 'laya' else OcrInput)(data=value['request'])
+        inputs_form.is_valid(raise_exception=True); data = inputs_form.validated_data
+        version = self.get_queryset().filter(model_version_id=data['model'], architecture_ref=f'modelanvil.{kind}.v1').first()
+        if version is None:
+            raise NotFound('Specialist model is unavailable in this project.')
+        image = Artifact.all_objects.filter(artifact_id=data.get('image_artifact'), tenant_id=get_active_tenant()).first() if kind != 'laya' else None
+        layout = None
+        if data.get('layout_model'):
+            layout = self.get_queryset().filter(model_version_id=data['layout_model'], architecture_ref='modelanvil.layout.v1').first()
+            if layout is None:
+                raise NotFound('Layout model is unavailable in this project.')
+        pool = WorkerPool.all_objects.filter(pk=value['pool'], tenant_id=get_active_tenant()).first()
+        if pool is None:
+            raise NotFound('Specialist worker pool is unavailable.')
+        try:
+            record = specialist_jobs.queue(tenant=get_active_tenant(), project=project, principal=request.user.pk,
+                version=version, kind=kind, device=data['device'], inputs={k:data[k] for k in ('state','questions')} if kind == 'laya' else {'max_tokens':data['max_tokens']},
+                image=image, layout=layout, pool=pool, policy_id=value['budget_policy'], key=value['idempotency_key'])
+        except (ValueError, IntegrityError) as exc:
+            raise serializers.ValidationError(str(exc) if isinstance(exc, ValueError) else 'This admission key is already in use.') from None
+        return Response({'request_id':str(record.request_id), 'job_id':record.configuration['job_id'], 'status':record.status}, status=202)
+
+    def _job_record(self, identifier):
+        from modelanvil.identity.models import get_accessible_queryset
+        try:
+            identifier = uuid.UUID(identifier)
+        except ValueError:
+            raise NotFound() from None
+        record = get_accessible_queryset(InferenceRequest).filter(request_id=identifier, configuration__job_id__isnull=False).first()
+        if record is None:
+            raise NotFound()
+        return record
+
+    @action(detail=False, methods=['get'], url_path=r'jobs/(?P<request_id>[^/.]+)')
+    def job_status(self, request, request_id=None):
+        from modelanvil.jobs.models import Job
+        from modelanvil.runners.specialist_jobs import read_result
+        record = self._job_record(request_id)
+        job = Job.all_objects.get(job_id=record.configuration['job_id'], tenant_id=record.tenant_id)
+        attempt = job.attempts.first()
+        return Response({'request_id':str(record.request_id), 'job_id':str(job.job_id), 'status':job.status, 'kind':record.configuration['kind'],
+            'desired_action':job.desired_action, 'attempt_count':job.attempt_count, 'max_attempts':job.max_attempts,
+            'progress':attempt.progress if attempt else 0, 'error':attempt.error if attempt and job.status == 'failed' else '',
+            'result':read_result(record) if job.status == 'succeeded' else None})
+
+    @action(detail=False, methods=['post'], url_path=r'jobs/(?P<request_id>[^/.]+)/cancel')
+    def cancel_job(self, request, request_id=None):
+        from modelanvil.runners.specialist_jobs import cancel
+        try:
+            job = cancel(self._job_record(request_id))
+        except ValueError as exc:
+            raise serializers.ValidationError(str(exc)) from None
+        return Response({'status':job.status, 'desired_action':job.desired_action})
+
+    @action(detail=False, methods=['post'], url_path=r'jobs/(?P<request_id>[^/.]+)/retry')
+    def retry_job(self, request, request_id=None):
+        from modelanvil.runners.specialist_jobs import retry
+        try:
+            job = retry(self._job_record(request_id))
+        except ValueError as exc:
+            raise serializers.ValidationError(str(exc)) from None
+        return Response({'status':job.status})
+
     def _infer(self, request, kind, form_class):
         project = project_scope()
         form = form_class(data=request.data); form.is_valid(raise_exception=True)
@@ -125,19 +213,26 @@ class SpecialistViewSet(TenantScopedViewSet):
             raise NotFound('Specialist model is unavailable in this project.')
         inputs = {k: value[k] for k in ('state', 'questions')} if kind == 'laya' else {'max_tokens': value['max_tokens']}
         image = None
+        layout = None
         if kind == 'ocr':
             image = Artifact.all_objects.filter(artifact_id=value['image_artifact'], tenant_id=get_active_tenant()).first()
             if image is None or not check_resource_access(image, project.pk, get_active_tenant()):
                 raise NotFound('Image is unavailable in this project.')
             if image.metadata.get('kind') != 'ocr_image':
                 raise serializers.ValidationError('Upload the image through the OCR image endpoint.')
-        identity = {'inputs': inputs, **({'image_sha256': image.sha256} if image else {})}
+            if value.get('layout_model'):
+                layout = self.get_queryset().filter(model_version_id=value['layout_model'], architecture_ref='modelanvil.layout.v1').first()
+                if layout is None:
+                    raise NotFound('Layout model is unavailable in this project.')
+        identity = {'inputs': inputs, **({'image_sha256': image.sha256} if image else {}),
+                    **({'layout_model':str(layout.model_version_id)} if layout else {})}
         record = InferenceRequest.all_objects.create(tenant_id=get_active_tenant(), project=project, model_version=version,
             principal_id=str(request.user.pk), input_digest=digest(identity), configuration={'kind': kind, 'device': value['device'],
+                **({'layout_snapshot':layout.metadata['snapshot_manifest']} if layout else {}),
                 **({'max_tokens': value['max_tokens'], 'image_artifact': str(image.artifact_id)} if image else {})})
         try:
             result = specialists.execute(version, tenant=get_active_tenant(), project=project.pk,
-                kind=kind, device=value['device'], inputs=inputs, image=image)
+                kind=kind, device=value['device'], inputs=inputs, image=image, **({'layout':layout} if layout else {}))
             result['request_id'] = str(record.request_id)
             if image:
                 result['provenance']['image'] = {'artifact_id': str(image.artifact_id), 'sha256': image.sha256, 'byte_size': image.byte_size}
@@ -158,22 +253,33 @@ class SpecialistViewSet(TenantScopedViewSet):
         envelopes = []
         for page in pages:
             location = f"page/{page['page']}" if rasterization['source_format'] == 'pdf' else 'image/1'
-            identity = digest({'image': image.sha256, 'model': source['snapshot_sha256'], 'text': page['text'], 'location':location})
+            identity = digest({'image': image.sha256, 'model': source['snapshot_sha256'], 'text': page['text'], 'location':location,
+                **({'regions':page['regions'], 'layout_model':source.get('layout_model')} if page.get('regions') else {})})
+            blocks = [{'block_id':r['region_id'], 'type':'text', 'text':r['text'],
+                'location':{'source_path':f"{location}/{r['region_id']}", 'page':page['page'],
+                            'coordinates':r['box'], 'coordinate_system':r['coordinate_system']},
+                'metadata':{k:v for k,v in r.items() if k != 'text'}} for r in page.get('regions', []) if r.get('text')]
             envelopes.append({'schema_version': '1.0', 'sample_id': str(uuid.uuid5(uuid.NAMESPACE_URL, f'ocr:{identity}')),
                 'source_group_id': f'source-sha256:{image.sha256}',
-                'blocks': [{'block_id': 'text', 'type': 'text', 'text': page['text'], 'location': {'source_path':location, 'page':page['page']}}],
+                'blocks': blocks or [{'block_id': 'text', 'type': 'text', 'text': page['text'], 'location': {'source_path':location, 'page':page['page']}}],
                 'provenance': {'source_snapshot_ref': f'sha256:{image.sha256}', 'source_record_key':location,
                     'content_sha256': hashlib.sha256(page['text'].encode()).hexdigest(),
-                    'transformation_revision_ref': 'modelanvil.glm-ocr.v2'},
+                    'transformation_revision_ref': 'modelanvil.glm-ocr-layout.v1' if blocks else 'modelanvil.glm-ocr.v2'},
                 'metadata': {'source_format':'ocr', 'model':source, 'rasterization':rasterization,
                     'image_dimensions':page['image_dimensions'], 'raster_sha256':page.get('raster_sha256'),
-                    'runtime_versions':result.get('runtime_versions', {}), 'review_required':True}})
+                    'regions':page.get('regions', []), 'runtime_versions':result.get('runtime_versions', {}), 'review_required':True}})
         payload = ''.join(json.dumps(e, ensure_ascii=False, allow_nan=False) + '\n' for e in envelopes).encode()
         ref = _store(io.BytesIO(payload), tenant=image.tenant_id, project=project.pk, name='ocr.jsonl',
             metadata={'kind': 'ocr_dataset_input', 'inference_request_id': str(record.request_id)}, media_type='application/x-ndjson')
         output = Artifact.all_objects.get(artifact_id=ref['artifact_id'], tenant_id=image.tenant_id)
         manifest = Artifact.all_objects.get(artifact_id=version.artifact_manifest_id, tenant_id=image.tenant_id)
-        for parent, relation in ((image, 'ocr_text'), (manifest, 'ocr_model')):
+        parents = [(image, 'ocr_text'), (manifest, 'ocr_model')]
+        if source.get('layout_model'):
+            frozen = record.configuration.get('frozen', {})
+            layout_ref = frozen.get('layout_snapshot') or record.configuration.get('layout_snapshot')
+            if layout_ref:
+                parents.append((Artifact.all_objects.get(artifact_id=layout_ref['artifact_id'], tenant_id=image.tenant_id), 'ocr_layout_model'))
+        for parent, relation in parents:
             LineageEdge.all_objects.create(tenant_id=image.tenant_id, parent_artifact=parent, child_artifact=output,
                 relation=relation, detail={'request_id': str(record.request_id), 'input_digest': record.input_digest})
         result.update(output_artifact=ref, envelope=envelopes[0], envelopes=envelopes)

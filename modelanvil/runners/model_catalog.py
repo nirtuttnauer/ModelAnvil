@@ -170,7 +170,7 @@ def _store(stream, *, tenant, project, name, expected=None, size=None, metadata=
 
 def publish_files(files, *, tenant, project, name, source, format, license_expression):
     """Called under a transaction/fence; bytes were verified before entering the manifest."""
-    if format in {'ocr', 'laya'}:
+    if format in {'ocr', 'laya', 'layout'}:
         from modelanvil.runners.specialists import publish_specialist
         return publish_specialist(files, tenant=tenant, project=project, name=name,
             kind=format, license_expression=license_expression)

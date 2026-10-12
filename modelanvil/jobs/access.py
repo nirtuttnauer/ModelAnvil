@@ -17,15 +17,23 @@ def accessible_jobs():
     hidden_runs = TrainingRun.all_objects.filter(tenant_id=tenant, job__isnull=False).exclude(
         pk__in=get_accessible_queryset(TrainingRun).values("pk")
     )
+    from modelanvil.runners.models import InferenceRequest
+    requests = get_accessible_queryset(InferenceRequest).annotate(
+        normalized_id=Replace(Cast('request_id', CharField()), Value('-'), Value(''))
+    ).values('normalized_id')
     snapshots = get_accessible_queryset(SourceSnapshot).annotate(
         normalized_id=Replace(Cast("snapshot_id", CharField()), Value("-"), Value(""))
     ).values("normalized_id")
     return Job.objects.filter(tenant_id=tenant).exclude(pk__in=hidden_runs.values("job_id")).annotate(
         accessible_snapshot_id=Replace(KeyTextTransform("snapshot_id", "payload"), Value("-"), Value(""), output_field=CharField())
-    ).filter(Q(payload__type__isnull=True) | ~Q(payload__type="dataset_acquisition") | Q(accessible_snapshot_id__in=snapshots))
+    ).filter(Q(payload__type__isnull=True) | ~Q(payload__type="dataset_acquisition") | Q(accessible_snapshot_id__in=snapshots)).annotate(
+        accessible_request_id=Replace(KeyTextTransform('request_id', 'payload'), Value('-'), Value(''), output_field=CharField())
+    ).filter(Q(payload__type__isnull=True) | ~Q(payload__type='specialist_inference') | Q(accessible_request_id__in=requests))
 
 
 def cancellation_endpoint(job):
+    if isinstance(job.payload, dict) and job.payload.get('type') == 'specialist_inference':
+        return f"/api/v1/specialists/jobs/{job.payload['request_id']}/cancel/"
     if isinstance(job.payload, dict) and job.payload.get("type") == "dataset_acquisition":
         return f"/api/v1/dataset-bank/acquisitions/{job.payload['snapshot_id']}/cancel/"
     owner = job.training_runs.filter(hardware_config__execution_mode="worker").first()

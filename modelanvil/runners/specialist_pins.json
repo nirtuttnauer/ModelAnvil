@@ -76,5 +76,27 @@
     "format": "mlx",
     "parameters_count": null,
     "task": "ocr"
+  },
+  "layout": {
+    "repo_id": "PaddlePaddle/PP-DocLayoutV3_safetensors",
+    "revision": "e4f489dc536556fc1be02b973ba06756e0d4a2ac",
+    "license": "Apache-2.0",
+    "files": {
+      "config.json": {
+        "sha256": "3cf834b91d23a756b1519bce4db42c09e852f3e35c35092dd5a3e253a50c071a",
+        "byte_size": 2460
+      },
+      "preprocessor_config.json": {
+        "sha256": "519fe0187a43a1ca429e3ad8317bab8700f0d5e8fb3a6e3a0a413ffac078ba42",
+        "byte_size": 575
+      },
+      "model.safetensors": {
+        "sha256": "5ea422c6cc5fe759a47e1357c35639b58173508e025a3131cbe4b6ac59e2b85e",
+        "byte_size": 133270468
+      }
+    },
+    "name": "PP-DocLayoutV3",
+    "task": "document_layout",
+    "parameters_count": 33175165
   }
 }

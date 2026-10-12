@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { questionInput, uploadOcrImage } from '../src/api/specialists.ts';
+import { questionInput, queueSpecialist, uploadOcrImage } from '../src/api/specialists.ts';
 
 test('visual questions preserve typed labels and ordinal order and reject ambiguous options', () => {
   assert.deepEqual(questionInput('choice', 'Department?', 'billing: invoices\ntechnical: outages'), {
@@ -12,6 +12,26 @@ test('visual questions preserve typed labels and ordinal order and reject ambigu
   for (const options of ['one', 'a: first\na: second', 'a:\nb: second', Array(9).fill('x').join('\n')]) {
     assert.throws(() => questionInput('choice', 'Question?', options));
   }
+});
+
+test('durable admission preserves layout and typed inputs and requires explicit quota', async () => {
+  const original = globalThis.fetch; const requests = [];
+  globalThis.fetch = async (url, init) => {
+    requests.push({url, init});
+    return new Response(JSON.stringify({request_id:'run',job_id:'job',status:'queued'}),{status:202});
+  };
+  try {
+    const request = { model:'ocr', image_artifact:'source', layout_model:'layout', max_tokens:256 };
+    await assert.rejects(queueSpecialist('token','ocr',request,'','policy'));
+    await assert.rejects(queueSpecialist('token','ocr',request,'1',''));
+    const signal = new AbortController().signal;
+    assert.equal((await queueSpecialist('token','ocr',request,'7','policy',signal)).status,'queued');
+    assert.equal(requests.length,1); assert.equal(requests[0].url,'/api/v1/specialists/jobs/');
+    assert.equal(requests[0].init.signal,signal);
+    const payload=JSON.parse(requests[0].init.body);
+    assert.deepEqual(payload.request,request); assert.equal(payload.pool,7);
+    assert.equal(payload.budget_policy,'policy'); assert.match(payload.idempotency_key,/^[a-f0-9-]{36}$/);
+  } finally { globalThis.fetch=original; }
 });
 
 test('OCR upload sends original bytes and refuses oversized or unsupported files before the request', async () => {

@@ -81,6 +81,8 @@ class JobSerializer(serializers.ModelSerializer):
         read_only_fields = ("job_id", "status", "desired_action", "attempt_count", "created_at", "updated_at")
 
     def validate(self, attrs):
+        if attrs.get('payload', {}).get('type') == 'specialist_inference' or (self.instance and self.instance.payload.get('type') == 'specialist_inference'):
+            raise serializers.ValidationError('Manage specialist jobs through the specialists API.')
         if (attrs.get('payload', {}).get('type') == 'model_import' or
                 (self.instance and self.instance.payload.get('type') == 'model_import')):
             raise serializers.ValidationError('Manage model acquisition through the model-imports API.')
@@ -221,9 +223,16 @@ class JobViewSet(ScopedViewSet):
             raise NotFound()
         serializer.save()
 
+    def perform_destroy(self, instance):
+        if instance.payload.get('type') == 'specialist_inference':
+            raise serializers.ValidationError('Specialist jobs retain durable request and accounting history.')
+        super().perform_destroy(instance)
+
     @action(detail=True, methods=("post",))
     def cancel(self, request, job_id=None):
         job = self.get_object()
+        if job.payload.get('type') == 'specialist_inference':
+            raise serializers.ValidationError('Cancel this job through its specialist request.')
         if isinstance(job.payload, dict) and job.payload.get('type') == 'dataset_acquisition':
             raise serializers.ValidationError('Cancel this job through its dataset acquisition.')
         if job.training_runs.filter(hardware_config__execution_mode='worker').exists():

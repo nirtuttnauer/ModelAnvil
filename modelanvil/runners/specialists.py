@@ -20,7 +20,7 @@ RUNTIME = Path(__file__).resolve().parents[2] / 'scripts' / 'specialist_runtime.
 
 def import_plan(kind):
     if kind not in PINS:
-        raise ValueError('Select ocr or laya.')
+        raise ValueError('Select ocr, laya or layout.')
     pin = PINS[kind]
     return {**pin, 'format': kind, 'byte_size': sum(f['byte_size'] for f in pin['files'].values()),
             'gated': False, 'training_supported': False}
@@ -43,8 +43,11 @@ def publish_specialist(files, *, tenant, project, name, kind, license_expression
         raise ValueError('Confirm the pinned model license.')
     check_files(files, kind)
     with staged_snapshot(files, tenant, project) as directory:
-        tokenizer = json.loads((directory / ('tokenizer/tokenizer.json' if kind == 'laya' else 'tokenizer.json')).read_text())
-        vocab = max([*tokenizer['model']['vocab'].values(), *(t['id'] for t in tokenizer.get('added_tokens', []))]) + 1
+        if kind == 'layout':
+            vocab = 1  # Registry placeholder; the detector has no text tokenizer.
+        else:
+            tokenizer = json.loads((directory / ('tokenizer/tokenizer.json' if kind == 'laya' else 'tokenizer.json')).read_text())
+            vocab = max([*tokenizer['model']['vocab'].values(), *(t['id'] for t in tokenizer.get('added_tokens', []))]) + 1
     source = {k: pin[k] for k in ('repo_id', 'revision', 'license')}
     manifest = {'source': source, 'files': files, 'format': kind}
     ref = _store(io.BytesIO(json.dumps(manifest, sort_keys=True).encode()), tenant=tenant, project=project, name='snapshot.json')
@@ -79,43 +82,71 @@ def snapshot(version, tenant, project, kind):
     return value
 
 
-def execute(version, *, tenant, project, kind, device, inputs, image=None):
+def execute(version, *, tenant, project, kind, device, inputs, image=None, layout=None, context=None):
     from scripts.specialist_runtime import validate_decision, validate_ocr
     if kind == 'laya':
         validate_decision(inputs)
     else:
         validate_ocr(inputs)
-    if device not in (['cpu', 'mps:0'] if kind == 'laya' else ['mlx:0']):
+    if device not in (['cpu', 'mps:0'] if kind == 'laya' else ['cpu'] if kind == 'layout' else ['mlx:0']):
         raise ValueError('Choose an explicitly supported specialist device.')
     python = getattr(settings, 'MODELANVIL_SPECIALIST_PYTHON', None) or os.environ.get('MODELANVIL_SPECIALIST_PYTHON')
     if not python or not Path(python).is_absolute() or not Path(python).is_file():
         raise ValueError('Install the isolated specialist runtime and configure MODELANVIL_SPECIALIST_PYTHON.')
     plan = snapshot(version, tenant, project, kind)
+    layout_plan = snapshot(layout, tenant, project, 'layout') if layout else None
     started = time.monotonic()
     with ExitStack() as stack:
         admission = stack.enter_context(device_lease(device, pass_descriptor=True))
+        descriptors = (admission,)
+        if layout_plan:
+            descriptors += (stack.enter_context(device_lease('cpu', pass_descriptor=True)),)
         directory = stack.enter_context(staged_snapshot(plan['files'], tenant, project))
+        layout_directory = stack.enter_context(staged_snapshot(layout_plan['files'], tenant, project)) if layout_plan else None
         work = Path(stack.enter_context(tempfile.TemporaryDirectory(prefix='modelanvil-specialist-')))
         runtime_bytes = RUNTIME.read_bytes()
         if len(runtime_bytes) > 128 * 1024:
             raise ValueError('Specialist runtime code exceeds its pinned execution limit.')
         runtime_digest = hashlib.sha256(runtime_bytes).hexdigest()
         (work / 'runtime.py').write_bytes(runtime_bytes)
-        if kind == 'ocr':
+        if kind in {'ocr', 'layout'}:
             if image is None or image.byte_size > 8 * 1024**2:
                 raise ValueError('Select an accessible PNG, JPEG or PDF of at most 8 MiB.')
             from modelanvil.runners.training.hf_runtime import file_ref
             with (work / 'image').open('wb') as target:
                 copy_verified(file_ref(image), tenant, project, target)
         request = {'kind': kind, 'device': device, 'directory': str(directory), 'inputs': inputs,
-                   'image': str(work / 'image') if image else None}
+                   'image': str(work / 'image') if image else None,
+                   'layout_directory': str(layout_directory) if layout_directory else None}
         env = {'PATH': os.defpath, 'HOME': str(work), 'TMPDIR': str(work), 'HF_HOME': str(work / 'hf'),
                'HF_HUB_OFFLINE': '1', 'TRANSFORMERS_OFFLINE': '1', 'HF_HUB_DISABLE_TELEMETRY': '1',
                'USE_TF': '0', 'PYTORCH_ENABLE_MPS_FALLBACK': '0', 'TOKENIZERS_PARALLELISM': 'false'}
         with (work / 'out').open('w+b') as stdout, (work / 'err').open('w+b') as stderr:
             try:
-                result = subprocess.run([python, '-I', str(work / 'runtime.py')], input=json.dumps(request, allow_nan=False).encode(),
-                    cwd=work, env=env, stdout=stdout, stderr=stderr, timeout=120, pass_fds=(admission,))
+                command = [python, '-I', str(work / 'runtime.py')]
+                raw_request = json.dumps(request, allow_nan=False).encode()
+                if context is None:
+                    result = subprocess.run(command, input=raw_request, cwd=work, env=env,
+                        stdout=stdout, stderr=stderr, timeout=120, pass_fds=descriptors)
+                else:
+                    # Kill and reap before releasing admission on cancellation or fence loss.
+                    # A file avoids blocking lease renewal on a child that has not read stdin.
+                    input_file = stack.enter_context((work / 'request.json').open('w+b'))
+                    input_file.write(raw_request); input_file.seek(0)
+                    with subprocess.Popen(command, stdin=input_file, cwd=work, env=env,
+                                          stdout=stdout, stderr=stderr, pass_fds=descriptors) as result:
+                        try:
+                            deadline = time.monotonic() + 120
+                            while result.poll() is None:
+                                if not context.heartbeat():
+                                    raise ValueError('Specialist job cancelled or lease lost.')
+                                if time.monotonic() >= deadline:
+                                    raise subprocess.TimeoutExpired(command, 120)
+                                time.sleep(0.5)
+                        finally:
+                            if result.poll() is None:
+                                result.kill()
+                            result.wait()
             except subprocess.TimeoutExpired:
                 raise ValueError('Specialist request exceeded 120 seconds; the runtime was terminated.') from None
             stdout.seek(0)
@@ -132,4 +163,8 @@ def execute(version, *, tenant, project, kind, device, inputs, image=None):
                   provenance={'source': plan['source'], 'snapshot_sha256': version.metadata['snapshot_manifest']['sha256'],
                               'runtime_code_sha256': runtime_digest,
                               'files': {n: {k: r[k] for k in ('sha256', 'byte_size')} for n, r in plan['files'].items()}})
+    if layout:
+        output['provenance']['layout_model'] = {'source': layout_plan['source'],
+            'snapshot_sha256': layout.metadata['snapshot_manifest']['sha256'],
+            'files': {n: {k: r[k] for k in ('sha256', 'byte_size')} for n, r in layout_plan['files'].items()}}
     return output

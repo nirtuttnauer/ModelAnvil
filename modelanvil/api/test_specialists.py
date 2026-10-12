@@ -51,7 +51,8 @@ class SpecialistInputTests(SimpleTestCase):
 class SpecialistApiTests(TestCase):
     def setUp(self):
         storage = tempfile.TemporaryDirectory(); self.addCleanup(storage.cleanup)
-        override = override_settings(MODELANVIL={**settings.MODELANVIL, 'artifact_backend': 'filesystem', 'artifact_root': storage.name})
+        override = override_settings(MODELANVIL={**settings.MODELANVIL, 'artifact_backend': 'filesystem', 'artifact_root': storage.name},
+                                     MODELANVIL_DEVICE_LOCK_ROOT=storage.name + '/device-locks')
         override.enable(); self.addCleanup(override.disable)
         self.tenant = Tenant.objects.create(slug='specialist', name='Specialist')
         set_active_tenant(self.tenant.pk); self.addCleanup(set_active_tenant, None)

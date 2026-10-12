@@ -4598,6 +4598,210 @@
           }
         }
       }
+    },
+    "/specialists/jobs/": {
+      "post": {
+        "summary": "Queue bounded OCR, layout or typed-decision work with recoverable fenced publication",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "400": {
+            "description": "Unsupported input, runtime, token or memory budget"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          },
+          "202": {
+            "description": "Durable request admitted with frozen inputs and attempt quota",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpecialistJobInput"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List the 20 most recent accessible durable specialist requests",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped measured result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported input, runtime, token or memory budget"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        }
+      }
+    },
+    "/specialists/jobs/{request_id}/": {
+      "get": {
+        "summary": "Read durable job status and restore a completed result",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped measured result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported input, runtime, token or memory budget"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/specialists/jobs/{request_id}/cancel/": {
+      "post": {
+        "summary": "Request specialist cancellation before publication",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped measured result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported input, runtime, token or memory budget"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/specialists/jobs/{request_id}/retry/": {
+      "post": {
+        "summary": "Retry a failed specialist request within its original remaining attempt quota",
+        "tags": [
+          "Models"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped measured result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported input, runtime, token or memory budget"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -7765,6 +7969,11 @@
             "minimum": 32,
             "maximum": 1024,
             "default": 512
+          },
+          "layout_model": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Optional pinned PP-DocLayoutV3 model for ordered region recognition."
           }
         },
         "description": "Per-page output limit; PDF sources allow 1\u20135 pages and 6 million total rendered pixels. Empty, encrypted or partial documents are refused."
@@ -7784,7 +7993,8 @@
             "type": "string",
             "enum": [
               "ocr",
-              "laya"
+              "laya",
+              "layout"
             ]
           },
           "name": {
@@ -7800,6 +8010,44 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 64
+          },
+          "idempotency_key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      },
+      "SpecialistJobInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "request",
+          "pool",
+          "budget_policy",
+          "idempotency_key"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "ocr",
+              "laya",
+              "layout"
+            ]
+          },
+          "request": {
+            "type": "object",
+            "description": "SpecialistOcrInput or SpecialistDecisionInput; layout-only runs use CPU placement."
+          },
+          "pool": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "budget_policy": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Enabled currency-free specialist_attempts policy. Three attempts reserved."
           },
           "idempotency_key": {
             "type": "string",
