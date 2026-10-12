@@ -26,6 +26,7 @@ Both scratch pretraining and fine-tuning remain required for the first complete 
 
 - [Canonical sample JSON Schema](schemas/sample-envelope.schema.json) describes the shared interchange envelope. Task-specific schemas refine its content and annotations.
 - [Adapter manifest JSON Schema](schemas/adapter-manifest.schema.json) describes capability and permission declarations. Qualification records determine actual support.
+- [External provider map](external-providers-and-plugins.md), [Runpod and custom plugin setup](runpod-and-custom-plugins.md), and [provider TODO](provider-integration-todo.md) cover integration choices, implemented contracts, and remaining providers.
 - [Existing iterative labeling specification](../iterative-labeling.md), [RAG and context specification](../rag-context-workbench.md), and [architecture decisions](../decisions/README.md) provide the detailed domain contracts.
 
 Requirement references use PRD IDs such as ANN04 and OPS07. Technical IDs use TECH-001 onward. Flow IDs use FLOW-01 onward. Work packages use WP-01 onward. The implementation plan links these systems together.

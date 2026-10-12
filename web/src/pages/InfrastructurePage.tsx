@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { ExternalCompute } from '../components/ExternalCompute';
 import { errorMessage } from '../api/client';
 import { allResources } from '../api/resources';
 import { ResourceState } from '../components/ResourceState';
@@ -19,6 +20,7 @@ export function InfrastructurePage({ token, refreshKey }: { token: string; refre
   return <div className="resource-view operations-page">
     <div className="ops-heading"><div><span className="eyebrow">Compute inventory</span><h2>Compute inventory</h2><p>Inspect pool registration, worker capabilities and result handling.</p></div><a className="ops-link-button" href="#workflows">Submit a job <ArrowRight size={16} aria-hidden="true" /></a></div>
     <ResourceState loading={loading} error={error} onRetry={() => setRetry(v => v + 1)} />
+    <ExternalCompute key={token} token={token} refreshKey={refreshKey} onChange={() => setRetry(value => value + 1)} />
     <div className="ops-metrics"><article><Server size={18} aria-hidden="true" /><span>Registered pools</span><b>{loading || error ? '—' : pools.length}</b></article><article><Cpu size={18} aria-hidden="true" /><span>Registered workers</span><b>{loading || error ? '—' : workers.length}</b></article><article><Layers size={18} aria-hidden="true" /><span>Configured slots</span><b>{loading || error ? '—' : workers.reduce((sum, w) => sum + w.slots, 0)}</b></article></div>
     <div className="ops-chart-grid">
       <ChartPanel title="Registered pool topology" description="Registered queues and worker memberships. Connections show configuration.">

@@ -63,6 +63,10 @@ remote GPU workers and additional vendor qualification remain separate work.
 
 For RabbitMQ dispatch, run `manage.py consume_worker --worker-id ID --executor package.module.callable` with `RABBITMQ_URL` set. It consumes the worker's tenant/pool topic, makes a durable database claim before acknowledging a dispatch, and uses delayed retry and quarantine queues. The executor remains operator-installed trusted code. This local consumer is not the outbound hybrid-worker gateway and has not been production-qualified.
 
+## External compute and custom plugins
+
+The [Runpod and custom plugin guide](docs/engineering/runpod-and-custom-plugins.md) covers REST v2 GPU discovery, tenant-scoped allocation/worker bootstrap, verified release, expiry reconciliation, and trusted operator-installed compute and task plugins. Configure provider accounts outside the browser and run `manage.py reconcile_compute --loop` for automatic expiry cleanup. The [provider TODO](docs/engineering/provider-integration-todo.md) tracks the remaining integrations and live qualification. Remote training runtimes and managed artifact transfer require their own qualification.
+
 ## Worker credentials
 
 An administrator registering a worker receives a one-time `worker_token` in the registration response. It is tenant- and worker-bound, stored only as a hash, and expires after 30 days by default (`MODELANVIL_WORKER_CREDENTIAL_SECONDS` configures the lifetime). The token can call only the worker claim, heartbeat, result, attempt-scoped input-grant discovery, and explicitly granted input-artifact download endpoints; it cannot access the tenant artifact registry or uploads. Use `POST /api/v1/workers/{worker_id}/credential/revoke/` with an administrator API key to revoke it. Do not log or persist the registration response as ordinary application output.
