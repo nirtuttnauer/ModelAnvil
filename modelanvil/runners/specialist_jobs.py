@@ -115,6 +115,45 @@ def read_result(record):
     return value['result']
 
 
+def read_pages(record):
+    from scripts.specialist_runtime import validate_page_result
+    refs = record.configuration.get('pages', {})
+    for key, ref in refs.items():
+        if key not in {'1','2','3','4','5'} or ref['byte_size'] > 1024**2:
+            raise ValueError('Invalid OCR page checkpoint reference.')
+        stream = io.BytesIO(); copy_verified(ref, record.tenant_id, record.project_id, stream)
+        saved = json.loads(stream.getvalue())
+        if saved['request_id'] != str(record.request_id) or saved['input_digest'] != record.input_digest:
+            raise ValueError('OCR page checkpoint belongs to different inputs.')
+        validate_page_result(saved['page_result'])
+        if str(saved['page_result']['page']['page']) != key:
+            raise ValueError('OCR page checkpoint number changed.')
+    return refs
+
+
+@transaction.atomic
+def save_page(context, page_result):
+    from scripts.specialist_runtime import validate_page_result
+    validate_page_result(page_result)
+    record = live_request(context)
+    key = str(page_result['page']['page'])
+    payload = json.dumps({'request_id':str(record.request_id), 'input_digest':record.input_digest,
+                          'page_result':page_result}, allow_nan=False).encode()
+    if len(payload) > 1024**2:
+        raise ValueError('OCR page checkpoint exceeds its byte limit.')
+    existing = record.configuration.get('pages', {}).get(key)
+    if existing:
+        if existing['sha256'] != hashlib.sha256(payload).hexdigest():
+            raise ValueError('A completed page checkpoint cannot be replaced.')
+        return
+    ref = _store(io.BytesIO(payload), tenant=record.tenant_id, project=record.project_id,
+        name=f'ocr-page-{key}.json', metadata={'kind':'ocr_page_checkpoint','request_id':str(record.request_id),'page':int(key)},
+        media_type='application/json')
+    record.configuration = {**record.configuration, 'pages':{**record.configuration.get('pages', {}), key:ref},
+        'page_count':page_result['rasterization']['page_count']}
+    record.save(update_fields=['configuration','updated_at'])
+
+
 def specialist_executor(descriptor, context):
     if descriptor.get('payload', {}).get('type') != TYPE:
         raise ValueError('This executor accepts specialist jobs only.')
@@ -143,8 +182,10 @@ def specialist_executor(descriptor, context):
     image = Artifact.all_objects.get(artifact_id=frozen['image']['artifact_id'], tenant_id=record.tenant_id) if frozen['image'] else None
     if image and file_ref(image) != frozen['image']:
         raise ValueError('The queued specialist source changed.')
+    resume_pages = read_pages(record) if frozen['kind'] == 'ocr' else None
     result = specialists.execute(version, tenant=record.tenant_id, project=record.project_id,
-        kind=frozen['kind'], device=frozen['device'], inputs=frozen['inputs'], image=image, layout=layout, context=context)
+        kind=frozen['kind'], device=frozen['device'], inputs=frozen['inputs'], image=image, layout=layout, context=context,
+        **({'resume_pages':resume_pages, 'checkpoint_page':lambda page:save_page(context,page)} if frozen['kind'] == 'ocr' else {}))
     result['request_id'] = str(record.request_id)
     if image:
         result['provenance']['image'] = frozen['image']

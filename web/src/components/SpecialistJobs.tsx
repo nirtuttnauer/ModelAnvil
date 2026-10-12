@@ -50,6 +50,7 @@ export function SpecialistJobs({ token, selected, onSelect, onResult }: {
     </select></label>
     {job && <div><p role="status">{job.status} · attempt {job.attempt_count} of {job.max_attempts}{job.desired_action === 'cancel' ? ' · cancellation requested' : ''}</p>
       <small>Job {job.job_id}</small>
+      {job.page_count && <p>{job.completed_pages?.length || 0} of {job.page_count} pages saved for resume.</p>}
       {job.error && <p role="alert">{job.error}</p>}
       <div className="specialist-actions">
         <button disabled={mutating || !['queued','running','interrupted'].includes(job.status) || job.desired_action === 'cancel'} onClick={() => void action('cancel')}>Cancel request</button>

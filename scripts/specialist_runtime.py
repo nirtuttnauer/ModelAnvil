@@ -4,6 +4,7 @@ import importlib.metadata
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 import sys
 import warnings
@@ -161,7 +162,7 @@ def reject_flat_image(image):
         raise ValueError('Blank or nearly uniform OCR pages are unsupported; no text was published.')
 
 
-def layout_pages(directory, pages):
+def layout_pages(directory, pages, count=0):
     import torch
     from PIL import Image
     from transformers import AutoImageProcessor, AutoModelForObjectDetection
@@ -169,7 +170,6 @@ def layout_pages(directory, pages):
     torch.set_default_device('cpu')
     processor = AutoImageProcessor.from_pretrained(str(directory), local_files_only=True, trust_remote_code=False)
     model = AutoModelForObjectDetection.from_pretrained(str(directory), local_files_only=True, trust_remote_code=False).to('cpu').eval()
-    count = 0
     for page in pages:
         with Image.open(page['path']) as source:
             with torch.inference_mode():
@@ -207,13 +207,64 @@ def detect_layout(directory, device, inputs, image):
         'regions':sum(len(p['regions']) for p in pages)}, 'layout_threshold':0.5}
 
 
-def recognize(directory, device, inputs, image, layout_directory=None):
+def validate_page_result(value):
+    import re
+    try:
+        json.dumps(value, allow_nan=False)
+        page, usage = value['page'], value['usage']
+        if (value['finish_reason'] != 'stop' or type(page['page']) is not int or not 1 <= page['page'] <= 5
+                or not isinstance(page['text'], str) or not page['text'].strip()
+                or not isinstance(page['image_dimensions'], list) or len(page['image_dimensions']) != 2
+                or any(type(n) is not int or not 1 <= n <= 2048 for n in page['image_dimensions'])
+                or not re.fullmatch('[0-9a-f]{64}', page['raster_sha256'])
+                or type(value['rasterization']['page_count']) is not int
+                or not page['page'] <= value['rasterization']['page_count'] <= 5
+                or any(type(usage[k]) is not int or usage[k] < 0 for k in ('input_tokens','output_tokens','total_tokens'))
+                or usage['total_tokens'] != usage['input_tokens'] + usage['output_tokens']
+                or type(usage['peak_memory_gb']) not in (int,float) or usage['peak_memory_gb'] < 0):
+            raise ValueError()
+    except (KeyError, TypeError, ValueError, RecursionError):
+        raise ValueError('OCR page checkpoint is invalid or incomplete.') from None
+
+
+def page_checkpoint(directory, number, value):
+    if not directory:
+        return
+    import time
+    path = Path(directory) / f'page-{number}.json'
+    temporary = path.with_suffix('.partial')
+    with temporary.open('w') as stream:
+        json.dump(value, stream, allow_nan=False)
+        stream.flush(); os.fsync(stream.fileno())
+    os.replace(temporary, path)
+    deadline = time.monotonic() + 15
+    while not path.with_suffix('.ack').exists():
+        if time.monotonic() >= deadline:
+            raise ValueError('The page checkpoint was not acknowledged; recognition stopped.')
+        time.sleep(0.05)
+
+
+def recognize(directory, device, inputs, image, layout_directory=None, resume=None, checkpoint_directory=None):
     validate_ocr(inputs)
     if device != 'mlx:0':
         raise ValueError('GLM-OCR requires explicit mlx:0.')
     pages, rasterization = render_sources(image)
+    restored = {}
+    for key, path in (resume or {}).items():
+        if key not in {str(p['page']) for p in pages} or Path(path).stat().st_size > 1024**2:
+            raise ValueError('OCR resume checkpoint page or size is invalid.')
+        saved = json.loads(Path(path).read_text())
+        validate_page_result(saved)
+        page = pages[int(key)-1]; old = saved['page']
+        if (saved['rasterization'] != rasterization or saved['runtime_versions'] != VERSIONS
+                or old['page'] != page['page'] or old['image_dimensions'] != page['image_dimensions']
+                or old['raster_sha256'] != page['raster_sha256'] or not old.get('text')):
+            raise ValueError('OCR resume checkpoint differs from the pinned page raster or runtime.')
+        restored[page['page']] = saved
+    pending = [p for p in pages if p['page'] not in restored]
     if layout_directory:
-        pages = layout_pages(Path(layout_directory), pages)
+        if pending:
+            layout_pages(Path(layout_directory), pending, count=sum(len(p['page'].get('regions', [])) for p in restored.values()))
     import mlx.core as mx
     from mlx_vlm import load, stream_generate
     from mlx_vlm.prompt_utils import apply_chat_template
@@ -224,9 +275,16 @@ def recognize(directory, device, inputs, image, layout_directory=None):
     allowance = mx.device_info().get('max_recommended_working_set_size', 0)
     if allowance - mx.get_active_memory() < 2 * (directory / 'model.safetensors').stat().st_size + 512 * 1024**2:
         raise ValueError('MLX process memory headroom is insufficient for OCR.')
-    model, processor = load(str(directory), trust_remote_code=False, local_files_only=True)
+    model, processor = load(str(directory), trust_remote_code=False, local_files_only=True) if pending else (None, None)
     results, usage = [], {'input_tokens': 0, 'output_tokens': 0, 'total_tokens': 0, 'peak_memory_gb': 0}
     for page in pages:
+        if page['page'] in restored:
+            saved = restored[page['page']]; results.append(saved['page'])
+            for key in ('input_tokens','output_tokens','total_tokens'):
+                usage[key] += saved['usage'][key]
+            usage['peak_memory_gb'] = max(usage['peak_memory_gb'], saved['usage']['peak_memory_gb'])
+            continue
+        page_usage = {'input_tokens':0, 'output_tokens':0, 'total_tokens':0, 'peak_memory_gb':0}
         targets = page.get('regions', [{'label':'text'}]); texts = []
         for region in targets:
             if region['label'] in {'image', 'chart', 'seal'}:
@@ -259,14 +317,21 @@ def recognize(directory, device, inputs, image, layout_directory=None):
                 raise ValueError('OCR output is empty or reached its token limit; no partial text was published.')
             region['text'] = text; texts.append(text)
             for key, value in [('input_tokens', last.prompt_tokens), ('output_tokens', last.generation_tokens), ('total_tokens', last.total_tokens)]:
-                usage[key] += value
-            usage['peak_memory_gb'] = max(usage['peak_memory_gb'], last.peak_memory)
+                page_usage[key] += value
+            page_usage['peak_memory_gb'] = max(page_usage['peak_memory_gb'], last.peak_memory)
         if not texts:
             raise ValueError('No text regions were recognized; no dataset was published.')
-        results.append({k:v for k,v in {**page, 'text':'\n\n'.join(texts)}.items() if k != 'path'})
+        complete = {k:v for k,v in {**page, 'text':'\n\n'.join(texts)}.items() if k != 'path'}
+        page_checkpoint(checkpoint_directory, page['page'], {'page':complete, 'usage':page_usage,
+            'rasterization':rasterization, 'runtime_versions':VERSIONS, 'finish_reason':'stop'})
+        results.append(complete)
+        for key in ('input_tokens','output_tokens','total_tokens'):
+            usage[key] += page_usage[key]
+        usage['peak_memory_gb'] = max(usage['peak_memory_gb'], page_usage['peak_memory_gb'])
     return {'text': '\n\n'.join(p['text'] for p in results), 'pages': results, 'rasterization': rasterization,
             'device': device, 'runtime_versions': VERSIONS, 'image_dimensions': results[0]['image_dimensions'],
-            'usage': usage, 'finish_reason': 'stop'}
+            'usage': usage, 'finish_reason': 'stop', 'resume':{'reused_pages':sorted(restored),
+                'processed_pages':[p['page'] for p in pending], 'page_count':len(pages)}}
 
 
 def main():
@@ -302,7 +367,8 @@ def main():
             if request['kind'] == 'laya':
                 result = decide(directory, request['device'], request['inputs'])
             elif request['kind'] == 'ocr':
-                result = recognize(directory, request['device'], request['inputs'], request['image'], request.get('layout_directory'))
+                result = recognize(directory, request['device'], request['inputs'], request['image'], request.get('layout_directory'),
+                    request.get('resume'), request.get('checkpoint_directory'))
             elif request['kind'] == 'layout':
                 result = detect_layout(directory, request['device'], request['inputs'], request['image'])
             else:

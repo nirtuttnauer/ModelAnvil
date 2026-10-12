@@ -184,6 +184,8 @@ class SpecialistViewSet(TenantScopedViewSet):
         return Response({'request_id':str(record.request_id), 'job_id':str(job.job_id), 'status':job.status, 'kind':record.configuration['kind'],
             'desired_action':job.desired_action, 'attempt_count':job.attempt_count, 'max_attempts':job.max_attempts,
             'progress':attempt.progress if attempt else 0, 'error':attempt.error if attempt and job.status == 'failed' else '',
+            'completed_pages':sorted(int(k) for k in record.configuration.get('pages', {})),
+            'page_count':record.configuration.get('page_count'),
             'result':read_result(record) if job.status == 'succeeded' else None})
 
     @action(detail=False, methods=['post'], url_path=r'jobs/(?P<request_id>[^/.]+)/cancel')

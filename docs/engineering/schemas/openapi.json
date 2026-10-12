@@ -4686,7 +4686,26 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "type": "object",
+                  "properties": {
+                    "completed_pages": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 5
+                      }
+                    },
+                    "page_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "minimum": 1,
+                      "maximum": 5
+                    }
+                  },
+                  "description": "Page checkpoints are acknowledged only after fenced persistence; retries verify input/raster/runtime identity and process unsaved pages."
                 }
               }
             }
@@ -4793,6 +4812,390 @@
         "parameters": [
           {
             "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/recipes/": {
+      "get": {
+        "summary": "List up to 50 immutable accessible recipe versions",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        }
+      },
+      "post": {
+        "summary": "Import and validate an immutable typed recipe version",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "201": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeDefinition"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipes/versions/{version_id}/": {
+      "get": {
+        "summary": "Export verified immutable recipe definition",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/recipes/upload-source/": {
+      "post": {
+        "summary": "Upload original bounded source bytes for a typed recipe",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "201": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file",
+                  "format"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "1 byte\u201316 MiB"
+                  },
+                  "format": {
+                    "enum": [
+                      "jsonl",
+                      "json",
+                      "csv",
+                      "docx",
+                      "pdf"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipes/runs/": {
+      "get": {
+        "summary": "List up to 30 accessible recipe runs",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        }
+      },
+      "post": {
+        "summary": "Admit a preview or reviewed full durable recipe run",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "202": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeRunInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recipes/runs/{run_id}/": {
+      "get": {
+        "summary": "Read progress, saved rows, bindings and bounded actual preview results",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/recipes/runs/{run_id}/cancel/": {
+      "post": {
+        "summary": "Cancel without publishing unfinished results",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/recipes/runs/{run_id}/retry/": {
+      "post": {
+        "summary": "Resume verified step and generation-row checkpoints within remaining attempt quota",
+        "tags": [
+          "Datasets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Project-scoped recipe result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid graph, bindings, preview, quota or checkpoint"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in this project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "run_id",
             "in": "path",
             "required": true,
             "schema": {
@@ -8055,6 +8458,132 @@
             "maxLength": 128
           }
         }
+      },
+      "RecipeDefinition": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "name",
+          "steps"
+        ],
+        "properties": {
+          "schema": {
+            "const": "modelanvil.recipe.v1"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "steps": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 12,
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "type"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_-]{0,31}$"
+                },
+                "type": {
+                  "enum": [
+                    "source",
+                    "sample",
+                    "expression",
+                    "template",
+                    "generate",
+                    "validate",
+                    "merge",
+                    "output"
+                  ]
+                }
+              },
+              "description": "Typed step fields and dependencies are validated by the recipe compiler. Only earlier-step dependencies are permitted; all steps must contribute to the final output."
+            }
+          }
+        }
+      },
+      "RecipeRunInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "recipe",
+          "sources",
+          "pool",
+          "budget_policy",
+          "idempotency_key"
+        ],
+        "properties": {
+          "recipe": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sources": {
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 4,
+            "additionalProperties": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "model": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "device": {
+            "enum": [
+              "cpu",
+              "mps:0",
+              "mlx:0"
+            ],
+            "default": "cpu"
+          },
+          "pool": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "budget_policy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "preview": {
+            "type": "boolean",
+            "default": true
+          },
+          "dataset": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "preview_run": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "protected_sources": {
+            "type": "array",
+            "maxItems": 4,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "reviewed_preview": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "description": "Full runs require reviewed_preview and a completed preview with exactly matching recipe/source/model/runtime/protected bindings. Generation uses a registered pinned local worker."
       }
     }
   }

@@ -82,7 +82,8 @@ def snapshot(version, tenant, project, kind):
     return value
 
 
-def execute(version, *, tenant, project, kind, device, inputs, image=None, layout=None, context=None):
+def execute(version, *, tenant, project, kind, device, inputs, image=None, layout=None, context=None,
+            resume_pages=None, checkpoint_page=None):
     from scripts.specialist_runtime import validate_decision, validate_ocr
     if kind == 'laya':
         validate_decision(inputs)
@@ -109,6 +110,16 @@ def execute(version, *, tenant, project, kind, device, inputs, image=None, layou
             raise ValueError('Specialist runtime code exceeds its pinned execution limit.')
         runtime_digest = hashlib.sha256(runtime_bytes).hexdigest()
         (work / 'runtime.py').write_bytes(runtime_bytes)
+        resume_paths = {}
+        for key, ref in (resume_pages or {}).items():
+            if key not in {'1','2','3','4','5'} or ref['byte_size'] > 1024**2:
+                raise ValueError('Invalid OCR resume page checkpoint.')
+            stream = io.BytesIO(); copy_verified(ref, tenant, project, stream)
+            saved = json.loads(stream.getvalue())
+            target = work / f'resume-{key}.json'
+            target.write_text(json.dumps(saved['page_result'], allow_nan=False))
+            resume_paths[key] = str(target)
+        spool = work / 'pages'; spool.mkdir()
         if kind in {'ocr', 'layout'}:
             if image is None or image.byte_size > 8 * 1024**2:
                 raise ValueError('Select an accessible PNG, JPEG or PDF of at most 8 MiB.')
@@ -117,7 +128,8 @@ def execute(version, *, tenant, project, kind, device, inputs, image=None, layou
                 copy_verified(file_ref(image), tenant, project, target)
         request = {'kind': kind, 'device': device, 'directory': str(directory), 'inputs': inputs,
                    'image': str(work / 'image') if image else None,
-                   'layout_directory': str(layout_directory) if layout_directory else None}
+                   'layout_directory': str(layout_directory) if layout_directory else None,
+                   'resume':resume_paths, 'checkpoint_directory':str(spool) if checkpoint_page else None}
         env = {'PATH': os.defpath, 'HOME': str(work), 'TMPDIR': str(work), 'HF_HOME': str(work / 'hf'),
                'HF_HUB_OFFLINE': '1', 'TRANSFORMERS_OFFLINE': '1', 'HF_HUB_DISABLE_TELEMETRY': '1',
                'USE_TF': '0', 'PYTORCH_ENABLE_MPS_FALLBACK': '0', 'TOKENIZERS_PARALLELISM': 'false'}
@@ -136,13 +148,28 @@ def execute(version, *, tenant, project, kind, device, inputs, image=None, layou
                     with subprocess.Popen(command, stdin=input_file, cwd=work, env=env,
                                           stdout=stdout, stderr=stderr, pass_fds=descriptors) as result:
                         try:
+                            persisted = set()
+                            def collect_pages():
+                                for number in range(1,6):
+                                    path = spool / f'page-{number}.json'
+                                    if number in persisted or not path.exists():
+                                        continue
+                                    if path.stat().st_size > 1024**2:
+                                        raise ValueError('OCR page checkpoint exceeds its byte limit.')
+                                    checkpoint_page(json.loads(path.read_text()))
+                                    path.with_suffix('.ack').write_text('committed')
+                                    persisted.add(number)
                             deadline = time.monotonic() + 120
                             while result.poll() is None:
                                 if not context.heartbeat():
                                     raise ValueError('Specialist job cancelled or lease lost.')
                                 if time.monotonic() >= deadline:
                                     raise subprocess.TimeoutExpired(command, 120)
+                                if checkpoint_page:
+                                    collect_pages()
                                 time.sleep(0.5)
+                            if checkpoint_page and result.returncode == 0:
+                                collect_pages()
                         finally:
                             if result.poll() is None:
                                 result.kill()

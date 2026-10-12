@@ -17,7 +17,7 @@ from modelanvil.budgets.models import BudgetPolicy, BudgetReservation, UsageEven
 from modelanvil.jobs.executor import ExecutionContext, execute_one
 from modelanvil.jobs.models import Job, JobAttempt, Worker, WorkerPool, claim_job, commit_result, reconcile_expired_leases
 from modelanvil.runners.models import InferenceRequest
-from modelanvil.runners.specialist_jobs import cancel, runtime_digest, specialist_executor
+from modelanvil.runners.specialist_jobs import cancel, runtime_digest, specialist_executor, save_page, read_pages
 
 
 class DurableSpecialistTests(TestCase):
@@ -52,6 +52,48 @@ class DurableSpecialistTests(TestCase):
                 'crop_sha256':'c'*64, 'text':'Invoice 1042'}]}], 'image_dimensions':[900,350],
             'device':'mlx:0', 'usage':{'input_tokens':400,'output_tokens':8}, 'elapsed_seconds':2,
             'provenance':{'source':{}, 'snapshot_sha256':'b'*64, 'files':{}}}
+
+    def page_result(self):
+        return {'page':{'page':1,'text':'Invoice 1042','image_dimensions':[900,350], 'raster_sha256':'a'*64},
+            'usage':{'input_tokens':400,'output_tokens':8,'total_tokens':408,'peak_memory_gb':2.4},
+            'rasterization':{'source_format':'pdf','page_count':2}, 'runtime_versions':{}, 'finish_reason':'stop'}
+
+    @patch('modelanvil.runners.specialists.execute')
+    def test_page_checkpoint_survives_interruption_and_is_supplied_to_retry(self, execute):
+        record=self.record(self.setup_job())
+        def first(*args, **kwargs):
+            kwargs['checkpoint_page'](self.page_result())
+            raise ValueError('interruption after page one')
+        execute.side_effect=first
+        self.assertEqual(execute_one(self.worker,specialist_executor)['status'],'failed')
+        record.refresh_from_db();refs=read_pages(record);self.assertEqual(set(refs),{'1'})
+        poll=self.client.get(f'/api/v1/specialists/jobs/{record.request_id}/')
+        self.assertEqual(poll.data['completed_pages'],[1]);self.assertEqual(poll.data['page_count'],2)
+        self.assertFalse(Artifact.all_objects.filter(metadata__kind='ocr_dataset_input').exists())
+        self.assertEqual(self.client.post(f'/api/v1/specialists/jobs/{record.request_id}/retry/').status_code,200)
+        def second(*args, **kwargs):
+            self.assertEqual(kwargs['resume_pages'],refs)
+            return self.result()
+        execute.side_effect=second
+        self.assertEqual(execute_one(self.worker,specialist_executor)['status'],'succeeded')
+        self.assertEqual(BudgetReservation.all_objects.get().settled_amount,2)
+
+    def test_stale_worker_cannot_replace_a_saved_page(self):
+        record=self.record(self.setup_job());descriptor=claim_job(self.worker)
+        attempt=JobAttempt.all_objects.get(attempt_id=descriptor['attempt_id']);context=ExecutionContext(attempt,descriptor['fencing_token'])
+        save_page(context,self.page_result());save_page(context,self.page_result())
+        self.assertEqual(Artifact.all_objects.filter(metadata__kind='ocr_page_checkpoint').count(),1)
+        self.expire(descriptor)
+        with self.assertRaisesMessage(ValueError,'fenced out'):
+            save_page(context,self.page_result())
+        record.refresh_from_db();self.assertEqual(set(read_pages(record)),{'1'})
+
+    def test_page_checkpoint_identity_and_checksum_are_verified(self):
+        record=self.record(self.setup_job());descriptor=claim_job(self.worker)
+        context=ExecutionContext(JobAttempt.all_objects.get(attempt_id=descriptor['attempt_id']),descriptor['fencing_token'])
+        save_page(context,self.page_result());record.refresh_from_db()
+        record.configuration['pages']['1']['sha256']='f'*64
+        with self.assertRaises(ValueError):read_pages(record)
 
     def expire(self, descriptor):
         JobAttempt.all_objects.filter(attempt_id=descriptor['attempt_id']).update(lease_expires_at=timezone.now()-timezone.timedelta(seconds=1))

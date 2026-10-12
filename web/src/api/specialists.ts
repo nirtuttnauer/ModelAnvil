@@ -13,7 +13,7 @@ export interface SpecialistResult {
 }
 
 export interface LayoutRegion { region_id: string; order: number; label: string; confidence: number; box: [number, number, number, number]; text?: string }
-export interface SpecialistJob { request_id: string; job_id: string; status: string; kind?: SpecialistKind; attempt_count: number; max_attempts: number; desired_action: string; error: string; result?: SpecialistResult | null }
+export interface SpecialistJob { request_id: string; job_id: string; status: string; kind?: SpecialistKind; attempt_count: number; max_attempts: number; desired_action: string; error: string; completed_pages?: number[]; page_count?: number; result?: SpecialistResult | null }
 
 export async function queueSpecialist(token: string, kind: SpecialistKind, request: Record<string, unknown>, pool: string, policy: string, signal?: AbortSignal) {
   if (!pool || !policy) throw new Error('Select a specialist worker pool and attempt quota.');
