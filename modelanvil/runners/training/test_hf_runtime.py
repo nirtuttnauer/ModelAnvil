@@ -19,6 +19,28 @@ from modelanvil.runners.training import hf_runtime as gpu
 
 
 class GPUInputTests(TestCase):
+    def test_guided_shuffle_visits_each_training_sample_once_and_replays_after_resume(self):
+        pins = {'sample_order': 'seeded_epoch_shuffle_v1', 'initialization_seed': 42}
+        first = [gpu.training_sample_index(step, 12, pins) for step in range(1, 13)]
+        second = [gpu.training_sample_index(step, 12, pins) for step in range(13, 25)]
+        self.assertEqual(sorted(first), list(range(12)))
+        self.assertEqual(sorted(second), list(range(12)))
+        self.assertNotEqual(first, second)
+        self.assertEqual(first[7:], [gpu.training_sample_index(step, 12, pins) for step in range(8, 13)])
+        self.assertEqual([gpu.training_sample_index(step, 12, {}) for step in range(1, 13)], list(range(12)))
+
+    def test_checkpoint_selection_prefers_validation_to_final_training_loss(self):
+        from unittest.mock import Mock
+        early = SimpleNamespace(step=20, metrics={'validation_loss': 1.5, 'loss': 2.0})
+        final = SimpleNamespace(step=30, metrics={'validation_loss': 2.0, 'loss': 0.1})
+        checkpoints = Mock()
+        checkpoints.filter.return_value.order_by.return_value = [early, final]
+        run = SimpleNamespace(checkpoints=checkpoints, current_step=30)
+        self.assertIs(gpu.best_checkpoint(run), early)
+        checkpoints.filter.return_value.order_by.return_value = [SimpleNamespace(step=30, metrics={})]
+        checkpoints.get.return_value = final
+        self.assertIs(gpu.best_checkpoint(run), final)
+
     def setUp(self):
         root = tempfile.TemporaryDirectory(); self.addCleanup(root.cleanup)
         override = override_settings(MODELANVIL={**settings.MODELANVIL, 'artifact_root': root.name, 'artifact_backend': 'filesystem'})
@@ -171,6 +193,17 @@ class GPUInputTests(TestCase):
         for tokens in ([1], list(range(129))):
             with self.assertRaisesRegex(ValueError, 'never truncated'):
                 gpu._training_samples(revision, SimpleNamespace(encode=lambda *a,**k:tokens), self.tenant.pk, self.project.pk)
+
+    def test_absent_validation_is_reported_without_using_training_examples(self):
+        revision = self.published()
+        prepared = json.loads(gpu.read_artifact(revision.manifest_artifact, self.tenant.pk, self.project.pk))
+        prepared['split_manifest'] = {'train': [r['sample_id'] for r in prepared['rows']], 'validation': [], 'test': []}
+        raw = json.dumps(prepared).encode(); revision.manifest_digest = hashlib.sha256(raw).hexdigest()
+        with patch.object(gpu, 'read_artifact', return_value=raw):
+            samples, summary = gpu._training_samples(revision, SimpleNamespace(encode=lambda *a, **k: [1, 2, 3]),
+                self.tenant.pk, self.project.pk, split='validation')
+        self.assertEqual(samples, [])
+        self.assertEqual(summary['consumed'], 'validation')
 
     def test_malformed_prepared_manifest_is_refused(self):
         revision = self.published();raw=b'[]';revision.manifest_digest=hashlib.sha256(raw).hexdigest()

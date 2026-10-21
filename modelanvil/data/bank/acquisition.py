@@ -37,6 +37,7 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.utils import timezone
 
+from modelanvil.core.ids import uuid7
 from modelanvil.artifacts.models import Artifact, Dataset, DatasetRevision, LineageEdge
 from modelanvil.artifacts.storage import artifact_storage_backend, upload_staged_artifact
 from modelanvil.budgets.models import BudgetPolicy, BudgetReservation, UsageEvent
@@ -244,7 +245,23 @@ def list_inventory(
         notices = [UpstreamRecord(entry["path"], entry["blob_sha1"], entry["size"]) for entry in manifest["licenses"]]
         return sorted(records, key=lambda record: record.path), notices
     base = _repository_api_base(card.upstream_repository)
-    payload = _read_json(f"{base}/git/trees/{card.pinned_revision}?recursive=1", transport)
+    try:
+        payload = _read_json(f"{base}/git/trees/{card.pinned_revision}?recursive=1", transport)
+    except UpstreamError as exc:
+        # Public GitHub API quotas must not prevent downloading pinned raw files.
+        inventory_path = card.evidence.get("inventory_path")
+        if str(exc) not in ("Upstream returned HTTP 403.", "Upstream returned HTTP 429.") or not inventory_path:
+            raise
+        root = Path(__file__).resolve().parents[3] / "catalog" / "qualified-datasets"
+        path = (root.parent.parent / inventory_path).resolve()
+        if not path.is_relative_to(root) or not path.is_file():
+            raise UpstreamError("Pinned upstream inventory is unavailable.") from None
+        raw = path.read_bytes()
+        if hashlib.sha256(raw).hexdigest() != card.evidence.get("inventory_sha256"):
+            raise UpstreamError("Pinned upstream inventory failed digest verification.") from None
+        payload = json.loads(raw)
+        if payload.get("revision") != card.pinned_revision:
+            raise UpstreamError("Pinned upstream inventory does not match the qualified revision.")
     if payload.get("truncated"):
         raise UpstreamError("Upstream tree listing was truncated; the scope cannot be bounded.")
     entries = payload.get("tree")
@@ -366,6 +383,7 @@ class AcquisitionLaunch:
 
 
 def _acquisition_pool(tenant_id: Any, pool_name: Optional[str] = None) -> WorkerPool:
+    from modelanvil.jobs.setup import local_capacity_available
     pools = WorkerPool.all_objects.filter(tenant_id=tenant_id, status="active")
     if pool_name:
         pools = pools.filter(name=pool_name)
@@ -374,7 +392,7 @@ def _acquisition_pool(tenant_id: Any, pool_name: Optional[str] = None) -> Worker
             tenant_id=tenant_id, pool=pool, slots__gte=1,
         ).exclude(status__in=(Worker.Status.OFFLINE, Worker.Status.DRAINING)).order_by("-slots", "id")
         for worker in workers:
-            if worker.capabilities.get(ACQUISITION_CAPABILITY) is True:
+            if worker.capabilities.get(ACQUISITION_CAPABILITY) is True and local_capacity_available(worker):
                 return pool
     raise AcquisitionCapacityError(
         "No registered acquisition worker is available for this tenant. An operator must "
@@ -484,6 +502,13 @@ def launch_acquisition(
             revision=preflight["source_revision"], project_policy=policy, download_scope=download_scope,
         )
         snapshot = SourceSnapshot.all_objects.select_for_update().get(pk=snapshot.pk, tenant_id=tenant_id)
+        saved_plan = snapshot.detail.get("acquisition") or {}
+        if saved_plan and (saved_plan.get("record_limit") != len(selected)
+                           or saved_plan.get("split_seed", "0") != split_seed):
+            raise AcquisitionRefused(
+                "This source revision already has a frozen acquisition scope in this project. "
+                "Restore or resume that acquisition; use another project to acquire a different subset."
+            )
         if snapshot.state == SourceSnapshot.State.READY:
             job = _existing_job(snapshot) or Job.all_objects.filter(
                 tenant_id=snapshot.tenant_id, payload__snapshot_id=str(snapshot.snapshot_id),
@@ -519,7 +544,7 @@ def launch_acquisition(
         snapshot.state = SourceSnapshot.State.INGESTING
         snapshot.save(update_fields=["detail", "state", "updated_at"])
 
-        job_id = uuid.uuid4()
+        job_id = uuid7()
         reservation = _reserve_budget(tenant_id, job_id, budget_policy_id, estimated_amount)
         job = Job.all_objects.create(
             tenant_id=tenant_id,
@@ -588,7 +613,7 @@ def resume_acquisition(
     _validate_budget(snapshot.tenant_id, budget_policy_id, estimated_amount, max(0, remaining))
     pool = _acquisition_pool(snapshot.tenant_id, pool_name)
     with transaction.atomic():
-        job_id = uuid.uuid4()
+        job_id = uuid7()
         reservation = _reserve_budget(snapshot.tenant_id, job_id, budget_policy_id, estimated_amount)
         job = Job.all_objects.create(
             tenant_id=snapshot.tenant_id,

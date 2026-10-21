@@ -1,7 +1,6 @@
 """Tenant-scoped budget admission, reservations, and idempotent usage events."""
 from __future__ import annotations
 
-import uuid
 from datetime import date
 from decimal import Decimal, ROUND_HALF_EVEN
 from typing import Any
@@ -11,6 +10,7 @@ from django.db import IntegrityError, models, transaction
 from django.db.models import Case, DecimalField, F, Sum, Value, When
 from django.utils import timezone
 
+from modelanvil.core.ids import uuid7
 from modelanvil.core.models import TenantContextModel, TenantScopedManager, TenantScopedQuerySet
 
 
@@ -20,7 +20,7 @@ class BudgetPolicy(TenantContextModel):
         MONTHLY = "monthly", "Monthly"
         LIFETIME = "lifetime", "Lifetime"
 
-    policy_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    policy_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     name = models.CharField(max_length=200)
     period = models.CharField(max_length=16, choices=Period.choices)
     unit = models.CharField(max_length=64)
@@ -43,7 +43,7 @@ class BudgetReservation(TenantContextModel):
         SETTLED = "settled", "Settled"
         RELEASED = "released", "Released"
 
-    reservation_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    reservation_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     policy = models.ForeignKey(BudgetPolicy, on_delete=models.PROTECT, related_name="reservations")
     job_id = models.UUIDField()
     estimated_amount = models.DecimalField(max_digits=24, decimal_places=6)
@@ -205,7 +205,7 @@ class RateRevision(AppendOnlyRecord):
 
 
 class UsageEvent(AppendOnlyRecord):
-    usage_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    usage_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     provider_event_key = models.CharField(max_length=255)
     quantity = models.DecimalField(max_digits=24, decimal_places=6)
     unit = models.CharField(max_length=64)
@@ -282,7 +282,7 @@ class UsageEvent(AppendOnlyRecord):
 
 
 class UsageAdjustment(AppendOnlyRecord):
-    adjustment_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    adjustment_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     usage_event = models.ForeignKey(UsageEvent, on_delete=models.PROTECT, related_name="adjustments")
     amount_delta = models.DecimalField(max_digits=24, decimal_places=6)
     reason = models.CharField(max_length=1000)

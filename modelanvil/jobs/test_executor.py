@@ -99,6 +99,22 @@ class ControlledExecutorTests(TestCase):
         self.assertEqual(self.job.status, Job.Status.SUCCEEDED)
         self.assertEqual(self.worker.slots, 1)
         self.assertIn("succeeded", output.getvalue())
+        self.assertIsNotNone(self.worker.last_heartbeat_at)
+        self.assertEqual(self.worker.status, Worker.Status.OFFLINE)
+
+    def test_operator_poll_reconnects_offline_workers_and_preserves_drain(self):
+        from django.utils import timezone
+        from modelanvil.jobs.setup import observe_operator_worker, connection_state
+        Worker.all_objects.filter(pk=self.worker.pk).update(status=Worker.Status.OFFLINE,
+            last_heartbeat_at=timezone.now()-timezone.timedelta(minutes=2))
+        self.worker.refresh_from_db()
+        self.assertEqual(connection_state(self.worker), 'offline')
+        observe_operator_worker(self.worker)
+        self.assertEqual(self.worker.status, Worker.Status.AVAILABLE)
+        self.assertIsNotNone(self.worker.last_heartbeat_at)
+        Worker.all_objects.filter(pk=self.worker.pk).update(status=Worker.Status.DRAINING)
+        observe_operator_worker(self.worker)
+        self.assertEqual(self.worker.status, Worker.Status.DRAINING)
 
     def test_executor_exception_is_committed_as_failed_attempt(self):
         spec = importlib.util.find_spec("modelanvil.jobs.executor")

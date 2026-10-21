@@ -55,7 +55,9 @@ class CampaignEngine:
             )
             audit_digest = hashlib.sha256(audit_payload.encode("utf-8")).hexdigest()
 
+        from modelanvil.core.tenancy import get_active_project
         campaign = LabelingCampaign.objects.create(
+            project_id=get_active_project(),
             tenant_id=tid,
             name=name,
             seed_mode=seed_mode,
@@ -199,7 +201,7 @@ class CampaignEngine:
     def close_batch(self, batch: CampaignBatch) -> CumulativeSnapshot:
         """Close batch, gather approved data, and commit an immutable cumulative snapshot (TECH-012)."""
         approved_tasks = AnnotationTask.objects.filter(
-            batch=batch, status=AnnotationTask.Status.COMPLETED
+            batch=batch, status__in=[AnnotationTask.Status.COMPLETED, AnnotationTask.Status.ADJUDICATED], needs_adjudication=False
         )
 
         new_items: list[dict[str, Any]] = []
@@ -215,6 +217,8 @@ class CampaignEngine:
                     "human_label": rec.human_label,
                     "decision": rec.decision,
                     "reviewer_id": rec.reviewer_id,
+                    "is_blind_review": rec.is_blind_review,
+                    "is_adjudication": rec.is_adjudication,
                     "cycle_approved": batch.cycle_no,
                 })
 

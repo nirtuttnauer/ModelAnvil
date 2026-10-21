@@ -38,12 +38,13 @@ def digest(value):
 def build_digest():
     from pathlib import Path
     root = Path(__file__).parent
-    return hashlib.sha256(b''.join((root / name).read_bytes() for name in ['engine.py', 'runtime.py', 'executor.py'])).hexdigest()
+    return hashlib.sha256(b''.join((root / name).read_bytes() for name in ['engine.py', 'runtime.py', 'executor.py', 'options.py'])).hexdigest()
 
 
 def capable_worker(worker):
+    from modelanvil.jobs.setup import setup_worker_ready
     caps = worker.capabilities
-    return (isinstance(caps, dict) and caps.get('training_runtime') == CONTRACT_DIGEST
+    return (isinstance(caps, dict) and setup_worker_ready(worker) and caps.get('training_runtime') == CONTRACT_DIGEST
             and type(caps.get('memory_bytes')) is int and caps['memory_bytes'] >= LIMITS['memory_bytes'])
 
 
@@ -79,8 +80,9 @@ def encode(text, spec):
     return ids
 
 
-def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, steps, require_capacity=True):
+def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, steps, require_capacity=True, hyperparameters=None):
     from modelanvil.artifacts.models import DatasetRevision
+    from modelanvil.runners.training.options import cpu_options, validation_sequences
     from modelanvil.jobs.models import Worker
     if not all([dataset, base, tokenizer, runner, pool]):
         raise ValueError('Select a published dataset, base weights, tokenizer, qualified runner and worker pool.')
@@ -147,12 +149,14 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
             or runner.manifest != runner_manifest()
             or runner.digest != digest(runner.manifest)):
         raise ValueError('Select an enabled runner manifest for the verified CPU contract.')
-    if pool.status != 'active':
+    if (pool.status != 'active' and (require_capacity or pool.status != 'draining')):
         raise ValueError('Activate the selected worker pool.')
     eligible = Worker.all_objects.filter(tenant_id=tenant, pool=pool, slots__gte=1,
         status__in=[Worker.Status.AVAILABLE, Worker.Status.BUSY])
     if require_capacity and not any(capable_worker(w) for w in eligible):
         raise ValueError('Register an available CPU worker with this runtime contract and at least 256 MiB RAM.')
+    optimizer, validation_interval = cpu_options(hyperparameters, {'algorithm': 'sgd', 'learning_rate': 0.05, 'momentum': 0})
+    validation = validation_sequences(prepared, encode, spec, samples, validation_interval, LIMITS['sequence_tokens'])
     pins = {
         'runtime': RUNTIME_ID, 'contract_digest': CONTRACT_DIGEST, 'dataset_id': str(dataset.revision_id),
         'build_digest': build_digest(),
@@ -160,10 +164,10 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
         'base_artifact_id': str(artifact.artifact_id), 'base_digest': hashlib.sha256(base_raw).hexdigest(),
         'tokenizer_id': str(tokenizer.tokenizer_id), 'tokenizer_digest': digest(spec),
         'runner_id': str(runner.manifest_id), 'runner_digest': runner.digest,
-        'pool_id': pool.pk, 'steps': steps, 'config': cfg, 'optimizer': {'algorithm': 'sgd', 'learning_rate': 0.05, 'momentum': 0},
-        'sample_digest': digest(samples),
+        'pool_id': pool.pk, 'steps': steps, 'config': cfg, 'optimizer': optimizer,
+        'sample_digest': digest(samples), 'validation': {'interval': validation_interval, 'digest': digest(validation)},
     }
-    return {'pins': pins, 'bundle': bundle, 'tokenizer': spec, 'samples': samples, 'sequences': encoded}
+    return {'pins': pins, 'bundle': bundle, 'tokenizer': spec, 'samples': samples, 'sequences': encoded, 'validation_sequences': validation}
 
 
 def is_worker_run(run):
@@ -220,7 +224,7 @@ def execute_training(run, context):
     runner = RunnerManifest.all_objects.get(manifest_id=pins['runner_id'], tenant_id=run.tenant_id)
     inputs = resolve_inputs(dataset=run.dataset_revision, base=run.base_model_version,
         tokenizer=run.tokenizer_version, runner=runner, pool=run.pool, tenant=run.tenant_id,
-        project=run.project_id, steps=run.total_steps, require_capacity=False)
+        project=run.project_id, steps=run.total_steps, require_capacity=False, hyperparameters=run.hyperparameters)
     if inputs['pins'] != pins or run.recipe_type != 'full_sft':
         raise ValueError('Pinned inputs changed since launch; create a new run.')
     if not capable_worker(context.attempt.worker):
@@ -246,6 +250,10 @@ def execute_training(run, context):
                    'training_pairs': len(sequence) - 1, 'cpu_seconds': time.process_time() - started,
                    'engine_wall_seconds': time.perf_counter() - wall_started,
                    'sample_id': inputs['samples'][(step - 1) % len(inputs['samples'])]['sample_id']}
+        from modelanvil.runners.training.options import validation_metrics
+        metrics.update(validation_metrics(inputs['validation_sequences'], pins['validation']['interval'], step, run.total_steps, model.compute_loss))
+        metrics['cpu_seconds'] = time.process_time() - started
+        metrics['engine_wall_seconds'] = time.perf_counter() - wall_started
         state = {'run_id': str(run.run_id), 'step': step, 'pins': pins,
                  'optimizer': {**pins['optimizer'], 'updates': step}, 'tokenizer': inputs['tokenizer'],
                  'weights': weights, 'data_b64': base64.b64encode(raw).decode(), 'metrics': metrics,
@@ -264,7 +272,7 @@ def execute_training(run, context):
 
 
 def _finalize_worker_job(job, status, *, runtime_id, contract_digest, model_name_prefix,
-                         checkpoint_bundle, is_worker_run):
+                         checkpoint_bundle, is_worker_run, select_checkpoint=None):
     """Shared terminal accounting and candidate creation for any worker runtime."""
     import io
     from django.utils import timezone
@@ -278,7 +286,7 @@ def _finalize_worker_job(job, status, *, runtime_id, contract_digest, model_name
     if status == Job.Status.SUCCEEDED:
         if run.current_step != run.total_steps:
             raise ValueError('Worker cannot declare success before all checkpointed steps complete.')
-        checkpoint = run.checkpoints.get(step=run.current_step)
+        checkpoint = select_checkpoint(run) if select_checkpoint else run.checkpoints.get(step=run.current_step)
         bundle = checkpoint_bundle(run, checkpoint)
         payload = json.dumps(bundle, sort_keys=True, allow_nan=False).encode()
         artifact = Artifact.all_objects.create(tenant_id=run.tenant_id, project_id=run.project_id,
@@ -291,6 +299,7 @@ def _finalize_worker_job(job, status, *, runtime_id, contract_digest, model_name
             project_id=run.project_id, model=model, revision_no=1, tokenizer=run.tokenizer_version,
             architecture_ref=runtime_id, artifact_manifest_id=str(artifact.artifact_id),
             state=ModelVersion.State.DRAFT, metadata={'source_run_id': str(run.run_id),
+                'selected_checkpoint_step': checkpoint.step,
                 'weights_sha256': bundle['weights_manifest.json']['weights_sha256'],
                 'runtime_contract': contract_digest, 'checkpoint_digest': checkpoint.state_digest})
         run.status = TrainingRun.Status.COMPLETED
@@ -298,9 +307,10 @@ def _finalize_worker_job(job, status, *, runtime_id, contract_digest, model_name
         run.status = TrainingRun.Status.CANCELLED if job.desired_action == Job.DesiredAction.CANCEL else TrainingRun.Status.FAILED
     reservation = BudgetReservation.all_objects.get(tenant_id=run.tenant_id,
         reservation_id=run.resource_reservation_id, job_id=job.job_id)
-    reservation.settle(run.current_step)
+    committed_steps = run.current_step - run.hardware_config.get('recovery', {}).get('start_step', 0)
+    reservation.settle(committed_steps)
     UsageEvent.record(tenant_id=run.tenant_id, provider_event_key=f'training:{run.run_id}',
-        quantity=run.current_step, unit='training_steps', reservation=reservation,
+        quantity=committed_steps, unit='training_steps', reservation=reservation,
         detail={'runtime': runtime_id, 'cpu_seconds': sum(m['cpu_seconds'] for m in run.metrics_log),
                 'training_pairs': sum(m['training_pairs'] for m in run.metrics_log), 'status': run.status})
     run.completed_at = timezone.now()

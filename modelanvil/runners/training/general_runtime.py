@@ -73,13 +73,14 @@ def runner_manifest():
 def build_digest():
     from pathlib import Path
     root = Path(__file__).parent
-    names = ['engine.py', 'runtime.py', 'general_runtime.py', 'general_transformer.py', 'autograd.py', 'executor.py']
+    names = ['engine.py', 'runtime.py', 'general_runtime.py', 'options.py', 'general_transformer.py', 'autograd.py', 'executor.py']
     return hashlib.sha256(b''.join((root / name).read_bytes() for name in names)).hexdigest()
 
 
 def capable_worker(worker):
+    from modelanvil.jobs.setup import setup_worker_ready
     caps = worker.capabilities
-    return (isinstance(caps, dict) and caps.get('training_runtime') == CONTRACT_DIGEST
+    return (isinstance(caps, dict) and setup_worker_ready(worker) and caps.get('training_runtime') == CONTRACT_DIGEST
             and type(caps.get('memory_bytes')) is int and caps['memory_bytes'] >= LIMITS['memory_bytes'])
 
 
@@ -156,7 +157,7 @@ def verify_external_loadable(bundle):
     }
 
 
-def generate_candidate_completion(bundle, prompt, max_new_tokens=8):
+def generate_candidate_completion(bundle, prompt, max_new_tokens=8, heartbeat=None):
     """Bounded greedy byte-level decoding; the byte tokenizer decodes back to text."""
     if type(max_new_tokens) is not int or not 1 <= max_new_tokens <= 32:
         raise ValueError('max_new_tokens must be between 1 and 32.')
@@ -168,6 +169,8 @@ def generate_candidate_completion(bundle, prompt, max_new_tokens=8):
     context = context[-model.context_window:]
     generated = []
     for _ in range(max_new_tokens):
+        if heartbeat is not None and not heartbeat():
+            raise ValueError('CPU transformer inference lost its lease or was cancelled.')
         logits = model.forward_logits(context)[-1]
         if not all(math.isfinite(v.data) for v in logits):
             raise ValueError('Non-finite inference logits.')
@@ -184,8 +187,9 @@ def generate_candidate_completion(bundle, prompt, max_new_tokens=8):
     }
 
 
-def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, steps, require_capacity=True):
+def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, steps, require_capacity=True, hyperparameters=None):
     from modelanvil.artifacts.models import DatasetRevision
+    from modelanvil.runners.training.options import cpu_options, validation_sequences
     from modelanvil.identity.models import check_resource_access
     from modelanvil.jobs.models import Worker
     if not all([dataset, base, tokenizer, runner, pool]):
@@ -260,31 +264,37 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
     cfg = _config_from_bundle(bundle)
     if base.architecture_ref != RUNTIME_ID or cfg.get('vocab_size') != tokenizer.vocabulary_size or bundle.get('tokenizer_config.json') != spec:
         raise ValueError('Base weights/config/tokenizer do not match the general transformer runtime.')
+    if any(len(sequence) > cfg['context_window'] for sequence in encoded):
+        raise ValueError(
+            f'Training text exceeds the pinned model context of {cfg["context_window"]} encoded byte tokens '
+            '(including BOS/EOS); prepare shorter text samples.')
     _load_general_export_model(bundle)
     if (not runner.enabled or runner.compatibility.get('contract_digest') != CONTRACT_DIGEST
             or runner.manifest != runner_manifest()
             or runner.digest != digest(runner.manifest)):
         raise ValueError('Select an enabled runner manifest for the verified general transformer contract.')
-    if pool.status != 'active':
+    if (pool.status != 'active' and (require_capacity or pool.status != 'draining')):
         raise ValueError('Activate the selected worker pool.')
     eligible = Worker.all_objects.filter(tenant_id=tenant, pool=pool, slots__gte=1,
         status__in=[Worker.Status.AVAILABLE, Worker.Status.BUSY])
     if require_capacity and not any(capable_worker(w) for w in eligible):
         raise ValueError('Register an available CPU worker with this runtime contract and at least 512 MiB RAM.')
     pinned_config = {**cfg, 'runtime': RUNTIME_ID}
+    optimizer, validation_interval = cpu_options(hyperparameters, OPTIMIZER)
+    validation = validation_sequences(prepared, encode, spec, samples, validation_interval, cfg['context_window'])
     pins = {
         'runtime': RUNTIME_ID, 'contract_digest': CONTRACT_DIGEST, 'dataset_id': str(dataset.revision_id),
         'build_digest': build_digest(), 'dataset_digest': dataset.manifest_digest,
         'base_id': str(base.model_version_id), 'base_artifact_id': str(artifact.artifact_id),
         'base_digest': hashlib.sha256(base_raw).hexdigest(), 'tokenizer_id': str(tokenizer.tokenizer_id),
         'tokenizer_digest': digest(spec), 'runner_id': str(runner.manifest_id), 'runner_digest': runner.digest,
-        'pool_id': pool.pk, 'steps': steps, 'config': pinned_config, 'optimizer': dict(OPTIMIZER),
-        'sample_digest': digest(samples),
+        'pool_id': pool.pk, 'steps': steps, 'config': pinned_config, 'optimizer': optimizer,
+        'sample_digest': digest(samples), 'validation': {'interval': validation_interval, 'digest': digest(validation)},
         'splits': {'consumed': 'train', 'train_rows': len(encoded),
                    'excluded_rows': {name: len(ids) for name, ids in excluded.items()},
                    'excluded_digest': digest(sorted(held_out))},
     }
-    return {'pins': pins, 'bundle': bundle, 'tokenizer': spec, 'samples': samples, 'sequences': encoded}
+    return {'pins': pins, 'bundle': bundle, 'tokenizer': spec, 'samples': samples, 'sequences': encoded, 'validation_sequences': validation}
 
 
 def is_worker_run(run):
@@ -317,7 +327,7 @@ def execute_training(run, context):
     runner = RunnerManifest.all_objects.get(manifest_id=pins['runner_id'], tenant_id=run.tenant_id)
     inputs = resolve_inputs(dataset=run.dataset_revision, base=run.base_model_version,
         tokenizer=run.tokenizer_version, runner=runner, pool=run.pool, tenant=run.tenant_id,
-        project=run.project_id, steps=run.total_steps, require_capacity=False)
+        project=run.project_id, steps=run.total_steps, require_capacity=False, hyperparameters=run.hyperparameters)
     if inputs['pins'] != pins or run.recipe_type != 'full_sft':
         raise ValueError('Pinned inputs changed since launch; create a new run.')
     if not capable_worker(context.attempt.worker):
@@ -356,6 +366,10 @@ def execute_training(run, context):
                    'training_pairs': len(sequence) - 1, 'cpu_seconds': time.process_time() - started,
                    'engine_wall_seconds': time.perf_counter() - wall_started,
                    'sample_id': inputs['samples'][(step - 1) % len(inputs['samples'])]['sample_id']}
+        from modelanvil.runners.training.options import validation_metrics
+        metrics.update(validation_metrics(inputs['validation_sequences'], pins['validation']['interval'], step, run.total_steps, lambda sequence: model.loss(sequence).data))
+        metrics['cpu_seconds'] = time.process_time() - started
+        metrics['engine_wall_seconds'] = time.perf_counter() - wall_started
         state = {'run_id': str(run.run_id), 'step': step, 'pins': pins,
                  'optimizer': {**pins['optimizer'], 'updates': step}, 'tokenizer': inputs['tokenizer'],
                  'weights': weights, 'data_b64': base64.b64encode(raw).decode(), 'metrics': metrics,

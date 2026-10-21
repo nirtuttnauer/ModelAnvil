@@ -38,6 +38,8 @@ from modelanvil.data.bank.acquisition import (
     resume_acquisition,
     select_records,
     UpstreamRecord,
+    list_inventory,
+    UpstreamError,
 )
 from modelanvil.data.bank.catalog import DatasetBankCatalog
 from modelanvil.data.models import SourceSnapshot
@@ -152,6 +154,24 @@ class BankAcquisitionTests(TestCase):
                 catalog=self.catalog, transport=self.upstream, **kwargs,
             )
 
+    def test_rate_limited_github_uses_checksum_pinned_inventory(self):
+        source = self.catalog.get_source('svg-lucide')
+        records, licenses = list_inventory(source, transport=lambda *args: (403, b'', {}))
+        self.assertEqual(len(records), 1877)
+        self.assertEqual(sum(record.size for record in records), 762249)
+        self.assertEqual([record.path for record in licenses], ['LICENSE'])
+        source.acquisition.evidence['inventory_sha256'] = '0' * 64
+        with self.assertRaisesMessage(UpstreamError, 'digest verification'):
+            list_inventory(source, transport=lambda *args: (429, b'', {}))
+
+    def test_inventory_fallback_cannot_change_the_pinned_revision(self):
+        source = self.catalog.get_source('svg-lucide')
+        source.acquisition.pinned_revision = 'f' * 40
+        with self.assertRaisesMessage(UpstreamError, 'qualified revision'):
+            list_inventory(source, transport=lambda *args: (403, b'', {}))
+        with self.assertRaisesMessage(UpstreamError, 'HTTP 500'):
+            list_inventory(source, transport=lambda *args: (500, b'', {}))
+
     def run_worker(self, context=None):
         descriptor = claim_job(self.worker)
         if descriptor is None:
@@ -241,6 +261,28 @@ class BankAcquisitionTests(TestCase):
         second = self.launch(record_limit=4)
         self.assertFalse(second.created)
         self.assertEqual(first.job.job_id, second.job.job_id)
+        self.assertEqual(Job.all_objects.count(), 1)
+
+    def test_observed_stale_and_draining_workers_refuse_acquisition_before_transfer(self):
+        for changes in ({'last_heartbeat_at':timezone.now()-timezone.timedelta(seconds=61)},
+                        {'drain_requested':True}):
+            Worker.all_objects.filter(pk=self.worker.pk).update(last_heartbeat_at=None,drain_requested=False)
+            Worker.all_objects.filter(pk=self.worker.pk).update(**changes)
+            with self.assertRaises(AcquisitionCapacityError):
+                self.launch(record_limit=4)
+            self.assertEqual(Job.all_objects.count(),0)
+            self.assertEqual(self.upstream.fetches,[])
+
+    def test_replays_cannot_silently_change_a_frozen_subset_or_split(self):
+        first = self.launch(record_limit=4)
+        for changes in ({'record_limit': 6}, {'record_limit': 4, 'split_seed': 'different'}):
+            with self.assertRaisesMessage(ValidationError, 'frozen acquisition scope'):
+                self.launch(**changes)
+        self.run_worker()
+        with self.assertRaisesMessage(ValidationError, 'frozen acquisition scope'):
+            self.launch(record_limit=6)
+        first.snapshot.refresh_from_db()
+        self.assertEqual(first.snapshot.item_count, 4)
         self.assertEqual(Job.all_objects.count(), 1)
 
     # -- execution -----------------------------------------------------------

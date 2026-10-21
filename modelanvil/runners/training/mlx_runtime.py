@@ -82,7 +82,10 @@ def capable_worker(worker):
 
 def resolve_inputs(**kwargs):
     kwargs.setdefault('recipe_type', 'qlora_adapter')
-    return hf.resolve_inputs(**kwargs, profile=sys.modules[__name__])
+    inputs = hf.resolve_inputs(**kwargs, profile=sys.modules[__name__])
+    if any('labels' in sample for sample in inputs['samples']):
+        raise ValueError('Chat SFT currently requires the managed FP32 GPU profile; native QLoRA accepts plain text only.')
+    return inputs
 
 
 def checkpoint_bundle(run, checkpoint):

@@ -102,12 +102,16 @@ def inspect_model(identifier, revision, tenant, project, *, format='safetensors'
     license_expression = (info.card_data or {}).get('license')
     if not isinstance(license_expression, str) or not license_expression:
         raise ValueError('Record model license evidence before importing this snapshot.')
+    from modelanvil.runners.capabilities import training_memory_requirements
+    training_supported = identifier == hf_runtime.SOURCE['repo_id'] and revision == hf_runtime.SOURCE['revision'] and format == 'safetensors'
     return {'repo_id': identifier, 'revision': revision, 'format': format, 'files': files,
             'byte_size': sum(v['byte_size'] for v in files.values()), 'license': license_expression,
             'gated': bool(info.gated), 'task': info.pipeline_tag,
             'architecture': (info.config or {}).get('model_type'),
             'parameters_count': getattr(info.safetensors, 'total', None),
-            'training_supported': identifier == hf_runtime.SOURCE['repo_id'] and revision == hf_runtime.SOURCE['revision'] and format == 'safetensors'}
+            'training_supported': training_supported,
+            'memory_requirements': {'weights_bytes': sum(v['byte_size'] for n, v in files.items() if n.endswith(('.safetensors', '.gguf'))),
+                'training': training_memory_requirements(hf_runtime.RUNTIME_ID) if training_supported else None}}
 
 
 @transaction.atomic
@@ -305,6 +309,14 @@ def model_import_executor(descriptor, context):
             item.status = 'completed'
             item.save(update_fields=['candidate', 'status', 'updated_at'])
     return None
+
+
+def finalize_import(job, status):
+    item = ModelImport.all_objects.select_for_update().get(job=job, tenant_id=job.tenant_id)
+    if status == 'succeeded' and not item.candidate_id:
+        raise ValueError('A successful model import must have verified candidate bytes.')
+    item.status = 'completed' if status == 'succeeded' else 'cancelled' if job.desired_action == 'cancel' else 'failed'
+    item.save(update_fields=['status', 'updated_at'])
 
 
 @transaction.atomic

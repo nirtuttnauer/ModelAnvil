@@ -3,11 +3,11 @@ from __future__ import annotations
 
 import hashlib
 import json
-import uuid
 from typing import Any, Callable, Optional
 from urllib.parse import urlparse
 
 from contracts.validate import validate_envelope
+from modelanvil.core.ids import uuid7
 from modelanvil.data.connectors.base import (
     BaseConnector,
     ConnectorConfig,
@@ -89,7 +89,7 @@ class RepositoryConnector(BaseConnector):
 
             max_items = limit or self.config.max_requests
             for idx, raw_record in enumerate(records[:max_items]):
-                item_id = str(raw_record.get("id") or raw_record.get("sample_id") or uuid.uuid4())
+                item_id = str(raw_record.get("id") or raw_record.get("sample_id") or uuid7())
                 if item_id in self.processed_ids:
                     continue
 
@@ -107,7 +107,7 @@ class RepositoryConnector(BaseConnector):
                     )
                     envelope = {
                         "schema_version": "1.0",
-                        "sample_id": str(uuid.uuid4()),
+                        "sample_id": str(uuid7()),
                         "source_group_id": f"repo-{self.config.pin_revision or 'main'}",
                         "blocks": [
                             {

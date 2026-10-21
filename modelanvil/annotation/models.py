@@ -1,13 +1,13 @@
 """Annotation records, rubric revisions, campaign lifecycle, and approved cumulative snapshots (WP-09, WP-10 / TECH-011-013)."""
 from __future__ import annotations
 
-import uuid
 from typing import Any, Optional
 
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
+from modelanvil.core.ids import uuid7
 from modelanvil.core.models import TenantContextModel
 from modelanvil.runners.models import ModelVersion
 
@@ -22,7 +22,7 @@ class LabelSchema(TenantContextModel):
         TEXT_GENERATION = "text_generation", "Text Generation"
         RUBRIC_SCORING = "rubric_scoring", "Rubric Scoring"
 
-    schema_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    schema_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     name = models.CharField(max_length=200)
     kind = models.CharField(max_length=32, choices=Kind.choices)
     classes = models.JSONField(default=list, blank=True)
@@ -40,7 +40,7 @@ class LabelSchema(TenantContextModel):
 class RubricRevision(TenantContextModel):
     """Guidelines and evaluation criteria for annotation review and quality."""
 
-    rubric_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    rubric_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     name = models.CharField(max_length=200)
     revision_no = models.PositiveIntegerField(default=1)
     guidelines_text = models.TextField()
@@ -68,7 +68,9 @@ class LabelingCampaign(TenantContextModel):
         MANUAL = "manual", "Manual Annotation"
         EXISTING_MODEL = "existing_model", "Existing Model Assisted"
 
-    campaign_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    campaign_id = models.UUIDField(default=uuid7, unique=True, editable=False)
+    project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, null=True, blank=True,
+        related_name='labeling_campaigns')
     name = models.CharField(max_length=200)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.ACTIVE)
     seed_mode = models.CharField(max_length=24, choices=SeedMode.choices)
@@ -104,7 +106,7 @@ class CampaignBatch(TenantContextModel):
         REVIEWING = "reviewing", "Reviewing"
         CLOSED = "closed", "Closed"
 
-    batch_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    batch_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     campaign = models.ForeignKey(LabelingCampaign, on_delete=models.CASCADE, related_name="batches")
     cycle_no = models.PositiveIntegerField()
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.OPEN)
@@ -135,7 +137,7 @@ class AnnotationTask(TenantContextModel):
         ADJUDICATED = "adjudicated", "Adjudicated"
         SKIPPED = "skipped", "Skipped"
 
-    task_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    task_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     campaign = models.ForeignKey(
         LabelingCampaign, null=True, blank=True, on_delete=models.CASCADE, related_name="tasks"
     )
@@ -146,6 +148,7 @@ class AnnotationTask(TenantContextModel):
     content = models.JSONField(default=dict)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.PENDING)
     assigned_reviewer = models.CharField(max_length=128, blank=True)
+    needs_adjudication = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f"Task {self.task_id} ({self.status}) [{self.sample_ref}]"
@@ -160,7 +163,7 @@ class AnnotationRecord(TenantContextModel):
         REJECTED = "rejected", "Rejected"
         SKIPPED = "skipped", "Skipped"
 
-    record_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    record_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     task = models.ForeignKey(AnnotationTask, on_delete=models.CASCADE, related_name="records")
     revision_no = models.PositiveIntegerField(default=1)
     reviewer_id = models.CharField(max_length=128)
@@ -168,6 +171,8 @@ class AnnotationRecord(TenantContextModel):
     human_label = models.JSONField(default=dict)
     decision = models.CharField(max_length=32, choices=Decision.choices)
     is_blind_preference = models.BooleanField(default=False)
+    is_blind_review = models.BooleanField(default=False)
+    is_adjudication = models.BooleanField(default=False)
     preference_choice = models.CharField(max_length=32, blank=True)  # "candidate_a", "candidate_b", "tie", "abstain"
     time_spent_seconds = models.FloatField(default=0.0)
 
@@ -183,12 +188,14 @@ class AnnotationRecord(TenantContextModel):
 class CumulativeSnapshot(TenantContextModel):
     """Committed, immutable cumulative dataset snapshot across completed campaign cycles."""
 
-    snapshot_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    snapshot_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     campaign = models.ForeignKey(LabelingCampaign, on_delete=models.CASCADE, related_name="snapshots")
     cycle_no = models.PositiveIntegerField()
     item_count = models.PositiveIntegerField(default=0)
     manifest_digest = models.CharField(max_length=64)
     items = models.JSONField(default=list)
+    dataset_revision = models.OneToOneField('artifacts.DatasetRevision', on_delete=models.PROTECT, null=True,
+        blank=True, related_name='annotation_snapshot')
 
     class Meta:
         constraints = [

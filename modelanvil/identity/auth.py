@@ -28,6 +28,11 @@ class ApiKeyAuthentication(authentication.BaseAuthentication):
 
     def authenticate(self, request: Request) -> Optional[tuple[object, ApiKey]]:
         auth = authentication.get_authorization_header(request)
+        cookie = request.COOKIES.get("modelanvil_session") if not auth else None
+        if cookie:
+            authentication.SessionAuthentication().enforce_csrf(request)
+            auth = f"Bearer {cookie}".encode()
+            request.modelanvil_cookie_auth = True
         if not auth:
             return None
         try:
@@ -53,6 +58,13 @@ class ApiKeyAuthentication(authentication.BaseAuthentication):
         tenant = key.tenant
         if not tenant.is_active():
             raise exceptions.AuthenticationFailed("Tenant is not active.")
+
+        if cookie:
+            from modelanvil.identity.models import Membership
+            membership = Membership.objects.filter(tenant=tenant, user=key.created_by, user__is_active=True).first()
+            if membership is None:
+                raise exceptions.AuthenticationFailed("Workspace access is no longer available.")
+            key.role = membership.role
 
         # Resolve project scope from key or request header
         project_id = key.project_id

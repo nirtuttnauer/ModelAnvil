@@ -33,6 +33,11 @@ class ExecutionContext:
 
     def heartbeat(self, progress: float | None = None) -> bool:
         """Renew the lease; return false when cancelled or fenced out."""
+        from modelanvil.jobs.setup import credential_active
+        worker = self.attempt.worker
+        if worker.capabilities.get("setup_profile") and not credential_active(worker):
+            self.lease_lost = True
+            return False
         if not renew_lease(self.attempt, self.fencing_token, progress):
             self.lease_lost = True
             return False

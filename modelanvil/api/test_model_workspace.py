@@ -66,12 +66,46 @@ class ModelWorkspaceTests(TestCase):
         inputs = {'files': self.files, 'name': 'Tiny real Llama', 'accepted_license': 'apache-2.0', 'idempotency_key': 'local-1', **overrides}
         return self.client.post('/api/v1/model-imports/', inputs, format='json')
 
+    def test_managed_instruction_bases_are_chat_snapshots_only_with_exact_allowlisted_files(self):
+        from modelanvil.runners.inference import snapshot, local_session
+        from modelanvil.runners.training import hf_runtime
+        imported = self.import_model()
+        version = ModelVersion.all_objects.get(model_version_id=imported.data['candidate_id'])
+        hashes = {name: ref['sha256'] for name, ref in self.files.items()}
+        for source, constant in ((hf_runtime.GUIDED_SOURCE, 'GUIDED_FILE_HASHES'), (hf_runtime.LARGE_GUIDED_SOURCE, 'LARGE_GUIDED_FILE_HASHES')):
+            with self.subTest(source=source), patch.object(hf_runtime, constant, hashes):
+                manifest = _store(io.BytesIO(json.dumps({'source': source, 'files': self.files}).encode()),
+                    tenant=self.tenant.pk, project=self.project.pk, name='snapshot.json')
+                version.metadata = {'managed_local': True, 'source': source, 'snapshot_manifest': manifest}
+                version.artifact_manifest_id = manifest['artifact_id']; version.architecture_ref = hf_runtime.RUNTIME_ID
+                ModelVersion.all_objects.filter(pk=version.pk).update(metadata=version.metadata,
+                    artifact_manifest_id=version.artifact_manifest_id, architecture_ref=version.architecture_ref)
+                catalog = self.client.get('/api/v1/inference/models/')
+                self.assertEqual([row['id'] for row in catalog.data['data']], [str(version.model_version_id)])
+                plan = snapshot(version, self.tenant.pk, self.project.pk)
+                self.assertEqual(plan['format'], 'safetensors')
+                self.assertEqual(plan['guided_large'], source == hf_runtime.LARGE_GUIDED_SOURCE)
+                with local_session(version, tenant=self.tenant.pk, project=self.project.pk) as session:
+                    self.assertEqual(session['format'], 'safetensors')
+                for changes in ({'source': {}}, {'managed_local': False}):
+                    version.metadata.update(changes)
+                    with self.assertRaises(ValueError):
+                        snapshot(version, self.tenant.pk, self.project.pk)
+                    version.metadata = {'managed_local': True, 'source': source, 'snapshot_manifest': manifest}
+                with patch.object(hf_runtime, constant, {**hashes, 'config.json': '0' * 64}):
+                    with self.assertRaises(ValueError):
+                        snapshot(version, self.tenant.pk, self.project.pk)
+
     def test_real_local_import_repeat_and_completion_matches_framework(self):
         response = self.import_model()
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(self.import_model().data['candidate_id'], response.data['candidate_id'])
         self.assertEqual(ModelImport.all_objects.count(), 1)
         version = ModelVersion.all_objects.get(model_version_id=response.data['candidate_id'])
+        compatibility = self.client.get(f'/api/v1/model-versions/{version.model_version_id}/').data['capabilities']
+        self.assertTrue(compatibility['chat']['eligible'])
+        self.assertIn('cpu', compatibility['chat']['devices'])
+        self.assertFalse(compatibility['train']['eligible'])
         self.assertEqual(version.state, 'draft')
         body = {'model': response.data['candidate_id'], 'messages': [{'role': 'user', 'content': 'hello world'}], 'max_tokens': 4}
         completed = self.client.post('/api/v1/inference/chat/completions', body, format='json')
@@ -134,8 +168,13 @@ class ModelWorkspaceTests(TestCase):
 
     def test_import_worker_executes_only_compatible_job_and_publishes_through_fence(self):
         from modelanvil.runners.model_catalog import launch_import
-        pool = WorkerPool.objects.create(tenant_id=self.tenant.pk, name='imports', queue_name='imports')
-        worker = Worker.objects.create(tenant_id=self.tenant.pk, pool=pool, name='local', slots=1, capabilities={'model_import': True})
+        from modelanvil.jobs.setup import observe_local_worker
+        self.key.role = Role.ADMIN; self.key.save(update_fields=['role'])
+        registered = self.client.post('/api/v1/workers/setup/', {'worker_name':'acquisition', 'pool':'imports', 'profile':'model-import'}, format='json')
+        self.assertEqual(registered.status_code, 201, registered.json())
+        self.assertIsNone(registered.data['runner_id'])
+        worker = Worker.all_objects.get(pk=registered.data['worker_id']); pool = worker.pool
+        observe_local_worker(worker, 'model-import', registered.data['worker_token'])
         plan = {'repo_id': 'owner/model', 'revision': 'a' * 40, 'license': 'apache-2.0', 'format': 'safetensors',
                 'files': {n: {'byte_size': r['byte_size'], 'sha256': r['sha256']} for n, r in self.files.items()}}
         item = launch_import(plan, name='Downloaded', tenant=self.tenant.pk, project=self.project, pool=pool,
@@ -175,6 +214,22 @@ class ModelWorkspaceTests(TestCase):
         stream.close()
         self.assertTrue(device_available('cpu'))
         self.assertEqual(self.client.post('/api/v1/inference/chat/completions', body, format='json').status_code, 200)
+
+    def test_conversation_configuration_accepts_and_preserves_chat_comparison_mode(self):
+        imported = self.import_model()
+        config = {'model': imported.data['candidate_id'], 'compare_model': None, 'compare_device': 'cpu',
+                  'device': 'cpu', 'max_tokens': 128, 'temperature': 0, 'seed': 42, 'prompt_format': 'model', 'system_prompt': ''}
+        for mode in ('blind', 'base-trained'):
+            with self.subTest(mode=mode):
+                response = self.client.post('/api/v1/chat-conversations/', {'title': 'Saved chat',
+                    'messages': [{'role': 'user', 'content': 'hello'}], 'configuration': {**config, 'comparison_mode': mode}}, format='json')
+                self.assertEqual(response.status_code, 201, response.content)
+                path = f"/api/v1/chat-conversations/{response.data['conversation_id']}/"
+                self.assertEqual(self.client.get(path).data['configuration']['comparison_mode'], mode)
+        for extra in ({'comparison_mode': 'unknown'}, {'unrecognized_option': True}):
+            response = self.client.post('/api/v1/chat-conversations/', {'title': 'Invalid chat',
+                'messages': [], 'configuration': {**config, **extra}}, format='json')
+            self.assertEqual(response.status_code, 400, response.content)
 
     def test_disconnect_releases_model_and_conversations_use_revision_checks(self):
         imported = self.import_model()
@@ -246,6 +301,11 @@ class ModelWorkspaceTests(TestCase):
             with zipfile.ZipFile(io.BytesIO(raw)) as archive:
                 self.assertEqual(archive.read('model.safetensors'), (Path(self.fixture.name) / 'model.safetensors').read_bytes())
                 self.assertEqual(json.loads(archive.read('modelanvil-provenance.json')), bundle)
+            with patch('modelanvil.runners.training.registry.verify_bundle', side_effect=AssertionError('Manifest downloads must not allocate a model')):
+                manifest = self.client.get(path + '?export_format=json')
+                self.assertEqual(manifest.status_code, 200)
+                self.assertEqual(json.loads(b''.join(manifest.streaming_content)), bundle)
+                manifest.close()
             artifact = Artifact.all_objects.get(artifact_id=self.files['model.safetensors']['artifact_id'])
             from modelanvil.artifacts.storage import artifact_storage_backend
             artifact_storage_backend()._path(self.tenant.pk, artifact.object_key, create_parent=False).write_bytes(b'corrupt')
@@ -254,6 +314,85 @@ class ModelWorkspaceTests(TestCase):
             ApiKey.objects.create(tenant=self.tenant, project=self.other, name='other download key', role=Role.ENGINEER, secret_hash=hashed)
             other = APIClient(); other.credentials(HTTP_AUTHORIZATION=f'Bearer {secret}')
             self.assertEqual(other.get(path).status_code, 404)
+
+    def test_adapter_export_contains_only_adapter_files_and_base_provenance(self):
+        import zipfile
+        from modelanvil.runners.models import TrainingRun
+        from modelanvil.runners.training import hf_runtime
+        imported = self.import_model()
+        version = ModelVersion.all_objects.get(model_version_id=imported.data['candidate_id'])
+        run = TrainingRun.all_objects.create(tenant_id=self.tenant.pk, project=self.project,
+            tokenizer_version=version.tokenizer, base_model_version=version, status='completed', recipe_type='lora_adapter',
+            hardware_config={'execution_mode': 'worker', 'pins': {'runtime': hf_runtime.RUNTIME_ID}})
+        # File-transfer fixture: archive selection is tested independently of adapter loading.
+        files = dict(self.files)
+        for name, data in [('adapter_config.json', b'{"base_model_name_or_path":"pinned-base"}'), ('adapter_model.safetensors', b'fixture-adapter-bytes')]:
+            files[name] = _store(io.BytesIO(data), tenant=self.tenant.pk, project=self.project.pk, name=name)
+        bundle = {'files': files, 'source': hf_runtime.SOURCE, 'provenance.json': {'run_id': str(run.run_id)}}
+        path = f'/api/v1/training-runs/{run.run_id}/'
+        self.assertEqual([o['format'] for o in self.client.get(path).data['export_options']], ['native', 'adapter', 'json'])
+        with patch('modelanvil.api.views.training_views.TrainingRunViewSet._worker_bundle', return_value=bundle):
+            response = self.client.get(path + 'download/?export_format=adapter')
+            self.assertEqual(response.status_code, 200)
+            raw = b''.join(response.streaming_content); response.close()
+            with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+                self.assertEqual(set(archive.namelist()), {'adapter_config.json', 'adapter_model.safetensors', 'modelanvil-provenance.json'})
+                self.assertEqual(archive.read('adapter_model.safetensors'), b'fixture-adapter-bytes')
+                provenance = json.loads(archive.read('modelanvil-provenance.json'))
+                self.assertEqual(provenance['source'], hf_runtime.SOURCE)
+                self.assertEqual(provenance['included_files'], ['adapter_config.json', 'adapter_model.safetensors'])
+            run.status = 'pending'; run.save(update_fields=['status'])
+            self.assertEqual(self.client.get(path).data['export_options'], [])
+            self.assertEqual(self.client.get(path + 'download/?export_format=adapter').status_code, 400)
+
+    def test_synthetic_download_registration_requires_post_and_write_permission(self):
+        from modelanvil.runners.models import TrainingRun
+        imported = self.import_model()
+        version = ModelVersion.all_objects.get(model_version_id=imported.data['candidate_id'])
+        run = TrainingRun.all_objects.create(tenant_id=self.tenant.pk, project=self.project,
+            tokenizer_version=version.tokenizer, status='completed', hardware_config={'execution_mode': 'simulation'})
+        path = f'/api/v1/training-runs/{run.run_id}/download/?export_format=json'
+        bundle = {'fixture': True}
+        with patch('modelanvil.api.views.training_views.TrainingEngine.export_candidate_model', return_value=(version, bundle)) as export, patch('modelanvil.runners.training.registry.verify_bundle'):
+            self.assertEqual(self.client.get(path).status_code, 400); export.assert_not_called()
+            response = self.client.post(path, {}, format='json')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(json.loads(b''.join(response.streaming_content)), bundle); response.close()
+            secret, hashed = generate_api_key()
+            ApiKey.objects.create(tenant=self.tenant, project=self.project, name='viewer export key', role=Role.VIEWER, secret_hash=hashed)
+            viewer = APIClient(); viewer.credentials(HTTP_AUTHORIZATION=f'Bearer {secret}')
+            export.reset_mock()
+            self.assertEqual(viewer.post(path, {}, format='json').status_code, 403); export.assert_not_called()
+
+    def test_failed_import_resumes_verified_files_and_preserves_worker_history(self):
+        from modelanvil.runners.model_catalog import launch_import
+        from modelanvil.jobs.models import JobAttempt
+        pool = WorkerPool.objects.create(tenant_id=self.tenant.pk, name='retry', queue_name='retry')
+        worker = Worker.objects.create(tenant_id=self.tenant.pk, pool=pool, name='local', slots=1, capabilities={'model_import': True})
+        plan = {'repo_id': 'owner/model', 'revision': 'a'*40, 'license': 'apache-2.0', 'format': 'safetensors',
+            'files': {n: {'byte_size': r['byte_size'], 'sha256': r['sha256']} for n, r in self.files.items()}}
+        item = launch_import(plan, name='Resumable', tenant=self.tenant.pk, project=self.project, pool=pool,
+            accepted_license='apache-2.0', idempotency_key='resume-1')
+        calls = []
+        def partial(item, name, pin, context):
+            calls.append(name)
+            if len(calls) == 2: raise ValueError('Interrupted transfer.')
+            return self.files[name]
+        with patch('modelanvil.runners.model_catalog.download_file', side_effect=partial):
+            result = execute_claim(worker, claim_job(worker), model_import_executor)
+        self.assertTrue(result['committed']); item.refresh_from_db(); self.assertEqual(item.status, 'failed')
+        self.assertEqual(len(item.acquired_files), 1); self.assertIsNone(item.candidate_id)
+        resumed = self.client.post(f'/api/v1/model-imports/{item.import_id}/resume/', {}, format='json')
+        self.assertEqual(resumed.status_code, 200, resumed.data)
+        self.assertEqual(self.client.post(f'/api/v1/model-imports/{item.import_id}/resume/', {}, format='json').status_code, 200)
+        second_calls = []
+        def download(item, name, pin, context): second_calls.append(name); return self.files[name]
+        with patch('modelanvil.runners.model_catalog.download_file', side_effect=download):
+            result = execute_claim(worker, claim_job(worker), model_import_executor)
+        self.assertTrue(result['committed']); item.refresh_from_db(); self.assertEqual(item.status, 'completed')
+        self.assertNotIn(calls[0], second_calls)
+        self.assertEqual(JobAttempt.all_objects.filter(job=item.job).count(), 2)
+        self.assertEqual(self.client.post(f'/api/v1/model-imports/{item.import_id}/resume/', {}, format='json').status_code, 400)
 
     def test_expired_import_attempt_cannot_publish_a_candidate(self):
         from modelanvil.runners.model_catalog import launch_import
@@ -324,7 +463,10 @@ class ModelWorkspaceTests(TestCase):
             tokenizer=base.tokenizer, architecture_ref=hf.RUNTIME_ID, artifact_manifest_id=manifest['artifact_id'],
             metadata={'source_run_id': str(run.run_id), 'checkpoint_digest': checkpoint.state_digest})
         run.output_model_version = candidate; run.save()
-        self.assertIn(str(candidate.model_version_id), [m['id'] for m in self.client.get('/api/v1/inference/models/').data['data']])
+        catalog = self.client.get('/api/v1/inference/models/').data['data']
+        entry = next(m for m in catalog if m['id'] == str(candidate.model_version_id))
+        self.assertEqual(entry['base_model_id'], str(base.model_version_id))
+        self.assertEqual(entry['training_run_id'], str(run.run_id))
         body = {'model': str(candidate.model_version_id), 'messages': [{'role': 'user', 'content': 'hello world'}], 'max_tokens': 2}
         with patch('requests.sessions.Session.request', side_effect=AssertionError('Candidate chat must stay offline')) as network:
             response = self.client.post('/api/v1/inference/chat/completions', body, format='json')
@@ -360,6 +502,18 @@ class ModelWorkspaceTests(TestCase):
         self.assertEqual(repeated.data['sides'], saved.data['sides'])
         self.assertEqual(ChatComparison.all_objects.count(), 1)
         path = f"/api/v1/chat-comparisons/{saved.data['comparison_id']}/"
+        self.assertEqual(self.client.get(path).data['sides'], saved.data['sides'])
+        self.assertTrue(all('role' not in side for side in self.client.get(path + '?view=base-trained').data['sides']))
+        from modelanvil.runners.models import TrainingRun
+        base = ModelVersion.all_objects.get(model_version_id=first)
+        trained = ModelVersion.all_objects.get(model_version_id=second)
+        pool = WorkerPool.all_objects.create(tenant_id=self.tenant.pk, name='comparison lineage')
+        job = Job.all_objects.create(tenant_id=self.tenant.pk, project=self.project, pool=pool, name='Completed lineage fixture', status='succeeded')
+        TrainingRun.all_objects.create(tenant_id=self.tenant.pk, project=self.project, job=job, status='completed',
+            base_model_version=base, output_model_version=trained, tokenizer_version=base.tokenizer)
+        named = self.client.get(path + '?view=base-trained')
+        self.assertEqual({side['role']: side['model'] for side in named.data['sides']}, {'base': first, 'trained': second})
+        self.assertTrue(all('name' in side for side in named.data['sides']))
         self.assertEqual(self.client.get(path).data['sides'], saved.data['sides'])
         voted = self.client.post(path + 'vote/', {'vote': 'A'}, format='json')
         self.assertEqual(voted.status_code, 200, voted.content)

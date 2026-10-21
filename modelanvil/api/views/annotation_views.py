@@ -6,7 +6,7 @@ import uuid
 from django.db import transaction
 from rest_framework import serializers, status
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.response import Response
 
 from modelanvil.annotation.campaign_engine import CampaignEngine
@@ -18,7 +18,7 @@ from modelanvil.api.views.registries import TenantScopedViewSet
 from modelanvil.core.models import record_audit
 from modelanvil.core.exceptions import WorkflowConflict as Conflict
 from modelanvil.core.tenancy import get_active_tenant, get_active_project
-from modelanvil.identity.models import check_resource_access
+from modelanvil.identity.models import check_resource_access, get_accessible_queryset, role_at_least, Role, ApiKey
 from modelanvil.runners.models import ModelVersion
 
 
@@ -31,6 +31,14 @@ def audit(request, action_name, resource, resource_id, **details):
 class ReadWorkflowViewSet(TenantScopedViewSet):
     # Reviewed history and snapshots are immutable through this API.
     http_method_names = ["get", "post", "head", "options"]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if qs.model == LabelingCampaign:
+            return qs
+        if hasattr(qs.model, 'campaign'):
+            return qs.filter(campaign__in=get_accessible_queryset(LabelingCampaign))
+        return qs
 
     def create(self, request, *args, **kwargs):
         from rest_framework.exceptions import MethodNotAllowed
@@ -50,9 +58,10 @@ class RubricSerializer(serializers.ModelSerializer):
 
 
 class SnapshotSerializer(serializers.ModelSerializer):
+    dataset_revision_id = serializers.UUIDField(source='dataset_revision.revision_id', read_only=True, allow_null=True)
     class Meta:
         model = CumulativeSnapshot
-        fields = ("snapshot_id", "cycle_no", "item_count", "manifest_digest", "created_at")
+        fields = ("snapshot_id", "cycle_no", "item_count", "manifest_digest", "created_at", "dataset_revision_id")
 
 
 class BatchSerializer(serializers.ModelSerializer):
@@ -91,9 +100,12 @@ class CampaignSetupSerializer(serializers.Serializer):
     drafting_model_id = serializers.UUIDField(required=False, allow_null=True)
     max_cycles = serializers.IntegerField(min_value=1, max_value=100, default=3)
     budget_limit_dollars = serializers.FloatField(min_value=0, max_value=1000000, default=100)
+    source_revision = serializers.UUIDField(required=False, allow_null=True)
     audit_sample_refs = serializers.ListField(child=serializers.CharField(max_length=128), default=list, max_length=10000)
 
     def validate(self, data):
+        if data['kind'] in ('ner_span', 'rubric_scoring'):
+            raise ValidationError('Structured span and rubric campaigns require a validated editor; these schemas are currently unsupported.')
         if LabelingCampaign.objects.filter(name=data["name"], tenant_id=get_active_tenant()).exists():
             raise ValidationError({"name": "A campaign with this name already exists."})
         if data["kind"] == "classification" and (not data["classes"] or len(set(data["classes"])) != len(data["classes"])):
@@ -106,6 +118,13 @@ class CampaignSetupSerializer(serializers.Serializer):
             raise ValidationError({"drafting_model_id": "Select the version that produced the imported drafts."})
         if data["seed_mode"] == "manual" and model is not None:
             raise ValidationError({"drafting_model_id": "Manual campaigns must not specify a drafting model."})
+        data["source_configuration"] = {}
+        if data.get('source_revision') and data['kind'] == 'preference_ranking':
+            raise ValidationError({'source_revision': 'Preference ranking requires manually imported samples with both candidate responses.'})
+        if data.get('source_revision'):
+            from modelanvil.annotation.publication import source_configuration
+            try: data['source_configuration'] = source_configuration(data['source_revision'], data['audit_sample_refs'])
+            except ValueError as exc: raise ValidationError({'source_revision': str(exc)}) from exc
         data["active_drafting_model"] = model
         return data
 
@@ -129,7 +148,7 @@ class CampaignViewSet(ReadWorkflowViewSet):
             seed_mode=data["seed_mode"], active_drafting_model=data["active_drafting_model"],
             max_cycles=data["max_cycles"], budget_limit_dollars=data["budget_limit_dollars"],
             audit_samples=[{"id": ref} for ref in data["audit_sample_refs"]],
-            configuration={"audit_sample_refs": data["audit_sample_refs"], "draft_source": "imported"},
+            configuration={"audit_sample_refs": data["audit_sample_refs"], "draft_source": "imported", **data["source_configuration"]},
         )
         audit(request, "create", "labeling_campaign", campaign.campaign_id)
         return Response(self.get_serializer(campaign).data, status=status.HTTP_201_CREATED)
@@ -155,9 +174,26 @@ class CampaignViewSet(ReadWorkflowViewSet):
             raise Conflict("The campaign must be active and have a remaining cycle.")
         if campaign.batches.exclude(status="closed").exists():
             raise Conflict("Close the current batch before starting another cycle.")
-        ser = SamplesSerializer(data=request.data)
-        ser.is_valid(raise_exception=True)
-        samples = ser.validated_data["samples"]
+        if campaign.configuration.get('source_revision'):
+            if request.data.get('samples'):
+                raise ValidationError('Pinned-source campaigns select eligible samples from their source revision.')
+            from modelanvil.annotation.publication import select_source_samples
+            limit = serializers.IntegerField(min_value=1, max_value=500).run_validation(request.data.get('limit', 100))
+            try: samples = select_source_samples(campaign, limit)
+            except ValueError as exc: raise ValidationError({'source': str(exc)}) from exc
+        else:
+            ser = SamplesSerializer(data=request.data)
+            ser.is_valid(raise_exception=True)
+            samples = ser.validated_data['samples']
+        for sample in samples:
+            # Match publication's field precedence so an unusable earlier field cannot mask a valid input.
+            source = sample.get('text', sample.get('prompt', sample.get('input')))
+            if campaign.label_schema.kind != 'preference_ranking' and (not isinstance(source, str) or not source.strip()):
+                raise ValidationError({'samples': f'Sample {sample["id"]} requires nonempty text, prompt, or input; the first supplied field is used.'})
+            if campaign.label_schema.kind == 'preference_ranking' and not all(
+                isinstance(sample.get(key), str) and sample[key].strip() for key in ('candidate_a', 'candidate_b')
+            ):
+                raise ValidationError({'samples': f'Sample {sample["id"]} requires nonempty candidate_a and candidate_b responses.'})
         audit_refs = set(campaign.configuration.get("audit_sample_refs", []))
         seen = set(campaign.tasks.values_list("sample_ref", flat=True))
         fingerprints = {sample_digest(c) for c in campaign.tasks.values_list("content", flat=True)}
@@ -166,7 +202,10 @@ class CampaignViewSet(ReadWorkflowViewSet):
             fingerprint = sample_digest(sample)
             if ref in seen or fingerprint in fingerprints:
                 raise ValidationError({"samples": f"Duplicate or previously used sample: {ref}."})
-            if ref in audit_refs or sample.get("protected") or sample.get("split") in ("audit", "test", "evaluation", "protected_eval", "held_out"):
+            if ref in audit_refs or sample.get("protected") or any(
+                str(sample.get(key, "")).strip().lower() in ("audit", "test", "validation", "val", "evaluation", "eval", "protected_eval", "held_out")
+                for key in ("split", "assigned_split")
+            ):
                 raise ValidationError({"samples": f"Protected audit/evaluation sample cannot enter training: {ref}."})
             if "draft_prediction" in sample:
                 if campaign.active_drafting_model is None:
@@ -198,8 +237,8 @@ class SamplesSerializer(serializers.Serializer):
         for sample in samples:
             if not isinstance(sample.get("id"), str) or not sample["id"].strip() or len(sample["id"]) > 128:
                 raise ValidationError("Every sample requires a unique string id (1–128 characters).")
-            if not any(key in sample for key in ("text", "prompt", "input", "candidate_a")):
-                raise ValidationError("Every sample needs text, prompt, input, or candidate_a content.")
+            if not any(isinstance(sample.get(key), str) and sample[key].strip() for key in ("text", "prompt", "input", "candidate_a")):
+                raise ValidationError("Every sample needs nonempty text, prompt, input, or candidate_a content.")
         return samples
 
 
@@ -216,27 +255,45 @@ def validate_label(schema, value):
 
 
 class RecordSerializer(serializers.ModelSerializer):
+    def to_representation(self, record):
+        data = super().to_representation(record)
+        if self.context.get('blind') or (self.context.get('request') and self.context['request'].query_params.get('blind') == '1'):
+            data.update(human_label={}, original_prediction={}, preference_choice='')
+        return data
+
     class Meta:
         model = AnnotationRecord
-        fields = ("record_id", "revision_no", "reviewer_id", "original_prediction", "human_label", "decision", "preference_choice", "created_at")
+        fields = ("record_id", "revision_no", "reviewer_id", "original_prediction", "human_label", "decision", "preference_choice", "is_blind_review", "is_adjudication", "created_at")
 
 
 class TaskSerializer(serializers.ModelSerializer):
+    def to_representation(self, task):
+        from copy import deepcopy
+        data = super().to_representation(task)
+        request = self.context.get('request')
+        if self.context.get('blind') or (request and request.query_params.get('blind') == '1'):
+            data['content'] = deepcopy(data['content']); data['content'].pop('draft_prediction', None); data['content'].pop('arena_vote', None); data['content'].pop('comparison_origin', None)
+            if data['latest_review']:
+                data['latest_review'] = {**data['latest_review'], 'human_label': {}, 'original_prediction': {}}
+        return data
+
     latest_review = serializers.SerializerMethodField()
 
     def get_latest_review(self, task):
         record = task.records.order_by("-revision_no").first()
-        return RecordSerializer(record).data if record else None
+        return RecordSerializer(record, context=self.context).data if record else None
 
     class Meta:
         model = AnnotationTask
-        fields = ("task_id", "sample_ref", "content", "status", "latest_review")
+        fields = ("task_id", "sample_ref", "content", "status", "latest_review", "assigned_reviewer", "needs_adjudication")
 
 
 class ReviewSerializer(serializers.Serializer):
     decision = serializers.ChoiceField(choices=AnnotationRecord.Decision.choices)
     human_label = serializers.DictField(default=dict)
     expected_revision = serializers.IntegerField(min_value=1)
+    blind_review = serializers.BooleanField(default=False)
+    adjudicate = serializers.BooleanField(default=False)
 
 
 class BatchViewSet(ReadWorkflowViewSet):
@@ -248,7 +305,7 @@ class BatchViewSet(ReadWorkflowViewSet):
     def tasks(self, request, batch_id=None):
         tasks = self.get_object().tasks.filter(tenant_id=get_active_tenant())
         page = self.paginate_queryset(tasks)
-        return self.get_paginated_response(TaskSerializer(page, many=True).data)
+        return self.get_paginated_response(TaskSerializer(page, many=True, context={'request': request}).data)
 
     @action(detail=True, methods=["post"])
     @transaction.atomic
@@ -262,7 +319,12 @@ class BatchViewSet(ReadWorkflowViewSet):
             raise Conflict("Resume the campaign before closing this batch.")
         if batch.tasks.filter(records__isnull=True).exists():
             raise Conflict("Review or skip every sample before closing the batch.")
+        if batch.tasks.filter(needs_adjudication=True).exists():
+            raise Conflict('Resolve escalated or conflicting reviews before closing this batch.')
         snapshot = CampaignEngine().close_batch(batch)
+        from modelanvil.annotation.publication import publish_snapshot
+        try: publish_snapshot(snapshot)
+        except ValueError as exc: raise ValidationError({'publication': str(exc)}) from exc
         if campaign.current_cycle + 1 >= campaign.max_cycles:
             campaign.status = "completed"
             campaign.save(update_fields=["status", "updated_at"])
@@ -278,7 +340,7 @@ class TaskViewSet(ReadWorkflowViewSet):
     @action(detail=True, methods=["get"])
     def history(self, request, task_id=None):
         page = self.paginate_queryset(self.get_object().records.filter(tenant_id=get_active_tenant()))
-        return self.get_paginated_response(RecordSerializer(page, many=True).data)
+        return self.get_paginated_response(RecordSerializer(page, many=True, context={'request': request}).data)
 
     @action(detail=True, methods=["post"])
     @transaction.atomic
@@ -298,6 +360,19 @@ class TaskViewSet(ReadWorkflowViewSet):
         latest = task.records.order_by("-revision_no").first()
         if data["expected_revision"] != (latest.revision_no if latest else 0) + 1:
             raise Conflict("Another reviewer changed this task. Refresh before submitting again.")
+        principal = f'{request.modelanvil_actor_kind}:{request.modelanvil_actor_id}'
+        adjudicate = data.pop('adjudicate')
+        blind = data.pop('blind_review') or request.query_params.get('blind') == '1'
+        if adjudicate and not role_at_least(request.modelanvil_role, Role.MANAGER):
+            raise PermissionDenied('Adjudication requires a manager.')
+        if task.needs_adjudication and not adjudicate:
+            raise Conflict('This task requires an authorized adjudication.')
+        if task.assigned_reviewer and task.assigned_reviewer != principal and not adjudicate:
+            raise PermissionDenied('This task is assigned to another reviewer.')
+        if blind and data['decision'] == 'accepted_without_edit':
+            raise ValidationError('Blind review requires an independently supplied label.')
+        if campaign.label_schema.kind in ('ner_span', 'rubric_scoring'):
+            raise ValidationError('Structured span and rubric review is unsupported until validated editors are available.')
         if data["decision"] in ("corrected", "accepted_without_edit"):
             validate_label(campaign.label_schema, data["human_label"])
             prediction = task.content.get("draft_prediction", {})
@@ -306,8 +381,53 @@ class TaskViewSet(ReadWorkflowViewSet):
         record = CampaignEngine().submit_review(task=task,
             reviewer_id=f'{request.modelanvil_actor_kind}:{request.modelanvil_actor_id}',
             **data, preference_choice=data["human_label"].get("label", "") if campaign.label_schema.kind == "preference_ranking" else "")
+        record.is_blind_review, record.is_adjudication = blind, adjudicate
+        record.save(update_fields=['is_blind_review', 'is_adjudication', 'updated_at'])
+        disagreement = bool(latest and latest.reviewer_id != principal and latest.human_label != record.human_label
+            and latest.decision in ('corrected', 'accepted_without_edit') and record.decision in ('corrected', 'accepted_without_edit'))
+        task.needs_adjudication = False if adjudicate else disagreement
+        if adjudicate: task.status = AnnotationTask.Status.ADJUDICATED
+        task.save(update_fields=['needs_adjudication', 'status', 'updated_at'])
         audit(request, "create", "annotation_review", record.record_id, task_id=str(task.task_id), decision=record.decision)
-        return Response(TaskSerializer(task).data, status=201)
+        return Response(TaskSerializer(task, context={'request': request, 'blind': blind}).data, status=201)
+
+    def _locked_task(self):
+        found = self.get_object()
+        LabelingCampaign.objects.select_for_update().get(pk=found.campaign_id)
+        CampaignBatch.objects.select_for_update().get(pk=found.batch_id)
+        return AnnotationTask.objects.select_for_update().select_related('campaign', 'batch').get(pk=found.pk)
+
+    @action(detail=True, methods=['post'])
+    @transaction.atomic
+    def escalate(self, request, task_id=None):
+        task = self._locked_task()
+        if task.batch.status == 'closed' or task.campaign.status != 'active':
+            raise Conflict('Only an active open review can be escalated.')
+        reason = serializers.CharField(max_length=2000).run_validation(request.data.get('reason'))
+        task.needs_adjudication = True
+        task.save(update_fields=['needs_adjudication', 'updated_at'])
+        audit(request, 'annotation.escalate', 'annotation_task', task.task_id, reason=reason)
+        return Response(self.get_serializer(task).data)
+
+    @action(detail=True, methods=['get', 'post'])
+    @transaction.atomic
+    def assignment(self, request, task_id=None):
+        task = self._locked_task()
+        if not role_at_least(request.modelanvil_role, Role.MANAGER):
+            raise PermissionDenied('Reviewer assignment requires a manager.')
+        keys = ApiKey.objects.filter(tenant_id=get_active_tenant(), is_active=True)
+        eligible = [key for key in keys if not key.is_expired() and role_at_least(key.role, Role.ENGINEER) and (not key.project_id or key.project_id == task.campaign.project_id)]
+        if request.method == 'GET':
+            return Response({'reviewers': [{'principal_id': f'api_key:{key.pk}', 'name': key.name} for key in eligible]})
+        if task.batch.status == 'closed' or task.campaign.status != 'active':
+            raise Conflict('Only active open review assignments can change.')
+        selected = serializers.CharField(max_length=128, allow_blank=True).run_validation(request.data.get('reviewer', ''))
+        if selected and selected not in [f'api_key:{key.pk}' for key in eligible]:
+            raise ValidationError('Select an authorized active reviewer in this project.')
+        task.assigned_reviewer = selected
+        task.save(update_fields=['assigned_reviewer', 'updated_at'])
+        audit(request, 'annotation.assign', 'annotation_task', task.task_id, reviewer=selected)
+        return Response(self.get_serializer(task).data)
 
 
 class SnapshotViewSet(ReadWorkflowViewSet):
