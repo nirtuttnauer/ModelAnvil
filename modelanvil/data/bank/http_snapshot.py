@@ -460,6 +460,28 @@ def validate_sample(source_id, payload):
                         or not isinstance(message["content"], str)
                     ):
                         raise ValueError()
+        elif source_id == "math-gsm8k":
+            if any(not isinstance(value[key], str) or not value[key].strip() for key in ("question", "answer")):
+                raise ValueError()
+        elif source_id == "code-mbpp":
+            if (
+                type(value["task_id"]) is not int
+                or value["task_id"] < 0
+                or any(not isinstance(value[key], str) or not value[key].strip() for key in ("text", "code"))
+                or not isinstance(value["test_list"], list)
+                or not value["test_list"]
+                or any(not isinstance(test, str) or not test.strip() for test in value["test_list"])
+                or not isinstance(value["test_setup_code"], str)
+                or not isinstance(value["challenge_test_list"], list)
+                or any(not isinstance(test, str) or not test.strip() for test in value["challenge_test_list"])
+            ):
+                raise ValueError()
+        elif source_id == "text-dolly15k":
+            if (
+                any(not isinstance(value[key], str) or not value[key].strip() for key in ("instruction", "response", "category"))
+                or not isinstance(value["context"], str)
+            ):
+                raise ValueError()
         elif source_id == "text-squad":
             context, question, answers = value["context"], value["question"], value["answers"]
             if (

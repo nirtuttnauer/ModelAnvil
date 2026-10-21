@@ -1,0 +1,477 @@
+{
+  "schema_version": "1.0",
+  "source_id": "text-dolly15k",
+  "upstream": {
+    "repository": "databricks/databricks-dolly-15k",
+    "commit": "bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a",
+    "file": "databricks-dolly-15k.jsonl",
+    "file_size": 13085339,
+    "publisher_lfs_sha256": "2df9083338b4abd6bceb5635764dab5d833b393b55759dffb0959b6fcbf794ec",
+    "full_file_checksum_verified": false
+  },
+  "containers": {
+    "data": {
+      "url": "https://huggingface.co/datasets/databricks/databricks-dolly-15k/resolve/bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a/databricks-dolly-15k.jsonl",
+      "size": 13085339,
+      "segments": [
+        {
+          "start": 0,
+          "length": 262144,
+          "sha256": "cb3cb6d345f28d1e6f52c42f25dd3ef6da5c460aeb08135fd45b02af005a17d0"
+        },
+        {
+          "start": 0,
+          "length": 734,
+          "sha256": "d86e3ccb19712db8f1a4c70daaba6c0c84f5f03b2070263e4d26f873b652e00b"
+        },
+        {
+          "start": 734,
+          "length": 125,
+          "sha256": "d3cfecc0a4842b5a23498fb54f63b1cc85dcc5fe297e19999deb0b579f211bd6"
+        },
+        {
+          "start": 859,
+          "length": 225,
+          "sha256": "d7828634277c924416227a468908055c108ca7f4e1410a9ef351d0c3d0dcbeac"
+        },
+        {
+          "start": 1084,
+          "length": 210,
+          "sha256": "9957897e8d6c514bad90b8ae2e41c8022c5b667480a8abb2ec7af6c3b7daa576"
+        },
+        {
+          "start": 1294,
+          "length": 1340,
+          "sha256": "15ecaa54581fe96f362b7bd999c6973c7066a1ccadb61af57892b8d5350d0cbe"
+        },
+        {
+          "start": 2634,
+          "length": 1156,
+          "sha256": "aba0e20e877bb75676f0477cf4c6cc0b75f08e221b25d100d1eb0d212b319329"
+        },
+        {
+          "start": 3790,
+          "length": 1625,
+          "sha256": "11c4c4be6147f911b38f7776c39f417059a8caacc497e6aba321d76a14a1a66a"
+        },
+        {
+          "start": 5415,
+          "length": 141,
+          "sha256": "cddb3d5af5b79a611b9b11a0b14dc99d402e82163c3b11dfed957836e3ad61c6"
+        },
+        {
+          "start": 5556,
+          "length": 157,
+          "sha256": "552e6ead5cb05d8711124d7368eba26e530d9675e024b3628f2f851bee894780"
+        },
+        {
+          "start": 5713,
+          "length": 2730,
+          "sha256": "1cce3d217fa26c938ed2a01c3a026272406d43b2ed4a5de977a535be3ca0bef3"
+        },
+        {
+          "start": 8443,
+          "length": 6430,
+          "sha256": "b2c0c20324eab03d74c3f9cd823218b5f8f435f12078aabad5b7e51efb485c0f"
+        },
+        {
+          "start": 14873,
+          "length": 930,
+          "sha256": "2092fa310d56b7d38fd5c8470f214769fe014263e98306492e6ebbb1620587fc"
+        },
+        {
+          "start": 15803,
+          "length": 1549,
+          "sha256": "48b5d6978fa8aa756b8c8baf3fc55a83143a9646487d9eace1d74629fa127eba"
+        },
+        {
+          "start": 17352,
+          "length": 504,
+          "sha256": "656e4ca00089e9ba7c62fd84612106eee9a3303f4e496925211dc44639d59b68"
+        },
+        {
+          "start": 17856,
+          "length": 543,
+          "sha256": "d51afb5dfe6771e3a282c1a63bc7f4d8e1444fe440c6df510edda0d6ea6204ac"
+        },
+        {
+          "start": 18399,
+          "length": 265,
+          "sha256": "97b03a8d738c56a3b7a89dc201bd144578be5b3609eac26fd6372c0c6391278e"
+        },
+        {
+          "start": 18664,
+          "length": 1508,
+          "sha256": "ec0b913771dbc02a364a36844aba768f5f1c56997c49183499723a9121c778c5"
+        },
+        {
+          "start": 20172,
+          "length": 406,
+          "sha256": "3987db1580f40a6f03e3f760432b10c6b41250544af70a07f2d6d9397d71ecb0"
+        },
+        {
+          "start": 20578,
+          "length": 929,
+          "sha256": "b4f536f1df9eba4fd64fc9cb39b7c71054676b38b92da66d64b10a8dea5a8f9c"
+        },
+        {
+          "start": 21507,
+          "length": 185,
+          "sha256": "23883ba517f3bfe54eaa25b5cff2841ed3ce61c8337b88a611371f6b9cbecfa6"
+        }
+      ]
+    }
+  },
+  "records": [
+    {
+      "path": "databricks-dolly-15k.jsonl#row=0",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 0,
+        "length": 734
+      },
+      "source_group_id": "dolly:prompt:bc2f75114d623ee46759ca3a28d402ef5081e026032dceee551cb2972d13b31e",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 726,
+      "sha256": "8a94735d0659f1722e0804d53c888801bc0681f85a4fada12a4e04b452123fd4",
+      "blob_sha1": "da9a9ae29297ba2b6aa9aab409f466cdd9c2b9d7"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=1",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 734,
+        "length": 125
+      },
+      "source_group_id": "dolly:prompt:817b56533fc24fd6b5b96bb9e4bc6eb0437bf9265d1ead9dec5e84a2140cb9c9",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 117,
+      "sha256": "689535ef073c5797972e93a06d6fe7c0101f23415dfb226b6fc702b010e707e1",
+      "blob_sha1": "eda2fb285e20c8df369367845a6898245a16bd27"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=2",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 859,
+        "length": 225
+      },
+      "source_group_id": "dolly:prompt:f9a37ec8e6455609af85ab64baee57a994fb42a67c67f38ebe89974861ef2195",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 217,
+      "sha256": "76b362de97e66958bedd7d5d530336b1b33b4b7a214fa69cf80c5b4a96186b59",
+      "blob_sha1": "8a378fccf7d97e2f04a218c689b09716b2fb22ce"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=3",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 1084,
+        "length": 210
+      },
+      "source_group_id": "dolly:prompt:854443eb5a9177ba62e6445a1d0c83678e6d727586df80f8a480aeb3a2fff4d0",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 199,
+      "sha256": "2febda8ff1491deb496970a222422fd2002091267248fc9a4a0458ae227a746f",
+      "blob_sha1": "4856f9c1f87b4874a0459dfd06f309bb81a7982f"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=4",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 1294,
+        "length": 1340
+      },
+      "source_group_id": "dolly:prompt:5db30eb1a5ce45abef281ab3b0514c657c3c60dce61305f3d1889036f9704b82",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 1332,
+      "sha256": "5703281eb7e50537a26b8949c93dd0f6cd9cc308a9d9f279e9b4d925a0c8440a",
+      "blob_sha1": "11d679366e7b4217ea5e786f25b1b79aefb7ba69"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=5",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 2634,
+        "length": 1156
+      },
+      "source_group_id": "dolly:prompt:1974ca00af9cacfc8acd3c33694d3f96ee996851a7e5d5432cf210da7bfd836c",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 1148,
+      "sha256": "3e86df7bcf87aa16bd99655610d0c4240be928edaad186d5903c951df467790d",
+      "blob_sha1": "190fa3c52ab03bff7f16b85fc2bf45354480796e"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=6",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 3790,
+        "length": 1625
+      },
+      "source_group_id": "dolly:prompt:6cebb7b002f6f5a9f75c4672b1dca111117a91ee621f6448f83ebd24b7a247f8",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 1589,
+      "sha256": "13ab8fe5ffb05531f87fbf692eaf91e88572ae6412394694ab64dd1ec46eedcb",
+      "blob_sha1": "9116ba965a133d50ad077f97ed1e4b567fa57502"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=7",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 5415,
+        "length": 141
+      },
+      "source_group_id": "dolly:prompt:7626ffe8368ef826fe215cbd9e985862d1ec41e24f3bffe55d43ee1a7eaf95b8",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 133,
+      "sha256": "d005df2ebf30214a5044466e6941a56e95f9125f5fd3d99934592df0535f0e46",
+      "blob_sha1": "0cd2d9d118fcbbbf7581267a70d0ea6911361f45"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=8",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 5556,
+        "length": 157
+      },
+      "source_group_id": "dolly:prompt:a1cae3564d49c3668a67defb6b8848e723d504d7d2861e559143acd15179a602",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 149,
+      "sha256": "e934a2e4f3df8a962d3b639d2d94ad9ba85d72e76348d95db031b4897a5d5235",
+      "blob_sha1": "8d68fc715d53a9ae90c7837205413aa2bdfedc87"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=9",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 5713,
+        "length": 2730
+      },
+      "source_group_id": "dolly:prompt:83fa9459591aaf704a73a0058a3d67ab2e00796064255a8c9ed50b5f0352f2d7",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 2707,
+      "sha256": "9537aaf0c25af751cc8ee093859446ecf6de864babd528305eadc6506b615715",
+      "blob_sha1": "89767b7d4fe7b107a7d49e662122caeead8c7b6f"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=10",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 8443,
+        "length": 6430
+      },
+      "source_group_id": "dolly:prompt:8c2a8b2087ee0dadfad3bd6ed5c904eba19f554a9f6382eb4f2b77bb41fd20d6",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 6416,
+      "sha256": "426c6e903c83aa5456540d8ec92220a79d7156026f6cdb201e4ba667bd20df25",
+      "blob_sha1": "b99604f2ae91a4e5a3afda2dd87664e0ba8f1141"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=11",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 14873,
+        "length": 930
+      },
+      "source_group_id": "dolly:prompt:f052433ec587ba575d3a868e1b94c89be519e85c4a778aabdbf7a4e98d6d7d6c",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 919,
+      "sha256": "ef6ed3a268f01f1bec1f780a06b5963d3e87f4b3a211bde4db705429766cbf28",
+      "blob_sha1": "84e33c6a677a468e406f94b7b859738d4cc3ddfd"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=12",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 15803,
+        "length": 1549
+      },
+      "source_group_id": "dolly:prompt:949e8ab096792f8c379356d6bb93986f98c35781b547dcb31980fdf9d80cd2d9",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 1446,
+      "sha256": "1b85329796752c4e62290a89289ffdb495359b0b6be4660dcf4c657998c6a2fb",
+      "blob_sha1": "b42ac1bb722f76a81ca76f1243e1b6a52066938d"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=13",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 17352,
+        "length": 504
+      },
+      "source_group_id": "dolly:prompt:c88b8e9bf8187eed5d1aa2300ef6bbb795f28c0da51fb48bd82785fd173af1bf",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 496,
+      "sha256": "3cfb28c40d69633f8f4093332b856d6d2749b5a53022bda755d0421ab064093f",
+      "blob_sha1": "b8f3b38122a5d1524df6f8841559abe3217ae378"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=14",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 17856,
+        "length": 543
+      },
+      "source_group_id": "dolly:prompt:7b376ab0d668572221483c89bab6e47a5b5403a58504d4f10cc256ffd064749d",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 535,
+      "sha256": "5089429ac3b4fb6b0e2114f2c3eacb6a5cb595bd3447fa47e7166a18710a1beb",
+      "blob_sha1": "f05cfee0993bacdd4987f5318cf137ce613c5da6"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=15",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 18399,
+        "length": 265
+      },
+      "source_group_id": "dolly:prompt:d5bf39a5187e36d49af40410ed4f2bf467488864b9da1b18bf0a0bf4c4b328b2",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 257,
+      "sha256": "eb4f2fe587aef566e85985ed143db0123e230de05a27c478af4523c3598fc87a",
+      "blob_sha1": "5249b46ef931b85564f7de2e74959763ecd72386"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=16",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 18664,
+        "length": 1508
+      },
+      "source_group_id": "dolly:prompt:5e853823ca061a0a2a88fb0bc9f3eebb6a9a885d0e5f94059f1555dc2117f34a",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 1500,
+      "sha256": "b9ab0527872255253e3f423d3cc4f19a3e70c8c7f68ed75b28b8102d07eaa7c5",
+      "blob_sha1": "e14d6cf21412c96da468756aafa76ba263f82ae9"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=17",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 20172,
+        "length": 406
+      },
+      "source_group_id": "dolly:prompt:503bf9db96b4f57dd10ff3fd762ce131fcd04dae1099ef720adab76e8b7e8449",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 398,
+      "sha256": "4ebf9dcbf0192dd81a9a94e28219325a7d3bb5e398e25eee4a64589588b6ba16",
+      "blob_sha1": "2109d3e691e0ddfc92cef5b8a485aec753e5286d"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=18",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 20578,
+        "length": 929
+      },
+      "source_group_id": "dolly:prompt:73217cdc332b1b36af71a8e8c5cc60064f501362e404bd695ba58d3c9c5183be",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 921,
+      "sha256": "4c1aaa9ff1eff0e1d5a8a46e3241f571721645f0700d232c9d96b47b619585af",
+      "blob_sha1": "649fe6935c8edfc864446f6b0bde9de10d2480c4"
+    },
+    {
+      "path": "databricks-dolly-15k.jsonl#row=19",
+      "reader": {
+        "kind": "json_slice",
+        "container": "data",
+        "start": 21507,
+        "length": 185
+      },
+      "source_group_id": "dolly:prompt:3cd7e48d30544527dd94fbd0fb5b538f4fd5255a3d43be8bcc362efb46d1302c",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": null
+      },
+      "size": 177,
+      "sha256": "52d0c679763692aaa7c51d5d1fd9989b535472228e63fde99eee9867f57c117d",
+      "blob_sha1": "b7f4982a0369455dce81895096fa4da0cbf9b997"
+    }
+  ],
+  "licenses": [
+    {
+      "path": "notice/publisher-card",
+      "archive_name": "text-dolly15k-publisher-card.txt",
+      "upstream_url": "https://huggingface.co/datasets/databricks/databricks-dolly-15k/resolve/bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a/README.md",
+      "size": 8199,
+      "sha256": "db06c60090a11b20e79d1933b2f316f781605f07761ff2ae2795d6523e3e960b",
+      "blob_sha1": "b72cf5c2c4e6f551e75c365cc8fd690601db4990"
+    }
+  ]
+}
