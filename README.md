@@ -27,6 +27,8 @@ ModelAnvil is a work in progress. Several local execution paths run real computa
 
 A labeling campaign currently produces reviewed snapshots. The automatic sequence of retraining a labeling model, qualifying it and drafting the next batch remains planned. The [iterative-labeling specification](docs/iterative-labeling.md) describes that intended loop and its acceptance criteria.
 
+The [developer and execution reference](docs/engineering/development-and-evidence.md) retains the detailed control-plane contracts, runtime evidence, Storybook coverage and integration-test procedures.
+
 GPU detection does not establish that a device can run a particular recipe. The checked-in SmolLM2 pilot covers one Apple MPS environment; CUDA, ROCm, Intel XPU and other configurations need their own qualification. The native Apple adapter report also records a bounded candidate's quality failure. Training completion alone does not authorize production promotion.
 
 ## Local development
@@ -45,7 +47,7 @@ make migrate
 make check
 ```
 
-`bootstrap_dev` creates an empty development workspace and a shared development identity/API key used by the browser. Run it only against a local development database. The defaults are deliberately insecure for public hosting. It does not create datasets, trained models or execution evidence.
+`bootstrap_dev` creates a local tenant, an admin user, an empty project and the shared development API key used by the browser. Run it only against a local development database. The defaults are deliberately insecure for public hosting. It does not create datasets, trained models or execution evidence.
 
 Start the API in one terminal, from the repository root:
 
@@ -76,7 +78,7 @@ npm --prefix web run storybook
 
 Open [localhost:6006](http://localhost:6006). Storybook uses the real components with synthetic API fixtures, including populated, empty, error, dark and mobile states. Its mock API resets between stories and is separate from the application backend. Story assertions verify UI behavior; their charts and outcomes are demo data. `npm --prefix web run build-storybook` builds the standalone demo.
 
-For API-backed interactions and their current limits, see the [frontend workspace guide](docs/engineering/frontend-workspace.md).
+For the Screens/States groups, action-story coverage, MSW behavior, axe checks and viewport tools, see [Storybook and browser verification](docs/engineering/development-and-evidence.md#storybook-and-browser-verification). For API-backed interactions and their current limits, see the [frontend workspace guide](docs/engineering/frontend-workspace.md).
 
 ## Architecture
 
@@ -113,6 +115,17 @@ This starts the development browser at `http://localhost:5173`, the API at `http
 
 The Compose reference uses development credentials and Django's development server. Keep it local. TLS, production secrets, backups and availability need an operator's deployment design. Managed S3 behavior and broader operational readiness remain unqualified.
 
+### Worker and transfer reference
+
+<a id="controlled-local-executor"></a>
+<a id="worker-credentials"></a>
+<a id="outbound-http-worker"></a>
+<a id="result-egress-boundary"></a>
+<a id="attempt-scoped-input-artifact-downloads"></a>
+<a id="resumable-artifact-uploads"></a>
+
+Read the preserved contracts for [local executors](docs/engineering/worker-operations.md#controlled-local-executor), [worker credentials](docs/engineering/worker-operations.md#worker-credentials), [outbound HTTP workers](docs/engineering/worker-operations.md#outbound-http-worker), [result-egress restrictions](docs/engineering/worker-operations.md#result-egress-boundary), [attempt-scoped downloads](docs/engineering/worker-operations.md#attempt-scoped-input-artifact-downloads), and [resumable uploads](docs/engineering/worker-operations.md#resumable-artifact-uploads).
+
 ## Checks
 
 From the repository root, with the Python environment installed:
@@ -128,7 +141,7 @@ npm --prefix web run build-storybook
 
 CI uses Python 3.12 and Node.js 24. It also checks fresh migrations/bootstrap and runs the backend suite against file-backed SQLite. To use a file-backed test database locally, set `DATABASE_TEST_NAME` to a separate temporary SQLite path before `make test`; Django manages that test database independently of your development data.
 
-The optional `make test-broker-integration`, `make test-accounting-integration`, `make test-worker-integration` and `make test-dataset-integration` targets start isolated Docker projects and remove their test stacks and volumes. They check specific PostgreSQL, broker or HTTP paths. None substitutes for model-quality evaluation, managed-storage qualification or production operations testing. See [CONTRIBUTING.md](CONTRIBUTING.md).
+The optional `make test-broker-integration`, `make test-accounting-integration`, `make test-worker-integration` and `make test-dataset-integration` targets start isolated Docker projects and remove their test stacks and volumes. They check specific PostgreSQL, broker or HTTP paths. The [test-target reference](docs/engineering/development-and-evidence.md#automated-checks-and-integration-boundaries) preserves each target's precise coverage, including broker callbacks, worker HTTP paths and concurrent accounting. None substitutes for model-quality evaluation, managed-storage qualification or production operations testing. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Limits and work in progress
 
@@ -138,6 +151,8 @@ The optional `make test-broker-integration`, `make test-accounting-integration`,
 - Production qualification and live promotion remain unavailable through unverified execution paths. Operator-installed executor code is trusted code; the worker protocol does not sandbox it.
 
 On 21 October 2026, [catalog additions (#10)](https://github.com/nirtuttnauer/ModelAnvil/pull/10), [guided training and reviewed releases (#11)](https://github.com/nirtuttnauer/ModelAnvil/pull/11), and [production packaging (#12)](https://github.com/nirtuttnauer/ModelAnvil/pull/12) are under review. Check their merge status before expecting those changes in `main`.
+
+<a id="planning-documents"></a>
 
 The [engineering planning pack](docs/engineering/README.md) and [implementation plan](docs/engineering/implementation-plan.md) describe proposed scope. Use the capability guides and dated evidence for implemented behavior. [Open issues](https://github.com/nirtuttnauer/ModelAnvil/issues) and [pull requests](https://github.com/nirtuttnauer/ModelAnvil/pulls) track ongoing work.
 
