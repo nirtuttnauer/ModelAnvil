@@ -36,3 +36,11 @@ Actual Mac inference used the previously pinned GLM-OCR/PP-DocLayoutV3 snapshots
 - The browser restored the real preview, admitted a reviewed full run, and displayed its completed publication and origins.
 
 Machine-readable evidence is in `verification/modelanvil-resume-recipes-2026-10-12.json`. These authored fixtures qualify execution and recovery mechanics. Representative document/model quality, non-Mac accelerators, remote generation providers and larger streaming recipes remain pending.
+
+Local recipe workers refresh their heartbeat while idle and become offline when stopped. `--once` is for a single poll, not persistent registration; run the normal command while submitting browser jobs. Completed full runs link to their exact published dataset revision for row, split, artifact and lineage inspection. The additional local acceptance run is recorded in [manual QA](verification/manual-qa-2026-10-12/local-workflows.md).
+
+## Local compute setup
+
+Infrastructure now offers **CPU data recipes** as a shipped profile. Register it with an active envelope pool, save the one-time credential and run the displayed `run_worker --profile cpu-recipes` command with the same database and artifact storage as the API. Deterministic CPU recipes need no optional generation packages. The worker advertises CPU generation only when the pinned inference packages are installed. Apple MPS and MLX generation retain the explicit `run_recipes --device` operator command. Newly provisioned profiles require fresh heartbeats and active credentials before queueing. Observed legacy workers are refused when stale, draining or without slots.
+
+Selecting a completed full recipe run restores its frozen definition and source/model/device bindings. Publication still requires selecting and reviewing a matching successful preview; restoring history never restores an approval checkbox.

@@ -45,7 +45,7 @@ Every successful/failed inference gets a principal-scoped request record with in
 
 `verification/modelanvil-specialists-2026-10-12.json` records real authenticated local HTTP execution: exact recovery of a four-line synthetic receipt on Metal, six correct department routes, all three decision primitives on MPS, explicit CPU execution, oversized/mask-token refusals, token-limited OCR refusal and immutable dataset publication. This is a small synthetic smoke suite, not representative OCR/model quality or probability calibration. The temporary qualification API key was deactivated. A second actual HTTP pilot is recorded in `verification/modelanvil-scanned-ocr-2026-10-12.json`: two image-only PDF pages contain no embedded text, both match their authored text exactly, and page-aware output publishes with lineage. Six-page, encrypted and blank PDFs are refused without partial publication.
 
-Layout extraction, larger independent OCR corpora, decision domain calibration, durable/cancellable budgeted specialist jobs, vision fine-tuning and other vendor GPU qualification remain pending. The selected Mac is the only accelerator used for these checks.
+Larger independent OCR corpora, decision domain calibration, vision fine-tuning and other vendor GPU qualification remain pending. Layout extraction and durable specialist execution are described below. The selected Mac is the only accelerator used for these checks.
 
 ## Layout extraction and durable specialist jobs
 
@@ -72,6 +72,8 @@ Use separate names/workers for `cpu` (layout-only/Laya CPU) and `mps:0` (Laya MP
 
 The child is supervised with renewable leases every 0.5 seconds, cancellation/fence checks and a 120-second deadline. Cancellation kills/reaps the child before admission is released. An API/worker crash leaves a durable job for reconciliation; an orphan child retains its device descriptor until it exits or its own deadline fires. A verified complete result checkpoint can be reused after a worker crashes between computation and commit. Publication and final accounting happen in the successful attempt's fence transaction; stale workers cannot publish, and cancellation wins over a staged success. Pool egress policy is checked again at checkpoint and publication.
 
-Recovery currently restarts an unfinished bounded document; it does not checkpoint individual partially recognized pages. A complete result checkpoint survives process loss. The worker runs independently of the API. Schedule the existing lease reconciler in the operator environment to recover dead workers.
+Recovery verifies and reuses completed page checkpoints, then processes missing pages. A complete result checkpoint also survives process loss. See [resumable pages and data recipes](resumable-pages-and-data-recipes.md). The worker runs independently of the API. Schedule the existing lease reconciler in the operator environment to recover dead workers.
 
 Qualification is a small authored Mac pilot. Representative multilingual documents, tables/formulas and Laya domain calibration remain pending, as do other GPU families.
+
+Trusted local specialist workers refresh their observed connection while idle and mark themselves offline when they stop. `--once` polls and executes at most one job, then exits offline; keep the normal command running while queueing work from the browser.

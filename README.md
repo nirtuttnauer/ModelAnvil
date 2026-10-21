@@ -10,11 +10,19 @@
 
 An open-source workspace for datasets, model training, alignment and evaluation. Built with Django and React, with a local development setup and a self-hosted control plane.
 
+See the [supported capability baseline](docs/engineering/supported-capabilities.md) for current operation-specific evidence and limits. Overview exposes local workflow measurements; Evaluation records explicit accept/reject decisions after verified candidate/baseline comparisons. These measurements stay in the installation and exclude prompts and credentials.
+
 The control plane includes tenant identity/RBAC, worker job protocol with lease fencing and reconciliation, a tenant-scoped RabbitMQ worker consumer, tenant-aware artifact and dataset metadata, source snapshots with canonical sample-envelope validation, runner/adapter registries, budget reservations/usage events, a React/Vite browser shell, and a local Compose reference.
 
 Worker fine-tuning now has separate bounded CPU reference runtimes and a pinned SmolLM2-135M GPU full-SFT runtime. These load verified base weights/tokenizers and published training samples, commit fenced checkpoints and produce independently loadable candidates. The [GPU pilot](docs/engineering/verification/task13-gpu-2026-10-11.md) covers one Apple MPS environment; other vendors and production serving need their own qualification. Alignment executes real bounded CPU character DPO, Bradley–Terry reward training, PPO RLHF and verifier RL. See the [alignment guide](docs/engineering/cpu-character-alignment.md) for supported models, preference inputs and execution limits. Other recipes retain their recorded fixture/integration scope. Bounded local evaluation, bundle exports and simulated quantization cannot authorize production qualification or promotion. See the [capability evidence audit](docs/engineering/capability-evidence.md) and [status ledger](docs/engineering/status.md).
 
 This is not a complete R1 platform. Managed-S3 transfer qualification, private-worker boundaries and operational qualification remain pending. Resumable artifact upload sessions now support checksummed parts, status/resume, idempotent completion/abort, and explicit-retention cleanup; they have not yet been qualified against a managed S3 provider. Job creation writes a transactional outbox event; the Compose publisher sends persistent, confirmed notifications to RabbitMQ with at-least-once delivery semantics. Expired worker leases are reconciled by a separate periodic Compose service; `make reconcile` runs one pass locally. SQLite is the default for fast local tests; PostgreSQL, RabbitMQ, and SeaweedFS S3-compatible storage are available in Compose. Compose credentials are insecure development defaults and must be replaced for any non-local use.
+
+## Guided fine-tuning
+
+New users can create an account and use **Training → Model → Dataset → Review → Train**. The guided path prepares pretrained SmolLM2-135M and its local execution resources automatically, accepts ordinary chat JSONL and prompt/response CSV, and provides progress, a trained-model download and a chat link.
+
+For the installation owner, start the API and managed training service together with `.venv-gpu/bin/python manage.py run_local` in the installed GPU environment, then start the existing web development server. Users need only the browser. See the [guided local fine-tuning guide](docs/engineering/guided-fine-tuning.md) for setup, account behavior, supported input limits and verification.
 
 ## Local development
 
@@ -28,7 +36,7 @@ make migrate
 make check test migration-check smoke
 ```
 
-The bootstrap command creates a local tenant, admin user, empty project and the development API key used by the browser. Use it only in a local development database. Use Storybook for populated demo screens; create datasets and models through the app for real execution.
+The bootstrap command creates a local tenant, admin user, empty project and a development API key for optional API-key connections. The guided browser flow starts with account creation instead. Use it only in a local development database. Use Storybook for populated demo screens; create datasets and models through the app for real execution.
 
 Start the API with `.venv/bin/python manage.py runserver` and the web UI with `cd web && npm ci && npm run dev`. The browser dev server proxies `/api` to `http://127.0.0.1:8000`.
 
@@ -112,6 +120,15 @@ Create a transfer session for a staging artifact with `POST /api/v1/artifacts/{a
 ## Checks
 
 `make check`, `make test`, `make migration-check`, and `make web-build` cover the current automated baseline. `make test-broker-integration` runs the broker callback and long-running consume-loop tests against isolated PostgreSQL and RabbitMQ containers, then removes that test stack and its volumes. `make test-worker-integration` rebuilds the API image and exercises the standalone worker against the real HTTP API backed by isolated PostgreSQL. `make test-accounting-integration` covers priced usage, adjustments and concurrent callback deduplication on PostgreSQL. These targets remove their test stacks and volumes. `make smoke` exercises identity and worker protocol behavior. Managed S3, automated transfer-cleanup scheduling, distributed worker allocation, recovery, and production readiness remain unqualified.
+
+## Production deployment
+
+The [production deployment runbook](deploy/production/README.md) covers the separate
+Gunicorn, PostgreSQL and Caddy stack, explicit migrations, HTTPS verification,
+backups and rollback. Run `make test-production` to build and exercise an isolated
+HTTPS deployment, including authentication and restart persistence. The test
+removes only its own containers and volumes. Hosted worker execution, account
+invitations, billing and recovery qualification remain separate SaaS milestones.
 
 ## Planning documents
 
