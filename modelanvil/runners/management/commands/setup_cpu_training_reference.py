@@ -6,6 +6,7 @@ import json
 import uuid
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
+from modelanvil.core.ids import uuid7
 from modelanvil.artifacts.models import Artifact, Dataset
 from modelanvil.artifacts.storage import artifact_storage_backend, upload_staged_artifact
 from modelanvil.budgets.models import BudgetPolicy
@@ -57,7 +58,7 @@ class Command(BaseCommand):
             metadata={'initialization': 'random numerical base; not a pretrained language model', 'seed': 123})
         rows = []
         for index, text in enumerate(['a small training example.', 'another text sample.']):
-            rows.append({'schema_version': '1.0', 'sample_id': str(uuid.uuid4()), 'source_group_id': str(index),
+            rows.append({'schema_version': '1.0', 'sample_id': str(uuid7()), 'source_group_id': str(index),
                 'blocks': [{'block_id': 'text', 'type': 'text', 'text': text}],
                 'provenance': {'source_snapshot_ref': 'cpu-reference', 'source_record_key': str(index),
                                'content_sha256': hashlib.sha256(text.encode()).hexdigest()}})

@@ -68,6 +68,23 @@ class LocalMlApiTests(TestCase):
         self.assertEqual(Model.all_objects.count(), 1)
         self.assertEqual(TokenizerVersion.all_objects.count(), 1)
 
+    def test_model_eligibility_requires_verified_bytes_and_supports_installed_transformer_base(self):
+        data = self.client.get(f'/api/v1/model-versions/{self.base.model_version_id}/').data
+        self.assertTrue(data['capabilities']['train']['eligible'])
+        self.assertTrue(data['capabilities']['evaluate']['eligible'])
+        self.assertFalse(data['capabilities']['production_qualified'])
+        self.assertTrue(data['capabilities']['chat']['eligible'])
+        artifact = Artifact.all_objects.get(artifact_id=self.base.artifact_manifest_id)
+        Artifact.all_objects.filter(pk=artifact.pk).update(state='staging')
+        self.assertFalse(self.client.get(f'/api/v1/model-versions/{self.base.model_version_id}/').data['capabilities']['train']['eligible'])
+        response = self.client.post('/api/v1/model-versions/initialize-cpu/',
+            {'name': 'Verified byte transformer', 'profile': 'cpu-transformer', 'seed': 0}, format='json')
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertTrue(response.data['model_version']['capabilities']['train']['eligible'])
+        version = ModelVersion.all_objects.get(pk=response.data['model_version']['id'])
+        self.assertEqual(version.tokenizer.vocabulary_size, 260)
+        self.assertEqual(version.metadata['initialization_seed'], 0)
+
     def test_actual_evaluation_scores_inference_not_expected_answers_and_is_repeat_safe(self):
         run_id = self.pending_eval(baseline=self.base)
         response = self.client.post(f'/api/v1/evaluation-runs/{run_id}/execute/', {'max_tokens': 4}, format='json')

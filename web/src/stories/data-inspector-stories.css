@@ -1,0 +1,10 @@
+.data-story-canvas { padding: 32px; max-width: 1160px; margin: 0 auto; }
+.data-story-board { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 24px; align-items: start; }
+.data-story-board > div { min-width: 0; }
+.data-story-board h2 { margin-top: 12px; }
+.data-story-narrow { width: 320px; max-width: 100%; }
+.data-story-narrow .data-story-board { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 700px) {
+  .data-story-canvas { padding: 16px; }
+  .data-story-board { grid-template-columns: minmax(0, 1fr); }
+}

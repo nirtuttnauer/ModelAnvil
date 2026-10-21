@@ -22,11 +22,20 @@ export function apiPath(path: string): string {
   return url.pathname + url.search;
 }
 
+export function authHeaders(token: string): Headers {
+  const headers = new Headers();
+  if (token === 'session') {
+    const csrf = typeof document === 'undefined' ? '' : document.cookie.split('; ').find(v => v.startsWith('csrftoken='))?.slice(10);
+    if (csrf) headers.set('X-CSRFToken', decodeURIComponent(csrf));
+  } else if (token.trim()) headers.set('Authorization', `Bearer ${token.trim()}`);
+  return headers;
+}
+
 export async function apiRequest<T>(path: string, token: string, init: RequestInit = {}): Promise<T> {
   const safePath = apiPath(path);
   if (!token.trim()) throw new Error('Enter an API key to connect to this workspace.');
   const headers = new Headers(init.headers);
-  headers.set('Authorization', `Bearer ${token.trim()}`);
+  authHeaders(token).forEach((value, name) => headers.set(name, value));
   if (activeProjectId) {
     headers.set('X-Project-ID', activeProjectId);
   }
@@ -36,17 +45,18 @@ export async function apiRequest<T>(path: string, token: string, init: RequestIn
     response = await fetch(safePath, { ...init, headers, redirect: 'error' });
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') throw error;
-    throw new Error('Could not reach the API. Check the Docker stack and try Refresh.');
+    throw new Error(token === 'session' ? 'Could not reach ModelAnvil. Try again when the app is available.' : 'Could not reach the API. Check the Docker stack and try Refresh.');
   }
+  if (response.ok && response.status === 204) return undefined as T;
   const body = await response.json().catch(() => null);
   if (!response.ok) {
     let message = `Request failed (HTTP ${response.status}).`;
-    if (response.status === 401) message = 'Authentication failed. Check your API key and reconnect.';
-    else if (response.status === 403) message = 'Your API key does not have permission for this action.';
+    if (response.status === 401) message = token === 'session' ? 'Your session expired. Sign in again.' : 'Authentication failed. Check your API key and reconnect.';
+    else if (response.status === 403) message = token === 'session' ? 'Your account does not have permission for this action. If you just signed in, refresh and try again.' : 'Your API key does not have permission for this action.';
     else if (response.status < 500) {
       message = body?.error?.message || body?.detail || (typeof body?.error === 'string' ? body.error : message);
       const details = body?.error?.details;
-      if (Array.isArray(details)) message += ' ' + details.map((d: { path?: string; message?: string }) => `${d.path || 'Request'}: ${d.message || 'Invalid value'}`).join(' ');
+      if (Array.isArray(details)) message += ' ' + details.map((d: { path?: string; message?: string }) => `${d.path && d.path !== '(root)' ? d.path + ': ' : ''}${d.message || 'Invalid value'}`).join(' ');
     }
     throw new ApiRequestError(message, response.status);
   }
@@ -65,11 +75,14 @@ export function nextPagePath(next: string, resource: string): string {
   // The Docker proxy can report an internal host in next links. Copy only
   // cursor parameters to the known local resource; never follow that host.
   const url = new URL(next, 'http://localhost');
-  if (url.pathname !== resource || url.username || url.password || url.hash ||
-      [...url.searchParams.keys()].some(key => !['cursor', 'page_size'].includes(key))) {
+  const base = new URL(apiPath(resource), 'http://localhost');
+  const filters = [...base.searchParams.keys()].filter(key => !['cursor', 'page_size'].includes(key));
+  if (url.pathname !== base.pathname || url.username || url.password || url.hash ||
+      [...url.searchParams.keys()].some(key => !['cursor', 'page_size', ...filters].includes(key)) ||
+      filters.some(key => url.searchParams.get(key) !== base.searchParams.get(key))) {
     throw new Error('Invalid pagination path.');
   }
-  return apiPath(resource + url.search);
+  return apiPath(base.pathname + url.search);
 }
 
 export function errorMessage(error: unknown): string {
@@ -78,7 +91,7 @@ export function errorMessage(error: unknown): string {
 
 export async function apiDownload(path: string, token: string): Promise<Blob> {
   if (!token.trim()) throw new Error('Connect to your workspace before downloading.');
-  const headers = new Headers({ Authorization: `Bearer ${token.trim()}` });
+  const headers = authHeaders(token);
   if (activeProjectId) headers.set('X-Project-ID', activeProjectId);
   const response = await fetch(apiPath(path), { headers, redirect: 'error' });
   if (!response.ok) throw new ApiRequestError(`Download failed (HTTP ${response.status}).`, response.status);
@@ -94,7 +107,7 @@ export async function saveArtifact(id: string, name: string, token: string, sign
   const project = getActiveProjectId();
   const handle = await picker.call(window, { suggestedName: name });
   if (signal?.aborted) return;
-  const headers = new Headers({ Authorization: `Bearer ${token.trim()}` });
+  const headers = authHeaders(token);
   if (project) headers.set('X-Project-ID', project);
   const response = await fetch(apiPath(`/api/v1/artifacts/${encodeURIComponent(id)}/download/`), { headers, signal, redirect: 'error' });
   if (!response.ok || !response.body) throw new Error(`Download failed (HTTP ${response.status}).`);

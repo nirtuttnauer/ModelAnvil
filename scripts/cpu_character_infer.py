@@ -70,11 +70,35 @@ def infer(bundle, prompt, count):
             'weights_sha256': hashlib.sha256(raw).hexdigest(), 'runtime': 'independent_stdlib_character_consumer'}
 
 
+def read_export(path):
+    if not path.is_dir():
+        if path.stat().st_size > 1024*1024:
+            raise ValueError('Bundle exceeds supported limits')
+        return json.loads(path.read_text())
+    manifest = json.loads((path / 'manifest.json').read_text())
+    if manifest['schema_version'] != 'modelanvil.local-export.v1' or len(manifest['files']) > 24:
+        raise ValueError('Invalid export manifest')
+    files = {}
+    for name, pin in manifest['files'].items():
+        if Path(name).name != name or not 0 <= pin['byte_size'] <= 2*1024**2:
+            raise ValueError('Invalid export path or size')
+        file = path / name
+        if file.stat().st_size != pin['byte_size']:
+            raise ValueError('File size mismatch')
+        raw = file.read_bytes()
+        if hashlib.sha256(raw).hexdigest() != pin['sha256']:
+            raise ValueError('File checksum mismatch')
+        files[name] = raw
+    bundle = {name: json.loads(raw) for name, raw in files.items() if name.endswith('.json')}
+    bundle['model.safetensors.b64'] = base64.b64encode(files['model.safetensors']).decode()
+    return bundle
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('bundle', type=Path); parser.add_argument('--prompt', default='')
     parser.add_argument('--max-tokens', type=int, choices=range(1, 33), default=8)
     args = parser.parse_args()
-    if args.bundle.stat().st_size > 1024 * 1024 or len(args.prompt) > 4096:
+    if len(args.prompt) > 4096:
         parser.error('Bundle or prompt exceeds supported limits')
-    print(json.dumps(infer(json.loads(args.bundle.read_text()), args.prompt, args.max_tokens)))
+    print(json.dumps(infer(read_export(args.bundle), args.prompt, args.max_tokens)))

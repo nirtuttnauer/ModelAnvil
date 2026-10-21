@@ -1,18 +1,18 @@
 """Versioned runner, adapter, model, tokenizer, and evaluation registry (WP-07, WP-08, WP-11)."""
 from __future__ import annotations
 
-import uuid
 from typing import Any
 
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
+from modelanvil.core.ids import uuid7
 from modelanvil.core.models import TenantContextModel
 
 
 class RunnerManifest(TenantContextModel):
-    manifest_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    manifest_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     name = models.CharField(max_length=200)
     version = models.CharField(max_length=64)
     digest = models.CharField(max_length=64)
@@ -38,7 +38,7 @@ class RunnerManifest(TenantContextModel):
 
 
 class AdapterRegistryEntry(TenantContextModel):
-    entry_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    entry_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     name = models.CharField(max_length=200)
     version = models.CharField(max_length=64)
     manifest_digest = models.CharField(max_length=64)
@@ -76,7 +76,7 @@ def compatible(entry: RunnerManifest | AdapterRegistryEntry, requirements: dict[
 class Model(TenantContextModel):
     """Logical registered model."""
 
-    model_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    model_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="models"
     )
@@ -94,7 +94,7 @@ class Model(TenantContextModel):
 class TokenizerVersion(TenantContextModel):
     """Exact tokenizer artifact with vocabulary and special token constraints."""
 
-    tokenizer_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    tokenizer_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="tokenizer_versions"
     )
@@ -127,7 +127,7 @@ class TokenizerVersion(TenantContextModel):
 class ProcessorVersion(TenantContextModel):
     """Multimodal or specialized preprocessor."""
 
-    processor_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    processor_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     name = models.CharField(max_length=200)
     revision_no = models.PositiveIntegerField(default=1)
     processor_type = models.CharField(max_length=64, default="multimodal")
@@ -150,7 +150,7 @@ class ModelVersion(TenantContextModel):
         REJECTED = "rejected", "Rejected"
         ARCHIVED = "archived", "Archived"
 
-    model_version_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    model_version_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="model_versions"
     )
@@ -197,7 +197,7 @@ class ModelVersion(TenantContextModel):
 
 
 class InferenceRequest(TenantContextModel):
-    request_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    request_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, related_name='inference_requests')
     model_version = models.ForeignKey(ModelVersion, on_delete=models.PROTECT, related_name='inference_requests')
     principal_id = models.CharField(max_length=128)
@@ -211,7 +211,7 @@ class InferenceRequest(TenantContextModel):
 
 
 class ChatConversation(TenantContextModel):
-    conversation_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    conversation_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, related_name='chat_conversations')
     title = models.CharField(max_length=180)
     messages = models.JSONField(default=list)
@@ -220,7 +220,9 @@ class ChatConversation(TenantContextModel):
 
 
 class ChatComparison(TenantContextModel):
-    comparison_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    review_campaign = models.ForeignKey('annotation.LabelingCampaign', on_delete=models.PROTECT,
+        null=True, blank=True, related_name='arena_comparisons')
+    comparison_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, related_name='chat_comparisons')
     conversation = models.ForeignKey(ChatConversation, on_delete=models.SET_NULL, null=True, related_name='comparisons')
     first_request = models.ForeignKey(InferenceRequest, on_delete=models.PROTECT, related_name='first_comparisons')
@@ -241,7 +243,7 @@ class ChatComparison(TenantContextModel):
 class ModelImport(TenantContextModel):
     """Pinned acquisition; only a live job fence may publish its candidate."""
 
-    import_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    import_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey("identity.Project", on_delete=models.PROTECT, related_name="model_imports")
     name = models.CharField(max_length=180)
     repo_id = models.CharField(max_length=200)
@@ -274,7 +276,7 @@ def validate_model_tokenizer_compatibility(model_version: ModelVersion, tokenize
 class EvaluationSuite(TenantContextModel):
     """Logical suite of evaluation test cases."""
 
-    suite_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    suite_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="evaluation_suites"
     )
@@ -291,7 +293,7 @@ class EvaluationSuite(TenantContextModel):
 class EvaluationSuiteVersion(TenantContextModel):
     """Pinned evaluation test cases, scorers, and judge configurations."""
 
-    suite_version_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    suite_version_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="evaluation_suite_versions"
     )
@@ -327,8 +329,9 @@ class EvaluationRun(TenantContextModel):
         RUNNING = "running", "Running"
         COMPLETED = "completed", "Completed"
         FAILED = "failed", "Failed"
+        CANCELLED = "cancelled", "Cancelled"
 
-    run_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    run_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="evaluation_runs"
     )
@@ -336,6 +339,8 @@ class EvaluationRun(TenantContextModel):
     candidate_model_version = models.ForeignKey(ModelVersion, on_delete=models.PROTECT, related_name="evaluation_runs")
     baseline_model_version = models.ForeignKey(ModelVersion, on_delete=models.SET_NULL, null=True, blank=True, related_name="baseline_runs")
     protocol_ref = models.JSONField(default=dict, blank=True)
+    job = models.ForeignKey('jobs.Job', on_delete=models.PROTECT, null=True, blank=True, related_name='evaluation_runs')
+    started_at = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.PENDING)
     completed_at = models.DateTimeField(null=True, blank=True)
 
@@ -346,7 +351,7 @@ class EvaluationRun(TenantContextModel):
 class EvaluationCaseResult(TenantContextModel):
     """Case-level execution result with prediction, score, and failure diagnostics."""
 
-    result_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    result_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     run = models.ForeignKey(EvaluationRun, on_delete=models.CASCADE, related_name="case_results")
     case_id = models.CharField(max_length=128)
     input_prompt = models.TextField(blank=True)
@@ -364,7 +369,7 @@ class EvaluationCaseResult(TenantContextModel):
 class EvaluationMetric(TenantContextModel):
     """Aggregate metric per slice with uncertainty / confidence intervals."""
 
-    metric_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    metric_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     run = models.ForeignKey(EvaluationRun, on_delete=models.CASCADE, related_name="metrics")
     key = models.CharField(max_length=64)
     slice_name = models.CharField(max_length=64, default="all")
@@ -379,7 +384,7 @@ class EvaluationMetric(TenantContextModel):
 class JudgeCalibration(TenantContextModel):
     """Calibration record establishing judge agreement with verified human evaluations."""
 
-    calibration_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    calibration_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     judge_model_version = models.ForeignKey(ModelVersion, on_delete=models.PROTECT, related_name="calibrations")
     human_sample_ref = models.CharField(max_length=128)
     agreement_score = models.FloatField(default=0.0)
@@ -408,7 +413,11 @@ class TrainingRun(TenantContextModel):
         FAILED = "failed", "Failed"
         CANCELLED = "cancelled", "Cancelled"
 
-    run_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    run_id = models.UUIDField(default=uuid7, unique=True, editable=False)
+    recovery_parent = models.OneToOneField('self', on_delete=models.PROTECT, null=True, blank=True,
+        related_name='recovery_execution')
+    recovery_checkpoint = models.ForeignKey('TrainingCheckpoint', on_delete=models.PROTECT, null=True,
+        blank=True, related_name='recovery_executions')
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="training_runs"
     )
@@ -467,7 +476,7 @@ class TrainingRun(TenantContextModel):
 class TrainingCheckpoint(TenantContextModel):
     """Deterministic, inspectable checkpoint of training weights and state."""
 
-    checkpoint_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    checkpoint_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     training_run = models.ForeignKey(
         TrainingRun, on_delete=models.CASCADE, related_name="checkpoints"
     )
@@ -507,7 +516,7 @@ class AlignmentRun(TenantContextModel):
         FAILED = "failed", "Failed"
         CANCELLED = "cancelled", "Cancelled"
 
-    run_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    run_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="alignment_runs"
     )
@@ -556,7 +565,7 @@ class AlignmentRun(TenantContextModel):
 class AlignmentCheckpoint(TenantContextModel):
     """Deterministic, inspectable checkpoint of alignment policy/reward state."""
 
-    checkpoint_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    checkpoint_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     alignment_run = models.ForeignKey(
         AlignmentRun, on_delete=models.CASCADE, related_name="checkpoints"
     )
@@ -573,3 +582,14 @@ class AlignmentCheckpoint(TenantContextModel):
 
     def __str__(self) -> str:
         return f"AlignmentCheckpoint {self.alignment_run_id} step {self.step}"
+
+
+class LocalTrainingHost(models.Model):
+    """Observed managed service state; no tenant data or host credentials."""
+    name = models.CharField(max_length=32, unique=True, default="local")
+    status = models.CharField(max_length=20, default="starting")
+    device = models.CharField(max_length=32, blank=True)
+    memory_bytes = models.PositiveBigIntegerField(default=0)
+    error = models.CharField(max_length=400, blank=True)
+    build_digest = models.CharField(max_length=64, blank=True)
+    last_heartbeat_at = models.DateTimeField(null=True)

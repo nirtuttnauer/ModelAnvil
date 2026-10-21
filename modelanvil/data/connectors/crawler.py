@@ -3,12 +3,12 @@ from __future__ import annotations
 
 import hashlib
 import re
-import uuid
 from dataclasses import asdict, dataclass, field
 from typing import Any, Callable, Optional
 from urllib.parse import urljoin, urlparse
 
 from contracts.validate import validate_envelope
+from modelanvil.core.ids import uuid7
 from modelanvil.data.connectors.base import (
     BaseConnector,
     ConnectorConfig,
@@ -153,7 +153,7 @@ class ScraplingCrawlerConnector(BaseConnector):
                 content_sha = hashlib.sha256(body).hexdigest()
                 envelope = {
                     "schema_version": "1.0",
-                    "sample_id": str(uuid.uuid4()),
+                    "sample_id": str(uuid7()),
                     "source_group_id": f"crawl-{urlparse(current_url).hostname}",
                     "blocks": [
                         {

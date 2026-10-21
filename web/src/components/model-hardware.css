@@ -1,0 +1,19 @@
+.model-hardware { min-width: 0; border: 1px solid var(--border); border-radius: 9px; padding: var(--space-18); margin: var(--space-16) 0; background: var(--surface-subtle); color: var(--text); }
+.model-hardware > header { display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: var(--space-12); }
+.model-hardware > header > div, .model-hardware-status { display: flex; align-items: center; gap: var(--space-8); }
+.model-hardware h4 { margin: 0; font-size: 15px; }
+.model-hardware-status { font-size: var(--type-12); color: var(--text-secondary); }
+.model-hardware-status svg { flex-shrink: 0; }
+.model-hardware-insufficient .model-hardware-status, .model-hardware-unsupported .model-hardware-status { color: var(--error); }
+.model-hardware-meets .model-hardware-status { color: var(--success); }
+.model-hardware dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-16); margin: var(--space-20) 0; }
+.model-hardware dl > div { min-width: 0; }
+.model-hardware dt { font-size: var(--type-12); color: var(--text-secondary); }
+.model-hardware dd { margin: 5px 0 0; font-size: var(--type-14); font-weight: 600; overflow-wrap: anywhere; }
+.model-hardware p { margin: var(--space-12) 0 0; line-height: 1.65; font-size: var(--type-13); }
+.model-hardware .model-hardware-basis { color: var(--text-secondary); font-size: var(--type-12); }
+.model-memory-meter { display: grid; gap: var(--space-8); }
+.model-memory-meter meter { width: 100%; height: 14px; accent-color: var(--primary); }
+.model-memory-meter span { color: var(--text-secondary); font-size: var(--type-12); }
+.ml-page .model-hardware { grid-column: 1 / -1; }
+@media (max-width: 540px) { .model-hardware dl { grid-template-columns: minmax(0, 1fr); gap: var(--space-12); } }

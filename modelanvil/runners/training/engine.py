@@ -486,7 +486,9 @@ class TrainingEngine:
 
     def export_candidate_model(self, run: TrainingRun) -> tuple[ModelVersion, dict[str, Any]]:
         """Register candidate ModelVersion and construct standalone external export bundle."""
-        model_name = f"{run.recipe_type}-candidate-{run.run_id.hex[:8]}"
+        # Legacy runs keep their existing registry names; UUIDv7 prefixes contain only time.
+        suffix = run.run_id.hex if run.run_id.version == 7 else run.run_id.hex[:8]
+        model_name = f"{run.recipe_type}-candidate-{suffix}"
         model, _ = Model.all_objects.get_or_create(
             tenant_id=run.tenant_id,
             project_id=run.project_id,

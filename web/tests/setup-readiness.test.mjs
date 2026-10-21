@@ -8,7 +8,7 @@ function fixture() {
     tokenizers: [{ id: 1, vocabulary_size: 49152, name: 'Actual tokenizer' }],
     models: [{ id: 1, state: 'draft', tokenizer: 1, artifact_manifest_id: 'weights', architecture_ref: 'native-runtime', model_name: 'Pinned base' }],
     pools: [{ id: 1, status: 'active' }],
-    workers: [{ pool: 1, status: 'available', slots: 1, capabilities: { training_runtime: 'exact-contract', memory_bytes: 8192 } }],
+    workers: [{ pool: 1, status: 'available', slots: 1, connection_state: 'connected', capabilities: { training_runtime: 'exact-contract', memory_bytes: 8192 } }],
     budgets: [{ enabled: true, unit: 'training_steps', currency: '', limit_amount: '30.000000' }],
     runners: [{ enabled: true, compatibility: { contract_digest: 'exact-contract' }, manifest: { resources: { memory_bytes: 8192 }, capabilities: [{ kind: 'train', architectures: ['native-runtime'] }] } }],
   };
@@ -25,6 +25,8 @@ test('drafts, metadata-only models, mismatched tokenizers, inactive or incompati
     ['models', 'modelVersionCount', { artifact_manifest_id: '' }], ['models', 'modelVersionCount', { tokenizer: 2 }],
     ['pools', 'workerPoolCount', { status: 'inactive' }], ['workers', 'workerPoolCount', { slots: 0 }],
     ['workers', 'workerPoolCount', { status: 'offline' }], ['workers', 'workerPoolCount', { capabilities: { training_runtime: 'other-contract', memory_bytes: 8192 } }],
+    ['workers', 'workerPoolCount', { connection_state: 'not_connected' }], ['workers', 'workerPoolCount', { connection_state: 'stale' }],
+    ['workers', 'workerPoolCount', { connection_state: 'credential_unavailable' }],
     ['workers', 'workerPoolCount', { capabilities: { training_runtime: 'exact-contract', memory_bytes: 4096 } }],
     ['runners', 'workerPoolCount', { enabled: false }], ['runners', 'workerPoolCount', { manifest: {} }],
     ['budgets', 'budgetPolicyCount', { enabled: false }], ['budgets', 'budgetPolicyCount', { unit: 'usd' }],

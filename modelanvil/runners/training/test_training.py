@@ -173,6 +173,36 @@ class ScratchAndFineTuningJourneyTests(TestCase):
         )
         self.engine = TrainingEngine()
 
+    def test_candidate_models_stay_distinct_for_uuid7_runs_with_the_same_time_prefix(self):
+        identifiers = [uuid.UUID('019a3621-4d78-7bd0-8e43-9a091242336a'),
+                       uuid.UUID('019a3621-4d78-7bd0-8e43-9a091242336b')]
+        runs = [TrainingRun.objects.create(
+            tenant_id=self.tenant.tenant_id, run_id=identifier,
+            recipe_type=TrainingRun.RecipeType.SCRATCH_PRETRAINING, tokenizer_version=self.tokenizer,
+            hyperparameters={'architecture': {'n_layer': 1, 'n_embd': 4, 'vocab_size': 1000}},
+            initialization_seed=42, total_steps=1,
+        ) for identifier in identifiers]
+        first, _ = self.engine.export_candidate_model(runs[0])
+        second, _ = self.engine.export_candidate_model(runs[1])
+        self.assertNotEqual(first.model_id, second.model_id)
+        self.assertEqual(first.revision_no, 1)
+        self.assertEqual(second.revision_no, 1)
+        repeated, _ = self.engine.export_candidate_model(runs[0])
+        self.assertEqual(repeated.model_id, first.model_id)
+        self.assertEqual(repeated.revision_no, 2)
+
+    def test_legacy_uuid4_run_exports_keep_the_existing_logical_model(self):
+        identifier = uuid.UUID('12345678-1234-4234-8234-123456789abc')
+        existing = Model.objects.create(tenant_id=self.tenant.tenant_id, name=f'scratch_pretraining-candidate-{identifier.hex[:8]}')
+        run = TrainingRun.objects.create(
+            tenant_id=self.tenant.tenant_id, run_id=identifier,
+            recipe_type=TrainingRun.RecipeType.SCRATCH_PRETRAINING, tokenizer_version=self.tokenizer,
+            hyperparameters={'architecture': {'n_layer': 1, 'n_embd': 4, 'vocab_size': 1000}},
+            initialization_seed=42, total_steps=1,
+        )
+        candidate, _ = self.engine.export_candidate_model(run)
+        self.assertEqual(candidate.model_id, existing.pk)
+
     def test_prd_scenario_1_scratch_model_journey(self):
         # 1. Initialize scratch run with recorded random initialization seed
         run = TrainingRun.objects.create(

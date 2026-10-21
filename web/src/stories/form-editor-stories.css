@@ -1,0 +1,6 @@
+.form-story-canvas { padding: 32px; max-width: 920px; margin: 0 auto; }
+.form-story-canvas form { display: grid; gap: 20px; }
+.form-story-canvas form > button { justify-self: start; }
+.form-story-canvas form > label { display: grid; gap: 6px; }
+.form-story-narrow { width: 320px; max-width: 100%; }
+@media (max-width: 600px) { .form-story-canvas { padding: 16px; } }

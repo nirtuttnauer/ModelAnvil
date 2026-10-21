@@ -1,19 +1,19 @@
 """Context Lab durable models: Recipes, Blocks, Memory Snapshots, Tool Fixtures, and Experiments (WP-13 / TECH-026-027)."""
 from __future__ import annotations
 
-import uuid
 from typing import Any
 
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from modelanvil.core.ids import uuid7
 from modelanvil.core.models import TenantContextModel
 
 
 class ContextRecipe(TenantContextModel):
     """Logical context composition recipe."""
 
-    recipe_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    recipe_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
 
@@ -39,7 +39,7 @@ class ContextRecipeVersion(TenantContextModel):
         PROMOTED = "promoted", "Promoted"
         ARCHIVED = "archived", "Archived"
 
-    recipe_version_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    recipe_version_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     recipe = models.ForeignKey(ContextRecipe, on_delete=models.CASCADE, related_name="versions")
     revision_no = models.PositiveIntegerField(default=1)
     model_limit_tokens = models.PositiveIntegerField(default=4096)
@@ -78,7 +78,7 @@ class ContextBlockRevision(TenantContextModel):
         ASSISTANT = "assistant", "Assistant"
         TOOL = "tool", "Tool"
 
-    block_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    block_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     recipe_version = models.ForeignKey(ContextRecipeVersion, on_delete=models.CASCADE, related_name="blocks")
     block_key = models.CharField(max_length=64)
     block_type = models.CharField(max_length=32, choices=BlockType.choices)
@@ -100,7 +100,7 @@ class ContextBlockRevision(TenantContextModel):
 class SessionMemorySnapshot(TenantContextModel):
     """Multi-turn memory snapshot isolating conversation sessions with expiry support (TECH-027)."""
 
-    session_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    session_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     session_key = models.CharField(max_length=128)
     revision_no = models.PositiveIntegerField(default=1)
     entries = models.JSONField(default=list)  # [{"role": ..., "content": ..., "timestamp": ..., "expired": bool}]
@@ -117,7 +117,7 @@ class SessionMemorySnapshot(TenantContextModel):
 class ToolFixtureVersion(TenantContextModel):
     """Frozen tool execution schemas, responses, and permissions for offline reproducible replay (TECH-027)."""
 
-    fixture_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    fixture_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     name = models.CharField(max_length=128)
     revision_no = models.PositiveIntegerField(default=1)
     tool_schemas = models.JSONField(default=list)
@@ -136,7 +136,7 @@ class ToolFixtureVersion(TenantContextModel):
 class ContextExperiment(TenantContextModel):
     """Paired stress suite or ablation experiment execution (TECH-027 / PRD Scenario 16)."""
 
-    experiment_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    experiment_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     name = models.CharField(max_length=200)
     recipe_version = models.ForeignKey(ContextRecipeVersion, on_delete=models.PROTECT, related_name="experiments")
     stress_type = models.CharField(max_length=64)  # position_sweep, overflow, injection, stale_memory, history_comparison

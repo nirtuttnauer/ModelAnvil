@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand, CommandError
 from modelanvil.data.recipe_jobs import recipe_executor, runtime_digest
 from modelanvil.jobs.executor import execute_one
 from modelanvil.jobs.models import Worker, WorkerPool
+from modelanvil.jobs.setup import observe_operator_worker
 
 
 class Command(BaseCommand):
@@ -43,8 +44,10 @@ class Command(BaseCommand):
         self.stdout.write(f'worker_id={worker.pk} device={device} generation={int(generation)}')
         try:
             while True:
+                observe_operator_worker(worker)
                 result=execute_one(worker,recipe_executor)
                 if result.get('claimed'):self.stdout.write(str(result))
                 if options['once']:return
                 if not result.get('claimed'):time.sleep(2)
         except KeyboardInterrupt:self.stdout.write('Recipe worker stopped.')
+        finally:Worker.all_objects.filter(pk=worker.pk).update(status=Worker.Status.OFFLINE)

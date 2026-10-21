@@ -32,6 +32,8 @@ SECRET_KEY = os.environ.get(
     "insecure-development-key-change-me-in-production",
 )
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
+MODELANVIL_SELF_SERVICE_ACCOUNTS = os.environ.get("MODELANVIL_SELF_SERVICE_ACCOUNTS", "1" if DEBUG else "0") == "1"
+MODELANVIL_LOCAL_MODEL_DIR = os.environ.get("MODELANVIL_LOCAL_MODEL_DIR", "")
 ALLOWED_HOSTS = [
     h.strip()
     for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,testserver").split(",")
@@ -60,6 +62,9 @@ else:
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": BASE_DIR / os.environ.get("DATABASE_NAME", "modelanvil.db"),
+            # Acquire the writer lock before reads so worker heartbeats cannot
+            # invalidate a later lock upgrade in a local API write transaction.
+            "OPTIONS": {"transaction_mode": "IMMEDIATE"},
             # HTTP tests need separate connections instead of shared in-memory SQLite.
             "TEST": {"NAME": os.environ.get("DATABASE_TEST_NAME")},
         }
@@ -168,6 +173,8 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_THROTTLE_RATES": {
         "anon": "60/min",
+        "accounts": "10/min",
+        "activation": "60/min",
         "user": "600/min",
         "worker": "1200/min",
     },

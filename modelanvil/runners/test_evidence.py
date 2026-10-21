@@ -104,7 +104,7 @@ class FixtureQualificationTests(TestCase):
         self.assertEqual(release_data['recorded_status'], 'qualified')
         self.assertEqual(release_data['status'], 'draft')
         endpoint = ServingEndpoint.objects.create(tenant_id=self.tenant, endpoint_key='legacy', name='legacy')
-        dep = DeploymentRevision.objects.create(tenant_id=self.tenant, endpoint=endpoint, release_version=self.rv)
+        dep = DeploymentRevision.objects.create(tenant_id=self.tenant, endpoint=endpoint, release_version=self.rv, readiness_state='ready')
         deployment_data = DeploymentRevisionSerializer(dep).data
         self.assertEqual(deployment_data['recorded_readiness_state'], 'ready')
         self.assertEqual(deployment_data['readiness_state'], 'pending')

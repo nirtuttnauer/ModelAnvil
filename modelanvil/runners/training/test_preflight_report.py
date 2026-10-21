@@ -155,7 +155,7 @@ class PreflightReportTests(TestCase):
         self.assert_no_allocation()
 
     def test_malformed_and_cross_tenant_inputs_do_not_escape_validation(self):
-        for body in [{'total_steps': 'bad'}, {'total_steps': 0}, {'total_steps': 1001},
+        for body in [{'total_steps': 'bad'}, {'total_steps': 0}, {'total_steps': 3001},
                      {'pool': 'invalid'}, {'budget_policy_id': 'bad'}, {'base_model_version': 99999},
                      {'project': str(uuid.uuid4())}]:
             with self.subTest(body=body):

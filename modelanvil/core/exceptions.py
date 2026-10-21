@@ -33,11 +33,6 @@ def _request_id(request: Any) -> str | None:
     return getattr(request, "modelanvil_request_id", None)
 
 
-def _envelope(api_error: ApiError) -> JsonResponse:
-    api_error.request_id = _request_id(api_error.request)  # type: ignore[attr-defined]
-    return JsonResponse(api_error.to_dict(), status=api_error.status_code)
-
-
 def api_exception_handler(exc: Exception, context: dict | None = None) -> JsonResponse | None:
     """Map an exception to a structured JSON error response."""
     request: Any = (context or {}).get("request")
@@ -60,7 +55,8 @@ def api_exception_handler(exc: Exception, context: dict | None = None) -> JsonRe
         details = [
             {"path": _dotted(k), "message": "; ".join(str(m) for m in v) if isinstance(v, (list, tuple)) else str(v)}
             for k, v in (exc.detail.items() if isinstance(exc.detail, dict) else [])
-        ] or [{"path": "(root)", "message": str(exc.detail)}]
+        ] or [{"path": "(root)", "message": "; ".join(str(m) for m in exc.detail)
+               if isinstance(exc.detail, (list, tuple)) else str(exc.detail)}]
         api_error = ApiError(ErrorCode.VALIDATION_FAILED, "Validation failed.", 400, details=details)
     elif isinstance(exc, drf_exceptions.MethodNotAllowed):
         api_error = ApiError(ErrorCode.INVALID_TRANSITION, "Method not allowed.", 405)

@@ -1,13 +1,13 @@
 """Source registry and immutable ingestion snapshot metadata."""
 from __future__ import annotations
 
-import uuid
 from typing import Any
 
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
+from modelanvil.core.ids import uuid7
 from modelanvil.core.models import TenantContextModel
 
 
@@ -18,7 +18,7 @@ class DataSource(TenantContextModel):
         REPOSITORY = "repository", "Repository/API"
         CRAWLER = "crawler", "Crawler"
 
-    source_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    source_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="data_sources"
     )
@@ -39,7 +39,7 @@ class SourceSnapshot(TenantContextModel):
         FAILED = "failed", "Failed"
         CANCELLED = "cancelled", "Cancelled"
 
-    snapshot_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    snapshot_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="source_snapshots"
     )
@@ -104,7 +104,7 @@ def validate_sample_envelope(document: Any) -> dict[str, Any]:
 
 class RecipeRun(TenantContextModel):
     """Frozen recipe bindings and fenced, immutable step/row checkpoints."""
-    run_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    run_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, related_name='recipe_runs')
     job = models.OneToOneField('jobs.Job', on_delete=models.PROTECT, related_name='recipe_run')
     recipe = models.ForeignKey('artifacts.Artifact', on_delete=models.PROTECT, related_name='recipe_runs')

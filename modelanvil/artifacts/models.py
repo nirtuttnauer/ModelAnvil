@@ -8,7 +8,7 @@ never modifies an earlier revision.
 from __future__ import annotations
 
 import re
-import uuid
+
 from datetime import timedelta
 from typing import Any
 
@@ -16,6 +16,7 @@ from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.utils import timezone
 
+from modelanvil.core.ids import uuid7
 from modelanvil.core.models import TenantContextModel
 
 
@@ -32,7 +33,7 @@ class Artifact(TenantContextModel):
         TOMBSTONED = "tombstoned", "Tombstoned"
         FAILED = "failed", "Failed"
 
-    artifact_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    artifact_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="artifacts"
     )
@@ -96,7 +97,7 @@ class Artifact(TenantContextModel):
 
 
 class Dataset(TenantContextModel):
-    dataset_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    dataset_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="datasets"
     )
@@ -122,7 +123,7 @@ class DatasetRevision(TenantContextModel):
         PUBLISHED = "published", "Published"
         FAILED = "failed", "Failed"
 
-    revision_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    revision_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="dataset_revisions"
     )
@@ -190,7 +191,7 @@ class DatasetRevision(TenantContextModel):
 
 
 class LineageEdge(TenantContextModel):
-    edge_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    edge_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     parent_artifact = models.ForeignKey(Artifact, on_delete=models.PROTECT, related_name="outgoing_lineage")
     child_artifact = models.ForeignKey(Artifact, on_delete=models.PROTECT, related_name="incoming_lineage")
     relation = models.CharField(max_length=64)
@@ -214,7 +215,7 @@ class LineageEdge(TenantContextModel):
 class WorkerArtifactGrant(TenantContextModel):
     """Short-lived input download authority for one worker execution."""
 
-    grant_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    grant_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     attempt = models.ForeignKey("jobs.JobAttempt", on_delete=models.PROTECT, related_name="artifact_grants")
     worker = models.ForeignKey("jobs.Worker", on_delete=models.PROTECT, related_name="artifact_grants")
     artifact = models.ForeignKey(Artifact, on_delete=models.PROTECT, related_name="worker_grants")
@@ -249,7 +250,7 @@ class TransferSession(TenantContextModel):
     class Direction(models.TextChoices):
         UPLOAD = "upload", "Upload"
 
-    transfer_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    transfer_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     artifact = models.ForeignKey(Artifact, on_delete=models.PROTECT, related_name="transfer_sessions")
     direction = models.CharField(max_length=16, choices=Direction.choices, default=Direction.UPLOAD)
     source_ref = models.CharField(max_length=512, blank=True)
@@ -291,7 +292,7 @@ class DeletionTombstone(TenantContextModel):
     tombstones to fail closed on tombstoned assets.
     """
 
-    tombstone_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    tombstone_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     resource_type = models.CharField(max_length=64, db_index=True)
     resource_id = models.CharField(max_length=128, db_index=True)
     policy_epoch = models.PositiveBigIntegerField(default=1)

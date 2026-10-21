@@ -109,6 +109,17 @@ class ContextLabTests(TestCase):
         self.assertIn("Quantum computers use qubits", res.serialized_prompt)
         self.assertIn("What is superposition", res.serialized_prompt)
 
+    def test_compiler_preserves_saved_and_overridden_whitespace(self):
+        template = "  Saved instruction\n"
+        self.b_sys.content_template = template
+        self.b_sys.save(update_fields=['content_template'])
+        override = "    print('exact source')\n\n"
+        result = ContextCompiler(self.v1).compile({'evidence': override})
+        self.assertEqual(result.included_blocks[0].rendered_content, template)
+        self.assertEqual(result.included_blocks[1].rendered_content, override)
+        self.assertIn(f'<|im_start|>system\n{template}<|im_end|>', result.serialized_prompt)
+        self.assertIn(f'<|im_start|>system\n{override}<|im_end|>', result.serialized_prompt)
+
     def test_context_overflow_policies(self):
         """TECH-026: Strict overflow raises ContextOverflowError, trim policy drops lowest priority blocks."""
         # 1. Test fail-on-overflow
