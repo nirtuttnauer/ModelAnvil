@@ -22,7 +22,7 @@ The API runs with `.venv/bin/python manage.py runserver`; the frontend runs with
 
 ## Storybook and browser verification
 
-For visual verification, run `cd web && npm run storybook` and open `http://127.0.0.1:6006`. Storybook renders the real app shell and all 16 screens with synthetic fixtures. Its API proxy is disabled; MSW handles demo reads and writes, resets fixtures between stories, and returns HTTP 501 for missing fixtures. The mock worker is shipped only with Storybook, never with the production app.
+For visual verification, run `cd web && npm run storybook` and open `http://127.0.0.1:6006`. Storybook renders the real app shell with synthetic fixtures. The Screens group has 18 numbered screens plus additional authoring stories. Its API proxy is disabled; MSW handles demo reads and writes, resets fixtures between stories, and returns HTTP 501 for missing fixtures. The mock worker is shipped only with Storybook, never with the production app.
 
 The Screens group covers populated charts, records and inspectors. The States group adds empty, loading, error, dark and mobile examples. Each story runs browser assertions; additional action stories exercise document indexing, context authoring, CPU base initialization, suite registration, evaluation, preference registration, alignment execution and cancellation controls. Use the Accessibility panel for axe results and the viewport toolbar for responsive review. `npm run build-storybook` builds the standalone demo. `npm test` checks chart contracts and mock isolation. These checks verify UI behavior with demo responses; they do not execute model training, qualify releases or validate backend integrations.
 
