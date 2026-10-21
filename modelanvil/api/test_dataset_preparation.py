@@ -165,6 +165,43 @@ class DatasetPreparationApiTests(TransactionTestCase):
         self.assertNotIn("PRIVATE_MARKER", response.content.decode())
         self.assert_no_publication(2)
 
+    def test_chunking_preserves_parent_checks_source_positions_and_split_groups(self):
+        from modelanvil.data.detection import build_protected_set
+        parents = [dict(self.documents[0]), dict(self.documents[1])]
+        parents[0]["blocks"] = [{"block_id": "text", "type": "text", "text": "Protected source content. " * 30}]
+        parents[1]["blocks"] = [{"block_id": "text", "type": "text", "text": "Allowed source content with diverse symbols 日本語. " * 30}]
+        artifact = self.committed_input(b'\n'.join(json.dumps(row).encode() for row in parents))
+        response = self.post_prepare(artifact, chunk_characters=128, protected=build_protected_set(parents[:1]), near_threshold=0)
+        self.assertEqual(response.status_code, 201, response.content)
+        revision = DatasetRevision.all_objects.get(revision_id=response.json()["revision_id"])
+        with artifact_storage_backend().open(self.tenant.pk, revision.manifest_artifact.object_key) as stream:
+            prepared = json.load(stream)
+        self.assertEqual(prepared["source_row_count"], 1)
+        self.assertEqual(prepared["source_dropped"][0]["sample_id"], parents[0]["sample_id"])
+        self.assertEqual("".join(row["blocks"][0]["text"] for row in prepared["rows"]), parents[1]["blocks"][0]["text"])
+        self.assertEqual({row["source_group_id"] for row in prepared["rows"]}, {parents[1]["source_group_id"]})
+        self.assertEqual(sum(bool(ids) for ids in prepared["split_manifest"].values()), 1)
+        self.assertEqual(prepared["recipe"]["chunking"]["character_limit"], 128)
+        self.assertEqual(prepared["recipe_digest"], revision.recipe_digest)
+
+    def test_invalid_chunk_limit_or_chat_structure_cannot_publish(self):
+        for value in [True, "128", 0, 4097, 128.5]:
+            self.assertEqual(self.post_prepare(chunk_characters=value).status_code, 400)
+        row = dict(self.documents[0]); row["blocks"] = [{"block_id": "text", "type": "text", "text": "Chat source text", "role": "user"}]
+        artifact = self.committed_input(json.dumps(row).encode())
+        self.assertEqual(self.post_prepare(artifact, chunk_characters=128).status_code, 400)
+        self.assert_no_publication(2)
+
+    def test_parent_privacy_detection_cannot_be_evaded_by_chunk_boundaries(self):
+        parents = [dict(self.documents[0]), dict(self.documents[1])]
+        parents[0]["blocks"] = [{"block_id": "text", "type": "text", "text": "p" * 28 + "a@b.co" + "y" * 30}]
+        parents[1]["blocks"] = [{"block_id": "text", "type": "text", "text": "Allowed plain source content. " * 10}]
+        artifact = self.committed_input(b'\n'.join(json.dumps(row).encode() for row in parents))
+        response = self.post_prepare(artifact, chunk_characters=32, detect={"privacy": True, "quality": False})
+        self.assertEqual(response.status_code, 201, response.content)
+        revision = DatasetRevision.all_objects.get(revision_id=response.json()["revision_id"])
+        self.assertEqual(revision.metadata["source_drop_report"]["drop_reason_counts"]["pii.email"], 1)
+
     def test_docx_import_publishes_and_bad_xml_leaves_no_revision(self):
         from modelanvil.data.test_source_import import docx
         from modelanvil.data.source_import import MEDIA_TYPES

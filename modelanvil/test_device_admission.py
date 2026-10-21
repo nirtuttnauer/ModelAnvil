@@ -61,3 +61,20 @@ class DeviceAdmissionTests(SimpleTestCase):
         self.assertFalse(device_available('mlx:0'))
         child.terminate(); child.wait(timeout=10)
         self.assertTrue(device_available('mlx:0'))
+
+    def test_child_keeps_lease_after_parent_closes_until_child_deadline(self):
+        import signal
+        code="import signal,time\nsignal.alarm(1)\nprint('held',flush=True)\ntime.sleep(10)\n"
+        with device_lease('mps:0', pass_descriptor=True) as descriptor:
+            self.assertFalse(os.get_inheritable(descriptor))
+            child=subprocess.Popen([sys.executable,'-I','-c',code],stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+                text=True,pass_fds=(descriptor,))
+            def stop():
+                if child.poll() is None:child.kill()
+                child.communicate(timeout=5)
+            self.addCleanup(stop)
+            self.assertEqual(child.stdout.readline().strip(),'held')
+        # The API's close/death does not free admission while its GPU child still lives.
+        self.assertFalse(device_available('mlx:0'))
+        self.assertEqual(child.wait(timeout=5),-signal.SIGALRM)
+        self.assertTrue(device_available('mlx:0'))

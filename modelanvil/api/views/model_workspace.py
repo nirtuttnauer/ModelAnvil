@@ -335,7 +335,7 @@ class InferenceViewSet(TenantScopedViewSet):
         from modelanvil.runners.training import hf_runtime, mlx_runtime
         trained = TrainingRun.objects.filter(status='completed', job__status='succeeded',
             base_model_version__architecture_ref__in=[hf_runtime.RUNTIME_ID, mlx_runtime.RUNTIME_ID]).values_list('output_model_version_id', flat=True)
-        rows = self.get_queryset().filter(Q(metadata__imported=True) | Q(pk__in=trained))
+        rows = self.get_queryset().filter(Q(metadata__imported=True) | Q(pk__in=trained)).exclude(architecture_ref__in=['modelanvil.ocr.v1', 'modelanvil.laya.v1'])
         return Response({'object': 'list', 'data': [{'id': str(v.model_version_id), 'object': 'model',
             'created': int(v.created_at.timestamp()), 'owned_by': 'modelanvil', 'name': v.model.name,
             'format': v.metadata.get('format', 'mlx' if v.architecture_ref == mlx_runtime.RUNTIME_ID else 'safetensors'), 'load_tested': v.inference_requests.filter(status='completed').exists(),

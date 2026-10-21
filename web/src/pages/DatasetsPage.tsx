@@ -52,6 +52,7 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
   const [sourceFormat, setSourceFormat] = useState<DatasetSourceFormat>('jsonl');
   const [textField, setTextField] = useState('text');
   const [groupField, setGroupField] = useState('');
+  const [chunkCharacters, setChunkCharacters] = useState('');
   const [splitSeed, setSplitSeed] = useState('0');
   const [validationPercent, setValidationPercent] = useState('10');
   const [testPercent, setTestPercent] = useState('10');
@@ -133,6 +134,7 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
         file, name, token: requestToken, splitSeed, sourceFormat,
         textField: sourceFormat === 'csv' || sourceFormat === 'json' ? textField : 'text',
         groupField: sourceFormat === 'csv' || sourceFormat === 'json' ? groupField : '',
+        chunkCharacters: chunkCharacters ? Number(chunkCharacters) : undefined,
         validationPercent: Number(validationPercent), testPercent: Number(testPercent),
       });
       if (!mounted.current) return;
@@ -254,6 +256,10 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
             <label htmlFor={`${formId}-seed`}>Split seed</label>
             <input id={`${formId}-seed`} name="split-seed" value={splitSeed} onChange={event => setSplitSeed(event.target.value)} autoComplete="off" />
           </div>
+          <div className="datasets-field"><label htmlFor={`${formId}-chunk`}>Text chunk size</label>
+            <select id={`${formId}-chunk`} value={chunkCharacters} onChange={event => setChunkCharacters(event.target.value)}>
+              <option value="">Keep source rows</option>{[128, 256, 512, 1024, 2048, 4096].map(size => <option key={size} value={size}>{size} characters</option>)}
+            </select><p className="datasets-hint">Plain text only. Exact source spans and split groups are retained. Training preflight separately checks tokenizer length.</p></div>
           <div className="datasets-field">
             <label htmlFor={`${formId}-validation`}>Validation percentage</label>
             <input id={`${formId}-validation`} name="validation-percent" type="number" min="0" max="99" step="1" required

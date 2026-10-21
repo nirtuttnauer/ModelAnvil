@@ -24,7 +24,9 @@ MAX_BYTES = 8 * 1024**3
 MAX_FILES = 64
 AUX_NAMES = {'config.json', 'generation_config.json', 'tokenizer.json', 'tokenizer_config.json',
              'special_tokens_map.json', 'tokenizer.model', 'vocab.json', 'merges.txt',
-             'model.safetensors.index.json', 'adapter_config.json'}
+             'model.safetensors.index.json', 'adapter_config.json', 'preprocessor_config.json',
+             'processor_config.json', 'chat_template.jinja', 'rl_agent_config.json'}
+SPECIALIST_NAMES = {'encoder/config.json', 'tokenizer/tokenizer.json', 'tokenizer/tokenizer_config.json'}
 
 
 def repo_id(value):
@@ -62,6 +64,8 @@ def search_models(query, tenant, project):
 
 
 def filename_allowed(name):
+    if isinstance(name, str) and name in SPECIALIST_NAMES:
+        return True
     return isinstance(name, str) and '/' not in name and '\\' not in name and '..' not in name and (
         name in AUX_NAMES or re.fullmatch(r'(?:model(?:-\d{5}-of-\d{5})?|adapter_model|adapters)\.safetensors', name)
         or re.fullmatch(r'[A-Za-z0-9_.-]{1,160}\.gguf', name))
@@ -147,7 +151,7 @@ def _locked_live_import(context, identifier):
     return ModelImport.all_objects.select_for_update().get(import_id=identifier, job=job, tenant_id=job.tenant_id)
 
 
-def _store(stream, *, tenant, project, name, expected=None, size=None):
+def _store(stream, *, tenant, project, name, expected=None, size=None, metadata=None, media_type='application/octet-stream'):
     sha, length = hashlib.sha256(), 0
     while block := stream.read(1024 * 1024):
         length += len(block)
@@ -159,13 +163,17 @@ def _store(stream, *, tenant, project, name, expected=None, size=None):
     stream.seek(0)
     artifact = Artifact.all_objects.create(tenant_id=tenant, project_id=project, storage_location_id='local',
         object_key=f'model-imports/{uuid.uuid4()}/{name}', sha256=sha.hexdigest(), byte_size=length,
-        media_type='application/octet-stream')
+        media_type=media_type, metadata=metadata or {})
     upload_staged_artifact(artifact, stream, backend=artifact_storage_backend())
     return hf_runtime.file_ref(artifact)
 
 
 def publish_files(files, *, tenant, project, name, source, format, license_expression):
     """Called under a transaction/fence; bytes were verified before entering the manifest."""
+    if format in {'ocr', 'laya', 'layout'}:
+        from modelanvil.runners.specialists import publish_specialist
+        return publish_specialist(files, tenant=tenant, project=project, name=name,
+            kind=format, license_expression=license_expression)
     from modelanvil.runners.inference import staged_snapshot
     vocab, template, config = 1, '', {}
     if format in {'safetensors', 'mlx'}:
