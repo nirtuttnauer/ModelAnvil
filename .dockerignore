@@ -1,5 +1,6 @@
 .git
 .venv
+.venv-*
 venv
 **/node_modules
 **/__pycache__
@@ -12,6 +13,9 @@ venv
 **/credentials*
 **/auth.json
 **/*.db
+**/*.db-*
+**/*.sqlite3
+**/*.sqlite3-*
 **/*.log
 **/.DS_Store
 web/dist
@@ -22,4 +26,6 @@ web/dist
 /runs
 /output
 /.scratch
+/business
+/private-saas
 web/storybook-static
