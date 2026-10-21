@@ -35,6 +35,9 @@ from modelanvil.data.bank.http_snapshot import (
 
 ROOT = Path(__file__).resolve().parents[1]
 HF_SOURCES = {
+    "math-gsm8k": ("openai/gsm8k", "main/train-00000"),
+    "code-mbpp": ("google-research-datasets/mbpp", "full/train-00000"),
+    "text-dolly15k": ("databricks/databricks-dolly-15k", "databricks-dolly-15k.jsonl"),
     "text-smol-magpie-ultra": ("HuggingFaceTB/smoltalk", "data/smol-magpie-ultra/train-00000"),
     "text-ultrachat-200k": ("HuggingFaceH4/ultrachat_200k", "data/train_sft-00000"),
     "text-squad": ("rajpurkar/squad", "plain_text/train-00000"),
@@ -85,6 +88,12 @@ def size_at(url):
 
 
 def group_for(source_id, row):
+    if source_id == "math-gsm8k":
+        return "gsm8k:question:" + digest(row["question"].encode())
+    if source_id == "code-mbpp":
+        return "mbpp:task:" + str(row["task_id"])
+    if source_id == "text-dolly15k":
+        return "dolly:prompt:" + digest(canonical_json([row["instruction"], row["context"]]))
     if source_id == "text-squad":
         return "squad:passage:" + digest(row["context"].encode())
     if source_id in ("text-ultrachat-200k", "preference-ultrafeedback-binarized"):
@@ -164,7 +173,22 @@ def qualify(source, date):
         manifest["licenses"].append(
             archive_notice(source_id, "publisher-card", get(readme_url), readme_url)
         )
-        if source_id != "tools-glaive-v2":
+        if entry["path"].endswith(".jsonl"):
+            # Only complete lines in this bounded prefix are admitted.
+            raw = stream.read(min(256 * 1024, entry["size"]))
+            start = 0
+            for index, line in enumerate(raw.splitlines(keepends=True)[:20]):
+                if not line.endswith(b"\n"):
+                    raise ValueError("Selected JSONL row is incomplete within the prefix.")
+                row = json.loads(line)
+                add_sample(
+                    f"{entry['path']}#row={index}",
+                    {"kind": "json_slice", "container": "data", "start": start, "length": len(line)},
+                    group_for(source_id, row),
+                    {"upstream_split": "train", "configuration": source["fetch"].get("configuration")},
+                )
+                start += len(line)
+        elif entry["path"].endswith(".parquet"):
             import pyarrow.parquet as pq
 
             parquet = pq.ParquetFile(stream)
@@ -172,7 +196,8 @@ def qualify(source, date):
             for group in groups:
                 count = parquet.metadata.row_group(group).num_rows
                 rows = parquet.read_row_group(group)
-                for index in sorted(set(int(i * (count - 1) / 4) for i in range(5))):
+                samples = 20 if source_id in ("math-gsm8k", "code-mbpp") else 5
+                for index in sorted(set(int(i * (count - 1) / (samples - 1)) for i in range(samples))):
                     row = rows.slice(index, 1).to_pylist()[0]
                     reader = {
                         "kind": "parquet_row",
@@ -470,6 +495,7 @@ def qualify(source, date):
     )
     sample_bytes = sum(r["size"] for r in manifest["records"])
     source["license"]["reviewed_revision"] = revision
+    source["license"]["upstream_declaration_checked_on"] = date
     source["connector_status"] = "implemented_qualified_bounded_subset"
     source["publication_status"] = "qualified_bounded_download_enabled"
     source["size_bytes"] = transfer_bytes + sum(r["size"] for r in manifest["licenses"])

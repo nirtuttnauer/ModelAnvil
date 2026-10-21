@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1.0",
   "catalog_status": "partially_qualified",
-  "checked_on": "2026-10-11",
+  "checked_on": "2026-10-17",
   "policy": {
     "meaning_of_open": "Declared license permits reuse, modification, and redistribution, including commercial use, subject to license obligations.",
     "excluded_license_features": [
@@ -23,7 +23,7 @@
       "preserve_attribution",
       "apply_project_distribution_policy"
     ],
-    "readiness_note": "Lucide and the ten sources added on 11 October are qualified for explicitly bounded acquisition. HTTP source revisions pin frozen subset manifests, observed byte ranges, decoded samples and archived publisher notices. Full corpora, full archive/shard checksums and training recipes are not qualified.",
+    "readiness_note": "Fourteen sources have qualified bounded acquisition, including GSM8K, MBPP and Dolly 15k added on 17 October. HTTP sample revisions pin frozen subset manifests, observed byte ranges, decoded samples and archived publisher notices. Complete releases require separate full_acquisition qualification; training recipes are not qualified by acquisition.",
     "qualification_note": "A source is qualified only when an implemented connector has fetched upstream bytes at a pinned immutable revision, verified per-record digests and archived the license notice at that revision. License eligibility alone never enables acquisition.",
     "budget_quantity_note": "Dataset Bank acquisition budgets are reserved in the policy unit and settled with the number of verified upstream records transferred."
   },
@@ -331,7 +331,9 @@
             "Recursive tree listing reported 1877 icons/*.svg blobs totalling 762249 bytes, not truncated.",
             "120 evenly spaced records were fetched and every git blob SHA-1 recomputed from the downloaded bytes matched the tree listing.",
             "The LICENSE blob at the pinned commit was fetched and its notice is archived with the published dataset."
-          ]
+          ],
+          "inventory_path": "catalog/qualified-datasets/svg-lucide-inventory.json",
+          "inventory_sha256": "ddab7725a4625fb684518296ce6e3a88fcefc0ac3ac3b3036b268decd7861bd3"
         }
       }
     },
@@ -1078,14 +1080,14 @@
         "evidence_urls": [
           "https://huggingface.co/datasets/databricks/databricks-dolly-15k"
         ],
-        "upstream_declaration_checked_on": "2026-10-08",
-        "reviewed_revision": null,
+        "upstream_declaration_checked_on": "2026-10-17",
+        "reviewed_revision": "398ba7297d50747609b58a18784ae238ea9901215d62063189c5ed67d61401fd",
         "retain_license_and_notices": true,
         "share_alike": true,
         "notes": "Publisher allows academic and commercial use under CC BY-SA 3.0. Preserve Databricks and relevant Wikipedia attribution. Opt-in under project distribution policy."
       },
       "eligibility": "open_license_candidate",
-      "connector_status": "planned_not_implemented",
+      "connector_status": "implemented_qualified_bounded_subset",
       "fetch": {
         "kind": "huggingface_dataset_snapshot",
         "repo_id": "databricks/databricks-dolly-15k",
@@ -1096,21 +1098,73 @@
         "file_selection_status": "data_files_and_splits_to_qualify"
       },
       "split_policy": "Create reproducible grouped held-out splits without overlapping derived examples.",
-      "size_bytes": null,
-      "record_count": null,
-      "publication_status": "draft_catalog_not_download_enabled",
+      "size_bytes": 292035,
+      "record_count": 20,
+      "publication_status": "qualified_bounded_download_enabled",
       "output_group_ids": [
         "text"
       ],
       "acquisition": {
-        "status": "unqualified",
-        "qualified_on": "",
-        "connector": "",
-        "upstream_repository": "",
-        "pinned_revision": "",
-        "include_patterns": [],
-        "license_paths": [],
-        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+        "status": "qualified",
+        "qualified_on": "2026-10-17",
+        "connector": "qualified_http_subset_v1",
+        "upstream_repository": "https://huggingface.co/datasets/databricks/databricks-dolly-15k",
+        "pinned_revision": "398ba7297d50747609b58a18784ae238ea9901215d62063189c5ed67d61401fd",
+        "revision_resolved_on": "2026-10-17",
+        "revision_selection": "SHA-256 of the frozen subset manifest: observed upstream ranges, decoded samples, and archived publisher license notices. Full archives/shards are not qualified.",
+        "qualified_revisions": [
+          "398ba7297d50747609b58a18784ae238ea9901215d62063189c5ed67d61401fd"
+        ],
+        "include_patterns": [
+          "databricks-dolly-15k.jsonl#row=0",
+          "databricks-dolly-15k.jsonl#row=1",
+          "databricks-dolly-15k.jsonl#row=2",
+          "databricks-dolly-15k.jsonl#row=3",
+          "databricks-dolly-15k.jsonl#row=4",
+          "databricks-dolly-15k.jsonl#row=5",
+          "databricks-dolly-15k.jsonl#row=6",
+          "databricks-dolly-15k.jsonl#row=7",
+          "databricks-dolly-15k.jsonl#row=8",
+          "databricks-dolly-15k.jsonl#row=9",
+          "databricks-dolly-15k.jsonl#row=10",
+          "databricks-dolly-15k.jsonl#row=11",
+          "databricks-dolly-15k.jsonl#row=12",
+          "databricks-dolly-15k.jsonl#row=13",
+          "databricks-dolly-15k.jsonl#row=14",
+          "databricks-dolly-15k.jsonl#row=15",
+          "databricks-dolly-15k.jsonl#row=16",
+          "databricks-dolly-15k.jsonl#row=17",
+          "databricks-dolly-15k.jsonl#row=18",
+          "databricks-dolly-15k.jsonl#row=19"
+        ],
+        "license_paths": [
+          "notice/publisher-card"
+        ],
+        "record_selection": "deterministic evenly spaced selection of the frozen, explicitly qualified sample inventory",
+        "record_limit": 20,
+        "record_limit_max": 20,
+        "preview_limit": 3,
+        "measured_upstream_records": 20,
+        "measured_upstream_bytes": 292035,
+        "measured_selected_records": 20,
+        "measured_selected_bytes": 21382,
+        "measured_transfer_seconds": 15,
+        "measurement_environment": "macOS arm64; CPython 3.12; PyArrow 26.0.0; public HTTPS byte-range downloads and independent refetch through the runtime decoder.",
+        "verified_record_digests": true,
+        "blocked_reason": "",
+        "evidence": {
+          "manifest_path": "catalog/qualified-datasets/text-dolly15k.json",
+          "manifest_sha256": "398ba7297d50747609b58a18784ae238ea9901215d62063189c5ed67d61401fd",
+          "download_range_bytes": 283836,
+          "decoded_sample_bytes": 21382,
+          "full_corpus_qualified": false,
+          "checks": [
+            "Actual upstream bytes fetched over HTTPS; every admitted range SHA-256 recorded.",
+            "Each selected sample decoded without executing remote dataset code.",
+            "Independent refetch through pinned range reader reproduced every selected sample digest.",
+            "Publisher license declaration/notice bytes archived and digest-pinned."
+          ]
+        }
       }
     },
     {
@@ -1187,14 +1241,14 @@
         "evidence_urls": [
           "https://huggingface.co/datasets/openai/gsm8k"
         ],
-        "upstream_declaration_checked_on": "2026-10-08",
-        "reviewed_revision": null,
+        "upstream_declaration_checked_on": "2026-10-17",
+        "reviewed_revision": "9ae4be48b59b808bf13184043332a218384d3dd544cf8fe408be9b8540c89c13",
         "retain_license_and_notices": true,
         "share_alike": false,
         "notes": "MIT is declared on the official dataset card. Preserve its license evidence. Keep benchmark test examples out of training and synthetic-data seeds."
       },
       "eligibility": "open_license_candidate",
-      "connector_status": "planned_not_implemented",
+      "connector_status": "implemented_qualified_bounded_subset",
       "fetch": {
         "kind": "huggingface_dataset_snapshot",
         "repo_id": "openai/gsm8k",
@@ -1205,21 +1259,133 @@
         "file_selection_status": "data_files_and_splits_to_qualify"
       },
       "split_policy": "Train split for training; official test split reserved for evaluation.",
-      "size_bytes": null,
-      "record_count": null,
-      "publication_status": "draft_catalog_not_download_enabled",
+      "size_bytes": 1132197,
+      "record_count": 80,
+      "publication_status": "qualified_bounded_download_enabled",
       "output_group_ids": [
         "text"
       ],
       "acquisition": {
-        "status": "unqualified",
-        "qualified_on": "",
-        "connector": "",
-        "upstream_repository": "",
-        "pinned_revision": "",
-        "include_patterns": [],
-        "license_paths": [],
-        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+        "status": "qualified",
+        "qualified_on": "2026-10-17",
+        "connector": "qualified_http_subset_v1",
+        "upstream_repository": "https://huggingface.co/datasets/openai/gsm8k",
+        "pinned_revision": "9ae4be48b59b808bf13184043332a218384d3dd544cf8fe408be9b8540c89c13",
+        "revision_resolved_on": "2026-10-17",
+        "revision_selection": "SHA-256 of the frozen subset manifest: observed upstream ranges, decoded samples, and archived publisher license notices. Full archives/shards are not qualified.",
+        "qualified_revisions": [
+          "9ae4be48b59b808bf13184043332a218384d3dd544cf8fe408be9b8540c89c13"
+        ],
+        "include_patterns": [
+          "main/train-00000-of-00001.parquet#group=0&row=0",
+          "main/train-00000-of-00001.parquet#group=0&row=52",
+          "main/train-00000-of-00001.parquet#group=0&row=105",
+          "main/train-00000-of-00001.parquet#group=0&row=157",
+          "main/train-00000-of-00001.parquet#group=0&row=210",
+          "main/train-00000-of-00001.parquet#group=0&row=262",
+          "main/train-00000-of-00001.parquet#group=0&row=315",
+          "main/train-00000-of-00001.parquet#group=0&row=368",
+          "main/train-00000-of-00001.parquet#group=0&row=420",
+          "main/train-00000-of-00001.parquet#group=0&row=473",
+          "main/train-00000-of-00001.parquet#group=0&row=525",
+          "main/train-00000-of-00001.parquet#group=0&row=578",
+          "main/train-00000-of-00001.parquet#group=0&row=630",
+          "main/train-00000-of-00001.parquet#group=0&row=683",
+          "main/train-00000-of-00001.parquet#group=0&row=736",
+          "main/train-00000-of-00001.parquet#group=0&row=788",
+          "main/train-00000-of-00001.parquet#group=0&row=841",
+          "main/train-00000-of-00001.parquet#group=0&row=893",
+          "main/train-00000-of-00001.parquet#group=0&row=946",
+          "main/train-00000-of-00001.parquet#group=0&row=999",
+          "main/train-00000-of-00001.parquet#group=2&row=0",
+          "main/train-00000-of-00001.parquet#group=2&row=52",
+          "main/train-00000-of-00001.parquet#group=2&row=105",
+          "main/train-00000-of-00001.parquet#group=2&row=157",
+          "main/train-00000-of-00001.parquet#group=2&row=210",
+          "main/train-00000-of-00001.parquet#group=2&row=262",
+          "main/train-00000-of-00001.parquet#group=2&row=315",
+          "main/train-00000-of-00001.parquet#group=2&row=368",
+          "main/train-00000-of-00001.parquet#group=2&row=420",
+          "main/train-00000-of-00001.parquet#group=2&row=473",
+          "main/train-00000-of-00001.parquet#group=2&row=525",
+          "main/train-00000-of-00001.parquet#group=2&row=578",
+          "main/train-00000-of-00001.parquet#group=2&row=630",
+          "main/train-00000-of-00001.parquet#group=2&row=683",
+          "main/train-00000-of-00001.parquet#group=2&row=736",
+          "main/train-00000-of-00001.parquet#group=2&row=788",
+          "main/train-00000-of-00001.parquet#group=2&row=841",
+          "main/train-00000-of-00001.parquet#group=2&row=893",
+          "main/train-00000-of-00001.parquet#group=2&row=946",
+          "main/train-00000-of-00001.parquet#group=2&row=999",
+          "main/train-00000-of-00001.parquet#group=4&row=0",
+          "main/train-00000-of-00001.parquet#group=4&row=52",
+          "main/train-00000-of-00001.parquet#group=4&row=105",
+          "main/train-00000-of-00001.parquet#group=4&row=157",
+          "main/train-00000-of-00001.parquet#group=4&row=210",
+          "main/train-00000-of-00001.parquet#group=4&row=262",
+          "main/train-00000-of-00001.parquet#group=4&row=315",
+          "main/train-00000-of-00001.parquet#group=4&row=368",
+          "main/train-00000-of-00001.parquet#group=4&row=420",
+          "main/train-00000-of-00001.parquet#group=4&row=473",
+          "main/train-00000-of-00001.parquet#group=4&row=525",
+          "main/train-00000-of-00001.parquet#group=4&row=578",
+          "main/train-00000-of-00001.parquet#group=4&row=630",
+          "main/train-00000-of-00001.parquet#group=4&row=683",
+          "main/train-00000-of-00001.parquet#group=4&row=736",
+          "main/train-00000-of-00001.parquet#group=4&row=788",
+          "main/train-00000-of-00001.parquet#group=4&row=841",
+          "main/train-00000-of-00001.parquet#group=4&row=893",
+          "main/train-00000-of-00001.parquet#group=4&row=946",
+          "main/train-00000-of-00001.parquet#group=4&row=999",
+          "main/train-00000-of-00001.parquet#group=7&row=0",
+          "main/train-00000-of-00001.parquet#group=7&row=24",
+          "main/train-00000-of-00001.parquet#group=7&row=49",
+          "main/train-00000-of-00001.parquet#group=7&row=74",
+          "main/train-00000-of-00001.parquet#group=7&row=99",
+          "main/train-00000-of-00001.parquet#group=7&row=124",
+          "main/train-00000-of-00001.parquet#group=7&row=149",
+          "main/train-00000-of-00001.parquet#group=7&row=173",
+          "main/train-00000-of-00001.parquet#group=7&row=198",
+          "main/train-00000-of-00001.parquet#group=7&row=223",
+          "main/train-00000-of-00001.parquet#group=7&row=248",
+          "main/train-00000-of-00001.parquet#group=7&row=273",
+          "main/train-00000-of-00001.parquet#group=7&row=298",
+          "main/train-00000-of-00001.parquet#group=7&row=322",
+          "main/train-00000-of-00001.parquet#group=7&row=347",
+          "main/train-00000-of-00001.parquet#group=7&row=372",
+          "main/train-00000-of-00001.parquet#group=7&row=397",
+          "main/train-00000-of-00001.parquet#group=7&row=422",
+          "main/train-00000-of-00001.parquet#group=7&row=447",
+          "main/train-00000-of-00001.parquet#group=7&row=472"
+        ],
+        "license_paths": [
+          "notice/publisher-card"
+        ],
+        "record_selection": "deterministic evenly spaced selection of the frozen, explicitly qualified sample inventory",
+        "record_limit": 80,
+        "record_limit_max": 80,
+        "preview_limit": 3,
+        "measured_upstream_records": 80,
+        "measured_upstream_bytes": 1132197,
+        "measured_selected_records": 80,
+        "measured_selected_bytes": 43269,
+        "measured_transfer_seconds": 10,
+        "measurement_environment": "macOS arm64; CPython 3.12; PyArrow 26.0.0; public HTTPS byte-range downloads and independent refetch through the runtime decoder.",
+        "verified_record_digests": true,
+        "blocked_reason": "",
+        "evidence": {
+          "manifest_path": "catalog/qualified-datasets/math-gsm8k.json",
+          "manifest_sha256": "9ae4be48b59b808bf13184043332a218384d3dd544cf8fe408be9b8540c89c13",
+          "download_range_bytes": 1124262,
+          "decoded_sample_bytes": 43269,
+          "full_corpus_qualified": false,
+          "checks": [
+            "Actual upstream bytes fetched over HTTPS; every admitted range SHA-256 recorded.",
+            "Each selected sample decoded without executing remote dataset code.",
+            "Independent refetch through pinned range reader reproduced every selected sample digest.",
+            "Publisher license declaration/notice bytes archived and digest-pinned."
+          ]
+        }
       }
     },
     {
@@ -1366,14 +1532,14 @@
         "evidence_urls": [
           "https://huggingface.co/datasets/google-research-datasets/mbpp"
         ],
-        "upstream_declaration_checked_on": "2026-10-08",
-        "reviewed_revision": null,
+        "upstream_declaration_checked_on": "2026-10-17",
+        "reviewed_revision": "b5f6a2d3910dbb350eb5727a92420e59aad0ab467bc078652283db95df010c16",
         "retain_license_and_notices": true,
         "share_alike": false,
         "notes": "Preserve attribution. Use official training split only for training; keep validation, test, and prompt examples distinct. Execute generated code only in isolated evaluators."
       },
       "eligibility": "open_license_candidate",
-      "connector_status": "planned_not_implemented",
+      "connector_status": "implemented_qualified_bounded_subset",
       "fetch": {
         "kind": "huggingface_dataset_snapshot",
         "repo_id": "google-research-datasets/mbpp",
@@ -1384,21 +1550,73 @@
         "file_selection_status": "data_files_and_splits_to_qualify"
       },
       "split_policy": "Preserve official splits and task IDs.",
-      "size_bytes": null,
-      "record_count": null,
-      "publication_status": "draft_catalog_not_download_enabled",
+      "size_bytes": 157980,
+      "record_count": 20,
+      "publication_status": "qualified_bounded_download_enabled",
       "output_group_ids": [
         "code"
       ],
       "acquisition": {
-        "status": "unqualified",
-        "qualified_on": "",
-        "connector": "",
-        "upstream_repository": "",
-        "pinned_revision": "",
-        "include_patterns": [],
-        "license_paths": [],
-        "blocked_reason": "No acquisition connector is implemented for this source; no bytes were ever fetched from upstream. License eligibility is not qualification."
+        "status": "qualified",
+        "qualified_on": "2026-10-17",
+        "connector": "qualified_http_subset_v1",
+        "upstream_repository": "https://huggingface.co/datasets/google-research-datasets/mbpp",
+        "pinned_revision": "b5f6a2d3910dbb350eb5727a92420e59aad0ab467bc078652283db95df010c16",
+        "revision_resolved_on": "2026-10-17",
+        "revision_selection": "SHA-256 of the frozen subset manifest: observed upstream ranges, decoded samples, and archived publisher license notices. Full archives/shards are not qualified.",
+        "qualified_revisions": [
+          "b5f6a2d3910dbb350eb5727a92420e59aad0ab467bc078652283db95df010c16"
+        ],
+        "include_patterns": [
+          "full/train-00000-of-00001.parquet#group=0&row=0",
+          "full/train-00000-of-00001.parquet#group=0&row=19",
+          "full/train-00000-of-00001.parquet#group=0&row=39",
+          "full/train-00000-of-00001.parquet#group=0&row=58",
+          "full/train-00000-of-00001.parquet#group=0&row=78",
+          "full/train-00000-of-00001.parquet#group=0&row=98",
+          "full/train-00000-of-00001.parquet#group=0&row=117",
+          "full/train-00000-of-00001.parquet#group=0&row=137",
+          "full/train-00000-of-00001.parquet#group=0&row=157",
+          "full/train-00000-of-00001.parquet#group=0&row=176",
+          "full/train-00000-of-00001.parquet#group=0&row=196",
+          "full/train-00000-of-00001.parquet#group=0&row=215",
+          "full/train-00000-of-00001.parquet#group=0&row=235",
+          "full/train-00000-of-00001.parquet#group=0&row=255",
+          "full/train-00000-of-00001.parquet#group=0&row=274",
+          "full/train-00000-of-00001.parquet#group=0&row=294",
+          "full/train-00000-of-00001.parquet#group=0&row=314",
+          "full/train-00000-of-00001.parquet#group=0&row=333",
+          "full/train-00000-of-00001.parquet#group=0&row=353",
+          "full/train-00000-of-00001.parquet#group=0&row=373"
+        ],
+        "license_paths": [
+          "notice/publisher-card"
+        ],
+        "record_selection": "deterministic evenly spaced selection of the frozen, explicitly qualified sample inventory",
+        "record_limit": 20,
+        "record_limit_max": 20,
+        "preview_limit": 3,
+        "measured_upstream_records": 20,
+        "measured_upstream_bytes": 157980,
+        "measured_selected_records": 20,
+        "measured_selected_bytes": 11536,
+        "measured_transfer_seconds": 4,
+        "measurement_environment": "macOS arm64; CPython 3.12; PyArrow 26.0.0; public HTTPS byte-range downloads and independent refetch through the runtime decoder.",
+        "verified_record_digests": true,
+        "blocked_reason": "",
+        "evidence": {
+          "manifest_path": "catalog/qualified-datasets/code-mbpp.json",
+          "manifest_sha256": "b5f6a2d3910dbb350eb5727a92420e59aad0ab467bc078652283db95df010c16",
+          "download_range_bytes": 148922,
+          "decoded_sample_bytes": 11536,
+          "full_corpus_qualified": false,
+          "checks": [
+            "Actual upstream bytes fetched over HTTPS; every admitted range SHA-256 recorded.",
+            "Each selected sample decoded without executing remote dataset code.",
+            "Independent refetch through pinned range reader reproduced every selected sample digest.",
+            "Publisher license declaration/notice bytes archived and digest-pinned."
+          ]
+        }
       }
     },
     {
