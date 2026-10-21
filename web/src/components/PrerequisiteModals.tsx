@@ -1,4 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { Button, Field, MultilineField, Notice } from './ui';
+import { ObjectFields } from './FormEditors';
+import { objectInput } from './form-data';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { X, Sparkles, BookOpen, Layers, FolderPlus } from 'lucide-react';
 import { apiPage, apiRequest, errorMessage } from '../api/client';
 import type { Project, Team, TokenizerVersion, RegisteredModelVersion } from '../api/resources';
@@ -51,15 +54,12 @@ export function RegisterTokenizerModal({
     e.preventDefault();
     setBusy(true);
     setError(null);
-    let parsedTokens: Record<string, string> = {};
+    let parsedTokens: Record<string, unknown>;
     try {
-      if (specialTokens.trim()) {
-        parsedTokens = JSON.parse(specialTokens);
-      }
-    } catch {
-      setError('Special tokens must be valid JSON object.');
-      setBusy(false);
-      return;
+      parsedTokens = objectInput(specialTokens);
+      if (Object.values(parsedTokens).some(value => typeof value !== 'string')) throw new Error('Each special token must have a text symbol.');
+    } catch (e) {
+      setError(errorMessage(e)); setBusy(false); return;
     }
 
     try {
@@ -89,33 +89,33 @@ export function RegisterTokenizerModal({
       onClose={onClose}
     >
       <div className="dialog-title">
-        <h2 id="reg-tokenizer-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <h2 id="reg-tokenizer-title" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)' }}>
           <BookOpen size={18} aria-hidden="true" /> Register Tokenizer
         </h2>
-        <button className="icon-button" aria-label="Close dialog" onClick={onClose}>
+        <Button className="icon-button" aria-label="Close dialog" onClick={onClose}>
           <X size={18} />
-        </button>
+        </Button>
       </div>
-      <p className="muted" style={{ margin: '8px 0 16px' }}>
+      <p className="muted" style={{ margin: 'var(--space-8) 0 var(--space-16)' }}>
         Declare vocabulary boundaries and special token mappings required for model tokenization.
       </p>
 
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-        <button type="button" onClick={() => applyPreset('llama')}>
+      <div style={{ display: 'flex', gap: 'var(--space-8)', marginBottom: 'var(--space-16)' }}>
+        <Button type="button" onClick={() => applyPreset('llama')}>
           <Sparkles size={13} /> Llama 3
-        </button>
-        <button type="button" onClick={() => applyPreset('mistral')}>
+        </Button>
+        <Button type="button" onClick={() => applyPreset('mistral')}>
           <Sparkles size={13} /> Mistral
-        </button>
-        <button type="button" onClick={() => applyPreset('gpt2')}>
+        </Button>
+        <Button type="button" onClick={() => applyPreset('gpt2')}>
           <Sparkles size={13} /> GPT-2
-        </button>
+        </Button>
       </div>
 
       <form className="api-key" onSubmit={submit} style={{ marginTop: '0' }}>
-        {error && <p className="notice error" role="alert">{error}</p>}
+        {error && <Notice as="p" tone="error" className="notice error" role="alert">{error}</Notice>}
         <label htmlFor="tok-name">Tokenizer Name</label>
-        <input
+        <Field
           id="tok-name"
           required
           maxLength={100}
@@ -125,7 +125,7 @@ export function RegisterTokenizerModal({
         />
 
         <label htmlFor="tok-vocab">Vocabulary Size</label>
-        <input
+        <Field
           id="tok-vocab"
           required
           type="number"
@@ -135,22 +135,15 @@ export function RegisterTokenizerModal({
           onChange={(e) => setVocabSize(e.target.value)}
         />
 
-        <label htmlFor="tok-specials">Special Tokens (JSON)</label>
-        <textarea
-          id="tok-specials"
-          rows={3}
-          value={specialTokens}
-          onChange={(e) => setSpecialTokens(e.target.value)}
-          spellCheck={false}
-        />
+        <ObjectFields title="Special tokens" description="Map each token name to its exact symbol. Presets fill the common tokens for you." textOnly nameLabel="Token name" valueLabel="Token symbol" suggestions={["bos_token", "eos_token", "pad_token", "unk_token"]} value={specialTokens} onChange={setSpecialTokens} disabled={busy} />
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '12px' }}>
-          <button type="button" disabled={busy} onClick={onClose}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-8)', marginTop: 'var(--space-12)' }}>
+          <Button type="button" disabled={busy} onClick={onClose}>
             Cancel
-          </button>
-          <button className="primary" type="submit" disabled={busy || !name.trim()}>
+          </Button>
+          <Button className="primary" type="submit" disabled={busy || !name.trim()}>
             {busy ? 'Registering…' : 'Register Tokenizer'}
-          </button>
+          </Button>
         </div>
       </form>
     </dialog>
@@ -289,44 +282,44 @@ export function RegisterModelVersionModal({
       onClose={onClose}
     >
       <div className="dialog-title">
-        <h2 id="reg-model-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <h2 id="reg-model-title" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)' }}>
           <Layers size={18} aria-hidden="true" /> Register Model Version
         </h2>
-        <button className="icon-button" aria-label="Close dialog" onClick={onClose}>
+        <Button className="icon-button" aria-label="Close dialog" onClick={onClose}>
           <X size={18} />
-        </button>
+        </Button>
       </div>
-      <p className="muted" style={{ margin: '8px 0 16px' }}>
+      <p className="muted" style={{ margin: 'var(--space-8) 0 var(--space-16)' }}>
         Pin an immutable model checkpoint version with architecture reference and tokenizer.
       </p>
 
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-        <button type="button" onClick={() => applyPreset('llama8b')}>
+      <div style={{ display: 'flex', gap: 'var(--space-8)', marginBottom: 'var(--space-16)' }}>
+        <Button type="button" onClick={() => applyPreset('llama8b')}>
           <Sparkles size={13} /> Llama 3 8B
-        </button>
-        <button type="button" onClick={() => applyPreset('mistral7b')}>
+        </Button>
+        <Button type="button" onClick={() => applyPreset('mistral7b')}>
           <Sparkles size={13} /> Mistral 7B
-        </button>
-        <button type="button" onClick={() => applyPreset('anvil125m')}>
+        </Button>
+        <Button type="button" onClick={() => applyPreset('anvil125m')}>
           <Sparkles size={13} /> Anvil 125M
-        </button>
+        </Button>
       </div>
 
       <form className="api-key" onSubmit={submit} style={{ marginTop: '0' }}>
-        {error && <p className="notice error" role="alert">{error}</p>}
+        {error && <Notice as="p" tone="error" className="notice error" role="alert">{error}</Notice>}
 
         {!isCreatingModel ? (
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <label htmlFor="mv-model">Base Model</label>
-              <button
+              <Button
                 type="button"
                 className="text-button"
-                style={{ minHeight: 'unset', padding: '0', fontSize: '12px' }}
+                style={{ minHeight: 'unset', padding: '0', fontSize: 'var(--type-12)' }}
                 onClick={() => setIsCreatingModel(true)}
               >
                 + New model name
-              </button>
+              </Button>
             </div>
             <select
               id="mv-model"
@@ -346,16 +339,16 @@ export function RegisterModelVersionModal({
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <label htmlFor="mv-new-model">New Model Name</label>
-              <button
+              <Button
                 type="button"
                 className="text-button"
-                style={{ minHeight: 'unset', padding: '0', fontSize: '12px' }}
+                style={{ minHeight: 'unset', padding: '0', fontSize: 'var(--type-12)' }}
                 onClick={() => setIsCreatingModel(false)}
               >
                 Use existing model
-              </button>
+              </Button>
             </div>
-            <input
+            <Field
               id="mv-new-model"
               required
               maxLength={200}
@@ -382,7 +375,7 @@ export function RegisterModelVersionModal({
         </select>
 
         <label htmlFor="mv-arch">Architecture Reference</label>
-        <input
+        <Field
           id="mv-arch"
           required
           maxLength={200}
@@ -390,10 +383,10 @@ export function RegisterModelVersionModal({
           onChange={(e) => setArchitectureRef(e.target.value)}
         />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-12)' }}>
           <div>
             <label htmlFor="mv-params">Parameters Count</label>
-            <input
+            <Field
               id="mv-params"
               required
               type="number"
@@ -404,7 +397,7 @@ export function RegisterModelVersionModal({
           </div>
           <div>
             <label htmlFor="mv-rev">Revision No</label>
-            <input
+            <Field
               id="mv-rev"
               required
               type="number"
@@ -415,7 +408,7 @@ export function RegisterModelVersionModal({
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-12)' }}>
           <div>
             <label htmlFor="mv-state">Registry State</label>
             <select id="mv-state" value={state} onChange={(e) => setState(e.target.value)}>
@@ -424,7 +417,7 @@ export function RegisterModelVersionModal({
           </div>
           <div>
             <label htmlFor="mv-license">License Evidence</label>
-            <input
+            <Field
               id="mv-license"
               required
               value={license}
@@ -433,17 +426,17 @@ export function RegisterModelVersionModal({
           </div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
-          <button type="button" disabled={busy} onClick={onClose}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-8)', marginTop: 'var(--space-16)' }}>
+          <Button type="button" disabled={busy} onClick={onClose}>
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             className="primary"
             type="submit"
             disabled={busy || (!selectedModel && !newModelName.trim()) || !selectedTokenizer}
           >
             {busy ? 'Registering…' : 'Register Model Version'}
-          </button>
+          </Button>
         </div>
       </form>
     </dialog>
@@ -461,7 +454,9 @@ export function CreateProjectModal({
   onClose: () => void;
   onSuccess: (p: Project) => void;
 }) {
+  const formId = useId();
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const [teamsLoading, setTeamsLoading] = useState(false);
   const [teams, setTeams] = useState<Team[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<string>('');
   const [name, setName] = useState('');
@@ -480,6 +475,7 @@ export function CreateProjectModal({
   }, [isOpen, token]);
 
   async function loadTeams() {
+    setTeamsLoading(true);
     try {
       const page = await apiPage<Team>('/api/v1/teams/', token);
       setTeams(page.results);
@@ -488,6 +484,8 @@ export function CreateProjectModal({
       }
     } catch (err) {
       setError(errorMessage(err));
+    } finally {
+      setTeamsLoading(false);
     }
   }
 
@@ -541,30 +539,30 @@ export function CreateProjectModal({
     <dialog
       ref={dialogRef}
       className="connection-dialog"
-      aria-labelledby="create-project-title"
+      aria-labelledby={formId + "-create-project-title"}
       onCancel={onClose}
       onClose={onClose}
     >
       <div className="dialog-title">
-        <h2 id="create-project-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <h2 id={formId + "-create-project-title"} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)' }}>
           <FolderPlus size={18} aria-hidden="true" /> Create Project
         </h2>
-        <button className="icon-button" aria-label="Close dialog" onClick={onClose}>
+        <Button className="icon-button" aria-label="Close dialog" onClick={onClose}>
           <X size={18} />
-        </button>
+        </Button>
       </div>
-      <p className="muted" style={{ margin: '8px 0 16px' }}>
+      <p className="muted" style={{ margin: 'var(--space-8) 0 var(--space-16)' }}>
         Create an explicit project scope for your datasets, experiments, and training runs.
       </p>
 
       <form className="api-key" onSubmit={submit} style={{ marginTop: '0' }}>
-        {error && <p className="notice error" role="alert">{error}</p>}
+        {error && <Notice as="p" tone="error" className="notice error" role="alert">{error}</Notice>}
 
         {teams.length > 1 && (
           <div>
-            <label htmlFor="proj-team">Owning Team</label>
+            <label htmlFor={formId + "-proj-team"}>Owning Team</label>
             <select
-              id="proj-team"
+              id={formId + "-proj-team"}
               required
               value={selectedTeam}
               onChange={(e) => setSelectedTeam(e.target.value)}
@@ -578,9 +576,9 @@ export function CreateProjectModal({
           </div>
         )}
 
-        <label htmlFor="proj-name">Project Name</label>
-        <input
-          id="proj-name"
+        <label htmlFor={formId + "-proj-name"}>Project Name</label>
+        <Field
+          id={formId + "-proj-name"}
           required
           maxLength={200}
           value={name}
@@ -589,9 +587,9 @@ export function CreateProjectModal({
           autoFocus
         />
 
-        <label htmlFor="proj-slug">Project Slug</label>
-        <input
-          id="proj-slug"
+        <label htmlFor={formId + "-proj-slug"}>Project Slug</label>
+        <Field
+          id={formId + "-proj-slug"}
           required
           maxLength={64}
           value={slug}
@@ -599,22 +597,22 @@ export function CreateProjectModal({
           placeholder="e.g. reasoning-alignment"
         />
 
-        <label htmlFor="proj-desc">Description</label>
-        <textarea
-          id="proj-desc"
+        <label htmlFor={formId + "-proj-desc"}>Description</label>
+        <MultilineField
+          id={formId + "-proj-desc"}
           rows={3}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Objective and scope of this model project"
         />
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
-          <button type="button" disabled={busy} onClick={onClose}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-8)', marginTop: 'var(--space-16)' }}>
+          <Button type="button" disabled={busy} onClick={onClose}>
             Cancel
-          </button>
-          <button className="primary" type="submit" disabled={busy || !name.trim() || !slug.trim()}>
+          </Button>
+          <Button className="primary" type="submit" disabled={busy || teamsLoading || !name.trim() || !slug.trim()}>
             {busy ? 'Creating…' : 'Create Project'}
-          </button>
+          </Button>
         </div>
       </form>
     </dialog>

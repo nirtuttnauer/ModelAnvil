@@ -21,7 +21,7 @@ export interface AlignmentPlan {
 
 export function preferencePairs(raw: string): PreferencePair[] {
   let parsed: unknown;
-  try { parsed = JSON.parse(raw); } catch { throw new Error('Enter a JSON array of prompt, chosen, and rejected strings.'); }
+  try { parsed = JSON.parse(raw); } catch { throw new Error('Could not read the preference records. Each pair needs a prompt, a preferred response, and a rejected response.'); }
   if (!Array.isArray(parsed) || !parsed.length || parsed.length > 32) throw new Error('Provide between 1 and 32 preference pairs.');
   const seen = new Set<string>();
   return parsed.map(value => {

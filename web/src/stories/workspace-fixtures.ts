@@ -5,6 +5,22 @@ const time = '2026-10-11T09:15:00Z';
 const checkpoint = { checkpoint_id: '70000000-0000-4000-8000-000000000003', step: 50, state_digest: '3'.repeat(64), is_valid: true, contract_digest: 'd'.repeat(64), weights_sha256: 'f'.repeat(64), created_at: time };
 const candidate = { available: true, reason: 'Valid demo checkpoint.', checkpoint_id: checkpoint.checkpoint_id, step: 50, state_digest: checkpoint.state_digest, contract_digest: checkpoint.contract_digest };
 export const workspaceResponses: Record<string, unknown> = {
+  '/api/v1/artifacts/': [],
+  '/api/v1/inference/models/': { data: [{ id: '10000000-0000-4000-8000-000000000002', name: 'Local text model · Demo', format: 'cpu-reference', chat_template: '', devices: ['cpu'], max_tokens: 128, context_limit: 2048, load_tested: false }] },
+  '/api/v1/recipes/': [],
+  '/api/v1/recipes/runs/': [],
+  '/api/v1/specialists/': {
+    models: [{ id: 'demo-ocr', name: 'OCR model · Demo', kind: 'ocr', load_tested: false }, { id: 'demo-decisions', name: 'Decision model · Demo', kind: 'laya', load_tested: false }],
+    catalog: Object.fromEntries(['ocr', 'laya', 'layout'].map(kind => [kind, { name: `${kind} · Demo`, repo_id: `storybook/demo-${kind}`, revision: '0'.repeat(40), license: 'Synthetic fixture only', byte_size: 0 }])),
+  },
+  '/api/v1/specialists/jobs/': [],
+  '/api/v1/fine-tuning/options/': {
+    compute: { available: false, busy: false, device: null, message: 'Storybook preview. Local training is not connected in this demo.' },
+    model: { id: 'smollm2-135m-instruct', name: 'SmolLM2-135M Instruct', parameters: 135000000, description: 'Synthetic model choice for the guided-flow preview.', license: 'Apache-2.0', max_examples: 1000, max_tokens: 128,
+      source: { repo_id: 'storybook/synthetic-model', revision: '0'.repeat(40) } }, default_epochs: 3, max_steps: 3000,
+  },
+  '/api/v1/model-imports/': [],
+  '/api/v1/build/': typeof __API_BUILD__ === 'undefined' ? { revision: 'storybook-demo', source_digest: 'synthetic-fixture', protocol: 'demo-only', dataset_formats: ['jsonl', 'csv', 'json', 'docx', 'pdf'] } : __API_BUILD__,
   '/api/v1/health/': { status: 'ok' },
   '/api/v1/tenants/': [{ tenant_id: 'demo-tenant', name: 'Anvil Research · Demo' }],
   '/api/v1/teams/': [{ id: 'demo-team', slug: 'research', name: 'Research', description: 'Synthetic Storybook team.' }],

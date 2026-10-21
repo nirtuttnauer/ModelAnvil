@@ -192,6 +192,13 @@ for (const stage of [0, 1, 2, 3]) {
   });
 }
 
+test('dataset creation preserves structured name repair guidance', async () => {
+  const { prepareUploadedDataset } = await client();
+  const harness = fetchWithOverride(2, () => response({ error: { details: [{ path: 'name', message: 'A dataset already uses this name. Choose a different dataset name.' }] } }, 400));
+  await assert.rejects(prepareUploadedDataset({ file: file(), name: dataset.name, token, fetchImpl: harness.fetchImpl }), /Choose a different dataset name/);
+  assert.equal(harness.calls.length, 3);
+});
+
 const invalidResponses = [
   ['registration URL injection', 0, { ...artifact, state: 'staging', artifact_id: '../outside?secret=1' }],
   ['registration state', 0, artifact],
@@ -354,7 +361,7 @@ test('dataset page integration surface exists and typechecks with existing React
   assert.match(source, /token: string/);
   assert.match(source, /refreshKey\?: number/);
   assert.doesNotMatch(source, /dangerouslySetInnerHTML|localStorage|sessionStorage/);
-  assert.match(source, /<table/);
+  assert.match(source, /<RecordTable/);
   assert.match(source, /<label/);
   assert.match(source, /Supported upload format/);
   const result = spawnSync(process.execPath, [
@@ -400,4 +407,16 @@ test('upload hashes real file bytes, uses safe requests, and returns a published
   assert.deepEqual(result, { artifact, dataset, revision });
   assert.equal(harness.calls.length, 4);
   assert.equal(result.revision.dataset, 17, 'integer FKs must not be treated as business UUIDs');
+});
+
+test('training mappings are included in publication and distinguish retry identities', async () => {
+  const { prepareUploadedDataset } = await client();
+  const keys = [];
+  for (const mapping of [{ mode: 'prompt_response', prompt_field: 'question', response_field: 'answer' }, { mode: 'prompt_response', prompt_field: 'answer', response_field: 'question' }]) {
+    const harness = successFetch((index, _url, init) => {
+      if (index === 3) { assert.deepEqual(JSON.parse(init.body).source_mapping, mapping); keys.push(init.headers['Idempotency-Key']); }
+    });
+    await prepareUploadedDataset({ file: file(), name: dataset.name, token, sourceFormat: 'training', sourceMapping: mapping, fetchImpl: harness.fetchImpl });
+  }
+  assert.notEqual(keys[0], keys[1]);
 });

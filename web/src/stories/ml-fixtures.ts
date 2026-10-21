@@ -35,6 +35,11 @@ const versions = [
   { id: 2, model_version_id: '10000000-0000-4000-8000-000000000007', model: 1, model_name: 'Anvil Assistant', revision_no: 7, architecture_ref: 'demo/anvil-character-16', tokenizer: 1, state: 'candidate', parameters_count: 4096, license_evidence: 'Fictional demo record · MIT', created_at: createdAt },
   { id: 3, model_version_id: '10000000-0000-4000-8000-000000000008', model: 3, model_name: 'Anvil Verifier', revision_no: 2, architecture_ref: 'demo/anvil-character-8', tokenizer: 2, state: 'draft', parameters_count: 2048, metadata: { model_role: 'reward_model', fixture_only: true }, license_evidence: 'Fictional demo record · MIT', created_at: createdAt },
 ];
+for (const version of versions) Object.assign(version, { capabilities: {
+  train: { eligible: true, recipes: ['full_sft', 'lora_adapter', 'continued_pretraining'], reason: 'Fictional Storybook compatibility; no real execution.' },
+  evaluate: { eligible: true, reason: 'Fictional Storybook evaluator.' },
+  chat: { eligible: false, devices: [], reason: 'Demo registration does not provide real weights.' },
+} });
 const revisions = [
   { id: 1, revision_id: ids.revision, dataset: 1, dataset_name: 'Assistant instruction corpus', revision_no: 1, schema_version: '1.0', manifest_digest: digest('a'), manifest_artifact: 11, recipe_digest: digest('b'), row_count: 1200, state: 'published', created_at: createdAt, published_at: '2026-10-11T08:30:00Z', metadata: { preparation_kind: 'bounded_local_jsonl_v1', input_sha256: digest('c'), split_counts: { train: 960, validation: 120, test: 120 } } },
   { id: 2, revision_id: '20000000-0000-4000-8000-000000000004', dataset: 2, dataset_name: 'Lucide SVG instructions', revision_no: 2, schema_version: '1.0', manifest_digest: digest('d'), manifest_artifact: 12, recipe_digest: digest('e'), row_count: 480, state: 'published', created_at: createdAt, published_at: '2026-10-10T14:20:00Z', metadata: { preparation_kind: 'bounded_local_jsonl_v1', input_sha256: digest('f'), split_counts: { train: 384, validation: 48, test: 48 } } },
@@ -63,6 +68,7 @@ const completedTraining = {
   dataset_revision: 1, dataset_manifest_digest: digest('a'), pool: 1, job: ids.job,
   checkpoints, tokenizer_version: 1, base_model_version: 2, output_model_version: 1,
   runtime: { execution_mode: 'worker' }, execution_evidence: fixtureEvidence,
+  export_options: [{ format: 'json', label: 'Reference bundle (JSON)', extension: 'json', description: 'Synthetic reference bundle for the Storybook preview.' }],
   metrics_log: [4.852, 3.731, 2.943, 2.401, 2.122, 1.887, 1.716, 1.598, 1.486, 1.421, 1.372].map((loss, index) => ({ step: index * 5, loss })),
   created_at: createdAt, completed_at: '2026-10-11T09:24:00Z',
 };
