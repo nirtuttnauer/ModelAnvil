@@ -86,7 +86,7 @@ class ContextCompiler:
             if not raw:
                 continue
 
-            rendered = str(raw).strip()
+            rendered = str(raw)
             original_tokens = estimate_tokens(rendered)
             was_truncated = False
             if b.max_tokens is not None and original_tokens > b.max_tokens:
@@ -97,7 +97,7 @@ class ContextCompiler:
                         low = middle
                     else:
                         high = middle - 1
-                rendered = rendered[:low].rstrip()
+                rendered = rendered[:low]
                 was_truncated = True
                 truncated.append({"block_key": b.block_key, "reason": "block_token_limit", "original_tokens": original_tokens, "tokens_retained": estimate_tokens(rendered)})
             tok_count = estimate_tokens(f"<|im_start|>{b.role}\n{rendered}<|im_end|>")

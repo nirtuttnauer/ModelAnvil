@@ -29,6 +29,8 @@ jobs:
         env:
           DATABASE_TEST_NAME: ${{ runner.temp }}/modelanvil-tests.sqlite3
       - run: PYTHONPATH=. python -m scripts.smoke
+      - name: Verify production deployment over HTTPS
+        run: python scripts/production_integration.py
   frontend:
     runs-on: ubuntu-latest
     defaults:

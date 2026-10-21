@@ -3,11 +3,11 @@ import hashlib
 import io
 import json
 from pathlib import Path
-import uuid
 
 from django.db import transaction
 from django.utils import timezone
 
+from modelanvil.core.ids import uuid7
 from modelanvil.artifacts.models import Artifact
 from modelanvil.budgets.models import BudgetPolicy, BudgetReservation, UsageEvent
 from modelanvil.core.models import IdempotencyKey
@@ -60,14 +60,16 @@ def queue(*, tenant, project, principal, version, kind, device, inputs, image, l
         if admission.request_hash != fingerprint:
             raise ValueError('This idempotency key belongs to different specialist inputs.')
         return InferenceRequest.all_objects.get(request_id=admission.response_body['request_id'], tenant_id=tenant, project=project)
+    from modelanvil.jobs.setup import local_capacity_available
+    workers = Worker.all_objects.filter(tenant_id=tenant, pool=pool, status__in=['available','busy'],
+        capabilities__specialist_runtime=frozen['runtime'], capabilities__specialist_device=device)
     if (str(pool.tenant_id) != str(tenant) or pool.status != 'active' or pool.result_egress != 'envelope'
-            or not Worker.all_objects.filter(tenant_id=tenant, pool=pool, status__in=['available','busy'],
-                capabilities__specialist_runtime=frozen['runtime'], capabilities__specialist_device=device).exists()):
+            or not any(local_capacity_available(w) for w in workers)):
         raise ValueError('Select an active envelope pool with a worker for this exact specialist runtime and device.')
     policy = BudgetPolicy.all_objects.filter(tenant_id=tenant, policy_id=policy_id, enabled=True, unit=UNIT, currency='').first()
     if policy is None:
         raise ValueError('Select an enabled specialist_attempts quota without currency pricing.')
-    job_id = uuid.uuid4()
+    job_id = uuid7()
     BudgetReservation.reserve(tenant_id=tenant, policy=policy, job_id=job_id, estimated_amount=MAX_ATTEMPTS)
     record = InferenceRequest.all_objects.create(tenant_id=tenant, project=project, principal_id=str(principal),
         model_version=version, input_digest=digest(frozen), status='queued',

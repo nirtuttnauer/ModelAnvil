@@ -1,14 +1,14 @@
-import { apiPath, ApiRequestError, getActiveProjectId } from './client.ts';
+import { apiPath, ApiRequestError, getActiveProjectId, authHeaders } from './client.ts';
 
 export interface ChatMessage { role: 'system' | 'user' | 'assistant'; content: string }
-export interface LocalModel { id: string; name: string; format: string; load_tested: boolean; chat_template: string }
+export interface LocalModel { id: string; name: string; format: string; load_tested: boolean; chat_template: string; devices?: string[]; max_tokens?: number; context_limit?: number; tokenizer_kind?: string; base_model_id?: string | null; training_run_id?: string | null }
 export interface TokenUsage { prompt_tokens: number; completion_tokens: number; total_tokens: number }
 
 export async function streamCompletion(token: string, body: Record<string, unknown>, signal: AbortSignal,
   onText: (text: string) => void, onUsage: (usage: TokenUsage) => void,
   fetchImpl: typeof fetch = fetch): Promise<string> {
   if (!token.trim()) throw new Error('Connect to your workspace before chatting.');
-  const headers = new Headers({ Authorization: `Bearer ${token.trim()}`, 'Content-Type': 'application/json' });
+  const headers = authHeaders(token); headers.set('Content-Type', 'application/json');
   const project = getActiveProjectId();
   if (project) headers.set('X-Project-ID', project);
   const response = await fetchImpl(apiPath('/api/v1/inference/chat/completions'), { method: 'POST', headers,

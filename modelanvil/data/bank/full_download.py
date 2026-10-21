@@ -7,13 +7,13 @@ import io
 import json
 import re
 import time
-import uuid
 from datetime import timedelta
 from pathlib import Path, PurePosixPath
 
 from django.db import transaction
 from django.utils import timezone
 
+from modelanvil.core.ids import uuid7
 from modelanvil.artifacts.models import Artifact, LineageEdge, TransferSession
 from modelanvil.artifacts.storage import (
     artifact_storage_backend,
@@ -431,7 +431,7 @@ def execute(descriptor, context, source, snapshot):
         )
     return {
         "schema_version": "1.0",
-        "sample_id": str(uuid.uuid4()),
+        "sample_id": str(uuid7()),
         "source_group_id": str(snapshot.snapshot_id),
         "blocks": [
             {

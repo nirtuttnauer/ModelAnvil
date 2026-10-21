@@ -12,6 +12,8 @@ A self-hosted workspace for dataset preparation, team labeling, and bounded mode
 
 ModelAnvil is a work in progress. Several local execution paths run real computations, while other screens and domain tests use explicit fixtures. Execution evidence, model quality, hardware support and production readiness are separate questions. The [capability audit](docs/engineering/capability-evidence.md) and [status ledger](docs/engineering/status.md) record the evidence and remaining gaps.
 
+See the [supported capability baseline](docs/engineering/supported-capabilities.md) for current operation-specific evidence and limits. Overview exposes local workflow measurements; Evaluation records explicit accept/reject decisions after verified candidate/baseline comparisons. These measurements stay in the installation and exclude prompts and credentials.
+
 [Start locally](#local-development) · [Current capabilities](#current-capabilities) · [Architecture](#architecture) · [Checks](#checks) · [Limits and work in progress](#limits-and-work-in-progress) · [Contributing](CONTRIBUTING.md)
 
 ## Current capabilities
@@ -31,6 +33,12 @@ The [developer and execution reference](docs/engineering/development-and-evidenc
 
 GPU detection does not establish that a device can run a particular recipe. The checked-in SmolLM2 pilot covers one Apple MPS environment; CUDA, ROCm, Intel XPU and other configurations need their own qualification. The native Apple adapter report also records a bounded candidate's quality failure. Training completion alone does not authorize production promotion.
 
+## Guided fine-tuning
+
+New users can create an account and use **Training → Model → Dataset → Review → Train**. The guided path prepares pretrained SmolLM2-135M and its local execution resources automatically, accepts ordinary chat JSONL and prompt/response CSV, and provides progress, a trained-model download and a chat link.
+
+For the installation owner, start the API and managed training service together with `.venv-gpu/bin/python manage.py run_local` in the installed GPU environment, then start the existing web development server. Users need only the browser. See the [guided local fine-tuning guide](docs/engineering/guided-fine-tuning.md) for setup, account behavior, supported input limits and verification.
+
 ## Local development
 
 Use Python 3.12, Node.js 24 and npm to match CI. Docker with Compose is optional for the local SQLite setup and required for the multi-service reference and container integration checks. Model execution needs the optional dependencies and hardware described by its runtime guide; installing the control plane does not provision a training worker or download model weights.
@@ -47,7 +55,7 @@ make migrate
 make check
 ```
 
-`bootstrap_dev` creates a local tenant, an admin user, an empty project and the shared development API key used by the browser. Run it only against a local development database. The defaults are deliberately insecure for public hosting. It does not create datasets, trained models or execution evidence.
+`bootstrap_dev` creates a local tenant, an admin user, an empty project and a development API key for optional API-key connections. The guided browser flow starts with account creation instead. Run bootstrap only against a local development database; its shared defaults are deliberately insecure for public hosting. It does not create datasets, trained models or execution evidence. Use Storybook for populated demo screens.
 
 Start the API in one terminal, from the repository root:
 
@@ -62,7 +70,7 @@ npm --prefix web ci
 npm --prefix web run dev -- --host 127.0.0.1
 ```
 
-Open [localhost:5173](http://localhost:5173). Vite proxies `/api` to the local Django server. The unauthenticated health endpoint is available while the API is running:
+Open [localhost:5173](http://localhost:5173) and create an account for the browser workflow. Vite proxies `/api` to the local Django server. The unauthenticated health endpoint is available while the API is running:
 
 ```sh
 curl --fail http://127.0.0.1:8000/api/v1/health/
@@ -81,6 +89,8 @@ Open [localhost:6006](http://localhost:6006). Storybook uses the real components
 For the Screens/States groups, action-story coverage, MSW behavior, axe checks and viewport tools, see [Storybook and browser verification](docs/engineering/development-and-evidence.md#storybook-and-browser-verification). For API-backed interactions and their current limits, see the [frontend workspace guide](docs/engineering/frontend-workspace.md).
 
 ## Architecture
+
+The control plane includes tenant identity/RBAC, worker job protocol with lease fencing and reconciliation, a tenant-scoped RabbitMQ worker consumer, tenant-aware artifact and dataset metadata, source snapshots with canonical sample-envelope validation, runner/adapter registries, budget reservations/usage events, a React/Vite browser shell, and a local Compose reference.
 
 ```mermaid
 flowchart LR
@@ -143,6 +153,15 @@ CI uses Python 3.12 and Node.js 24. It also checks fresh migrations/bootstrap an
 
 The optional `make test-broker-integration`, `make test-accounting-integration`, `make test-worker-integration` and `make test-dataset-integration` targets start isolated Docker projects and remove their test stacks and volumes. They check specific PostgreSQL, broker or HTTP paths. The [test-target reference](docs/engineering/development-and-evidence.md#automated-checks-and-integration-boundaries) preserves each target's precise coverage, including broker callbacks, worker HTTP paths and concurrent accounting. None substitutes for model-quality evaluation, managed-storage qualification or production operations testing. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Production deployment
+
+The [production deployment runbook](deploy/production/README.md) covers the separate
+Gunicorn, PostgreSQL and Caddy stack, explicit migrations, HTTPS verification,
+backups and rollback. Run `make test-production` to build and exercise an isolated
+HTTPS deployment, including authentication and restart persistence. The test
+removes only its own containers and volumes. Hosted worker execution, account
+invitations, billing and recovery qualification remain separate SaaS milestones.
+
 ## Limits and work in progress
 
 - Runtime contracts impose model, input, sequence, step and memory limits. The supported local profiles and their measured envelopes are narrower than the full product plan.
@@ -150,7 +169,7 @@ The optional `make test-broker-integration`, `make test-accounting-integration`,
 - Automatic label-review/retraining cycles, broad GPU qualification, distributed allocation, managed-S3 qualification and a complete private-worker gateway remain open work.
 - Production qualification and live promotion remain unavailable through unverified execution paths. Operator-installed executor code is trusted code; the worker protocol does not sandbox it.
 
-On 21 October 2026, [catalog additions (#10)](https://github.com/nirtuttnauer/ModelAnvil/pull/10), [guided training and reviewed releases (#11)](https://github.com/nirtuttnauer/ModelAnvil/pull/11), and [production packaging (#12)](https://github.com/nirtuttnauer/ModelAnvil/pull/12) are under review. Check their merge status before expecting those changes in `main`.
+The [catalog additions (#10)](https://github.com/nirtuttnauer/ModelAnvil/pull/10), [guided training and reviewed releases (#11)](https://github.com/nirtuttnauer/ModelAnvil/pull/11), and [production packaging (#12)](https://github.com/nirtuttnauer/ModelAnvil/pull/12) were integrated into `main` on 21 October 2026. Their guides record the supported paths and remaining qualification limits.
 
 <a id="planning-documents"></a>
 

@@ -20,6 +20,21 @@ _allocation = threading.Lock()
 MAX_BYTES = 8 * 1024**3
 
 
+def safetensors_limits(plan):
+    return {'weight_bytes': 4 * 1024**3, 'parameters': 2000000000} if plan.get('guided_large') else {'weight_bytes': 1024**3, 'parameters': 300000000}
+
+
+def model_chat_template(version):
+    """Completed chat SFT candidates export the runtime's role template."""
+    if version.tokenizer.chat_template:
+        return version.tokenizer.chat_template
+    from modelanvil.runners.models import TrainingRun
+    from modelanvil.data.training_import import ROLE_PREFIX_TEMPLATE
+    completed = TrainingRun.all_objects.filter(tenant_id=version.tenant_id, output_model_version=version,
+        status='completed', job__status='succeeded', hardware_config__pins__chat_sft=True).exists()
+    return ROLE_PREFIX_TEMPLATE if completed else ''
+
+
 def verified_artifact(ref, tenant, project):
     from modelanvil.runners.training.hf_runtime import file_ref
     try:
@@ -86,7 +101,7 @@ def snapshot(version, tenant, project):
             status='completed', job__status='succeeded', base_model_version__architecture_ref__in=[hf_runtime.RUNTIME_ID, mlx_runtime.RUNTIME_ID]).first()
         if run is None or not check_resource_access(run, project, tenant) or run.tokenizer_version_id != version.tokenizer_id:
             raise ValueError('Import a snapshot or complete a supported transformer training run before inference.')
-        checkpoint = run.checkpoints.filter(step=run.total_steps).first()
+        checkpoint = run.checkpoints.filter(step=version.metadata.get('selected_checkpoint_step', run.total_steps)).first()
         if checkpoint is None or version.metadata.get('checkpoint_digest') != checkpoint.state_digest:
             raise ValueError('Candidate checkpoint lineage changed; inference refused.')
         bundle = runtime_for_run(run).checkpoint_bundle(run, checkpoint)
@@ -97,7 +112,8 @@ def snapshot(version, tenant, project):
         target = io.BytesIO(); copy_verified(file_ref(artifact), tenant, project, target)
         if digest(json.loads(target.getvalue())) != digest(bundle):
             raise ValueError('Candidate manifest differs from its committed checkpoint.')
-        return {'format': 'mlx' if run.recipe_type == 'qlora_adapter' else 'safetensors', 'files': bundle['files'], 'recipe': run.recipe_type, 'trained': True}
+        return {'format': 'mlx' if run.recipe_type == 'qlora_adapter' else 'safetensors', 'files': bundle['files'], 'recipe': run.recipe_type, 'trained': True,
+                'source': bundle.get('source'), 'adapter': bundle['provenance.json']['pins'].get('adapter'), 'guided_large': bundle.get('source') == hf_runtime.LARGE_GUIDED_SOURCE and run.recipe_type == 'lora_adapter'}
     if not ref or str(ref.get('artifact_id')) != version.artifact_manifest_id:
         raise ValueError('Import a pinned model snapshot before local inference.')
     artifact = verified_artifact(ref, tenant, project)
@@ -107,6 +123,16 @@ def snapshot(version, tenant, project):
     copy_verified(ref, tenant, project, target)
     try:
         value = json.loads(target.getvalue())
+        if isinstance(value, dict) and set(value) == {'source', 'files'} and version.metadata.get('managed_local'):
+            from modelanvil.runners.training import hf_runtime
+            source = value['source']
+            expected = hf_runtime.LARGE_GUIDED_FILE_HASHES if source == hf_runtime.LARGE_GUIDED_SOURCE else hf_runtime.GUIDED_FILE_HASHES if source == hf_runtime.GUIDED_SOURCE else None
+            files = value['files']
+            if (version.architecture_ref != hf_runtime.RUNTIME_ID or source != version.metadata.get('source') or expected is None
+                    or not isinstance(files, dict) or set(files) != set(expected)
+                    or any(not isinstance(files[name], dict) or files[name].get('sha256') != sha for name, sha in expected.items())):
+                raise ValueError()
+            return {**value, 'format': 'safetensors', 'guided_large': source == hf_runtime.LARGE_GUIDED_SOURCE}
         if not isinstance(value, dict) or value['format'] not in {'safetensors', 'gguf', 'mlx'}:
             raise ValueError()
         return value
@@ -144,6 +170,20 @@ def rendered_prompt(tokenizer, messages, prompt_format='model'):
 @contextmanager
 def local_session(version, *, tenant, project, device='cpu'):
     """One model per process and exclusive local device use; close always unloads."""
+    from modelanvil.runners.training import runtime, general_runtime
+    if version.architecture_ref in (runtime.RUNTIME_ID, general_runtime.RUNTIME_ID):
+        if device != 'cpu':
+            raise ValueError('CPU reference candidates require the CPU device.')
+        from modelanvil.runners.local_execution import load_reference_bundle
+        bundle, _, _ = load_reference_bundle(version, tenant=tenant, project=project)
+        if not _allocation.acquire(blocking=False):
+            raise ValueError('Local inference is busy; retry after the current request finishes.')
+        try:
+            with device_lease(device):
+                yield {'format': 'cpu-reference', 'bundle': bundle}
+        finally:
+            _allocation.release()
+        return
     plan = snapshot(version, tenant, project)
     if not _allocation.acquire(blocking=False):
         raise ValueError('Local inference is busy; retry after the current request finishes.')
@@ -206,8 +246,9 @@ def local_session(version, *, tenant, project, device='cpu'):
                     if os.environ.get('PYTORCH_ENABLE_MPS_FALLBACK') == '1':
                         raise ValueError('Disable MPS CPU fallback before GPU inference.')
                 weight_bytes = sum(verified_artifact(ref, tenant, project).byte_size for n, ref in plan['files'].items() if n.endswith('.safetensors'))
-                if weight_bytes > 1024**3:
-                    raise ValueError('This bounded transformer runtime loads at most 1 GiB of weights.')
+                limits = safetensors_limits(plan)
+                if weight_bytes > limits['weight_bytes']:
+                    raise ValueError('Snapshot weights exceed the verified local runtime limit.')
                 required = 4 * weight_bytes + 256 * 1024**2
                 if observed['backend'] == 'mps':
                     from modelanvil.runners.training.hf_runtime import mps_memory
@@ -226,15 +267,16 @@ def local_session(version, *, tenant, project, device='cpu'):
                     raise ValueError('Model configuration dimensions exceed this bounded runtime.')
                 with torch.device('meta'):
                     shape_model = AutoModelForCausalLM.from_config(config, trust_remote_code=False)
-                if sum(p.numel() for p in shape_model.parameters()) > 300000000:
-                    raise ValueError('This FP32 runtime loads at most 300 million parameters.')
+                maximum_parameters = limits['parameters']
+                if sum(p.numel() for p in shape_model.parameters()) > maximum_parameters:
+                    raise ValueError('This snapshot exceeds the verified local runtime parameter limit.')
                 del shape_model
                 tokenizer = AutoTokenizer.from_pretrained(str(directory), local_files_only=True, trust_remote_code=False)
                 if 'adapter_config.json' in plan['files']:
                     if not plan.get('trained') or plan.get('recipe') != 'lora_adapter':
                         raise ValueError('Adapter inference requires a completed verified ModelAnvil LoRA candidate and pinned local base.')
                     from modelanvil.runners.training.hf_runtime import _recipe_model
-                    model = _recipe_model(directory, 'lora_adapter')
+                    model = _recipe_model(directory, 'lora_adapter', source=plan.get('source'), adapter=plan.get('adapter'))
                     info = {key: [] for key in ['missing_keys', 'unexpected_keys', 'mismatched_keys', 'error_msgs']}
                 else:
                     model, info = AutoModelForCausalLM.from_pretrained(str(directory), local_files_only=True,
@@ -281,6 +323,28 @@ def generate(session, messages, *, max_tokens=128, temperature=0.0, seed=42, pro
     if prompt_format not in {'model', 'plain', 'chatml'}:
         raise ValueError('Choose the imported model template, plain text or ChatML.')
     started, count, finish = time.monotonic(), 0, 'length'
+    if session['format'] == 'cpu-reference':
+        from modelanvil.runners.training import runtime, general_runtime, registry
+        if temperature != 0 or max_tokens > 32:
+            raise ValueError('CPU reference inference supports greedy decoding and 1–32 tokens.')
+        if prompt_format == 'chatml':
+            raise ValueError('CPU reference inference uses plain text; ChatML is unsupported.')
+        prompt = rendered_prompt(None, messages, 'plain')
+        bundle = session['bundle']
+        module = general_runtime if bundle['config.json']['runtime'] == general_runtime.RUNTIME_ID else runtime
+        prompt_count = len(module.encode(prompt, bundle['tokenizer_config.json']))
+        if prompt_count + max_tokens > bundle['config.json'].get('context_window', 64):
+            raise ValueError('Prompt and output exceed the CPU reference context limit.')
+        if cancelled():
+            finish = 'cancelled'
+        else:
+            output = registry.generate_completion(bundle, prompt, max_new_tokens=max_tokens)
+            count = len(output['generated_token_ids'])
+            finish = 'stop' if output['generated_token_ids'][-1:] == [2] else 'length'
+            yield {'text': output['completion']}
+        yield {'finish_reason': finish, 'elapsed_seconds': time.monotonic()-started,
+               'usage': {'prompt_tokens': prompt_count, 'completion_tokens': count, 'total_tokens': prompt_count+count}}
+        return
     if session['format'] == 'gguf':
         model = session['model']
         chat = prompt_format == 'model' and bool(model.metadata.get('tokenizer.chat_template'))

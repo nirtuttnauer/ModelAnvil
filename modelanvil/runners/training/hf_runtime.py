@@ -9,7 +9,9 @@ import contextlib
 import hashlib
 import importlib.metadata
 import json
+import math
 import os
+import random
 from pathlib import Path
 import tempfile
 import time
@@ -35,18 +37,36 @@ FILE_HASHES = {
     'special_tokens_map.json': 'e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3',
 }
 PACKAGES = {'torch': '2.9.0', 'transformers': '4.57.1', 'safetensors': '0.6.2', 'tokenizers': '0.22.2'}
-LIMITS = {'rows': 1000, 'steps': 1000, 'sequence_tokens': 128, 'memory_bytes': 8 * 1024**3,
-          'gpu_memory_bytes': 4 * 1024**3, 'weight_bytes': 1024**3, 'aux_bytes': 8 * 1024**2}
-OPTIMIZER = {'algorithm': 'adamw', 'learning_rate': 0.00001, 'beta1': 0.9, 'beta2': 0.999,
+GUIDED_SOURCE = {'repo_id': 'HuggingFaceTB/SmolLM2-135M-Instruct', 'revision': '12fd25f77366fa6b3b4b768ec3050bf629380bac', 'license': 'Apache-2.0'}
+GUIDED_FILE_HASHES = {**FILE_HASHES,
+    'model.safetensors': '5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c',
+    'config.json': '8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a',
+    'tokenizer_config.json': '4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df',
+    'special_tokens_map.json': '2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52'}
+LARGE_GUIDED_SOURCE = {'repo_id': 'HuggingFaceTB/SmolLM2-1.7B-Instruct', 'revision': '31b70e2e869a7173562077fd711b654946d38674', 'license': 'Apache-2.0'}
+LARGE_GUIDED_FILE_HASHES = {**GUIDED_FILE_HASHES,
+    'model.safetensors': 'f55217be716b6a997b97b9d8d7eb6fad02e00858f5010ec24f64603c3a98a0e8',
+    'config.json': '994f50b16abb4ae00880baefe03c10260b5bd608d2bf586f7056ca05a534feea'}
+LIMITS = {'rows': 1000, 'steps': 3000, 'sequence_tokens': 128, 'memory_bytes': 8 * 1024**3,
+          'gpu_memory_bytes': 4 * 1024**3, 'weight_bytes': 4 * 1024**3, 'aux_bytes': 8 * 1024**2}
+OPTIMIZER = {'algorithm': 'adamw', 'learning_rate': 0.00002, 'beta1': 0.9, 'beta2': 0.999,
              'epsilon': 1e-8, 'weight_decay': 0.0}
 LORA = {'r': 8, 'lora_alpha': 16, 'target_modules': ['q_proj', 'v_proj'], 'lora_dropout': 0.0,
         'bias': 'none', 'task_type': 'CAUSAL_LM'}
+GUIDED_LORA = {**LORA, 'r': 16, 'lora_alpha': 32,
+    'target_modules': ['q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj']}
 CONTRACT = {'runtime': RUNTIME_ID, 'source': SOURCE, 'file_hashes': FILE_HASHES, 'packages': PACKAGES,
             'recipe': 'full_sft', 'precision': 'fp32', 'optimizer': OPTIMIZER, 'limits': LIMITS,
             'dropout': 'disabled', 'placement': 'one_trusted_local_worker',
             'recipes': ['full_sft', 'lora_adapter', 'continued_pretraining'], 'lora': LORA, 'adapter_package': {'peft': '0.17.1'},
             'lora_gradient_checkpointing': 'non_reentrant', 'deterministic_algorithms': True,
-            'device_admission': 'exclusive_posix_user_host_v1'}
+            'device_admission': 'exclusive_posix_user_host_v1',
+            'chat_sft': 'native_template_assistant_labels_eos_v2',
+            'guided_source': GUIDED_SOURCE, 'guided_file_hashes': GUIDED_FILE_HASHES,
+            'large_guided_source': LARGE_GUIDED_SOURCE, 'large_guided_file_hashes': LARGE_GUIDED_FILE_HASHES,
+            'large_guided_recipe': 'lora_adapter', 'large_guided_learning_rate': 0.0002, 'large_guided_adapter': GUIDED_LORA,
+            'gradient_clip_norm': 1.0, 'guided_checkpoints': 'three_spaced_checkpoints_best_validation_v1'}
+CONTRACT['guided_sample_order'] = 'seeded_epoch_shuffle_v1'
 CONTRACT_DIGEST = digest(CONTRACT)
 MPS_MEMORY_FRACTION = 0.9
 
@@ -90,7 +110,7 @@ def runner_manifest():
                           'disk_bytes': 2 * 1024**3, 'distributed': False},
             'permissions': {'network_hosts': [], 'artifact_access': ['read_job_inputs', 'write_attempt_staging'], 'secret_kinds': []},
             'dependencies': [],
-            'limitations': ['One pinned SmolLM2-135M model, text full SFT, rank-8 q/v LoRA or continued pretraining, FP32, deterministic manifest-order samples.',
+            'limitations': ['One pinned SmolLM2-135M model, text or assistant-only conversation SFT, rank-8 q/v LoRA or continued pretraining, FP32, deterministic manifest-order samples.',
                            'One trusted local GPU worker per pool; cross-worker device reservations require TASK-42.',
                            'No QLoRA, quantization, distributed or remote worker support; each device needs qualification.']}
 
@@ -98,7 +118,7 @@ def runner_manifest():
 def build_digest():
     root = Path(__file__).parent
     paths = [root / name for name in ['hf_runtime.py', 'runtime.py', 'executor.py', 'registry.py']]
-    paths.extend(root.parents[1] / name for name in ('accelerators.py', 'device_admission.py'))
+    paths.extend(root.parents[1] / name for name in ('accelerators.py', 'device_admission.py', 'data/training_import.py'))
     return hashlib.sha256(b''.join(p.read_bytes() for p in paths)).hexdigest()
 
 
@@ -114,6 +134,10 @@ def require_packages():
 
 def capable_worker(worker):
     caps = worker.capabilities
+    if caps.get('managed_local'):
+        from modelanvil.jobs.setup import connection_state
+        if connection_state(worker) != 'connected':
+            return False
     return (isinstance(caps, dict) and caps.get('training_runtime') == CONTRACT_DIGEST
             and type(caps.get('memory_bytes')) is int and caps['memory_bytes'] >= LIMITS['memory_bytes']
             and caps.get('gpu_backend') in {'cuda', 'rocm', 'xpu', 'mps'}
@@ -206,10 +230,13 @@ def _load_model(directory):
     return model
 
 
-def _recipe_model(directory, recipe_type='full_sft', seed=42, *, training=False):
+def _recipe_model(directory, recipe_type='full_sft', seed=42, *, training=False, source=None, adapter=None):
     if recipe_type in {'full_sft', 'continued_pretraining'}:
         return _load_model(directory)
     require_adapter_package()
+    adapter = adapter or LORA
+    if adapter not in (LORA, GUIDED_LORA) or (adapter == GUIDED_LORA and source != LARGE_GUIDED_SOURCE):
+        raise ValueError('Use a verified adapter configuration for the pinned source model.')
     import torch
     from peft import LoraConfig, PeftModel, get_peft_model, get_peft_model_state_dict
     # Transformers auto-detects adapter_config.json; isolate the verified base to prevent implicit Hub loading.
@@ -220,7 +247,7 @@ def _recipe_model(directory, recipe_type='full_sft', seed=42, *, training=False)
     model = _load_model(base)
     if (directory / 'adapter_model.safetensors').exists():
         config = json.loads((directory / 'adapter_config.json').read_text())
-        if any(config.get(k) != value for k, value in LORA.items() if k != 'target_modules') or set(config.get('target_modules', [])) != set(LORA['target_modules']):
+        if any(config.get(k) != value for k, value in adapter.items() if k != 'target_modules') or set(config.get('target_modules', [])) != set(adapter['target_modules']):
             raise ValueError('Adapter configuration differs from the pinned LoRA profile.')
         model = PeftModel.from_pretrained(model, str(directory), is_trainable=training, local_files_only=True)
         from safetensors.torch import load_file
@@ -231,9 +258,10 @@ def _recipe_model(directory, recipe_type='full_sft', seed=42, *, training=False)
     else:
         with torch.random.fork_rng():
             torch.manual_seed(seed)
-            model = get_peft_model(model, LoraConfig(**LORA))
-    model.peft_config['default'].base_model_name_or_path = SOURCE['repo_id']
-    model.peft_config['default'].revision = SOURCE['revision']
+            model = get_peft_model(model, LoraConfig(**adapter))
+    source = source or SOURCE
+    model.peft_config['default'].base_model_name_or_path = source['repo_id']
+    model.peft_config['default'].revision = source['revision']
     if training:
         model.train()
         model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': False})
@@ -279,14 +307,12 @@ def _training_samples(dataset, tokenizer, tenant, project, *, split='train'):
         groups[group] = named_split
         if identifier not in selected:
             continue
-        if any(b['type'] != 'text' or b.get('role') for b in row['blocks']):
-            raise ValueError('GPU full SFT accepts text-only samples without chat roles.')
-        text = '\n'.join(b['text'] for b in row['blocks'])
-        ids = tokenizer.encode(text, add_special_tokens=True)
+        from modelanvil.data.training_import import tokenize_blocks
+        text, ids, labels = tokenize_blocks(row['blocks'], tokenizer)
         if not text or not 2 <= len(ids) <= LIMITS['sequence_tokens']:
             raise ValueError('Prepare nonempty samples of 2–128 actual tokenizer tokens; samples are never truncated.')
-        samples.append({'sample_id': identifier, 'text': text, 'token_ids': ids})
-    if not samples or (set(train) | set(held)) - seen:
+        samples.append({'sample_id': identifier, 'text': text, 'token_ids': ids, **({'labels': labels} if labels != ids else {})})
+    if (not samples and split == 'train') or (set(train) | set(held)) - seen:
         raise ValueError('Published split identifiers do not resolve to actual samples.')
     return samples, {'consumed': split, 'train_rows': len(train), 'excluded_rows': {n: len(ids) for n, ids in splits.items() if n != 'train'}, 'excluded_digest': digest(sorted(held))}
 
@@ -302,14 +328,20 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
     if recipe_type == 'lora_adapter':
         require_adapter_package()
     if type(steps) is not int or not 1 <= steps <= profile.LIMITS['steps']:
-        raise ValueError('GPU full SFT supports 1–1000 optimizer steps.')
+        raise ValueError(f'GPU full SFT supports 1–{profile.LIMITS["steps"]} optimizer steps.')
     if not all([dataset, base, tokenizer, runner, pool]) or any(not check_resource_access(r, project, tenant) for r in [dataset, base, tokenizer, runner, pool]):
         raise ValueError('Select accessible published data, base weights, tokenizer, runner and pool.')
-    if (base.architecture_ref != profile.RUNTIME_ID or base.tokenizer_id != tokenizer.pk or tokenizer.chat_template
-            or tokenizer.compatibility.get('hf_snapshot') != SOURCE):
-        raise ValueError('Select the pinned SmolLM2 base and its unchanged text tokenizer.')
+    source = base.metadata.get('source', SOURCE)
+    guided = source in (GUIDED_SOURCE, LARGE_GUIDED_SOURCE) and profile.RUNTIME_ID == RUNTIME_ID
+    large_guided = source == LARGE_GUIDED_SOURCE
+    expected_hashes = LARGE_GUIDED_FILE_HASHES if large_guided else GUIDED_FILE_HASHES if guided else FILE_HASHES
+    if large_guided and recipe_type != 'lora_adapter':
+        raise ValueError('The recommended 1.7B model uses lightweight LoRA training on this computer.')
+    if (source not in (SOURCE, GUIDED_SOURCE, LARGE_GUIDED_SOURCE) or base.architecture_ref != profile.RUNTIME_ID or base.tokenizer_id != tokenizer.pk
+            or (tokenizer.chat_template and not guided) or tokenizer.compatibility.get('hf_snapshot') != source):
+        raise ValueError('Select a pinned SmolLM2 snapshot and its matching tokenizer.')
     if (not runner.enabled or runner.manifest != profile.runner_manifest() or runner.digest != digest(profile.runner_manifest())
-            or runner.compatibility.get('contract_digest') != profile.CONTRACT_DIGEST or pool.status != 'active'):
+            or runner.compatibility.get('contract_digest') != profile.CONTRACT_DIGEST or (pool.status != 'active' and (require_capacity or pool.status != 'draining'))):
         raise ValueError('Enable the exact GPU runtime manifest and activate its worker pool.')
     manifest = base.metadata.get('snapshot_manifest', {})
     artifact = _artifact({'artifact_id': str(base.artifact_manifest_id),
@@ -319,8 +351,8 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
     if not isinstance(bundle, dict):
         raise ValueError('Base snapshot manifest must be an object.')
     files = bundle.get('files', {})
-    if (bundle.get('source') != SOURCE or not isinstance(files, dict) or set(files) != set(FILE_HASHES)
-            or any(not isinstance(files[n], dict) or files[n].get('sha256') != h for n, h in FILE_HASHES.items())):
+    if (bundle.get('source') != source or not isinstance(files, dict) or set(files) != set(expected_hashes)
+            or any(not isinstance(files[n], dict) or files[n].get('sha256') != h for n, h in expected_hashes.items())):
         raise ValueError('Base must contain the exact immutable SmolLM2 snapshot files.')
     workers = list(Worker.all_objects.filter(tenant_id=tenant, pool=pool, status__in=['available', 'busy']))
     matching = [w for w in workers if profile.capable_worker(w)]
@@ -328,7 +360,13 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
     if len(workers) != 1 or len(matching) != 1:
         raise ValueError('Use a dedicated pool with exactly one single-slot GPU worker for this contract.')
     worker = matching[0]
+    if large_guided and worker.capabilities['memory_bytes'] < 32 * 1024**3:
+        raise ValueError('The 1.7B adapter profile requires at least 32 GiB host memory; use the small guided model.')
     observed = profile.observed_device(worker.capabilities['gpu_device'])
+    if large_guided and observed['device']['backend'] != 'mps':
+        raise ValueError('The 1.7B adapter profile is verified on Apple GPUs only; use the small guided model on this device.')
+    if large_guided and mps_memory()['process_headroom_bytes'] < 12 * 1024**3:
+        raise ValueError('The 1.7B adapter profile needs 12 GiB of free process memory headroom. Release GPU allocations before launch.')
     if observed['device']['backend'] != worker.capabilities['gpu_backend']:
         raise ValueError('GPU worker backend changed; re-register the worker before launch.')
     if require_capacity and worker.slots < 1:
@@ -341,7 +379,9 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
         if len(spec) != tokenizer.vocabulary_size or config['vocab_size'] != tokenizer.vocabulary_size:
             raise ValueError('Tokenizer vocabulary does not match the pinned transformer.')
         samples, splits = _training_samples(dataset, spec, tenant, project)
-        validation = _training_samples(dataset, spec, tenant, project, split='validation')[0] if recipe_type == 'continued_pretraining' else []
+        if guided and tokenizer.chat_template != spec.chat_template:
+            raise ValueError('The instruction model requires its verified native chat template.')
+        validation = _training_samples(dataset, spec, tenant, project, split='validation')[0] if guided or recipe_type == 'continued_pretraining' else []
     pins = {'runtime': profile.RUNTIME_ID, 'contract_digest': profile.CONTRACT_DIGEST, 'build_digest': profile.build_digest(),
             'dataset_id': str(dataset.revision_id), 'dataset_digest': dataset.manifest_digest,
             'base_id': str(base.model_version_id), 'base_artifact_id': str(artifact.artifact_id),
@@ -350,9 +390,17 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
             'runner_id': str(runner.manifest_id), 'runner_digest': runner.digest, 'pool_id': pool.pk,
             'steps': steps, 'config': {**config, 'runtime': profile.RUNTIME_ID}, 'optimizer': profile.OPTIMIZER,
             'sample_digest': digest(samples), 'splits': splits, 'accelerator': observed, 'worker_id': worker.pk}
+    pins['chat_sft'] = any('labels' in sample for sample in samples)
+    if pins['chat_sft'] and recipe_type == 'continued_pretraining':
+        raise ValueError('Conversations require supervised fine-tuning; continued pretraining accepts plain text.')
     pins['recipe'] = recipe_type
+    if guided:
+        pins.update(source=source, checkpoint_interval=max(1, (steps + 2) // 3), validation_digest=digest(validation),
+                    sample_order='seeded_epoch_shuffle_v1', initialization_seed=initialization_seed)
+    if large_guided:
+        pins['optimizer'] = {**profile.OPTIMIZER, 'learning_rate': 0.0002}
     if recipe_type == 'lora_adapter':
-        pins.update(adapter=LORA, initialization_seed=initialization_seed, adapter_package={'peft': '0.17.1'})
+        pins.update(adapter=GUIDED_LORA if large_guided else LORA, initialization_seed=initialization_seed, adapter_package={'peft': '0.17.1'})
     if recipe_type == 'continued_pretraining':
         pins.update(objective='causal_next_token_continued_pretraining', initialization='pinned_pretrained_weights',
             corpus={'components': [{'revision_id': str(dataset.revision_id), 'manifest_digest': dataset.manifest_digest, 'weight': 1.0}],
@@ -363,13 +411,18 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
     if recipe_type in {'lora_adapter', 'qlora_adapter'}:
         adapter_parameters = config['num_hidden_layers'] * LORA['r'] * (
             3 * config['hidden_size'] + config['num_key_value_heads'] * config['hidden_size'] // config['num_attention_heads'])
+        if large_guided:
+            adapter_parameters = config['num_hidden_layers'] * GUIDED_LORA['r'] * (
+                9 * config['hidden_size'] + 2 * config['num_key_value_heads'] * config['hidden_size'] // config['num_attention_heads'] + 3 * config['intermediate_size'])
         pins['trainable_parameters'] = adapter_parameters
         checkpoint_bytes = 12 * adapter_parameters + 1024**2
     if recipe_type == 'qlora_adapter':
         pins.update(adapter=profile.LORA, quantization=profile.QUANTIZATION, initialization_seed=initialization_seed, adapter_package=profile.PACKAGES)
         checkpoint_bytes += files['model.safetensors']['byte_size']
-    return {'pins': pins, 'bundle': bundle, 'tokenizer': {'kind': 'huggingface', 'source': SOURCE},
-            'samples': samples, 'sequences': [s['token_ids'] for s in samples], 'validation_samples': validation, 'checkpoint_bytes': checkpoint_bytes}
+    return {'pins': pins, 'bundle': bundle, 'tokenizer': {'kind': 'huggingface', 'source': source},
+            'samples': samples, 'sequences': [s['token_ids'] for s in samples], 'validation_samples': validation, 'checkpoint_bytes': checkpoint_bytes,
+            'checkpoint_count': (steps + pins.get('checkpoint_interval', 1) - 1) // pins.get('checkpoint_interval', 1),
+            'staging_bytes': 2 * files['model.safetensors']['byte_size'] if recipe_type == 'lora_adapter' else 0}
 
 
 def is_worker_run(run):
@@ -380,9 +433,9 @@ def checkpoint_bundle(run, checkpoint):
     state = checkpoint.weights_manifest
     if (not checkpoint.is_valid or digest(state) != checkpoint.state_digest or state.get('pins') != run.hardware_config['pins']
             or state.get('step') != checkpoint.step or state.get('run_id') != str(run.run_id)
-            or state.get('optimizer') != {**OPTIMIZER, 'updates': checkpoint.step} or state.get('metrics') != checkpoint.metrics):
+            or state.get('optimizer') != {**state['pins'].get('optimizer', OPTIMIZER), 'updates': checkpoint.step} or state.get('metrics') != checkpoint.metrics):
         raise ValueError('GPU checkpoint checksum, cursor or pinned optimizer changed.')
-    bundle = {'config.json': state['pins']['config'], 'files': state['files'], 'source': SOURCE,
+    bundle = {'config.json': state['pins']['config'], 'files': state['files'], 'source': state['pins'].get('source', SOURCE),
               'weights_manifest.json': {'weights_sha256': state['files'].get('adapter_model.safetensors', state['files']['model.safetensors'])['sha256'],
                                         'base_weights_sha256': state['files']['model.safetensors']['sha256']},
               'tokenizer_config.json': state['tokenizer'],
@@ -489,13 +542,22 @@ def _validation_loss(model, samples, device):
     with torch.no_grad():
         for sample in samples:
             ids = torch.tensor([sample['token_ids']], device=device, dtype=torch.long)
-            value = model(input_ids=ids, labels=ids).loss
+            value = model(input_ids=ids, labels=torch.tensor([sample.get('labels', sample['token_ids'])], device=device, dtype=torch.long)).loss
             if not torch.isfinite(value).item():
                 raise ValueError('Protected validation produced non-finite loss.')
-            count = len(sample['token_ids']) - 1
+            count = sum(label != -100 for label in sample.get('labels', sample['token_ids'])[1:])
             pairs += count
             total += value.item() * count
     return {'loss': total / pairs, 'prediction_tokens': pairs, 'samples': len(samples)}
+
+
+def training_sample_index(step, count, pins):
+    epoch, offset = divmod(step - 1, count)
+    if pins.get('sample_order') != 'seeded_epoch_shuffle_v1':
+        return offset
+    order = list(range(count))
+    random.Random(pins['initialization_seed'] + epoch).shuffle(order)
+    return order[offset]
 
 
 def _execute_updates(run, context, inputs, device, recovery, files, latest):
@@ -506,18 +568,27 @@ def _execute_updates(run, context, inputs, device, recovery, files, latest):
     model = optimizer = loss = ids = None
     trainable = []
     try:
+        with transaction.atomic():
+            locked = _locked_live_run(context, run.run_id)
+            if locked.started_at is None:
+                locked.started_at = timezone.now(); locked.status = TrainingRun.Status.RUNNING
+                locked.save(update_fields=['started_at', 'status', 'updated_at'])
         with staged_files(recovery, run.tenant_id, run.project_id) as directory:
-            model = _recipe_model(directory, run.recipe_type, run.initialization_seed, training=True).to(device)
+            model = _recipe_model(directory, run.recipe_type, run.initialization_seed, training=True, source=pins.get('source'), adapter=pins.get('adapter')).to(device)
             trainable = [p for p in model.parameters() if p.requires_grad]
-            optimizer = torch.optim.AdamW(trainable, lr=OPTIMIZER['learning_rate'],
-                betas=(OPTIMIZER['beta1'], OPTIMIZER['beta2']), eps=OPTIMIZER['epsilon'], weight_decay=OPTIMIZER['weight_decay'], foreach=False)
+            optimizer_spec = pins['optimizer']
+            optimizer = torch.optim.AdamW(trainable, lr=optimizer_spec['learning_rate'],
+                betas=(optimizer_spec['beta1'], optimizer_spec['beta2']), eps=optimizer_spec['epsilon'], weight_decay=optimizer_spec['weight_decay'], foreach=False)
             if latest:
                 _restore_optimizer(model, optimizer, directory, latest.step)
             validation_before = _validation_loss(model, inputs['validation_samples'], device) if inputs['validation_samples'] else None
+            validation_baseline = ({'loss': latest.metrics['validation_loss_before_training']}
+                if latest and latest.metrics.get('validation_loss_before_training') is not None else validation_before)
+            window = {'training_pairs': 0, 'cpu_seconds': 0.0, 'engine_wall_seconds': 0.0, 'updates': 0}
             for step in range(run.current_step + 1, run.total_steps + 1):
                 if not context.heartbeat(progress=(step - 1) / run.total_steps):
                     return
-                sample = inputs['samples'][(step - 1) % len(inputs['samples'])]
+                sample = inputs['samples'][training_sample_index(step, len(inputs['samples']), pins)]
                 ids = torch.tensor([sample['token_ids']], device=device, dtype=torch.long)
                 backend = pins['accelerator']['device']['backend']
                 api = getattr(torch, 'cuda' if backend == 'rocm' else backend)
@@ -525,7 +596,7 @@ def _execute_updates(run, context, inputs, device, recovery, files, latest):
                     api.reset_peak_memory_stats(device)
                 cpu_started, wall_started = time.process_time(), time.perf_counter()
                 optimizer.zero_grad()
-                loss = model(input_ids=ids, labels=ids).loss
+                loss = model(input_ids=ids, labels=torch.tensor([sample.get('labels', sample['token_ids'])], device=device, dtype=torch.long)).loss
                 loss.backward()
                 if loss.device != device or not torch.isfinite(loss).item() or any(
                         p.device != device or p.grad is None or not torch.isfinite(p.grad).all().item() for p in trainable):
@@ -533,14 +604,15 @@ def _execute_updates(run, context, inputs, device, recovery, files, latest):
                 if any(p.grad is not None for p in model.parameters() if not p.requires_grad):
                     raise ValueError('Frozen base parameters unexpectedly acquired gradients.')
                 grad_norm = torch.linalg.vector_norm(torch.stack([torch.linalg.vector_norm(p.grad.detach()) for p in trainable])).item()
+                torch.nn.utils.clip_grad_norm_(trainable, 1.0)
                 optimizer.step()
                 with torch.no_grad():
-                    post_loss = model(input_ids=ids, labels=ids).loss.item()
+                    post_loss = model(input_ids=ids, labels=torch.tensor([sample.get('labels', sample['token_ids'])], device=device, dtype=torch.long)).loss.item()
                 if not torch.isfinite(torch.tensor(post_loss)).item():
                     raise ValueError('GPU update produced non-finite loss.')
                 api.synchronize() if backend == 'mps' else api.synchronize(device)
                 metrics = {'step': step, 'loss': loss.item(), 'post_update_loss': post_loss, 'sample_id': sample['sample_id'],
-                           'training_pairs': len(sample['token_ids']) - 1, 'cpu_seconds': time.process_time() - cpu_started,
+                           'training_pairs': sum(label != -100 for label in sample.get('labels', sample['token_ids'])[1:]), 'cpu_seconds': time.process_time() - cpu_started,
                            'engine_wall_seconds': time.perf_counter() - wall_started, 'gpu_backend': backend,
                            'gpu_device': str(device), 'device_residency_checked': True,
                            'gradient_norm': grad_norm, 'trainable_parameters': sum(p.numel() for p in trainable),
@@ -552,36 +624,51 @@ def _execute_updates(run, context, inputs, device, recovery, files, latest):
                 metrics['gpu_utilization_percent'] = None  # No portable utilization measurement is available in this runtime.
                 if backend == 'mps':
                     metrics['unified_memory'] = mps_memory()
+                for key in ('training_pairs', 'cpu_seconds', 'engine_wall_seconds'):
+                    window[key] += metrics[key]
+                window['updates'] += 1
+                if step % pins.get('checkpoint_interval', 1) and step != run.total_steps:
+                    continue
+                metrics.update({key: window[key] for key in ('training_pairs', 'cpu_seconds', 'engine_wall_seconds')}, updates_since_checkpoint=window['updates'])
+                metrics['tokens_per_second'] = window['training_pairs'] / window['engine_wall_seconds']
+                window = {'training_pairs': 0, 'cpu_seconds': 0.0, 'engine_wall_seconds': 0.0, 'updates': 0}
                 if validation_before is not None:
                     validation_started = time.perf_counter()
                     after = _validation_loss(model, inputs['validation_samples'], device)
-                    metrics.update(validation_loss_before_update=validation_before['loss'], validation_loss=after['loss'],
+                    metrics.update(validation_loss_before_update=validation_before['loss'], validation_loss_before_training=validation_baseline['loss'], validation_loss=after['loss'],
                         validation_prediction_tokens=after['prediction_tokens'], validation_samples=after['samples'],
                         validation_wall_seconds=time.perf_counter() - validation_started,
-                        cumulative_training_prediction_tokens=sum(len(inputs['samples'][i % len(inputs['samples'])]['token_ids']) - 1 for i in range(step)))
+                        cumulative_training_prediction_tokens=sum(sum(label != -100 for label in inputs['samples'][training_sample_index(i + 1, len(inputs['samples']), pins)].get('labels', inputs['samples'][training_sample_index(i + 1, len(inputs['samples']), pins)]['token_ids'])[1:]) for i in range(step)))
                     validation_before = after
                 # Hugging Face preserves its expected tied embedding key; generic save_model does not.
                 model.save_pretrained(str(directory), safe_serialization=True,
                     **({'save_embedding_layers': False} if run.recipe_type == 'lora_adapter' else {}))
+                if pins.get('chat_sft') and pins.get('source') not in (GUIDED_SOURCE, LARGE_GUIDED_SOURCE):
+                    from modelanvil.data.training_import import ROLE_PREFIX_TEMPLATE
+                    candidate_tokenizer = _tokenizer(directory)
+                    candidate_tokenizer.chat_template = ROLE_PREFIX_TEMPLATE
+                    candidate_tokenizer.save_pretrained(str(directory), save_jinja_files=False)
                 save_file(_optimizer_state(model, optimizer), str(directory / 'optimizer.safetensors'))
                 if not context.heartbeat(progress=(step - 1) / run.total_steps):
                     return
                 with transaction.atomic():
                     locked = _locked_live_run(context, run.run_id)
-                    if locked.current_step != step - 1:
+                    if locked.current_step != (latest.step if latest else run.current_step):
                         raise ValueError('GPU training cursor changed; publication refused.')
                     if run.recipe_type == 'lora_adapter':
                         saved_files = {**files, **{n: _store_file(directory / n, run, context, step)
                             for n in ['adapter_model.safetensors', 'adapter_config.json']}}
                     else:
                         saved_files = {**files, 'model.safetensors': _store_file(directory / 'model.safetensors', run, context, step)}
+                    if pins.get('chat_sft'):
+                        saved_files.update({n: _store_file(directory / n, run, context, step) for n in FILE_HASHES if n != 'model.safetensors'})
                     adam_ref = _store_file(directory / 'optimizer.safetensors', run, context, step)
                     _locked_live_run(context, run.run_id)  # Recheck expiry/cancellation after bounded storage writes.
                     state = {'run_id': str(run.run_id), 'step': step, 'pins': pins,
                         'files': saved_files, 'adam': adam_ref,
-                        'optimizer': {**OPTIMIZER, 'updates': step}, 'tokenizer': inputs['tokenizer'], 'metrics': metrics,
+                        'optimizer': {**optimizer_spec, 'updates': step}, 'tokenizer': inputs['tokenizer'], 'metrics': metrics,
                         'attempt_id': str(context.attempt.attempt_id), 'fencing_token': context.fencing_token}
-                    TrainingCheckpoint.all_objects.create(tenant_id=run.tenant_id, training_run=locked,
+                    latest = TrainingCheckpoint.all_objects.create(tenant_id=run.tenant_id, training_run=locked,
                         step=step, state_digest=digest(state), weights_manifest=state, metrics=metrics)
                     locked.current_step, locked.latest_loss = step, metrics['loss']
                     locked.metrics_log = [*locked.metrics_log, metrics]; locked.status = TrainingRun.Status.RUNNING
@@ -602,7 +689,14 @@ def _execute_updates(run, context, inputs, device, recovery, files, latest):
 
 def finalize_job(job, status):
     return _finalize_worker_job(job, status, runtime_id=RUNTIME_ID, contract_digest=CONTRACT_DIGEST,
-        model_name_prefix='smollm2-gpu-sft', checkpoint_bundle=checkpoint_bundle, is_worker_run=is_worker_run)
+        model_name_prefix='smollm2-gpu-sft', checkpoint_bundle=checkpoint_bundle, is_worker_run=is_worker_run,
+        select_checkpoint=best_checkpoint)
+
+
+def best_checkpoint(run):
+    checkpoints = list(run.checkpoints.filter(is_valid=True).order_by('step'))
+    measured = [c for c in checkpoints if type(c.metrics.get('validation_loss')) in (int, float) and math.isfinite(c.metrics['validation_loss'])]
+    return min(measured, key=lambda c: c.metrics['validation_loss']) if measured else run.checkpoints.get(step=run.current_step)
 
 
 def generate_candidate_completion(bundle, prompt, max_new_tokens=8):
@@ -611,7 +705,7 @@ def generate_candidate_completion(bundle, prompt, max_new_tokens=8):
         raise ValueError('Use a text prompt up to 4096 characters and 1–32 new tokens.')
     provenance = bundle['provenance.json']
     with staged_files(bundle['files'], provenance['tenant_id'], provenance['project_id']) as directory:
-        model, tokenizer = _recipe_model(directory, bundle['provenance.json']['pins'].get('recipe', 'full_sft')), _tokenizer(directory)
+        model, tokenizer = _recipe_model(directory, bundle['provenance.json']['pins'].get('recipe', 'full_sft'), source=bundle.get('source'), adapter=bundle['provenance.json']['pins'].get('adapter')), _tokenizer(directory)
         ids = tokenizer.encode(prompt, add_special_tokens=True)
         if not 1 <= len(ids) <= LIMITS['sequence_tokens']:
             raise ValueError('Prompt must encode to 1–128 tokens; inputs are never silently truncated.')

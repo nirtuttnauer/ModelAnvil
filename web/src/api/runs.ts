@@ -7,8 +7,14 @@ export function runRoute(kind: RunKind, id: string): string {
   return `runs/${kind}/${id}`;
 }
 
-export function runHash(kind: RunKind, id: string): string {
-  return `#${runRoute(kind, id)}`;
+export function sourceHash(hash: string, fallback: string): string {
+  const candidate = new URLSearchParams(hash.split('?')[1]).get('from');
+  return candidate && /^#(training|evaluation|workflows|models|datasets|audit|releases)(\?|$)/.test(candidate) && candidate.length <= 2048 ? candidate : fallback;
+}
+
+export function runHash(kind: RunKind, id: string, from = typeof window === 'undefined' ? '' : window.location.hash): string {
+  const origin = /^#(training|evaluation|workflows|models|datasets|audit|releases)(\?|$)/.test(from) ? from : sourceHash(from, '');
+  return `#${runRoute(kind, id)}${origin ? `?from=${encodeURIComponent(origin)}` : ''}`;
 }
 
 export function parseRunRoute(hash: string): { kind: RunKind; id: string } | null {

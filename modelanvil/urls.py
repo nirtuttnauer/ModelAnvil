@@ -26,10 +26,11 @@ def readiness(_request) -> JsonResponse:
     from django.db import connection
 
     try:
-        connection.ensure_connection()
-    except Exception as exc:  # pragma: no cover - surfaced as 503
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT 1')
+    except Exception:  # Backend details may contain credentials or private hosts.
         return JsonResponse(
-            {"status": "degraded", "reason": str(exc)}, status=503
+            {"status": "degraded", "reason": "database_unavailable"}, status=503
         )
     return JsonResponse({"status": "ready"}, status=200)
 

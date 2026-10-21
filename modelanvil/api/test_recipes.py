@@ -38,6 +38,16 @@ class RecipeApiTests(TestCase):
         result=execute_one(self.worker,recipe_jobs.recipe_executor)
         self.assertTrue(result['committed'],result);self.assertEqual(result['status'],'succeeded',result)
 
+    def test_stale_draining_and_zero_slot_workers_cannot_reserve_recipe_quota(self):
+        for changes in ({'last_heartbeat_at':timezone.now()-timezone.timedelta(seconds=61)},
+                        {'drain_requested':True}, {'slots':0}):
+            Worker.all_objects.filter(pk=self.worker.pk).update(last_heartbeat_at=None, drain_requested=False, slots=1)
+            Worker.all_objects.filter(pk=self.worker.pk).update(**changes)
+            response=self.client.post('/api/v1/recipes/runs/',self.body,format='json')
+            self.assertEqual(response.status_code,400,response.json())
+            self.assertEqual(Job.all_objects.count(),0)
+            self.assertEqual(BudgetReservation.all_objects.count(),0)
+
     def test_version_export_is_verified_and_identical_import_reuses_version(self):
         r=self.client.post('/api/v1/recipes/',definition(),format='json');self.assertEqual(r.data,self.recipe)
         exported=self.client.get(f'/api/v1/recipes/versions/{self.recipe["artifact_id"]}/')

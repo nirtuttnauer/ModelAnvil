@@ -5,11 +5,11 @@ import io
 import json
 from pathlib import Path
 import time
-import uuid
 
 from django.db import transaction
 from django.utils import timezone
 
+from modelanvil.core.ids import uuid7
 from modelanvil.artifacts.models import Artifact, Dataset, LineageEdge
 from modelanvil.budgets.models import BudgetPolicy, BudgetReservation, UsageEvent
 from modelanvil.data.models import RecipeRun
@@ -121,13 +121,14 @@ def queue(*, tenant, project, principal, recipe, sources, model, device, pool, p
         raise ValueError('Preview runs cannot publish a dataset.')
     requirements={'recipe_runtime':basis['runtime'],'recipe_device':device}
     if needs_model:requirements['recipe_generation']=True
+    from modelanvil.jobs.setup import local_capacity_available
     workers=Worker.all_objects.filter(tenant_id=tenant,pool=pool,status__in=['available','busy'])
     if (str(pool.tenant_id)!=str(tenant) or pool.status!='active' or pool.result_egress!='envelope'
-            or not any(all(w.capabilities.get(k)==v for k,v in requirements.items()) for w in workers)):
+            or not any(local_capacity_available(w) and all(w.capabilities.get(k)==v for k,v in requirements.items()) for w in workers)):
         raise ValueError('Select an active envelope pool with a matching recipe worker.')
     if str(policy.tenant_id)!=str(tenant) or policy.unit!=UNIT or policy.currency or not policy.enabled:
         raise ValueError('Select an enabled currency-free recipe_attempts quota.')
-    identifier=uuid.uuid4();job_id=uuid.uuid4()
+    identifier=uuid7();job_id=uuid7()
     BudgetReservation.reserve(tenant_id=tenant,policy=policy,job_id=job_id,estimated_amount=MAX_ATTEMPTS)
     job=Job.all_objects.create(tenant_id=tenant,job_id=job_id,pool=pool,name=f'Recipe: {definition["name"]}',max_attempts=MAX_ATTEMPTS,
         payload={'type':TYPE,'run_id':str(identifier)},requirements={**requirements,'slots':1})

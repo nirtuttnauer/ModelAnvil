@@ -1,3 +1,4 @@
+import { Button, Card, Notice } from './ui';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import {
   CheckCircle2,
@@ -17,10 +18,11 @@ import {
   Rocket,
   RefreshCw,
 } from 'lucide-react';
-import { apiPage, errorMessage } from '../api/client';
+import { errorMessage } from '../api/client';
 import {
   CreateProjectModal,
 } from './PrerequisiteModals';
+import { allResources } from '../api/resources';
 import type { Project, TokenizerVersion } from '../api/resources';
 
 import { setupReadiness, type SetupDataset, type SetupPool, type SetupBudget, type SetupWorker, type SetupRunner, type SetupModel } from '../api/setup-readiness';
@@ -95,16 +97,16 @@ export function OnboardingChecklist({
     if (!token.trim()) { setLoading(false); return; }
     setLoading(true);
     const results = await Promise.allSettled([
-      apiPage<SetupDataset>('/api/v1/dataset-revisions/', token, signal),
-      apiPage<TokenizerVersion>('/api/v1/tokenizers/', token, signal),
-      apiPage<SetupModel>('/api/v1/model-versions/', token, signal),
-      apiPage<SetupPool>('/api/v1/worker-pools/', token, signal),
-      apiPage<SetupBudget>('/api/v1/budget-policies/', token, signal),
-      apiPage<SetupWorker>('/api/v1/worker-inventory/', token, signal),
-      apiPage<SetupRunner>('/api/v1/runner-manifests/', token, signal),
+      allResources<SetupDataset>('/api/v1/dataset-revisions/', token, signal),
+      allResources<TokenizerVersion>('/api/v1/tokenizers/', token, signal),
+      allResources<SetupModel>('/api/v1/model-versions/', token, signal),
+      allResources<SetupPool>('/api/v1/worker-pools/', token, signal),
+      allResources<SetupBudget>('/api/v1/budget-policies/', token, signal),
+      allResources<SetupWorker>('/api/v1/worker-inventory/', token, signal),
+      allResources<SetupRunner>('/api/v1/runner-manifests/', token, signal),
     ]);
     if (signal?.aborted || version !== requestVersion.current) return;
-    const [datasets, tokenizers, models, pools, budgets, workers, runners] = results.map(r => r.status === 'fulfilled' ? r.value.results : []);
+    const [datasets, tokenizers, models, pools, budgets, workers, runners] = results.map(r => r.status === 'fulfilled' ? r.value : []);
     const failures = results.filter(r => r.status === 'rejected');
     if (failures.length) setError('Some prerequisites could not be verified. ' + errorMessage((failures[0] as PromiseRejectedResult).reason));
     setState({ hasConnection: results.some(r => r.status === 'fulfilled'), activeProject,
@@ -186,7 +188,7 @@ export function OnboardingChecklist({
           : 'Register an available worker with matching runtime and memory',
       isReady: state.workerPoolCount > 0,
       icon: Server,
-      actionText: 'Inspect infrastructure',
+      actionText: 'Set up compute',
       action: () => onNavigate('Infrastructure'),
     },
     {
@@ -198,7 +200,7 @@ export function OnboardingChecklist({
           : 'Enable a training-step budget with a positive limit',
       isReady: state.budgetPolicyCount > 0,
       icon: CircleDollarSign,
-      actionText: 'Review budgets',
+      actionText: 'Set up budget policy',
       action: () => onNavigate('Budgets'),
     },
   ];
@@ -212,13 +214,13 @@ export function OnboardingChecklist({
   const nextMissing = items.find((item) => !item.isReady);
 
   return (
-    <section
+    <Card
       className="panel onboarding-panel"
       aria-labelledby="onboarding-heading"
       style={{
-        border: '1px solid var(--primary-border)',
+        border: '1px solid var(--border)',
         background: 'var(--surface)',
-        marginBottom: '24px',
+        marginBottom: 'var(--space-24)',
       }}
     >
       <div
@@ -228,13 +230,13 @@ export function OnboardingChecklist({
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: '12px',
+          gap: 'var(--space-12)',
         }}
       >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)' }}>
             <Sparkles size={18} style={{ color: 'var(--primary-text)' }} aria-hidden="true" />
-            <h2 id="onboarding-heading" style={{ margin: 0, fontSize: '16px' }}>
+            <h2 id="onboarding-heading" style={{ margin: 0, fontSize: 'var(--type-20)' }}>
               Workspace Setup & Prerequisites
             </h2>
             <span
@@ -244,13 +246,13 @@ export function OnboardingChecklist({
               {loading ? 'Checking prerequisites…' : `${readyCount} of ${totalCount} recorded`}
             </span>
           </div>
-          <p style={{ margin: '4px 0 0', color: 'var(--text-muted)', fontSize: '13px' }}>
+          <p style={{ margin: 'var(--space-4) 0 0', color: 'var(--text-muted)', fontSize: 'var(--type-13)' }}>
             Your connected resources and the next setup step.
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <button
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)' }}>
+          <Button
             type="button"
             className="icon-button"
             title="Refresh prerequisites"
@@ -259,112 +261,112 @@ export function OnboardingChecklist({
             disabled={loading}
           >
             <RefreshCw size={15} className={loading ? 'spinning' : ''} />
-          </button>
+          </Button>
 
-          <button
+          <Button
             type="button"
             className="text-button"
             onClick={toggleCollapsed}
             aria-expanded={!collapsed}
             aria-controls="onboarding-checklist-body"
-            style={{ fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}
           >
             {collapsed ? 'Expand checklist' : 'Minimize'}
             {collapsed ? <ChevronDown size={15} /> : <ChevronUp size={15} />}
-          </button>
+          </Button>
         </div>
       </div>
 
           {error && (
-            <div className="notice error" role="alert" style={{ marginBottom: '16px' }}>
+            <Notice tone="error" className="notice error" role="alert" style={{ marginBottom: 'var(--space-16)' }}>
               <AlertCircle size={16} />
               <span>{error}</span>
-              <button type="button" onClick={() => void loadPrerequisites()}>
+              <Button type="button" onClick={() => void loadPrerequisites()}>
                 Retry
-              </button>
-            </div>
+              </Button>
+            </Notice>
           )}
 
       <div className="onboarding-journey" aria-label="Workspace prerequisites">
-        {items.map(item => <button type="button" className={`journey-step ${item.isReady ? 'ready' : ''}`} key={item.id} onClick={item.action}>
+        {items.map(item => <Button type="button" className={`journey-step ${item.isReady ? 'ready' : ''}`} key={item.id} onClick={item.action}>
           {item.isReady ? <CheckCircle2 size={18} aria-hidden="true" /> : <Circle size={18} aria-hidden="true" />}
           <span>{item.title}<small>{loading ? 'Checking…' : item.isReady ? 'Resource present' : 'Needs setup'}</small></span>
-        </button>)}
+        </Button>)}
       </div>
 
       {!collapsed && (
-        <div id="onboarding-checklist-body" className="panel-body" style={{ paddingTop: '16px' }}>
+        <div id="onboarding-checklist-body" className="panel-body" style={{ paddingTop: 'var(--space-16)' }}>
 
 
           {/* Actionable highlight banner */}
           {isTrainingReady ? (
-            <div
+            <Notice tone="success"
               className="notice success"
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                marginBottom: '20px',
-                padding: '14px 18px',
+                marginBottom: 'var(--space-20)',
+                padding: '14px var(--space-18)',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-10)' }}>
                 <Rocket size={20} />
                 <div>
                   <strong>Ready for training preflight!</strong>
-                  <p style={{ margin: '2px 0 0', fontSize: '12px' }}>
+                  <p style={{ margin: '2px 0 0', fontSize: 'var(--type-12)' }}>
                     Published data, model/tokenizer, a matching worker and a step budget are recorded.
                     Preflight still verifies actual bytes, current runtime, device availability and remaining budget.
                   </p>
                 </div>
               </div>
-              <button
+              <Button
                 type="button"
                 className="primary"
                 onClick={() => onNavigate('Training')}
                 style={{ whiteSpace: 'nowrap' }}
               >
                 Launch Training Preflight <ArrowRight size={14} />
-              </button>
-            </div>
+              </Button>
+            </Notice>
           ) : (
             nextMissing && (
-              <div
+              <Notice
                 className="notice"
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  marginBottom: '20px',
-                  padding: '12px 18px',
+                  marginBottom: 'var(--space-20)',
+                  padding: 'var(--space-12) var(--space-18)',
                 }}
               >
                 <div>
                   <strong>Next action: {nextMissing.title}</strong>
-                  <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
+                  <p style={{ margin: '2px 0 0', fontSize: 'var(--type-12)', color: 'var(--text-muted)' }}>
                     {nextMissing.description}
                   </p>
                 </div>
-                <button
+                <Button
                   type="button"
                   className="primary"
                   onClick={nextMissing.action}
                   style={{ whiteSpace: 'nowrap' }}
                 >
                   {nextMissing.actionText} <ArrowRight size={14} />
-                </button>
-              </div>
+                </Button>
+              </Notice>
             )
           )}
 
           {/* Progress bar */}
-          <div style={{ marginBottom: '16px' }}>
+          <div style={{ marginBottom: 'var(--space-16)' }}>
             <div
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                fontSize: '12px',
-                marginBottom: '6px',
+                fontSize: 'var(--type-12)',
+                marginBottom: 'var(--space-6)',
                 color: 'var(--text-muted)',
               }}
             >
@@ -384,7 +386,7 @@ export function OnboardingChecklist({
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))',
-              gap: '12px',
+              gap: 'var(--space-12)',
             }}
           >
             {items.map((item) => {
@@ -395,9 +397,9 @@ export function OnboardingChecklist({
                   style={{
                     display: 'flex',
                     alignItems: 'flex-start',
-                    gap: '12px',
+                    gap: 'var(--space-12)',
                     padding: '14px',
-                    borderRadius: '8px',
+                    borderRadius: 'var(--radius-8)',
                     border: item.isReady
                       ? '1px solid var(--border)'
                       : '1px solid var(--control-border)',
@@ -418,15 +420,15 @@ export function OnboardingChecklist({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        gap: '6px',
+                        gap: 'var(--space-6)',
                       }}
                     >
                       <strong
                         style={{
-                          fontSize: '13px',
+                          fontSize: 'var(--type-13)',
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '6px',
+                          gap: 'var(--space-6)',
                         }}
                       >
                         <Icon size={14} style={{ color: 'var(--text-muted)' }} />
@@ -434,7 +436,7 @@ export function OnboardingChecklist({
                       </strong>
                       <span
                         className={`badge ${item.isReady ? 'state-ready' : 'state-pending'}`}
-                        style={{ fontSize: '10px', padding: '2px 6px' }}
+                        style={{ fontSize: '10px', padding: '2px var(--space-6)' }}
                       >
                         {item.isReady ? 'Ready' : 'Missing'}
                       </span>
@@ -442,8 +444,8 @@ export function OnboardingChecklist({
 
                     <p
                       style={{
-                        margin: '4px 0 10px',
-                        fontSize: '12px',
+                        margin: 'var(--space-4) 0 var(--space-10)',
+                        fontSize: 'var(--type-12)',
                         color: 'var(--text-muted)',
                         lineHeight: 1.4,
                       }}
@@ -451,19 +453,19 @@ export function OnboardingChecklist({
                       {item.description}
                     </p>
 
-                    <button
+                    <Button
                       type="button"
                       className="text-button"
                       onClick={item.action}
                       style={{
-                        fontSize: '12px',
+                        fontSize: 'var(--type-12)',
                         minHeight: '26px',
                         padding: '0',
                         fontWeight: 600,
                       }}
                     >
                       {item.actionText} <ArrowRight size={12} />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               );
@@ -481,6 +483,6 @@ export function OnboardingChecklist({
           void loadPrerequisites();
         }}
       />
-    </section>
+    </Card>
   );
 }

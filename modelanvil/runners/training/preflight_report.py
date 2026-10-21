@@ -69,7 +69,7 @@ def estimate_from_pilot(inputs, *, tenant, pool, project):
     pilots = get_accessible_queryset(TrainingRun, tenant_id=tenant, project_id=project).filter(pool=pool, status='completed').order_by('-completed_at')[:20]
     for run in pilots:
         prior = (run.hardware_config or {}).get('pins', {})
-        if any(prior.get(k) != pins.get(k) for k in ('runtime', 'contract_digest', 'build_digest', 'config', 'optimizer', 'tokenizer_digest')):
+        if any(prior.get(k) != pins.get(k) for k in ('runtime', 'contract_digest', 'build_digest', 'config', 'optimizer', 'tokenizer_digest', 'dataset_digest', 'base_digest', 'sample_digest', 'validation')):
             continue
         checkpoint = run.checkpoints.filter(step=run.total_steps).first()
         if not checkpoint:
@@ -92,7 +92,7 @@ def estimate_from_pilot(inputs, *, tenant, pool, project):
 
 def build_preflight_report(*, recipe_type, tokenizer_version, base_model_version=None, dataset_revision=None,
                            pool=None, runner=None, total_steps=100, budget_policy=None,
-                           execution_mode='worker', tenant=None, project=None, initialization_seed=42):
+                           execution_mode='worker', tenant=None, project=None, initialization_seed=42, hyperparameters=None):
     checks = []
     inputs = None
 
@@ -124,7 +124,7 @@ def build_preflight_report(*, recipe_type, tokenizer_version, base_model_version
         try:
             inputs = resolve_inputs(dataset=dataset_revision, base=base_model_version, tokenizer=tokenizer_version,
                                     runner=runner, pool=pool, tenant=tenant, project=project, steps=total_steps, require_capacity=False,
-                                    recipe_type=recipe_type, initialization_seed=initialization_seed)
+                                    recipe_type=recipe_type, initialization_seed=initialization_seed, hyperparameters=hyperparameters)
             check('pinned-inputs', 'compatibility', True, 'Verified dataset bytes, base weights, tokenizer encoding and runner contract.')
         except (ValueError, TypeError, KeyError) as exc:
             category, action = classify_reason(str(exc))
@@ -151,10 +151,11 @@ def build_preflight_report(*, recipe_type, tokenizer_version, base_model_version
     if inputs:
         # shortcut: bounded JSON checkpoint sizing plus conservative database overhead; revisit for remote storage or a larger runtime.
         checkpoint_bytes = inputs.get('checkpoint_bytes', len(json.dumps(inputs['bundle']).encode()) + 65536)
-        required = checkpoint_bytes * (total_steps + 2)
+        required = checkpoint_bytes * (inputs.get('checkpoint_count', total_steps) + 2) + inputs.get('staging_bytes', 0)
         requirements = {'runtime': inputs['pins']['runtime'], 'recipe': recipe_type, 'config': inputs['pins']['config'],
                         'optimizer': inputs['pins']['optimizer'], 'cpu_slots': 1, 'memory_bytes': module.LIMITS['memory_bytes'],
-                        'storage_bytes': required, 'storage_assumption': 'One full checkpoint per step, candidate copies and 64 KiB overhead per state; shared local host.'}
+                        'storage_bytes': required, 'checkpoint_count': inputs.get('checkpoint_count', total_steps),
+                        'storage_assumption': 'Planned checkpoints plus staging and candidate headroom; shared local host.'}
         if inputs['pins'].get('accelerator'):
             from modelanvil.device_admission import device_available
             try:
@@ -164,7 +165,7 @@ def build_preflight_report(*, recipe_type, tokenizer_version, base_model_version
             except (ValueError, OSError) as exc:
                 check('device-admission', 'capacity', False, str(exc), 'Configure the same private device admission directory for local API and workers.')
             requirements.update(gpu_count=1, accelerator=inputs['pins']['accelerator'], precision=module.CONTRACT['precision'],
-                storage_assumption='FP32 weights, two FP32 Adam moments, per-step checkpoints and staging/candidate headroom; shared local host.')
+                storage_assumption='FP32 weights and Adam moments for the planned checkpoint cadence, plus staging/candidate headroom; shared local host.')
             if recipe_type in {'lora_adapter', 'qlora_adapter'}:
                 requirements.update(adapter=inputs['pins']['adapter'], trainable_parameters=inputs['pins']['trainable_parameters'],
                     storage_assumption='Immutable shared base references plus FP32 adapter weights and Adam moments per step; shared local host.')

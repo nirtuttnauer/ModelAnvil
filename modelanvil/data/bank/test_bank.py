@@ -61,12 +61,18 @@ class DatasetBankCatalogTests(TestCase):
     def test_expansion_preserves_subset_scope_and_share_alike_opt_in(self):
         smol = self.catalog.get_source("text-smol-magpie-ultra")
         self.assertEqual(smol.fetch["configuration"], "smol-magpie-ultra")
-        squad = self.catalog.get_source("text-squad")
-        self.assertEqual(squad.eligibility, "opt_in_required")
-        with self.assertRaisesMessage(ValidationError, "share-alike"):
-            self.catalog.preflight_download(
-                squad.id, tenant_id="tenant-1", project_policy={"allow_share_alike": False},
-            )
+        for source_id in ("text-squad", "text-dolly15k"):
+            with self.subTest(source=source_id):
+                source = self.catalog.get_source(source_id)
+                self.assertEqual(source.eligibility, "opt_in_required")
+                for consent in (False, "true", 1):
+                    with self.assertRaisesMessage(ValidationError, "share-alike"):
+                        self.catalog.preflight_download(
+                            source.id, tenant_id="tenant-1", project_policy={"allow_share_alike": consent},
+                        )
+                self.catalog.preflight_download(
+                    source.id, tenant_id="tenant-1", project_policy={"allow_share_alike": True},
+                )
 
     def test_search_svg_returns_curated_candidates(self):
         results = self.catalog.search("svg")
@@ -80,7 +86,7 @@ class DatasetBankCatalogTests(TestCase):
         qualified = {source.id for source in self.catalog.qualified_sources()}
         self.assertEqual(qualified, {"svg-lucide", "text-smol-magpie-ultra", "text-ultrachat-200k", "text-squad",
             "preference-ultrafeedback-binarized", "tools-glaive-v2", "image-clevr", "audio-vctk",
-            "audio-libritts-r", "numeric-iris", "numeric-wine-quality"})
+            "audio-libritts-r", "numeric-iris", "numeric-wine-quality", "math-gsm8k", "code-mbpp", "text-dolly15k"})
         for source in self.catalog.list_sources():
             if source.id in qualified:
                 continue

@@ -1,3 +1,8 @@
+import { Button, Field, NavigationItem, Notice, WorkspaceHeader } from './components/ui';
+import { Welcome } from './components/Welcome';
+import { parseResourceRoute } from './api/resource-routes';
+import { DraftScope } from './components/Draft';
+import { ScreenBoundary } from './components/ScreenBoundary';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import {
@@ -9,7 +14,7 @@ import {
   ArrowUpRight,
   RefreshCw,
   KeyRound,
-  Menu,
+  Settings2,
   X,
   CircleDollarSign,
   Compass,
@@ -25,35 +30,44 @@ import {
   Server,
   Scale,
 } from 'lucide-react';
+import './design-system/tokens.css';
 import './style.css';
 import './premium.css';
+import './workspace-ui.css';
+import './design-system/components.css';
 import { WorkspaceSearch } from './components/WorkspaceSearch';
+import { ActiveJobs } from './components/ActiveJobs';
+import { startActivation } from './api/activation';
+import { BuildIdentity } from './components/BuildIdentity';
 import { ThemeControl } from './components/ThemeControl';
-import { apiPage, errorMessage, setActiveProjectId } from './api/client';
+import { apiPage, apiRequest, errorMessage, setActiveProjectId } from './api/client';
 import { CreateProjectModal } from './components/PrerequisiteModals';
+import { allResources } from './api/resources';
 import type { Project } from './api/resources';
-import { DatasetsPage } from './pages/DatasetsPage';
-import { DatasetBankPage } from './pages/DatasetBankPage';
-import { WorkflowsPage } from './pages/WorkflowsPage';
-import { BudgetsPage } from './pages/BudgetsPage';
-import { ModelsPage } from './pages/ModelsPage';
-import { ChatPage } from './pages/ChatPage';
-import { SpecialistsPage } from './pages/SpecialistsPage';
-import { RecipesPage } from './pages/RecipesPage';
-import { TrainingPage } from './pages/TrainingPage';
-import { ClusterExplorerPage } from './pages/ClusterExplorerPage';
-import { ContextLabPage } from './pages/ContextLabPage';
-import { ReleasesPage } from './pages/ReleasesPage';
-import { OverviewPage } from './pages/OverviewPage';
-import { AuditPage } from './pages/AuditPage';
-import { AnnotationPage } from './pages/AnnotationPage';
-import { EvaluationPage } from './pages/EvaluationPage';
-import { AlignmentPage } from './pages/AlignmentPage';
-import { InfrastructurePage } from './pages/InfrastructurePage';
-import { RunDetailPage } from './pages/RunDetailPage';
 import { parseRunRoute } from './api/runs';
 
-const DEV_DEFAULT_TOKEN = 'mkv_dev_master_key_for_local_testing_12345';
+const ResourceDetailPage = React.lazy(() => import('./pages/ResourceDetailPage').then(module => ({ default: module.ResourceDetailPage })));
+const DatasetsPage = React.lazy(() => import('./pages/DatasetsPage').then(module => ({ default: module.DatasetsPage })));
+const DatasetBankPage = React.lazy(() => import('./pages/DatasetBankPage').then(module => ({ default: module.DatasetBankPage })));
+const WorkflowsPage = React.lazy(() => import('./pages/WorkflowsPage').then(module => ({ default: module.WorkflowsPage })));
+const BudgetsPage = React.lazy(() => import('./pages/BudgetsPage').then(module => ({ default: module.BudgetsPage })));
+const ModelsPage = React.lazy(() => import('./pages/ModelsPage').then(module => ({ default: module.ModelsPage })));
+const ChatPage = React.lazy(() => import('./pages/ChatPage').then(module => ({ default: module.ChatPage })));
+const SpecialistsPage = React.lazy(() => import('./pages/SpecialistsPage').then(module => ({ default: module.SpecialistsPage })));
+const RecipesPage = React.lazy(() => import('./pages/RecipesPage').then(module => ({ default: module.RecipesPage })));
+const TrainingPage = React.lazy(() => import('./pages/TrainingPage').then(module => ({ default: module.TrainingPage })));
+const ClusterExplorerPage = React.lazy(() => import('./pages/ClusterExplorerPage').then(module => ({ default: module.ClusterExplorerPage })));
+const ContextLabPage = React.lazy(() => import('./pages/ContextLabPage').then(module => ({ default: module.ContextLabPage })));
+const ReleasesPage = React.lazy(() => import('./pages/ReleasesPage').then(module => ({ default: module.ReleasesPage })));
+const OverviewPage = React.lazy(() => import('./pages/OverviewPage').then(module => ({ default: module.OverviewPage })));
+const AuditPage = React.lazy(() => import('./pages/AuditPage').then(module => ({ default: module.AuditPage })));
+const AnnotationPage = React.lazy(() => import('./pages/AnnotationPage').then(module => ({ default: module.AnnotationPage })));
+const EvaluationPage = React.lazy(() => import('./pages/EvaluationPage').then(module => ({ default: module.EvaluationPage })));
+const AlignmentPage = React.lazy(() => import('./pages/AlignmentPage').then(module => ({ default: module.AlignmentPage })));
+const InfrastructurePage = React.lazy(() => import('./pages/InfrastructurePage').then(module => ({ default: module.InfrastructurePage })));
+const RunDetailPage = React.lazy(() => import('./pages/RunDetailPage').then(module => ({ default: module.RunDetailPage })));
+
+
 
 type Page =
   | 'Overview'
@@ -74,7 +88,8 @@ type Page =
   | 'Releases'
   | 'Budgets'
   | 'Audit'
-  | 'Run Detail';
+  | 'Run Detail'
+  | 'Resource Detail';
 
 const pages: { name: Page; icon: React.ElementType; endpoint: string; slug?: string }[] = [
   { name: 'Overview', icon: Activity, endpoint: '/api/v1/health/' },
@@ -96,6 +111,7 @@ const pages: { name: Page; icon: React.ElementType; endpoint: string; slug?: str
   { name: 'Budgets', icon: CircleDollarSign, endpoint: '/api/v1/budget-policies/' },
   { name: 'Audit', icon: Layers3, endpoint: '/api/v1/audit/' },
   // Reached only through a run deep link; it renders in no navigation group.
+  { name: 'Resource Detail', icon: Database, endpoint: '/api/v1/model-versions/', slug: 'resources' },
   { name: 'Run Detail', icon: Workflow, endpoint: '/api/v1/jobs/', slug: 'runs' },
 ];
 
@@ -120,7 +136,7 @@ const descriptions: Record<Page, string> = {
   Chat: 'Run local models, save conversations and compare actual responses.',
   Specialists: 'Read image text and evaluate structured decisions with pinned local models.',
   Recipes: 'Compose typed transformations, preview actual generation and publish recoverable dataset runs.',
-  Training: 'Configure reproducible runs and follow their actual progress.',
+  Training: 'Fine-tune a pretrained model with your own examples.',
   Alignment: 'Configure preference learning and inspect recorded outcomes.',
   Evaluation: 'Compare pinned versions, inspect failures, and review the evidence.',
   Workflows: 'Follow execution, inspect attempts, and recover interrupted work.',
@@ -130,6 +146,7 @@ const descriptions: Record<Page, string> = {
   Infrastructure: 'Inspect worker pools, capabilities, and recorded availability.',
   Budgets: 'Understand measured usage, reservations, and spending policies.',
   Audit: 'Trace changes and inspect the events behind your workspace.',
+  'Resource Detail': 'Inspect an exact authorized revision, its evidence and compatible next actions.',
   'Run Detail':
     'Follow one run end to end: observed state, desired state, attempts, evidence and recovery blockers.',
 };
@@ -151,9 +168,10 @@ interface OrganizationConnection {
 
 export function App() {
   const [active, setActive] = React.useState<Page>(currentPage);
+  const [resourceRoute, setResourceRoute] = React.useState(() => parseResourceRoute(window.location.hash));
   const [runRoute, setRunRoute] = React.useState(() => parseRunRoute(window.location.hash));
   const [token, setTokenState] = React.useState<string>(
-    () => localStorage.getItem('modelanvil_token') ?? DEV_DEFAULT_TOKEN
+    () => localStorage.getItem('modelanvil_token') ?? ''
   );
   const [draftToken, setDraftToken] = React.useState(token);
   const [datasetRefreshKey, setDatasetRefreshKey] = React.useState(0);
@@ -186,14 +204,35 @@ export function App() {
   const activeProject = projects.find((p) => p.id === activeProjectId) || null;
 
   const [navigationOpen, setNavigationOpen] = React.useState(false);
+  const [headerOptionsOpen, setHeaderOptionsOpen] = React.useState(false);
+  const menuButton = React.useRef<HTMLButtonElement>(null);
   const connectionDialog = React.useRef<HTMLDialogElement>(null);
   const connectionRequest = React.useRef<AbortController | null>(null);
 
   React.useEffect(() => () => connectionRequest.current?.abort(), []);
 
+  React.useEffect(() => {
+    if (!token || !activeProjectId || !currentOrganization || projectLoading || organizationLoading) return;
+    return startActivation(token, activeProjectId);
+  }, [token, activeProjectId, currentOrganization?.tenant_id, projectLoading, organizationLoading]);
+
+  React.useEffect(() => {
+    if (!navigationOpen) return;
+    document.querySelector<HTMLButtonElement>('.navigation-rail [aria-current="page"]')?.focus();
+    const close = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { setNavigationOpen(false); menuButton.current?.focus(); }
+    };
+    const media = window.matchMedia('(min-width: 1025px)');
+    const resized = () => { if (media.matches) setNavigationOpen(false); };
+    window.addEventListener('keydown', close);
+    media.addEventListener('change', resized);
+    return () => { window.removeEventListener('keydown', close); media.removeEventListener('change', resized); };
+  }, [navigationOpen]);
+
   // Fetch organization for the active token
   React.useEffect(() => {
     const controller = new AbortController();
+    if (!token) { setOrganizationLoading(false); setOrganizationConnection(null); return; }
     setOrganizationLoading(true);
     apiPage<Organization>('/api/v1/tenants/', token, controller.signal)
       .then((page) => {
@@ -219,8 +258,9 @@ export function App() {
   // Fetch projects for the active tenant
   React.useEffect(() => {
     const controller = new AbortController();
+    if (!token) { setProjectLoading(false); setProjects([]); return; }
     setProjectLoading(true);
-    apiPage<Project>('/api/v1/projects/', token, controller.signal)
+    allResources<Project>('/api/v1/projects/', token, controller.signal).then(results => ({ results }))
       .then((page) => {
         if (controller.signal.aborted) return;
         setProjects(page.results);
@@ -254,6 +294,7 @@ export function App() {
   React.useEffect(() => {
     const onHashChange = () => {
       setRunRoute(parseRunRoute(window.location.hash));
+      setResourceRoute(parseResourceRoute(window.location.hash));
       setActive(currentPage());
     };
     window.addEventListener('hashchange', onHashChange);
@@ -262,7 +303,7 @@ export function App() {
 
   React.useEffect(() => {
     document.title = active === 'Run Detail' && runRoute
-      ? `Run ${runRoute.id.slice(0, 8)} · ModelAnvil`
+      ? `Run details · ModelAnvil`
       : `${active} · ModelAnvil`;
   }, [active, runRoute]);
 
@@ -283,6 +324,7 @@ export function App() {
   function load(page: Page) {
     setActive(page);
     setNavigationOpen(false);
+    if (navigationOpen) document.getElementById('workspace-content')?.focus();
     window.scrollTo(0, 0);
     window.location.hash = slugFor(page);
     if (page === 'Datasets') setDatasetRefreshKey((value) => value + 1);
@@ -371,7 +413,25 @@ export function App() {
     refresh();
   }
 
-  const selectedNavigation = active === 'Run Detail'
+  function welcomeConnected(value: string) {
+    setActiveProjectId(null);
+    setActiveProjectIdState(null);
+    localStorage.removeItem('modelanvil_active_project');
+    localStorage.setItem('modelanvil_token', value);
+    setTokenState(value); setDraftToken(value);
+    load('Training'); refresh();
+  }
+
+  async function signOut() {
+    try { await apiRequest('/api/v1/accounts/signout/', token, { method: 'POST', body: '{}' }); }
+    catch (e) { setConnectionError(errorMessage(e)); return; }
+    localStorage.removeItem('modelanvil_token'); localStorage.removeItem('modelanvil_active_project');
+    setActiveProjectId(null); setActiveProjectIdState(null); setTokenState(''); setDraftToken('');
+  }
+
+  if (!token || (!organizationLoading && !currentOrganization)) return <Welcome onConnected={welcomeConnected} />;
+
+  const selectedNavigation = active === 'Resource Detail' ? resourceRoute?.kind === 'model-version' ? 'Models' : 'Datasets' : active === 'Run Detail'
     ? runRoute?.kind === 'training' ? 'Training' : runRoute?.kind === 'evaluation' ? 'Evaluation' : 'Workflows'
     : active;
 
@@ -387,7 +447,7 @@ export function App() {
       >
         Skip to content
       </a>
-      <aside className="navigation-rail" aria-label="Workspace navigation">
+      <aside className="navigation-rail" id="workspace-navigation" aria-label="Workspace navigation">
         <a className="brand" href="#overview" aria-label="ModelAnvil Model Workspace overview">
           <img className="brand-logo" src={`${import.meta.env.BASE_URL}brand/modelanvil-logo-reversed.svg`} alt="" width="1088" height="240" />
           <img className="brand-icon" src={`${import.meta.env.BASE_URL}brand/modelanvil-icon.svg`} alt="" width="256" height="256" />
@@ -410,18 +470,16 @@ export function App() {
               {pages
                 .filter((page) => group.names.includes(page.name))
                 .map(({ name, icon: Icon }) => (
-                  <button
+                  <NavigationItem
                     key={name}
                     title={name}
-                    className={selectedNavigation === name ? 'selected' : ''}
+                    selected={selectedNavigation === name}
+                    icon={<Icon size={18} aria-hidden="true" />}
                     aria-label={name}
-                    aria-current={selectedNavigation === name ? 'page' : undefined}
                     onClick={() => load(name)}
                   >
-                    <Icon size={18} aria-hidden="true" />
-                    <span>{name}</span>
-                    {selectedNavigation === name && <span className="nav-indicator" aria-hidden="true" />}
-                  </button>
+                    {name}
+                  </NavigationItem>
                 ))}
             </div>
           ))}
@@ -443,16 +501,16 @@ export function App() {
         </div>
       </aside>
       <main>
-        <header className="topbar">
-          <div className="breadcrumbs">
-            <button
-              className="icon-button mobile-menu"
-              aria-label="Toggle navigation"
-              aria-expanded={navigationOpen}
-              onClick={() => setNavigationOpen((v) => !v)}
-            >
-              <Menu size={19} />
-            </button>
+        <WorkspaceHeader className={headerOptionsOpen ? 'options-open' : undefined}>
+          <div className="compact-title">
+            <a className="compact-product" href="#overview">ModelAnvil</a>
+            <span className="compact-page">{active}</span>
+            <Button type="button" className="icon-button" aria-label="Workspace options" aria-expanded={headerOptionsOpen} aria-controls="workspace-context workspace-actions" onClick={() => setHeaderOptionsOpen(value => !value)}>
+              <Settings2 size={17} aria-hidden="true" />
+            </Button>
+            <Button type="button" ref={menuButton} variant="quiet" aria-label="Toggle navigation" aria-expanded={navigationOpen} aria-controls="workspace-navigation" onClick={() => setNavigationOpen(value => !value)}>Menu</Button>
+          </div>
+          <div className="breadcrumbs" id="workspace-context">
             <label className="organization-select">
               <Building2 size={16} aria-hidden="true" />
               <select
@@ -499,31 +557,32 @@ export function App() {
             <ChevronRight className="breadcrumb-divider" size={14} aria-hidden="true" />
             <strong className="breadcrumb-page">{active}</strong>
           </div>
-          <div className="header-actions">
+          <div className="header-actions" id="workspace-actions">
             <a className="mobile-brand" href="#overview" aria-label="ModelAnvil overview">
               <img src={`${import.meta.env.BASE_URL}brand/modelanvil-icon.svg`} alt="" width="32" height="32" />
             </a>
             <WorkspaceSearch pages={pages.filter(p => p.name !== 'Run Detail').map(p => p.name)} onNavigate={name => load(name as Page)} />
             <ThemeControl />
-            <button
+            {!projectLoading && !organizationLoading && token && <ActiveJobs key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />}
+            <Button
               className="icon-button"
               title="Refresh workspace"
               aria-label="Refresh workspace"
               onClick={refresh}
             >
               <RefreshCw size={16} />
-            </button>
-            <button
+            </Button>
+            <Button
               className="connection-button"
-              aria-label="Connection"
+              aria-label={token === 'session' ? 'Sign out' : 'Connection'}
               disabled={connectionBusy}
-              onClick={() => openConnection()}
+              onClick={() => token === 'session' ? void signOut() : openConnection()}
             >
               <KeyRound size={15} aria-hidden="true" />
-              <span>Connection</span>
-            </button>
+              <span>{token === 'session' ? 'Sign out' : 'Connection'}</span>
+            </Button>
           </div>
-        </header>
+        </WorkspaceHeader>
         <dialog
           ref={connectionDialog}
           className="connection-dialog"
@@ -533,13 +592,13 @@ export function App() {
         >
           <div className="dialog-title">
             <h2 id="connection-title">Connect organization</h2>
-            <button
+            <Button
               className="icon-button"
               aria-label="Close connection settings"
               onClick={() => connectionDialog.current?.close()}
             >
               <X size={18} />
-            </button>
+            </Button>
           </div>
           <p className="muted">
             Enter an organization’s API key to verify access and connect its workspace. Connected
@@ -547,12 +606,12 @@ export function App() {
           </p>
           <form className="api-key" onSubmit={connect} aria-busy={connectionBusy}>
             {connectionError && (
-              <p className="notice error" role="alert">
+              <Notice as="p" tone="error" className="notice error" role="alert">
                 {connectionError}
-              </p>
+              </Notice>
             )}
             <label htmlFor="api-key">API key</label>
-            <input
+            <Field
               id="api-key"
               required
               disabled={connectionBusy}
@@ -561,9 +620,9 @@ export function App() {
               value={draftToken}
               onChange={(e) => setDraftToken(e.target.value)}
             />
-            <button className="primary" type="submit" disabled={connectionBusy}>
+            <Button className="primary" type="submit" disabled={connectionBusy}>
               {connectionBusy ? 'Verifying access…' : 'Connect'}
-            </button>
+            </Button>
           </form>
         </dialog>
 
@@ -579,10 +638,10 @@ export function App() {
 
         <div className="page-content" id="workspace-content" data-screen={slugFor(active)} tabIndex={-1}>
           {connectionError && (
-            <div className="notice error" role="alert">
+            <Notice tone="error" className="notice error" role="alert">
               {connectionError}
-              <button onClick={() => openConnection()}>Review connection</button>
-            </div>
+              <Button onClick={() => openConnection()}>Review connection</Button>
+            </Notice>
           )}
           <div className="page-heading">
             <div>
@@ -593,14 +652,16 @@ export function App() {
               <p>{descriptions[active]}</p>
             </div>
             {active === 'Overview' && (
-              <button className="primary" onClick={() => load('Workflows')}>
+              <Button onClick={() => load('Workflows')}>
                 Open workflows
                 <ArrowUpRight size={16} aria-hidden="true" />
-              </button>
+              </Button>
             )}
           </div>
 
-          {active === 'Run Detail' ? (
+          <DraftScope.Provider value={currentOrganization ? { organization: currentOrganization.tenant_id, project: activeProjectId } : null}>
+          <ScreenBoundary key={`${token}-${activeProjectId}-${active}`}>
+          {projectLoading || organizationLoading ? (<p role="status">Loading project scope…</p>) : active === 'Resource Detail' ? (resourceRoute ? <ResourceDetailPage key={`${token}-${activeProjectId}-${resourceRoute.kind}-${resourceRoute.id}`} token={token} kind={resourceRoute.kind} id={resourceRoute.id} refreshKey={refreshKey} /> : <p role="alert">This resource address is invalid. Open an exact revision from Models or Datasets.</p>) : active === 'Run Detail' ? (
             runRoute ? (
               <RunDetailPage
                 key={`${token}-${activeProjectId}-${runRoute.kind}-${runRoute.id}`}
@@ -610,12 +671,12 @@ export function App() {
                 runId={runRoute.id}
               />
             ) : (
-              <div className="notice">
+              <Notice className="notice">
                 <span>
                   This address has no run identifier. Open a run from its list to load a durable run link.
                 </span>
-                <button onClick={() => load('Workflows')}>Go to workflows</button>
-              </div>
+                <Button onClick={() => load('Workflows')}>Go to workflows</Button>
+              </Notice>
             )
           ) : active === 'Dataset Bank' ? (
             <DatasetBankPage
@@ -716,8 +777,10 @@ export function App() {
             />
           )}
 
+          </ScreenBoundary>
+          </DraftScope.Provider>
           <footer>
-            <span>ModelAnvil · foundation build</span>
+            <BuildIdentity token={token} refreshKey={refreshKey} />
             <span>
               <Activity size={14} /> Control plane
             </span>

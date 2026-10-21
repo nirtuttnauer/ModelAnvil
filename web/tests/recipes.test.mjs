@@ -1,6 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { starterRecipe, newStep, importRecipe, graphErrors, uploadRecipeSource } from '../src/api/recipes.ts';
+
+test('recipe step IDs use a valid HTML Unicode-set pattern and retain the accepted ID syntax', () => {
+  const page = readFileSync(new URL('../src/pages/RecipesPage.tsx', import.meta.url), 'utf8');
+  const pattern = page.match(/pattern="([^"]+)"/)[1];
+  const constraint = new RegExp(`^(?:${pattern})$`, 'v');
+  for (const id of ['source', 'source-1', 'source_1', 's' + 'x'.repeat(31)]) assert.equal(constraint.test(id), true, id);
+  for (const id of ['', 'Source', '1source', 'source.bad', 'source|bad', 's' + 'x'.repeat(32)]) assert.equal(constraint.test(id), false, id);
+});
 
 test('starter graphs expose typed dependencies and refuse missing or duplicate steps', () => {
   assert.deepEqual(graphErrors(starterRecipe()),[]);

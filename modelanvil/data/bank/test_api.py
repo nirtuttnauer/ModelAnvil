@@ -42,7 +42,7 @@ class DatasetBankAPITests(APITestCase):
         data = response.json()
         self.assertIn("sources", data)
         self.assertGreater(data["count"], 0)
-        self.assertEqual(data["qualified_count"], 11)
+        self.assertEqual(data["qualified_count"], 14)
 
     def test_squad_requires_boolean_share_alike_opt_in(self):
         path = "/api/v1/dataset-bank/sources/text-squad/preflight/"

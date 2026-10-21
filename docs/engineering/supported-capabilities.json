@@ -1,0 +1,178 @@
+{
+  "schema_version": "modelanvil.supported-capabilities.v1",
+  "reviewed_on": "2026-10-21",
+  "scope": "Operation-specific evidence index; not complete R1 certification.",
+  "operations": [
+    {
+      "operation": "import",
+      "recipe": "canonical JSONL and bounded CSV/JSON/DOCX/PDF extraction; pinned model acquisition separately",
+      "runtime": "standard-library importers; optional pinned PDF parser; trusted acquisition worker",
+      "hardware": "local macOS arm64; optional parser qualifications are POSIX only",
+      "evidence_date": "2026-10-12",
+      "level": "integrated_execution",
+      "artifact_identity": {
+        "source_hashes": "recorded in source-import evidence and published manifests"
+      },
+      "evidence": [
+        {
+          "path": "verification/modelanvil-source-import-2026-10-12.json",
+          "sha256": "785a16e0755bad801bf067d9f4a8c35f9c19583abc1dc190b043866c91124f93"
+        },
+        {
+          "path": "verification/modelanvil-pdf-import-2026-10-12.json",
+          "sha256": "906904a93fcf3648f784128fad6e5f3b192f44024c1113f9fd61f9382e1f8126"
+        }
+      ],
+      "remaining": [
+        "Acquiring data is distinct from executable model/training compatibility.",
+        "Guided training still limits input to 1000 examples and 128 tokens.",
+        "Live Hub transfer and managed-store/private-worker transfer need separate qualification."
+      ],
+      "production_qualified": false,
+      "hardware_qualified": false
+    },
+    {
+      "operation": "training",
+      "recipe": "guided SmolLM2-1.7B-Instruct rank-16 LoRA, 288 updates; 135M full SFT has separate evidence",
+      "runtime": "modelanvil.smollm2-gpu-sft.v1; pinned PyTorch/Transformers/PEFT profile",
+      "hardware": "Apple MPS local 48 GiB unified-memory pilot; large profile requires >=32 GiB and 12 GiB process headroom",
+      "evidence_date": "2026-10-14",
+      "level": "integrated_execution",
+      "artifact_identity": {
+        "run_id": "f16fa988-738c-4b64-bff7-fe6a32b3b6cf",
+        "candidate_id": "c630bde8-0bc6-453d-aa2b-83b75f54fc49",
+        "base_revision": "31b70e2e869a7173562077fd711b654946d38674",
+        "candidate_weight_sha256": null
+      },
+      "evidence": [
+        {
+          "path": "verification/useful-local-training-2026-10-14/final-training-evidence.json",
+          "sha256": "703ceccae6636183e0d88974814999109f5fb9296fa036abaab47336606131e0"
+        },
+        {
+          "path": "verification/task40-mps-pilot.json",
+          "sha256": "7b28365f081f5526fb18670da9918447f5bf6d2fbc7133aad235bd655cbf6137"
+        }
+      ],
+      "remaining": [
+        "Six reworded questions do not establish general quality.",
+        "128-token/1000-example/3000-update guided envelope remains unchanged.",
+        "CUDA/ROCm/XPU and distributed execution require named physical-hardware evidence."
+      ],
+      "production_qualified": false,
+      "hardware_qualified": false
+    },
+    {
+      "operation": "evaluation",
+      "recipe": "durable CPU reference candidate/baseline comparison, exact-match held-out case, fenced commits",
+      "runtime": "modelanvil.local-cpu-evaluation.v1; plain prompts, <=64 cases and <=32 output tokens",
+      "hardware": "Apple M5 Pro, macOS-27.0.1-arm64-arm-64bit, Python 3.12.15, local CPU",
+      "evidence_date": "2026-10-21",
+      "level": "integrated_execution",
+      "artifact_identity": {
+        "version": "01a16011-18f4-7fd1-85aa-4988922aabaa",
+        "artifact_id": "01a16011-18f1-7261-a50b-b35d585c3aa4",
+        "sha256": "cb55e43509a0991524f3e10b4898db917a9c6ddf4029b9c2fdddedf113cda50c",
+        "tokenizer": "01a16011-1660-76af-ab85-92c31b354060"
+      },
+      "evidence": [
+        {
+          "path": "verification/task44-activation-2026-10-21/baseline.json",
+          "sha256": "f661ada0c377c311ade884177eddec3b08408985d389bedd67335580f1fed21d"
+        }
+      ],
+      "remaining": [
+        "One deliberately failing case qualifies the workflow only.",
+        "Guided GPU/PEFT adapters and native-chat-template evaluation remain TASK-46.",
+        "Protected evaluation coverage, calibrated judges and broad useful-model claims need separate evidence."
+      ],
+      "production_qualified": false,
+      "hardware_qualified": false
+    },
+    {
+      "operation": "export",
+      "recipe": "frozen CPU candidate review and real standalone-consumer export; guided LoRA ZIP inspected separately",
+      "runtime": "standard-library Safetensors consumer for CPU reference; native full/base+adapter archive for guided profile",
+      "hardware": "local POSIX CPU consumer; guided Apple pilot archive inspection",
+      "evidence_date": "2026-10-12 (CPU); 2026-10-14 (guided archive)",
+      "level": "integrated_execution",
+      "artifact_identity": {
+        "cpu_weights_sha256": "3b55f30aa34cc1de3a9cf9bfecc654312abce32de21314c898e461ff67a1cdb5",
+        "guided_run_id": "6584aa0a-66e1-4730-b733-8aae24ba57a1",
+        "guided_selected_step": 192
+      },
+      "evidence": [
+        {
+          "path": "verification/p0-local/independent-consumer.json",
+          "sha256": "bb97097fb9b858ff3863d790900f55a8e0d3bc847f5a2dac7890d721d1e4d6c3"
+        },
+        {
+          "path": "verification/useful-local-training-2026-10-14/download-evidence.json",
+          "sha256": "0f15a94c781d783f7f3fa41909c03307940f4982e1285a10029deadf6abdae0f"
+        }
+      ],
+      "remaining": [
+        "CPU external loading does not qualify guided exports in all third-party runtimes.",
+        "The final shuffled guided candidate ZIP was not independently loaded in that report.",
+        "GGUF conversion/quantization need actual independent loading and quality measurements."
+      ],
+      "production_qualified": false,
+      "hardware_qualified": false
+    },
+    {
+      "operation": "serving",
+      "recipe": "authenticated local CPU on-demand serving with startup probe and rollback",
+      "runtime": "in-application CPU reference runtime; separate production web stack uses Gunicorn/Caddy/PostgreSQL",
+      "hardware": "single local application service, filesystem artifacts, trusted workers",
+      "evidence_date": "2026-10-12",
+      "level": "integrated_execution",
+      "artifact_identity": {
+        "release_version": "e3c9f73c-e208-4b13-b519-3b224016c366",
+        "local_deployment": "aaee70c7-f03f-4de2-9a42-f632b38deaa5"
+      },
+      "evidence": [
+        {
+          "path": "verification/p0-local/local-beta-browser.json",
+          "sha256": "748c598cc50d5d7384f0172be28be1d91fffbbffba76504fd6f046b2ccebd80a"
+        }
+      ],
+      "remaining": [
+        "Serving test used an explicit zero accuracy threshold to exercise infrastructure.",
+        "Startup probe is not continuous health or production uptime evidence.",
+        "Public web deployment alone does not provision model workers or qualify external model serving."
+      ],
+      "production_qualified": false,
+      "hardware_qualified": false
+    },
+    {
+      "operation": "recovery",
+      "recipe": "fenced checkpoints; local SQLite/filesystem restore; duplicate terminal commit refusal",
+      "runtime": "trusted local database-polling workers, SQLite and filesystem backup/restore",
+      "hardware": "single local POSIX application service",
+      "evidence_date": "2026-10-12",
+      "level": "integrated_execution",
+      "artifact_identity": {
+        "artifacts_verified": 49,
+        "duplicate_terminal_commits_refused": 12,
+        "database_integrity": "ok"
+      },
+      "evidence": [
+        {
+          "path": "verification/p0-local/restore-drill.json",
+          "sha256": "53b3bf37f65f8f158b72879ab13c0b0ae2653222c46cd64a9d10d9f2529e3ef5"
+        },
+        {
+          "path": "verification/p0-local/clean-install.json",
+          "sha256": "07ef95dd25a6e567531667c23f0c7b958f521b6fb8892fd97d013c93583e45e8"
+        }
+      ],
+      "remaining": [
+        "PostgreSQL/broker/managed object-store interruptions and remote workers need separate recovery drills.",
+        "Per-artifact identities live in restore manifests; this summary does not contain their hashes.",
+        "Local restore timing is not a declared production RTO/RPO."
+      ],
+      "production_qualified": false,
+      "hardware_qualified": false
+    }
+  ]
+}

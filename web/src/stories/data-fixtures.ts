@@ -43,7 +43,7 @@ const tasks = [
   { task_id: id(101), sample_ref: 'assistant-0421', status: 'pending', content: { user: 'How do I choose a validation split without leaking related examples?', assistant: 'Keep examples from the same source group together, then assign groups deterministically. Inspect the recorded split counts before training.', source: 'Dataset preparation guide · section 3.2', draft_prediction: { predicted_label: 'Helpful', model_version_id: modelVersionId } }, latest_review: null as ReturnType<typeof previousReview> | null },
   { task_id: id(102), sample_ref: 'assistant-0422', status: 'reviewed', content: { user: 'Can I compare two model revisions using training loss alone?', assistant: 'Training loss is enough to choose the better production model.', source: 'Evaluation guide · held-out qualification', draft_prediction: { predicted_label: 'Helpful', model_version_id: modelVersionId } }, latest_review: previousReview(112, 'corrected', 'Needs correction') },
   { task_id: id(103), sample_ref: 'assistant-0423', status: 'reviewed', content: { user: 'What happens when a run is cancelled?', assistant: 'Cancellation is a requested action. Wait for the worker to acknowledge it and finalize its resources before treating the run as terminal.', source: 'Worker lifecycle guide · cancellation', draft_prediction: { predicted_label: 'Helpful', model_version_id: modelVersionId } }, latest_review: previousReview(113, 'accepted_without_edit', 'Helpful') },
-];
+].map(task => ({ ...task, assigned_reviewer: '', needs_adjudication: false }));
 const knowledgeBases = [
   { knowledge_base_id: id(51), kb_id: id(51), name: 'Platform documentation', description: 'Dataset, training, and worker lifecycle reference material.', created_at: stamp, updated_at: stamp },
   { knowledge_base_id: id(52), kb_id: id(52), name: 'Research playbook', description: 'Evaluation protocols and annotation review guidelines.', created_at: stamp, updated_at: stamp },
@@ -60,6 +60,7 @@ const chunks = [
 
 export const dataResponses: Record<string, unknown> = {
   '/api/v1/dataset-bank/sources/': { sources, count: sources.length, catalog_status: 'demo_qualified', catalog_checked_on: '2026-10-11', qualified_count: 2 },
+  '/api/v1/dataset-bank/acquisitions/': [transfer('demo-text'), transfer('demo-lucide')],
   '/api/v1/datasets/': rows,
   '/api/v1/dataset-revisions/': revisions,
   [`/api/v1/datasets/${datasetId}/`]: rows[0],
@@ -93,6 +94,10 @@ for (const source of sources) {
   };
 }
 for (const task of tasks) {
+  dataResponses[`/api/v1/annotation-tasks/${task.task_id}/`] = task;
+  dataResponses[`/api/v1/annotation-tasks/${task.task_id}/assignment/`] = { reviewers: [{ principal_id: 'demo-reviewer', name: 'Demo reviewer' }] };
+  dataActions[`/api/v1/annotation-tasks/${task.task_id}/assignment/`] = body => { task.assigned_reviewer = String(body.reviewer || ''); return { ...task }; };
+  dataActions[`/api/v1/annotation-tasks/${task.task_id}/escalate/`] = () => { task.needs_adjudication = true; return { ...task }; };
   const historyPath = `/api/v1/annotation-tasks/${task.task_id}/history/`;
   dataResponses[historyPath] = task.latest_review ? [task.latest_review] : [];
   dataActions[`/api/v1/annotation-tasks/${task.task_id}/review/`] = body => {

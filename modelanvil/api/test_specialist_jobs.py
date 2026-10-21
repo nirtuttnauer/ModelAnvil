@@ -41,6 +41,18 @@ class DurableSpecialistTests(TestCase):
     def submit(self):
         return self.client.post('/api/v1/specialists/jobs/', self.body, format='json')
 
+    def test_stale_draining_and_zero_slot_workers_refuse_new_specialist_jobs(self):
+        record=self.record(self.setup_job())
+        for index, changes in enumerate(({'last_heartbeat_at':timezone.now()-timezone.timedelta(seconds=61)},
+                                        {'drain_requested':True}, {'slots':0})):
+            Worker.all_objects.filter(pk=self.worker.pk).update(last_heartbeat_at=None,drain_requested=False,slots=1)
+            Worker.all_objects.filter(pk=self.worker.pk).update(**changes)
+            self.body['idempotency_key']=f'unavailable-{index}'
+            response=self.submit()
+            self.assertEqual(response.status_code,400,response.json())
+            self.assertEqual(Job.all_objects.count(),1)
+            self.assertEqual(BudgetReservation.all_objects.count(),1)
+
     def record(self, response):
         self.assertEqual(response.status_code, 202, response.data)
         return InferenceRequest.all_objects.get(request_id=response.data['request_id'])

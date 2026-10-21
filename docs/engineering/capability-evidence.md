@@ -1,5 +1,7 @@
 # Capability evidence audit
 
+For current operation-specific support, artifact references and remaining qualification, see the [21 October capability baseline](supported-capabilities.md). This audit retains its original scenario-by-scenario review scope.
+
 TASK-1 · 11 October 2026 · Local source and automated-test audit
 
 Levels describe evidence, independently of a saved workflow status:

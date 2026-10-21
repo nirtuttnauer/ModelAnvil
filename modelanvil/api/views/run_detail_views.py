@@ -289,43 +289,21 @@ def _recovery_projection(request, run, job, pins) -> dict[str, Any]:
     permission = _permission(request)
     resume_candidate = _resume_candidate(run, list(run.checkpoints.all()), pins)
     budget = _budget_projection(run)
-    blocked_by = []
-    if not permission["satisfied"]:
-        blocked_by.append(
-            f"This API key holds the '{permission['role']}' role; recovery actions require "
-            f"the '{Role.ENGINEER}' role."
-        )
-    if job is None:
-        blocked_by.append("This run has no durable job to re-queue.")
-    elif job.status not in (Job.Status.FAILED, Job.Status.INTERRUPTED):
-        blocked_by.append(
-            f"The job is '{job.status}'; recovery applies to failed or interrupted jobs only."
-        )
-    elif job.desired_action != Job.DesiredAction.RUN:
-        blocked_by.append("The job still carries an unacknowledged cancel request.")
-    if not resume_candidate["available"]:
-        blocked_by.append(resume_candidate["reason"])
-    if not budget["reservable"]:
-        blocked_by.append(budget["reason"])
-    blocked_by.append(
-        "This API is read-only and exposes no action that re-reserves budget and re-queues the "
-        "job. Recovery stays an operator path until that write contract exists."
-    )
+    from modelanvil.runners.training.recovery import recovery_review
+    review = recovery_review(run)
+    blocked_by = list(review['blocked_by'])
+    if not permission['satisfied']:
+        blocked_by.append(f"Recovery requires the '{Role.ENGINEER}' role.")
     return {
-        "available": False,
-        "permission": permission,
-        "checkpoint": resume_candidate,
-        "budget": budget,
-        "blocked_by": blocked_by,
-        "operator_path": (
-            "Lease reconciliation re-queues a job automatically while attempts remain. Otherwise "
-            "launch a new run from the same pinned inputs; prior attempts, checkpoints and usage "
-            "events for this run are append-only and stay readable."
-        ),
-        "preserves_history": (
-            "Attempts, checkpoints and recorded usage for this run are append-only; no action "
-            "offered in this view deletes or rewrites them."
-        ),
+        "available": not blocked_by,
+        "endpoint": f"/api/v1/training-runs/{run.run_id}/resume/",
+        "permission": permission, "checkpoint": resume_candidate,
+        "budget": {**budget, 'reservable': review['available'],
+            'reason': f"Recovery reserves {review['remaining_steps']} remaining training_steps in a new job. Headroom: {review['headroom'] or 'unavailable'}.",
+            'remaining_steps': review['remaining_steps'], 'policy_id': review['policy_id']},
+        "blocked_by": blocked_by, "recovery_run_id": review['recovery_run_id'],
+        "operator_path": review['replay_limits'],
+        "preserves_history": "Parent attempts, checkpoints and usage remain immutable. Recovery creates a linked execution with a new reservation for the remaining steps.",
     }
 
 
@@ -369,6 +347,7 @@ def _training_links(run, job) -> dict[str, Any]:
     return {
         "job": str(job.job_id) if job else None,
         "training_run": str(run.run_id),
+        "recovery_parent": str(run.recovery_parent.run_id) if run.recovery_parent_id else None,
         "output_model_version": str(run.output_model_version.model_version_id)
         if run.output_model_version_id
         else None,
@@ -523,32 +502,39 @@ def _evaluation_payload(request, run) -> dict[str, Any]:
     ]
     candidate = run.candidate_model_version
     source_run = candidate.metadata.get("source_run_id") if candidate else None
-    terminal = run.status in (EvaluationRun.Status.COMPLETED, EvaluationRun.Status.FAILED)
+    job = run.job
+    terminal = run.status in ('completed', 'failed', 'cancelled')
+    total = run.protocol_ref.get('total_cases', len(run.suite_version.cases))
+    completed = run.case_results.count()
+    cancel = _cancel_projection(job, None) if job else {
+        'available': False, 'requested': False, 'acknowledged': False, 'endpoint': None,
+        'blocked_by': ['This evaluation has no worker job.']}
+    if job:
+        cancel['endpoint'] = f'/api/v1/evaluation-runs/{run.run_id}/cancel/'
     return {
         "kind": "evaluation",
         "id": str(run.run_id),
         "name": f"Evaluation {str(run.run_id)[:8]}",
         "project": str(run.project_id) if run.project_id else None,
-        "execution_mode": "configuration",
+        "execution_mode": "worker" if job else "configuration",
         "observed": {
             "state": run.status,
-            "job_state": None,
-            "current_step": None,
-            "total_steps": None,
-            "progress": None,
+            "job_state": job.status if job else None,
+            "current_step": completed,
+            "total_steps": total,
+            "progress": completed / total if total else None,
             "latest_loss": None,
-            "attempts": None,
+            "attempts": f"{job.attempt_count}/{job.effective_max_attempts()}" if job else None,
             "created_at": _iso(run.created_at),
             "started_at": _iso(getattr(run, "started_at", None)),
             "completed_at": _iso(run.completed_at),
-            "updated_at": _iso(run.updated_at),
+            "updated_at": _iso(max(run.updated_at, job.updated_at)) if job else _iso(run.updated_at),
         },
         "desired": {
-            "action": "run",
-            "acknowledged": terminal,
+            "action": job.desired_action if job else "run",
+            "acknowledged": job.status == Job.Status.CANCELLED if job else terminal,
             "note": (
-                "An evaluation records configuration and its callback results; it is never "
-                "leased to a worker and has no cancel action."
+                DESIRED_NOTE if job else "Synchronous local evaluation has no worker ownership."
             ),
         },
         "inputs": {
@@ -559,12 +545,14 @@ def _evaluation_payload(request, run) -> dict[str, Any]:
             if run.baseline_model_version_id
             else None,
             "protocol_ref": run.protocol_ref,
+            "case_coverage": {"completed": completed, "missing": max(0, total-completed),
+                              "failed": run.case_results.filter(passed=False).count()},
         },
         "metrics": {**_bounded(metrics, MAX_METRICS), "latest_loss": None},
         "checkpoints": None,
-        "usage": _usage_projection(run.tenant_id, None),
+        "usage": _usage_projection(run.tenant_id, job.job_id if job else None),
         "links": {
-            "job": None,
+            "job": str(job.job_id) if job else None,
             "evaluation_run": str(run.run_id),
             "training_run": source_run,
             "model_version": str(candidate.model_version_id) if candidate else None,
@@ -572,13 +560,7 @@ def _evaluation_payload(request, run) -> dict[str, Any]:
         },
         "evidence": evaluation_evidence(run),
         "actions": {
-            "cancel": {
-                "available": False,
-                "requested": False,
-                "acknowledged": False,
-                "endpoint": None,
-                "blocked_by": ["Evaluations are recorded by the API and expose no cancellation."],
-            },
+            "cancel": cancel,
             "resume": {
                 "available": False,
                 "permission": _permission(request),
@@ -589,13 +571,7 @@ def _evaluation_payload(request, run) -> dict[str, Any]:
                 "preserves_history": "Recorded metrics and case results are never rewritten.",
             },
         },
-        "ownership": {
-            "state": "not_applicable",
-            "worker": None,
-            "worker_status": None,
-            "lease_expires_at": None,
-            "reason": "Evaluations are recorded by the API, not leased to a worker.",
-        },
+        "ownership": _ownership_projection(job),
     }
 
 
@@ -621,7 +597,7 @@ def _resolve(kind: str, run_id):
         )
     return (
         get_accessible_queryset(EvaluationRun).filter(run_id=run_id)
-        .select_related("suite_version", "candidate_model_version", "baseline_model_version")
+        .select_related("job", "suite_version", "candidate_model_version", "baseline_model_version")
         .prefetch_related("metrics")
         .first()
     )
@@ -660,7 +636,7 @@ class RunDetailAttemptsView(APIView):
         job = None
         if kind == "job":
             job = _resolve(kind, run_id)
-        elif kind == "training":
+        elif kind in ("training", "evaluation"):
             run = _resolve(kind, run_id)
             job = run.job if run else None
         else:

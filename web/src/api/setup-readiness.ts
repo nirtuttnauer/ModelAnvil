@@ -3,7 +3,7 @@ import type { RegisteredModelVersion, TokenizerVersion } from './resources';
 export interface SetupPool { id: number; name: string; status: string }
 export interface SetupBudget { policy_id: string; name: string; enabled: boolean; unit: string; currency: string; limit_amount: string }
 export interface SetupDataset { state: string; manifest_digest: string; manifest_artifact: string | null; row_count: number }
-export interface SetupWorker { pool: number; status: string; slots: number; capabilities: { training_runtime?: string; memory_bytes?: number } }
+export interface SetupWorker { pool: number; status: string; slots: number; connection_state?: string; capabilities: { training_runtime?: string; memory_bytes?: number } }
 export interface SetupRunner {
   enabled: boolean;
   compatibility: { contract_digest?: string };
@@ -18,7 +18,7 @@ export function setupReadiness(data: {
   const tokenizers = data.tokenizers.filter(t => t.vocabulary_size > 0);
   const models = data.models.filter(m => m.state !== 'retired' && !!m.artifact_manifest_id && tokenizers.some(t => t.id === m.tokenizer));
   const readyPools = data.pools.filter(pool => pool.status === 'active' && data.workers.some(worker =>
-    worker.pool === pool.id && worker.status === 'available' && worker.slots > 0 && data.runners.some(runner => {
+    worker.pool === pool.id && worker.connection_state === 'connected' && worker.status === 'available' && worker.slots > 0 && data.runners.some(runner => {
       const contract = runner.compatibility?.contract_digest;
       const memory = runner.manifest?.resources?.memory_bytes;
       return runner.enabled && !!contract && worker.capabilities?.training_runtime === contract &&

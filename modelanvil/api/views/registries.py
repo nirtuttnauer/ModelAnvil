@@ -1,5 +1,8 @@
 """Tenant-scoped registry APIs for data sources, runners, and budgets."""
 from decimal import Decimal
+from django.utils import timezone
+from django.db import IntegrityError, transaction
+from django.db.models import Q, Sum
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -7,7 +10,8 @@ from rest_framework.response import Response
 
 from modelanvil.core.tenancy import get_active_tenant
 from modelanvil.identity.auth import TenantRBAC
-from modelanvil.identity.models import Role
+from modelanvil.identity.models import Role, role_at_least
+from modelanvil.core.models import record_audit
 from modelanvil.data.models import DataSource, SourceSnapshot
 from modelanvil.runners.models import AdapterRegistryEntry, RunnerManifest
 from modelanvil.budgets.models import BudgetPolicy, BudgetReservation, UsageEvent
@@ -152,10 +156,45 @@ class AdapterRegistryViewSet(TenantScopedViewSet):
 
 
 class BudgetPolicySerializer(serializers.ModelSerializer):
+    allowance = serializers.SerializerMethodField()
+
+    def get_allowance(self, policy):
+        period_start, _ = BudgetReservation.current_commitment(policy)
+        amounts = BudgetReservation.all_objects.filter(policy=policy, period_start=period_start).aggregate(
+            reserved=Sum('estimated_amount', filter=Q(state=BudgetReservation.State.RESERVED)),
+            settled=Sum('settled_amount', filter=Q(state=BudgetReservation.State.SETTLED)))
+        reserved, settled = amounts['reserved'] or Decimal('0'), amounts['settled'] or Decimal('0')
+        return {'scope': 'tenant', 'period_start': str(period_start),
+                'reserved_amount': str(reserved), 'settled_amount': str(settled),
+                'remaining_amount': str(max(Decimal('0'), policy.limit_amount - reserved - settled))}
+
+    def validate_name(self, value):
+        existing = BudgetPolicy.all_objects.filter(tenant_id=get_active_tenant(), name=value)
+        if self.instance:
+            existing = existing.exclude(pk=self.instance.pk)
+        if existing.exists():
+            raise serializers.ValidationError('This policy name already exists. Inspect the existing policy before retrying.')
+        return value
+
+    def validate(self, attrs):
+        value = lambda field, default=None: attrs.get(field, getattr(self.instance, field, default))
+        if value('limit_amount', Decimal('0')) <= 0:
+            raise serializers.ValidationError({'limit_amount': 'Use a positive budget limit.'})
+        if value('unit') in ('training_steps', 'bank_acquisition_records', 'evaluation_cases') and value('currency', ''):
+            raise serializers.ValidationError({'currency': 'This policy limits resource quantities; leave currency empty.'})
+        if self.instance:
+            if self.instance.reservations.exists() and any(value(field) != getattr(self.instance, field)
+                    for field in ('period', 'unit', 'currency')):
+                raise serializers.ValidationError('A policy with reservations retains its period, unit and currency. Create a new policy.')
+            _, commitment = BudgetReservation.current_commitment(self.instance)
+            if value('limit_amount') < commitment:
+                raise serializers.ValidationError({'limit_amount': 'The limit cannot be below already committed usage and active reservations.'})
+        return attrs
+
     class Meta:
         model = BudgetPolicy
-        fields = ("policy_id", "name", "period", "unit", "limit_amount", "currency", "enabled", "stop_behavior", "created_at", "updated_at")
-        read_only_fields = ("policy_id", "created_at", "updated_at")
+        fields = ("policy_id", "name", "period", "unit", "limit_amount", "currency", "enabled", "stop_behavior", "allowance", "created_at", "updated_at")
+        read_only_fields = ("policy_id", "allowance", "created_at", "updated_at")
 
 
 class BudgetPolicyViewSet(TenantScopedViewSet):
@@ -164,14 +203,45 @@ class BudgetPolicyViewSet(TenantScopedViewSet):
     lookup_field = "policy_id"
     write_role = Role.ADMIN
 
+    @action(detail=False, methods=['get'])
+    def permissions(self, request):
+        return Response({'can_administer': role_at_least(getattr(request, 'modelanvil_role', None), Role.ADMIN),
+                         'scope': 'tenant'})
+
+    def perform_create(self, serializer):
+        try:
+            with transaction.atomic():
+                super().perform_create(serializer)
+        except IntegrityError as exc:
+            raise serializers.ValidationError({'name': 'Policy registration conflicted. Refresh policies before retrying.'}) from exc
+        record_audit('create', 'budget_policy', serializer.instance.policy_id,
+                     input_snapshot={'unit': serializer.instance.unit, 'limit_amount': str(serializer.instance.limit_amount)})
+
+    @transaction.atomic
+    def update(self, request, *args, **kwargs):
+        # Use the same lock as reservation admission while validating a new limit.
+        self.queryset = self.queryset.select_for_update()
+        return super().update(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        serializer.save()
+        record_audit('update', 'budget_policy', serializer.instance.policy_id,
+                     input_snapshot={'enabled': serializer.instance.enabled, 'limit_amount': str(serializer.instance.limit_amount)})
+
 
 class BudgetReservationSerializer(serializers.ModelSerializer):
+    source = serializers.SerializerMethodField()
+    period_start = serializers.DateField(read_only=True)
+    def get_source(self, obj):
+        from modelanvil.api.ledger_source import reservation_source
+        return reservation_source(obj)
+
     unit = serializers.CharField(source="policy.unit", read_only=True)
     currency = serializers.CharField(source="policy.currency", read_only=True)
     policy_name = serializers.CharField(source="policy.name", read_only=True)
     class Meta:
         model = BudgetReservation
-        fields = ("reservation_id", "policy", "policy_name", "unit", "currency", "job_id", "estimated_amount", "settled_amount", "state", "reserved_at", "settled_at")
+        fields = ("reservation_id", "policy", "policy_name", "unit", "currency", "job_id", "estimated_amount", "settled_amount", "state", "reserved_at", "settled_at", "period_start", "source")
         read_only_fields = fields
 
 
@@ -183,18 +253,32 @@ class BudgetReservationViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = "reservation_id"
 
     def get_queryset(self):
-        tenant_id = get_active_tenant()
-        return self.queryset.filter(tenant_id=tenant_id) if tenant_id else self.queryset.none()
+        from modelanvil.api.ledger_filters import ledger_filters
+        tenant = get_active_tenant()
+        qs = self.queryset.filter(tenant_id=tenant) if tenant else self.queryset.none()
+        return ledger_filters(self.request, qs, reservation=True)[0]
 
 
 class UsageEventSerializer(serializers.ModelSerializer):
+    source = serializers.SerializerMethodField()
+    adjustments = serializers.SerializerMethodField()
+    reservation_id = serializers.UUIDField(source='reservation.reservation_id', read_only=True, allow_null=True)
+    def get_source(self, obj):
+        from modelanvil.api.ledger_source import reservation_source
+        return reservation_source(obj.reservation)
+    def get_adjustments(self, obj):
+        from modelanvil.budgets.models import UsageAdjustment
+        return [{'adjustment_id': str(item.adjustment_id), 'amount_delta': str(item.amount_delta), 'reason': item.reason,
+            'source_event_key': item.source_event_key, 'created_at': item.created_at} for item in
+            UsageAdjustment.all_objects.filter(tenant_id=obj.tenant_id, usage_event=obj)]
+
     net_amount = serializers.DecimalField(
         max_digits=24, decimal_places=6, read_only=True, allow_null=True,
     )
 
     class Meta:
         model = UsageEvent
-        fields = ("usage_id", "provider_event_key", "quantity", "unit", "reservation", "rate_revision", "amount", "currency", "net_amount", "occurred_at", "observed_at", "detail")
+        fields = ("usage_id", "provider_event_key", "quantity", "unit", "reservation", "rate_revision", "amount", "currency", "net_amount", "occurred_at", "observed_at", "detail", "source", "adjustments", "reservation_id")
         read_only_fields = fields
 
 
@@ -206,8 +290,26 @@ class UsageEventViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = "usage_id"
 
     def get_queryset(self):
-        tenant_id = get_active_tenant()
-        return self.queryset.filter(tenant_id=tenant_id) if tenant_id else self.queryset.none()
+        from modelanvil.api.ledger_filters import ledger_filters
+        tenant = get_active_tenant()
+        qs = self.queryset.filter(tenant_id=tenant) if tenant else self.queryset.none()
+        return ledger_filters(self.request, qs)[0]
+
+    @action(detail=False, methods=['get'])
+    @transaction.atomic
+    def export(self, request):
+        from modelanvil.api.ledger_filters import ledger_filters
+        from django.utils import timezone
+        cutoff = timezone.now()
+        events = self.get_queryset().filter(created_at__lte=cutoff)
+        reservations, scope = ledger_filters(request, BudgetReservation.all_objects.filter(tenant_id=get_active_tenant()), reservation=True)
+        event_count, reservation_count = events.count(), reservations.count()
+        rows = list(events[:20000]); holds = list(reservations[:20000])
+        return Response({'scope': scope, 'as_of': cutoff, 'event_count': event_count, 'reservation_count': reservation_count,
+            'complete': event_count <= 20000 and reservation_count <= 20000,
+            'limits': 'Bounded local export supports 20,000 events and 20,000 reservations; larger exports are explicitly partial.',
+            'events': UsageEventSerializer(rows, many=True).data,
+            'reservations': BudgetReservationSerializer(holds, many=True).data})
 
     @action(detail=False, methods=["get"], url_path="summary")
     def summary(self, request):
@@ -215,7 +317,8 @@ class UsageEventViewSet(viewsets.ReadOnlyModelViewSet):
         tenant_id = get_active_tenant()
         if not tenant_id:
             return Response({"error": "No active tenant"}, status=400)
-        events = UsageEvent.objects.filter(tenant_id=tenant_id)
+        from modelanvil.api.ledger_filters import ledger_filters
+        events, scope = ledger_filters(request, self.get_queryset())
         by_unit = {}
         for ev in events:
             unit = (ev.unit, ev.currency)
@@ -242,6 +345,7 @@ class UsageEventViewSet(viewsets.ReadOnlyModelViewSet):
         active_reservations = BudgetReservation.objects.filter(
             tenant_id=tenant_id, state=BudgetReservation.State.RESERVED
         )
+        active_reservations, _ = ledger_filters(request, active_reservations, reservation=True)
         reserved = {}
         for reservation in active_reservations.select_related("policy"):
             key = (reservation.policy.unit, reservation.policy.currency)
@@ -252,6 +356,8 @@ class UsageEventViewSet(viewsets.ReadOnlyModelViewSet):
 
         return Response({
             "tenant_id": str(tenant_id),
+            "scope": scope,
+            "observed_at": timezone.now(),
             "usage_by_unit": [
                 {
                     "unit": data["unit"],

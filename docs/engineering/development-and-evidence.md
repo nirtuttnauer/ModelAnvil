@@ -16,7 +16,7 @@ Compose declares named data volumes for PostgreSQL and SeaweedFS. RabbitMQ does 
 
 The local setup targets Python 3.12 or newer; CI verifies Python 3.12. Vite's locked engine requirement accepts Node.js 22.12 or newer, while CI uses Node.js 24. Use the README's Python 3.12/Node.js 24 quickstart to match the tested CI versions.
 
-The bootstrap command creates a local tenant, admin user, empty project and the development API key used by the browser. Use it only in a local development database. Use Storybook for populated demo screens; create datasets and models through the app for real execution.
+The bootstrap command creates a local tenant, admin user, empty project and a development API key for optional API-key connections. The guided browser flow starts with account creation instead. Use it only in a local development database. Use Storybook for populated demo screens; create datasets and models through the app for real execution.
 
 The API runs with `.venv/bin/python manage.py runserver`; the frontend runs with `cd web && npm ci && npm run dev`. The browser dev server proxies `/api` to `http://127.0.0.1:8000`. The README shows explicit loopback binds and separate terminals for these same services.
 

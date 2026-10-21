@@ -36,6 +36,28 @@ from modelanvil.runners.training.engine import TrainingEngine
 from modelanvil.artifacts.models import Artifact
 
 
+def training_export_options(run):
+    if run.status != TrainingRun.Status.COMPLETED:
+        return []
+    from modelanvil.runners.training import hf_runtime, mlx_runtime
+    from modelanvil.runners.training.registry import runtime_for_run, is_worker_run
+    module = runtime_for_run(run)
+    transformer = is_worker_run(run) and module in (hf_runtime, mlx_runtime)
+    options = []
+    if transformer:
+        options.append({'format': 'native', 'label': 'MLX snapshot (ZIP)' if module is mlx_runtime else 'Safetensors snapshot (ZIP)',
+                        'extension': 'zip', 'description': 'Includes model weights, tokenizer files and provenance. Adapter runs include the base and separate adapters; weights are not merged or converted.'})
+        if module is hf_runtime and run.recipe_type == TrainingRun.RecipeType.LORA_ADAPTER:
+            options.append({'format': 'adapter', 'label': 'LoRA adapter only (ZIP)', 'extension': 'zip',
+                            'description': 'Includes adapter weights, adapter configuration and base provenance. Requires the exact base model recorded in the provenance.'})
+    options.append({'format': 'json', 'label': 'Snapshot manifest (JSON)' if transformer else 'Reference bundle (JSON)', 'extension': 'json',
+                    'description': 'Artifact references and provenance only; model weights are downloaded with the ZIP options.' if transformer
+                                   else 'Includes embedded reference weights, tokenizer configuration and provenance for the ModelAnvil reference runtime.'})
+    if not is_worker_run(run):
+        options[-1].update(method='POST', description='Synthetic reference bundle. Export registers a fixture candidate; it does not establish model quality.')
+    return options
+
+
 class TrainingCheckpointSerializer(serializers.ModelSerializer):
     weights_manifest = serializers.SerializerMethodField()
 
@@ -55,15 +77,38 @@ class TrainingCheckpointSerializer(serializers.ModelSerializer):
 
 
 class TrainingRunSerializer(serializers.ModelSerializer):
+    recovery_parent = serializers.SlugRelatedField(slug_field='run_id', read_only=True)
+    recovery_checkpoint = serializers.SlugRelatedField(slug_field='checkpoint_id', read_only=True)
     job = serializers.UUIDField(source='job.job_id', read_only=True, allow_null=True)
     execution_evidence = serializers.SerializerMethodField()
+    output_model_version_uuid = serializers.UUIDField(source='output_model_version.model_version_id', read_only=True, allow_null=True)
+    progress_step = serializers.SerializerMethodField()
+    export_options = serializers.SerializerMethodField()
+    quality_summary = serializers.SerializerMethodField()
     execution_mode = serializers.ChoiceField(choices=['worker', 'simulation'], default='worker', write_only=True)
     runner_manifest = serializers.PrimaryKeyRelatedField(queryset=RunnerManifest.objects.all(), required=False, write_only=True)
     runtime = serializers.JSONField(source='hardware_config', read_only=True)
+    purpose = serializers.ChoiceField(choices=['experiment', 'pilot'], default='experiment', write_only=True)
     preflight_token = serializers.CharField(write_only=True, required=False, max_length=2048)
 
     def get_execution_evidence(self, obj):
         return training_evidence(obj)
+
+    def get_progress_step(self, obj):
+        attempt = obj.job.attempts.order_by('-started_at', '-pk').first() if obj.job_id else None
+        return max(obj.current_step, min(obj.total_steps, int(attempt.progress * obj.total_steps))) if attempt else obj.current_step
+
+    def get_export_options(self, obj):
+        return training_export_options(obj)
+
+    def get_quality_summary(self, obj):
+        if not obj.output_model_version_id:
+            return None
+        selected = obj.output_model_version.metadata.get('selected_checkpoint_step', obj.total_steps)
+        checkpoint = obj.checkpoints.filter(step=selected).first()
+        metrics = checkpoint.metrics if checkpoint else {}
+        return {'selected_step': selected, 'baseline_loss': metrics.get('validation_loss_before_training'),
+                'validation_loss': metrics.get('validation_loss'), 'validation_examples': metrics.get('validation_samples', 0)}
 
     checkpoints = TrainingCheckpointSerializer(many=True, read_only=True)
     budget_policy_id = serializers.UUIDField(write_only=True, required=False, allow_null=True)
@@ -122,10 +167,11 @@ class TrainingRunSerializer(serializers.ModelSerializer):
         fields = (
             "execution_evidence", "execution_mode", "runner_manifest", "runtime", "preflight_token",
             "run_id", "project", "recipe_type", "base_model_version", "tokenizer_version",
+            "recovery_parent", "recovery_checkpoint",
             "dataset_revision", "dataset_manifest_digest", "pool", "job",
             "budget_policy_id", "estimated_amount",
-            "initialization_seed", "total_steps", "current_step", "status",
-            "latest_loss", "metrics_log", "output_model_version", "checkpoints",
+            "initialization_seed", "hyperparameters", "purpose", "total_steps", "current_step", "status",
+            "latest_loss", "metrics_log", "output_model_version", "output_model_version_uuid", "progress_step", "export_options", "quality_summary", "checkpoints",
             "created_at", "updated_at", "started_at", "completed_at"
         )
         read_only_fields = (
@@ -136,7 +182,7 @@ class TrainingRunSerializer(serializers.ModelSerializer):
 
 
 class TrainingPreflightSerializer(TrainingRunSerializer):
-    total_steps = serializers.IntegerField(min_value=1, max_value=1000, required=False)
+    total_steps = serializers.IntegerField(min_value=1, max_value=3000, required=False)
 
     def validate(self, attrs):
         # Report compatibility failures together after scoped relation/type validation.
@@ -164,7 +210,7 @@ class TrainingRunViewSet(TenantScopedViewSet):
             dataset_revision=attrs.get('dataset_revision'), pool=attrs.get('pool'), runner=attrs.get('runner_manifest'),
             total_steps=attrs.get('total_steps', 100), budget_policy=policy,
             execution_mode=attrs.get('execution_mode', 'worker'), tenant=tenant, project=project,
-            initialization_seed=attrs.get('initialization_seed', 42))
+            initialization_seed=attrs.get('initialization_seed', 42), hyperparameters=attrs.get('hyperparameters', {}))
         return report, policy
 
     def get_queryset(self):
@@ -181,7 +227,7 @@ class TrainingRunViewSet(TenantScopedViewSet):
 
         if idempotency_key_header and tenant_id:
             principal = f"{getattr(request.user, 'pk', 'legacy')}:{get_active_project() or 'tenant'}"
-            req_hash = hashlib.sha256(json.dumps(request.data, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            req_hash = hashlib.sha256(json.dumps({k: v for k, v in request.data.items() if k != "preflight_token"}, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
             cached = IdempotencyKey.objects.filter(
                 tenant_id=tenant_id,
@@ -227,6 +273,9 @@ class TrainingRunViewSet(TenantScopedViewSet):
         from modelanvil.jobs.models import Job
         attrs = serializer.validated_data
         proof = attrs.pop('preflight_token', None)
+        purpose = attrs.pop('purpose', 'experiment')
+        if purpose == 'pilot' and (attrs.get('execution_mode', 'worker') != 'worker' or attrs.get('total_steps', 100) > 10):
+            raise serializers.ValidationError('Measured pilots require a real worker execution of at most 10 optimizer steps.')
         mode = attrs.get('execution_mode', 'worker')
         tenant = get_active_tenant()
         project = get_active_project() or getattr(attrs.get('project'), 'pk', None) or getattr(attrs.get('base_model_version'), 'project_id', None)
@@ -251,7 +300,7 @@ class TrainingRunViewSet(TenantScopedViewSet):
         if mode == 'simulation' and (attrs.get('pool') or budget_id or runner):
             raise serializers.ValidationError('Simulation cannot allocate workers or reserve compute budget.')
         run = serializer.save(tenant_id=tenant, project_id=project,
-            hardware_config={'execution_mode': mode, **({'pins': pins} if pins else {})})
+            hardware_config={'execution_mode': mode, 'purpose': purpose, **({'pins': pins} if pins else {})})
         if pins:
             gpu = pins.get('accelerator', {}).get('device')
             requirements = {'training_runtime': pins['contract_digest'], 'slots': 1}
@@ -268,6 +317,10 @@ class TrainingRunViewSet(TenantScopedViewSet):
             run.job = job
             run.resource_reservation_id = reservation.reservation_id
             run.save(update_fields=['job', 'resource_reservation_id', 'updated_at'])
+        record_audit('training.launch', 'training_run', run.run_id,
+            actor_id=request.modelanvil_actor_id, actor_kind=request.modelanvil_actor_kind,
+            input_snapshot={'job_id': str(run.job.job_id) if run.job else None, 'recipe': run.recipe_type,
+                'total_steps': run.total_steps, 'execution_mode': mode})
         out = self.get_serializer(run).data
         return Response(out, status=201, headers=self.get_success_headers(out))
 
@@ -286,12 +339,33 @@ class TrainingRunViewSet(TenantScopedViewSet):
         report['preflight_token'] = issue_token(report, request.user.pk)
         return Response(report)
 
+    @action(detail=True, methods=['get', 'post'], url_path='resume')
+    def resume(self, request, run_id=None):
+        from modelanvil.runners.training.recovery import recovery_review, resume_training
+        run = self.get_object()
+        if request.method == 'GET':
+            return Response(recovery_review(run))
+        checkpoint_id = serializers.UUIDField().run_validation(request.data.get('checkpoint_id'))
+        policy_id = serializers.UUIDField().run_validation(request.data.get('budget_policy_id'))
+        try:
+            child, created = resume_training(run, checkpoint_id=checkpoint_id, policy_id=policy_id)
+        except ValueError as exc:
+            raise serializers.ValidationError({'recovery': str(exc)}) from exc
+        if created:
+            record_audit('training.resume', 'training_run', child.run_id,
+                actor_id=request.modelanvil_actor_id, actor_kind=request.modelanvil_actor_kind,
+                input_snapshot={'parent_run_id': str(run.run_id), 'checkpoint_id': str(checkpoint_id),
+                    'start_step': child.current_step, 'budget_policy_id': str(policy_id), 'job_id': str(child.job.job_id)})
+        return Response(self.get_serializer(child).data, status=201 if created else 200)
+
     def _worker_bundle(self, run):
         from modelanvil.runners.training.registry import checkpoint_bundle
         if run.status != TrainingRun.Status.COMPLETED:
             raise serializers.ValidationError('Wait for successful worker completion before exporting or inferring.')
         try:
-            return checkpoint_bundle(run, run.checkpoints.get(step=run.total_steps))
+            selected_step = (run.output_model_version.metadata.get('selected_checkpoint_step', run.total_steps)
+                             if run.output_model_version else run.total_steps)
+            return checkpoint_bundle(run, run.checkpoints.get(step=selected_step))
         except (ValueError, TrainingCheckpoint.DoesNotExist) as exc:
             raise serializers.ValidationError(str(exc)) from exc
 
@@ -325,9 +399,9 @@ class TrainingRunViewSet(TenantScopedViewSet):
             "verification": verification,
         }, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['get'], url_path='download')
+    @action(detail=True, methods=['get', 'post'], url_path='download')
     def download(self, request, *args, **kwargs):
-        """Download actual verified transformer files; checkpoints keep optimizer state separately."""
+        """Download verified native files or a JSON bundle; optimizer state stays in checkpoints."""
         from django.http import FileResponse
         from modelanvil.runners.training import hf_runtime, mlx_runtime
         from modelanvil.runners.training.registry import runtime_for_run, is_worker_run
@@ -336,17 +410,37 @@ class TrainingRunViewSet(TenantScopedViewSet):
         import shutil
         run = self.get_object()
         module = runtime_for_run(run)
-        if not is_worker_run(run) or module not in (hf_runtime, mlx_runtime):
-            raise serializers.ValidationError('File download requires a completed transformer worker run; use the JSON export for reference fixtures.')
-        bundle = self._worker_bundle(run)
+        selected_format = request.query_params.get('export_format', 'native')
+        if selected_format not in {option['format'] for option in training_export_options(run)}:
+            raise serializers.ValidationError('Choose a supported export format from a completed training run.')
+        if is_worker_run(run):
+            bundle = self._worker_bundle(run)
+        else:
+            if request.method != 'POST':
+                raise serializers.ValidationError('Synthetic fixture exports register a candidate and require POST.')
+            _, bundle = TrainingEngine().export_candidate_model(run)
         output = tempfile.TemporaryFile()
         try:
-            with module.staged_files(bundle['files'], run.tenant_id, run.project_id) as directory:
+            if selected_format == 'json':
+                from modelanvil.runners.training.registry import verify_bundle
+                if not is_worker_run(run) or module not in (hf_runtime, mlx_runtime):
+                    verify_bundle(bundle)
+                output.write(json.dumps(bundle, indent=2, allow_nan=False).encode())
+                output.seek(0)
+                return FileResponse(output, as_attachment=True, filename=f'modelanvil-{run.run_id}.json', content_type='application/json')
+            files = bundle['files']
+            if selected_format == 'adapter':
+                names = {'adapter_model.safetensors', 'adapter_config.json'}
+                if not names.issubset(files):
+                    raise ValueError('The selected checkpoint does not contain a complete LoRA adapter.')
+                files = {name: files[name] for name in sorted(names)}
+            with module.staged_files(files, run.tenant_id, run.project_id) as directory:
                 with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_STORED, allowZip64=True) as archive:
-                    for name in bundle['files']:
+                    for name in files:
                         with (directory / name).open('rb') as source, archive.open(name, 'w', force_zip64=True) as target:
                             shutil.copyfileobj(source, target, length=1024 * 1024)
-                    archive.writestr('modelanvil-provenance.json', json.dumps(bundle, indent=2, allow_nan=False))
+                    provenance = bundle if selected_format == 'native' else {**bundle, 'export_format': selected_format, 'included_files': sorted(files)}
+                    archive.writestr('modelanvil-provenance.json', json.dumps(provenance, indent=2, allow_nan=False))
             output.seek(0)
             return FileResponse(output, as_attachment=True, filename=f'modelanvil-{run.recipe_type}-{run.run_id}.zip', content_type='application/zip')
         except (ValueError, OSError) as exc:

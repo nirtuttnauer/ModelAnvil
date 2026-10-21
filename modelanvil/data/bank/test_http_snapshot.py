@@ -29,6 +29,20 @@ from modelanvil.jobs.executor import execute_claim
 from modelanvil.jobs.models import Worker, WorkerPool, claim_job
 
 
+TEXT_SAMPLES = {
+    "math-gsm8k": {"question": "What is 2 + 2?", "answer": "2 + 2 = 4. #### 4"},
+    "code-mbpp": {
+        "task_id": 1, "text": "Return café.", "code": "def cafe(): return 'café'",
+        "test_list": ["assert cafe() == 'café'"], "test_setup_code": "",
+        "challenge_test_list": [],
+    },
+    "text-dolly15k": {
+        "instruction": "Name a café drink.", "context": "", "response": "Coffee.",
+        "category": "open_qa",
+    },
+}
+
+
 class RangeTransport:
     def __init__(self, payload):
         self.payload = payload
@@ -175,6 +189,77 @@ class PinnedRangeTests(SimpleTestCase):
             with self.assertRaisesMessage(http.SnapshotError, "expansion bound"):
                 http.decode_record(record, stream())
 
+    def test_new_text_source_schemas_preserve_fields_and_reject_invalid_rows(self):
+        for source_id, value in TEXT_SAMPLES.items():
+            with self.subTest(source=source_id):
+                self.assertEqual(http.validate_sample(source_id, http.canonical_json(value)), value)
+                for field in value:
+                    invalid = {**value, field: None}
+                    with self.subTest(field=field), self.assertRaisesMessage(http.SnapshotError, "schema"):
+                        http.validate_sample(source_id, http.canonical_json(invalid))
+                required = {
+                    "math-gsm8k": ["question", "answer"],
+                    "code-mbpp": ["text", "code", "test_list"],
+                    "text-dolly15k": ["instruction", "response", "category"],
+                }[source_id]
+                for field in required:
+                    with self.subTest(empty=field), self.assertRaisesMessage(http.SnapshotError, "schema"):
+                        http.validate_sample(source_id, http.canonical_json({**value, field: ""}))
+        for invalid in ({"task_id": True}, {"test_list": [1]}, {"challenge_test_list": [False]}):
+            with self.assertRaisesMessage(http.SnapshotError, "schema"):
+                http.validate_sample("code-mbpp", http.canonical_json({**TEXT_SAMPLES["code-mbpp"], **invalid}))
+
+    def test_new_hf_sources_qualify_and_refetch_only_training_records(self):
+        import pyarrow as pa
+        import pyarrow.parquet as pq
+        from scripts import qualify_bank_subsets as qualifier
+
+        path = Path(__file__).resolve().parents[3] / "catalog/dataset-presets.json"
+        catalog = json.loads(path.read_text())
+        for source_id, value in TEXT_SAMPLES.items():
+            with self.subTest(source=source_id), tempfile.TemporaryDirectory() as root:
+                source = next(s for s in catalog["sources"] if s["id"] == source_id)
+                repo, prefix = qualifier.HF_SOURCES[source_id]
+                rows = [{**value, "fixture_index": i} for i in range(20)]
+                if source_id == "text-dolly15k":
+                    raw = b"".join(json.dumps(row, ensure_ascii=False).encode() + b"\n" for row in rows)
+                    # The incomplete suffix must never enter the frozen sample inventory.
+                    raw += b'{"instruction":'
+                    data_path = prefix
+                else:
+                    buffer = io.BytesIO()
+                    pq.write_table(pa.Table.from_pylist(rows), buffer)
+                    raw = buffer.getvalue()
+                    data_path = prefix + "-of-00001.parquet"
+                def metadata(url):
+                    if url.endswith("/revision/main"):
+                        return http.canonical_json({"sha": "a" * 40})
+                    if "/tree/" in url:
+                        entries = [{"path": data_path, "type": "file", "size": len(raw)}]
+                        if "train-" in data_path:
+                            entries.insert(0, {"path": data_path.replace("train-", "test-"), "type": "file", "size": 99})
+                        return http.canonical_json(entries)
+                    return b"Publisher license notice"
+                with (
+                    patch.object(qualifier, "get", metadata),
+                    patch.object(qualifier, "transport", RangeTransport(raw)),
+                    patch.object(qualifier, "CATALOG_ROOT", Path(root)),
+                ):
+                    report = qualifier.qualify(source, "2026-10-17")
+                self.assertEqual(report["records"], 20)
+                manifest = json.loads((Path(root) / (source_id + ".json")).read_text())
+                self.assertEqual(manifest["upstream"]["commit"], "a" * 40)
+                self.assertEqual({r["metadata"]["upstream_split"] for r in manifest["records"]}, {"train"})
+                stream = {"data": http.RangeFile(manifest["containers"]["data"], RangeTransport(raw))}
+                self.assertEqual([json.loads(http.decode_record(r, stream)) for r in manifest["records"]], rows)
+
+    def test_new_text_groups_do_not_depend_on_answers(self):
+        from scripts.qualify_bank_subsets import group_for
+
+        for source_id, answer in (("math-gsm8k", "answer"), ("code-mbpp", "code"), ("text-dolly15k", "response")):
+            row = TEXT_SAMPLES[source_id]
+            self.assertEqual(group_for(source_id, row), group_for(source_id, {**row, answer: "Alternative answer"}))
+
     def test_question_prefix_and_answer_offsets_are_checked(self):
         self.assertEqual(
             http.json_prefix_rows(b'{"questions":[{"answer":"cube"},{"unfinished":', "questions"),
@@ -232,8 +317,8 @@ class PinnedRangeTests(SimpleTestCase):
         sources = [
             s for s in catalog.qualified_sources() if s.acquisition.connector == http.CONNECTOR
         ]
-        self.assertEqual(len(sources), 10)
-        self.assertEqual(sum(s.record_count for s in sources), 200)
+        self.assertEqual(len(sources), 13)
+        self.assertEqual(sum(s.record_count for s in sources), 320)
         for source in sources:
             with self.subTest(source=source.id):
                 catalog.assert_acquirable(source.id)
@@ -307,6 +392,8 @@ class HttpPublicationTests(TestCase):
                 }
                 for i in range(4)
             ]
+        if source_id in TEXT_SAMPLES:
+            values = [{**TEXT_SAMPLES[source_id], "fixture_index": i} for i in range(4)]
         rows = [http.canonical_json(value) for value in values]
         raw = b"".join(rows)
         self.upstream = RangeTransport(raw)
@@ -370,6 +457,7 @@ class HttpPublicationTests(TestCase):
             source_id=self.source_id,
             catalog=self.catalog,
             transport=self.upstream,
+            project_policy={"allow_share_alike": True},
         )
 
     def work(self):
@@ -411,6 +499,27 @@ class HttpPublicationTests(TestCase):
             ).status_code,
             404,
         )
+
+    def test_new_text_sources_preview_publish_and_download_original_fields(self):
+        for source_id in TEXT_SAMPLES:
+            with self.subTest(source=source_id):
+                rows = self.fixture(source_id)
+                previews = preview_samples(self.catalog.get_source(source_id), transport=self.upstream)
+                self.assertTrue(previews)
+                launched = self.launch()
+                self.assertEqual(self.work()["status"], "succeeded")
+                launched.snapshot.refresh_from_db()
+                self.assertEqual(launched.snapshot.state, "ready")
+                self.assertEqual(launched.snapshot.item_count, 4)
+                artifact = Artifact.all_objects.get(
+                    tenant_id=self.tenant.pk, metadata__kind="dataset_bank_acquisition",
+                    metadata__source_id=source_id,
+                )
+                response = self.client.get(f"/api/v1/artifacts/{artifact.artifact_id}/download/", **self.auth)
+                self.assertEqual(response.status_code, 200)
+                envelopes = [json.loads(line) for line in b"".join(response.streaming_content).splitlines()]
+                self.assertEqual({http.canonical_json(e["blocks"][0]["value"]) for e in envelopes}, set(rows))
+                self.assertTrue(all(e["metadata"]["upstream_split"] == "train" for e in envelopes))
 
     def test_media_bytes_are_committed_downloadable_and_linked(self):
         self.fixture("image-clevr")
