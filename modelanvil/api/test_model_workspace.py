@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.test import TestCase, override_settings
+from django.test import TransactionTestCase, override_settings
 from rest_framework.test import APIClient
 
 from modelanvil.artifacts.models import Artifact
@@ -22,7 +22,7 @@ from modelanvil.runners.models import InferenceRequest, ModelImport, ModelVersio
 
 
 @skipUnless(importlib.util.find_spec('torch') and importlib.util.find_spec('transformers'), 'Optional transformer runtime is not installed')
-class ModelWorkspaceTests(TestCase):
+class ModelWorkspaceTests(TransactionTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

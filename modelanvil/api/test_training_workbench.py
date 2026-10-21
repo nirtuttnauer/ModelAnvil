@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TransactionTestCase
 from modelanvil.runners.training import test_cpu_runtime as cpu
 from modelanvil.data.publication import publish_prepared_dataset
 from modelanvil.budgets.models import BudgetReservation
@@ -6,7 +6,7 @@ from modelanvil.runners.models import TrainingRun
 import json
 
 
-class TrainingWorkbenchTests(TestCase):
+class TrainingWorkbenchTests(TransactionTestCase):
     setUp = cpu.CpuRuntimeTests.setUp
     artifact = cpu.CpuRuntimeTests.artifact
     envelope = cpu.CpuRuntimeTests.envelope
