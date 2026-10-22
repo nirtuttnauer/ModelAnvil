@@ -11,7 +11,7 @@ from modelanvil.core.ids import uuid7
 from modelanvil.budgets.models import BudgetReservation, UsageEvent
 from modelanvil.identity.models import check_resource_access
 from modelanvil.jobs.models import Job, JobAttempt, OutboxEvent, Worker, dispatch_topic
-from modelanvil.runners.eval_executor import _aggregate_metrics, default_eval_scorer, validate_local_suite
+from modelanvil.runners.eval_executor import SCORER_VERSION, _aggregate_metrics, default_eval_scorer, validate_local_suite
 from modelanvil.runners.models import EvaluationCaseResult, EvaluationMetric, EvaluationRun
 from modelanvil.runners.training.runtime import digest
 
@@ -103,6 +103,8 @@ def evaluation_prompt_format(run):
 
 
 def resolve_inputs(run, max_tokens):
+    if run.suite_version.protected_role != 'protected_eval':
+        raise ValueError('Queue a suite version declared as protected evaluation.')
     validate_local_suite(run.suite_version.cases, run.suite_version.scorer_type, run.suite_version.scorer_config)
     if not check_resource_access(run.suite_version, run.project_id, run.tenant_id):
         raise ValueError('The evaluation suite is unavailable in this project.')
@@ -146,7 +148,8 @@ def resolve_inputs(run, max_tokens):
                     if encoded_len + max_tokens > limit:
                         raise ValueError('A case prompt and output exceed the selected snapshot context limit.')
     return {'candidate': candidate, 'baseline': baseline, 'pins': {
-        'runtime': RUNTIME_ID, 'build_digest': BUILD_DIGEST, 'candidate': candidate['pins'],
+        'runtime': RUNTIME_ID, 'build_digest': BUILD_DIGEST, 'scorer_version': SCORER_VERSION,
+        'protected_role': run.suite_version.protected_role, 'candidate': candidate['pins'],
         'baseline': baseline['pins'] if baseline else None,
         'suite_digest': digest({'cases': run.suite_version.cases, 'scorer': run.suite_version.scorer_type,
                               'config': run.suite_version.scorer_config}),
@@ -251,7 +254,11 @@ def evaluation_worker_executor(descriptor, context):
     with transaction.atomic():
         current = locked_run(context, run.run_id)
         current.status = 'running'; current.started_at = current.started_at or timezone.now()
-        current.save(update_fields=['status', 'started_at', 'updated_at'])
+        import platform
+        current.protocol_ref['environment'] = {'python': platform.python_version(), 'platform': platform.platform(),
+            'device': inputs['pins']['device'], 'runtime': RUNTIME_ID, 'build_digest': BUILD_DIGEST,
+            'scorer_version': SCORER_VERSION}
+        current.save(update_fields=['status', 'started_at', 'protocol_ref', 'updated_at'])
     for case in run.suite_version.cases:
         if run.case_results.filter(case_id=case['case_id']).exists():
             continue

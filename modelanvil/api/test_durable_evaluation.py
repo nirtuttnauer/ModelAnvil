@@ -63,6 +63,14 @@ class DurableEvaluationTests(TestCase):
         self.assertEqual(run.status, 'completed', JobAttempt.all_objects.last().error)
         self.assertEqual(run.job.status, 'succeeded')
         self.assertEqual(run.case_results.count(), 1)
+        self.assertEqual(run.protocol_ref['pins']['scorer_version'], 'modelanvil.local-scorers.v1')
+        self.assertEqual(run.protocol_ref['pins']['protected_role'], 'protected_eval')
+        self.assertEqual(run.protocol_ref['environment']['device'], 'cpu')
+        self.assertTrue(run.protocol_ref['environment']['python'])
+        self.assertEqual(run.protocol_ref['environment']['build_digest'], run.protocol_ref['pins']['build_digest'])
+        recorded = self.client.get(f'/api/v1/evaluation-runs/{run.run_id}/').data
+        self.assertTrue(recorded['comparison']['compatible'])
+        self.assertEqual(recorded['case_coverage'], {'completed': 1, 'missing': 0, 'failed': 1, 'total': 1})
         self.assertNotEqual(run.case_results.get().candidate_output, 'ANSWER_IS_NOT_ECHOED')
         self.assertFalse(run.case_results.get().passed)
         self.assertEqual(len(run.protocol_ref['baseline_results']), 1)
@@ -77,6 +85,27 @@ class DurableEvaluationTests(TestCase):
         self.assertEqual(detail['inputs']['case_coverage']['missing'], 0)
         self.assertEqual(detail['evidence']['level'], 'integrated_execution')
         self.assertEqual(self.client.get(f'/api/v1/run-details/evaluation/{run.run_id}/attempts/').status_code, 200)
+
+    def test_nonprotected_suite_rejected_before_allocation(self):
+        run_id = self.pending_eval(candidate=self.candidate, baseline=self.base)
+        run = EvaluationRun.all_objects.get(run_id=run_id)
+        run.suite_version = type(run.suite_version).all_objects.create(tenant_id=self.tenant.pk,
+            suite=run.suite_version.suite, revision_no=2, cases=run.suite_version.cases, protected_role='training')
+        run.save()
+        response = self.client.post(f'/api/v1/evaluation-runs/{run_id}/execute/', self.request, format='json')
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('protected evaluation', str(response.json()))
+        self.assertFalse(BudgetReservation.all_objects.filter(policy=self.case_budget).exists())
+
+    def test_incompatible_tokenizer_rejected_before_allocation(self):
+        from modelanvil.runners.models import TokenizerVersion
+        other = TokenizerVersion.objects.create(tenant_id=self.tenant.pk, name='Incompatible evaluation tokenizer', vocabulary_size=17)
+        type(self.base).all_objects.filter(pk=self.base.pk).update(tokenizer=other)
+        run_id = self.pending_eval(candidate=self.candidate, baseline=self.base)
+        response = self.client.post(f'/api/v1/evaluation-runs/{run_id}/execute/', self.request, format='json')
+        self.assertEqual(response.status_code, 400, response.json())
+        self.assertIn('tokenizer', str(response.json()).lower())
+        self.assertFalse(BudgetReservation.all_objects.filter(policy=self.case_budget).exists())
 
     def test_known_source_group_overlap_rejected_before_allocation(self):
         from modelanvil.runners.training.runtime import read_artifact
@@ -101,6 +130,13 @@ class DurableEvaluationTests(TestCase):
         self.assertIsNone(claim_job(self.evaluator, run.job))
         self.assertEqual(self.client.post(f'/api/v1/evaluation-runs/{run.run_id}/cancel/', {}, format='json').status_code, 200)
         self.assertEqual(UsageEvent.all_objects.filter(unit='evaluation_cases').count(), 1)
+        from modelanvil.runners.eval_worker import finalize_evaluation
+        completed_at = run.completed_at
+        finalize_evaluation(run.job, 'succeeded')  # Late duplicate cannot rewrite cancellation.
+        run.refresh_from_db()
+        self.assertEqual(run.status, 'cancelled')
+        self.assertEqual(run.completed_at, completed_at)
+        self.assertFalse(run.metrics.exists())
 
     def test_running_cancel_is_requested_until_worker_observes_it(self):
         run = self.queued()
@@ -135,6 +171,9 @@ class DurableEvaluationTests(TestCase):
         self.assertFalse(run.metrics.exists())
         detail = self.client.get(f'/api/v1/run-details/evaluation/{run.run_id}/').data
         self.assertEqual(detail['inputs']['case_coverage']['missing'], 2)
+        recorded = self.client.get(f'/api/v1/evaluation-runs/{run.run_id}/').data
+        self.assertEqual(recorded['case_coverage']['missing'], 2)
+        self.assertFalse(recorded['comparison']['compatible'])
         self.assertEqual(reconcile_expired_leases(), 1)
         self.evaluator.refresh_from_db()
         second = claim_job(self.evaluator, run.job)

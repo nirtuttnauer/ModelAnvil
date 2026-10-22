@@ -203,24 +203,51 @@ class EvaluationSuiteViewSet(TenantScopedViewSet):
 
     @action(detail=False, methods=['post'], url_path='register-cpu')
     def register_cpu(self, request):
-        """Validate before atomically registering a logical suite and its first pin."""
+        """Pin a bounded suite version, or the next version of a suite already in this project."""
         from modelanvil.core.tenancy import get_active_project
+        from modelanvil.identity.models import check_resource_access
         from modelanvil.runners.eval_executor import validate_local_suite
-        name = serializers.CharField(max_length=200).run_validation(request.data.get('name'))
+        if request.data.get('protected_role') != 'protected_eval':
+            raise serializers.ValidationError({'protected_role': 'Declare this suite as protected evaluation before pinning it.'})
         cases = request.data.get('cases')
         scorer = request.data.get('scorer_type', 'exact_match')
         config = request.data.get('scorer_config', {})
         try:
-            validate_local_suite(cases, scorer, config)
+            validate_local_suite(cases, scorer, config, require_source_groups=True)
         except ValueError as exc:
             raise serializers.ValidationError({'cases': str(exc)}) from exc
+        tenant = get_active_tenant()
+        project = get_active_project()
+        suite_pk = request.data.get('suite')
         try:
             with transaction.atomic():
-                suite = EvaluationSuite.objects.create(tenant_id=get_active_tenant(), project_id=get_active_project(), name=name)
-                version = EvaluationSuiteVersion.objects.create(tenant_id=suite.tenant_id, project_id=suite.project_id, suite=suite, cases=cases, scorer_type=scorer, scorer_config=config)
+                if suite_pk in (None, ''):
+                    name = serializers.CharField(max_length=200).run_validation(request.data.get('name'))
+                    suite = EvaluationSuite.objects.create(tenant_id=tenant, project_id=project, name=name)
+                    version = EvaluationSuiteVersion.objects.create(
+                        tenant_id=suite.tenant_id, project_id=suite.project_id, suite=suite, cases=cases,
+                        scorer_type=scorer, scorer_config=config, protected_role='protected_eval')
+                    created = True
+                else:
+                    suite_id = serializers.IntegerField(min_value=1).run_validation(suite_pk)
+                    suite = EvaluationSuite.objects.select_for_update().filter(pk=suite_id, tenant_id=tenant).first()
+                    if suite is None or suite.project_id != project or not check_resource_access(suite, project, tenant):
+                        raise serializers.ValidationError({'suite': 'Choose a suite in this project to version.'})
+                    latest = suite.versions.select_for_update().order_by('-revision_no').first()
+                    if latest and latest.protected_role != 'protected_eval':
+                        raise serializers.ValidationError({'protected_role': 'New versions keep the protected evaluation role.'})
+                    same = latest and latest.cases == cases and latest.scorer_type == scorer and latest.scorer_config == config
+                    if same:
+                        version, created = latest, False
+                    else:
+                        version = EvaluationSuiteVersion.objects.create(
+                            tenant_id=suite.tenant_id, project_id=suite.project_id or project, suite=suite,
+                            revision_no=(latest.revision_no + 1) if latest else 1, cases=cases,
+                            scorer_type=scorer, scorer_config=config, protected_role='protected_eval')
+                        created = True
         except IntegrityError as exc:
             raise serializers.ValidationError({'name': 'An evaluation suite with this name already exists.'}) from exc
-        return Response(EvaluationSuiteVersionSerializer(version).data, status=201)
+        return Response(EvaluationSuiteVersionSerializer(version).data, status=201 if created else 200)
 
 
 class EvaluationSuiteVersionSerializer(serializers.ModelSerializer):
@@ -236,11 +263,16 @@ class EvaluationSuiteVersionSerializer(serializers.ModelSerializer):
         return attrs
 
     suite_name = serializers.CharField(source="suite.name", read_only=True)
+    source_group_count = serializers.SerializerMethodField()
+
+    def get_source_group_count(self, obj):
+        groups = {case.get('source_group_id') for case in (obj.cases or []) if isinstance(case, dict) and isinstance(case.get('source_group_id'), str) and case['source_group_id'].strip()}
+        return len(groups) if groups else None
 
     class Meta:
         model = EvaluationSuiteVersion
-        fields = ("id", "suite_version_id", "suite", "suite_name", "revision_no", "cases", "cases_count", "scorer_type", "scorer_config", "protected_role", "created_at")
-        read_only_fields = ("id", "suite_version_id", "suite_name", "cases_count", "created_at")
+        fields = ("id", "suite_version_id", "suite", "suite_name", "revision_no", "cases", "cases_count", "source_group_count", "scorer_type", "scorer_config", "protected_role", "created_at")
+        read_only_fields = ("id", "suite_version_id", "suite_name", "cases_count", "source_group_count", "created_at")
 
 
 class EvaluationSuiteVersionViewSet(TenantScopedViewSet):
@@ -290,9 +322,19 @@ class EvaluationRunSerializer(serializers.ModelSerializer):
         return attrs
 
     execution_evidence = serializers.SerializerMethodField()
+    case_coverage = serializers.SerializerMethodField()
+    comparison = serializers.SerializerMethodField()
 
     def get_execution_evidence(self, obj):
         return evaluation_evidence(obj)
+
+    def get_case_coverage(self, obj):
+        from modelanvil.runners.eval_executor import case_coverage
+        return case_coverage(obj)
+
+    def get_comparison(self, obj):
+        from modelanvil.runners.eval_executor import frozen_comparison
+        return frozen_comparison(obj)
 
     metrics = EvaluationMetricSerializer(many=True, read_only=True)
     # EvaluationRun currently records creation and completion, not execution start.
@@ -312,7 +354,7 @@ class EvaluationRunSerializer(serializers.ModelSerializer):
         model = EvaluationRun
         fields = (
             "improvement_decision",
-            "execution_evidence",
+            "execution_evidence", "case_coverage", "comparison",
             "run_id", "job", "project", "suite_version", "candidate_model_version",
             "baseline_model_version", "status", "metrics", "baseline_metrics", "protocol_ref", "created_at", "started_at", "completed_at"
         )
@@ -398,7 +440,8 @@ class EvaluationRunViewSet(TenantScopedViewSet):
                 raise ValueError('Evaluation suite is unavailable in this project.')
             candidate, candidate_artifact, verification = load_character_bundle(run.candidate_model_version, tenant=tenant, project=project)
             baseline_runner = None
-            pins = {'candidate_artifact_id': str(candidate_artifact.artifact_id), 'candidate_bundle_sha256': candidate_artifact.sha256, 'candidate_weights_sha256': verification['weights_sha256'], 'suite_version_id': str(run.suite_version.suite_version_id)}
+            from modelanvil.runners.eval_executor import SCORER_VERSION
+            pins = {'candidate_artifact_id': str(candidate_artifact.artifact_id), 'candidate_bundle_sha256': candidate_artifact.sha256, 'candidate_weights_sha256': verification['weights_sha256'], 'suite_version_id': str(run.suite_version.suite_version_id), 'scorer_version': SCORER_VERSION, 'decoding': 'greedy', 'prompt_format': 'plain', 'device': 'cpu', 'environment': {'runtime': 'modelanvil.local-cpu-character', 'device': 'cpu', 'prompt_format': 'plain', 'decoding': 'greedy', 'scorer_version': SCORER_VERSION}}
             if run.baseline_model_version_id:
                 baseline, baseline_artifact, baseline_verification = load_character_bundle(run.baseline_model_version, tenant=tenant, project=project)
                 pins.update(baseline_artifact_id=str(baseline_artifact.artifact_id), baseline_bundle_sha256=baseline_artifact.sha256, baseline_weights_sha256=baseline_verification['weights_sha256'])

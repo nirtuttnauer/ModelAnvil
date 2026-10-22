@@ -14,6 +14,8 @@ from modelanvil.runners.models import (
     ModelVersion,
 )
 
+SCORER_VERSION = 'modelanvil.local-scorers.v1'
+
 
 def default_eval_scorer(
     predicted: str,
@@ -53,7 +55,7 @@ def default_eval_scorer(
     return (1.0 if passed else 0.0), passed
 
 
-def validate_local_suite(cases, scorer_type, scorer_config):
+def validate_local_suite(cases, scorer_type, scorer_config, *, require_source_groups=False):
     if not isinstance(cases, list) or not 1 <= len(cases) <= 64:
         raise ValueError('A local evaluation suite requires 1–64 cases.')
     if scorer_type not in {'exact_match', 'substring', 'numeric_tolerance'}:
@@ -76,6 +78,60 @@ def validate_local_suite(cases, scorer_type, scorer_config):
                 raise ValueError(f'{field} must be text up to {limit} characters.')
         if not isinstance(case.get('slice', 'all'), str) or not 1 <= len(case.get('slice', 'all')) <= 64:
             raise ValueError('Slice names must have 1–64 characters.')
+        for field in ('source_group_id', 'sample_id'):
+            if field in case and (not isinstance(case[field], str) or not 1 <= len(case[field]) <= 128):
+                raise ValueError(f'{field} must be an identifier of 1–128 characters when supplied.')
+
+        if require_source_groups:
+            group = case.get('source_group_id')
+            if not isinstance(group, str) or not 1 <= len(group.strip()) <= 128:
+                raise ValueError('Each case needs a source_group_id of 1–128 characters.')
+        if scorer_type == 'numeric_tolerance':
+            raw = case.get('expected_output')
+            try:
+                value = float(raw)
+            except (TypeError, ValueError):
+                raise ValueError('Numeric tolerance scoring is incompatible with non-numeric expected outputs.') from None
+            if isinstance(raw, bool) or not math.isfinite(value):
+                raise ValueError('Numeric tolerance scoring needs finite expected numbers.')
+
+
+def case_coverage(run):
+    """Recorded, missing and failed counts. Missing cases are never counted as passes."""
+    from django.db.models import Count, Q
+    total = (run.protocol_ref or {}).get('total_cases')
+    if not isinstance(total, int) and run.suite_version_id:
+        total = run.suite_version.cases_count
+    stats = run.case_results.aggregate(completed=Count('pk'), failed=Count('pk', filter=Q(passed=False)))
+    completed = stats['completed'] or 0
+    missing = None if not isinstance(total, int) else max(0, total - completed)
+    return {'completed': completed, 'missing': missing, 'failed': stats['failed'] or 0, 'total': total}
+
+
+def frozen_comparison(run):
+    """Candidate and baseline deltas are comparable only for one frozen configuration."""
+    pins = (run.protocol_ref or {}).get('pins') or {}
+    metrics = (run.protocol_ref or {}).get('baseline_metrics') or []
+    if not run.baseline_model_version_id:
+        return {'compatible': False, 'reason': 'No baseline was frozen with this evaluation.'}
+    if run.status != 'completed' or not metrics:
+        return {'compatible': False, 'reason': 'Baseline scores stay unavailable until this same frozen run completes. Missing cases are not passes.'}
+    decoding = pins.get('decoding') or (run.protocol_ref or {}).get('decoding')
+    if decoding != 'greedy':
+        return {'compatible': False, 'reason': 'Candidate and baseline were not frozen with the same decoding.'}
+    candidate_pin = pins.get('candidate') if isinstance(pins.get('candidate'), dict) else None
+    baseline_pin = pins.get('baseline') if isinstance(pins.get('baseline'), dict) else None
+    if candidate_pin or baseline_pin:
+        if not candidate_pin or not baseline_pin or candidate_pin.get('tokenizer') != baseline_pin.get('tokenizer'):
+            return {'compatible': False, 'reason': 'Candidate and baseline do not share the frozen tokenizer.'}
+        if pins.get('scorer_version') != SCORER_VERSION or pins.get('prompt_format') not in ('plain', 'native_template'):
+            return {'compatible': False, 'reason': 'Candidate and baseline do not share the frozen scorer version and template.'}
+        return {'compatible': True, 'reason': 'Same frozen suite, scorer version, tokenizer, template and decoding.'}
+    if pins.get('baseline_bundle_sha256') or pins.get('baseline_artifact_id'):
+        return {'compatible': True, 'reason': 'Candidate and baseline were scored together on one frozen suite.'}
+    return {'compatible': False, 'reason': 'Baseline bytes were not frozen with this run.'}
+
+
 
 
 def _aggregate_metrics(results):
