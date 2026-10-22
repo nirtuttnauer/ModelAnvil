@@ -1308,9 +1308,9 @@
       "path": "notice/publisher-declaration",
       "archive_name": "numeric-wine-quality-publisher-declaration.txt",
       "upstream_url": "https://archive.ics.uci.edu/dataset/186/wine+quality",
-      "size": 169230,
-      "sha256": "7465cf9b5a61acc6a0a3bc5aeaa02af3ab902d347373ad050d5db28e69d06fe4",
-      "blob_sha1": "dfa9822799de2040462cbcf1bc496216a7fd2f76"
+      "size": 673,
+      "sha256": "0695386194174fdc9867309d371752c801897d7b29b5ed33c89701a1e4d5f134",
+      "blob_sha1": "4644e263e6f96cc95fb9de902d1ad39e73fe8dbb"
     }
   ]
 }

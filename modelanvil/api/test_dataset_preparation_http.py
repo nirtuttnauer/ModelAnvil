@@ -107,7 +107,7 @@ class DatasetPreparationHttpTests(LiveServerTestCase):
         report = json.loads(result.stdout)
         self.assertEqual(report["row_count"], 2)
         revision = DatasetRevision.all_objects.get(revision_id=report["revision_id"])
-        self.assertEqual(revision.metadata["recipe"]["extraction"]["pdf_parser"], "pypdf==6.20.0")
+        self.assertEqual(revision.metadata["recipe"]["extraction"]["pdf_parser"], "pypdf==6.21.2")
 
     def test_actual_frontend_client_publishes_exact_source_chunks(self):
         text = "Real 日本語 source paragraph with emoji 🙂 and line breaks.\n" * 20

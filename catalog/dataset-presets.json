@@ -3648,7 +3648,7 @@
           "https://archive.ics.uci.edu/dataset/53/iris"
         ],
         "upstream_declaration_checked_on": "2026-10-11",
-        "reviewed_revision": "21d6eb41c7dc6ca8e57d9b7ec0449d43b1ad3153d5d46c175939f0231096ffa8",
+        "reviewed_revision": "3247ae45990b6123f441c4e376dd820a2bbc952379ad809661e078d1bf56dadb",
         "retain_license_and_notices": true,
         "share_alike": false,
         "notes": "Preserve UCI/Fisher attribution and feature units. Parse numeric measurements separately from the species target. This small fixture does not establish broad tabular model quality."
@@ -3664,7 +3664,7 @@
         "transport_status": "not_download_tested"
       },
       "split_policy": "Create deterministic stratified splits, grouping duplicate feature rows; fit scaling and other learned preprocessing on training rows only.",
-      "size_bytes": 589192,
+      "size_bytes": 4341,
       "record_count": 20,
       "publication_status": "qualified_bounded_download_enabled",
       "output_group_ids": [
@@ -3675,11 +3675,11 @@
         "qualified_on": "2026-10-11",
         "connector": "qualified_http_subset_v1",
         "upstream_repository": "https://archive.ics.uci.edu/dataset/53/iris",
-        "pinned_revision": "21d6eb41c7dc6ca8e57d9b7ec0449d43b1ad3153d5d46c175939f0231096ffa8",
+        "pinned_revision": "3247ae45990b6123f441c4e376dd820a2bbc952379ad809661e078d1bf56dadb",
         "revision_resolved_on": "2026-10-11",
         "revision_selection": "SHA-256 of the frozen subset manifest: observed upstream ranges, decoded samples, and archived publisher license notices. Full archives/shards are not qualified.",
         "qualified_revisions": [
-          "21d6eb41c7dc6ca8e57d9b7ec0449d43b1ad3153d5d46c175939f0231096ffa8"
+          "3247ae45990b6123f441c4e376dd820a2bbc952379ad809661e078d1bf56dadb"
         ],
         "include_patterns": [
           "iris.data#row=0",
@@ -3711,7 +3711,7 @@
         "record_limit_max": 20,
         "preview_limit": 3,
         "measured_upstream_records": 20,
-        "measured_upstream_bytes": 589192,
+        "measured_upstream_bytes": 4341,
         "measured_selected_records": 20,
         "measured_selected_bytes": 2025,
         "measured_transfer_seconds": 5,
@@ -3720,7 +3720,7 @@
         "blocked_reason": "",
         "evidence": {
           "manifest_path": "catalog/qualified-datasets/numeric-iris.json",
-          "manifest_sha256": "21d6eb41c7dc6ca8e57d9b7ec0449d43b1ad3153d5d46c175939f0231096ffa8",
+          "manifest_sha256": "3247ae45990b6123f441c4e376dd820a2bbc952379ad809661e078d1bf56dadb",
           "download_range_bytes": 3738,
           "decoded_sample_bytes": 2025,
           "full_corpus_qualified": false,
@@ -3737,9 +3737,9 @@
         "qualified_on": "2026-10-12",
         "connector": "qualified_full_http_release_v1",
         "upstream_repository": "https://archive.ics.uci.edu/dataset/53/iris",
-        "pinned_revision": "a477f8a13315c7dd807d4519d7cc56c1518bd4ef3da8b1cd29527679fdbe6107",
+        "pinned_revision": "8936aa41c8eb9d4ef2c41d9631aea94f6a70ebd7d6715de00d50b4415c51f9b8",
         "qualified_revisions": [
-          "a477f8a13315c7dd807d4519d7cc56c1518bd4ef3da8b1cd29527679fdbe6107"
+          "8936aa41c8eb9d4ef2c41d9631aea94f6a70ebd7d6715de00d50b4415c51f9b8"
         ],
         "revision_resolved_on": "2026-10-11",
         "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
@@ -3806,7 +3806,7 @@
           "https://archive.ics.uci.edu/dataset/186/wine+quality"
         ],
         "upstream_declaration_checked_on": "2026-10-11",
-        "reviewed_revision": "190ed41317253c9e2addfca27c64af3e06137922ca44018c6192bababd44a97a",
+        "reviewed_revision": "9e7d31a5c289038ab68a9a18d8ddc5880c2952b9745db188977483b9b34d096f",
         "retain_license_and_notices": true,
         "share_alike": false,
         "notes": "Preserve Cortez and coauthor attribution. Parse semicolon-separated files, retain red/white type, and treat quality as the target. Do not infer consumer preferences or a time series from these measurements."
@@ -3822,7 +3822,7 @@
         "transport_status": "not_download_tested"
       },
       "split_policy": "Create versioned splits stratified by wine type and target; group duplicate measurements and fit learned preprocessing on training rows only.",
-      "size_bytes": 260583,
+      "size_bytes": 92026,
       "record_count": 40,
       "publication_status": "qualified_bounded_download_enabled",
       "output_group_ids": [
@@ -3833,11 +3833,11 @@
         "qualified_on": "2026-10-11",
         "connector": "qualified_http_subset_v1",
         "upstream_repository": "https://archive.ics.uci.edu/dataset/186/wine+quality",
-        "pinned_revision": "190ed41317253c9e2addfca27c64af3e06137922ca44018c6192bababd44a97a",
+        "pinned_revision": "9e7d31a5c289038ab68a9a18d8ddc5880c2952b9745db188977483b9b34d096f",
         "revision_resolved_on": "2026-10-11",
         "revision_selection": "SHA-256 of the frozen subset manifest: observed upstream ranges, decoded samples, and archived publisher license notices. Full archives/shards are not qualified.",
         "qualified_revisions": [
-          "190ed41317253c9e2addfca27c64af3e06137922ca44018c6192bababd44a97a"
+          "9e7d31a5c289038ab68a9a18d8ddc5880c2952b9745db188977483b9b34d096f"
         ],
         "include_patterns": [
           "winequality-red.csv#row=0",
@@ -3889,7 +3889,7 @@
         "record_limit_max": 40,
         "preview_limit": 3,
         "measured_upstream_records": 40,
-        "measured_upstream_bytes": 260583,
+        "measured_upstream_bytes": 92026,
         "measured_selected_records": 40,
         "measured_selected_bytes": 9237,
         "measured_transfer_seconds": 6,
@@ -3898,7 +3898,7 @@
         "blocked_reason": "",
         "evidence": {
           "manifest_path": "catalog/qualified-datasets/numeric-wine-quality.json",
-          "manifest_sha256": "190ed41317253c9e2addfca27c64af3e06137922ca44018c6192bababd44a97a",
+          "manifest_sha256": "9e7d31a5c289038ab68a9a18d8ddc5880c2952b9745db188977483b9b34d096f",
           "download_range_bytes": 91353,
           "decoded_sample_bytes": 9237,
           "full_corpus_qualified": false,
@@ -3915,9 +3915,9 @@
         "qualified_on": "2026-10-12",
         "connector": "qualified_full_http_release_v1",
         "upstream_repository": "https://archive.ics.uci.edu/dataset/186/wine+quality",
-        "pinned_revision": "82b3b20a1ad7f783b88030811ab1c56608237a60582f1fa90bb9b6bc1ac60bc2",
+        "pinned_revision": "ff3b685a5cf734f75d7b180a0da82cc3a29c4a4116b4cf34b8dfe46e9d9b87ef",
         "qualified_revisions": [
-          "82b3b20a1ad7f783b88030811ab1c56608237a60582f1fa90bb9b6bc1ac60bc2"
+          "ff3b685a5cf734f75d7b180a0da82cc3a29c4a4116b4cf34b8dfe46e9d9b87ef"
         ],
         "revision_resolved_on": "2026-10-11",
         "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",

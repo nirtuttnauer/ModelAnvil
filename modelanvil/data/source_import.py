@@ -19,7 +19,7 @@ MEDIA_TYPES = {"training": "application/x-ndjson", "csv": "text/csv", "json": "a
                "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"}
 MAX_BYTES = 16 * 1024 * 1024
 MAX_ROWS = 10000
-PDF_VERSION = "6.20.0"
+PDF_VERSION = "6.21.2"
 
 
 class SourceImportError(ValueError):

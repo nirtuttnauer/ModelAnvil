@@ -610,7 +610,9 @@ class R1AcceptanceScenariosTests(TestCase):
 
         runner = ContextExperimentRunner(recipe_ver)
         exp_pos = runner.run_evidence_position_sweep(target_fact="The secret code is 42.", distractor_count=4)
-        self.assertIn("accuracy_start", exp_pos.metrics)
+        self.assertEqual(exp_pos.metrics["status"], "not_run")
+        self.assertNotIn("accuracy_start", exp_pos.metrics)
+        self.assertNotIn("middle_dip_detected", exp_pos.metrics)
 
         mem = SessionMemorySnapshot.objects.create(
             tenant_id=self.tenant.tenant_id,

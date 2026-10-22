@@ -182,7 +182,7 @@ class ContextRecipeVersionViewSet(TenantScopedViewSet):
 
     @action(detail=True, methods=["post"], url_path="sweep")
     def position_sweep(self, request, recipe_version_id=None):
-        """Execute lost-in-the-middle evidence position sweep experiment."""
+        """Inspect evidence positions; report recall evaluation as not run."""
         version = self.get_object()
         fact = request.data.get("target_fact", "Target key phrase 42.")
         runner = ContextExperimentRunner(version)
