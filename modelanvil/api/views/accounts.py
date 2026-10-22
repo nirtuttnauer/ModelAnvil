@@ -124,6 +124,12 @@ def open_action(purpose, email, secret):
     return action
 
 
+def consume_action(action):
+    now = timezone.now()
+    if AccountAction.objects.filter(pk=action.pk, used_at__isnull=True, expires_at__gt=now).update(used_at=now) != 1:
+        raise serializers.ValidationError('That code is invalid or expired. Request a new one.')
+
+
 def apply_password(user, password):
     if len(password) < 10:
         raise serializers.ValidationError({'password': 'Use at least 10 characters.'})
@@ -151,7 +157,7 @@ class AccountPasswordReset(APIView):
         if code and settings.DEBUG:
             payload['reset_code'] = code
             payload['delivery'] = 'This installation has no email delivery. Use the reset code below.'
-        elif user:
+        else:
             payload['delivery'] = 'Email delivery is not configured on this installation.'
         return Response(payload)
 
@@ -163,6 +169,7 @@ class AccountPasswordResetConfirm(APIView):
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = 'accounts'
 
+    @transaction.atomic
     def post(self, request):
         email = serializers.EmailField().run_validation(request.data.get('email', '')).lower()
         password = serializers.CharField(trim_whitespace=False, min_length=1, max_length=256).run_validation(request.data.get('password', ''))
@@ -172,9 +179,9 @@ class AccountPasswordResetConfirm(APIView):
         membership = Membership.objects.filter(user=user, tenant__status='active').order_by('-role_rank').first() if user else None
         if not user or not membership:
             raise serializers.ValidationError('That code is invalid or expired. Request a new one.')
+        consume_action(action)
         apply_password(user, password)
-        action.used_at = timezone.now()
-        action.save(update_fields=['used_at'])
+        ApiKey.objects.filter(created_by=user, is_active=True).update(is_active=False)
         return browser_session(request, user, membership)
 
 
@@ -219,12 +226,11 @@ class AccountInviteAccept(APIView):
             raise serializers.ValidationError('That invitation is no longer available.')
         try:
             with transaction.atomic():
+                consume_action(action)
                 user = User(email=email, name=name or 'Teammate')
                 apply_password(user, password)
                 user.save()
                 membership = Membership.objects.create(tenant=action.tenant, user=user, role=Role.ENGINEER)
-                action.used_at = timezone.now()
-                action.save(update_fields=['used_at'])
         except IntegrityError:
             raise serializers.ValidationError('That email already has an account.') from None
         return browser_session(request, user, membership)

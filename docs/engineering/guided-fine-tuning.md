@@ -49,3 +49,5 @@ DATABASE_NAME=storage/guided-local/modelanvil.sqlite3 MODELANVIL_ARTIFACT_ROOT="
 ```
 
 The existing Vite server for this instance uses `VITE_API_URL=http://127.0.0.1:8010` and port 5180. This startup configuration belongs to the installation owner; users create accounts and train through the browser.
+
+Password reset codes and invitation codes are consumed atomically and cannot be reused. A successful password reset revokes all existing API keys and browser sessions created by that account before issuing a fresh browser session. With DEBUG off, reset requests return the same response for known and unknown addresses. Email delivery remains unconfigured; development-only reset codes are never returned in production.

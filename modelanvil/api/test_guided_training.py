@@ -122,6 +122,39 @@ class AccountTests(TestCase):
         self.assertEqual(requested.status_code, 200, requested.data)
         self.assertNotIn('reset_code', requested.data)
         self.assertIn('not configured', requested.data['delivery'])
+        unknown = self.client.post('/api/v1/accounts/password-reset/', {'email': 'missing@example.invalid'},
+            format='json', HTTP_X_CSRFTOKEN=self.csrf())
+        self.assertEqual(requested.data, unknown.data)
+
+    @override_settings(DEBUG=True)
+    def test_password_reset_revokes_existing_credentials_and_rejects_reused_code(self):
+        self.signup()
+        old_cookie = self.client.cookies['modelanvil_session'].value
+        old_keys = list(ApiKey.objects.filter(created_by__email='new@example.invalid').values_list('pk', flat=True))
+        requested = self.client.post('/api/v1/accounts/password-reset/', {'email': 'new@example.invalid'},
+            format='json', HTTP_X_CSRFTOKEN=self.csrf())
+        payload = {'email': 'new@example.invalid', 'code': requested.data['reset_code'],
+                   'password': 'replacement-testing-password-937!'}
+        confirmed = self.client.post('/api/v1/accounts/password-reset/confirm/', payload,
+            format='json', HTTP_X_CSRFTOKEN=self.csrf())
+        self.assertEqual(confirmed.status_code, 200, confirmed.data)
+        self.assertFalse(ApiKey.objects.filter(pk__in=old_keys, is_active=True).exists())
+        old_session = APIClient(); old_session.cookies['modelanvil_session'] = old_cookie
+        self.assertFalse(old_session.get('/api/v1/accounts/status/').data['authenticated'])
+        repeated = self.client.post('/api/v1/accounts/password-reset/confirm/', payload,
+            format='json', HTTP_X_CSRFTOKEN=self.csrf())
+        self.assertEqual(repeated.status_code, 400)
+
+    def test_action_consumption_rejects_a_stale_previously_loaded_copy(self):
+        from modelanvil.api.views.accounts import consume_action, issue_action, open_action
+        from modelanvil.identity.models import AccountAction
+        from rest_framework.exceptions import ValidationError
+        code = issue_action(AccountAction.Purpose.PASSWORD_RESET, 'new@example.invalid')
+        first = open_action(AccountAction.Purpose.PASSWORD_RESET, 'new@example.invalid', code)
+        stale = open_action(AccountAction.Purpose.PASSWORD_RESET, 'new@example.invalid', code)
+        consume_action(first)
+        with self.assertRaises(ValidationError):
+            consume_action(stale)
 
     def test_owner_can_invite_one_teammate_who_can_join(self):
         self.signup('owner@example.invalid')
