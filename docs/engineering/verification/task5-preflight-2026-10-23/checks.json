@@ -1,0 +1,128 @@
+{
+  "date": "2026-10-23",
+  "scope": "local_cpu_preflight_contract",
+  "source_sha256": {
+    "modelanvil/runners/training/preflight_report.py": "6e17b0a53a7df256a6353d25c0b8bb0dcdfbab5a6f935ac6f43c2366d68c9dbb",
+    "web/src/components/PreflightChecklist.tsx": "5f3737cde3e1138265b31fbb3afb8fca4573dc49a2793a18c6f4bbd25f2dc853"
+  },
+  "live_ui_observation": {
+    "status": "approved",
+    "samples": 4,
+    "encoded_token_counts": [
+      34,
+      39,
+      37,
+      44
+    ],
+    "requirements": {
+      "runtime": "modelanvil.cpu-character-sft.v1",
+      "recipe": "full_sft",
+      "config": {
+        "lora_alpha": 4,
+        "lora_r": 2,
+        "n_embd": 8,
+        "runtime": "modelanvil.cpu-character-sft.v1",
+        "vocab_size": 102
+      },
+      "optimizer": {
+        "algorithm": "sgd",
+        "learning_rate": 0.05,
+        "momentum": 0
+      },
+      "cpu_slots": 1,
+      "memory_bytes": 268435456,
+      "storage_bytes": 306884,
+      "checkpoint_count": 2,
+      "storage_assumption": "Planned checkpoints plus staging and candidate headroom; shared local host."
+    },
+    "checks": [
+      {
+        "check": "recipe-execution-mode",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "dataset_revision",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "base_model_version",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "tokenizer_version",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "runner_manifest",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "pool",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "dataset-published",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "model-tokenizer",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "runner-contract",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "pinned-inputs",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "worker-memory",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "worker-slots",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "budget",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "storage",
+        "status": "pass",
+        "blocking": false
+      }
+    ],
+    "estimated_cost_known": false
+  },
+  "regression_tests": 10,
+  "allocation_failures_checked": [
+    "incompatible inputs",
+    "capacity",
+    "budget",
+    "storage",
+    "runner disabled",
+    "changed configuration",
+    "changed referenced revision",
+    "tampered token",
+    "expired token",
+    "different principal",
+    "other project"
+  ],
+  "estimation": "A matching real CPU pilot provides measured engine duration; corruption invalidates its evidence. No monetary rate was recorded.",
+  "qualification": "CPU correctness and no-allocation checks; no GPU execution or representative customer timing claim."
+}
