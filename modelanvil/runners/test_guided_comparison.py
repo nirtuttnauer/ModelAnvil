@@ -13,6 +13,16 @@ def chat_version(template='{{ messages }}'):
 
 
 class GuidedComparisonTests(SimpleTestCase):
+    def test_frozen_comparison_keeps_native_template_results_compatible(self):
+        from modelanvil.runners.eval_executor import SCORER_VERSION, frozen_comparison
+        pins = {'candidate': {'tokenizer': 'same'}, 'baseline': {'tokenizer': 'same'},
+                'scorer_version': SCORER_VERSION, 'prompt_format': 'native_template', 'decoding': 'greedy'}
+        run = SimpleNamespace(baseline_model_version_id=1, status='completed',
+                              protocol_ref={'pins': pins, 'baseline_metrics': [{'value': 0}]})
+        self.assertTrue(frozen_comparison(run)['compatible'])
+        pins['baseline']['tokenizer'] = 'different'
+        self.assertFalse(frozen_comparison(run)['compatible'])
+
     def test_native_template_requires_both_snapshots_to_declare_a_chat_template(self):
         guided = chat_version()
         run = SimpleNamespace(candidate_model_version=guided, baseline_model_version_id=1, baseline_model_version=chat_version())

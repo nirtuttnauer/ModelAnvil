@@ -1,11 +1,15 @@
 {
-  "observed_at": "2026-10-22T22:59:39.467Z",
+  "observed_at": "2026-10-22T23:05:51.569Z",
   "ui_pinned_suite": true,
-  "immutable_revision": 1,
+  "immutable_revisions": [
+    1,
+    2
+  ],
+  "same_suite_family": true,
   "cases": 1,
   "source_group_and_sample_ids_preserved": true,
   "protected_role": "protected_eval",
-  "pin_survives_reload": true,
+  "pins_survive_reload": true,
   "viewports": [
     1440,
     390

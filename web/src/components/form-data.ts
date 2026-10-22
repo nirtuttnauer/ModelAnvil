@@ -105,7 +105,7 @@ export function recordsInput(raw: string, fields: FormField[], maximum: number, 
 export const evaluationFields: FormField[] = [
   { key: 'case_id', label: 'Case ID', required: true, maxLength: 128 },
   { key: 'slice', label: 'Slice', maxLength: 64, defaultValue: 'general' },
-  { key: 'source_group_id', label: 'Source group ID (optional)', maxLength: 128 },
+  { key: 'source_group_id', label: 'Source group ID', required: true, maxLength: 128 },
   { key: 'sample_id', label: 'Source sample ID (optional)', maxLength: 128 },
   { key: 'input_prompt', label: 'Input prompt', multiline: true, required: true, allowEmpty: true, maxLength: 1024, defaultValue: '' },
   { key: 'expected_output', label: 'Expected response', multiline: true, required: true, allowEmpty: true, maxLength: 4096, defaultValue: '' },
