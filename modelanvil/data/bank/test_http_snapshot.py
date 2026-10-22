@@ -304,13 +304,33 @@ class PinnedRangeTests(SimpleTestCase):
                 patch.object(qualifier, "CATALOG_ROOT", root),
                 patch.object(qualifier, "transport", RangeTransport(raw)),
                 patch.object(qualifier, "size_at", return_value=(len(raw), {})),
-                patch.object(qualifier, "get", return_value=b"new notice"),
+                patch.object(qualifier, "get", return_value=("<h2>License</h2><p>" + qualifier.UCI_LICENSE_DECLARATION + "</p>").encode()),
                 patch.object(qualifier, "decode_record", side_effect=refuse_refetch),
             ):
                 with self.assertRaisesMessage(ValueError, "Independent refetch failed"):
                     qualifier.qualify(source, "2026-10-11")
             self.assertEqual(manifest.read_bytes(), b"existing manifest")
             self.assertEqual(notice.read_bytes(), b"existing notice")
+
+    def test_uci_notices_exclude_contacts_and_script_metadata(self):
+        from scripts.qualify_bank_subsets import UCI_LICENSE_DECLARATION, uci_license_notice
+
+        page = (
+            '<h2>License</h2><p>' + UCI_LICENSE_DECLARATION + '</p>'
+            '<script>{"email":"private@example.test"}</script><p>Contact: other@example.test</p>'
+        ).encode()
+        for source_id in ("numeric-iris", "numeric-wine-quality"):
+            url = "https://archive.ics.uci.edu/dataset/53/iris" if source_id == "numeric-iris" else "https://archive.ics.uci.edu/dataset/186/wine+quality"
+            notice = uci_license_notice(source_id, page, url).decode()
+            self.assertIn(UCI_LICENSE_DECLARATION, notice)
+            self.assertIn(url, notice)
+            self.assertIn("https://doi.org/10.24432/", notice)
+            self.assertNotIn("@", notice)
+            self.assertNotIn("<script", notice)
+        for page in (b"<h2>License</h2><p>All rights reserved.</p>",
+                     ("<script>License " + UCI_LICENSE_DECLARATION + "</script>").encode()):
+            with self.assertRaisesMessage(ValueError, "license declaration changed"):
+                uci_license_notice("numeric-iris", page, "https://archive.ics.uci.edu/dataset/53/iris")
 
     def test_all_committed_manifests_and_notices_match_catalog_pins(self):
         catalog = DatasetBankCatalog.load_from_file()

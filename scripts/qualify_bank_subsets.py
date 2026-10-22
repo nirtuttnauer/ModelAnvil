@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 from datetime import date
 import hashlib
+from html.parser import HTMLParser
 import io
 import json
 import time
@@ -54,6 +55,50 @@ ARCHIVES = {
     "numeric-iris": "https://archive.ics.uci.edu/static/public/53/iris.zip",
     "numeric-wine-quality": "https://archive.ics.uci.edu/static/public/186/wine+quality.zip",
 }
+
+UCI_LICENSE_DECLARATION = (
+    "This dataset is licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) license. "
+    "This allows for the sharing and adaptation of the datasets for any purpose, provided that the appropriate credit is given."
+)
+
+
+class _PublisherText(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.ignored = 0
+        self.parts = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag in ("script", "style"):
+            self.ignored += 1
+
+    def handle_endtag(self, tag):
+        if tag in ("script", "style") and self.ignored:
+            self.ignored -= 1
+
+    def handle_data(self, data):
+        if not self.ignored:
+            self.parts.append(data)
+
+
+def uci_license_notice(source_id, raw, url):
+    """Retain the publisher license and attribution without page contact/edit data."""
+    name, authors, doi = {
+        "numeric-iris": ("Iris", "R. A. Fisher", "10.24432/C56C76"),
+        "numeric-wine-quality": ("Wine Quality", "P. Cortez, A. Cerdeira, F. Almeida, T. Matos, and J. Reis", "10.24432/C56S3T"),
+    }[source_id]
+    parser = _PublisherText()
+    parser.feed(raw.decode("utf-8"))
+    text = " ".join(" ".join(parser.parts).split())
+    if "License " + UCI_LICENSE_DECLARATION not in text:
+        raise ValueError("UCI publisher license declaration changed or is unavailable.")
+    return (
+        f"{name} publisher license notice\n\nSource: {url}\n"
+        f"Attribution: {authors}. {name} [Dataset]. UCI Machine Learning Repository. https://doi.org/{doi}\n"
+        "License: CC-BY-4.0\nLicense URL: https://creativecommons.org/licenses/by/4.0/\n\n"
+        + UCI_LICENSE_DECLARATION + "\n\n"
+        "Extracted from the publisher license section; page navigation, edit history and contact details are omitted.\n"
+    ).encode("utf-8")
 
 
 def transport(url, headers):
@@ -411,7 +456,8 @@ def qualify(source, date):
                     notice_url = source["source_url"]
                     manifest["licenses"].append(
                         archive_notice(
-                            source_id, "publisher-declaration", get(notice_url), notice_url
+                            source_id, "publisher-declaration",
+                            uci_license_notice(source_id, get(notice_url), notice_url), notice_url
                         )
                     )
         else:
