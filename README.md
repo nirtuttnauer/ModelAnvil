@@ -8,118 +8,177 @@
 
 [![CI](https://github.com/nirtuttnauer/ModelAnvil/actions/workflows/ci.yml/badge.svg)](https://github.com/nirtuttnauer/ModelAnvil/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-An open-source workspace for datasets, model training, alignment and evaluation. Built with Django and React, with a local development setup and a self-hosted control plane.
+A self-hosted workspace for dataset preparation, team labeling, and bounded model post-training and evaluation. A Django API records the data, runs, permissions and artifacts; a React app lets you inspect and operate those workflows.
 
-The control plane includes tenant identity/RBAC, worker job protocol with lease fencing and reconciliation, a tenant-scoped RabbitMQ worker consumer, tenant-aware artifact and dataset metadata, source snapshots with canonical sample-envelope validation, runner/adapter registries, budget reservations/usage events, a React/Vite browser shell, and a local Compose reference.
+ModelAnvil is a work in progress. Several local execution paths run real computations, while other screens and domain tests use explicit fixtures. Execution evidence, model quality, hardware support and production readiness are separate questions. The [capability audit](docs/engineering/capability-evidence.md) and [status ledger](docs/engineering/status.md) record the evidence and remaining gaps.
 
-Worker fine-tuning now has separate bounded CPU reference runtimes and a pinned SmolLM2-135M GPU full-SFT runtime. These load verified base weights/tokenizers and published training samples, commit fenced checkpoints and produce independently loadable candidates. The [GPU pilot](docs/engineering/verification/task13-gpu-2026-10-11.md) covers one Apple MPS environment; other vendors and production serving need their own qualification. Alignment executes real bounded CPU character DPO, Bradley–Terry reward training, PPO RLHF and verifier RL. See the [alignment guide](docs/engineering/cpu-character-alignment.md) for supported models, preference inputs and execution limits. Other recipes retain their recorded fixture/integration scope. Bounded local evaluation, bundle exports and simulated quantization cannot authorize production qualification or promotion. See the [capability evidence audit](docs/engineering/capability-evidence.md) and [status ledger](docs/engineering/status.md).
+See the [supported capability baseline](docs/engineering/supported-capabilities.md) for current operation-specific evidence and limits. Overview exposes local workflow measurements; Evaluation records explicit accept/reject decisions after verified candidate/baseline comparisons. These measurements stay in the installation and exclude prompts and credentials.
 
-This is not a complete R1 platform. Managed-S3 transfer qualification, private-worker boundaries and operational qualification remain pending. Resumable artifact upload sessions now support checksummed parts, status/resume, idempotent completion/abort, and explicit-retention cleanup; they have not yet been qualified against a managed S3 provider. Job creation writes a transactional outbox event; the Compose publisher sends persistent, confirmed notifications to RabbitMQ with at-least-once delivery semantics. Expired worker leases are reconciled by a separate periodic Compose service; `make reconcile` runs one pass locally. SQLite is the default for fast local tests; PostgreSQL, RabbitMQ, and SeaweedFS S3-compatible storage are available in Compose. Compose credentials are insecure development defaults and must be replaced for any non-local use.
+[Start locally](#local-development) · [Current capabilities](#current-capabilities) · [Architecture](#architecture) · [Checks](#checks) · [Limits and work in progress](#limits-and-work-in-progress) · [Contributing](CONTRIBUTING.md)
+
+## Current capabilities
+
+| Area | Implemented scope | Guide |
+| --- | --- | --- |
+| Dataset preparation | Source snapshots, canonical sample validation, verified artifacts, protected source groups, and versioned dataset publication | [Source import](docs/engineering/source-import.md), [Dataset Bank](docs/open-dataset-bank.md) |
+| Team labeling | Manual or imported-draft campaigns, review and correction, pause/resume, batch closure, and cumulative approved snapshot export | [Labeling workflow and planned loop](docs/iterative-labeling.md) |
+| Post-training | Bounded CPU reference runtimes and pinned SmolLM2 GPU training profiles; committed checkpoints and candidate weight exports | [CPU runtime](docs/engineering/qualification-reports/text-finetuning-runtime.md), [GPU setup](docs/engineering/smollm2-gpu-training.md), [Apple adapters](docs/engineering/native-apple-adapter-training.md) |
+| Evaluation and alignment | Versioned suites, actual bounded CPU character-model evaluation, and bounded character-model DPO, reward training, PPO and verifier-RL paths | [Backend/frontend support](docs/engineering/backend-frontend-support.md), [CPU alignment](docs/engineering/cpu-character-alignment.md) |
+| Document and recipe jobs | Pinned local OCR/layout runtimes, resumable page work, typed decisions, and bounded versioned data recipes | [Specialists](docs/engineering/local-specialists.md), [Recipes and recovery](docs/engineering/resumable-pages-and-data-recipes.md) |
+| Control plane | Tenant identity and roles, project access checks, worker leases and fencing, artifact integrity, budget reservations and usage accounting | [Worker and artifact operations](docs/engineering/worker-operations.md) |
+
+A labeling campaign currently produces reviewed snapshots. The automatic sequence of retraining a labeling model, qualifying it and drafting the next batch remains planned. The [iterative-labeling specification](docs/iterative-labeling.md) describes that intended loop and its acceptance criteria.
+
+The [developer and execution reference](docs/engineering/development-and-evidence.md) retains the detailed control-plane contracts, runtime evidence, Storybook coverage and integration-test procedures.
+
+GPU detection does not establish that a device can run a particular recipe. The checked-in SmolLM2 pilot covers one Apple MPS environment; CUDA, ROCm, Intel XPU and other configurations need their own qualification. The native Apple adapter report also records a bounded candidate's quality failure. Training completion alone does not authorize production promotion.
+
+## Guided fine-tuning
+
+New users can create an account and use **Training → Model → Dataset → Review → Train**. The guided path prepares pretrained SmolLM2-135M and its local execution resources automatically, accepts ordinary chat JSONL and prompt/response CSV, and provides progress, a trained-model download and a chat link.
+
+For the installation owner, start the API and managed training service together with `.venv-gpu/bin/python manage.py run_local` in the installed GPU environment, then start the existing web development server. Users need only the browser. See the [guided local fine-tuning guide](docs/engineering/guided-fine-tuning.md) for setup, account behavior, supported input limits and verification.
 
 ## Local development
 
-Requirements: Python 3.12+, Node.js 22+, and npm. Create a virtual environment, install Python dependencies, and run migrations/tests:
+Use Python 3.12, Node.js 24 and npm to match CI. Docker with Compose is optional for the local SQLite setup and required for the multi-service reference and container integration checks. Model execution needs the optional dependencies and hardware described by its runtime guide; installing the control plane does not provision a training worker or download model weights.
+
+From a new checkout:
 
 ```sh
+git clone https://github.com/nirtuttnauer/ModelAnvil.git
+cd ModelAnvil
 python3.12 -m venv .venv
-.venv/bin/pip install -r requirements.txt
+.venv/bin/python -m pip install -r requirements.txt
 make migrate
 .venv/bin/python manage.py bootstrap_dev
-make check test migration-check smoke
+make check
 ```
 
-The bootstrap command creates a local tenant, admin user, empty project and the development API key used by the browser. Use it only in a local development database. Use Storybook for populated demo screens; create datasets and models through the app for real execution.
+`bootstrap_dev` creates a local tenant, an admin user, an empty project and a development API key for optional API-key connections. The guided browser flow starts with account creation instead. Run bootstrap only against a local development database; its shared defaults are deliberately insecure for public hosting. It does not create datasets, trained models or execution evidence. Use Storybook for populated demo screens.
 
-Start the API with `.venv/bin/python manage.py runserver` and the web UI with `cd web && npm ci && npm run dev`. The browser dev server proxies `/api` to `http://127.0.0.1:8000`.
+Start the API in one terminal, from the repository root:
 
-For visual verification, run `cd web && npm run storybook` and open `http://127.0.0.1:6006`. Storybook renders the real app shell and all 16 screens with synthetic fixtures. Its API proxy is disabled; MSW handles demo reads and writes, resets fixtures between stories, and returns HTTP 501 for missing fixtures. The mock worker is shipped only with Storybook, never with the production app.
+```sh
+.venv/bin/python manage.py runserver 127.0.0.1:8000
+```
 
-The Screens group covers populated charts, records and inspectors. The States group adds empty, loading, error, dark and mobile examples. Each story runs browser assertions; additional action stories exercise document indexing, context authoring, CPU base initialization, suite registration, evaluation, preference registration, alignment execution and cancellation controls. Use the Accessibility panel for axe results and the viewport toolbar for responsive review. `npm run build-storybook` builds the standalone demo. `npm test` checks chart contracts and mock isolation. These checks verify UI behavior with demo responses; they do not execute model training, qualify releases or validate backend integrations.
+In another terminal, also from the repository root:
 
+```sh
+npm --prefix web ci
+npm --prefix web run dev -- --host 127.0.0.1
+```
 
-The [backend/frontend support report](docs/engineering/backend-frontend-support.md) documents the real authoring, CPU evaluation, accounting and artifact paths, their API contracts and the remaining executor limits.
+Open [localhost:5173](http://localhost:5173) and create an account for the browser workflow. Vite proxies `/api` to the local Django server. The unauthenticated health endpoint is available while the API is running:
 
-## Compose reference
+```sh
+curl --fail http://127.0.0.1:8000/api/v1/health/
+```
+
+SQLite is the local default. `DATABASE_ENGINE`, `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_HOST` and `DATABASE_PORT` select a PostgreSQL connection; `MODELANVIL_ARTIFACT_ROOT` selects local artifact storage. Configuration is read in [settings.py](modelanvil/settings.py). Keep credentials and private data out of source control.
+
+### Explore the UI with fixtures
+
+```sh
+npm --prefix web run storybook
+```
+
+Open [localhost:6006](http://localhost:6006). Storybook uses the real components with synthetic API fixtures, including populated, empty, error, dark and mobile states. Its mock API resets between stories and is separate from the application backend. Story assertions verify UI behavior; their charts and outcomes are demo data. `npm --prefix web run build-storybook` builds the standalone demo.
+
+For the Screens/States groups, action-story coverage, MSW behavior, axe checks and viewport tools, see [Storybook and browser verification](docs/engineering/development-and-evidence.md#storybook-and-browser-verification). For API-backed interactions and their current limits, see the [frontend workspace guide](docs/engineering/frontend-workspace.md).
+
+## Architecture
+
+The control plane includes tenant identity/RBAC, worker job protocol with lease fencing and reconciliation, a tenant-scoped RabbitMQ worker consumer, tenant-aware artifact and dataset metadata, source snapshots with canonical sample-envelope validation, runner/adapter registries, budget reservations/usage events, a React/Vite browser shell, and a local Compose reference.
+
+```mermaid
+flowchart LR
+    Browser[React workspace] --> API[Django and DRF API]
+    API --> DB[(SQLite locally / PostgreSQL in Compose)]
+    API --> Artifacts[Filesystem or S3-compatible artifacts]
+    DB --> Outbox[Transactional outbox publisher]
+    Outbox --> Broker[RabbitMQ dispatch]
+    Broker --> Worker[Trusted compatible worker]
+    Worker -->|Claim, heartbeat, fenced result| API
+    Worker -->|Verified inputs and outputs| Artifacts
+```
+
+The database owns workflow state. Broker notifications can be delivered more than once; workers still need a valid durable claim to publish results. A separate reconciler handles expired leases. Direct database polling and an outbound HTTP worker are also implemented; their credential, cancellation and transfer boundaries are documented in [worker operations](docs/engineering/worker-operations.md).
+
+| Location | Responsibility |
+| --- | --- |
+| `modelanvil/api/` | REST contracts and workspace actions |
+| `modelanvil/data/`, `modelanvil/annotation/` | Source preparation, recipes and human review |
+| `modelanvil/runners/` | Runtime contracts, training, evaluation and inference |
+| `modelanvil/jobs/`, `modelanvil/artifacts/`, `modelanvil/budgets/` | Durable execution, stored artifacts and accounting |
+| `web/` | React app, API clients, Storybook and frontend tests |
+| `contracts/`, `docs/engineering/` | Schemas, implementation guides and dated evidence |
+
+### Compose reference
 
 ```sh
 docker compose -f compose.yaml up --build
 ```
 
-The reference exposes the browser at `http://localhost:5173`, API at `http://localhost:8000/api/v1/health/`, and the SeaweedFS S3 endpoint at `http://localhost:8333`. Separate `outbox-publisher` and `lease-reconciler` services publish queued notifications and recover expired worker attempts. PostgreSQL, RabbitMQ, and object-store data use named volumes. Use `docker compose -f compose.yaml down` to stop; add `-v` only when intentionally deleting local persisted data. This single-host setup has no production-grade secrets, TLS, backup, or high-availability configuration. The API currently uses Django's development server; do not expose it publicly.
+This starts the development browser at `http://localhost:5173`, the API at `http://localhost:8000` and the SeaweedFS S3 endpoint at `http://localhost:8333`, alongside PostgreSQL, RabbitMQ, the outbox publisher and the lease reconciler. The database and object store use named volumes. `docker compose -f compose.yaml down` stops the stack; adding `-v` deletes its persisted volumes.
 
+The Compose reference uses development credentials and Django's development server. Keep it local. TLS, production secrets, backups and availability need an operator's deployment design. Managed S3 behavior and broader operational readiness remain unqualified.
 
-The [frontend workspace](docs/engineering/frontend-workspace.md) documents the browser interactions, current API boundaries, and verification commands.
+### Worker and transfer reference
 
-## Controlled local executor
+<a id="controlled-local-executor"></a>
+<a id="worker-credentials"></a>
+<a id="outbound-http-worker"></a>
+<a id="result-egress-boundary"></a>
+<a id="attempt-scoped-input-artifact-downloads"></a>
+<a id="resumable-artifact-uploads"></a>
 
-The optional [accelerator inventory and diagnostic tool](docs/engineering/accelerators.md)
-checks CUDA, ROCm, Intel XPU and Apple MPS on the worker host with
-`python -m modelanvil.accelerators`. Successful detection does not register training capacity.
-The optional [local GPU training setup](docs/engineering/smollm2-gpu-training.md)
-registers one dedicated worker for the pinned SmolLM2 recipe. Shared-device admission,
-remote GPU workers and additional vendor qualification remain separate work.
-
-`manage.py run_worker --worker-id ID --executor package.module.callable --once` claims one compatible job from PostgreSQL and executes it with an operator-installed Python callable. Omit `--once` to poll continuously. The callable receives the claim descriptor and an execution context; it must call `context.heartbeat()` regularly and stop when that returns false. Job payloads are data and are never executed as shell commands. This path polls the database; use the RabbitMQ consumer below when consuming broker dispatches. Only load trusted executor code.
-
-For RabbitMQ dispatch, run `manage.py consume_worker --worker-id ID --executor package.module.callable` with `RABBITMQ_URL` set. It consumes the worker's tenant/pool topic, makes a durable database claim before acknowledging a dispatch, and uses delayed retry and quarantine queues. The executor remains operator-installed trusted code. This local consumer is not the outbound hybrid-worker gateway and has not been production-qualified.
+Read the preserved contracts for [local executors](docs/engineering/worker-operations.md#controlled-local-executor), [worker credentials](docs/engineering/worker-operations.md#worker-credentials), [outbound HTTP workers](docs/engineering/worker-operations.md#outbound-http-worker), [result-egress restrictions](docs/engineering/worker-operations.md#result-egress-boundary), [attempt-scoped downloads](docs/engineering/worker-operations.md#attempt-scoped-input-artifact-downloads), and [resumable uploads](docs/engineering/worker-operations.md#resumable-artifact-uploads).
 
 ## External compute and custom plugins
 
 The [Runpod and custom plugin guide](docs/engineering/runpod-and-custom-plugins.md) covers REST v2 GPU discovery, tenant-scoped allocation/worker bootstrap, verified release, expiry reconciliation, and trusted operator-installed compute and task plugins. Configure provider accounts outside the browser and run `manage.py reconcile_compute --loop` for automatic expiry cleanup. The [provider TODO](docs/engineering/provider-integration-todo.md) tracks the remaining integrations and live qualification. Remote training runtimes and managed artifact transfer require their own qualification.
 
-## Worker credentials
-
-An administrator registering a worker receives a one-time `worker_token` in the registration response. It is tenant- and worker-bound, stored only as a hash, and expires after 30 days by default (`MODELANVIL_WORKER_CREDENTIAL_SECONDS` configures the lifetime). The token can call only the worker claim, heartbeat, result, attempt-scoped input-grant discovery, and explicitly granted input-artifact download endpoints; it cannot access the tenant artifact registry or uploads. Use `POST /api/v1/workers/{worker_id}/credential/revoke/` with an administrator API key to revoke it. Do not log or persist the registration response as ordinary application output.
-
-## Outbound HTTP worker
-
-`python -m modelanvil.worker_agent` is a standalone polling worker, separate from the DB-dependent Django commands. It imports no Django, connects to no database or broker, and uses the scoped worker API for claims, automatic/manual heartbeats, cancellation and fenced results. Supply the credential through a securely provisioned `MODELANVIL_WORKER_TOKEN` environment variable, not a command-line argument. Start it with:
-
-```sh
-.venv/bin/python -m modelanvil.worker_agent \
-  --endpoint https://control.example/api/v1/workers/ \
-  --worker-id 1 --pool cpu --executor trusted_package.remote:execute
-```
-
-The executor is trusted, operator-installed Python code selected at startup; the agent never imports modules, interprets shell commands, or redirects its API requests based on job payloads. Executor code remains responsible for its own network and data access. Its signature is `(descriptor, context)` and it returns a canonical EnvelopeSample or `None`. `context.heartbeat(progress)` returns false on cancellation or uncertain/lost lease ownership; the callable must cooperate by stopping its backend. Background heartbeats do not force-kill Python code or prove that an external provider stopped. Expired claims do not execute, and loss of ownership prevents result publication.
-
-HTTPS uses certificate verification. Redirects and ambient proxy settings are disabled; credentials stay on the configured endpoint. Plain HTTP requires `--allow-loopback-http` and a numeric loopback address (local development only). JSON control requests/responses are limited to one MiB; verified binary inputs use the separate byte cap below. Executor exceptions and transport failures are reported without their original bodies/messages. `--once` handles one claim and exits. A lost result acknowledgement is reported as `commit_unconfirmed`; the CLI exits nonzero without rerunning or blindly retrying the work. Reconcile server state before restarting after an uncertain commit or lost lease.
-
-### Result-egress boundary
-
-A tenant administrator can set a pool's result policy with `POST /api/v1/workers/pools/{pool_id}/egress/` and JSON `{"result_egress":"metadata_only"}`. The other supported value is `envelope`; it remains the compatibility default, **not** a private-workload safety default. Changes are tenant-scoped and audited. Registration, claim and heartbeat responses disclose the current policy.
-
-For private workers, also pin `--result-egress metadata_only` locally before starting. Either local or pool restriction wins; job payloads cannot relax it, and an attempt remains restricted after observing a stricter heartbeat even if the pool is subsequently relaxed. In this mode the agent sends only attempt identity, fence and terminal status: returned envelopes are withheld before HTTP and reported as failed; executor exceptions send no free-form error. Return `None` to report successful status without a sample. The API rejects supplied envelopes (including empty objects), nonempty errors and artifact descriptors under a metadata-only policy. The shared transactional result-commit service rechecks the policy before persistence.
-
-Pool policy changes cannot recall bytes already sent by an old or noncompliant client. Local pinning is the agent's pre-transmission boundary, not a sandbox for trusted executor code, a content/privacy classifier, or protection against covert channels in permitted metadata. The control-to-worker job payload is not minimized by this result-only policy.
-
-This implements the outbound execution protocol, a bounded result-egress mode, and the input-download hook below, **not** a completed private-data gateway: artifact residency/egress rules, output-artifact transfer, credential rotation/provisioning, and disconnected/reconnected private-worker qualification remain outstanding. Do not treat it as qualified for workloads requiring those unimplemented boundaries. See `--help` for polling/heartbeat/timeout controls.
-
-### Attempt-scoped input artifact downloads
-
-A tenant administrator can issue a download grant with `POST /api/v1/workers/artifact-grants/` and JSON fields `worker_id`, `attempt_id`, `artifact_id`, and optional `ttl_seconds` (default 60, range 1–300). It binds one committed artifact to the current worker execution and expires no later than its issued lease. The response contains a `download_path`; GET it using that worker's scoped credential. The grant ID alone does not authorize access. Revoke it with administrator-only `POST /api/v1/workers/artifact-grants/{grant_id}/revoke/`.
-
-This slice accepts only unversioned `local` artifacts on the configured filesystem backend. Other storage locations, S3 and versioned objects fail closed. Scope, fencing, leases, cancellation, grant/credential expiry and revocation, tenant suspension, artifact state and pinned metadata/backend are checked before each bounded file read. Revocation stops future reads; already-read or buffered bytes cannot be recalled. Consumers must reject incomplete transfers and verify the declared byte size and SHA-256 before using an input.
-
-Grants are manually issued by an administrator; they are not inferred from job payloads or automatically attached to claims. A standalone executor can explicitly call `context.download_artifact(grant_id, sha256=expected_digest, byte_size=expected_size)` with pinned input metadata. It returns bytes only after full length and SHA-256 verification, and requires the response's authorized attempt to match the context. It constructs a same-origin path from a canonical grant UUID, not a job-selected URL. Cancellation, lease loss, transfer timeout checks, truncation, ambiguous framing, wrong-attempt responses and corruption refuse the input without returning partial bytes. The input is buffered in memory, not written to disk. `--artifact-max-bytes` sets the per-input cap (default 16 MiB, permitted 1 byte through 64 MiB); larger inputs need a future streaming/staging implementation, not an unbounded setting.
-
-An executor can explicitly call `context.discover_artifacts(cursor=...)` to fetch one bounded page of already-issued grants for its own current fenced attempt. The response contains `attempt_id`, `grants` and `next_cursor`; each reference exposes only grant/artifact IDs, pinned size/digest and expiry. At most 32 candidates are validated per page; pages can be empty with a non-null advancing cursor when candidates are ineligible. The helper does not automatically paginate or download. It validates response scope, identifiers, metadata, expiry and cursor progression before returning. The executor must select the intended artifact explicitly; discovery is not a frozen input-manifest resolver.
-
-Neither helper issues, renews or retries grants, and downloads are not resumable. Do not provision an administrator credential to the worker: an authorized external controller still chooses and issues the grants, while the scoped worker can now retrieve their references itself. This is control-plane-to-worker input access, not worker output upload permission, an artifact-residency router, or a network sandbox. Metadata-only result policy continues to restrict worker-to-control-plane results, not these explicitly authorized inputs. See [worker artifact grants](docs/engineering/worker-artifact-grants.md) for scope and lifecycle limits.
-
-The [standalone input client](docs/engineering/worker-artifact-client.md) documents the executor helper's return/exception contract, byte cap, attempt binding and remaining boundaries.
-
-## Resumable artifact uploads
-
-Create a transfer session for a staging artifact with `POST /api/v1/artifacts/{artifact_id}/transfers/`. Upload each non-empty part with `PUT /api/v1/artifacts/{artifact_id}/transfers/{transfer_id}/parts/{part_number}/`, as multipart form field `file`, and provide the lowercase part digest in `X-Part-SHA256`. Parts are limited to 16 MiB and numbered from 1; they may arrive out of order and exact retries are idempotent. `GET .../transfers/{transfer_id}/` returns the durable manifest for resume. `POST .../complete/` verifies order, total size, and the staged artifact digest before committing; incomplete transfers remain staging. `POST .../abort/` is idempotent. Sessions expire after 24 hours. Part objects for old terminal sessions can be purged while retaining their manifests with `make prune-transfer-parts RETENTION_DAYS=N`; choose a retention period that matches the installation policy. Managed-provider behavior and automated cleanup scheduling still require qualification.
 
 ## Checks
 
-`make check`, `make test`, `make migration-check`, and `make web-build` cover the current automated baseline. `make test-broker-integration` runs the broker callback and long-running consume-loop tests against isolated PostgreSQL and RabbitMQ containers, then removes that test stack and its volumes. `make test-worker-integration` rebuilds the API image and exercises the standalone worker against the real HTTP API backed by isolated PostgreSQL. `make test-accounting-integration` covers priced usage, adjustments and concurrent callback deduplication on PostgreSQL. These targets remove their test stacks and volumes. `make smoke` exercises identity and worker protocol behavior. Managed S3, automated transfer-cleanup scheduling, distributed worker allocation, recovery, and production readiness remain unqualified.
+From the repository root, with the Python environment installed:
 
-## Planning documents
+```sh
+make check migration-check smoke
+make test
+npm --prefix web ci
+npm --prefix web test
+npm --prefix web run build
+npm --prefix web run build-storybook
+```
 
-The authoritative product and engineering scope remains in `docs/`: see the [implementation plan](docs/engineering/implementation-plan.md), [technical requirements](docs/engineering/technical-requirements.md), and [backend schema](docs/engineering/backend-schema.md).
+CI uses Python 3.12 and Node.js 24. It also checks fresh migrations/bootstrap and runs the backend suite against file-backed SQLite. To use a file-backed test database locally, set `DATABASE_TEST_NAME` to a separate temporary SQLite path before `make test`; Django manages that test database independently of your development data.
+
+The optional `make test-broker-integration`, `make test-accounting-integration`, `make test-worker-integration` and `make test-dataset-integration` targets start isolated Docker projects and remove their test stacks and volumes. They check specific PostgreSQL, broker or HTTP paths. The [test-target reference](docs/engineering/development-and-evidence.md#automated-checks-and-integration-boundaries) preserves each target's precise coverage, including broker callbacks, worker HTTP paths and concurrent accounting. None substitutes for model-quality evaluation, managed-storage qualification or production operations testing. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Production deployment
+
+The [production deployment runbook](deploy/production/README.md) covers the separate
+Gunicorn, PostgreSQL and Caddy stack, explicit migrations, HTTPS verification,
+backups and rollback. Run `make test-production` to build and exercise an isolated
+HTTPS deployment, including authentication and restart persistence. The test
+removes only its own containers and volumes. Hosted worker execution, account
+invitations, billing and recovery qualification remain separate SaaS milestones.
+
+## Limits and work in progress
+
+- Runtime contracts impose model, input, sequence, step and memory limits. The supported local profiles and their measured envelopes are narrower than the full product plan.
+- Some domain workflows, quantization paths and evaluation fallbacks use simulation. Read the recorded execution origin before interpreting a result.
+- Automatic label-review/retraining cycles, broad GPU qualification, distributed allocation, managed-S3 qualification and a complete private-worker gateway remain open work.
+- Production qualification and live promotion remain unavailable through unverified execution paths. Operator-installed executor code is trusted code; the worker protocol does not sandbox it.
+
+The [catalog additions (#10)](https://github.com/nirtuttnauer/ModelAnvil/pull/10), [guided training and reviewed releases (#11)](https://github.com/nirtuttnauer/ModelAnvil/pull/11), and [production packaging (#12)](https://github.com/nirtuttnauer/ModelAnvil/pull/12) were integrated into `main` on 21 October 2026. Their guides record the supported paths and remaining qualification limits.
+
+<a id="planning-documents"></a>
+
+The [engineering planning pack](docs/engineering/README.md) and [implementation plan](docs/engineering/implementation-plan.md) describe proposed scope. Use the capability guides and dated evidence for implemented behavior. [Open issues](https://github.com/nirtuttnauer/ModelAnvil/issues) and [pull requests](https://github.com/nirtuttnauer/ModelAnvil/pulls) track ongoing work.
 
 ## License and contributions
 

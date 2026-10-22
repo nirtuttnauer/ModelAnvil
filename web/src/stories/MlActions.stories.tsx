@@ -34,7 +34,7 @@ export const ExecuteEvaluation: Story = {
     await userEvent.type(canvas.getByLabelText('Maximum generated tokens'), '4');
     await userEvent.click(canvas.getByRole('button', { name: 'Execute CPU evaluation' }));
     await expect(canvas.findByText('Demo evaluation completed with fictional Storybook results.')).resolves.toBeVisible();
-    await expect(canvas.findByText(/SUPPORT-001 · Pass/)).resolves.toBeVisible();
+    await expect(canvas.findByText('SUPPORT-001', { exact: true })).resolves.toBeVisible();
     await expect(demoRequests.filter(r => r.status >= 400)).toHaveLength(0);
     canvasElement.dataset.demoVerified = 'passed';
   },
@@ -45,10 +45,13 @@ export const RegisterEvaluationSuite: Story = {
   parameters: { demoRoute: '#evaluation', demoHeading: 'Evaluation', demoApiPath: '/api/v1/evaluation-runs/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(await canvas.findByRole('button', { name: 'Register evaluation suite' }));
+    const register = await canvas.findByRole('button', { name: 'Register evaluation suite' });
+    await waitFor(() => expect(register).toBeEnabled());
+    await userEvent.click(register);
     await userEvent.type(canvas.getByLabelText('Suite name'), 'Storybook checks');
+    await userEvent.type(canvas.getByLabelText(/Source group ID/), 'storybook-held-out');
     await userEvent.click(canvas.getByRole('button', { name: 'Pin evaluation suite' }));
-    await expect(canvas.findByText('Evaluation suite pinned. Select a candidate to create an evaluation.')).resolves.toBeVisible();
+    await expect(canvas.findByText('Suite r1 pinned as protected evaluation with 1 source group.')).resolves.toBeVisible();
     await expect(canvas.getByLabelText('Evaluation suite version')).toHaveValue('3');
     await expect(demoRequests.filter(r => r.status >= 400)).toHaveLength(0);
     canvasElement.dataset.demoVerified = 'passed';
@@ -97,8 +100,11 @@ export const RegisterPreferencePairs: Story = {
     await waitFor(() => expect(registration).toBeEnabled());
     await userEvent.click(registration);
     await userEvent.type(canvas.getByLabelText('Preference artifact name'), 'Storybook preferences');
-    await userEvent.click(canvas.getByLabelText('Preference pairs JSON'));
-    await userEvent.paste(JSON.stringify([{ prompt: 'Say a', chosen: 'a', rejected: 'b' }]));
+    await userEvent.click(canvas.getByRole('button', { name: 'Add preference pair' }));
+    const pair = within(canvas.getByRole('group', { name: 'Preference pair 1' }));
+    await userEvent.type(pair.getByLabelText('Prompt'), 'Say a');
+    await userEvent.type(pair.getByLabelText('Preferred response'), 'a');
+    await userEvent.type(pair.getByLabelText('Rejected response'), 'b');
     await userEvent.click(canvas.getByRole('button', { name: 'Commit preference artifact' }));
     await expect(canvas.findByText('Preference artifact “Storybook preferences” committed. Select separate training and held-out inputs.')).resolves.toBeVisible();
     await userEvent.click(canvas.getByRole('button', { name: 'New alignment plan' }));

@@ -1,3 +1,4 @@
+import { Badge, Button, RecordTable } from './ui';
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { BarChart3, ChevronDown } from 'lucide-react';
 import { chartRange, formatValue, interval, validPoints, type BarDatum, type Point } from './chart-data';
@@ -30,7 +31,7 @@ export function ChartEmpty({ message = 'No measurements recorded yet.' }: { mess
 }
 
 function DataTable({ children }: { children: ReactNode }) {
-  return <details className="chart-data"><summary>View data <ChevronDown size={13} aria-hidden="true" /></summary><div className="table-scroll" tabIndex={0}><table className="resource-table">{children}</table></div></details>;
+  return <details className="chart-data"><summary>View data <ChevronDown size={13} aria-hidden="true" /></summary><div className="table-scroll" tabIndex={0}><RecordTable className="resource-table">{children}</RecordTable></div></details>;
 }
 
 export interface Series { name: string; points: Point[] }
@@ -48,7 +49,7 @@ export function LineChart({ series, xLabel = 'Step', yLabel = 'Value' }: { serie
   const [yMin, yMax] = chartRange(points.map(p => p.y));
   const sx = (n: number) => 80 + (n - xMin) / (xMax - xMin) * (width - 120);
   const sy = (n: number) => 250 - (n - yMin) / (yMax - yMin) * 216;
-  return <div className="chart" ref={ref}><div className="chart-legend">{available.map((s, i) => <button key={s.name} type="button" aria-pressed={!hidden.includes(s.name)} className={hidden.includes(s.name) ? 'series-hidden' : ''} onClick={() => { setHidden(h => h.includes(s.name) ? h.filter(n => n !== s.name) : [...h, s.name]); setSelection(null); }}><span style={{ background: colors[i % colors.length] }} />{s.name}</button>)}</div>
+  return <div className="chart" ref={ref}><div className="chart-legend">{available.map((s, i) => <Button key={s.name} type="button" aria-pressed={!hidden.includes(s.name)} className={hidden.includes(s.name) ? 'series-hidden' : ''} onClick={() => { setHidden(h => h.includes(s.name) ? h.filter(n => n !== s.name) : [...h, s.name]); setSelection(null); }}><span style={{ background: colors[i % colors.length] }} />{s.name}</Button>)}</div>
     <svg viewBox={`0 0 ${width} 300`} role="group" aria-labelledby={id}><title id={id}>{yLabel} by {xLabel}. Focus a point to inspect its value. Use the legend to toggle series.</title>
       {Array.from({ length: 5 }, (_, i) => { const f = i / 4; return <g key={i}><line className="chart-grid" x1={80} x2={width - 40} y1={250 - f * 216} y2={250 - f * 216} /><text className="chart-tick" x={70} y={254 - f * 216} textAnchor="end">{formatValue(yMin + f * (yMax - yMin), (yMax - yMin) / 4)}</text><line className="chart-grid" x1={80 + f * (width - 120)} x2={80 + f * (width - 120)} y1={34} y2={250} /><text className="chart-tick" x={80 + f * (width - 120)} y={273} textAnchor="middle">{formatValue(xMin + f * (xMax - xMin))}</text></g>; })}
       <text className="chart-axis" x={(width + 40) / 2} y={295} textAnchor="middle">{xLabel}</text><text className="chart-axis" x={15} y={142} textAnchor="middle" transform="rotate(-90 15 142)">{yLabel}</text>
@@ -92,5 +93,5 @@ export function MetricsChart({ metrics }: { metrics: RecordedMetric[] }) {
 }
 
 export function EventTimeline({ events }: { events: { label: string; detail?: string; status?: string }[] }) {
-  return <ol className="event-timeline">{events.map((e, i) => <li key={i}><span className={`timeline-dot state-${e.status || 'pending'}`} /><div><strong>{e.label}</strong>{e.detail && <small>{e.detail}</small>}</div>{e.status && <span className={`state state-${e.status}`}>{e.status.replaceAll('_', ' ')}</span>}</li>)}</ol>;
+  return <ol className="event-timeline">{events.map((e, i) => <li key={i}><span className={`timeline-dot state-${e.status || 'pending'}`} /><div><strong>{e.label}</strong>{e.detail && <small>{e.detail}</small>}</div>{e.status && <Badge className={`state state-${e.status}`}>{e.status.replaceAll('_', ' ')}</Badge>}</li>)}</ol>;
 }

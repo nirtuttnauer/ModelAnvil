@@ -1,6 +1,10 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: check test test-broker-integration test-accounting-integration test-worker-integration test-dataset-integration test-web migrate migration-check smoke reconcile reconcile-compute prune-transfer-parts web-install web-build up down logs
+.PHONY: test-production
+test-production:
+	$(PYTHON) scripts/production_integration.py
+
+.PHONY: check test test-broker-integration test-accounting-integration test-worker-integration test-dataset-integration test-web migrate migration-check smoke reconcile reconcile-compute prune-transfer-parts web-install web-build up down logs local
 check:
 	DJANGO_SETTINGS_MODULE=modelanvil.settings PYTHONPATH=. $(PYTHON) manage.py check
 
@@ -71,3 +75,7 @@ down:
 
 logs:
 	docker compose -f compose.yaml logs -f api db rabbitmq object-store outbox-publisher lease-reconciler web
+
+# Installation owner entry point; user training runs are launched in the browser.
+local:
+	.venv-gpu/bin/python manage.py run_local

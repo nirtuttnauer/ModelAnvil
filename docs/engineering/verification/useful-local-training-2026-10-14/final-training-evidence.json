@@ -1,0 +1,82 @@
+{
+  "run_id": "f16fa988-738c-4b64-bff7-fe6a32b3b6cf",
+  "candidate_id": "c630bde8-0bc6-453d-aa2b-83b75f54fc49",
+  "status": "completed",
+  "job_status": "succeeded",
+  "recipe": "lora_adapter",
+  "updates": 288,
+  "duration_seconds": 180.251768,
+  "splits": {
+    "train": 48,
+    "validation": 6,
+    "test": 6
+  },
+  "source": {
+    "repo_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    "revision": "31b70e2e869a7173562077fd711b654946d38674",
+    "license": "Apache-2.0"
+  },
+  "optimizer": {
+    "algorithm": "adamw",
+    "learning_rate": 0.0002,
+    "beta1": 0.9,
+    "beta2": 0.999,
+    "epsilon": 1e-08,
+    "weight_decay": 0.0
+  },
+  "adapter": {
+    "r": 16,
+    "lora_alpha": 32,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "lora_dropout": 0.0,
+    "bias": "none",
+    "task_type": "CAUSAL_LM"
+  },
+  "sample_order": "seeded_epoch_shuffle_v1",
+  "initialization_seed": 42,
+  "selected_checkpoint": 288,
+  "trainable_parameters": 18087936,
+  "checkpoints": [
+    {
+      "step": 96,
+      "validation_loss": 0.9280946185191472,
+      "validation_loss_before_training": 3.755464776357015,
+      "validation_samples": 6,
+      "updates_since_checkpoint": 96,
+      "gpu_allocated_bytes": 7197467648,
+      "training_pairs": 1466,
+      "trainable_parameters": 18087936,
+      "total_parameters": 1729464320
+    },
+    {
+      "step": 192,
+      "validation_loss": 0.5920426142712434,
+      "validation_loss_before_training": 3.755464776357015,
+      "validation_samples": 6,
+      "updates_since_checkpoint": 96,
+      "gpu_allocated_bytes": 7197467648,
+      "training_pairs": 1466,
+      "trainable_parameters": 18087936,
+      "total_parameters": 1729464320
+    },
+    {
+      "step": 288,
+      "validation_loss": 0.48699678616443026,
+      "validation_loss_before_training": 3.755464776357015,
+      "validation_samples": 6,
+      "updates_since_checkpoint": 96,
+      "gpu_allocated_bytes": 7197467648,
+      "training_pairs": 1466,
+      "trainable_parameters": 18087936,
+      "total_parameters": 1729464320
+    }
+  ]
+}

@@ -17,6 +17,7 @@ from typing import Callable
 from django.http import HttpRequest, HttpResponse, JsonResponse
 
 from contracts import ApiError, ErrorCode, error_from_exception
+from modelanvil.core.ids import uuid7
 from modelanvil.core import tenancy
 from modelanvil.core.signals import bind_request
 
@@ -30,7 +31,10 @@ class RequestIdMiddleware:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
-        request_id = request.headers.get("X-Request-Id") or str(uuid.uuid4())
+        try:
+            request_id = str(uuid.UUID(request.headers.get('X-Request-Id', '')))
+        except (ValueError, TypeError, AttributeError):
+            request_id = str(uuid7())
         request.modelanvil_request_id = request_id  # type: ignore[attr-defined]
         bind_request(request)
         response = self.get_response(request)

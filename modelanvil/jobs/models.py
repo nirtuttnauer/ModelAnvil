@@ -25,7 +25,7 @@ from __future__ import annotations
 
 import hashlib
 import secrets
-import uuid
+
 from datetime import datetime
 from typing import Any, Optional
 
@@ -34,6 +34,7 @@ from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.utils import timezone
 
+from modelanvil.core.ids import uuid7
 from modelanvil.core.models import TenantContextModel
 
 
@@ -103,6 +104,9 @@ class Worker(TenantContextModel):
     slots = models.PositiveSmallIntegerField(default=1)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.AVAILABLE)
     last_heartbeat_at = models.DateTimeField(null=True)
+    drain_requested = models.BooleanField(default=False)
+    drain_requested_at = models.DateTimeField(null=True, blank=True)
+    drain_acknowledged_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         unique_together = ("tenant_id", "name")
@@ -162,7 +166,9 @@ class Job(TenantContextModel):
         RUN = "run", "Run"
         CANCEL = "cancel", "Cancel"
 
-    job_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    job_id = models.UUIDField(default=uuid7, unique=True, editable=False)
+    project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, null=True, blank=True,
+        related_name='execution_jobs')
     name = models.CharField(max_length=200)
     pool = models.ForeignKey(WorkerPool, on_delete=models.PROTECT, related_name="jobs")
     status = models.CharField(
@@ -233,7 +239,7 @@ class JobAttempt(TenantContextModel):
         INTERRUPTED = "interrupted"
         EXPIRED = "expired"
 
-    attempt_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    attempt_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="attempts")
     worker = models.ForeignKey(
         Worker, on_delete=models.SET_NULL, null=True, blank=True, related_name="attempts"
@@ -276,7 +282,7 @@ class OutboxEvent(TenantContextModel):
     broker.
     """
 
-    event_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    event_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     topic = models.CharField(max_length=200)
     payload = models.JSONField(default=dict)
     published_at = models.DateTimeField(null=True)
@@ -353,6 +359,13 @@ def claim_job(worker: Worker, job: Optional[Job] = None) -> Optional[dict[str, A
     acquired in job -> worker -> pool order so stale worker objects cannot
     overrun capacity and concurrent claims remain serialized.
     """
+    from modelanvil.jobs.setup import setup_worker_ready
+    current_worker = Worker.objects.filter(pk=worker.pk).first()
+    if current_worker is None or not setup_worker_ready(current_worker):
+        return None
+    if current_worker.drain_requested:
+        Worker.objects.filter(pk=worker.pk, drain_requested=True).update(drain_acknowledged_at=timezone.now())
+        return None
     worker_identity = Worker.objects.filter(pk=worker.pk).values(
         "tenant_id", "pool_id", "capabilities", "slots"
     ).first()
@@ -390,6 +403,7 @@ def claim_job(worker: Worker, job: Optional[Job] = None) -> Optional[dict[str, A
         current_worker is None
         or current_worker.tenant_id != worker_identity["tenant_id"]
         or current_worker.pool_id != worker_identity["pool_id"]
+        or current_worker.drain_requested
         or current_worker.status in (Worker.Status.DRAINING, Worker.Status.OFFLINE)
     ):
         return None
@@ -567,6 +581,24 @@ def commit_result(
             job_status = Job.Status.CANCELLED
         from modelanvil.runners.training.registry import finalize_job
         finalize_job(job, job_status)
+    if job.payload.get('type') == 'qualified_evaluation':
+        if job.desired_action == Job.DesiredAction.CANCEL:
+            job_status = Job.Status.CANCELLED
+        from modelanvil.runners.eval_worker import finalize_evaluation
+        finalize_evaluation(job, job_status)
+    if job.payload.get('type') == 'model_import':
+        from modelanvil.runners.model_catalog import finalize_import
+        finalize_import(job, job_status)
+    if job.payload.get('type') == 'specialist_inference':
+        if job.desired_action == Job.DesiredAction.CANCEL:
+            job_status = Job.Status.CANCELLED
+        from modelanvil.runners.specialist_jobs import finalize_job as finalize_specialist
+        finalize_specialist(job, job_status)
+    if job.payload.get('type') == 'recipe_execution':
+        if job.desired_action == Job.DesiredAction.CANCEL:
+            job_status = Job.Status.CANCELLED
+        from modelanvil.data.recipe_jobs import finalize_job as finalize_recipe
+        finalize_recipe(job, job_status)
     job.status = job_status
     job.lease_expires_at = None
     job.claimed_by = None
@@ -637,5 +669,14 @@ def reconcile_expired_leases() -> int:
         if current_job_attempt and job.status in (Job.Status.FAILED, Job.Status.INTERRUPTED) and job.payload.get('type') == 'qualified_training':
             from modelanvil.runners.training.registry import finalize_job
             finalize_job(job, job.status)
+        if current_job_attempt and job.status in (Job.Status.FAILED, Job.Status.INTERRUPTED) and job.payload.get('type') == 'qualified_evaluation':
+            from modelanvil.runners.eval_worker import finalize_evaluation
+            finalize_evaluation(job, job.status)
+        if current_job_attempt and job.status in (Job.Status.FAILED, Job.Status.INTERRUPTED) and job.payload.get('type') == 'specialist_inference':
+            from modelanvil.runners.specialist_jobs import finalize_job as finalize_specialist
+            finalize_specialist(job, job.status)
+        if current_job_attempt and job.status in (Job.Status.FAILED, Job.Status.INTERRUPTED) and job.payload.get('type') == 'recipe_execution':
+            from modelanvil.data.recipe_jobs import finalize_job as finalize_recipe
+            finalize_recipe(job, job.status)
         count += 1
     return count

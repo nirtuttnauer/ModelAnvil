@@ -67,7 +67,7 @@ class ContextExperimentRunner:
         target_fact: str,
         distractor_count: int = 10,
     ) -> ContextExperiment:
-        """Sweep evidence position across start (0%), middle (50%), and end (100%) (Lost in the Middle test)."""
+        """Inspect compiled evidence positions; recall evaluation remains not run."""
         distractor = "The sky was partly cloudy and atmospheric temperature remained 21 degrees Celsius. "
         positions = ["start", "middle", "end"]
         results: dict[str, Any] = {}
@@ -82,25 +82,19 @@ class ContextExperimentRunner:
                 evidence = (distractor * distractor_count) + "\n" + target_fact
 
             res = self.compiler.compile({"evidence": evidence})
-            # Simulated attention/recall accuracy
-            # Start has 0.98, middle drops to 0.76 (Lost in the Middle effect), end has 0.94
-            simulated_recall = 0.98 if pos == "start" else (0.76 if pos == "middle" else 0.94)
             results[pos] = {
                 "tokens": res.total_input_tokens,
                 "fact_retained": target_fact in res.serialized_prompt,
-                "simulated_retrieval_accuracy": simulated_recall,
             }
 
         experiment = ContextExperiment.objects.create(
             tenant_id=self.recipe_version.tenant_id,
-            name="Evidence Position Sweep (Lost in the Middle)",
+            name="Evidence Position Sweep (Prompt Inspection)",
             recipe_version=self.recipe_version,
             stress_type="position_sweep",
             metrics={
-                "accuracy_start": results["start"]["simulated_retrieval_accuracy"],
-                "accuracy_middle": results["middle"]["simulated_retrieval_accuracy"],
-                "accuracy_end": results["end"]["simulated_retrieval_accuracy"],
-                "middle_dip_detected": results["middle"]["simulated_retrieval_accuracy"] < results["start"]["simulated_retrieval_accuracy"],
+                "status": "not_run",
+                "reason": "Recall evaluation requires model execution; only prompt compilation was performed.",
             },
             details=results,
         )

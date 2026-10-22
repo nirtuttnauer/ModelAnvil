@@ -45,6 +45,8 @@ def resolve_inputs(**kwargs):
     module = runtime_for_architecture(getattr(base, 'architecture_ref', None) or base)
     if module is None:
         raise ValueError('The selected base model architecture is not a supported training runtime.')
+    if module in (hf_runtime, mlx_runtime) and kwargs.pop('hyperparameters', None):
+        raise ValueError('This pinned GPU profile does not expose custom optimizer or validation settings.')
     if module not in (hf_runtime, mlx_runtime):
         if kwargs.pop('recipe_type', 'full_sft') != 'full_sft':
             raise ValueError('This reference runtime supports full_sft only.')

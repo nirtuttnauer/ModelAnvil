@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 from datetime import date
 import hashlib
+from html.parser import HTMLParser
 import io
 import json
 import time
@@ -35,6 +36,9 @@ from modelanvil.data.bank.http_snapshot import (
 
 ROOT = Path(__file__).resolve().parents[1]
 HF_SOURCES = {
+    "math-gsm8k": ("openai/gsm8k", "main/train-00000"),
+    "code-mbpp": ("google-research-datasets/mbpp", "full/train-00000"),
+    "text-dolly15k": ("databricks/databricks-dolly-15k", "databricks-dolly-15k.jsonl"),
     "text-smol-magpie-ultra": ("HuggingFaceTB/smoltalk", "data/smol-magpie-ultra/train-00000"),
     "text-ultrachat-200k": ("HuggingFaceH4/ultrachat_200k", "data/train_sft-00000"),
     "text-squad": ("rajpurkar/squad", "plain_text/train-00000"),
@@ -51,6 +55,50 @@ ARCHIVES = {
     "numeric-iris": "https://archive.ics.uci.edu/static/public/53/iris.zip",
     "numeric-wine-quality": "https://archive.ics.uci.edu/static/public/186/wine+quality.zip",
 }
+
+UCI_LICENSE_DECLARATION = (
+    "This dataset is licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) license. "
+    "This allows for the sharing and adaptation of the datasets for any purpose, provided that the appropriate credit is given."
+)
+
+
+class _PublisherText(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.ignored = 0
+        self.parts = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag in ("script", "style"):
+            self.ignored += 1
+
+    def handle_endtag(self, tag):
+        if tag in ("script", "style") and self.ignored:
+            self.ignored -= 1
+
+    def handle_data(self, data):
+        if not self.ignored:
+            self.parts.append(data)
+
+
+def uci_license_notice(source_id, raw, url):
+    """Retain the publisher license and attribution without page contact/edit data."""
+    name, authors, doi = {
+        "numeric-iris": ("Iris", "R. A. Fisher", "10.24432/C56C76"),
+        "numeric-wine-quality": ("Wine Quality", "P. Cortez, A. Cerdeira, F. Almeida, T. Matos, and J. Reis", "10.24432/C56S3T"),
+    }[source_id]
+    parser = _PublisherText()
+    parser.feed(raw.decode("utf-8"))
+    text = " ".join(" ".join(parser.parts).split())
+    if "License " + UCI_LICENSE_DECLARATION not in text:
+        raise ValueError("UCI publisher license declaration changed or is unavailable.")
+    return (
+        f"{name} publisher license notice\n\nSource: {url}\n"
+        f"Attribution: {authors}. {name} [Dataset]. UCI Machine Learning Repository. https://doi.org/{doi}\n"
+        "License: CC-BY-4.0\nLicense URL: https://creativecommons.org/licenses/by/4.0/\n\n"
+        + UCI_LICENSE_DECLARATION + "\n\n"
+        "Extracted from the publisher license section; page navigation, edit history and contact details are omitted.\n"
+    ).encode("utf-8")
 
 
 def transport(url, headers):
@@ -85,6 +133,12 @@ def size_at(url):
 
 
 def group_for(source_id, row):
+    if source_id == "math-gsm8k":
+        return "gsm8k:question:" + digest(row["question"].encode())
+    if source_id == "code-mbpp":
+        return "mbpp:task:" + str(row["task_id"])
+    if source_id == "text-dolly15k":
+        return "dolly:prompt:" + digest(canonical_json([row["instruction"], row["context"]]))
     if source_id == "text-squad":
         return "squad:passage:" + digest(row["context"].encode())
     if source_id in ("text-ultrachat-200k", "preference-ultrafeedback-binarized"):
@@ -164,7 +218,22 @@ def qualify(source, date):
         manifest["licenses"].append(
             archive_notice(source_id, "publisher-card", get(readme_url), readme_url)
         )
-        if source_id != "tools-glaive-v2":
+        if entry["path"].endswith(".jsonl"):
+            # Only complete lines in this bounded prefix are admitted.
+            raw = stream.read(min(256 * 1024, entry["size"]))
+            start = 0
+            for index, line in enumerate(raw.splitlines(keepends=True)[:20]):
+                if not line.endswith(b"\n"):
+                    raise ValueError("Selected JSONL row is incomplete within the prefix.")
+                row = json.loads(line)
+                add_sample(
+                    f"{entry['path']}#row={index}",
+                    {"kind": "json_slice", "container": "data", "start": start, "length": len(line)},
+                    group_for(source_id, row),
+                    {"upstream_split": "train", "configuration": source["fetch"].get("configuration")},
+                )
+                start += len(line)
+        elif entry["path"].endswith(".parquet"):
             import pyarrow.parquet as pq
 
             parquet = pq.ParquetFile(stream)
@@ -172,7 +241,8 @@ def qualify(source, date):
             for group in groups:
                 count = parquet.metadata.row_group(group).num_rows
                 rows = parquet.read_row_group(group)
-                for index in sorted(set(int(i * (count - 1) / 4) for i in range(5))):
+                samples = 20 if source_id in ("math-gsm8k", "code-mbpp") else 5
+                for index in sorted(set(int(i * (count - 1) / (samples - 1)) for i in range(samples))):
                     row = rows.slice(index, 1).to_pylist()[0]
                     reader = {
                         "kind": "parquet_row",
@@ -386,7 +456,8 @@ def qualify(source, date):
                     notice_url = source["source_url"]
                     manifest["licenses"].append(
                         archive_notice(
-                            source_id, "publisher-declaration", get(notice_url), notice_url
+                            source_id, "publisher-declaration",
+                            uci_license_notice(source_id, get(notice_url), notice_url), notice_url
                         )
                     )
         else:
@@ -470,6 +541,7 @@ def qualify(source, date):
     )
     sample_bytes = sum(r["size"] for r in manifest["records"])
     source["license"]["reviewed_revision"] = revision
+    source["license"]["upstream_declaration_checked_on"] = date
     source["connector_status"] = "implemented_qualified_bounded_subset"
     source["publication_status"] = "qualified_bounded_download_enabled"
     source["size_bytes"] = transfer_bytes + sum(r["size"] for r in manifest["licenses"])

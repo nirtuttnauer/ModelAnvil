@@ -1,7 +1,7 @@
 """Server-owned descriptions of current execution paths; metadata is not qualification."""
 from __future__ import annotations
 
-EVIDENCE_DOC = "/docs/engineering/capability-evidence.md"
+EVIDENCE_DOC = "/docs/engineering/supported-capabilities.md"
 
 
 def evidence(level="unknown", source="No verified execution evidence recorded"):

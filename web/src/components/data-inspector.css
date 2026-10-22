@@ -1,0 +1,63 @@
+.data-inspector { container-type: inline-size; min-width: 0; padding: var(--space-18) var(--space-20); margin: var(--space-12) 0; border: 1px solid var(--border); border-radius: var(--radius-8); background: var(--surface); color: var(--text); }
+.data-inspector-heading { display: flex; align-items: flex-start; gap: var(--space-12); margin-bottom: var(--space-18); }
+.data-inspector-heading h3 { margin: 0; font-size: 15px; }
+.data-inspector-heading p { margin: 5px 0 0; color: var(--text-muted); font-size: var(--type-13); }
+.data-inspector-icon { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; background: var(--primary-surface); color: var(--primary-text); border-radius: var(--radius-7); }
+.data-fields { min-width: 0; }
+.data-fields > .data-facts { margin: 0; display: grid; }
+.data-fields > .data-facts:empty { display: none; }
+.data-fields > .data-facts > div { display: grid; grid-template-columns: minmax(100px, .8fr) minmax(0, 1.4fr); gap: var(--space-12) var(--space-20); padding: 11px 0; border-bottom: 1px solid var(--border); font-size: var(--type-13); line-height: 1.65; }
+.data-fields > .data-facts > div:first-child { padding-top: 0; }
+.data-fields > .data-facts > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.data-fields > .data-facts dt { color: var(--text-muted); overflow-wrap: anywhere; }
+.data-fields > .data-facts dd { margin: 0; min-width: 0; color: var(--text); }
+.data-group { min-width: 0; margin-top: var(--space-18); padding: 14px var(--space-16); border: 1px solid var(--border); border-radius: var(--radius-7); background: var(--surface-subtle); }
+.data-group .data-group { background: var(--surface); }
+.data-group > .data-group-heading { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-12); flex-wrap: wrap; margin: 0 0 14px !important; font-size: var(--type-13); font-weight: 650; overflow-wrap: anywhere; }
+.data-count { color: var(--text-muted); font-size: var(--type-12); font-weight: 400; }
+.data-empty { color: var(--text-muted); font-size: var(--type-13); }
+.data-number { font-variant-numeric: tabular-nums; }
+.data-string { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; }
+.data-boolean { display: inline-flex; align-items: center; gap: 5px; padding: 1px var(--space-8); border: 1px solid var(--border); border-radius: 5px; background: var(--surface-subtle); font-size: var(--type-12); }
+.data-identifier { min-width: 0; margin: 0; }
+.data-identifier > summary { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6) var(--space-12); min-height: 44px; cursor: pointer; color: var(--text-secondary); }
+.data-identifier > summary span { color: var(--primary-text); font-size: var(--type-12); text-decoration: underline; text-underline-offset: 3px; }
+.data-identifier code { font-size: var(--type-12); overflow-wrap: anywhere; }
+.data-identifier[open] > code { display: block; padding: var(--space-10) var(--space-12); margin: 5px 0; border: 1px solid var(--border); border-radius: 5px; background: var(--code-surface); }
+.data-records { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-12); }
+.data-records > li { display: flex; align-items: flex-start; gap: var(--space-12); padding: var(--space-12); border: 1px solid var(--border); border-radius: var(--radius-7); background: var(--surface); }
+.data-records > li > div { flex: 1; min-width: 0; }
+.data-record-index { color: var(--text-muted); font-size: 11px; font-variant-numeric: tabular-nums; min-width: 24px; padding-top: 3px; }
+.readable-text { min-width: 0; color: var(--text); font-size: var(--type-14); }
+.readable-text > p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.8; }
+.evaluation-case { container-type: inline-size; margin: var(--space-12) 0; border: 1px solid var(--border); border-radius: var(--radius-8); overflow: hidden; background: var(--surface); }
+.evaluation-case > summary { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-10); padding: 14px var(--space-18); min-height: 48px; cursor: pointer; font-size: var(--type-13); }
+.evaluation-case > summary::before { content: '›'; color: var(--text-muted); font-size: var(--type-20); }
+.evaluation-case[open] > summary::before { transform: rotate(90deg); }
+.evaluation-case > summary strong { overflow-wrap: anywhere; }
+.evaluation-case-slice { color: var(--text-muted); }
+.evaluation-case-score { color: var(--text-secondary); margin-left: auto; font-variant-numeric: tabular-nums; }
+.evaluation-case-body { padding: var(--space-18); border-top: 1px solid var(--border); display: grid; gap: 14px; }
+.response-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.response-card { min-width: 0; padding: var(--space-16) var(--space-18); border: 1px solid var(--border); border-radius: var(--radius-7); }
+.response-card h3 { display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--space-8); margin: 0 0 var(--space-12); font-size: var(--type-12); color: var(--text-secondary); }
+.response-card h3 span { font-weight: 400; }
+.response-input { background: var(--surface-subtle); }
+.response-failure { border-left: 3px solid var(--error); background: var(--error-surface); padding: var(--space-12) var(--space-16); border-radius: 4px; }
+.response-failure > strong { display: block; color: var(--error); font-size: var(--type-12); margin-bottom: var(--space-6); }
+@media (max-width: 600px) {
+  .data-inspector { padding: var(--space-16); }
+  .data-fields > .data-facts > div { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+  .data-group { padding: var(--space-12); }
+  .response-comparison { grid-template-columns: minmax(0, 1fr); }
+  .evaluation-case-body { padding: var(--space-12); }
+  .evaluation-case-score { margin-left: 0; }
+}
+
+@container (max-width: 380px) {
+  .data-fields > .data-facts > div { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+}
+
+@container (max-width: 500px) {
+  .response-comparison { grid-template-columns: minmax(0, 1fr); }
+}

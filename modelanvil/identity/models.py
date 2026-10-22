@@ -12,6 +12,7 @@ from __future__ import annotations
 import hashlib
 import secrets
 import uuid
+
 from typing import Any, Optional
 
 from django.conf import settings
@@ -20,9 +21,9 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
+from modelanvil.core.ids import uuid7
 from modelanvil.core.models import TenantContextModel
 from modelanvil.core.tenancy import get_active_project, get_active_tenant
-
 
 # ---------------------------------------------------------------------------
 # Roles
@@ -66,7 +67,7 @@ class Tenant(models.Model):
     response, or artifact path may cross tenant boundaries.
     """
 
-    tenant_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    tenant_id = models.UUIDField(primary_key=True, default=uuid7, editable=False)
     slug = models.SlugField(max_length=64, unique=True)
     name = models.CharField(max_length=200)
     status = models.CharField(
@@ -123,7 +124,7 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     """A platform user, identified by email."""
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid7, editable=False)
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=200, blank=True)
     is_staff = models.BooleanField(default=False)
@@ -171,7 +172,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Membership(models.Model):
     """A user's role within a tenant."""
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid7, editable=False)
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name="memberships")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="memberships")
     role = models.CharField(max_length=16, choices=Role.choices, default=Role.VIEWER)
@@ -202,7 +203,7 @@ class ApiKey(models.Model):
     within the owning tenant.
     """
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid7, editable=False)
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name="api_keys")
     project = models.ForeignKey(
         "Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="api_keys"
@@ -256,7 +257,7 @@ def generate_api_key() -> tuple[str, str]:
 class Team(TenantContextModel):
     """A team within a tenant, grouping members and projects."""
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid7, editable=False)
     slug = models.SlugField(max_length=64)
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True, default="")
@@ -278,7 +279,7 @@ class Project(TenantContextModel):
     share a tenant with its owning team.
     """
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid7, editable=False)
     team = models.ForeignKey(Team, on_delete=models.PROTECT, related_name="projects")
     slug = models.SlugField(max_length=64)
     name = models.CharField(max_length=200)
@@ -312,7 +313,7 @@ class Project(TenantContextModel):
 class TeamMembership(TenantContextModel):
     """A user's role grant within a team."""
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid7, editable=False)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="memberships")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="team_memberships")
     role = models.CharField(max_length=16, choices=Role.choices, default=Role.VIEWER)
@@ -335,7 +336,7 @@ class TeamMembership(TenantContextModel):
 class ProjectMembership(TenantContextModel):
     """A user's explicit role grant within a project."""
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid7, editable=False)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="memberships")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="project_memberships")
     role = models.CharField(max_length=16, choices=Role.choices, default=Role.VIEWER)
@@ -365,7 +366,7 @@ class ProjectConfig(TenantContextModel):
     there is no end-user identity to attribute).
     """
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid7, editable=False)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="configs")
     revision_no = models.PositiveIntegerField()
     goals = models.JSONField(default=dict, blank=True)
@@ -401,7 +402,7 @@ class ProjectConfig(TenantContextModel):
 class ProjectGrant(TenantContextModel):
     """An explicit grant allowing a target project to access resources owned by another project within the same tenant."""
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid7, editable=False)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="granted_resources")
     granted_to_project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="received_grants")
     resource_type = models.CharField(max_length=64, default="all")  # model, tokenizer, data_source, etc.
@@ -540,3 +541,25 @@ def get_accessible_queryset(
         filters = filters | models.Q(**{f"{uuid_field}__in": granted_resource_uuids})
 
     return qs.filter(filters)
+
+
+class AccountAction(models.Model):
+    """One-time password reset or teammate invitation. Only the secret hash is stored."""
+
+    class Purpose(models.TextChoices):
+        PASSWORD_RESET = 'password_reset', 'Password reset'
+        INVITATION = 'invitation', 'Invitation'
+
+    id = models.UUIDField(primary_key=True, default=uuid7, editable=False)
+    purpose = models.CharField(max_length=32, choices=Purpose.choices)
+    email = models.EmailField()
+    secret_hash = models.CharField(max_length=64, unique=True)
+    tenant = models.ForeignKey(Tenant, null=True, blank=True, on_delete=models.CASCADE, related_name='account_actions')
+    project = models.ForeignKey(Project, null=True, blank=True, on_delete=models.CASCADE, related_name='account_actions')
+    role = models.CharField(max_length=16, choices=Role.choices, default=Role.ENGINEER)
+    expires_at = models.DateTimeField()
+    used_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        indexes = [models.Index(fields=['purpose', 'email'], name='identity_ac_purpose_d3dbfd_idx')]

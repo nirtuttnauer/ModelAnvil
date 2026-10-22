@@ -35,6 +35,8 @@ SECRET_KEY = os.environ.get(
     "insecure-development-key-change-me-in-production",
 )
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
+MODELANVIL_SELF_SERVICE_ACCOUNTS = os.environ.get("MODELANVIL_SELF_SERVICE_ACCOUNTS", "1" if DEBUG else "0") == "1"
+MODELANVIL_LOCAL_MODEL_DIR = os.environ.get("MODELANVIL_LOCAL_MODEL_DIR", "")
 ALLOWED_HOSTS = [
     h.strip()
     for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,testserver").split(",")
@@ -63,6 +65,9 @@ else:
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": BASE_DIR / os.environ.get("DATABASE_NAME", "modelanvil.db"),
+            # Acquire the writer lock before reads so worker heartbeats cannot
+            # invalidate a later lock upgrade in a local API write transaction.
+            "OPTIONS": {"transaction_mode": "IMMEDIATE"},
             # HTTP tests need separate connections instead of shared in-memory SQLite.
             "TEST": {"NAME": os.environ.get("DATABASE_TEST_NAME")},
         }
@@ -172,6 +177,8 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_THROTTLE_RATES": {
         "anon": "60/min",
+        "accounts": "10/min",
+        "activation": "60/min",
         "user": "600/min",
         "worker": "1200/min",
     },
@@ -194,6 +201,15 @@ CORS_ALLOWED_ORIGINS = [
 # ---------------------------------------------------------------------------
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
+
+# Private workloads never use external judges, generation, analytics or support upload.
+MODELANVIL_OFFLINE = os.environ.get('MODELANVIL_OFFLINE', '0') == '1'
+MODELANVIL_PUBLIC_MODEL_DOWNLOADS = os.environ.get('MODELANVIL_PUBLIC_MODEL_DOWNLOADS', '0') == '1'
+MODELANVIL_ACQUISITION_ORIGINS = [v.strip() for v in os.environ.get('MODELANVIL_ACQUISITION_ORIGINS',
+    'https://huggingface.co,https://cdn-lfs.huggingface.co,https://cdn-lfs-us-1.hf.co,https://cas-bridge.xethub.hf.co,https://cdn-lfs.hf.co,https://api.github.com,https://raw.githubusercontent.com,https://github.com,https://archive.ics.uci.edu').split(',') if v.strip()]
+os.environ['HF_HUB_DISABLE_TELEMETRY'] = '1'
+os.environ['HF_HUB_DISABLE_XET'] = '1'
+os.environ['DO_NOT_TRACK'] = '1'
 USE_I18N = True
 USE_TZ = True
 
@@ -247,4 +263,6 @@ LOGGING = {
         "handlers": ["console"],
         "level": os.environ.get("LOG_LEVEL", "INFO"),
     },
+    "loggers": {name: {"handlers": ["console"], "level": "INFO", "propagate": False}
+                for name in ('django.server', 'django.request')},
 }

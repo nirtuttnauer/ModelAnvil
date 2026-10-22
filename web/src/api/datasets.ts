@@ -1,6 +1,8 @@
+import { authHeaders, getActiveProjectId } from './client.ts';
+import type { TrainingColumnMapping } from './training-dataset.ts';
 export const MAX_DATASET_BYTES = 16 * 1024 * 1024;
 export const DATASET_SOURCE_TYPES = {
-  jsonl: 'application/x-ndjson', csv: 'text/csv', json: 'application/json',
+  training: 'application/x-ndjson', jsonl: 'application/x-ndjson', csv: 'text/csv', json: 'application/json',
   docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   pdf: 'application/pdf',
 };
@@ -54,7 +56,13 @@ export interface PrepareUploadedDatasetOptions {
   sourceFormat?: DatasetSourceFormat;
   textField?: string;
   groupField?: string;
+  sourceMapping?: TrainingColumnMapping;
+  chunkCharacters?: number;
   fetchImpl?: typeof fetch;
+  detect?: boolean;
+  dedup?: boolean | { exact: boolean; near: boolean };
+  resume?: { sha256: string; format: DatasetSourceFormat; artifactId: string; datasetId?: string; name: string };
+  onProgress?: (state: NonNullable<PrepareUploadedDatasetOptions['resume']>, message: string) => void;
 }
 
 export interface PaginatedResult<T> {
@@ -142,12 +150,16 @@ async function request(
   fetchImpl: typeof fetch,
   expectedStatus: number,
   body?: unknown,
+  idempotencyKey?: string,
 ): Promise<any> {
   const safeUrl = sanitizeUrl(url);
   const headers: Record<string, string> = {
-    Authorization: `Bearer ${token.trim()}`,
+    ...Object.fromEntries(authHeaders(token).entries()),
     Accept: 'application/json',
   };
+  const project = getActiveProjectId();
+  if (project) headers['X-Project-ID'] = project;
+  if (idempotencyKey) headers['Idempotency-Key'] = idempotencyKey;
   const init: RequestInit = {
     method: body ? 'POST' : 'GET',
     headers,
@@ -167,7 +179,10 @@ async function request(
   }
   if (res.status !== expectedStatus) {
     if (res.status === 400) {
-      throw new DatasetClientError(step, `HTTP 400: Request validation failed; no revision was published.`, 400);
+      const error = await res.json().catch(() => null);
+      const details = error?.error?.details;
+      const repair = Array.isArray(details) ? details.filter(d => typeof d?.message === 'string').map(d => d.message).join(' ') : '';
+      throw new DatasetClientError(step, repair || 'HTTP 400: Request validation failed; no revision was published.', 400);
     }
     if (res.status === 404 || res.status === 405 || res.status === 501) {
       throw new DatasetClientError(step, `HTTP ${res.status}: Backend capability is unavailable or not implemented.`, res.status);
@@ -254,9 +269,17 @@ export async function fetchDatasetWorkspace(
 
 export async function prepareUploadedDataset({
   file, name, token, splitSeed = '0', validationPercent = 10, testPercent = 10,
-  sourceFormat = 'jsonl', textField = 'text', groupField = '',
+  sourceFormat = 'jsonl', textField = 'text', groupField = '', sourceMapping,
+  chunkCharacters,
+  detect = false, dedup = false, resume, onProgress,
   fetchImpl = fetch,
 }: PrepareUploadedDatasetOptions): Promise<PreparedDataset> {
+  const project = getActiveProjectId();
+  const transport = fetchImpl;
+  fetchImpl = (input, init) => {
+    if (getActiveProjectId() !== project) throw new DatasetClientError('Scope validation', 'Project changed during preparation. Return to the original project to resume.');
+    return transport(input, init);
+  };
   if (typeof name !== 'string' || !name.trim()) {
     throw new DatasetClientError('Input validation', 'Dataset name is required.');
   }
@@ -264,6 +287,10 @@ export async function prepareUploadedDataset({
     throw new DatasetClientError('Input validation', 'Dataset name cannot exceed 200 characters.');
   }
   validateToken(token);
+  if (sourceMapping && sourceFormat !== 'training') throw new DatasetClientError('Input validation', 'Column mapping requires a training source.');
+  if (chunkCharacters !== undefined && (!Number.isInteger(chunkCharacters) || chunkCharacters < 32 || chunkCharacters > 4096)) {
+    throw new DatasetClientError('Input validation', 'Chunk character limit must be an integer from 32 to 4096.');
+  }
   if (!(file instanceof File) || file.size === 0) {
     throw new DatasetClientError('Input validation', 'A nonempty file is required.');
   }
@@ -301,22 +328,33 @@ export async function prepareUploadedDataset({
     throw new DatasetClientError('Input validation', 'WebCrypto is unavailable; use localhost or a secure browser context.');
   }
   const sha256 = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
-  const registered = await request('/api/v1/artifacts/', 'Artifact registration', token, fetchImpl, 201, {
+  if (resume && (resume.sha256 !== sha256 || resume.format !== sourceFormat || resume.name !== name)) {
+    throw new DatasetClientError('Input validation', 'Reattach the same source and use the original dataset name, or explicitly start a new import.');
+  }
+  const registered = resume ? await request(`/api/v1/artifacts/${resume.artifactId}/`, 'Artifact verification', token, fetchImpl, 200) : await request('/api/v1/artifacts/', 'Artifact registration', token, fetchImpl, 201, {
     storage_location_id: 'local', object_key: `inputs/${objectId}.${sourceFormat}`,
     sha256, byte_size: file.size, media_type: DATASET_SOURCE_TYPES[sourceFormat],
   });
-  verifyArtifact(registered, 'staging', sha256, file.size, 'Artifact registration');
+  verifyArtifact(registered, resume && registered.state === 'committed' ? 'committed' : 'staging', sha256, file.size, 'Artifact registration', resume?.artifactId);
+  const progress = { sha256, format: sourceFormat, artifactId: registered.artifact_id, name, ...(resume?.datasetId ? { datasetId: resume.datasetId } : {}) };
+  onProgress?.(progress, registered.state === 'committed' ? 'Verified source already uploaded.' : 'Source registered; uploading up to 16 MiB.');
   const form = new FormData();
   form.append('file', file);
-  const artifact = await request(`/api/v1/artifacts/${registered.artifact_id}/upload/`, 'File upload', token, fetchImpl, 200, form);
+  const artifact = registered.state === 'committed' ? registered : await request(`/api/v1/artifacts/${registered.artifact_id}/upload/`, 'File upload', token, fetchImpl, 200, form);
   verifyArtifact(artifact, 'committed', sha256, file.size, 'File upload', registered.artifact_id);
-  const dataset = await request('/api/v1/datasets/', 'Dataset creation', token, fetchImpl, 201, { name });
+  const dataset = resume?.datasetId ? await request(`/api/v1/datasets/${resume.datasetId}/`, 'Dataset verification', token, fetchImpl, 200) : await request('/api/v1/datasets/', 'Dataset creation', token, fetchImpl, 201, { name }, `dataset:${artifact.artifact_id}`);
   if (!validDataset(dataset)) throw new DatasetClientError('Dataset creation', 'Invalid dataset response.');
-  const revision = await request(`/api/v1/datasets/${dataset.dataset_id}/prepare/`, 'Dataset preparation', token, fetchImpl, 201, {
+  onProgress?.({ ...progress, datasetId: dataset.dataset_id }, 'Uploaded source verified; preparing and publishing.');
+  const preparation = {
     input_artifact_id: artifact.artifact_id, split_seed: splitSeed,
     validation_percent: validationPercent, test_percent: testPercent,
     ...(sourceFormat !== 'jsonl' ? { source_format: sourceFormat, text_field: textField, group_field: groupField || null } : {}),
-  });
+    ...(sourceMapping ? { source_mapping: sourceMapping } : {}),
+    ...(chunkCharacters !== undefined ? { chunk_characters: chunkCharacters } : {}),
+    ...(detect ? { detect } : {}), ...(dedup ? { dedup } : {}),
+  };
+  const requestDigest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(preparation)))), byte => byte.toString(16).padStart(2, '0')).join('');
+  const revision = await request(`/api/v1/datasets/${dataset.dataset_id}/prepare/`, 'Dataset preparation', token, fetchImpl, 201, preparation, `prepare:${requestDigest}`);
   if (!validRevision(revision) || revision.state !== 'published' || !revision.published_at
     || revision.row_count === null || revision.manifest_artifact === null || !revision.recipe_digest) {
     throw new DatasetClientError('Dataset preparation', 'Invalid response: a published revision was not confirmed.');

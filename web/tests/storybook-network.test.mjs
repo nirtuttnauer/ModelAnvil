@@ -17,7 +17,7 @@ const imports = { msw, './data-fixtures': data, './ml-fixtures': ml, './operatio
 const module = { exports: {} };
 const loggedErrors = [];
 vm.runInNewContext(bundle.output.find(chunk => chunk.type === 'chunk').code, {
-  module, exports: module.exports, URL,
+  module, exports: module.exports, URL, structuredClone,
   console: { ...console, error: message => loggedErrors.push(message) },
   require(name) { assert.ok(imports[name], `Unexpected demo handler import: ${name}`); return imports[name]; },
 });
@@ -87,6 +87,29 @@ test('unknown API reads and writes fail closed with 501 and never pass through t
   assert.equal(loggedErrors.length, 2);
 });
 
+test('Dataset Bank demo acquisition history resolves its existing synthetic detail records', async () => {
+  const { status, body } = await request('/api/v1/dataset-bank/acquisitions/');
+  assert.equal(status, 200);
+  assert.equal(body.results.length, 2);
+  for (const acquisition of body.results) {
+    const detail = await request(`/api/v1/dataset-bank/acquisitions/${acquisition.snapshot_id}/`);
+    assert.equal(detail.status, 200);
+    assert.deepEqual(detail.body, acquisition);
+  }
+  server.resetHandlers(...demoHandlers('empty'));
+  assert.deepEqual((await request('/api/v1/dataset-bank/acquisitions/')).body.results, []);
+});
+
+test('build identity is mocked in every story state without reaching a live API', async () => {
+  for (const state of ['populated', 'empty', 'loading', 'error']) {
+    server.resetHandlers(...demoHandlers(state));
+    const { status, body } = await request('/api/v1/build/');
+    assert.equal(status, 200);
+    assert.equal(body.protocol, 'demo-only');
+    assert.ok(body.dataset_formats.includes('jsonl'));
+  }
+});
+
 test('demo create/cancel writes update only fixture records and reset restores all nested state', async () => {
   const initial = (await request('/api/v1/jobs/')).body;
   const created = await request('/api/v1/jobs/', post({ name: 'Session-only job', pool: 1, priority: 0, requirements: { slots: 1 }, payload: { fixture: 'Storybook only' } }));
@@ -152,4 +175,32 @@ test('error stories return explicit 503 for API reads and writes without mutatin
   }
   assert.deepEqual(operations.operationsResponses, initial);
   for (const path of ['/api/v1/health/', '/api/v1/projects/']) assert.equal((await request(path)).status, 200);
+});
+
+test('completed reference downloads return synthetic JSON without escaping the demo network', async () => {
+  const result = await request('/api/v1/training-runs/30000000-0000-4000-8000-000000000001/download/?export_format=json');
+  assert.equal(result.status, 200); assert.equal(result.body.demo_only, true);
+  assert.equal((await request('/api/v1/training-runs/30000000-0000-4000-8000-000000000001/download/?export_format=gguf')).status, 400);
+});
+
+
+test('annotation demo blind responses redact labels without mutating stored evidence', async () => {
+  const batch = '/api/v1/labeling-batches/60000000-0000-4000-8000-000000000010/tasks/';
+  const task = '/api/v1/annotation-tasks/60000000-0000-4000-8000-000000000101/';
+  const assisted = await request(batch);
+  assert.equal(assisted.body.results[0].content.draft_prediction.predicted_label, 'Helpful');
+  const blind = await request(batch + '?blind=1');
+  assert.equal(blind.body.results[0].content.draft_prediction, undefined);
+  for (const row of blind.body.results) if (row.latest_review) assert.deepEqual(row.latest_review.human_label, {});
+  const saved = await request(task + 'review/?blind=1', post({decision:'corrected',human_label:{label:'Needs correction'},expected_revision:1,blind_review:true}));
+  assert.deepEqual(saved.body.latest_review.human_label, {});
+  assert.equal(saved.body.content.draft_prediction, undefined);
+  const history = await request(task + 'history/?blind=1');
+  assert.deepEqual(history.body.results[0].human_label, {});
+  const visible = await request(task);
+  assert.equal(visible.body.latest_review.human_label.label, 'Needs correction');
+  assert.equal(visible.body.content.draft_prediction.predicted_label, 'Helpful');
+  const escalated = await request(task + 'escalate/?blind=1',post({reason:'Synthetic escalation'}));
+  assert.equal(escalated.body.needs_adjudication,true);
+  assert.equal(escalated.body.content.draft_prediction,undefined);
 });

@@ -49,6 +49,12 @@ class GateResultSerializer(serializers.ModelSerializer):
 
 
 class ReleaseVersionSerializer(serializers.ModelSerializer):
+    local_review = serializers.JSONField(source='bundle_manifest.local_review', read_only=True, default=None)
+
+    def validate(self, attrs):
+        if self.instance and self.instance.bundle_manifest.get('local_review'):
+            raise serializers.ValidationError('Reviewed releases are immutable; create another candidate revision.')
+        return attrs
     execution_evidence = serializers.SerializerMethodField()
 
     def get_execution_evidence(self, obj):
@@ -74,7 +80,7 @@ class ReleaseVersionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReleaseVersion
         fields = (
-            "execution_evidence",
+            "execution_evidence", "local_review",
             "release_version_id", "project", "release", "revision_no", "candidate_type",
             "candidate_ref", "model_version", "status", "manifest_digest",
             "model_card", "bundle_manifest", "quantization_spec", "gate_results", "created_at"
@@ -96,11 +102,67 @@ class ReleaseViewSet(TenantScopedViewSet):
     serializer_class = ReleaseSerializer
     lookup_field = "release_id"
 
+    def perform_destroy(self, instance):
+        if instance.versions.filter(bundle_manifest__local_review__isnull=False).exists():
+            raise serializers.ValidationError('Reviewed release revisions retain their evidence and exports.')
+        super().perform_destroy(instance)
+
 
 class ReleaseVersionViewSet(TenantScopedViewSet):
     queryset = ReleaseVersion.objects.prefetch_related("gate_results")
     serializer_class = ReleaseVersionSerializer
     lookup_field = "release_version_id"
+
+    @action(detail=False, methods=['post'], url_path='create-candidate')
+    def create_candidate(self, request):
+        from modelanvil.releases.review import create_candidate_review
+        name = serializers.CharField(max_length=200).run_validation(request.data.get('name'))
+        candidate_id = serializers.UUIDField().run_validation(request.data.get('candidate_model_version'))
+        evaluation_id = serializers.UUIDField().run_validation(request.data.get('evaluation_run'))
+        threshold = serializers.FloatField(min_value=0, max_value=1).run_validation(request.data.get('min_accuracy', 0.8))
+        import math
+        if not math.isfinite(threshold):
+            raise serializers.ValidationError('Accuracy threshold must be finite.')
+        candidate = get_accessible_queryset(ModelVersion).filter(model_version_id=candidate_id).first()
+        evaluation = get_accessible_queryset(EvaluationRun).filter(run_id=evaluation_id).first()
+        if not candidate or not evaluation:
+            from rest_framework.exceptions import NotFound
+            raise NotFound()
+        license_record = request.data.get('license_record')
+        if license_record is not None:
+            if not isinstance(license_record, dict) or set(license_record) != {'spdx', 'source', 'notice'}:
+                raise serializers.ValidationError('License record requires spdx, source and notice text.')
+            license_record = {key: serializers.CharField(max_length=4000).run_validation(value) for key, value in license_record.items()}
+        try:
+            version, created = create_candidate_review(tenant=get_active_tenant(),
+                project=get_active_project() or candidate.project_id, name=name, candidate=candidate,
+                evaluation=evaluation, min_accuracy=threshold, license_record=license_record)
+        except (ValueError, PermissionError) as exc:
+            raise serializers.ValidationError({'review': str(exc)}) from exc
+        if created:
+            record_audit('release.review', 'release_version', version.release_version_id,
+                input_snapshot={'manifest_digest': version.manifest_digest, 'candidate': str(candidate_id),
+                                'evaluation': str(evaluation_id), 'scope': 'local_cpu_export'})
+        return Response(self.get_serializer(version).data, status=201 if created else 200)
+
+    def perform_destroy(self, instance):
+        if instance.bundle_manifest.get('local_review'):
+            raise serializers.ValidationError('Reviewed releases retain their evidence and exports.')
+        super().perform_destroy(instance)
+
+    @action(detail=True, methods=['get'], url_path='download')
+    def download(self, request, release_version_id=None):
+        from django.http import HttpResponse
+        from modelanvil.releases.review import candidate_archive
+        version = self.get_object()
+        try:
+            raw = candidate_archive(version)
+        except (ValueError, PermissionError) as exc:
+            raise serializers.ValidationError({'export': str(exc)}) from exc
+        response = HttpResponse(raw, content_type='application/zip')
+        response['Content-Disposition'] = f'attachment; filename="candidate-{version.release_version_id}.zip"'
+        response['Cache-Control'] = 'no-store'
+        return response
 
     def perform_create(self, serializer):
         from rest_framework.exceptions import NotFound
@@ -286,9 +348,13 @@ class ReleaseVersionViewSet(TenantScopedViewSet):
 
 
 class DeploymentRevisionSerializer(serializers.ModelSerializer):
+    release_version_id = serializers.UUIDField(source='release_version.release_version_id', read_only=True)
     execution_evidence = serializers.SerializerMethodField()
 
     def get_execution_evidence(self, obj):
+        if obj.serving_config.get('backend') == 'modelanvil.local-on-demand-cpu.v1':
+            return evidence('integrated_execution' if obj.serving_config.get('readiness_probe') else 'configuration_only',
+                'Local on-demand CPU serving; startup probe recorded. Check live health after restart or interruption; production qualification unavailable.')
         origin = (obj.serving_config or {}).get("execution_evidence", {})
         return evidence("simulation" if origin.get("level") == "simulation" else "unknown",
                         "Endpoint pointer; live serving has not been verified")
@@ -296,21 +362,22 @@ class DeploymentRevisionSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data["recorded_readiness_state"] = data["readiness_state"]
-        if data["readiness_state"] == "ready":
+        if data["readiness_state"] == "ready" and instance.serving_config.get('backend') != 'modelanvil.local-on-demand-cpu.v1':
             data["readiness_state"] = DeploymentRevision.ReadinessState.PENDING
         return data
 
     class Meta:
         model = DeploymentRevision
-        fields = ("execution_evidence", "deployment_id", "release_version", "revision_no", "readiness_state", "created_at")
+        fields = ("execution_evidence", "deployment_id", "release_version", "release_version_id", "revision_no", "readiness_state", "serving_config", "created_at")
 
 
 class ServingEndpointSerializer(serializers.ModelSerializer):
     active_deployment = DeploymentRevisionSerializer(read_only=True)
+    deployments = DeploymentRevisionSerializer(many=True, read_only=True)
 
     class Meta:
         model = ServingEndpoint
-        fields = ("endpoint_id", "project", "endpoint_key", "name", "active_deployment", "created_at", "updated_at")
+        fields = ("endpoint_id", "project", "endpoint_key", "name", "active_deployment", "deployments", "created_at", "updated_at")
         read_only_fields = ("endpoint_id", "created_at", "updated_at")
 
 
@@ -318,6 +385,41 @@ class ServingEndpointViewSet(TenantScopedViewSet):
     queryset = ServingEndpoint.objects.select_related("active_deployment")
     serializer_class = ServingEndpointSerializer
     lookup_field = "endpoint_id"
+
+    @action(detail=True, methods=['post'], url_path='deploy-local')
+    def deploy_local(self, request, endpoint_id=None):
+        if not role_at_least(getattr(request, 'modelanvil_role', None), Role.MANAGER):
+            return Response({'detail': 'Manager role is required to deploy local serving.'}, status=403)
+        from modelanvil.releases.local_serving import deploy_local
+        endpoint = self.get_object()
+        identifier = serializers.UUIDField().run_validation(request.data.get('release_version_id'))
+        version = get_accessible_queryset(ReleaseVersion).filter(release_version_id=identifier).first()
+        if not version:
+            from rest_framework.exceptions import NotFound
+            raise NotFound()
+        deployment = deploy_local(endpoint, version)
+        record_audit('serving.deploy_local', 'serving_endpoint', endpoint.endpoint_id,
+            input_snapshot={'deployment_id': str(deployment.deployment_id), 'state': deployment.readiness_state})
+        return Response(DeploymentRevisionSerializer(deployment).data, status=201 if deployment.readiness_state == 'ready' else 409)
+
+    @action(detail=True, methods=['get'], url_path='local-health')
+    def local_health(self, request, endpoint_id=None):
+        from modelanvil.releases.local_serving import serve_local
+        try:
+            result = serve_local(self.get_object(), 'x', 2)
+        except (ValueError, PermissionError) as exc:
+            return Response({'state': 'unhealthy', 'reason': str(exc), 'production_qualified': False}, status=503)
+        return Response({'state': 'ready', **result})
+
+    @action(detail=True, methods=['post'], url_path='completions')
+    def completions(self, request, endpoint_id=None):
+        from modelanvil.releases.local_serving import serve_local
+        prompt = serializers.CharField(max_length=1024, allow_blank=True).run_validation(request.data.get('prompt', ''))
+        maximum = serializers.IntegerField(min_value=1, max_value=32).run_validation(request.data.get('max_tokens', 2))
+        try:
+            return Response(serve_local(self.get_object(), prompt, maximum))
+        except (ValueError, PermissionError) as exc:
+            raise serializers.ValidationError({'serving': str(exc)}) from exc
 
     @action(detail=True, methods=["post"], url_path="promote")
     def promote(self, request, endpoint_id=None):
@@ -406,7 +508,13 @@ class ServingEndpointViewSet(TenantScopedViewSet):
             )
 
         try:
-            deployment = rollback_endpoint(endpoint)
+            if endpoint.active_deployment and endpoint.active_deployment.serving_config.get('backend') == 'modelanvil.local-on-demand-cpu.v1':
+                from modelanvil.releases.local_serving import rollback_local
+                deployment = rollback_local(endpoint)
+                if deployment.readiness_state != 'ready':
+                    return Response(DeploymentRevisionSerializer(deployment).data, status=409)
+            else:
+                deployment = rollback_endpoint(endpoint)
             record_audit(
                 action="rollback",
                 resource_type="serving_endpoint",

@@ -1,4 +1,4 @@
-import { apiPage, apiRequest, nextPagePath, type ApiPage } from './client';
+import { apiPage, apiRequest, nextPagePath, type ApiPage } from './client.ts';
 
 export async function allResources<T>(path: string, token: string, signal?: AbortSignal, scope: 'project' | 'organization' = 'project'): Promise<T[]> {
   const items: T[] = [];
@@ -22,7 +22,13 @@ export async function downloadJson(path: string, token: string, filename: string
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export interface RegisteredModel { id: number; model_version_id: string; model_name: string; revision_no: number; state: string }
+export interface ModelCapabilities {
+  memory_requirements?: import('./model-hardware').ModelMemory;
+  train: { eligible: boolean; recipes: string[]; reason: string };
+  evaluate: { eligible: boolean; reason: string };
+  chat: { eligible: boolean; devices: string[]; reason: string };
+}
+export interface RegisteredModel { id: number; model_version_id: string; model_name: string; revision_no: number; state: string; capabilities?: ModelCapabilities }
 
 export interface Project {
   id: string;

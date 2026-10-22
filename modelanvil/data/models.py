@@ -1,13 +1,13 @@
 """Source registry and immutable ingestion snapshot metadata."""
 from __future__ import annotations
 
-import uuid
 from typing import Any
 
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
+from modelanvil.core.ids import uuid7
 from modelanvil.core.models import TenantContextModel
 
 
@@ -18,7 +18,7 @@ class DataSource(TenantContextModel):
         REPOSITORY = "repository", "Repository/API"
         CRAWLER = "crawler", "Crawler"
 
-    source_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    source_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="data_sources"
     )
@@ -39,7 +39,7 @@ class SourceSnapshot(TenantContextModel):
         FAILED = "failed", "Failed"
         CANCELLED = "cancelled", "Cancelled"
 
-    snapshot_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    snapshot_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="source_snapshots"
     )
@@ -100,3 +100,24 @@ def validate_sample_envelope(document: Any) -> dict[str, Any]:
     from contracts.validate import validate_envelope
 
     return validate_envelope(document)
+
+
+class RecipeRun(TenantContextModel):
+    """Frozen recipe bindings and fenced, immutable step/row checkpoints."""
+    run_id = models.UUIDField(default=uuid7, unique=True, editable=False)
+    project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, related_name='recipe_runs')
+    job = models.OneToOneField('jobs.Job', on_delete=models.PROTECT, related_name='recipe_run')
+    recipe = models.ForeignKey('artifacts.Artifact', on_delete=models.PROTECT, related_name='recipe_runs')
+    model_version = models.ForeignKey('runners.ModelVersion', null=True, blank=True, on_delete=models.PROTECT, related_name='recipe_runs')
+    dataset = models.ForeignKey('artifacts.Dataset', null=True, blank=True, on_delete=models.PROTECT, related_name='recipe_runs')
+    principal_id = models.CharField(max_length=128)
+    idempotency_key = models.CharField(max_length=128)
+    input_digest = models.CharField(max_length=64)
+    frozen = models.JSONField(default=dict)
+    checkpoints = models.JSONField(default=dict)
+    result = models.JSONField(default=dict)
+    status = models.CharField(max_length=20, default='queued')
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=('tenant_id','project','principal_id','idempotency_key'), name='recipe_run_admission_unique')]

@@ -76,11 +76,73 @@ def _read_verified_input(artifact, backend):
     return bytes(raw)
 
 
+def prepare_source(raw, *, split_seed="0", validation_percent=10, test_percent=10,
+                   detect=None, dedup=None, protected=None, near_threshold=3, min_text_chars=None,
+                   source_format="jsonl", text_field="text", group_field=None, chunk_characters=None, source_mapping=None):
+    """The exact bounded preparation path shared by preview and publication."""
+    from modelanvil.data.source_import import VERSION, PDF_VERSION, SourceImportError, extract_source
+    if not 0 < len(raw) <= MAX_INPUT_BYTES:
+        raise DatasetPreparationError('Choose a nonempty source of at most 16 MiB.')
+    if source_format == 'jsonl' and (text_field != 'text' or group_field is not None):
+        raise DatasetPreparationError('Canonical envelopes do not support field mappings.')
+    if source_mapping is not None and source_format != 'training':
+        raise DatasetPreparationError('Training column mapping requires the training source format.')
+    # The independent, pure kernel is deliberately imported only at execution.
+    from modelanvil.data.preparation import prepare_envelopes
+    try:
+        from modelanvil.data.training_import import training_records, allocate_training_splits, training_mapping
+        mapping = training_mapping(source_mapping)
+        documents = training_records(raw, mapping) if source_format == "training" else _documents(raw) if source_format == "jsonl" else extract_source(raw,
+            source_format=source_format, text_field=text_field, group_field=group_field)
+        prepared = prepare_envelopes(documents, split_seed=split_seed,
+            validation_percent=validation_percent, test_percent=test_percent, max_rows=MAX_ROWS,
+            detect=detect, dedup=dedup, protected=protected,
+            near_threshold=near_threshold, min_text_chars=min_text_chars)
+        if source_format == "training":
+            allocate_training_splits(prepared, split_seed, validation_percent, test_percent)
+        if chunk_characters is not None:
+            from modelanvil.data.text_chunks import VERSION as CHUNK_VERSION, chunk_envelopes
+            sources = prepared
+            # Source-level checks run before chunking so split privacy/protected text cannot evade them.
+            prepared = prepare_envelopes(chunk_envelopes(sources["rows"], chunk_characters, max_rows=MAX_ROWS),
+                split_seed=split_seed, validation_percent=validation_percent, test_percent=test_percent,
+                max_rows=MAX_ROWS, detect=detect, dedup=dedup, protected=protected,
+                near_threshold=near_threshold, min_text_chars=min_text_chars)
+            prepared["recipe"]["chunking"] = {"version": CHUNK_VERSION, "character_limit": chunk_characters,
+                "source_recipe_digest": sources["recipe_digest"]}
+            prepared["source_row_count"] = sources["row_count"]
+            if "report" in sources:
+                prepared["source_preparation_report"] = sources["report"]
+                prepared["source_dropped"] = sources["dropped"]
+        if source_format != "jsonl":
+            prepared["recipe"]["extraction"] = {"version": "modelanvil.training-records.v1" if source_format == "training" else VERSION, "source_format": source_format,
+                "input_sha256": hashlib.sha256(raw).hexdigest(), "text_field": text_field, "group_field": group_field}
+            if mapping:
+                prepared['recipe']['extraction']['source_mapping'] = mapping
+            if source_format == "pdf":
+                prepared["recipe"]["extraction"]["pdf_parser"] = f"pypdf=={PDF_VERSION}"
+        if source_format != "jsonl" or chunk_characters is not None:
+            prepared["recipe_digest"] = hashlib.sha256(json.dumps(prepared["recipe"], sort_keys=True,
+                separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode("utf-8")).hexdigest()
+        payload = json.dumps(prepared, sort_keys=True, separators=(",", ":"),
+                             ensure_ascii=False, allow_nan=False).encode("utf-8")
+        if chunk_characters is not None:
+            from modelanvil.data.text_chunks import MAX_MANIFEST_BYTES
+            if len(payload) > MAX_MANIFEST_BYTES:
+                raise ValueError("Chunked manifest exceeds its byte limit.")
+    except SourceImportError as exc:
+        raise DatasetPreparationError(str(exc)) from None
+    except (ValueError, TypeError, UnicodeError, RecursionError, KeyError, zipfile.BadZipFile, ParseError, RuntimeError, OSError, csv.Error):
+        raise DatasetPreparationError("Input or split recipe is invalid for bounded source preparation.") from None
+    return prepared, payload
+
+
 @transaction.atomic
 def publish_prepared_dataset(dataset, artifact, *, split_seed="0", validation_percent=10, test_percent=10,
                              detect=None, dedup=None, protected=None,
                              near_threshold=3, min_text_chars=None,
-                             source_format="jsonl", text_field="text", group_field=None):
+                             source_format="jsonl", text_field="text", group_field=None,
+                             chunk_characters=None, source_mapping=None):
     # Serialize revision numbering/publication per dataset and pin input state
     # until publication. All callers acquire locks in this order.
     dataset = Dataset.all_objects.select_for_update().get(pk=dataset.pk, tenant_id=dataset.tenant_id)
@@ -96,28 +158,10 @@ def publish_prepared_dataset(dataset, artifact, *, split_seed="0", validation_pe
     if source_format == "jsonl" and (text_field != "text" or group_field is not None):
         raise DatasetPreparationError("Canonical envelopes do not support field mappings.")
     raw = _read_verified_input(artifact, backend)
-    # The independent, pure kernel is deliberately imported only at execution.
-    from modelanvil.data.preparation import prepare_envelopes
-    try:
-        documents = _documents(raw) if source_format == "jsonl" else extract_source(raw,
-            source_format=source_format, text_field=text_field, group_field=group_field)
-        prepared = prepare_envelopes(documents, split_seed=split_seed,
-            validation_percent=validation_percent, test_percent=test_percent, max_rows=MAX_ROWS,
-            detect=detect, dedup=dedup, protected=protected,
-            near_threshold=near_threshold, min_text_chars=min_text_chars)
-        if source_format != "jsonl":
-            prepared["recipe"]["extraction"] = {"version": VERSION, "source_format": source_format,
-                "input_sha256": artifact.sha256, "text_field": text_field, "group_field": group_field}
-            if source_format == "pdf":
-                prepared["recipe"]["extraction"]["pdf_parser"] = f"pypdf=={PDF_VERSION}"
-            prepared["recipe_digest"] = hashlib.sha256(json.dumps(prepared["recipe"], sort_keys=True,
-                separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode("utf-8")).hexdigest()
-        payload = json.dumps(prepared, sort_keys=True, separators=(",", ":"),
-                             ensure_ascii=False, allow_nan=False).encode("utf-8")
-    except SourceImportError as exc:
-        raise DatasetPreparationError(str(exc)) from None
-    except (ValueError, TypeError, UnicodeError, RecursionError, KeyError, zipfile.BadZipFile, ParseError, RuntimeError, OSError, csv.Error):
-        raise DatasetPreparationError("Input or split recipe is invalid for bounded source preparation.") from None
+    prepared, payload = prepare_source(raw, split_seed=split_seed, validation_percent=validation_percent,
+        test_percent=test_percent, detect=detect, dedup=dedup, protected=protected,
+        near_threshold=near_threshold, min_text_chars=min_text_chars, source_format=source_format,
+        text_field=text_field, group_field=group_field, chunk_characters=chunk_characters, source_mapping=source_mapping)
     manifest = Artifact.all_objects.create(
         tenant_id=dataset.tenant_id, project_id=dataset.project_id, storage_location_id="local",
         object_key=f"datasets/{dataset.dataset_id}/{uuid.uuid4()}.json",
@@ -138,6 +182,10 @@ def publish_prepared_dataset(dataset, artifact, *, split_seed="0", validation_pe
         # Aggregate drop transparency on the revision row; per-sample drop
         # details live in the manifest artifact only, keeping the DB slim.
         revision_metadata["drop_report"] = prepared["report"]
+    if "source_row_count" in prepared:
+        revision_metadata["source_row_count"] = prepared["source_row_count"]
+    if "source_preparation_report" in prepared:
+        revision_metadata["source_drop_report"] = prepared["source_preparation_report"]
     revision = DatasetRevision.all_objects.create(
         tenant_id=dataset.tenant_id, dataset=dataset, revision_no=latest + 1,
         schema_version=prepared["schema_version"], manifest_digest=manifest.sha256,

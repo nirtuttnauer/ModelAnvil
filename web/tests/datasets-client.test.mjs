@@ -89,6 +89,18 @@ test('explicit split settings preserve zero percentages and the exact string see
     splitSeed: ' 007 ', validationPercent: 0, testPercent: 0, fetchImpl: harness.fetchImpl });
 });
 
+test('chunking is explicit and invalid character limits are refused before upload', async () => {
+  const { prepareUploadedDataset } = await client();
+  const harness = successFetch((index, _url, init) => {
+    if (index === 3) assert.equal(JSON.parse(init.body).chunk_characters, 128);
+  });
+  await prepareUploadedDataset({ file: file(), name: dataset.name, token, chunkCharacters: 128, fetchImpl: harness.fetchImpl });
+  for (const limit of [0, 31, 4097, 128.5, NaN, '128']) {
+    await assert.rejects(prepareUploadedDataset({ file: file(), name: dataset.name, token, chunkCharacters: limit,
+      fetchImpl: async () => assert.fail('Unexpected upload') }), /Chunk character limit/);
+  }
+});
+
 test('CSV mappings and binary DOCX retain original bytes and media type', async () => {
   const { prepareUploadedDataset } = await client();
   for (const sourceFormat of ['csv', 'json', 'docx', 'pdf']) {
@@ -179,6 +191,13 @@ for (const stage of [0, 1, 2, 3]) {
     assert.equal(harness.calls.length, stage + 1);
   });
 }
+
+test('dataset creation preserves structured name repair guidance', async () => {
+  const { prepareUploadedDataset } = await client();
+  const harness = fetchWithOverride(2, () => response({ error: { details: [{ path: 'name', message: 'A dataset already uses this name. Choose a different dataset name.' }] } }, 400));
+  await assert.rejects(prepareUploadedDataset({ file: file(), name: dataset.name, token, fetchImpl: harness.fetchImpl }), /Choose a different dataset name/);
+  assert.equal(harness.calls.length, 3);
+});
 
 const invalidResponses = [
   ['registration URL injection', 0, { ...artifact, state: 'staging', artifact_id: '../outside?secret=1' }],
@@ -342,7 +361,7 @@ test('dataset page integration surface exists and typechecks with existing React
   assert.match(source, /token: string/);
   assert.match(source, /refreshKey\?: number/);
   assert.doesNotMatch(source, /dangerouslySetInnerHTML|localStorage|sessionStorage/);
-  assert.match(source, /<table/);
+  assert.match(source, /<RecordTable/);
   assert.match(source, /<label/);
   assert.match(source, /Supported upload format/);
   const result = spawnSync(process.execPath, [
@@ -388,4 +407,16 @@ test('upload hashes real file bytes, uses safe requests, and returns a published
   assert.deepEqual(result, { artifact, dataset, revision });
   assert.equal(harness.calls.length, 4);
   assert.equal(result.revision.dataset, 17, 'integer FKs must not be treated as business UUIDs');
+});
+
+test('training mappings are included in publication and distinguish retry identities', async () => {
+  const { prepareUploadedDataset } = await client();
+  const keys = [];
+  for (const mapping of [{ mode: 'prompt_response', prompt_field: 'question', response_field: 'answer' }, { mode: 'prompt_response', prompt_field: 'answer', response_field: 'question' }]) {
+    const harness = successFetch((index, _url, init) => {
+      if (index === 3) { assert.deepEqual(JSON.parse(init.body).source_mapping, mapping); keys.push(init.headers['Idempotency-Key']); }
+    });
+    await prepareUploadedDataset({ file: file(), name: dataset.name, token, sourceFormat: 'training', sourceMapping: mapping, fetchImpl: harness.fetchImpl });
+  }
+  assert.notEqual(keys[0], keys[1]);
 });

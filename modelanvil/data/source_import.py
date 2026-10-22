@@ -14,12 +14,12 @@ import tempfile
 from xml.etree import ElementTree
 
 VERSION = "modelanvil.source-extraction.v1"
-MEDIA_TYPES = {"csv": "text/csv", "json": "application/json",
+MEDIA_TYPES = {"training": "application/x-ndjson", "csv": "text/csv", "json": "application/json",
                "pdf": "application/pdf",
                "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"}
 MAX_BYTES = 16 * 1024 * 1024
 MAX_ROWS = 10000
-PDF_VERSION = "6.20.0"
+PDF_VERSION = "6.21.2"
 
 
 class SourceImportError(ValueError):

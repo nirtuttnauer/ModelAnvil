@@ -1,6 +1,8 @@
 """Integration tests for persistent labeling, immutable closure, and tenant boundaries."""
 import hashlib
 import json
+import time
+import uuid
 from django.test import TestCase
 from rest_framework.test import APIClient
 from modelanvil.annotation.models import AnnotationRecord, AnnotationTask, LabelingCampaign
@@ -11,6 +13,12 @@ from modelanvil.jobs.models import Worker, WorkerPool
 
 class LabelingApiTests(TestCase):
     def setUp(self):
+        import tempfile
+        from django.conf import settings
+        from django.test import override_settings
+        root = tempfile.TemporaryDirectory(); self.addCleanup(root.cleanup)
+        override = override_settings(MODELANVIL={**settings.MODELANVIL, 'artifact_backend': 'filesystem', 'artifact_root': root.name})
+        override.enable(); self.addCleanup(override.disable)
         self.tenant = Tenant.objects.create(slug="labels-test", name="Labels test")
         self.other = Tenant.objects.create(slug="labels-other", name="Other")
         self.client = self.auth_client(self.tenant)
@@ -45,6 +53,32 @@ class LabelingApiTests(TestCase):
 
     def close(self, batch):
         return self.client.post(f'/api/v1/labeling-batches/{batch["batch_id"]}/close/', {}, format="json")
+
+    def test_new_labeling_resource_ids_are_uuid7_and_source_refs_stay_unchanged(self):
+        before = time.time_ns() // 1_000_000
+        campaign = self.campaign()
+        source_ref = 'original-provider:sample-42'
+        batch, tasks = self.batch(campaign, [{'id': source_ref, 'text': 'Source content'}])
+        reviewed = self.review(tasks[0])
+        self.assertEqual(reviewed.status_code, 201, reviewed.content)
+        closed = self.close(batch)
+        self.assertEqual(closed.status_code, 200, closed.content)
+        after = time.time_ns() // 1_000_000
+        generated = [campaign['campaign_id'], campaign['label_schema']['schema_id'], campaign['rubric']['rubric_id'],
+                     batch['batch_id'], tasks[0]['task_id'], reviewed.data['latest_review']['record_id'], closed.data['snapshot_id']]
+        for identifier in generated:
+            with self.subTest(identifier=identifier):
+                value = uuid.UUID(identifier)
+                self.assertEqual(value.version, 7)
+                self.assertEqual(value.variant, uuid.RFC_4122)
+                self.assertLessEqual(before, value.int >> 80)
+                self.assertLessEqual(value.int >> 80, after)
+        self.assertEqual(len(set(generated)), 7)
+        self.assertEqual(tasks[0]['sample_ref'], source_ref)
+        exported = self.client.get(f'/api/v1/annotation-snapshots/{closed.data["snapshot_id"]}/export/').data
+        self.assertEqual(exported['items'][0]['sample_ref'], source_ref)
+        inspection = self.client.get(f'/api/v1/dataset-revisions/{closed.data["dataset_revision_id"]}/inspect/').data
+        self.assertEqual(inspection['rows'][0]['sample_id'], str(uuid.uuid5(uuid.UUID(closed.data['snapshot_id']), source_ref)))
 
     def test_manual_journey_cumulative_snapshot_and_immutable_history(self):
         campaign = self.campaign(max_cycles=2)
@@ -99,6 +133,15 @@ class LabelingApiTests(TestCase):
         self.review(tasks[0]); self.close(batch)
         self.assertEqual(self.client.post(path, {"samples": [{"id": "different-id", "text": "unique"}]}, format="json").status_code, 400)
 
+    def test_manual_import_excludes_held_out_split_metadata(self):
+        campaign = self.campaign()
+        path = f'/api/v1/labeling-campaigns/{campaign["campaign_id"]}/batches/'
+        for field in ('split', 'assigned_split'):
+            for split in ('test', 'validation', 'val', ' Evaluation ', 'HELD_OUT'):
+                response = self.client.post(path, {'samples': [{'id': 'protected', 'text': 'Source', field: split}]}, format='json')
+                self.assertEqual(response.status_code, 400, response.content)
+        self.assertEqual(AnnotationTask.all_objects.count(), 0)
+
     def test_paused_campaign_blocks_review_and_batch_closure(self):
         campaign = self.campaign()
         batch, tasks = self.batch(campaign, [{"id": "one", "text": "x"}])
@@ -108,6 +151,53 @@ class LabelingApiTests(TestCase):
         self.assertEqual(self.close(batch).status_code, 409)
         self.assertEqual(self.client.post(path, {"transition": "resume"}, format="json").status_code, 200)
         self.assertEqual(self.review(tasks[0]).status_code, 201)
+
+    def test_blank_and_nontext_samples_are_rejected_without_partial_batch(self):
+        campaign = self.campaign()
+        path = f'/api/v1/labeling-campaigns/{campaign["campaign_id"]}/batches/'
+        for content in ({'text': ''}, {'text': ' \n\t'}, {'input': None}, {'prompt': 123}, {'candidate_a': []}):
+            with self.subTest(content=content):
+                response = self.client.post(path, {'samples': [
+                    {'id': 'valid', 'text': 'Useful source'}, {'id': 'empty', **content},
+                ]}, format='json')
+                self.assertEqual(response.status_code, 400, response.content)
+                self.assertEqual(AnnotationTask.all_objects.count(), 0)
+                self.assertEqual(LabelingCampaign.all_objects.get(campaign_id=campaign['campaign_id']).batches.count(), 0)
+        batch, tasks = self.batch(campaign, [{'id': 'valid', 'input': 'Useful source'}])
+        self.assertEqual(batch['sample_count'], 1)
+        self.assertEqual(tasks[0]['content']['input'], 'Useful source')
+
+    def test_text_sources_match_publication_schema_before_a_batch_opens(self):
+        for kind in ('classification', 'text_generation'):
+            campaign = self.campaign(name=kind, kind=kind)
+            path = f'/api/v1/labeling-campaigns/{campaign["campaign_id"]}/batches/'
+            for source in ({'candidate_a': 'Only a response'}, {'text': None, 'prompt': 'Masked prompt'},
+                           {'text': 12, 'input': 'Masked input'}, {'text': ' ', 'input': 'Masked input'},
+                           {'prompt': [], 'input': 'Masked input'}):
+                with self.subTest(kind=kind, source=source):
+                    response = self.client.post(path, {'samples': [{'id': 'invalid', **source}]}, format='json')
+                    self.assertEqual(response.status_code, 400, response.content)
+                    self.assertFalse(LabelingCampaign.all_objects.get(campaign_id=campaign['campaign_id']).batches.exists())
+            batch, tasks = self.batch(campaign, [{'id': field, field: f'Source from {field}'} for field in ('text', 'prompt', 'input')])
+            for task in tasks:
+                self.assertEqual(self.review(task).status_code, 201)
+            closed = self.close(batch)
+            self.assertEqual(closed.status_code, 200, closed.content)
+            self.assertIsNotNone(closed.data['dataset_revision_id'])
+
+    def test_preference_sources_require_both_responses_before_a_batch_opens(self):
+        campaign = self.campaign(kind='preference_ranking', classes=[])
+        path = f'/api/v1/labeling-campaigns/{campaign["campaign_id"]}/batches/'
+        for source in ({'text': 'Question'}, {'prompt': 'Question', 'candidate_a': 'A'},
+                       {'prompt': 'Question', 'candidate_a': 'A', 'candidate_b': '  '},
+                       {'text': 'Question', 'candidate_a': {}, 'candidate_b': 'B'}):
+            with self.subTest(source=source):
+                response = self.client.post(path, {'samples': [{'id': 'invalid', **source}]}, format='json')
+                self.assertEqual(response.status_code, 400, response.content)
+                self.assertFalse(LabelingCampaign.all_objects.get(campaign_id=campaign['campaign_id']).batches.exists())
+        batch, tasks = self.batch(campaign, [{'id': 'valid', 'candidate_a': 'A', 'candidate_b': 'B'}])
+        self.assertEqual(self.review(tasks[0], label='candidate_a').status_code, 201)
+        self.assertEqual(self.close(batch).status_code, 200)
 
     def test_cross_tenant_and_viewer_permissions(self):
         campaign = self.campaign()
@@ -161,7 +251,7 @@ class LabelingApiTests(TestCase):
 
     def test_rejected_samples_are_excluded_from_snapshot(self):
         campaign = self.campaign(kind="preference_ranking", classes=[])
-        batch, tasks = self.batch(campaign, [{"id": "one", "prompt": "question", "candidate_a": "a", "candidate_b": "b"}, {"id": "two", "text": "bad"}])
+        batch, tasks = self.batch(campaign, [{"id": "one", "prompt": "question", "candidate_a": "a", "candidate_b": "b"}, {"id": "two", "text": "bad", "candidate_a": "c", "candidate_b": "d"}])
         for task in tasks:
             self.assertEqual(self.review(task, label="tie", decision="corrected" if task["sample_ref"] == "one" else "rejected").status_code, 201)
         self.assertEqual(self.close(batch).data["item_count"], 1)

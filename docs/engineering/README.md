@@ -24,9 +24,13 @@ Both scratch pretraining and fine-tuning remain required for the first complete 
 
 ## Supporting contracts
 
+- [Supported capability baseline and local activation measurements](supported-capabilities.md) indexes operation-specific evidence, remaining limits, and the explicit improvement-decision metric.
+
+- [Guided local LLM fine-tuning](guided-fine-tuning.md) covers fresh accounts, ordinary training datasets and installation-managed local GPU execution.
+
 - [Canonical sample JSON Schema](schemas/sample-envelope.schema.json) describes the shared interchange envelope. Task-specific schemas refine its content and annotations.
 - [Adapter manifest JSON Schema](schemas/adapter-manifest.schema.json) describes capability and permission declarations. Qualification records determine actual support.
-- [External provider map](external-providers-and-plugins.md), [Runpod and custom plugin setup](runpod-and-custom-plugins.md), and [provider TODO](provider-integration-todo.md) cover integration choices, implemented contracts, and remaining providers.
+- [External API providers and custom plugins](external-providers-and-plugins.md) maps GPU rental, managed execution, inference, storage, and proposed extension contracts and delivery priorities.
 - [Existing iterative labeling specification](../iterative-labeling.md), [RAG and context specification](../rag-context-workbench.md), and [architecture decisions](../decisions/README.md) provide the detailed domain contracts.
 
 Requirement references use PRD IDs such as ANN04 and OPS07. Technical IDs use TECH-001 onward. Flow IDs use FLOW-01 onward. Work packages use WP-01 onward. The implementation plan links these systems together.
@@ -34,3 +38,5 @@ Requirement references use PRD IDs such as ANN04 and OPS07. Technical IDs use TE
 ## Review decisions still needed
 
 Name the reference GPU and two-node topology; select and pin training, inference, RLHF, embedding, judge, and annotation integrations; settle the Mac feature matrix; choose the identity provider and managed cloud; set retention and regional policy; assign owners and measured estimates. These decisions have assigned work packages and do not justify dropping required release paths.
+
+- [Runpod and custom plugin setup](runpod-and-custom-plugins.md) documents opt-in provider control and trusted task execution; live provider/GPU qualification remains separate.

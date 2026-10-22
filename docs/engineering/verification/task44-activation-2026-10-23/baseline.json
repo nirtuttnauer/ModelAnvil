@@ -1,0 +1,101 @@
+{
+  "observed_at": "2026-10-22T22:37:44.016374+00:00",
+  "scope": "automated_fresh_database_cpu_reference",
+  "build": {
+    "revision": "e29325b1d7d71a2beaadd48f730c06c808a45229",
+    "source_digest": "300a50b4836e0982c4a99ea4345e4191c70bd5aeb10ec60e9639b084f250fc1a",
+    "protocol": "modelanvil.local-beta.v1",
+    "dataset_formats": [
+      "jsonl",
+      "csv",
+      "docx",
+      "json",
+      "pdf",
+      "training"
+    ],
+    "production_qualified": false
+  },
+  "python": "3.12.15",
+  "machine": "arm64",
+  "hardware": {
+    "os": "macOS-27.0.1-arm64-arm-64bit",
+    "architecture": "arm64",
+    "cpu_model": "Apple M5 Pro",
+    "physical_memory_bytes": 51539607552
+  },
+  "fresh_database": true,
+  "fresh_artifacts": true,
+  "dependency_installation_seconds": 11.63826416595839,
+  "model_download_seconds": null,
+  "human_active_seconds": null,
+  "missing_timing_reason": "Initialized local reference weights; no model download or human onboarding observed.",
+  "migration_seconds": 4.4225935828872025,
+  "resource_training_evaluation_seconds": 1.862818208988756,
+  "fresh_database_to_decision_seconds": 6.745405624853447,
+  "candidate_pins": {
+    "version": "01a165c3-55fe-7e08-975b-8fa791b8c214",
+    "artifact_id": "01a165c3-55fb-76fe-b432-52d9c4c23cc9",
+    "sha256": "9c6bba942357cf4e2c9581bcba56cc6bc8c8675e9058b4225e47fb23dab5e78f",
+    "tokenizer": "01a165c3-5206-717d-98a5-375b7df4f5a3"
+  },
+  "evaluation_pins": {
+    "runtime": "modelanvil.local-cpu-evaluation.v1",
+    "build_digest": "fef10195d7532842147b86095801806ab29e4aa22c5a1bbb4090565496fc1fc5",
+    "candidate": {
+      "version": "01a165c3-55fe-7e08-975b-8fa791b8c214",
+      "artifact_id": "01a165c3-55fb-76fe-b432-52d9c4c23cc9",
+      "sha256": "9c6bba942357cf4e2c9581bcba56cc6bc8c8675e9058b4225e47fb23dab5e78f",
+      "tokenizer": "01a165c3-5206-717d-98a5-375b7df4f5a3"
+    },
+    "baseline": {
+      "version": "01a165c3-523e-7367-b00c-dec6f37be312",
+      "artifact_id": "01a165c3-523a-7d7c-8335-6800eb6a2982",
+      "sha256": "6ea5ba2454cd232a1c3620cec7ff62497fad4fafc8102e96ce0536fad873a682",
+      "tokenizer": "01a165c3-5206-717d-98a5-375b7df4f5a3"
+    },
+    "suite_digest": "32c2639fa0468a9e0f787b5987642b176d7f2b2cd0cd20ab9207a1aacf4ebb97",
+    "max_tokens": 2,
+    "decoding": "greedy",
+    "prompt_format": "plain",
+    "device": "cpu",
+    "training_overlap": "known_lineage_checked"
+  },
+  "committed_steps": 2,
+  "evaluation_cases": 1,
+  "decision": "reject",
+  "report": {
+    "scope": "project",
+    "week_start": "2026-10-19T00:00:00+00:00",
+    "week_end": "2026-10-26T00:00:00+00:00",
+    "storage": "installation_database",
+    "external_analytics": "disabled",
+    "weekly_teams_with_decisions": 1,
+    "weekly_improvement_cycles": 1,
+    "weekly_accepted_improvements": 0,
+    "weekly_rejected_candidates": 1,
+    "workspace_sessions": 1,
+    "reported_active_seconds": 0.0,
+    "time_to_first_decision_seconds": 0.196321,
+    "timing_basis": "Browser-reported interaction time; server attempt wall time includes loading and checkpointing. Missing timings stay null.",
+    "decisions": [
+      {
+        "decision_id": "01a165c3-5a12-7bef-b9e0-e2ffd23be1a4",
+        "evaluation_run": "01a165c3-5623-7287-926f-dbdd004fd47f",
+        "candidate": "01a165c3-55fe-7e08-975b-8fa791b8c214",
+        "outcome": "reject",
+        "accepted_improvement": false,
+        "training": {
+          "queue_seconds": 0.013473,
+          "execution_seconds": 0.823237
+        },
+        "evaluation": {
+          "queue_seconds": 0.009958,
+          "execution_seconds": 0.517098
+        }
+      }
+    ],
+    "model_acquisition": []
+  },
+  "quality_claim": "None. This is a one-case workflow baseline with a deliberately failing candidate, not useful-model qualification.",
+  "dependency_installation_method": "Fresh Python venv and pip install -r requirements.txt on the same host immediately before this observation; pip cache allowed, Python installation excluded."
+}

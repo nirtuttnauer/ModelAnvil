@@ -40,6 +40,16 @@ class RetrievalEngine:
 
     def get_eligible_chunks(self) -> list[DocumentChunk]:
         """Fetch all eligible chunks, enforcing tenant scope, access revocations, and tombstones (TECH-024)."""
+        from modelanvil.identity.models import check_resource_access
+        from modelanvil.core.tenancy import get_active_tenant
+        tenant = get_active_tenant()
+        current = IndexVersion.all_objects.select_related('knowledge_base').filter(
+            pk=self.index_version.pk, tenant_id=self.tenant_id, status='ready').first()
+        if ((tenant is not None and str(tenant) != str(self.tenant_id))
+                or current is None
+                or not check_resource_access(current.knowledge_base, tenant_id=self.tenant_id)):
+            return []
+        self.index_version = current
         chunks = DocumentChunk.objects.filter(
             tenant_id=self.tenant_id,
             document__knowledge_base=self.index_version.knowledge_base,
