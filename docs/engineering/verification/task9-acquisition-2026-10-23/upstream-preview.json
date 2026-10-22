@@ -1,0 +1,43 @@
+{
+  "observed_at": "2026-10-22T23:51:43.331Z",
+  "evidence": "actual app/API preview of pinned public upstream; no acquisition launched",
+  "source": "svg-lucide",
+  "source_revision": "70562c1ee1c4fdcf736fe97bc893fb8511927934",
+  "license": "ISC AND MIT",
+  "preview_records": [
+    {
+      "path": "icons/a-arrow-down.svg",
+      "sha256": "75cd597812a2734562fcead79b03d124babc317e62ff279e15512603d5e4d1ca",
+      "bytes": 349,
+      "digest_verified": true
+    },
+    {
+      "path": "icons/layout-freeform.svg",
+      "sha256": "4b54b0ab92c3c36ab27bcaa7b5e6c5007ebc8431ef6608af6b3c554e469b34df",
+      "bytes": 363,
+      "digest_verified": true
+    }
+  ],
+  "access": {
+    "gated": false,
+    "credentials_required": false,
+    "share_alike": false
+  },
+  "scope": {
+    "include_patterns": [
+      "icons/*.svg"
+    ],
+    "record_selection": "deterministic evenly spaced slice of the sorted icons/*.svg inventory at the pinned commit",
+    "record_limit": 120,
+    "record_limit_max": 400,
+    "available_records": 1877,
+    "measured_selected_bytes": 48362
+  },
+  "destination_disclosed": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_overflow": false,
+  "page_errors": []
+}
