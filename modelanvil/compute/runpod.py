@@ -71,7 +71,7 @@ class RunpodProvider:
         if (not isinstance(row, dict) or not isinstance(row.get("id"), str)
                 or not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", row["id"])
                 or not isinstance(row.get("name"), str)
-                or row.get("status") not in {"PROVISIONING", "RUNNING", "EXITED", "TERMINATED"}):
+                or row.get("status") not in {"PROVISIONING", "STARTING", "RUNNING", "EXITED", "ERROR", "TERMINATED"}):
             raise ProviderError("provider_invalid_response")
         return {"id": row["id"], "name": row["name"], "status": row["status"]}
 

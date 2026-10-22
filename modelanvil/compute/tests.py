@@ -139,6 +139,24 @@ class ComputeApiTests(TestCase):
         self.assertEqual(self.provider.release.call_count, calls)
         self.assertEqual(Worker.all_objects.get().status, "offline")
 
+    def test_starting_and_error_pods_can_be_verified_and_released(self):
+        for status in ('STARTING', 'ERROR'):
+            with self.subTest(status=status):
+                self.payload['request_id'] = str(uuid.uuid4())
+                response = self.allocate()
+                allocation = ComputeAllocation.all_objects.get(allocation_id=response.json()['allocation_id'])
+                replies = [{'id': 'pod-1', 'name': allocation_name(allocation), 'status': status}, None]
+                def inspect(resource_id):
+                    reply = replies.pop(0)
+                    return RunpodProvider._resource(reply) if reply is not None else None
+                self.provider.inspect.side_effect = inspect
+                calls = self.provider.release.call_count
+                result = reconcile(allocation, release=True)
+                self.assertEqual(self.provider.release.call_count, calls + 1)
+                self.assertEqual(result.state, 'released')
+                self.assertEqual(result.reservation.state, 'settled')
+                self.assertIsNotNone(WorkerCredential.all_objects.get(worker=allocation.worker).revoked_at)
+
     def test_expiry_cleanup_command_revokes_and_releases(self):
         self.allocate()
         allocation = ComputeAllocation.all_objects.get()
