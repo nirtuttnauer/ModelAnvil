@@ -341,6 +341,15 @@ def publish_outbox_batch(publisher, limit: int = 100) -> int:
 # ---------------------------------------------------------------------------
 # Durable claim protocol
 # ---------------------------------------------------------------------------
+def _worker_matches(capabilities, requirements):
+    if not isinstance(requirements, dict):
+        return False
+    if capabilities.get("task_plugin") and any(
+        requirements.get(key) != capabilities.get(key) for key in ("task_plugin", "task_plugin_digest")
+    ):
+        return False
+    return all(capabilities.get(name) == value for name, value in requirements.items() if name != "slots")
+
 @transaction.atomic
 def claim_job(worker: Worker, job: Optional[Job] = None) -> Optional[dict[str, Any]]:
     """Atomically claim a job for ``worker``.
@@ -376,11 +385,7 @@ def claim_job(worker: Worker, job: Optional[Job] = None) -> Optional[dict[str, A
     job = None
     for candidate in candidates.iterator():
         requirements = candidate.requirements
-        if isinstance(requirements, dict) and all(
-            capabilities.get(name) == value
-            for name, value in requirements.items()
-            if name != "slots"
-        ):
+        if _worker_matches(capabilities, requirements):
             slots_req = requirements.get("slots", 1)
             try:
                 slots_req = int(slots_req)
@@ -418,11 +423,7 @@ def claim_job(worker: Worker, job: Optional[Job] = None) -> Optional[dict[str, A
     ).first()
     if pool is None or pool.status != "active":
         return None
-    if not isinstance(job.requirements, dict) or any(
-        current_worker.capabilities.get(name) != value
-        for name, value in job.requirements.items()
-        if name != "slots"
-    ):
+    if not _worker_matches(current_worker.capabilities, job.requirements):
         return None
 
     fencing_token = secrets.token_hex(16)
@@ -458,6 +459,7 @@ def claim_job(worker: Worker, job: Optional[Job] = None) -> Optional[dict[str, A
 
     return {
         "job_id": str(job.job_id),
+        "tenant_id": str(job.tenant_id),
         "attempt_id": str(attempt.attempt_id),
         "fencing_token": fencing_token,
         "lease_expires_at": lease_until,

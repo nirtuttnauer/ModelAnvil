@@ -15,6 +15,9 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Operator-owned allowlist; entries bind installed code and secret references to tenants.
+MODELANVIL_PLUGINS = json.loads(os.environ.get("MODELANVIL_PLUGINS") or "{}")
+
 import tempfile
 MODELANVIL_DEVICE_LOCK_ROOT = os.environ.get('MODELANVIL_DEVICE_LOCK_ROOT',
     str(Path(tempfile.gettempdir()) / f'modelanvil-devices-{os.getuid() if hasattr(os, "getuid") else "local"}'))
@@ -90,6 +93,7 @@ INSTALLED_APPS = [
     "modelanvil.core",
     "modelanvil.identity",
     "modelanvil.jobs",
+    "modelanvil.compute",
     "modelanvil.artifacts",
     "modelanvil.data",
     "modelanvil.runners",

@@ -138,6 +138,11 @@ The Compose reference uses development credentials and Django's development serv
 
 Read the preserved contracts for [local executors](docs/engineering/worker-operations.md#controlled-local-executor), [worker credentials](docs/engineering/worker-operations.md#worker-credentials), [outbound HTTP workers](docs/engineering/worker-operations.md#outbound-http-worker), [result-egress restrictions](docs/engineering/worker-operations.md#result-egress-boundary), [attempt-scoped downloads](docs/engineering/worker-operations.md#attempt-scoped-input-artifact-downloads), and [resumable uploads](docs/engineering/worker-operations.md#resumable-artifact-uploads).
 
+## External compute and custom plugins
+
+The [Runpod and custom plugin guide](docs/engineering/runpod-and-custom-plugins.md) covers REST v2 GPU discovery, tenant-scoped allocation/worker bootstrap, verified release, expiry reconciliation, and trusted operator-installed compute and task plugins. Configure provider accounts outside the browser and run `manage.py reconcile_compute --loop` for automatic expiry cleanup. The [provider TODO](docs/engineering/provider-integration-todo.md) tracks the remaining integrations and live qualification. Remote training runtimes and managed artifact transfer require their own qualification.
+
+
 ## Checks
 
 From the repository root, with the Python environment installed:

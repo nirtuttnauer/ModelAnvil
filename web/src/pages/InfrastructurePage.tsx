@@ -1,3 +1,4 @@
+import { ExternalCompute } from '../components/ExternalCompute';
 import { Identifier } from '../components/Identifier';
 import { Badge, Button, Card, FactList, Field, MetricSummary, Notice, RecordTable } from '../components/ui';
 import { Feedback } from '../components/Feedback';
@@ -48,6 +49,7 @@ export function InfrastructurePage({ token, refreshKey }: { token: string; refre
   return <div className="resource-view operations-page">
     <div className="page-actions"><a className="ops-link-button" href="#workflows">Submit a job <ArrowRight size={16} aria-hidden="true" /></a></div>
     <ResourceState loading={loading} error={error} onRetry={() => setRetry(v => v + 1)} />
+    <ExternalCompute key={token} token={token} refreshKey={refreshKey} onChange={() => setRetry(value => value + 1)} />
     <details className="workspace-details"><summary>Set up or connect compute</summary><ComputeSetup token={token} onPermission={setCanAdmin} onRegistered={() => setRetry(v => v + 1)} /></details>
     {actionError && <Notice tone="error" role="alert">{actionError}</Notice>}
     <div className="cards"><MetricSummary as="article" label="Registered pools" value={loading || error ? '—' : pools.length} icon={<Server size={18} aria-hidden="true" />} /><MetricSummary as="article" label="Registered workers" value={loading || error ? '—' : workers.length} icon={<Cpu size={18} aria-hidden="true" />} /><MetricSummary as="article" label="Configured slots" value={loading || error ? '—' : workers.reduce((sum, w) => sum + (w.capacity?.configured_slots ?? w.slots), 0)} icon={<Layers size={18} aria-hidden="true" />} /></div>
