@@ -2,7 +2,7 @@
 
 import django.db.models.deletion
 import django.utils.timezone
-import uuid
+import modelanvil.core.ids
 from django.db import migrations, models
 
 
@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('tenant_id', models.UUIDField(db_index=True, help_text='Owning tenant. Set automatically from the active tenant context on save.')),
                 ('created_at', models.DateTimeField(db_index=True, default=django.utils.timezone.now)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('allocation_id', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
+                ('allocation_id', models.UUIDField(default=modelanvil.core.ids.uuid7, editable=False, unique=True)),
                 ('request_id', models.UUIDField()),
                 ('plugin_id', models.CharField(max_length=100)),
                 ('plugin_digest', models.CharField(max_length=64)),

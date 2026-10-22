@@ -1,7 +1,6 @@
 """Durable allocation intents with conservative recovery and verified cleanup."""
 import re
 import json
-import uuid
 from datetime import timedelta
 from decimal import Decimal
 from urllib.parse import urlsplit
@@ -13,6 +12,7 @@ from modelanvil.budgets.models import BudgetPolicy, BudgetReservation
 from modelanvil.compute.models import ComputeAllocation as Allocation
 from modelanvil.compute.plugins import PluginError, ProviderError, compute_provider, definition, validate_configuration
 from modelanvil.core.models import record_audit
+from modelanvil.core.ids import uuid7
 from modelanvil.identity.models import Tenant
 from modelanvil.jobs.models import Worker, WorkerCredential, generate_worker_credential
 
@@ -67,7 +67,7 @@ def allocate(*, tenant_id, request_id, plugin_id, pool, spec, lifetime_seconds, 
         token, secret_hash = generate_worker_credential()
         WorkerCredential.all_objects.create(tenant_id=tenant_id, worker=worker, secret_hash=secret_hash,
                                              expires_at=now + timedelta(seconds=lifetime_seconds))
-        allocation_id = uuid.uuid4()
+        allocation_id = uuid7()
         reservation = BudgetReservation.reserve(tenant_id=tenant_id, policy=policy, job_id=allocation_id,
                                                  estimated_amount=lifetime_seconds)
         allocation = Allocation.all_objects.create(tenant_id=tenant_id, allocation_id=allocation_id,

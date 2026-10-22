@@ -139,6 +139,9 @@ class ComputeApiTests(TestCase):
         self.assertEqual(self.provider.release.call_count, calls)
         self.assertEqual(Worker.all_objects.get().status, "offline")
 
+    def test_server_generated_allocation_identifier_uses_uuid7(self):
+        self.assertEqual(uuid.UUID(self.allocate().json()['allocation_id']).version, 7)
+
     def test_starting_and_error_pods_can_be_verified_and_released(self):
         for status in ('STARTING', 'ERROR'):
             with self.subTest(status=status):

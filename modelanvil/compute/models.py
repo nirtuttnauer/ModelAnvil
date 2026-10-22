@@ -1,5 +1,5 @@
 """Owned external compute; provider secrets and responses never enter these rows."""
-import uuid
+from modelanvil.core.ids import uuid7
 
 from django.db import models
 from modelanvil.core.models import TenantContextModel
@@ -14,7 +14,7 @@ class ComputeAllocation(TenantContextModel):
         RELEASED = "released"
         FAILED = "failed"
 
-    allocation_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    allocation_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     request_id = models.UUIDField()
     plugin_id = models.CharField(max_length=100)
     plugin_digest = models.CharField(max_length=64)

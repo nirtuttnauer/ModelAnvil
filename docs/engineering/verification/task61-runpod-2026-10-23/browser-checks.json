@@ -1,0 +1,22 @@
+{
+  "observed_at": "2026-10-22T23:39:15.145Z",
+  "configured_plugins": 0,
+  "live_provisioning": false,
+  "empty_state_visible": true,
+  "organization_requests": [
+    {
+      "name": "compute-plugins",
+      "status": 200
+    },
+    {
+      "name": "compute-allocations",
+      "status": 200
+    }
+  ],
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_page_overflow": false,
+  "page_errors": []
+}
