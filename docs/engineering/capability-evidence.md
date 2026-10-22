@@ -1,5 +1,7 @@
 # Capability evidence audit
 
+Current delivery addendum (23 October 2026): see the [integration inventory](integration-inventory.md), [operation-specific capability baseline](supported-capabilities.md), and dated verification reports. The original review below is historical; current dependency pins still require fresh GPU qualification. Customer discovery remains blocked on customer input.
+
 For current operation-specific support, artifact references and remaining qualification, see the [21 October capability baseline](supported-capabilities.md). This audit retains its original scenario-by-scenario review scope.
 
 TASK-1 · 11 October 2026 · Local source and automated-test audit

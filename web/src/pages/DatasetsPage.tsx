@@ -258,7 +258,7 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
   }
 
   return <div className="datasets-page">
-    <WorkspaceTabs label="Dataset workspace" value={datasetTab} onChange={chooseDatasetTab} tabs={[{ value: 'acquire', label: 'Acquire' }, { value: 'prepare', label: 'Prepare' }, { value: 'library', label: 'Library' }, { value: 'recipes', label: 'Recipes' }]} />
+    <WorkspaceTabs label="Dataset workspace" value={datasetTab} onChange={chooseDatasetTab} tabs={[{ value: 'acquire', label: 'Acquire' }, { value: 'prepare', label: 'Prepare' }, { value: 'library', label: 'Library' }, { value: 'recipes', label: 'Recipes' }]}>
     <div hidden={datasetTab !== 'acquire'}><DatasetBankPage token={token} refreshKey={refreshKey} /></div>
     {datasetTab === 'recipes' && <RecipesPage token={token} refreshKey={refreshKey} />}
     <div hidden={datasetTab !== 'prepare'}>
@@ -408,7 +408,7 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
         <RevisionDetails revision={visibleRevision} />
       </section>}
     </section>
-  </div>;
+  </WorkspaceTabs></div>;
 }
 
 export default DatasetsPage;

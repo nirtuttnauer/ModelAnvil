@@ -125,12 +125,12 @@ function slugFor(name: Page): string {
 }
 
 const primaryNavigation: { label: string; names: Page[] }[] = [
-  { label: 'Workspace', names: ['Overview', 'Training', 'Chat', 'Evaluation', 'Datasets'] },
+  { label: 'Workspace', names: ['Overview', 'Training', 'Chat', 'Datasets'] },
 ];
 const advancedNavigation: { label: string; names: Page[] }[] = [
-  { label: 'Data', names: ['Dataset Bank', 'Annotation', 'Recipes'] },
-  { label: 'Develop', names: ['Models', 'Specialists', 'Alignment'] },
-  { label: 'Context & release', names: ['RAG', 'Context Lab', 'Releases'] },
+  { label: 'Data', names: ['Annotation'] },
+  { label: 'Develop', names: ['Models', 'Specialists'] },
+  { label: 'Context & release', names: ['RAG', 'Releases'] },
   { label: 'Operations', names: ['Workflows', 'Infrastructure', 'Budgets', 'Audit'] },
 ];
 const navigationGroups = [...primaryNavigation, ...advancedNavigation];
@@ -800,20 +800,22 @@ export function App() {
               <WorkspaceTabs label="Model development" value={developMode(routeHash)} onChange={(mode) => {
                 window.location.hash = mode === 'align' ? 'training/align' : mode === 'evaluate' ? 'training/evaluate' : 'training';
                 setRouteHash(window.location.hash);
-              }} tabs={[{ value: 'train', label: 'Fine-tune' }, { value: 'align', label: 'Align' }, { value: 'evaluate', label: 'Evaluate' }]} />
+              }} tabs={[{ value: 'train', label: 'Fine-tune' }, { value: 'align', label: 'Align' }, { value: 'evaluate', label: 'Evaluate' }]}>
               {developMode(routeHash) === 'align' ? <AlignmentPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
                 : developMode(routeHash) === 'evaluate' ? <EvaluationPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
                 : <TrainingPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />}
+              </WorkspaceTabs>
             </>
           ) : active === 'RAG' ? (
             <>
               <WorkspaceTabs label="Context workspace" value={contextMode(routeHash)} onChange={(mode) => {
                 window.location.hash = mode === 'compile' ? 'context-lab' : 'rag';
                 setRouteHash(window.location.hash);
-              }} tabs={[{ value: 'retrieve', label: 'Retrieve' }, { value: 'compile', label: 'Compile' }]} />
+              }} tabs={[{ value: 'retrieve', label: 'Retrieve' }, { value: 'compile', label: 'Compile' }]}>
               {contextMode(routeHash) === 'compile'
                 ? <ContextLabPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
                 : <ClusterExplorerPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />}
+              </WorkspaceTabs>
             </>
           ) : active === 'Releases' ? (
             <ReleasesPage

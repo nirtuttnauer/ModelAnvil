@@ -251,6 +251,27 @@ export function OverviewPage({
 
       <div className="page-actions"><a href="#training">Training</a><a href="#evaluation">Evaluation</a></div>
 
+      <details className="workspace-details">
+        <summary>Other workflows</summary>
+        <div className="workflow-grid">
+          {workflows.map(({ icon: Icon, ...w }) => (
+            <Button className="workflow-card" key={w.page} onClick={() => onNavigate(w.page)}>
+              <span className="workflow-icon">
+                <Icon size={19} aria-hidden="true" />
+              </span>
+              <div>
+                <strong>{w.title}</strong>
+                <p>{w.description}</p>
+              </div>
+              <span className="workflow-prerequisite">{w.prerequisite}</span>
+              <span className="workflow-link">
+                {w.action}
+                <ArrowRight size={15} aria-hidden="true" />
+              </span>
+            </Button>
+          ))}
+        </div>
+      </details>
       <div className="section-heading">
         <h2>Workspace resources</h2>
         <span>Counts describe inventory</span>
