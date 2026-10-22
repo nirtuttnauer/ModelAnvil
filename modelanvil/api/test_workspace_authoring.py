@@ -135,6 +135,27 @@ class WorkspaceAuthoringTests(TestCase):
             self.assertEqual(ContextRecipe.objects.count(), 0)
             self.assertEqual(ContextRecipeVersion.objects.count(), 0)
 
+    def test_position_sweep_api_preserves_not_run_status(self):
+        saved = self.client.post("/api/v1/context-recipes/", self.recipe_payload(), format="json")
+        self.assertEqual(saved.status_code, 201, saved.data)
+        version = saved.data["versions"][0]["recipe_version_id"]
+        response = self.client.post(f"/api/v1/context-recipe-versions/{version}/sweep/", {
+            "target_fact": "The secret code is OMEGA-42.",
+        }, format="json")
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["metrics"]["status"], "not_run")
+        self.assertEqual(set(response.data["metrics"]), {"status", "reason"})
+        self.assertEqual(set(response.data["details"]), {"start", "middle", "end"})
+        for details in response.data["details"].values():
+            self.assertEqual(set(details), {"tokens", "fact_retained"})
+            self.assertGreater(details["tokens"], 0)
+            self.assertIsInstance(details["fact_retained"], bool)
+        experiment_id = response.data["experiment_id"]
+        stored = self.client.get(f"/api/v1/context-experiments/{experiment_id}/")
+        self.assertEqual(stored.status_code, 200, stored.data)
+        self.assertEqual(stored.data["metrics"], response.data["metrics"])
+        self.assertEqual(stored.data["details"], response.data["details"])
+
     def test_version_authoring_rejects_foreign_recipe_relation(self):
         saved = self.client.post("/api/v1/context-recipes/", self.recipe_payload(), format="json")
         foreign = Tenant.objects.create(slug="other-recipe", name="Other")

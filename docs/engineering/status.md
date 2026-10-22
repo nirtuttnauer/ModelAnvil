@@ -17,7 +17,7 @@ The former ledger used DONE for domain fixtures and described all 17 scenarios a
 | Alignment/RLHF | Fixture metrics and registry candidates | Real policy/reward weights, rollout and independent evaluation |
 | Release/quantization/serving | Metadata export, fixed simulated quantization values, fixture pointer/rollback tests | Weight conversion, real serving readiness, reviewed qualification; TASK-7 |
 | Annotation/campaign | Manual review and snapshot helpers; metadata candidate/fixed score fixtures | Actual retraining and qualification loop; TASK-10 |
-| RAG/cluster/context | Local helpers, inline vectors and simulated experiment scores | End-to-end retrieval/model execution and browser pilots; TASK-11/12 |
+| RAG/cluster/context | Local helpers, inline vectors and context prompt inspection; evidence-position recall is explicitly not run | End-to-end retrieval/model execution and browser pilots; TASK-11/12 |
 | SDK/deployment/ops | Local helpers/configuration and fixture checks | Process isolation, real installs, restore drills and platform qualification |
 
 API `execution_evidence` is read-only and separate from saved workflow state. Legacy qualified labels do not authorize production. Production model/release qualification and serving promotion fail closed while the trusted runtime evidence path is unavailable. See [frontend coverage](frontend-workspace.md) for browser interactions.
