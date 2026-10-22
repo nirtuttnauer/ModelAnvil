@@ -266,3 +266,6 @@ LOGGING = {
     "loggers": {name: {"handlers": ["console"], "level": "INFO", "propagate": False}
                 for name in ('django.server', 'django.request')},
 }
+
+# Keep SQLite coverage while explicit --tag=pg runs fail if Postgres is missing.
+TEST_RUNNER = "modelanvil.core.test_runner.Runner"

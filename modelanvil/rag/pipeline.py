@@ -1,7 +1,6 @@
 """End-to-end RAG query pipeline, citation generation, abstention policy, and trace logging (TECH-022, TECH-024)."""
 from __future__ import annotations
 
-import hashlib
 import time
 from typing import Any, Optional, Sequence
 
@@ -21,35 +20,27 @@ class RAGPipeline:
         self.engine = RetrievalEngine(index_version)
         self.abstention_threshold = abstention_threshold
 
-    def pseudo_embed_query(self, query: str) -> list[float]:
-        """Deterministic pseudo-embedding for testing and self-hosted local execution."""
-        dim = self.index_version.embedding_space.dimension
-        hasher = hashlib.sha256(query.encode("utf-8"))
-        digest = hasher.digest()
-        vec = []
-        for i in range(dim):
-            byte_val = digest[i % len(digest)]
-            vec.append((byte_val / 255.0) * 2.0 - 1.0)
-        norm = sum(x * x for x in vec) ** 0.5
-        return [x / norm for x in vec] if norm > 0 else vec
-
     def answer_query(
         self,
         query: str,
         mode: str = "hybrid",
         top_k: int = 3,
         caller_identity: str = "api-user",
+        query_embedding: Sequence[float] | None = None,
     ) -> QueryTrace:
         """Execute RAG pipeline: retrieval -> reranking -> context assembly -> generation/abstention -> trace."""
         start_time = time.monotonic()
-        query_vec = self.pseudo_embed_query(query)
 
         if mode == "lexical":
             candidates = self.engine.retrieve_lexical(query, top_k=top_k)
         elif mode == "dense":
-            candidates = self.engine.retrieve_dense(query_vec, top_k=top_k)
+            if not query_embedding:
+                raise ValueError("Dense retrieval requires a query embedding.")
+            candidates = self.engine.retrieve_dense(query_embedding, top_k=top_k)
         else:
-            candidates = self.engine.retrieve_hybrid(query, query_vec, top_k=top_k)
+            if not query_embedding:
+                raise ValueError("Hybrid retrieval requires a query embedding.")
+            candidates = self.engine.retrieve_hybrid(query, query_embedding, top_k=top_k)
 
         retrieved_ids = [c.chunk_id for c in candidates]
         reranked_ids = list(retrieved_ids)
