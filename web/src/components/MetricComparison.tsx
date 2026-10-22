@@ -13,7 +13,7 @@ function Interval({ value }: { value: unknown }) {
       return <span className="wb-number"><DataValue value={interval.lower} /> – <DataValue value={interval.upper} /></span>;
     }
   }
-  return <DataValue value={value} />;
+  return <span className="wb-muted">Not reported</span>;
 }
 
 export function MetricComparison({ metrics, baseline = [], candidateName = 'Candidate', baselineName = 'Baseline' }: {

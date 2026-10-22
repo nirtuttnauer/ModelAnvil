@@ -53,7 +53,7 @@ export const PayloadBuilder: Story = {
   },
 };
 export const EvaluationCases: Story = {
-  render: () => <RecordsDemo key="Evaluation cases" title="Evaluation cases" itemName="Case" fields={evaluationFields} maximum={64} uniqueKey="case_id" initial='[{"case_id":"case-1","input_prompt":"Hello","expected_output":"hello","slice":"general"}]' />,
+  render: () => <RecordsDemo key="Evaluation cases" title="Evaluation cases" itemName="Case" fields={evaluationFields} maximum={64} uniqueKey="case_id" initial='[{"case_id":"case-1","input_prompt":"Hello","expected_output":"hello","slice":"general","source_group_id":"held-out"}]' />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: 'Add case' }));
@@ -67,6 +67,7 @@ export const EvaluationCases: Story = {
     await userEvent.type(second.getByLabelText('Case ID'), 'case-2');
     await userEvent.type(second.getByLabelText('Input prompt'), 'Keep whitespace.\n');
     await userEvent.type(second.getByLabelText('Expected response'), ' exact response ');
+    await userEvent.type(second.getByLabelText('Source group ID'), 'held-out-second');
     await userEvent.click(canvas.getByRole('button', { name: 'Remove case 1' }));
     await expect(canvas.getByLabelText('Case ID')).toHaveValue('case-2');
     await expect(canvas.getByLabelText('Expected response')).toHaveValue(' exact response ');
@@ -117,5 +118,5 @@ export const EntitySpans: Story = { render: () => <RecordsDemo key="Entity spans
 export const RubricScores: Story = { render: () => <ObjectDemo rubric initial='{"accuracy":4,"clarity":3}' /> };
 export const DamagedDraft: Story = { render: () => <ObjectDemo initial="incomplete saved input" />, play: async ({ canvasElement }) => { const canvas = within(canvasElement); await expect(canvas.getByRole('alert')).toHaveTextContent('Saved fields could not be restored.'); await userEvent.click(canvas.getByRole('button', { name: 'Clear saved fields' })); await expect(canvas.queryByRole('alert')).not.toBeInTheDocument(); await userEvent.click(canvas.getByRole('button', { name: 'Save inputs' })); await expect(canvas.getByRole('status')).toHaveTextContent('Inputs saved.'); canvasElement.dataset.demoVerified = 'passed'; } };
 export const Disabled: Story = { render: () => <ObjectDemo disabled /> };
-export const Narrow: Story = { render: () => <div className="form-story-narrow"><RecordsDemo key="Evaluation cases" title="Evaluation cases" itemName="Case" fields={evaluationFields} maximum={64} uniqueKey="case_id" initial='[{"case_id":"case-1","input_prompt":"Summarize this source.","expected_output":"A clear, grounded answer.","slice":"general"}]' /></div> };
+export const Narrow: Story = { render: () => <div className="form-story-narrow"><RecordsDemo key="Evaluation cases" title="Evaluation cases" itemName="Case" fields={evaluationFields} maximum={64} uniqueKey="case_id" initial='[{"case_id":"case-1","input_prompt":"Summarize this source.","expected_output":"A clear, grounded answer.","slice":"general","source_group_id":"held-out"}]' /></div> };
 export const Dark: Story = { ...OptimizerAndVerifier, parameters: { demoTheme: 'dark' } };

@@ -103,6 +103,8 @@ def evaluation_prompt_format(run):
 
 
 def resolve_inputs(run, max_tokens):
+    if run.suite_version.protected_role != 'protected_eval':
+        raise ValueError('Queue a suite version declared as protected evaluation.')
     validate_local_suite(run.suite_version.cases, run.suite_version.scorer_type, run.suite_version.scorer_config)
     if not check_resource_access(run.suite_version, run.project_id, run.tenant_id):
         raise ValueError('The evaluation suite is unavailable in this project.')

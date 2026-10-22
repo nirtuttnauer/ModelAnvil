@@ -86,6 +86,17 @@ class DurableEvaluationTests(TestCase):
         self.assertEqual(detail['evidence']['level'], 'integrated_execution')
         self.assertEqual(self.client.get(f'/api/v1/run-details/evaluation/{run.run_id}/attempts/').status_code, 200)
 
+    def test_nonprotected_suite_rejected_before_allocation(self):
+        run_id = self.pending_eval(candidate=self.candidate, baseline=self.base)
+        run = EvaluationRun.all_objects.get(run_id=run_id)
+        run.suite_version = type(run.suite_version).all_objects.create(tenant_id=self.tenant.pk,
+            suite=run.suite_version.suite, revision_no=2, cases=run.suite_version.cases, protected_role='training')
+        run.save()
+        response = self.client.post(f'/api/v1/evaluation-runs/{run_id}/execute/', self.request, format='json')
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('protected evaluation', str(response.json()))
+        self.assertFalse(BudgetReservation.all_objects.filter(policy=self.case_budget).exists())
+
     def test_incompatible_tokenizer_rejected_before_allocation(self):
         from modelanvil.runners.models import TokenizerVersion
         other = TokenizerVersion.objects.create(tenant_id=self.tenant.pk, name='Incompatible evaluation tokenizer', vocabulary_size=17)
