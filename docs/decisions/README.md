@@ -28,3 +28,5 @@ Each record should contain:
 - [001 Job queue recommendation](001-job-queue.md) — proposed RabbitMQ dispatch with durable database claims and recovery; Kafka considered.
 
 - [002 Technology stack](002-technology-stack.md) — Vite/React, SwiftUI, Django, PostgreSQL, S3 providers, Scrapling, worker boundaries, deployment qualification, and the PRD 0.6 RAG/context extension.
+
+- [003 Fine-tune decision loop](003-fine-tune-decision-loop.md) — the next product slice is private fine-tune and decide; broader R1 surfaces stay later.

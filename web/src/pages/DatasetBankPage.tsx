@@ -36,13 +36,14 @@ export function DatasetBankPage({ token, onImportSuccess, refreshKey = 0 }: Data
   const [error, setError] = React.useState<string | null>(null);
   const [sources, setSources] = React.useState<BankSource[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const draft = useDraft('dataset-bank', { query: '', selectedModality: 'all', selectedId: '', budgetPolicyId: '', estimatedAmount: '', shareAlikeSourceId: '', downloadScope: 'sample', storageQuota: '', recordLimit: '' });
+  const draft = useDraft('dataset-bank', { query: '', selectedModality: 'all', catalogView: 'available', selectedId: '', budgetPolicyId: '', estimatedAmount: '', shareAlikeSourceId: '', downloadScope: 'sample', storageQuota: '', recordLimit: '' });
   const [recordLimit, setRecordLimit] = draft.field('recordLimit');
   const [history, setHistory] = React.useState<Acquisition[]>([]);
   const [historyError, setHistoryError] = React.useState('');
   const [review, setReview] = React.useState<{ source: BankSource; key: string; body: Record<string, unknown>; preview: unknown; preflight: unknown } | null>(null);
   const [query, setQuery] = draft.field('query');
   const [selectedModality, setSelectedModality] = draft.field('selectedModality');
+  const [catalogView, setCatalogView] = draft.field('catalogView');
   const [selectedId, setSelectedId] = draft.field('selectedId');
   const sourceInspector = React.useRef<HTMLElement>(null);
   const [importingId, setImportingId] = React.useState<string | null>(null);
@@ -59,6 +60,7 @@ export function DatasetBankPage({ token, onImportSuccess, refreshKey = 0 }: Data
   const [storageQuota, setStorageQuota] = draft.field('storageQuota');
   const acquisitionKey = (source: BankSource) => source.id + (downloadScope === 'full' ? ':full' : '');
   const available = (source: BankSource) => downloadScope === 'full' ? source.full_acquisition_available : source.acquisition_available;
+  const acquirable = (source: BankSource) => source.acquisition_available || !!source.full_acquisition_available;
   const qualifiedBytes = (source: BankSource) => downloadScope === 'full' ? source.full_acquisition?.measured_selected_bytes : source.size_bytes;
   const qualifiedCount = (source: BankSource) => acquisitions[acquisitionKey(source)]?.planned_records ?? (downloadScope === 'full' ? source.full_acquisition?.record_limit : recordLimit ? Number(recordLimit) : source.acquisition_record_limit);
   const storageBytes = (source: BankSource) => storageQuota ? Number(storageQuota) : 2 * (qualifiedBytes(source) || 0);
@@ -181,7 +183,8 @@ export function DatasetBankPage({ token, onImportSuccess, refreshKey = 0 }: Data
   }
 
   const modalities = [...new Set(sources.flatMap(source => source.modalities || []))].sort();
-  const filtered = sources.filter(source => [source.name, source.description, source.license].some(value => value.toLowerCase().includes(query.toLowerCase()))
+  const filtered = sources.filter(source => (catalogView === 'all' || (catalogView === 'unavailable' ? !acquirable(source) : acquirable(source)))
+    && [source.name, source.description, source.license].some(value => value.toLowerCase().includes(query.toLowerCase()))
     && (selectedModality === 'all' || source.modalities?.includes(selectedModality)));
   const selected = filtered.find(source => source.id === selectedId) || filtered[0];
   const status = selected ? importStatus[acquisitionKey(selected)] : undefined;
@@ -191,7 +194,8 @@ export function DatasetBankPage({ token, onImportSuccess, refreshKey = 0 }: Data
     <ResourceState loading={loading} error={error} />
     <Card className="panel data-filter-panel"><div className="data-filter-row"><label className="data-search"><Search size={17} aria-hidden="true" /><Field type="search" aria-label="Search dataset sources" placeholder="Search sources, descriptions, or licenses…" value={query} onChange={e => setQuery(e.target.value)} /></label>
       <label>Modality<select value={selectedModality} onChange={e => setSelectedModality(e.target.value)}><option value="all">All modalities</option>{modalities.map(modality => <option key={modality} value={modality}>{modality}</option>)}</select></label>
-      <Button onClick={() => { setQuery(''); setSelectedModality('all'); }} disabled={!query && selectedModality === 'all'}>Clear filters</Button></div></Card>
+      <label>Availability<select aria-label="Catalog availability" value={catalogView} onChange={e => setCatalogView(e.target.value)}><option value="available">Ready to acquire</option><option value="unavailable">Not available yet</option><option value="all">All sources</option></select></label>
+      <Button onClick={() => { setQuery(''); setSelectedModality('all'); setCatalogView('available'); }} disabled={!query && selectedModality === 'all' && catalogView === 'available'}>Clear filters</Button></div></Card>
     <div className="data-inspector-layout">
       <div className="data-catalog-column"><Card className="panel"><div className="panel-title"><div><h2>Source catalog</h2><p>Curated open data for training and evaluation.</p></div><Badge className="badge">{filtered.length} / {sources.length} SOURCES</Badge></div>
         <div className="table-scroll" tabIndex={0}><RecordTable className="resource-table data-source-table"><thead><tr><th>Source</th><th>Modality</th><th>License</th><th>Eligibility</th><th>Inspect</th></tr></thead><tbody>{filtered.map(source => <tr key={source.id} className={selected?.id === source.id ? 'data-selected-row' : ''}>
@@ -199,7 +203,7 @@ export function DatasetBankPage({ token, onImportSuccess, refreshKey = 0 }: Data
           <td><div className="data-tags">{source.modalities?.map(modality => <Badge className="badge" key={modality}>{modality}</Badge>)}</div></td><td>{source.license || 'Not provided'}</td>
           <td><Badge className={`state state-${source.eligibility === 'eligible' ? 'ready' : 'pending'}`}>{source.eligibility.replaceAll('_', ' ')}</Badge></td>
           <td><Button aria-pressed={selected?.id === source.id} aria-label={`Inspect ${source.name}`} disabled={importingId !== null} onClick={() => { setSelectedId(source.id); setReview(null); requestAnimationFrame(() => sourceInspector.current?.focus()); }}>Inspect</Button></td></tr>)}
-          {!loading && !filtered.length && <tr><td colSpan={5}><Feedback state="empty" title={error ? 'Catalog unavailable' : 'No matching sources'} description={error ? 'Check your connection and refresh the catalog.' : 'Try another search or clear your filters.'} /></td></tr>}</tbody></RecordTable></div></Card>
+          {!loading && !filtered.length && <tr><td colSpan={5}><Feedback state="empty" title={error ? 'Catalog unavailable' : 'No matching sources'} description={error ? 'Check your connection and refresh the catalog.' : catalogView === 'available' ? 'No sources in this installation can be acquired yet. Open Not available yet to see the reason for each remaining source.' : 'Try another search or clear your filters.'} /></td></tr>}</tbody></RecordTable></div></Card>
         <details className="workspace-details"><summary>Catalog statistics</summary><div className="visualization-grid equal"><ChartPanel title="Catalog composition" description="Source counts in the loaded catalog. A source can have multiple modalities."><BarChart data={modalities.map(modality => ({ label: modality, value: sources.filter(source => source.modalities?.includes(modality)).length }))} unit="Sources" emptyMessage="Connect to load the curated catalog." /></ChartPanel>
           <ChartPanel title="Import eligibility" description="Catalog policy status; sample counts are available after import."><BarChart data={[...new Set(sources.map(source => source.eligibility))].map(eligibility => ({ label: eligibility.replaceAll('_', ' '), value: sources.filter(source => source.eligibility === eligibility).length }))} unit="Sources" emptyMessage="Eligibility will appear when the catalog is loaded." /></ChartPanel></div></details>
       </div>

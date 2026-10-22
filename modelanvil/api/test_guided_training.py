@@ -6,6 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from django.conf import settings
+from django.core.cache import cache
 from django.test import TestCase, override_settings
 from django.utils import timezone
 from rest_framework.test import APIClient
@@ -21,6 +22,7 @@ from modelanvil.runners.training.managed import host_status, prepare_resources, 
 class AccountTests(TestCase):
     def setUp(self):
         reset_context()
+        cache.clear()
         self.client = APIClient(enforce_csrf_checks=True)
 
     def signup(self, email='new@example.invalid'):
@@ -88,6 +90,96 @@ class AccountTests(TestCase):
     def test_operator_can_disable_signup(self):
         self.assertFalse(self.client.get('/api/v1/accounts/status/').data['signup_enabled'])
         self.assertEqual(self.signup().status_code, 403)
+
+    def csrf(self):
+        return self.client.cookies['csrftoken'].value
+
+    @override_settings(DEBUG=True)
+    def test_password_reset_returns_a_code_in_debug_and_signs_in(self):
+        self.signup()
+        self.client.get('/api/v1/accounts/status/')
+        requested = self.client.post('/api/v1/accounts/password-reset/', {'email': 'new@example.invalid'},
+            format='json', HTTP_X_CSRFTOKEN=self.csrf())
+        self.assertEqual(requested.status_code, 200, requested.data)
+        self.assertIn('reset_code', requested.data)
+        unknown = self.client.post('/api/v1/accounts/password-reset/', {'email': 'missing@example.invalid'},
+            format='json', HTTP_X_CSRFTOKEN=self.csrf())
+        self.assertEqual(unknown.status_code, 200, unknown.data)
+        self.assertNotIn('reset_code', unknown.data)
+        confirmed = self.client.post('/api/v1/accounts/password-reset/confirm/', {
+            'email': 'new@example.invalid', 'code': requested.data['reset_code'], 'password': 'replacement-testing-password-937!'},
+            format='json', HTTP_X_CSRFTOKEN=self.csrf())
+        self.assertEqual(confirmed.status_code, 200, confirmed.data)
+        self.assertTrue(User.objects.get(email='new@example.invalid').check_password('replacement-testing-password-937!'))
+        self.assertEqual(self.client.get('/api/v1/accounts/status/').data['authenticated'], True)
+
+    @override_settings(DEBUG=False)
+    def test_password_reset_does_not_reveal_a_code_when_debug_is_off(self):
+        self.signup()
+        self.client.get('/api/v1/accounts/status/')
+        requested = self.client.post('/api/v1/accounts/password-reset/', {'email': 'new@example.invalid'},
+            format='json', HTTP_X_CSRFTOKEN=self.csrf())
+        self.assertEqual(requested.status_code, 200, requested.data)
+        self.assertNotIn('reset_code', requested.data)
+        self.assertIn('not configured', requested.data['delivery'])
+        unknown = self.client.post('/api/v1/accounts/password-reset/', {'email': 'missing@example.invalid'},
+            format='json', HTTP_X_CSRFTOKEN=self.csrf())
+        self.assertEqual(requested.data, unknown.data)
+
+    @override_settings(DEBUG=True)
+    def test_password_reset_revokes_existing_credentials_and_rejects_reused_code(self):
+        self.signup()
+        old_cookie = self.client.cookies['modelanvil_session'].value
+        old_keys = list(ApiKey.objects.filter(created_by__email='new@example.invalid').values_list('pk', flat=True))
+        requested = self.client.post('/api/v1/accounts/password-reset/', {'email': 'new@example.invalid'},
+            format='json', HTTP_X_CSRFTOKEN=self.csrf())
+        payload = {'email': 'new@example.invalid', 'code': requested.data['reset_code'],
+                   'password': 'replacement-testing-password-937!'}
+        confirmed = self.client.post('/api/v1/accounts/password-reset/confirm/', payload,
+            format='json', HTTP_X_CSRFTOKEN=self.csrf())
+        self.assertEqual(confirmed.status_code, 200, confirmed.data)
+        self.assertFalse(ApiKey.objects.filter(pk__in=old_keys, is_active=True).exists())
+        old_session = APIClient(); old_session.cookies['modelanvil_session'] = old_cookie
+        self.assertFalse(old_session.get('/api/v1/accounts/status/').data['authenticated'])
+        repeated = self.client.post('/api/v1/accounts/password-reset/confirm/', payload,
+            format='json', HTTP_X_CSRFTOKEN=self.csrf())
+        self.assertEqual(repeated.status_code, 400)
+
+    def test_action_consumption_rejects_a_stale_previously_loaded_copy(self):
+        from modelanvil.api.views.accounts import consume_action, issue_action, open_action
+        from modelanvil.identity.models import AccountAction
+        from rest_framework.exceptions import ValidationError
+        code = issue_action(AccountAction.Purpose.PASSWORD_RESET, 'new@example.invalid')
+        first = open_action(AccountAction.Purpose.PASSWORD_RESET, 'new@example.invalid', code)
+        stale = open_action(AccountAction.Purpose.PASSWORD_RESET, 'new@example.invalid', code)
+        consume_action(first)
+        with self.assertRaises(ValidationError):
+            consume_action(stale)
+
+    def test_owner_can_invite_one_teammate_who_can_join(self):
+        self.signup('owner@example.invalid')
+        self.client.get('/api/v1/accounts/status/')
+        self.assertTrue(self.client.get('/api/v1/accounts/status/').data['can_invite'])
+        invited = self.client.post('/api/v1/accounts/invitations/', {'email': 'teammate@example.invalid'},
+            format='json', HTTP_X_CSRFTOKEN=self.csrf())
+        self.assertEqual(invited.status_code, 201, invited.data)
+        self.assertEqual(invited.data['role'], Role.ENGINEER)
+        again = self.client.post('/api/v1/accounts/invitations/', {'email': 'second@example.invalid'},
+            format='json', HTTP_X_CSRFTOKEN=self.csrf())
+        self.assertEqual(again.status_code, 400, again.json())
+        existing = self.client.post('/api/v1/accounts/invitations/', {'email': 'owner@example.invalid'},
+            format='json', HTTP_X_CSRFTOKEN=self.csrf())
+        self.assertEqual(existing.status_code, 400)
+        guest = APIClient(enforce_csrf_checks=True)
+        guest.get('/api/v1/accounts/status/')
+        accepted = guest.post('/api/v1/accounts/invitations/accept/', {
+            'email': 'teammate@example.invalid', 'name': 'Teammate', 'code': invited.data['invite_code'],
+            'password': 'teammate-testing-password-937!'}, format='json', HTTP_X_CSRFTOKEN=guest.cookies['csrftoken'].value)
+        self.assertEqual(accepted.status_code, 200, accepted.data)
+        membership = Membership.objects.get(user__email='teammate@example.invalid')
+        self.assertEqual(membership.role, Role.ENGINEER)
+        self.assertEqual(membership.tenant_id, Membership.objects.get(user__email='owner@example.invalid').tenant_id)
+        self.assertEqual(guest.get('/api/v1/accounts/status/').data['can_invite'], False)
 
 
 class ManagedHostTests(TestCase):

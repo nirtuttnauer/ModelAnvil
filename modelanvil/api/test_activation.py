@@ -11,6 +11,7 @@ from modelanvil.identity.models import ApiKey, Project, Role, Team, Tenant, gene
 from modelanvil.jobs.executor import execute_claim
 from modelanvil.jobs.models import claim_job
 from modelanvil.runners.eval_worker import evaluation_worker_executor
+from modelanvil.runners.models import TrainingRun
 
 
 class ActivationTests(TestCase):
@@ -143,3 +144,18 @@ class ActivationTests(TestCase):
         self.assertEqual(ImprovementDecision.all_objects.count(), 2)
         self.assertEqual(totals['weekly_improvement_cycles'], 1)
         self.assertEqual(totals['weekly_teams_with_decisions'], 1)
+
+    def test_setup_check_and_synthetic_training_cannot_be_accepted(self):
+        training = TrainingRun.all_objects.get(output_model_version=self.evaluation.candidate_model_version)
+        original = dict(training.hardware_config or {})
+        training.hardware_config = {**original, 'setup_check': True}
+        training.save(update_fields=['hardware_config'])
+        setup = self.client.post(self.url, {'outcome': 'accept'}, format='json', **self.headers)
+        self.assertEqual(setup.status_code, 400, setup.json())
+        self.assertIn('setup check', str(setup.json()).lower())
+        training.hardware_config = {**original, 'execution_mode': 'simulation', 'setup_check': False}
+        training.save(update_fields=['hardware_config'])
+        synthetic = self.client.post(self.url, {'outcome': 'reject'}, format='json', **self.headers)
+        self.assertEqual(synthetic.status_code, 400, synthetic.json())
+        self.assertIn('synthetic', str(synthetic.json()).lower())
+        self.assertEqual(self.report()['weekly_improvement_cycles'], 0)

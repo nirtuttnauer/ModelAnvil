@@ -1,12 +1,14 @@
 # ModelAnvil product improvement backlog
 
-11 October 2026 · Product review of the current workspace
+22 October 2026 · Rebaselined against the 21 October capability baseline
+
+The current P0 is the fine-tune decision loop: a new account trains a guided SmolLM2 profile, compares that exact candidate with its base model through the native chat template, and records an accept or reject. See [decision 003](decisions/003-fine-tune-decision-loop.md). MA-PM-10, MA-PM-11, and MA-PM-12 stay later than that slice. MA-PM-02 remains ongoing relationship hardening. The 11 October review below is retained as history; its recommended path is no longer the build order.
 
 Drafted from repository evidence. No implementation authorization or delivery dates are implied. P0 protects trust and boundaries; P1 makes the first text-model journey usable; P2 expands qualified workflows. Effort is relative (M/L), not a delivery estimate.
 
 The ModelAnvil project was created through Aftur MCP at `<user-home>/Documents/Code/Aftur/ProjectMemory/ModelAnvil`, linked to this repository. All 12 improvement tasks were created and read back through its separate scoped MCP connection; acceptance criteria, repository assignments, proposed status and dependency links were verified. The mapping is MA-PM-01–12 → TASK-1–12. Priorities are recorded in each task title and description; they are product recommendations, not delivery commitments.
 
-Recommended path: MA-PM-01/02 → MA-PM-04 → MA-PM-06 → MA-PM-07. Onboarding, preflight, run monitoring and one Dataset Bank source support that journey. The first fine-tuning slice does not remove the PRD's scratch-pretraining or other R1 requirements.
+Historical recommended path from 11 October: MA-PM-01/02 → MA-PM-04 → MA-PM-06 → MA-PM-07. That order is superseded by the 22 October decision loop. The first fine-tuning slice does not remove the PRD's scratch-pretraining or other R1 requirements.
 
 ## MA-PM-01 — [P0] Make capability and qualification status match actual product evidence
 
@@ -28,6 +30,8 @@ Recommended path: MA-PM-01/02 → MA-PM-04 → MA-PM-06 → MA-PM-07. Onboarding
 **Repository evidence:** `docs/engineering/status.md`, `docs/engineering/frontend-workspace.md`, `modelanvil/runners/training/engine.py`, `modelanvil/acceptance/test_r1_scenarios.py`
 
 ## MA-PM-02 — [P0] Enforce resource relationships and permissions across project boundaries
+
+**Status:** Ongoing hardening. This stays in force while the decision loop is the build order.
 
 **Owner:** Backend + security · **Relative effort:** M · **Depends on:** None
 
@@ -67,6 +71,8 @@ Recommended path: MA-PM-01/02 → MA-PM-04 → MA-PM-06 → MA-PM-07. Onboarding
 
 ## MA-PM-04 — [P1] Ship a real worker-backed text fine-tuning journey with verified checkpoints
 
+**Status:** Partial against the 21 October baseline. Guided signup, worker-backed SmolLM2 training, and run monitoring exist for the pinned profiles. The remaining hero gap is the decision after that training, tracked as the current P0.
+
 **Owner:** ML + platform · **Relative effort:** L · **Depends on:** MA-PM-01, MA-PM-02
 
 **Problem:** Training creates pending configurations, and the current TrainingEngine simulates progress. Users cannot yet produce an independently usable trained model through the browser.
@@ -87,6 +93,8 @@ Recommended path: MA-PM-01/02 → MA-PM-04 → MA-PM-06 → MA-PM-07. Onboarding
 
 ## MA-PM-05 — [P1] Show actionable training preflight and an honest compute-cost estimate
 
+**Status:** Partial against the 21 October baseline. Guided and advanced launch already show server preflight. Setup checks stay ineligible for an accept decision.
+
 **Owner:** ML + frontend · **Relative effort:** M · **Depends on:** MA-PM-04
 
 **Problem:** The browser accepts recipe, tokenizer, base model and steps without showing a combined dataset/compatibility/capacity/budget preflight.
@@ -105,6 +113,8 @@ Recommended path: MA-PM-01/02 → MA-PM-04 → MA-PM-06 → MA-PM-07. Onboarding
 **Repository evidence:** `modelanvil/runners/training/preflight.py`, `web/src/pages/TrainingPage.tsx`, `modelanvil/budgets/models.py`
 
 ## MA-PM-06 — [P1] Execute independent model evaluations and compare candidates fairly
+
+**Status:** Partial against the 21 October baseline. CPU plain-prompt evaluation and the accept/reject API exist. Native-template comparison of the exact guided candidate is the current P0, not a later evaluation program.
 
 **Owner:** Evaluation + frontend · **Relative effort:** L · **Depends on:** MA-PM-04
 
@@ -146,6 +156,8 @@ Recommended path: MA-PM-01/02 → MA-PM-04 → MA-PM-06 → MA-PM-07. Onboarding
 
 ## MA-PM-08 — [P1] Add one durable run-detail view for progress, failures and recovery
 
+**Status:** Partial against the 21 October baseline. Training run detail, progress, and recovery review exist. They do not replace the post-training decision.
+
 **Owner:** Frontend + platform · **Relative effort:** M · **Depends on:** MA-PM-04
 
 **Problem:** Training/evaluation and jobs expose separate views, require manual refresh and do not provide one linked recovery experience.
@@ -186,6 +198,8 @@ Recommended path: MA-PM-01/02 → MA-PM-04 → MA-PM-06 → MA-PM-07. Onboarding
 
 ## MA-PM-10 — [P2] Complete a bounded labeling → retraining → qualification campaign loop
 
+**Status:** Later than the decision-loop slice. One manual handoff from an approved labeling snapshot into guided training is in that slice. Automatic draft, retrain, and next-batch orchestration stay unbuilt. Do not schedule this ahead of the current P0.
+
 **Owner:** Annotation + ML · **Relative effort:** L · **Depends on:** MA-PM-04, MA-PM-06
 
 **Problem:** Manual/imported-prediction review and snapshot export exist, but automatic drafting, actual retraining and independent promotion are disconnected. Protected IDs do not establish source-group reservations.
@@ -206,6 +220,8 @@ Recommended path: MA-PM-01/02 → MA-PM-04 → MA-PM-06 → MA-PM-07. Onboarding
 
 ## MA-PM-11 — [P2] Build a usable versioned RAG index and retrieval-comparison workflow
 
+**Status:** Later. Do not schedule this ahead of the fine-tune decision loop.
+
 **Owner:** Retrieval + frontend · **Relative effort:** L · **Depends on:** MA-PM-02, MA-PM-06
 
 **Problem:** The RAG browser queries registered indexes with lexical retrieval, while index construction, projection and retrieval/generation qualification remain operator/backend work.
@@ -225,6 +241,8 @@ Recommended path: MA-PM-01/02 → MA-PM-04 → MA-PM-06 → MA-PM-07. Onboarding
 **Repository evidence:** `web/src/pages/ClusterExplorerPage.tsx`, `modelanvil/rag/pipeline.py`, `modelanvil/rag/retrieval.py`, `docs/engineering/frontend-workspace.md`
 
 ## MA-PM-12 — [P2] Author context recipes and run measured paired Context Lab experiments
+
+**Status:** Later. Do not schedule this ahead of the fine-tune decision loop.
 
 **Owner:** Application ML + frontend · **Relative effort:** L · **Depends on:** MA-PM-06
 

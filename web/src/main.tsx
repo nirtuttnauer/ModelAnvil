@@ -119,13 +119,16 @@ function slugFor(name: Page): string {
   return pages.find((page) => page.name === name)?.slug ?? name.toLowerCase().replaceAll(' ', '-');
 }
 
-const navigationGroups = [
-  { label: 'Workspace', names: ['Overview'] },
-  { label: 'Data', names: ['Dataset Bank', 'Datasets', 'Recipes', 'Annotation'] },
-  { label: 'Develop', names: ['Models', 'Chat', 'Specialists', 'Training', 'Alignment', 'Evaluation'] },
+const primaryNavigation: { label: string; names: Page[] }[] = [
+  { label: 'Workspace', names: ['Overview', 'Training', 'Chat', 'Evaluation', 'Datasets'] },
+];
+const advancedNavigation: { label: string; names: Page[] }[] = [
+  { label: 'Data', names: ['Dataset Bank', 'Annotation', 'Recipes'] },
+  { label: 'Develop', names: ['Models', 'Specialists', 'Alignment'] },
   { label: 'Context & release', names: ['RAG', 'Context Lab', 'Releases'] },
   { label: 'Operations', names: ['Workflows', 'Infrastructure', 'Budgets', 'Audit'] },
 ];
+const navigationGroups = [...primaryNavigation, ...advancedNavigation];
 
 const descriptions: Record<Page, string> = {
   Overview: 'Your data, experiments, and next decisions. All in one workspace.',
@@ -204,6 +207,10 @@ export function App() {
   const activeProject = projects.find((p) => p.id === activeProjectId) || null;
 
   const [navigationOpen, setNavigationOpen] = React.useState(false);
+  const [advancedOpen, setAdvancedOpen] = React.useState(() => advancedNavigation.some(group => group.names.includes(currentPage())));
+  React.useEffect(() => {
+    if (advancedNavigation.some(group => group.names.includes(active))) setAdvancedOpen(true);
+  }, [active]);
   const [headerOptionsOpen, setHeaderOptionsOpen] = React.useState(false);
   const menuButton = React.useRef<HTMLButtonElement>(null);
   const connectionDialog = React.useRef<HTMLDialogElement>(null);
@@ -464,7 +471,7 @@ export function App() {
           </div>
         </div>
         <nav aria-label="Main navigation">
-          {navigationGroups.map((group) => (
+          {primaryNavigation.map((group) => (
             <div className="nav-group" key={group.label}>
               <p className="nav-label">{group.label}</p>
               {pages
@@ -483,6 +490,20 @@ export function App() {
                 ))}
             </div>
           ))}
+          <details className="nav-advanced" open={advancedOpen} onToggle={event => setAdvancedOpen(event.currentTarget.open)}>
+            <summary>Advanced</summary>
+            {advancedNavigation.map((group) => (
+              <div className="nav-group" key={group.label}>
+                <p className="nav-label">{group.label}</p>
+                {pages.filter((page) => group.names.includes(page.name)).map(({ name, icon: Icon }) => (
+                  <NavigationItem key={name} title={name} selected={selectedNavigation === name}
+                    icon={<Icon size={18} aria-hidden="true" />} aria-label={name} onClick={() => load(name)}>
+                    {name}
+                  </NavigationItem>
+                ))}
+              </div>
+            ))}
+          </details>
         </nav>
         <div className="sidebar-bottom">
           <span
@@ -652,8 +673,8 @@ export function App() {
               <p>{descriptions[active]}</p>
             </div>
             {active === 'Overview' && (
-              <Button onClick={() => load('Workflows')}>
-                Open workflows
+              <Button onClick={() => load('Training')}>
+                Start fine-tuning
                 <ArrowUpRight size={16} aria-hidden="true" />
               </Button>
             )}

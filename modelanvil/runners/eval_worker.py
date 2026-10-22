@@ -16,7 +16,8 @@ from modelanvil.runners.models import EvaluationCaseResult, EvaluationMetric, Ev
 from modelanvil.runners.training.runtime import digest
 
 RUNTIME_ID = 'modelanvil.local-cpu-evaluation.v1'
-CONTRACT_DIGEST = digest({'runtime': RUNTIME_ID, 'cases': 64, 'max_tokens': 32, 'decoding': 'greedy', 'format': 'plain'})
+CONTRACT = {'runtime': RUNTIME_ID, 'cases': 64, 'max_tokens': 32, 'decoding': 'greedy', 'formats': ['plain', 'native_template']}
+CONTRACT_DIGEST = digest(CONTRACT)
 BUILD_DIGEST = hashlib.sha256(b''.join((Path(__file__).parent / name).read_bytes()
     for name in ('eval_worker.py', 'eval_executor.py', 'local_execution.py', 'inference.py',
         'training/runtime.py', 'training/general_runtime.py', 'training/general_transformer.py',
@@ -30,19 +31,28 @@ def model_inputs(version, tenant, project):
     from modelanvil.runners.inference import snapshot, verified_artifact
     if version.architecture_ref in (runtime.RUNTIME_ID, general_runtime.RUNTIME_ID):
         bundle, artifact, _ = load_reference_bundle(version, tenant=tenant, project=project)
-        return {'kind': 'reference', 'bundle': bundle,
+        return {'kind': 'reference', 'device': 'cpu', 'bundle': bundle,
                 'pins': {'version': str(version.model_version_id), 'artifact_id': str(artifact.artifact_id),
                          'sha256': artifact.sha256, 'tokenizer': str(version.tokenizer.tokenizer_id)}}
     from modelanvil.runners.capabilities import model_capabilities
     capability = model_capabilities(version)['chat']
-    if not capability['eligible'] or 'cpu' not in capability['devices']:
-        raise ValueError('Select a CPU-loadable snapshot or supported CPU reference bundle for evaluation.')
+    if not capability['eligible']:
+        raise ValueError(capability.get('reason') or 'Select a loadable snapshot or supported reference bundle for evaluation.')
     plan = snapshot(version, tenant, project)
     if plan['format'] != 'safetensors':
         raise ValueError('This evaluation profile currently supports CPU reference and Safetensors snapshots.')
+    devices = capability.get('devices') or []
+    if plan.get('guided_large'):
+        device = next((item for item in devices if str(item).startswith('mps')), None)
+        if device is None:
+            raise ValueError('The 1.7B guided candidate evaluates on the Apple GPU used for training.')
+    elif 'cpu' in devices:
+        device = 'cpu'
+    else:
+        raise ValueError('Select a CPU-loadable snapshot or supported CPU reference bundle for evaluation.')
     files = {name: {'sha256': verified_artifact(ref, tenant, project).sha256, 'byte_size': ref['byte_size']}
              for name, ref in plan['files'].items()}
-    return {'kind': 'snapshot', 'pins': {'version': str(version.model_version_id),
+    return {'kind': 'snapshot', 'device': device, 'pins': {'version': str(version.model_version_id),
             'artifact_id': str(version.artifact_manifest_id), 'tokenizer': str(version.tokenizer.tokenizer_id), 'files': files}}
 
 
@@ -81,6 +91,17 @@ def check_training_overlap(run):
     return 'known_lineage_checked' if known else 'external_training_history_unknown'
 
 
+def evaluation_prompt_format(run):
+    """Guided chat snapshots are scored through their native template, not raw prompt text."""
+    from modelanvil.runners.training import hf_runtime
+    versions = [run.candidate_model_version]
+    if run.baseline_model_version_id:
+        versions.append(run.baseline_model_version)
+    if any(version.architecture_ref != hf_runtime.RUNTIME_ID or not getattr(version.tokenizer, 'chat_template', '') for version in versions):
+        return 'plain'
+    return 'native_template'
+
+
 def resolve_inputs(run, max_tokens):
     validate_local_suite(run.suite_version.cases, run.suite_version.scorer_type, run.suite_version.scorer_config)
     if not check_resource_access(run.suite_version, run.project_id, run.tenant_id):
@@ -89,8 +110,13 @@ def resolve_inputs(run, max_tokens):
     baseline = model_inputs(run.baseline_model_version, run.tenant_id, run.project_id) if run.baseline_model_version_id else None
     if baseline and run.baseline_model_version.tokenizer_id != run.candidate_model_version.tokenizer_id:
         raise ValueError('Use candidate and baseline versions with the same pinned tokenizer.')
+    if baseline and baseline['device'] != candidate['device']:
+        raise ValueError('Candidate and baseline must evaluate on the same device.')
     if type(max_tokens) is not int or not 1 <= max_tokens <= 32:
         raise ValueError('Choose 1–32 generated tokens per case.')
+    prompt_format = evaluation_prompt_format(run)
+    if prompt_format == 'native_template' and (candidate['kind'] != 'snapshot' or (baseline and baseline['kind'] != 'snapshot')):
+        raise ValueError('Native-template comparison requires Safetensors snapshots for the candidate and baseline.')
     from modelanvil.runners.training import runtime, general_runtime
     for inputs in (candidate, baseline):
         if inputs and inputs['kind'] == 'reference':
@@ -101,7 +127,7 @@ def resolve_inputs(run, max_tokens):
                 if len(encoded) + max_tokens > bundle['config.json'].get('context_window', 64):
                     raise ValueError('A case prompt and output exceed the selected reference context limit.')
         elif inputs:
-            from modelanvil.runners.inference import snapshot, staged_snapshot
+            from modelanvil.runners.inference import rendered_prompt, snapshot, staged_snapshot
             from transformers import AutoTokenizer
             version = run.candidate_model_version if inputs is candidate else run.baseline_model_version
             plan = snapshot(version, run.tenant_id, run.project_id)
@@ -111,15 +137,20 @@ def resolve_inputs(run, max_tokens):
                 config = json.loads((directory / 'config.json').read_text())
                 tokenizer = AutoTokenizer.from_pretrained(str(directory), local_files_only=True, trust_remote_code=False)
                 limit = min(2048, config.get('max_position_embeddings', 2048))
-                if any(len(tokenizer.encode(case['input_prompt'], add_special_tokens=True)) + max_tokens > limit
-                       for case in run.suite_version.cases):
-                    raise ValueError('A case prompt and output exceed the selected snapshot context limit.')
+                for case in run.suite_version.cases:
+                    if prompt_format == 'native_template':
+                        prompt = rendered_prompt(tokenizer, [{'role': 'user', 'content': case['input_prompt']}], 'model')
+                        encoded_len = len(tokenizer.encode(prompt, add_special_tokens=False))
+                    else:
+                        encoded_len = len(tokenizer.encode(case['input_prompt'], add_special_tokens=True))
+                    if encoded_len + max_tokens > limit:
+                        raise ValueError('A case prompt and output exceed the selected snapshot context limit.')
     return {'candidate': candidate, 'baseline': baseline, 'pins': {
         'runtime': RUNTIME_ID, 'build_digest': BUILD_DIGEST, 'candidate': candidate['pins'],
         'baseline': baseline['pins'] if baseline else None,
         'suite_digest': digest({'cases': run.suite_version.cases, 'scorer': run.suite_version.scorer_type,
                               'config': run.suite_version.scorer_config}),
-        'max_tokens': max_tokens, 'decoding': 'greedy', 'prompt_format': 'plain', 'device': 'cpu',
+        'max_tokens': max_tokens, 'decoding': 'greedy', 'prompt_format': prompt_format, 'device': candidate['device'],
         'training_overlap': check_training_overlap(run)}}
 
 
@@ -136,11 +167,10 @@ def queue_evaluation(run, *, pool, policy, max_tokens):
     if pool.tenant_id != run.tenant_id or pool.status != 'active':
         raise ValueError('Select an active evaluation pool in this organization.')
     from modelanvil.jobs.setup import connection_state
+    device = inputs['pins']['device']
     workers = Worker.all_objects.filter(tenant_id=run.tenant_id, pool=pool, status='available', slots__gte=1)
-    if not any(connection_state(w) == 'connected' and w.capabilities.get('evaluation_runtime') == CONTRACT_DIGEST
-               and w.capabilities.get('evaluation_build') == BUILD_DIGEST
-               and w.capabilities.get('memory_bytes', 0) >= MEMORY_BYTES for w in workers):
-        raise ValueError('Connect an installed CPU evaluation worker with matching runtime and sufficient memory.')
+    if not any(_worker_can_evaluate(w, device, connection_state) for w in workers):
+        raise ValueError('Connect an installed evaluation worker with matching runtime, device and sufficient memory.')
     if policy.tenant_id != run.tenant_id or policy.unit != 'evaluation_cases' or policy.currency:
         raise ValueError('Select an enabled evaluation_cases quantity budget.')
     job_id = uuid7()
@@ -148,7 +178,8 @@ def queue_evaluation(run, *, pool, policy, max_tokens):
                               estimated_amount=len(run.suite_version.cases))
     job = Job.all_objects.create(tenant_id=run.tenant_id, job_id=job_id, pool=pool,
         name=f'Evaluation {str(run.run_id)[:8]}', requirements={'slots': 1,
-            'evaluation_runtime': CONTRACT_DIGEST, 'evaluation_build': BUILD_DIGEST},
+            'evaluation_runtime': CONTRACT_DIGEST, 'evaluation_build': BUILD_DIGEST,
+            **({} if device == 'cpu' else {'gpu_backend': device.split(':')[0], 'gpu_device': device})},
         payload={'type': 'qualified_evaluation', 'run_id': str(run.run_id)})
     OutboxEvent.all_objects.create(tenant_id=run.tenant_id,
         topic=dispatch_topic(run.tenant_id, pool.queue_name, pool.name),
@@ -176,6 +207,16 @@ def locked_run(context, run_id):
     return EvaluationRun.all_objects.select_for_update().get(run_id=run_id, tenant_id=job.tenant_id, job=job)
 
 
+def _worker_can_evaluate(worker, device, connection_state):
+    caps = worker.capabilities or {}
+    if (connection_state(worker) != 'connected' or caps.get('evaluation_runtime') != CONTRACT_DIGEST
+            or caps.get('evaluation_build') != BUILD_DIGEST or caps.get('memory_bytes', 0) < MEMORY_BYTES):
+        return False
+    if device != 'cpu' and (caps.get('gpu_device') != device or caps.get('gpu_backend') != device.split(':')[0]):
+        return False
+    return True
+
+
 @contextmanager
 def predictor(version, inputs, run, max_tokens, context):
     if inputs['kind'] == 'reference':
@@ -188,10 +229,11 @@ def predictor(version, inputs, run, max_tokens, context):
             yield lambda prompt: generate_completion(inputs['bundle'], prompt, max_new_tokens=max_tokens)['completion']
     else:
         from modelanvil.runners.inference import generate, local_session
-        with local_session(version, tenant=run.tenant_id, project=run.project_id, device='cpu') as session:
+        prompt_format = 'model' if run.protocol_ref['pins'].get('prompt_format') == 'native_template' else 'plain'
+        with local_session(version, tenant=run.tenant_id, project=run.project_id, device=inputs.get('device', 'cpu')) as session:
             def predict(prompt):
                 return ''.join(part.get('text', '') for part in generate(session,
-                    [{'role': 'user', 'content': prompt}], max_tokens=max_tokens, temperature=0, prompt_format='plain',
+                    [{'role': 'user', 'content': prompt}], max_tokens=max_tokens, temperature=0, prompt_format=prompt_format,
                     cancelled=lambda: not context.heartbeat()))
             yield predict
 
@@ -237,8 +279,11 @@ def evaluation_worker_executor(descriptor, context):
                 if baseline_result:
                     current.protocol_ref['baseline_results'].append(baseline_result)
                 current.protocol_ref['completed_cases'] = current.case_results.count()
+                native = current.protocol_ref.get('pins', {}).get('prompt_format') == 'native_template'
                 current.protocol_ref['execution_evidence'] = {'level': 'integrated_execution',
-                    'source': 'Actual CPU candidate/baseline inference with pinned bytes, suite and fenced case commits; production qualification unavailable.'}
+                    'source': ('Actual native-template candidate/baseline inference with pinned bytes, suite and fenced case commits; production qualification unavailable.'
+                               if native else
+                               'Actual CPU candidate/baseline inference with pinned bytes, suite and fenced case commits; production qualification unavailable.')}
                 current.save(update_fields=['protocol_ref', 'updated_at'])
     # Job result commit below determines terminal state and settles recorded cases.
 
