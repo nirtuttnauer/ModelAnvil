@@ -1,5 +1,5 @@
 import { Identifier } from '../components/Identifier';
-import { Badge, Button, MultilineField, Notice, RecordTable } from '../components/ui';
+import { Badge, Button, FactList, MultilineField, Notice, RecordTable } from '../components/ui';
 import { resourceHash } from '../api/resource-routes';
 import { useDraft, DraftStatus } from '../components/Draft';
 import { DataInspector, DataValue } from '../components/DataInspector';
@@ -322,7 +322,7 @@ export function RunDetailPage({
       <section className="runs-panel">
         <div className="runs-heading">
           <div>
-            <h2>{displayName ?? 'Run detail'}</h2>
+            <h1>{displayName ?? 'Run detail'}</h1>
             <p className="runs-hint">
               {kind === 'training'
                 ? 'Training run'
@@ -379,7 +379,7 @@ export function RunDetailPage({
                   Observed state{' '}
                   <Badge className={`state state-${detail.observed.state}`}>{detail.observed.state}</Badge>
                 </h3>
-                <dl className="runs-kv">
+                <FactList variant="runs">
                   <div>
                     <dt>Progress</dt>
                     <dd>
@@ -409,7 +409,7 @@ export function RunDetailPage({
                     <dt>Recorded update</dt>
                     <dd>{new Date(detail.observed.updated_at).toLocaleString()}</dd>
                   </div>
-                </dl>
+                </FactList>
               </div>
               <div className="runs-state-card">
                 <h3>
@@ -419,7 +419,7 @@ export function RunDetailPage({
                   </Badge>
                 </h3>
                 <p className="muted">{detail.desired.note}</p>
-                <dl className="runs-kv">
+                <FactList variant="runs">
                   <div>
                     <dt>Worker acknowledgement</dt>
                     <dd>
@@ -449,7 +449,7 @@ export function RunDetailPage({
                         : 'No active lease'}
                     </dd>
                   </div>
-                </dl>
+                </FactList>
                 <p className="runs-hint">{detail.ownership.reason}</p>
               </div>
             </div>
@@ -577,7 +577,7 @@ export function RunDetailPage({
             <section className="runs-panel">
               <h2>Recorded evidence</h2>
               {detail.evidence ? (
-                <dl className="runs-kv">
+                <FactList variant="runs">
                   <div>
                     <dt>Level</dt>
                     <dd>{detail.evidence.level}</dd>
@@ -594,7 +594,7 @@ export function RunDetailPage({
                     <dt>Projection generated</dt>
                     <dd>{new Date(detail.generated_at).toLocaleString()}</dd>
                   </div>
-                </dl>
+                </FactList>
               ) : (
                 <p className="runs-empty">
                   Durable jobs carry no runtime evidence level; the worker outcome is recorded on the attempts

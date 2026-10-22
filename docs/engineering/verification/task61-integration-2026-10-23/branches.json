@@ -1,0 +1,174 @@
+{
+  "observed_local_date": "2026-10-23",
+  "main_at_inventory": "677c8a54a333c4a73e3a1d87cac91ba94d541fa0",
+  "branches": [
+    {
+      "branch": "codex/expand-open-dataset-bank",
+      "head": "3a643b2b59304c9ff856fe05176f22deb9cefc39",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task43-discovery",
+      "head": "99b229a2bbd2cbe49a7c52b68de5c5febb3bf2b4",
+      "head_in_main": false,
+      "scope": "TASK-43 preparation only; customer-input blocker retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task63-context-scores",
+      "head": "c8d078a83d49cc1dc72719837d304d932150cc34",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task65-publisher-notices",
+      "head": "c5b4cdd6507e992fd543c1cce43060889367c0fb",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task74-dependency-security",
+      "head": "549e9fd0c88eb7092d611d3827015b6728969c1d",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task75-commit-privacy",
+      "head": "62ee11b3215789734a9de148e99e318d64efe2b6",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/logo-primary-color",
+      "head": "6c51f4aff8c45feb8a1d77c79e8767858831ff4b",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/modelanvil-feature-parity",
+      "head": "c39a2e9554efdd6c5c644fb012580298f4bc78ca",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/modelanvil-public-project-guide",
+      "head": "51d22ce7b242c74b2407280aea74bdb77ef61e54",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/production-packaging",
+      "head": "cbe4c24aaa7a06e7a49ea7d0c25a055a33b8f6e5",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/qualified-dataset-catalog",
+      "head": "8d0586f1aed9a9a3143447f32900cf7c9c25bf3e",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/qualify-expanded-datasets",
+      "head": "7b915b34eb1e98e936c77fc59f4231f4cbac0d69",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/qualify-full-dataset-downloads",
+      "head": "d96aaf7f18547724f10b9e2e328f35580b8be073",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/readme-logo",
+      "head": "426012a3c8b483d14a351601e6a67a992354d424",
+      "head_in_main": false,
+      "scope": "Superseded by current branding assets and README; retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/reviewed-training-platform",
+      "head": "16c039a11bf83efbcd02ce3b8ebccbfb77729591",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/runpod-custom-plugins",
+      "head": "91e341e285e3bc43045688503194d18d23e8f49a",
+      "head_in_main": false,
+      "scope": "PR9 software; provider hardware/customer qualification remains separate",
+      "retained": true
+    },
+    {
+      "branch": "codex/takeover-fine-tune-decision",
+      "head": "1a359b06964217b75fd11cecc21e19e004ba93d1",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/takeover-screen-coherence",
+      "head": "b783437ff2dd5c2f0361b2030233d5722339b1e1",
+      "head_in_main": false,
+      "scope": "TASK-61 / PR15 integration",
+      "retained": true
+    },
+    {
+      "branch": "codex/takeover-task3-onboarding-proof",
+      "head": "f20e798df6336852d9d762064b21f398c2bdf9b1",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/takeover-task44-activation",
+      "head": "731855415ca4ac330540d1a5833ffdcc787f1c4b",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/takeover-task48-private-policy",
+      "head": "79a92da5ad8029af63af052c7782616d5ec9dcca",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/takeover-task5-preflight-proof",
+      "head": "2beb3e8bcc2f157e9b0edd47c9b0f1c84d27e5a6",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "codex/takeover-task6-evaluation-proof",
+      "head": "fa88d421ef27587792097e508740817c788d5796",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    },
+    {
+      "branch": "main",
+      "head": "3ec32061448b4e66803af32b16863f8eedab645c",
+      "head_in_main": true,
+      "scope": "Committed head is contained in main",
+      "retained": true
+    }
+  ]
+}

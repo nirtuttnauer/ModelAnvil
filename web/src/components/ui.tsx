@@ -1,4 +1,4 @@
-import { Children, cloneElement, createElement, isValidElement, type ComponentPropsWithRef, type HTMLAttributes, type ReactElement, type ReactNode, type Ref } from 'react';
+import { useId, useRef, Children, cloneElement, createElement, isValidElement, type ComponentPropsWithRef, type HTMLAttributes, type ReactElement, type ReactNode, type Ref } from 'react';
 
 type Tone = 'neutral' | 'success' | 'caution' | 'error';
 const classes = (...values: (string | undefined)[]) => [...new Set(values.filter(Boolean).flatMap(value => value!.split(/\s+/)))].join(' ');
@@ -83,4 +83,31 @@ export function RecordTable({ children, className, ...props }: ComponentPropsWit
       )));
     })}
   </table>;
+}
+
+export function FactList({ children, variant = 'ops' }: { children: ReactNode; variant?: 'ops' | 'runs' | 'data' | 'datasets' }) {
+  const variantClass = variant === 'runs' ? 'runs-kv' : variant === 'data' ? 'data-facts' : variant === 'datasets' ? 'datasets-facts' : 'ops-facts';
+  return <dl className={variantClass}>{children}</dl>;
+}
+
+export function WorkspaceTabs<T extends string>({ label, tabs, value, onChange, children }: {
+  label: string; tabs: { value: T; label: string }[]; value: T; onChange: (value: T) => void; children: ReactNode;
+}) {
+  const id = useId();
+  const buttons = useRef<(HTMLButtonElement | null)[]>([]);
+  const active = Math.max(0, tabs.findIndex(tab => tab.value === value));
+  return <>
+    <div className="workspace-tabs" role="tablist" aria-label={label}>
+      {tabs.map((tab, index) => <Tab key={tab.value} id={`${id}-tab-${index}`} aria-controls={`${id}-panel`}
+        ref={button => { buttons.current[index] = button; }} tabIndex={index === active ? 0 : -1}
+        aria-selected={value === tab.value} onClick={() => onChange(tab.value)} onKeyDown={event => {
+          const next = event.key === 'ArrowRight' ? (index + 1) % tabs.length
+            : event.key === 'ArrowLeft' ? (index - 1 + tabs.length) % tabs.length
+            : event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : -1;
+          if (next < 0) return;
+          event.preventDefault(); buttons.current[next]?.focus(); onChange(tabs[next].value);
+        }}>{tab.label}</Tab>)}
+    </div>
+    <div id={`${id}-panel`} role="tabpanel" aria-labelledby={`${id}-tab-${active}`} tabIndex={0}>{children}</div>
+  </>;
 }

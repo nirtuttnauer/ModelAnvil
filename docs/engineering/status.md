@@ -1,5 +1,7 @@
 # ModelAnvil implementation status
 
+Current delivery addendum (23 October 2026): see the [integration inventory](integration-inventory.md), [operation-specific capability baseline](supported-capabilities.md), and dated verification reports. The original review below is historical; current dependency pins still require fresh GPU qualification. Customer discovery remains blocked on customer input.
+
 Current operation-specific support and the later local evidence are indexed in the [21 October capability baseline](supported-capabilities.md). The entries below preserve the 11 October review history and are not a current cross-operation support matrix.
 
 11 October 2026 · TASK-1 evidence audit

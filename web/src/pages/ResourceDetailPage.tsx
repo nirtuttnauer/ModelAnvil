@@ -47,7 +47,7 @@ export function ResourceDetailPage({ token, kind, id, refreshKey }: { token: str
     for (const run of lineage?.evaluations || []) paths.push({ label: 'Model → evaluation', nodes: [current, { kind: 'Evaluation', name: 'Recorded evaluation', id: run.run_id, state: run.status, href: runHash('evaluation', run.run_id) }] });
     for (const release of lineage?.releases || []) paths.push({ label: 'Model → release', nodes: [current, { kind: 'Release', name: 'Recorded release', id: release.release_version_id, revision: release.revision_no, state: release.status, href: `#releases?release_version=${release.release_version_id}` }] });
   }
-  return <Card className="panel"><div className="panel-title"><div><h2>{record?.model_name || record?.dataset_name || 'Exact resource'}{record && ` · revision ${record.revision_no}`}</h2><VersionChip {...current} state={typeof record?.state === 'string' ? record.state : undefined} /></div><a href={kind === 'model-version' ? '#models' : '#datasets'}>Back to {kind === 'model-version' ? 'Models' : 'Datasets'}</a></div><div className="panel-body">
+  return <Card className="panel"><div className="panel-title"><div><h1>{record?.model_name || record?.dataset_name || 'Exact resource'}{record && ` · revision ${record.revision_no}`}</h1><VersionChip {...current} state={typeof record?.state === 'string' ? record.state : undefined} /></div><a href={kind === 'model-version' ? '#models' : '#datasets'}>Back to {kind === 'model-version' ? 'Models' : 'Datasets'}</a></div><div className="panel-body">
     <ResourceState loading={loading} error={error} onRetry={() => setRetry(v => v + 1)} />
     {record && lineage && <>
       <div className="actions" aria-label="Compatible resource actions">
