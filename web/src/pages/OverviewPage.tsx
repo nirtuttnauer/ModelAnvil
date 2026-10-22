@@ -18,7 +18,6 @@ import {
 import { apiPage, apiRequest, errorMessage } from '../api/client';
 import { ResourceState } from '../components/ResourceState';
 import { OnboardingChecklist } from '../components/OnboardingChecklist';
-import { BarChart, ChartPanel, LineChart } from '../components/Charts';
 import type { UsageSummaryResponse } from './BudgetsPage';
 import type { Project } from '../api/resources';
 import { runHash } from '../api/runs';
@@ -36,13 +35,6 @@ interface Evaluation {
   status: string;
   candidate_model_version: number;
   metrics: { key: string; value: number; sample_count: number; slice_name: string }[];
-}
-
-interface TrainingSummary {
-  run_id: string;
-  status: string;
-  metrics_log?: { step: number; loss: number }[];
-  execution_evidence?: { level: string; source: string };
 }
 
 const resourceIcons = {
@@ -100,8 +92,6 @@ export function OverviewPage({
     { name: string; value: number; more: boolean; total: boolean; page: string }[]
   >([]);
   const [jobs, setJobs] = useState<RecentJob[]>([]);
-  const [training, setTraining] = useState<TrainingSummary[]>([]);
-  const [trainingId, setTrainingId] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
@@ -136,12 +126,10 @@ export function OverviewPage({
           }))
         );
         setJobs(pages[3].results.slice(0, 5));
-        setTraining(pages[2].results as unknown as TrainingSummary[]);
       } catch (e) {
         if (!signal?.aborted) {
           setCounts([]);
           setJobs([]);
-          setTraining([]);
           setError(errorMessage(e));
         }
       } finally {
@@ -194,9 +182,6 @@ export function OverviewPage({
     return () => c.abort();
   }, [token, refreshKey]);
 
-  const selectedTraining = training.find(r => r.run_id === trainingId) ?? training.find(r => r.metrics_log?.length) ?? training[0];
-  const jobStates = [...new Set(jobs.map(j => j.status))].map(label => ({ label: label.replaceAll('_', ' '), value: jobs.filter(j => j.status === label).length }));
-
   return (
     <>
       <Card className="panel"><div className="panel-body"><h2>Fine-tune an LLM with your own dataset</h2><p>The guided flow prepares a pretrained model and local compute for you.</p><Button className="primary" onClick={() => onNavigate('Training')}>Start guided fine-tuning</Button></div></Card>
@@ -210,15 +195,9 @@ export function OverviewPage({
         onPrerequisiteAdded={onPrerequisiteAdded || (() => {})}
       />
 
-      <div className="visualization-grid">
-        <ChartPanel title="Experiment performance" description={selectedTraining ? `Training run ${training.indexOf(selectedTraining) + 1} · ${selectedTraining.execution_evidence?.level || 'Evidence not reported'} · recorded measurements` : 'Training loss from your recorded experiments.'} action={training.length > 0 && <select aria-label="Overview training run" value={selectedTraining?.run_id || ''} onChange={e => setTrainingId(e.target.value)}>{training.map((r, index) => <option key={r.run_id} value={r.run_id}>Training run {index + 1} · {r.status}</option>)}</select>}>
-          {selectedTraining && <Identifier value={selectedTraining.run_id} label="Run ID" />}
-          <LineChart series={[{ name: 'Recorded training loss', points: (selectedTraining?.metrics_log ?? []).map(m => ({ x: m.step, y: m.loss })) }]} xLabel="Training step" yLabel="Loss" />
-        </ChartPanel>
-        <ChartPanel title="Active work" description="Status distribution of the recent jobs shown below; up to 5 loaded records.">
-          <BarChart data={jobStates} unit="Jobs" emptyMessage="Create a workflow to track its observed execution state here." />
-          <Button className="text-button" onClick={() => onNavigate('Workflows')}>Inspect execution <ArrowRight size={14} aria-hidden="true" /></Button>
-        </ChartPanel>
+      <div className="page-actions">
+        <a href="#training">Training</a>
+        <a href="#evaluation">Evaluation</a>
       </div>
 
       <div className="section-heading">

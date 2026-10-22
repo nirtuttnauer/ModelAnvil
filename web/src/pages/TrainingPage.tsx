@@ -20,14 +20,11 @@ import { allResources } from '../api/resources';
 import { useResourceHandoff } from '../components/ResourceHandoff';
 import { useDraft, DraftStatus } from '../components/Draft';
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { Plus, XCircle, Play, CheckCircle, RefreshCw } from 'lucide-react';
+import { XCircle, Play, CheckCircle, RefreshCw } from 'lucide-react';
 import { ApiRequestError, apiRequest, errorMessage } from '../api/client';
 import { ResourceState } from '../components/ResourceState';
-import {
-  RegisterTokenizerModal,
-  RegisterModelVersionModal,
-} from '../components/PrerequisiteModals';
-import type { TokenizerVersion, RegisteredModelVersion, ModelCapabilities } from '../api/resources';
+import { PrerequisiteActions } from '../components/PrerequisiteActions';
+import type { ModelCapabilities } from '../api/resources';
 import { runHash } from '../api/runs';
 import { ChartPanel, ChartEmpty, LineChart, EventTimeline } from '../components/Charts';
 import './ml-pages.css';
@@ -262,8 +259,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
     setInferResult(null); setInferError(null); setInferring(false);
   }, [detailRun?.run_id]);
 
-  const [showTokenizerModal, setShowTokenizerModal] = useState(false);
-  const [showModelModal, setShowModelModal] = useState(false);
+  const [openTokenizer, setOpenTokenizer] = useState(0);
 
   const loadDependencies = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
@@ -605,37 +601,12 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
         ) : null;
 
   return (
+    <>
+    <div className="page-actions">
+      <PrerequisiteActions token={token} openTokenizer={openTokenizer} onTokenizer={tokenizer => { setTokenizers(current => [...current, tokenizer]); setTokenizer(String(tokenizer.id)); }} onVersion={version => { setModels(current => [...current, version]); setBase(String(version.id)); setModelName(''); }} />
+      <Button className="primary" hidden={tab === 'configure'} disabled={!token.trim() || loading} onClick={() => { navigateTab('configure'); draft.field('guidedStage')[1](base && selectedDataset ? 2 : 0); }}>Configure a run</Button>
+    </div>
     <Card className="panel ml-page ml-main-panel ml-training">
-      <div className="panel-title" style={{ flexWrap: 'wrap' }}>
-        <div style={{ flex: '1 1 300px' }}>
-          <span className="ml-eyebrow">DEVELOP / TRAINING</span><h2>Training studio</h2>
-          <p>Choose your model and data, review your training plan, and follow the results in one workspace.</p>
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-8)' }}>
-          <Button
-            type="button"
-            disabled={!token.trim()}
-            onClick={() => setShowTokenizerModal(true)}
-          >
-            <Plus size={14} /> Tokenizer
-          </Button>
-          <Button
-            type="button"
-            disabled={!token.trim()}
-            onClick={() => setShowModelModal(true)}
-          >
-            <Plus size={14} /> Model Version
-          </Button>
-          <Button
-            className="primary"
-            hidden={tab === 'configure'}
-            disabled={!token.trim() || loading}
-            onClick={() => { navigateTab('configure'); draft.field('guidedStage')[1](base && selectedDataset ? 2 : 0); }}
-          >
-            Configure a run
-          </Button>
-        </div>
-      </div>
       <div className="panel-body">
         <div className="training-tabs" role="tablist" aria-label="Training workspace">
           {tabs.map((item, index) => <Tab key={item.value} ref={element => { tabRefs.current[index] = element; }}
@@ -711,7 +682,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
                 <Button
                   type="button"
                   style={{ whiteSpace: 'nowrap' }}
-                  onClick={() => setShowTokenizerModal(true)}
+                  onClick={() => setOpenTokenizer(value => value + 1)}
                 >
                   + New
                 </Button>
@@ -722,7 +693,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
               options={models.map(m => ({ value: String(m.id), id: m.model_version_id, name: m.model_name, revision: m.revision_no, state: m.state,
                 href: resourceHash('model-version', m.model_version_id), description: m.capabilities?.train.reason,
                 unavailable: mode === 'worker' && (!m.capabilities?.train.eligible || !m.capabilities.train.recipes.includes(recipe)) ? m.capabilities?.train.reason || 'This model does not support the selected training recipe.' : undefined }))}
-              action={<Button type="button" onClick={() => setShowModelModal(true)}>+ New</Button>} />}
+              />}
 
             <p className="muted full-width"><a href="#models">Initialize a CPU base in Models</a> or select a GPU base registered on your worker host. Choose its matching tokenizer.</p>
             {base && mode === 'worker' && <p className="muted full-width">{models.find(m => String(m.id) === base)?.capabilities?.train.reason || 'Inspect model compatibility in Models before launch.'}</p>}
@@ -829,9 +800,9 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
           </div>
           {!loading && !focusRun && <div className="training-empty"><h3>{currentRunId ? 'This run is unavailable' : 'No training run yet'}</h3><p>{currentRunId ? 'Refresh the workspace or choose another accessible run.' : 'Prepare your model and data, then launch a training run.'}</p><Button type="button" onClick={() => navigateTab('configure')}>Configure a run</Button></div>}
           {focusRun && <>
+        {(focusRun.status === 'running' || focusRun.status === 'pending') && <Button type="button" style={{ borderColor: 'var(--error)', color: 'var(--error)' }} disabled={busy} onClick={() => cancelRun(focusRun.run_id)}><XCircle size={14} /> Cancel run</Button>}
         {tab === 'current-run' && <TrainingRunProgress key={`progress-${focusRun.run_id}`} run={focusRun} refreshedAt={runsRefreshedAt} refreshError={progressError} onRefresh={() => void refreshProgress()} />}
         {focusRun.status === 'completed' && focusRun.output_model_version_uuid && <Notice className="notice"><p>Your model is ready. Try it with a new question.</p><div className="actions"><a className="primary" href={`#chat?model_version=${encodeURIComponent(focusRun.output_model_version_uuid)}`}>Try your model</a>{focusRun.base_model_version && <a href={`#chat?model_version=${encodeURIComponent(focusRun.output_model_version_uuid)}&compare_base=1`}>Compare with base model</a>}</div></Notice>}
-        {tab === 'current-run' && exportPanel}
         <div className="ml-section-heading"><div><span className="ml-eyebrow">EXPERIMENT MONITOR</span><h3>Loss & checkpoint activity</h3><p>Recorded training loss at committed steps, alongside saved checkpoint artifacts.</p></div></div>
         <div className="visualization-grid">
           <ChartPanel title="Training & validation loss" description={`${runLabel(focusRun.run_id)} · ${focusRun.execution_evidence?.level || 'unknown evidence'} · exact recorded values`}>{lossSeries.length ? <LineChart key={focusRun.run_id} series={lossSeries} xLabel="Committed step" yLabel="Loss" /> : <ChartEmpty message={focusRun.status === 'pending' ? 'This run is queued. Loss will appear after the first measured checkpoint.' : 'No loss measurements have been recorded for this run.'} />}</ChartPanel>
@@ -839,7 +810,6 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
         </div>
         {focusRun?.metrics_log?.some(m => m.measured_at) && <div className="table-scroll" tabIndex={0}><RecordTable className="resource-table"><caption>Measured GPU optimizer steps; throughput includes the post-update loss pass. Missing metrics are not estimated.</caption><thead><tr><th>Step / timestamp</th><th>Protected validation loss</th><th>Gradient norm</th><th>Prediction tokens/sec</th><th>Allocated / peak MiB</th><th>GPU utilization</th><th>Trainable / total parameters</th></tr></thead><tbody>{focusRun.metrics_log.slice(-10).map(m => <tr key={m.step}><td>{m.step}<br />{m.measured_at || 'Not reported'}</td><td>{m.validation_loss?.toFixed(6) ?? 'Not reported'}<br />{m.validation_prediction_tokens == null ? '' : `${m.validation_prediction_tokens} prediction tokens`}</td><td>{m.gradient_norm?.toFixed(4) ?? 'Not reported'}</td><td>{m.tokens_per_second?.toFixed(2) ?? 'Not reported'}</td><td>{m.gpu_allocated_bytes == null ? 'Not reported' : (m.gpu_allocated_bytes / 1024**2).toFixed(1)} / {m.peak_allocated_bytes == null ? 'Not reported' : (m.peak_allocated_bytes / 1024**2).toFixed(1)}</td><td>{m.gpu_utilization_percent == null ? 'Not reported' : `${m.gpu_utilization_percent}%`}</td><td>{m.trainable_parameters?.toLocaleString() ?? 'Not reported'} / {m.total_parameters?.toLocaleString() ?? 'Not reported'}</td></tr>)}</tbody></RecordTable></div>}
           </>}
-          {tab === 'current-run' && runDetail}
         </div>
         <div id="training-panel-history" role="tabpanel" aria-labelledby="training-tab-history" hidden={tab !== 'history'}>
         <div className="ml-section-heading"><div><h3>Run history</h3><p>Inspect inputs, download candidates, and open the durable execution record.</p></div></div>
@@ -898,26 +868,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
 
       </div>
 
-      <RegisterTokenizerModal
-        token={token}
-        isOpen={showTokenizerModal}
-        onClose={() => setShowTokenizerModal(false)}
-        onSuccess={(tok: TokenizerVersion) => {
-          setTokenizers((current) => [...current, tok]);
-          setTokenizer(String(tok.id));
-        }}
-      />
-
-      <RegisterModelVersionModal
-        token={token}
-        isOpen={showModelModal}
-        onClose={() => setShowModelModal(false)}
-        onSuccess={(mv: RegisteredModelVersion) => {
-          setModels((current) => [...current, mv]);
-          setBase(String(mv.id));
-          setModelName('');
-        }}
-      />
     </Card>
+    </>
   );
 }

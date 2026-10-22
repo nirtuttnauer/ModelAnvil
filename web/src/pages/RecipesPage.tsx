@@ -1,5 +1,5 @@
 import { Identifier } from '../components/Identifier';
-import { Button, Card, Field, MultilineField } from '../components/ui';
+import { Button, Card, Field, MultilineField, Notice } from '../components/ui';
 import { useEffect, useRef, useState } from 'react';
 import { apiRequest, errorMessage } from '../api/client';
 import { allResources } from '../api/resources';
@@ -101,9 +101,9 @@ export function RecipesPage({token,refreshKey}: {token:string;refreshKey?:number
   }
   const canQueue=token.trim() && pool && policy && !errors.length && (!needsModel || model) && recipe.steps.filter(s => s.type==='source').every(s => Object.hasOwn(sources,s.id) || Object.hasOwn(files,s.id));
 
-  return <div className="ml-page recipe-page">
-    {error && <p role="alert" className="error-box">{error}</p>}{notice && <p role="status" className="success-box">{notice}</p>}
-    <Card className="panel ml-main-panel"><div className="panel-title"><div><h2>Data recipes</h2><p>Compose typed source, transform and generation steps. Preview bounded samples, review rejections, then publish through a recoverable worker job.</p></div></div>
+  return <div className="data-workspace ml-page recipe-page">
+    {error && <Notice tone="error" role="alert">{error}</Notice>}{notice && <Notice tone="success" role="status">{notice}</Notice>}
+    <Card className="panel ml-main-panel">
       <div className="panel-body">
         <fieldset disabled={busy} className="recipe-toolbar">
           <Button onClick={() => change(starterRecipe(false))}>Prepare documents</Button><Button onClick={() => change(starterRecipe())}>Generate summaries</Button>

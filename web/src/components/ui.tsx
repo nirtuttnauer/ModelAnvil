@@ -84,3 +84,16 @@ export function RecordTable({ children, className, ...props }: ComponentPropsWit
     })}
   </table>;
 }
+
+export function FactList({ children, variant = 'ops' }: { children: ReactNode; variant?: 'ops' | 'runs' | 'data' | 'datasets' }) {
+  const variantClass = variant === 'runs' ? 'runs-kv' : variant === 'data' ? 'data-facts' : variant === 'datasets' ? 'datasets-facts' : 'ops-facts';
+  return <dl className={variantClass}>{children}</dl>;
+}
+
+export function WorkspaceTabs<T extends string>({ label, tabs, value, onChange }: {
+  label: string; tabs: { value: T; label: string }[]; value: T; onChange: (value: T) => void;
+}) {
+  return <div className="workspace-tabs" role="tablist" aria-label={label}>
+    {tabs.map(tab => <Tab key={tab.value} aria-selected={value === tab.value} onClick={() => onChange(tab.value)}>{tab.label}</Tab>)}
+  </div>;
+}

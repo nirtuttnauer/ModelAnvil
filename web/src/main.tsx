@@ -8,6 +8,7 @@ import { createRoot } from 'react-dom/client';
 import {
   Activity,
   Bot,
+  Braces,
   Building2,
   FolderGit2,
   ChevronRight,
@@ -19,8 +20,12 @@ import {
   CircleDollarSign,
   Compass,
   Database,
-  FileCode,
+  FileSearch,
   Flame,
+  History,
+  ListTree,
+  MessageSquare,
+  ScanText,
   Layers3,
   Library,
   Rocket,
@@ -97,22 +102,22 @@ const pages: { name: Page; icon: React.ElementType; endpoint: string; slug?: str
   { name: 'Datasets', icon: Database, endpoint: '/api/v1/datasets/' },
   { name: 'Annotation', icon: Tags, endpoint: '/api/v1/labeling-campaigns/' },
   { name: 'Models', icon: Bot, endpoint: '/api/v1/models/' },
-  { name: 'Chat', icon: Bot, endpoint: '/api/v1/inference/models/' },
-  { name: 'Specialists', icon: FileCode, endpoint: '/api/v1/specialists/' },
-  { name: 'Recipes', icon: Workflow, endpoint: '/api/v1/recipes/' },
+  { name: 'Chat', icon: MessageSquare, endpoint: '/api/v1/inference/models/' },
+  { name: 'Specialists', icon: ScanText, endpoint: '/api/v1/specialists/' },
+  { name: 'Recipes', icon: ListTree, endpoint: '/api/v1/recipes/' },
   { name: 'Training', icon: Flame, endpoint: '/api/v1/training-runs/' },
   { name: 'Alignment', icon: Scale, endpoint: '/api/v1/alignment-runs/' },
   { name: 'Evaluation', icon: CheckCheck, endpoint: '/api/v1/evaluation-runs/' },
   { name: 'Workflows', icon: Workflow, endpoint: '/api/v1/jobs/' },
   { name: 'RAG', icon: Compass, endpoint: '/api/v1/knowledge-bases/' },
-  { name: 'Context Lab', icon: FileCode, endpoint: '/api/v1/context-recipes/' },
+  { name: 'Context Lab', icon: Braces, endpoint: '/api/v1/context-recipes/' },
   { name: 'Releases', icon: Rocket, endpoint: '/api/v1/serving-endpoints/' },
   { name: 'Infrastructure', icon: Server, endpoint: '/api/v1/worker-pools/' },
   { name: 'Budgets', icon: CircleDollarSign, endpoint: '/api/v1/budget-policies/' },
   { name: 'Audit', icon: Layers3, endpoint: '/api/v1/audit/' },
   // Reached only through a run deep link; it renders in no navigation group.
-  { name: 'Resource Detail', icon: Database, endpoint: '/api/v1/model-versions/', slug: 'resources' },
-  { name: 'Run Detail', icon: Workflow, endpoint: '/api/v1/jobs/', slug: 'runs' },
+  { name: 'Resource Detail', icon: FileSearch, endpoint: '/api/v1/model-versions/', slug: 'resources' },
+  { name: 'Run Detail', icon: History, endpoint: '/api/v1/jobs/', slug: 'runs' },
 ];
 
 function slugFor(name: Page): string {
@@ -121,10 +126,10 @@ function slugFor(name: Page): string {
 
 const navigationGroups = [
   { label: 'Workspace', names: ['Overview'] },
-  { label: 'Data', names: ['Dataset Bank', 'Datasets', 'Recipes', 'Annotation'] },
-  { label: 'Develop', names: ['Models', 'Chat', 'Specialists', 'Training', 'Alignment', 'Evaluation'] },
-  { label: 'Context & release', names: ['RAG', 'Context Lab', 'Releases'] },
-  { label: 'Operations', names: ['Workflows', 'Infrastructure', 'Budgets', 'Audit'] },
+  { label: 'Data', names: ['Datasets', 'Recipes', 'Annotation'] },
+  { label: 'Develop', names: ['Models', 'Chat', 'Training', 'Alignment', 'Evaluation', 'Specialists'] },
+  { label: 'Context', names: ['RAG', 'Context Lab'] },
+  { label: 'Operations', names: ['Workflows', 'Infrastructure', 'Budgets', 'Audit', 'Releases'] },
 ];
 
 const descriptions: Record<Page, string> = {
@@ -139,9 +144,9 @@ const descriptions: Record<Page, string> = {
   Training: 'Fine-tune a pretrained model with your own examples.',
   Alignment: 'Configure preference learning and inspect recorded outcomes.',
   Evaluation: 'Compare pinned versions, inspect failures, and review the evidence.',
-  Workflows: 'Follow execution, inspect attempts, and recover interrupted work.',
+  Workflows: 'Follow durable work from the queue to its recorded outcome.',
   RAG: 'Explore knowledge sources and inspect retrieved evidence.',
-  'Context Lab': 'Compile exact inputs and inspect how your token budget is allocated.',
+  'Context Lab': 'Compile a prompt from saved blocks and inspect how the token budget is allocated.',
   Releases: 'Inspect release versions, serving endpoints, and software provenance.',
   Infrastructure: 'Inspect worker pools, capabilities, and recorded availability.',
   Budgets: 'Understand measured usage, reservations, and spending policies.',
@@ -153,7 +158,15 @@ const descriptions: Record<Page, string> = {
 
 function currentPage(): Page {
   const slug = window.location.hash.slice(1).split('?')[0].split('/')[0];
+  if (slug === 'dataset-bank') return 'Datasets';
   return pages.find((p) => (p.slug ?? p.name.toLowerCase().replaceAll(' ', '-')) === slug)?.name || 'Overview';
+}
+
+function headingFor(name: Page): string {
+  if (name === 'Overview') return 'Project overview';
+  if (name === 'RAG') return 'Retrieval workbench';
+  if (name === 'Context Lab') return 'Prompt compiler';
+  return name;
 }
 
 interface Organization {
@@ -469,16 +482,17 @@ export function App() {
               <p className="nav-label">{group.label}</p>
               {pages
                 .filter((page) => group.names.includes(page.name))
+                .sort((a, b) => group.names.indexOf(a.name) - group.names.indexOf(b.name))
                 .map(({ name, icon: Icon }) => (
                   <NavigationItem
                     key={name}
-                    title={name}
+                    title={headingFor(name)}
                     selected={selectedNavigation === name}
                     icon={<Icon size={18} aria-hidden="true" />}
-                    aria-label={name}
+                    aria-label={name === 'Context Lab' ? 'Prompt compiler' : name}
                     onClick={() => load(name)}
                   >
-                    {name}
+                    {name === 'Context Lab' ? 'Prompt compiler' : name}
                   </NavigationItem>
                 ))}
             </div>
@@ -643,12 +657,12 @@ export function App() {
               <Button onClick={() => openConnection()}>Review connection</Button>
             </Notice>
           )}
-          <div className="page-heading">
+          {!['Run Detail', 'Resource Detail'].includes(active) && <div className="page-heading">
             <div>
               <span className="eyebrow">
                 {navigationGroups.find((group) => group.names.includes(active))?.label ?? 'Run'}
               </span>
-              <h1>{active === 'Overview' ? 'Project overview' : active === 'RAG' ? 'Retrieval workbench' : active}</h1>
+              <h1>{headingFor(active)}</h1>
               <p>{descriptions[active]}</p>
             </div>
             {active === 'Overview' && (
@@ -657,7 +671,7 @@ export function App() {
                 <ArrowUpRight size={16} aria-hidden="true" />
               </Button>
             )}
-          </div>
+          </div>}
 
           <DraftScope.Provider value={currentOrganization ? { organization: currentOrganization.tenant_id, project: activeProjectId } : null}>
           <ScreenBoundary key={`${token}-${activeProjectId}-${active}`}>

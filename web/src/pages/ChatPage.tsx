@@ -7,7 +7,7 @@ import { TextContent } from '../components/DataInspector';
 import { ChatResponseContent, CopyResponseButton } from '../components/MarkdownResponse';
 import { useDraft, DraftStatus } from '../components/Draft';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import { MessageSquare, Square, Download, RotateCcw, ArrowUp, Bot, User, Plus, SlidersHorizontal } from 'lucide-react';
+import { Square, Download, RotateCcw, ArrowUp, Bot, User, Plus, SlidersHorizontal } from 'lucide-react';
 import { apiRequest, errorMessage } from '../api/client';
 import { ChatMessage, LocalModel, streamCompletion, TokenUsage } from '../api/inference';
 import './model-workspace.css';
@@ -258,14 +258,14 @@ export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refre
   const messageDraft = <details open={['unsaved', 'expired', 'unavailable'].includes(draft.status)}><summary>Message draft</summary><DraftStatus draft={draft} disabled={busy || voteBusy} /></details>;
   const singleAnswer = !comparison && answers.length === 1 ? answers[0] : null;
   return <div className={`resource-view ml-page chat-page${baseComparison ? ' chat-page-comparison' : ''}`} data-options-open={showOptions}><Card className="panel ml-main-panel">
-    <div className="panel-title chat-header"><div><h1><MessageSquare size={20} aria-hidden="true" /> Chat</h1>{conversation && !baseComparison && <p>{conversation.title}</p>}</div>
+    <div className="panel-title chat-header"><div>{conversation && !baseComparison && <p>{conversation.title}</p>}</div>
       <div className="chat-view-options" role="group" aria-label="Chat view"><Button type="button" aria-pressed={!baseComparison} disabled={busy || voteBusy} onClick={() => changeView(false)}>Chat</Button><Button type="button" aria-pressed={baseComparison} disabled={busy || voteBusy} onClick={() => changeView(true)}>Base vs trained</Button></div>
       <div className="chat-toolbar"><div className="chat-model-picker">
         <label>{baseComparison ? 'Trained model' : 'Model'}<select aria-label={baseComparison ? 'Trained model' : 'Model'} value={model} required disabled={busy} onChange={e => { setHandoffModel(null); setModel(e.target.value); const candidate = models.find(m => m.id === e.target.value); setPromptFormat(candidate?.chat_template && (!baseComparison || matchedBaseModel(candidate, models)?.chat_template) ? 'model' : 'plain'); if (models.find(m => m.id === e.target.value)?.format === 'cpu-reference') setTemperature(0); if (e.target.value === compare) setCompare(''); setDevice(models.find(m => m.id === e.target.value)?.format === 'mlx' ? 'mlx:0' : 'cpu'); }}><option value="">Select a model</option>{(baseComparison ? trainedModels : models).map(m => <option key={m.id} value={m.id}>{modelDisplayName(m.name)}</option>)}</select></label>
       </div></div>
       <div className="actions chat-header-actions"><Button aria-label="New conversation" title="New conversation" disabled={busy || voteBusy} onClick={() => select(null)}><Plus size={16} aria-hidden="true" /><span>New conversation</span></Button><Button className="chat-export-action" aria-label="Export" title="Export conversation" disabled={busy || !messages.length} onClick={exportConversation}><Download size={16} aria-hidden="true" /><span>Export</span></Button>{baseComparison && <Button className="chat-mobile-options" type="button" aria-label="Chat options" title="Chat options" aria-expanded={showOptions} aria-controls={optionsId} onClick={() => setOptionsOpen(value => !value)}><SlidersHorizontal size={17} aria-hidden="true" /></Button>}</div></div>
     <div className="panel-body chat-body">
-      {handoffError && <p role="alert">{handoffError}</p>}{error && <p className="error-text" role="alert">{error}</p>}{notice && <p className={namedAnswers.length ? "chat-notice chat-notice-saved" : "chat-notice"} role="status">{notice}</p>}
+      {handoffError && <Notice tone="error" role="alert">{handoffError}</Notice>}{error && <Notice tone="error" role="alert">{error}</Notice>}{notice && <Notice tone={namedAnswers.length ? 'success' : 'caution'} role="status">{notice}</Notice>}
       <div className="chat-options" id={optionsId}>
       <div className="chat-settings-row">
       <details open={historyOpen} onToggle={event => setHistoryOpen(event.currentTarget.open)}><summary>Saved conversations</summary><div className="form-grid">

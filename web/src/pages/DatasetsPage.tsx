@@ -1,5 +1,7 @@
 import { Identifier } from '../components/Identifier';
-import { Button, Field, RecordTable } from '../components/ui';
+import { Button, FactList, Field, Notice, RecordTable, WorkspaceTabs } from '../components/ui';
+import { Feedback } from '../components/Feedback';
+import { DatasetBankPage } from './DatasetBankPage';
 import { apiRequest, apiPage, nextPagePath, errorMessage } from '../api/client';
 import { resourceHash } from '../api/resource-routes';
 import { useDraft, DraftStatus } from '../components/Draft';
@@ -20,6 +22,13 @@ export interface DatasetsPageProps {
   refreshKey?: number;
 }
 
+function datasetWorkspaceTab(): 'acquire' | 'prepare' | 'library' {
+  const path = window.location.hash.slice(1).split('?')[0];
+  if (path === 'dataset-bank' || path.startsWith('datasets/acquire')) return 'acquire';
+  if (path.startsWith('datasets/prepare')) return 'prepare';
+  return 'library';
+}
+
 function safeMessage(error: unknown): string {
   return error instanceof DatasetClientError ? error.message : 'The operation failed. No automatic retry.';
 }
@@ -29,7 +38,7 @@ function RevisionDetails({ revision }: { revision: DatasetRevision }) {
   const report = revision.metadata.drop_report;
   const reasons = numericEntries(report && typeof report === 'object' ? (report as Record<string, unknown>).drop_reason_counts : undefined);
   return <div className="datasets-revision-details">
-    <dl className="datasets-facts">
+    <FactList variant="datasets">
       <div><dt>Revision UUID</dt><dd><Identifier value={revision.revision_id} label="Revision ID" /></dd></div>
       <div><dt>Revision number</dt><dd>{revision.revision_no}</dd></div>
       <div><dt>State</dt><dd>{revision.state}</dd></div>
@@ -40,7 +49,7 @@ function RevisionDetails({ revision }: { revision: DatasetRevision }) {
       <div><dt>Published at</dt><dd>{revision.published_at ?? 'Not published'}</dd></div>
       <div className="datasets-wide"><dt>Manifest digest</dt><dd><Identifier value={revision.manifest_digest} label="Manifest SHA-256" /></dd></div>
       <div className="datasets-wide"><dt>Recipe digest</dt><dd><Identifier value={revision.recipe_digest} label="Recipe SHA-256" /></dd></div>
-    </dl>
+    </FactList>
     <div className="visualization-grid equal">
       <ChartPanel title="Recorded split allocation" description="Actual sample counts from this revision's published metadata.">{splits.length ? <SegmentBar data={splits} unit="samples" /> : <ChartEmpty message="This revision does not report split counts. Allocation is not inferred from configured percentages." />}</ChartPanel>
       <ChartPanel title="Preparation evidence" description="Immutable artifact and source references for this revision."><EventTimeline events={[{ label: 'Source references', detail: `${revision.source_snapshots.length} snapshot references recorded`, status: 'ready' }, { label: 'Recipe pinned', detail: revision.recipe_digest ? 'SHA-256 recorded' : 'Recipe digest not recorded', status: revision.recipe_digest ? 'ready' : 'pending' }, { label: 'Revision publication', detail: revision.published_at ? new Date(revision.published_at).toLocaleString() : 'Not published', status: revision.state }]} /></ChartPanel>
@@ -235,9 +244,21 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
   const emptyMessage = listingLoading ? 'Loading first page…' : listError
     ? 'This first page could not be loaded. Refresh explicitly to try again.'
     : 'Not loaded. Choose Refresh lists to fetch the first page.';
+  const [datasetTab, setDatasetTab] = useState<'acquire' | 'prepare' | 'library'>(() => datasetWorkspaceTab());
+  useEffect(() => {
+    const sync = () => setDatasetTab(datasetWorkspaceTab());
+    window.addEventListener('hashchange', sync);
+    return () => window.removeEventListener('hashchange', sync);
+  }, []);
+  function chooseDatasetTab(next: 'acquire' | 'prepare' | 'library') {
+    window.location.hash = next === 'library' ? 'datasets' : `datasets/${next}`;
+    setDatasetTab(next);
+  }
 
   return <div className="datasets-page">
-    <details className="workspace-details"><summary>Upload and prepare a dataset</summary>
+    <WorkspaceTabs label="Dataset workspace" value={datasetTab} onChange={chooseDatasetTab} tabs={[{ value: 'acquire', label: 'Acquire' }, { value: 'prepare', label: 'Prepare' }, { value: 'library', label: 'Library' }]} />
+    <div hidden={datasetTab !== 'acquire'}><DatasetBankPage token={token} refreshKey={refreshKey} /></div>
+    <div hidden={datasetTab !== 'prepare'}>
     <section className="datasets-capability" aria-labelledby={`${formId}-capability`}>
       <h2 id={`${formId}-capability`}>Supported upload formats</h2>
       <p>Upload chat or prompt/response JSONL, JSON or CSV, canonical envelopes, DOCX main-body text or a text PDF to prepare a dataset version.
@@ -322,17 +343,17 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
         </fieldset>
       </form>
       {stage && <p role="status">{stage}</p>}{uploadLoading && <p className="datasets-notice" role="status">Uploading and preparing. A successful published revision must be confirmed before completion.</p>}
-      {uploadError && <p className="datasets-error" role="alert">{uploadError}</p>}
+      {uploadError && <Notice tone="error" role="alert">{uploadError}</Notice>}
       {visiblePrepared && <section className="datasets-success" aria-labelledby={`${formId}-prepared-heading`}>
         <h3 id={`${formId}-prepared-heading`}>Published revision confirmed</h3><a href={resourceHash('dataset-revision', visiblePrepared.revision.revision_id)}>Inspect this exact published revision</a>
         <p role="status">Preparation succeeded for {visiblePrepared.dataset.name}. Use Refresh lists to update the first-page tables.</p>
-        <dl className="datasets-facts">
+        <FactList variant="datasets">
           <div><dt>Dataset UUID</dt><dd><Identifier value={visiblePrepared.dataset.dataset_id} label="Dataset ID" /></dd></div>
           <div><dt>Input artifact UUID</dt><dd><Identifier value={visiblePrepared.artifact.artifact_id} label="Input artifact ID" /></dd></div>
           <div><dt>Uploaded bytes</dt><dd>{visiblePrepared.artifact.byte_size}</dd></div>
           <div><dt>Upload state</dt><dd>{visiblePrepared.artifact.state}</dd></div>
           <div className="datasets-wide"><dt>Verified input SHA-256</dt><dd><Identifier value={visiblePrepared.artifact.sha256} label="Verified input SHA-256" /></dd></div>
-        </dl>
+        </FactList>
         <RevisionDetails revision={visiblePrepared.revision} />
       </section>}
     </section>
@@ -346,14 +367,14 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
       <ChartPanel title="Publication flow" description="Verified input becomes an immutable dataset revision."><EventTimeline events={[{ label: 'Select source file', detail: file ? `${file.name} · ${file.size.toLocaleString()} bytes` : `${sourceFormat.toUpperCase()} source · up to 16 MiB`, status: file ? 'ready' : 'pending' }, { label: 'Verify & prepare', detail: visiblePrepared ? 'Input SHA-256 verified' : 'SHA-256 verification, schema validation, and source-group splits', status: visiblePrepared ? 'completed' : uploadLoading ? 'running' : 'pending' }, { label: 'Publish immutable revision', detail: visiblePrepared ? `Revision ${visiblePrepared.revision.revision_no} · ${visiblePrepared.revision.row_count?.toLocaleString()} samples` : 'Confirmation requires a published server revision.', status: visiblePrepared ? 'published' : 'pending' }]} /></ChartPanel>
     </aside>
     </div>
-    </details>
-    <section className="datasets-panel" aria-labelledby={`${formId}-lists-heading`} aria-busy={listingLoading}>
+    </div>
+    <section hidden={datasetTab !== 'library'} className="datasets-panel" aria-labelledby={`${formId}-lists-heading`} aria-busy={listingLoading}>
       <div className="datasets-panel-heading"><div>
         <h2 id={`${formId}-lists-heading`}>Dataset and revision lists</h2>
         <p>Showing the first page of datasets and immutable revisions.</p>
       </div><Button type="button" onClick={() => void refresh()} disabled={busy || !token.trim()}>{listingLoading ? 'Loading lists…' : 'Refresh lists'}</Button></div>
       {listingLoading && <p className="datasets-notice" role="status">Loading dataset and revision first pages…</p>}
-      {listError && <p className="datasets-error" role="alert">{listError}</p>}
+      {listError && <Notice tone="error" role="alert">{listError}</Notice>}
       {visiblePages && <details className="workspace-details"><summary>Revision statistics</summary><div className="visualization-grid equal"><ChartPanel title="Revision size" description="Recorded row counts in the loaded first page; revisions can overlap."><BarChart data={visiblePages.revisions.results.filter(item => item.row_count !== null).map(item => ({ label: `Dataset #${item.dataset} · r${item.revision_no}`, value: item.row_count!, color: 0 }))} unit="Samples per revision" emptyMessage="No recorded revision row counts in this page." /></ChartPanel><ChartPanel title="Revision states" description="Counts for the loaded revision first page."><BarChart data={[...new Set(visiblePages.revisions.results.map(item => item.state))].map(state => ({ label: state.replaceAll('_', ' '), value: visiblePages.revisions.results.filter(item => item.state === state).length }))} unit="Revisions" /></ChartPanel></div></details>}
       <label>Search loaded datasets and revisions<Field value={query} onChange={e => setQuery(e.target.value)} /></label><div className="datasets-table-wrap" role="region" aria-label="Dataset first-page table" tabIndex={0}>
         <RecordTable>
@@ -362,7 +383,7 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
           <tbody>{visiblePages?.datasets.results.filter(item => `${item.name} ${item.dataset_id}`.toLowerCase().includes(query.toLowerCase())).map(item => <tr key={item.dataset_id}>
             <td><strong>{item.name}</strong><Identifier value={item.dataset_id} label="Dataset ID" />{item.description && <span className="datasets-description">{item.description}</span>}</td>
             <td>{item.current_revision ? `#${item.current_revision}` : 'No revision'}</td><td>{new Date(item.created_at).toLocaleString()}</td>
-          </tr>)}{!visiblePages?.datasets.results.length && <tr><td colSpan={3} className="datasets-empty">{visiblePages ? 'No datasets returned on this first page.' : emptyMessage}</td></tr>}</tbody>
+          </tr>)}{!visiblePages?.datasets.results.length && <tr><td colSpan={3}><Feedback state={listingLoading ? 'loading' : listError ? 'error' : 'empty'} title={visiblePages ? 'No datasets returned on this first page.' : emptyMessage} /></td></tr>}</tbody>
         </RecordTable>
       </div>
       {visiblePages?.datasets.next && <Button disabled={listingLoading} onClick={() => void more('datasets')}>Load more datasets</Button>}
@@ -375,7 +396,7 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
             <td><Identifier value={item.revision_id} label="Revision ID" /><span className="datasets-description">Revision {item.revision_no}</span></td>
             <td>#{item.dataset}</td><td>{item.row_count ?? 'Not prepared'}</td><td><span className="datasets-badge">{item.state}</span></td><td>{item.published_at ? new Date(item.published_at).toLocaleString() : 'Not published'}</td>
             <td><Button type="button" onClick={() => setSelectedRevision(item)} aria-label={`Inspect revision ${item.revision_no}, ${item.revision_id}`}>Inspect</Button></td>
-          </tr>)}{!visiblePages?.revisions.results.length && <tr><td colSpan={6} className="datasets-empty">{visiblePages ? 'No revisions returned on this first page.' : emptyMessage}</td></tr>}</tbody>
+          </tr>)}{!visiblePages?.revisions.results.length && <tr><td colSpan={6}><Feedback state={listingLoading ? 'loading' : listError ? 'error' : 'empty'} title={visiblePages ? 'No revisions returned on this first page.' : emptyMessage} /></td></tr>}</tbody>
         </RecordTable>
       </div>
       {visiblePages?.revisions.next && <Button disabled={listingLoading} onClick={() => void more('revisions')}>Load more revisions</Button>}

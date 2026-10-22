@@ -43,9 +43,9 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 const apiPaths: Record<string, string> = { Overview: 'training-runs', 'Dataset Bank': 'dataset-bank/sources', Datasets: 'datasets', Annotation: 'labeling-campaigns', Models: 'models', Training: 'fine-tuning/options', Alignment: 'alignment-runs', Evaluation: 'evaluation-runs', Workflows: 'jobs', RAG: 'index-versions', 'Context Lab': 'context-recipe-versions', Releases: 'release-versions', Infrastructure: 'worker-inventory', Budgets: 'usage-events/summary', Audit: 'audit', 'Run Detail': 'run-details/training/30000000-0000-4000-8000-000000000001' };
-const route = (name: string, hash?: string) => ({ demoHeading: name === 'Overview' ? 'Project overview' : name === 'RAG' ? 'Retrieval workbench' : name, demoApiPath: `/api/v1/${apiPaths[name]}/`, demoRoute: hash ?? `#${name.toLowerCase().replaceAll(' ', '-')}` });
+const route = (name: string, hash?: string) => ({ demoHeading: name === 'Overview' ? 'Project overview' : name === 'RAG' ? 'Retrieval workbench' : name === 'Context Lab' ? 'Prompt compiler' : name === 'Run Detail' ? 'Anvil Assistant · SFT demo' : name, demoApiPath: `/api/v1/${apiPaths[name]}/`, demoRoute: hash ?? `#${name.toLowerCase().replaceAll(' ', '-')}` });
 export const Overview: Story = { name: '01 · Overview', parameters: route('Overview') };
-export const DatasetBank: Story = { name: '02 · Dataset Bank', parameters: route('Dataset Bank') };
+export const DatasetBank: Story = { name: '02 · Dataset Bank', parameters: { demoHeading: 'Datasets', demoApiPath: '/api/v1/dataset-bank/sources/', demoRoute: '#datasets/acquire' } };
 export const Datasets: Story = { name: '03 · Datasets', parameters: route('Datasets') };
 export const Annotation: Story = { name: '04 · Annotation', parameters: route('Annotation', '#annotation?campaign=60000000-0000-4000-8000-000000000001') };
 export const Models: Story = { name: '05 · Models', parameters: route('Models') };
@@ -72,6 +72,7 @@ export const ContextLab: Story = {
   name: '11 · Context Lab', parameters: route('Context Lab'),
   play: async ({ canvasElement, parameters }) => {
     const canvas = within(canvasElement);
+    await expect(canvas.findByRole('heading', { name: 'Prompt compiler', level: 1 })).resolves.toBeVisible();
     const recipe = await canvas.findByLabelText('Recipe version');
     await waitFor(() => expect(within(recipe).getAllByRole('option').length).toBeGreaterThan(1));
     await userEvent.selectOptions(recipe, 'a0000000-0000-4000-8000-000000000001');

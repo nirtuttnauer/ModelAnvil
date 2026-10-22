@@ -1,8 +1,6 @@
-.page-content[data-screen="chat"] > .page-heading { display: none; }
 .chat-page .chat-header { border-bottom: 1px solid var(--border); }
 .chat-page .chat-header { padding: var(--space-16) var(--space-20); gap: var(--space-12) var(--space-18); }
 .chat-page .chat-header > div:first-child { flex: 1 1 160px; min-width: 0; }
-.chat-page .chat-header h1 { display: flex; align-items: center; gap: var(--space-10); font-size: var(--type-20); margin: 0; letter-spacing: -.025em; }
 .chat-page .chat-header p { margin-bottom: 0; font-size: var(--type-12); }
 .chat-page .chat-header .chat-view-options { margin: 0; }
 .chat-page .chat-header .chat-toolbar { margin: 0; }

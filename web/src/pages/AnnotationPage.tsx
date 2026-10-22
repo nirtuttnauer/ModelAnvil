@@ -1,5 +1,6 @@
 import { Identifier, isOpaqueIdentifier } from '../components/Identifier';
 import { Badge, Button, Card, Field, MultilineField, Notice } from '../components/ui';
+import { Feedback } from '../components/Feedback';
 import { ObjectFields, RecordListEditor } from '../components/FormEditors';
 import { readRecords, recordsInput, sampleFields, spanFields, structuredInput } from '../components/form-data';
 import { resourceHash, handoffHash } from '../api/resource-routes';
@@ -260,8 +261,8 @@ export function AnnotationPage({ token, refreshKey }: { token: string; refreshKe
     if (!reviewBlocked && /^[1-9]$/.test(e.key) && options[number - 1]) { e.preventDefault(); setLabel(options[number - 1]); }
   }
 
-  return <Card className="panel annotation-page">
-    <div className="panel-title"><div><h2>Annotation review</h2><p>Review source evidence, refine labels, and freeze approved snapshots.</p></div><Button className="primary" disabled={loading || busy} onClick={() => setSetup(v => !v)}>{setup ? 'Close setup' : 'New campaign'}</Button></div>
+  return <><div className="page-actions"><Button className="primary" disabled={loading || busy} onClick={() => setSetup(v => !v)}>{setup ? 'Close setup' : 'New campaign'}</Button></div>
+  <Card className="panel annotation-page">
     <div className="panel-body">
       <>{handoffError && <p role="alert">{handoffError}</p>}{!online && <p role="status">Offline. Your edits stay in this tab; reconnect before saving a review.</p>}</><ResourceState loading={loading} error={error} onRetry={() => { setRetry(v => v + 1); setQueueRetry(v => v + 1); }} />
       {notice && <Notice tone="success" className="notice success" role="status">{notice}</Notice>}
@@ -281,7 +282,7 @@ export function AnnotationPage({ token, refreshKey }: { token: string; refreshKe
         <p className="muted full-width">{sourceRevision && seed === 'existing_model' && 'Published-source batches start with manual labels; selecting a model does not generate predictions. '}Samples without imported predictions can be labeled manually. Imported drafts must carry the selected model version ID. Automatic model inference and retraining are not connected yet. The budget ceiling records campaign intent; this review flow incurs no executor spend.</p>
         <div className="actions full-width"><Button className="primary" disabled={busy || !online || (kind === 'preference_ranking' && !!sourceRevision) || (seed === 'existing_model' && !model)}>{busy ? 'Creating…' : 'Create campaign'}</Button></div>
       </form>}
-      {!loading && !error && !campaigns.length && !setup && <div className="empty-state"><h3>Start your first labeling campaign</h3><p>Create a label schema and review guidelines, then import samples from your source pool.</p><Button onClick={() => setSetup(true)}>Set up labeling</Button></div>}
+      {!loading && !error && !campaigns.length && !setup && <Feedback state="empty" title="Start your first labeling campaign" description="Create a label schema and review guidelines, then import samples from your source pool." action={<Button onClick={() => setSetup(true)}>Set up labeling</Button>} />}
       <div className="annotation-toolbar">{!!campaigns.length && <div className="campaign-picker"><div className="identifier-label"><label htmlFor="annotation-campaign-picker">Campaign</label><Identifier value={campaignId} label="Campaign ID" /></div><select id="annotation-campaign-picker" value={campaignId} disabled={busy} onChange={e => selectCampaign(e.target.value)}><option value="">Select a campaign</option>{campaigns.map(c => <option key={c.campaign_id} value={c.campaign_id}>{c.name} · {c.status} · cycle {c.current_cycle}/{c.max_cycles}</option>)}</select></div>}
         {!!campaign?.batches.length && <div className="campaign-picker"><div className="identifier-label"><label htmlFor="annotation-batch-picker">Batch</label><Identifier value={batchId} label="Batch ID" /></div><select id="annotation-batch-picker" value={batchId} disabled={busy} onChange={e => setBatchId(e.target.value)}>{[...campaign.batches].sort((a, b) => b.cycle_no - a.cycle_no).map(b => <option key={b.batch_id} value={b.batch_id}>Cycle {b.cycle_no} · {b.status} · {b.reviewed_count}/{b.sample_count} reviewed</option>)}</select></div>}
       {campaign && <details className="annotation-campaign-details"><summary>Campaign settings & limits</summary><div className="campaign-summary"><div><h3>{campaign.name} <Badge className={`state state-${campaign.status}`}>{campaign.status}</Badge></h3><p>{campaign.label_schema.kind.replaceAll('_', ' ')} · {campaign.seed_mode === 'manual' ? 'Manual seed' : 'Imported model drafts'} · {campaign.current_cycle}/{campaign.max_cycles} cycles closed</p><small>Recorded spend ${campaign.accumulated_cost_dollars.toFixed(2)} / ${campaign.budget_limit_dollars.toFixed(2)} ceiling</small></div>
@@ -332,5 +333,5 @@ export function AnnotationPage({ token, refreshKey }: { token: string; refreshKe
         <Notice className="notice campaign-stage"><strong>Next stage: train & qualify a candidate</strong><p>Automatic campaign training, held-out qualification, promotion, and rollback are not connected to an executor yet. Use the exported approved snapshot as training input. The active drafting model stays pinned.</p><div className="actions"><a href="#training">Training runs</a><a href="#evaluation">Evaluation</a></div></Notice>
       </>}
     </div>
-  </Card>;
+  </Card></>;
 }

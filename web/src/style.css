@@ -97,6 +97,10 @@ main { min-width: 0; width: 100%; }
 .mobile-menu { display: none; }
 .page-content { max-width: 1536px; margin: 0 auto; padding: 36px clamp(var(--space-24), 3vw, 48px) var(--space-20); }
 .page-heading { display: flex; justify-content: space-between; align-items: center; gap: var(--space-24); margin-bottom: 28px; }
+.page-actions { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: var(--space-8); margin: -12px 0 var(--space-16); }
+.workspace-tabs { display: flex; flex-wrap: wrap; gap: var(--space-8); margin-bottom: var(--space-16); border-bottom: 1px solid var(--border); }
+.workspace-tabs [role="tab"] { background: transparent; border: 0; border-radius: 0; min-height: 44px; color: var(--text-secondary); }
+.workspace-tabs [aria-selected="true"] { color: var(--text); font-weight: 650; box-shadow: inset 0 -2px 0 var(--primary); }
 .page-heading p { color: var(--text-muted); font-size: var(--type-14); margin: 0; max-width: 700px; }
 .eyebrow { font-size: 10px; text-transform: uppercase; letter-spacing: .13em; color: var(--text-muted); font-weight: 650; }
 .primary { background: var(--primary); color: var(--on-primary); border-color: var(--primary); font-weight: 600; }
