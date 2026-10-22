@@ -87,6 +87,17 @@ class JobSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Manage this job through its specialist request or recipe run.')
         if attrs.get('payload', {}).get('type') == 'qualified_evaluation' or (self.instance and self.instance.evaluation_runs.exists()):
             raise serializers.ValidationError('Manage evaluation jobs through their evaluation run.')
+        requirements = attrs.get("requirements", self.instance.requirements if self.instance else {})
+        payload = attrs.get("payload", self.instance.payload if self.instance else {})
+        if "task_plugin" in requirements or "task_plugin_digest" in requirements:
+            from modelanvil.compute.plugins import PluginError, definition, validate_configuration
+            try:
+                entry, digest = definition(requirements.get("task_plugin"), get_active_tenant(), "task")
+                if requirements.get("task_plugin_digest") != digest:
+                    raise PluginError("Task plugin revision is not installed.")
+                validate_configuration(entry["configuration_schema"], payload.get("configuration", {}))
+            except PluginError as exc:
+                raise serializers.ValidationError(str(exc)) from None
         if (attrs.get('payload', {}).get('type') == 'model_import' or
                 (self.instance and self.instance.payload.get('type') == 'model_import')):
             raise serializers.ValidationError('Manage model acquisition through the model-imports API.')

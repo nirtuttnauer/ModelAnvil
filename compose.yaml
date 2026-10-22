@@ -47,6 +47,8 @@ services:
       MODELANVIL_S3_BUCKET: modelanvil
       MODELANVIL_S3_ACCESS_KEY: ${S3_ACCESS_KEY:-modelanvil}
       MODELANVIL_S3_SECRET_KEY: ${S3_SECRET_KEY:-local-dev-only}
+      MODELANVIL_PLUGINS: ${MODELANVIL_PLUGINS:-}
+      MODELANVIL_RUNPOD_API_KEY: ${MODELANVIL_RUNPOD_API_KEY:-}
     ports: ["8000:8000"]
     depends_on:
       db: {condition: service_healthy}
@@ -100,6 +102,24 @@ services:
     ports: ["5173:5173"]
     volumes: [.:/app, /app/web/node_modules]
     depends_on: [api]
+  compute-reconciler:
+    profiles: [external-compute]
+    build: .
+    command: ["python", "manage.py", "reconcile_compute", "--loop"]
+    restart: unless-stopped
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-local-only-change-before-deploy}
+      DATABASE_ENGINE: postgresql
+      DATABASE_NAME: modelanvil
+      DATABASE_USER: modelanvil
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-local-dev-only}
+      DATABASE_HOST: db
+      DATABASE_PORT: "5432"
+      MODELANVIL_PLUGINS: ${MODELANVIL_PLUGINS:-}
+      MODELANVIL_RUNPOD_API_KEY: ${MODELANVIL_RUNPOD_API_KEY:-}
+    depends_on:
+      db: {condition: service_healthy}
+      api: {condition: service_started}
 volumes:
   postgres_data:
   object_data:

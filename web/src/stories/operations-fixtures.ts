@@ -18,6 +18,8 @@ const updated = '2026-10-11T10:00:00Z';
 export const operationsResponses: Record<string, unknown> = {
   '/api/v1/workers/setup/': { can_administer: false, profiles: [] },
   '/api/v1/budget-policies/permissions/': { can_administer: false, scope: 'tenant' },
+  '/api/v1/compute-plugins/': [],
+  '/api/v1/compute-allocations/': [],
   '/api/v1/jobs/': [
     {
       job_id: '40000000-0000-4000-8000-000000000001', name: 'Anvil Assistant · SFT demo', pool: 1,

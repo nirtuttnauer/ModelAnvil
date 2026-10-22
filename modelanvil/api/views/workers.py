@@ -312,6 +312,7 @@ def claim(request) -> Response:
             "fencing_token": descriptor["fencing_token"],
             "lease_expires_at": descriptor["lease_expires_at"].isoformat(),
             "payload": descriptor["payload"],
+            "tenant_id": descriptor["tenant_id"],
             "requirements": descriptor["requirements"],
             "result_egress": descriptor["result_egress"],
         },

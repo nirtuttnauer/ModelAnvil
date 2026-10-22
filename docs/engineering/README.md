@@ -38,3 +38,5 @@ Requirement references use PRD IDs such as ANN04 and OPS07. Technical IDs use TE
 ## Review decisions still needed
 
 Name the reference GPU and two-node topology; select and pin training, inference, RLHF, embedding, judge, and annotation integrations; settle the Mac feature matrix; choose the identity provider and managed cloud; set retention and regional policy; assign owners and measured estimates. These decisions have assigned work packages and do not justify dropping required release paths.
+
+- [Runpod and custom plugin setup](runpod-and-custom-plugins.md) documents opt-in provider control and trusted task execution; live provider/GPU qualification remains separate.

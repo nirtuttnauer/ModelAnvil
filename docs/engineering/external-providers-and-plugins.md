@@ -2,6 +2,8 @@
 
 12 October 2026 | Proposed integration map for ModelAnvil
 
+The [Runpod and custom plugin guide](runpod-and-custom-plugins.md) describes the implemented control API and trusted task execution. The [provider TODO](provider-integration-todo.md) tracks the remaining integrations and qualification work.
+
 ModelAnvil can connect to rented GPU capacity, managed GPU jobs, hosted model endpoints, and external artifact stores. Start with a customer-owned provider account, one Runpod compute integration, one hosted inference integration, and a custom plugin contract. Add more providers after the first integration proves worker bootstrap, artifact transfer, cancellation, cleanup, and cost reconciliation.
 
 Provider capabilities below come from official documentation. Integration priorities and contracts are proposed engineering choices. None of these listings establishes a working or qualified ModelAnvil integration. Prices, regional capacity, quotas, and supported models must be checked for the customer's account when selecting a workload.
