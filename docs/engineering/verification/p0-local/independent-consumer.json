@@ -1,0 +1,10 @@
+{
+  "scope": "independent_stdlib_consumer",
+  "actual_output_matches_frozen_case": true,
+  "weights_sha256": "3b55f30aa34cc1de3a9cf9bfecc654312abce32de21314c898e461ff67a1cdb5",
+  "generated_token_ids": [
+    36,
+    36
+  ],
+  "production_qualified": false
+}

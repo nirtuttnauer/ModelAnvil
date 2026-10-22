@@ -1,6 +1,6 @@
 {
   "schema_version": "modelanvil.supported-capabilities.v1",
-  "reviewed_on": "2026-10-21",
+  "reviewed_on": "2026-10-23",
   "scope": "Operation-specific evidence index; not complete R1 certification.",
   "operations": [
     {
@@ -57,7 +57,8 @@
       "remaining": [
         "Six reworded questions do not establish general quality.",
         "128-token/1000-example/3000-update guided envelope remains unchanged.",
-        "CUDA/ROCm/XPU and distributed execution require named physical-hardware evidence."
+        "CUDA/ROCm/XPU and distributed execution require named physical-hardware evidence.",
+        "The 14 October Apple GPU observation predates the 23 October dependency upgrade; requalify the current pinned stack on named hardware before claiming current GPU support."
       ],
       "production_qualified": false,
       "hardware_qualified": false
@@ -67,18 +68,22 @@
       "recipe": "durable CPU reference candidate/baseline comparison, exact-match held-out case, fenced commits",
       "runtime": "modelanvil.local-cpu-evaluation.v1; plain prompts, <=64 cases and <=32 output tokens",
       "hardware": "Apple M5 Pro, macOS-27.0.1-arm64-arm-64bit, Python 3.12.15, local CPU",
-      "evidence_date": "2026-10-21",
+      "evidence_date": "2026-10-23",
       "level": "integrated_execution",
       "artifact_identity": {
-        "version": "01a16011-18f4-7fd1-85aa-4988922aabaa",
-        "artifact_id": "01a16011-18f1-7261-a50b-b35d585c3aa4",
-        "sha256": "cb55e43509a0991524f3e10b4898db917a9c6ddf4029b9c2fdddedf113cda50c",
-        "tokenizer": "01a16011-1660-76af-ab85-92c31b354060"
+        "version": "01a165c3-55fe-7e08-975b-8fa791b8c214",
+        "artifact_id": "01a165c3-55fb-76fe-b432-52d9c4c23cc9",
+        "sha256": "9c6bba942357cf4e2c9581bcba56cc6bc8c8675e9058b4225e47fb23dab5e78f",
+        "tokenizer": "01a165c3-5206-717d-98a5-375b7df4f5a3"
       },
       "evidence": [
         {
           "path": "verification/task44-activation-2026-10-21/baseline.json",
           "sha256": "f661ada0c377c311ade884177eddec3b08408985d389bedd67335580f1fed21d"
+        },
+        {
+          "path": "verification/task44-activation-2026-10-23/baseline.json",
+          "sha256": "2b804f093fa30d4a4050aa0f049d623115531ec8a0e67807642bdb8b88bd9c45"
         }
       ],
       "remaining": [
