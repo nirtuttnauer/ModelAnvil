@@ -1,0 +1,105 @@
+Creating test database for alias 'default' ('test_modelanvil')...
+Including test tag(s): pg.
+Found 1 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: acceptance, corsheaders, django_filters, messages, ops, rest_framework, staticfiles
+  Apply all migrations: admin, annotation, artifacts, auth, budgets, contenttypes, context_lab, core, data, identity, jobs, rag, releases, runners, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying identity.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying identity.0002_team_project_teammembership_projectconfig_and_more... OK
+  Applying identity.0003_alter_projectconfig_created_by... OK
+  Applying identity.0004_apikey_project_projectgrant... OK
+  Applying jobs.0001_initial... OK
+  Applying jobs.0002_outboxevent_last_error... OK
+  Applying jobs.0003_job_desired_action... OK
+  Applying jobs.0004_job_requirements... OK
+  Applying jobs.0005_workercredential... OK
+  Applying jobs.0006_workerpool_result_egress... OK
+  Applying artifacts.0001_initial... OK
+  Applying artifacts.0002_transfersession... OK
+  Applying artifacts.0003_transfersession_parts_purged_at... OK
+  Applying artifacts.0004_workerartifactgrant... OK
+  Applying artifacts.0005_deletiontombstone... OK
+  Applying artifacts.0006_artifact_project_dataset_project_and_more... OK
+  Applying runners.0001_initial... OK
+  Applying runners.0002_evaluationsuite_evaluationsuiteversion_model_and_more... OK
+  Applying runners.0003_trainingrun_trainingcheckpoint... OK
+  Applying annotation.0001_initial... OK
+  Applying annotation.0002_reviewed_publication... OK
+  Applying annotation.0003_campaign_project_scope... OK
+  Applying annotation.0004_uuid7_identifiers... OK
+  Applying artifacts.0007_uuid7_identifiers... OK
+  Applying budgets.0001_initial... OK
+  Applying budgets.0002_reservation_period_start... OK
+  Applying budgets.0003_usageevent_amount_usageevent_currency_raterevision... OK
+  Applying budgets.0004_usageadjustment... OK
+  Applying budgets.0005_uuid7_identifiers... OK
+  Applying context_lab.0001_initial... OK
+  Applying context_lab.0002_uuid7_identifiers... OK
+  Applying identity.0005_uuid7_identifiers... OK
+  Applying runners.0004_alignmentrun_alignmentcheckpoint... OK
+  Applying runners.0005_alignmentrun_project_evaluationrun_project_and_more... OK
+  Applying jobs.0007_jobattempt_slots_reserved... OK
+  Applying runners.0006_trainingrun_dataset_revision_trainingrun_job_and_more... OK
+  Applying runners.0007_alignmentrun_execution_pins_and_more... OK
+  Applying runners.0008_model_import... OK
+  Applying runners.0009_chat_conversation... OK
+  Applying runners.0010_inference_request... OK
+  Applying runners.0011_chat_comparison... OK
+  Applying runners.0012_native_qlora_recipe... OK
+  Applying runners.0013_durable_evaluation... OK
+  Applying runners.0014_training_recovery... OK
+  Applying runners.0015_arena_review_handoff... OK
+  Applying runners.0016_local_training_host... OK
+  Applying runners.0017_uuid7_identifiers... OK
+  Applying releases.0001_initial... OK
+  Applying releases.0002_deploymentrevision_project_release_project_and_more... OK
+  Applying releases.0003_local_serving_readiness... OK
+  Applying core.0001_initial... OK
+  Applying core.0002_alter_idempotencykey_unique_together_and_more... OK
+  Applying core.0003_audit_project_scope... OK
+  Applying core.0004_uuid7_identifiers... OK
+  Applying core.0005_local_activation_measurement... OK
+  Applying core.0006_private_data_policy... OK
+  Applying data.0001_initial... OK
+  Applying data.0002_datasource_project_sourcesnapshot_project... OK
+  Applying data.0003_recipe_runs... OK
+  Applying data.0004_uuid7_identifiers... OK
+  Applying identity.0006_accountaction... OK
+  Applying jobs.0008_worker_drain... OK
+  Applying jobs.0009_job_project_scope... OK
+  Applying jobs.0010_uuid7_identifiers... OK
+  Applying rag.0001_initial... OK
+  Applying rag.0002_uuid7_identifiers... OK
+  Applying rag.0003_private_data_policy... OK
+  Applying rag.0004_vector_extension... OK
+  Applying releases.0004_uuid7_identifiers... OK
+  Applying sessions.0001_initial...test_vector_extension_round_trip (modelanvil.rag.test_pgvector.VectorExtensionTests.test_vector_extension_round_trip) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+OK
+Destroying test database for alias 'default' ('test_modelanvil')...
+ OK
+System check identified no issues (0 silenced).

@@ -25,7 +25,7 @@ jobs:
           python manage.py bootstrap_dev
         env:
           DATABASE_NAME: ${{ runner.temp }}/modelanvil-bootstrap.sqlite3
-      - run: python manage.py test --noinput
+      - run: python manage.py test --noinput --exclude-tag=pg
         env:
           DATABASE_TEST_NAME: ${{ runner.temp }}/modelanvil-tests.sqlite3
       - run: PYTHONPATH=. python -m scripts.smoke
@@ -47,3 +47,43 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npm run build-storybook
+  pgvector:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: modelanvil
+          POSTGRES_USER: modelanvil
+          POSTGRES_PASSWORD: modelanvil
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U modelanvil -d modelanvil"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -r requirements.txt huggingface-hub==1.33.0
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/embedding-model
+          key: embedding-${{ hashFiles('modelanvil/rag/embedding_model.py') }}
+      - name: Cache pinned embedding model
+        env:
+          HF_HOME: ${{ runner.temp }}/embedding-model
+          HF_HUB_DISABLE_TELEMETRY: "1"
+        run: python -c "from modelanvil.rag.embedding_model import cache_pinned_model; cache_pinned_model()"
+      - run: python manage.py test --noinput --tag=pg
+        env:
+          DATABASE_ENGINE: postgresql
+          DATABASE_NAME: modelanvil
+          DATABASE_USER: modelanvil
+          DATABASE_PASSWORD: modelanvil
+          DATABASE_HOST: localhost
+          DATABASE_PORT: "5432"

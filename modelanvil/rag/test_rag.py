@@ -23,8 +23,17 @@ from modelanvil.rag.models import (
     QueryTrace,
     SourceDocument,
 )
+from modelanvil.rag.embedding_model import MODEL_ID, REVISION
 from modelanvil.rag.pipeline import RAGPipeline
 from modelanvil.rag.retrieval import RetrievalEngine
+
+
+def fake_embed_query(query: str, dimension: int) -> list[float]:
+    """Deterministic stand-in. Production retrieval does not call this."""
+    digest = hashlib.sha256(query.encode("utf-8")).digest()
+    vec = [(digest[i % len(digest)] / 255.0) * 2.0 - 1.0 for i in range(dimension)]
+    norm = sum(x * x for x in vec) ** 0.5
+    return [x / norm for x in vec] if norm else vec
 
 
 class RetrievalMetricsAcceptanceTests(TestCase):
@@ -241,6 +250,22 @@ class RAGPipelineAndRetrievalTests(TestCase):
         pipeline.redact_trace(trace)
         self.assertTrue(trace.redacted)
         self.assertIn("REDACTED", trace.supplied_context)
+
+    def test_fake_embed_query_stays_out_of_production(self):
+        vec = fake_embed_query("qubits superposition", self.space.dimension)
+        self.assertEqual(len(vec), self.space.dimension)
+        self.assertAlmostEqual(sum(x * x for x in vec), 1.0, places=6)
+        self.assertFalse(hasattr(RAGPipeline, "pseudo_embed_query"))
+        pipeline = RAGPipeline(self.index)
+        with self.assertRaises(ValueError):
+            pipeline.answer_query("qubits superposition", mode="dense")
+        with self.assertRaises(ValueError):
+            pipeline.answer_query("qubits superposition", mode="hybrid")
+
+    def test_embedding_model_revision_is_pinned(self):
+        self.assertEqual(MODEL_ID, "sentence-transformers/all-MiniLM-L6-v2")
+        self.assertEqual(len(REVISION), 40)
+        int(REVISION, 16)
 
 
 class ClusterExplorerTests(TestCase):
