@@ -49,7 +49,7 @@ The `modelanvil.acceptance.test_r1_scenarios` suite is a **domain fixture suite*
 | 13 Complete RLHF | Fixture RLHF metrics and negative release invariant | Simulation | Learned reward weights, fresh policy rollout, independent held-out evaluation |
 | 14 RAG | Hand-scored retrieval metrics and tombstone row | Integrated execution (local helpers) | Index retrieval/answer execution, HTTP queries and deletion propagation |
 | 15 Cluster | Three inline embedding vectors, stored projection, neighbors and table | Integrated execution (local helpers) | True projection algorithm validation, large datasets and keyboard/browser investigation |
-| 16 Context | Recipe compilation and deterministic stress metrics | Simulation | Actual paired model inference, token accounting, isolation and user review |
+| 16 Context | Recipe compilation, deterministic stress fixtures and evidence-position prompt inspection; recall status is `not_run` | Simulation; no measured recall or middle dip | Actual paired model inference, token accounting, isolation and user review |
 | 17 Labeling | One manual batch, snapshot, metadata candidate and fixed score callback | Simulation | Both seed modes, two cycles, actual retraining, independent qualification and executor recovery |
 
 ## Verification and limits
