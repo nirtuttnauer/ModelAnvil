@@ -91,7 +91,8 @@ class ScraplingCrawlerConnector(BaseConnector):
             raise PermissionError(reason)
 
         req = urllib.request.Request(url, headers=headers)
-        with urllib.request.urlopen(req, timeout=self.config.timeout_seconds) as resp:
+        from modelanvil.core.privacy import open_acquisition
+        with open_acquisition(req, timeout=self.config.timeout_seconds) as resp:
             return resp.status, resp.read(), dict(resp.headers)
 
     def cancel(self) -> None:

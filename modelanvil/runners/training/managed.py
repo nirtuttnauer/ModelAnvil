@@ -29,7 +29,17 @@ def host_status():
             'memory_basis': 'Observed total system memory; currently free memory is not reported.',
             'message': 'Your computer is training another model. You can prepare your dataset while it finishes.' if available and host.status == 'training'
                        else 'Training runs on this computer. No server commands or cloud account needed.' if available
-                       else host.error if fresh and host.error else 'Local training is offline. The installation owner needs to start ModelAnvil with its managed training service.'}
+                       else host.error if fresh and host.error else 'Local training is offline. The installation owner needs to start the managed training service: python manage.py run_local'}
+
+
+def refresh_evaluation_capabilities(worker, host):
+    """The same managed worker scores guided candidates; browsers cannot choose its runtime."""
+    from modelanvil.runners.eval_worker import BUILD_DIGEST, CONTRACT_DIGEST
+    capabilities = {**worker.capabilities, 'evaluation_runtime': CONTRACT_DIGEST, 'evaluation_build': BUILD_DIGEST,
+                    'memory_bytes': host.memory_bytes}
+    if capabilities != worker.capabilities:
+        Worker.all_objects.filter(pk=worker.pk, tenant_id=worker.tenant_id).update(capabilities=capabilities)
+        worker.capabilities = capabilities
 
 
 def recommended_source():
@@ -44,9 +54,13 @@ def verified_model_directory(*, download=False):
     for name, expected in hashes.items():
         path = directory / name
         if not path.exists() and download:
+            from modelanvil.core.privacy import acquisition_scope, require_destination, install_hub_guard
             from huggingface_hub import hf_hub_download
-            hf_hub_download(source['repo_id'], name, revision=source['revision'],
-                            local_dir=directory, token=False)
+            with acquisition_scope(None, None, public_provisioning=True):
+                require_destination('https://huggingface.co')
+                install_hub_guard()
+                hf_hub_download(source['repo_id'], name, revision=source['revision'],
+                                local_dir=directory, token=False)
         try:
             maximum = hf_runtime.LIMITS['weight_bytes'] if name.endswith('.safetensors') else hf_runtime.LIMITS['aux_bytes']
             if not 1 <= path.stat().st_size <= maximum:
@@ -131,6 +145,7 @@ def prepare_resources(tenant, project, *, allow_new_allowance=True):
                 'gpu_backend': observed['device']['backend'], 'gpu_device': observed['device']['id'], 'gpu_packages': hf_runtime.PACKAGES}})
         if not worker.capabilities.get('managed_local') or worker.capabilities.get('training_runtime') != hf_runtime.CONTRACT_DIGEST:
             raise ValueError('The managed worker registration changed. Restart local training to repair its runtime.')
+        refresh_evaluation_capabilities(worker, host)
         policy, _ = BudgetPolicy.all_objects.get_or_create(tenant_id=tenant, name='Guided training allowance',
             defaults={'unit': 'training_steps', 'period': 'lifetime', 'limit_amount': 10000})
         if pool.status != 'active' or not runner.enabled or not policy.enabled or policy.unit != 'training_steps':

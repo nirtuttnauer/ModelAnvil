@@ -15,6 +15,8 @@ test('recommended setup fills the exact configuration edited by advanced control
   assert.equal(trainingStepCount(config, revision), 288);
   assert.equal(trainingStepCount({ ...config, recipe: 'full_sft' }, revision), 144);
   assert.equal(trainingStepCount({ ...config, preset: 'quick' }, revision), 3);
+  assert.equal(trainingLaunchPayload({ ...config, preset: 'quick' }, 3, false).setup_check, true);
+  assert.equal('setup_check' in trainingLaunchPayload(config, 288, false), false);
   assert.equal(trainingStepCount({ ...config, preset: 'custom', steps: '2400' }, revision), 2400);
   assert.equal(trainingStepCount({ ...config, preset: 'recommended' }, null), 0);
 });

@@ -1,6 +1,7 @@
 import { Identifier } from '../components/Identifier';
 import { Badge, Button, Card, Field, Notice, RecordTable, Tab } from '../components/ui';
 import { GuidedFineTune } from '../components/GuidedFineTune';
+import { GuidedDecision } from '../components/GuidedDecision';
 import { ModelHardwareFit } from '../components/ModelHardwareFit';
 import { TrainingRunProgress } from '../components/TrainingRunProgress';
 import { ModelExport } from '../components/ModelExport';
@@ -92,7 +93,7 @@ interface Checkpoint {
 }
 
 interface Run {
-  runtime?: { execution_mode?: string; pins?: { runtime?: string } };
+  runtime?: { execution_mode?: string; setup_check?: boolean; purpose?: string; pins?: { runtime?: string } };
   execution_evidence?: { level: string; source: string };
   run_id: string;
   recipe_type: string;
@@ -199,6 +200,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
   const [pilotReport, setPilotReport] = useState<PreflightReport | null>(null);
   const [pilotBusy, setPilotBusy] = useState(false);
   const [mode, setMode] = draft.field('mode');
+  const [demoAcknowledged, setDemoAcknowledged] = useState(false);
   const [recipe, setRecipe] = draft.field('recipe');
   const [runners, setRunners] = useState<Runner[]>([]);
   const [runner, setRunner] = draft.field('runner');
@@ -345,7 +347,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
 
   async function create(e: React.FormEvent) {
     e.preventDefault();
-    if (!canReview || setupBusy || pilotBusy || (mode === 'worker' && (preflight?.status !== 'approved' || !preflight.preflight_token))) return;
+    if (!canReview || setupBusy || pilotBusy || (mode === 'simulation' && !demoAcknowledged) || (mode === 'worker' && (preflight?.status !== 'approved' || !preflight.preflight_token))) return;
     setBusy(true); setError(null); setNotice('');
     try {
       const inputs = launchPayload();
@@ -448,7 +450,18 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
   }
   const compared = comparisonIds.split(',').filter(Boolean).map(id => runs.find(run => run.run_id === id)).filter((run): run is Run => !!run);
   const compareBlocked = comparisonBlockers(compared);
-  const handoffError = useResourceHandoff(token, (kind, value) => { if (kind === 'model-version') { setBase(String(value.id)); setTokenizer(String(value.tokenizer || '')); } else setSelectedDataset(String(value.id)); setModelName(''); setPreset('custom'); setAdvanced(true); setPreflight(null); });
+  const handoffError = useResourceHandoff(token, (kind, value) => {
+    if (kind === 'model-version') { setBase(String(value.id)); setTokenizer(String(value.tokenizer || '')); setModelName(''); setPreset('custom'); setAdvanced(true); }
+    else {
+      setSelectedDataset(String(value.id));
+      const metadata = value.metadata;
+      if (value.revision_id && typeof value.row_count === 'number' && metadata?.split_counts) {
+        setRevisionJson(JSON.stringify({ id: value.id, revision_id: value.revision_id, row_count: value.row_count, dataset_name: value.dataset_name || 'Approved snapshot', metadata: { split_counts: metadata.split_counts, source_group_count: metadata.source_group_count || 0 } }));
+      } else setRevisionJson('');
+      setAdvanced(false); setPreset('recommended'); draft.field('guidedStage')[1](2);
+    }
+    setPreflight(null);
+  });
   const lossSeries = trainingLossSeries(focusRun?.metrics_log);
   const savedCheckpoints = runs.reduce((sum, run) => sum + run.checkpoints.length, 0);
   const tabs: Array<{ value: TrainingTab; label: string }> = [{ value: 'configure', label: 'Configure' }, { value: 'current-run', label: 'Current run' }, { value: 'history', label: 'History' }];
@@ -645,7 +658,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
             <label>Execution
               <select value={mode} onChange={(e) => { setMode(e.target.value); setRecipe('full_sft'); setSelectedPool(''); setSelectedPolicy(''); setRunner(''); }}>
                 <option value="worker">Worker text fine-tuning</option>
-                <option value="simulation">Synthetic training fixture</option>
+                <option value="simulation">Synthetic training fixture (demo — not a real model)</option>
               </select>
             </label>
             <label>
@@ -772,7 +785,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
                     <p>{preset === 'recommended' ? revision ? `${plan.epochs} complete passes through ${plan.trainingExamples} training examples (${steps} updates).` : 'Add your dataset to calculate the recommended training plan automatically.' : `${steps} training updates.`}</p>
                     {preset === 'quick' && <p>This short run checks your setup. Use more training steps to assess model quality.</p>}
                     {revision && <p>{revision.metadata.split_counts.validation ?? 0} validation and {revision.metadata.split_counts.test ?? 0} test examples remain held out.</p>}
-                    {mode === 'simulation' && <Button className="primary" disabled={!canReview}>Create CPU training fixture</Button>}
+                    {mode === 'simulation' && <><p>This demo does not train a real model. Its result cannot be recorded as an improvement.</p><label className="data-license-consent"><input type="checkbox" checked={demoAcknowledged} onChange={event => setDemoAcknowledged(event.target.checked)} /><span>I understand this is a demo and cannot be accepted.</span></label><Button className="primary" disabled={!canReview || !demoAcknowledged}>Create CPU training fixture</Button></>}
                   </section>}
                 </fieldset>
               </form>
@@ -802,7 +815,9 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
           {focusRun && <>
         {(focusRun.status === 'running' || focusRun.status === 'pending') && <Button type="button" style={{ borderColor: 'var(--error)', color: 'var(--error)' }} disabled={busy} onClick={() => cancelRun(focusRun.run_id)}><XCircle size={14} /> Cancel run</Button>}
         {tab === 'current-run' && <TrainingRunProgress key={`progress-${focusRun.run_id}`} run={focusRun} refreshedAt={runsRefreshedAt} refreshError={progressError} onRefresh={() => void refreshProgress()} />}
-        {focusRun.status === 'completed' && focusRun.output_model_version_uuid && <Notice className="notice"><p>Your model is ready. Try it with a new question.</p><div className="actions"><a className="primary" href={`#chat?model_version=${encodeURIComponent(focusRun.output_model_version_uuid)}`}>Try your model</a>{focusRun.base_model_version && <a href={`#chat?model_version=${encodeURIComponent(focusRun.output_model_version_uuid)}&compare_base=1`}>Compare with base model</a>}</div></Notice>}
+        {focusRun.status === 'completed' && <GuidedDecision key={`${token}:${focusRun.run_id}`} token={token} runId={focusRun.run_id} />}
+        {focusRun.status === 'completed' && focusRun.output_model_version_uuid && <Notice className="notice"><p>Chat and download let you inspect this candidate. They are not evidence that it improved, and a downloaded file is not deployed.</p><div className="actions"><a href={`#chat?model_version=${encodeURIComponent(focusRun.output_model_version_uuid)}`}>Inspect in chat</a>{focusRun.base_model_version && <a href={`#chat?model_version=${encodeURIComponent(focusRun.output_model_version_uuid)}&compare_base=1`}>Inspect both models in chat</a>}</div></Notice>}
+        {tab === 'current-run' && exportPanel}
         <div className="ml-section-heading"><div><span className="ml-eyebrow">EXPERIMENT MONITOR</span><h3>Loss & checkpoint activity</h3><p>Recorded training loss at committed steps, alongside saved checkpoint artifacts.</p></div></div>
         <div className="visualization-grid">
           <ChartPanel title="Training & validation loss" description={`${runLabel(focusRun.run_id)} · ${focusRun.execution_evidence?.level || 'unknown evidence'} · exact recorded values`}>{lossSeries.length ? <LineChart key={focusRun.run_id} series={lossSeries} xLabel="Committed step" yLabel="Loss" /> : <ChartEmpty message={focusRun.status === 'pending' ? 'This run is queued. Loss will appear after the first measured checkpoint.' : 'No loss measurements have been recorded for this run.'} />}</ChartPanel>

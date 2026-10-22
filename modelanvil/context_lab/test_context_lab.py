@@ -197,16 +197,24 @@ class ContextLabTests(TestCase):
         self.assertGreater(exp.metrics["full_history_tokens"], exp.metrics["windowed_history_tokens"])
         self.assertGreater(exp.metrics["token_reduction_pct"], 0)
 
-    def test_evidence_position_sweep_lost_in_the_middle(self):
-        """TECH-027: Lost in the Middle position sweep (start, middle, end)."""
+    def test_evidence_position_sweep_reports_recall_not_run(self):
+        """Prompt inspection must not manufacture model recall or a middle dip."""
         runner = ContextExperimentRunner(self.v1)
         exp = runner.run_evidence_position_sweep(
             target_fact="The secret code is OMEGA-42.", distractor_count=6
         )
 
         self.assertEqual(exp.stress_type, "position_sweep")
-        self.assertTrue(exp.metrics["middle_dip_detected"])
-        self.assertGreater(exp.metrics["accuracy_start"], exp.metrics["accuracy_middle"])
+        exp.refresh_from_db()
+        self.assertEqual(exp.metrics, {
+            "status": "not_run",
+            "reason": "Recall evaluation requires model execution; only prompt compilation was performed.",
+        })
+        self.assertEqual(set(exp.details), {"start", "middle", "end"})
+        for details in exp.details.values():
+            self.assertEqual(set(details), {"tokens", "fact_retained"})
+            self.assertGreater(details["tokens"], 0)
+            self.assertTrue(details["fact_retained"])
 
     def test_multi_turn_stress_safety_suites(self):
         """PRD Scenario 16 & TECH-027: Injection attack, stale memory isolation, and tool error handling."""

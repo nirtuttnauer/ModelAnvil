@@ -1,0 +1,57 @@
+import { useState } from 'react';
+import { apiRequest, errorMessage } from '../api/client';
+import { Button, Field, Notice } from './ui';
+
+interface Policy { offline: boolean; acquisition_origins: string[]; installation_origins: string[]; measurement_retention_days: number }
+
+export function PrivacySettings({ token }: { token: string }) {
+  const [policy, setPolicy] = useState<Policy | null>(null);
+  const [offline, setOffline] = useState(false);
+  const [origins, setOrigins] = useState<string[]>([]);
+  const [days, setDays] = useState('30');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  async function load() {
+    setBusy(true); setError('');
+    try {
+      const value = await apiRequest<Policy>('/api/v1/privacy/', token);
+      setPolicy(value); setOffline(value.offline); setOrigins(value.acquisition_origins); setDays(String(value.measurement_retention_days));
+    } catch (e) { setError(errorMessage(e)); } finally { setBusy(false); }
+  }
+  async function save(e: React.FormEvent) {
+    e.preventDefault(); setBusy(true); setError(''); setNotice('');
+    try {
+      const value = await apiRequest<Policy>('/api/v1/privacy/', token, {method:'PUT', body:JSON.stringify({
+        offline, acquisition_origins:origins, measurement_retention_days:Number(days)})});
+      setPolicy(value); setOffline(value.offline); setNotice('Project privacy settings saved. Installation restrictions still apply.');
+    } catch (e) { setError(errorMessage(e)); } finally { setBusy(false); }
+  }
+  async function diagnostics() {
+    setBusy(true); setError('');
+    try {
+      const value = await apiRequest<unknown>('/api/v1/privacy/diagnostics/', token);
+      const url = URL.createObjectURL(new Blob([JSON.stringify(value,null,2)], {type:'application/json'}));
+      const anchor = document.createElement('a'); anchor.href = url; anchor.download = 'modelanvil-diagnostics.json'; anchor.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (e) { setError(errorMessage(e)); } finally { setBusy(false); }
+  }
+  return <details className="detail-box" onToggle={e => { if (e.currentTarget.open && !policy && !busy) void load(); }}>
+    <summary>Privacy and data</summary>
+    <p>Your examples and model responses are processed on the configured execution host. External judges, generation, analytics and support uploads are unavailable. Diagnostic downloads contain build identity, policy and job counts only.</p>
+    {error && <Notice as="p" tone="error" role="alert">{error}</Notice>}
+    {notice && <Notice as="p" role="status">{notice}</Notice>}
+    {busy && !policy && <p role="status">Loading project privacy settings…</p>}
+    {policy && <form onSubmit={save}>
+      <fieldset disabled={busy}><legend>Acquisition policy</legend>
+        <label className="checkbox-label"><input type="checkbox" checked={offline} onChange={e => setOffline(e.target.checked)} />Run this project offline</label>
+        <p>When acquisition is enabled, requests may send a search or source URL and configured source credentials to these destinations. They may read models and datasets; they cannot upload your examples. Review the complete list before saving.</p>
+        {policy.installation_origins.map(value => <label className="checkbox-label" key={value}><input type="checkbox" checked={origins.includes(value)} onChange={e => setOrigins(current => e.target.checked ? [...current,value] : current.filter(v => v !== value))} />{value}</label>)}
+        <label>Interaction measurement retention (days)<Field type="number" required min="1" max="365" value={days} onChange={e => setDays(e.target.value)} /></label>
+        <p>Expired interaction measurements can be purged by an administrator. Saved product data and decisions are retained until explicitly deleted through their own authorized controls.</p>
+        <Button disabled={busy || !Number.isInteger(Number(days)) || Number(days)<1 || Number(days)>365}>Save privacy settings</Button>
+      </fieldset>
+    </form>}
+    <div className="actions"><Button disabled={busy} onClick={() => void load()}>Reload privacy settings</Button><Button disabled={busy || !policy} onClick={() => void diagnostics()}>Download safe diagnostics</Button></div>
+  </details>;
+}

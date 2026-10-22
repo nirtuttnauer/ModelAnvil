@@ -16,9 +16,9 @@ from modelanvil.jobs.executor import execute_one
 from modelanvil.jobs.models import Worker, reconcile_expired_leases
 from modelanvil.runners.models import LocalTrainingHost
 from modelanvil.runners.training import hf_runtime
-from modelanvil.runners.training.executor import training_worker_executor
 from modelanvil.runners.training.hardware import total_memory_bytes
-from modelanvil.runners.training.managed import verified_model_directory, recommended_source
+from modelanvil.runners.training.managed import refresh_evaluation_capabilities, verified_model_directory, recommended_source
+from modelanvil.runners.training.managed_executor import managed_executor
 
 
 class Command(BaseCommand):
@@ -54,6 +54,10 @@ class Command(BaseCommand):
                     if state['status'] in ('ready', 'training'):
                         workers.filter(status='offline', drain_requested=False).update(status='available')
                         workers.update(last_heartbeat_at=timezone.now())
+                        current = LocalTrainingHost.objects.filter(pk=host.pk).first()
+                        if current and current.memory_bytes:
+                            for worker in workers:
+                                refresh_evaluation_capabilities(worker, current)
                     stopped.wait(2)
             finally:
                 close_old_connections()
@@ -93,7 +97,7 @@ class Command(BaseCommand):
                         Worker.all_objects.filter(pk=worker.pk).update(status='available')
                         worker.refresh_from_db()
                     state['status'] = 'training'
-                    outcome = execute_one(worker, training_worker_executor)
+                    outcome = execute_one(worker, managed_executor)
                     state['status'] = 'ready'
                     if outcome.get('claimed'):
                         self.stdout.write(f'Training job finished: {outcome.get("status", "unknown")}')

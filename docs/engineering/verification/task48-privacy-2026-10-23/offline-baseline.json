@@ -1,0 +1,103 @@
+{
+  "observed_at": "2026-10-22T22:44:25.407409+00:00",
+  "scope": "automated_fresh_database_cpu_reference",
+  "build": {
+    "revision": "e29325b1d7d71a2beaadd48f730c06c808a45229",
+    "source_digest": "9c151bd36ea25df1dd535fca7bcc5dffd3fc95080b7c4a7e589762db66bd3939",
+    "protocol": "modelanvil.local-beta.v1",
+    "dataset_formats": [
+      "jsonl",
+      "csv",
+      "docx",
+      "json",
+      "pdf",
+      "training"
+    ],
+    "production_qualified": false
+  },
+  "python": "3.12.15",
+  "machine": "arm64",
+  "hardware": {
+    "os": "macOS-27.0.1-arm64-arm-64bit",
+    "architecture": "arm64",
+    "cpu_model": "Apple M5 Pro",
+    "physical_memory_bytes": 51539607552
+  },
+  "fresh_database": true,
+  "fresh_artifacts": true,
+  "dependency_installation_seconds": null,
+  "model_download_seconds": null,
+  "human_active_seconds": null,
+  "missing_timing_reason": "Existing Python dependencies and initialized local reference weights; no model download or human onboarding observed.",
+  "migration_seconds": 2.8670112499967217,
+  "resource_training_evaluation_seconds": 2.0043682500254363,
+  "fresh_database_to_decision_seconds": 5.321581250056624,
+  "candidate_pins": {
+    "version": "01a165c9-7557-7ae4-b50e-06e170b05115",
+    "artifact_id": "01a165c9-754f-7064-9e35-ba2168d501e4",
+    "sha256": "984d27820dbeca71937b5e944c4fc33408fc48b5f29950640a6eb9a5926af1bd",
+    "tokenizer": "01a165c9-7152-7462-ba62-b7ce1d5a95fe"
+  },
+  "evaluation_pins": {
+    "runtime": "modelanvil.local-cpu-evaluation.v1",
+    "build_digest": "a2d1043ae187755c6681e52bc2a6bc258c66adc8ffea35c4bbd58ee8f086810f",
+    "candidate": {
+      "version": "01a165c9-7557-7ae4-b50e-06e170b05115",
+      "artifact_id": "01a165c9-754f-7064-9e35-ba2168d501e4",
+      "sha256": "984d27820dbeca71937b5e944c4fc33408fc48b5f29950640a6eb9a5926af1bd",
+      "tokenizer": "01a165c9-7152-7462-ba62-b7ce1d5a95fe"
+    },
+    "baseline": {
+      "version": "01a165c9-7159-78ff-8db2-21c60de2fae8",
+      "artifact_id": "01a165c9-7155-7bd8-aa2d-62871da99ff0",
+      "sha256": "6ea5ba2454cd232a1c3620cec7ff62497fad4fafc8102e96ce0536fad873a682",
+      "tokenizer": "01a165c9-7152-7462-ba62-b7ce1d5a95fe"
+    },
+    "suite_digest": "32c2639fa0468a9e0f787b5987642b176d7f2b2cd0cd20ab9207a1aacf4ebb97",
+    "max_tokens": 2,
+    "decoding": "greedy",
+    "prompt_format": "plain",
+    "device": "cpu",
+    "training_overlap": "known_lineage_checked"
+  },
+  "committed_steps": 2,
+  "evaluation_cases": 1,
+  "decision": "reject",
+  "report": {
+    "scope": "project",
+    "week_start": "2026-10-19T00:00:00+00:00",
+    "week_end": "2026-10-26T00:00:00+00:00",
+    "storage": "installation_database",
+    "external_analytics": "disabled",
+    "weekly_teams_with_decisions": 1,
+    "weekly_improvement_cycles": 1,
+    "weekly_accepted_improvements": 0,
+    "weekly_rejected_candidates": 1,
+    "workspace_sessions": 1,
+    "reported_active_seconds": 0.0,
+    "time_to_first_decision_seconds": 0.227134,
+    "timing_basis": "Browser-reported interaction time; server attempt wall time includes loading and checkpointing. Missing timings stay null.",
+    "decisions": [
+      {
+        "decision_id": "01a165c9-7a08-75b5-b211-065910e0e923",
+        "evaluation_run": "01a165c9-7574-7991-ade0-caf62b77f0ec",
+        "candidate": "01a165c9-7557-7ae4-b50e-06e170b05115",
+        "outcome": "reject",
+        "accepted_improvement": false,
+        "training": {
+          "queue_seconds": 0.012451,
+          "execution_seconds": 0.891715
+        },
+        "evaluation": {
+          "queue_seconds": 0.006608,
+          "execution_seconds": 0.592836
+        }
+      }
+    ],
+    "model_acquisition": []
+  },
+  "quality_claim": "None. This is a one-case workflow baseline with a deliberately failing candidate, not useful-model qualification.",
+  "offline_policy": true,
+  "outbound_connection_attempts": 0,
+  "verification": "Actual CPU training, durable evaluation, authenticated chat and a recorded decision with Python socket connections refused."
+}

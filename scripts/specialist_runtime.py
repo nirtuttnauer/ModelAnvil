@@ -9,9 +9,9 @@ from pathlib import Path
 import sys
 import warnings
 
-VERSIONS = {'laya': '0.4.3', 'torch': '2.9.0', 'transformers': '5.14.0',
-            'mlx-vlm': '0.7.6', 'mlx': '0.32.3', 'Pillow': '12.2.0', 'safetensors': '0.8.0', 'pypdfium2': '5.14.0',
-            'torchvision': '0.24.0'}
+VERSIONS = {'laya': '0.4.3', 'torch': '2.13.0', 'transformers': '5.14.0',
+            'mlx-vlm': '0.7.6', 'mlx': '0.32.3', 'Pillow': '13.0.0', 'safetensors': '0.8.0', 'pypdfium2': '5.14.0',
+            'torchvision': '0.28.0'}
 
 
 def validate_decision(inputs):

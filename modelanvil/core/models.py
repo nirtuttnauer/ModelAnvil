@@ -172,6 +172,15 @@ def record_audit(
     return event
 
 
+class ProjectPrivacyPolicy(TenantContextModel):
+    """An administrator's restriction on the installation's acquisition destinations."""
+
+    project = models.OneToOneField('identity.Project', on_delete=models.CASCADE)
+    offline = models.BooleanField(default=False)
+    acquisition_origins = models.JSONField(default=list)
+    measurement_retention_days = models.PositiveSmallIntegerField(default=30)
+
+
 class ActivationEvent(TenantContextModel):
     """Content-free measurements stored only in this installation."""
 

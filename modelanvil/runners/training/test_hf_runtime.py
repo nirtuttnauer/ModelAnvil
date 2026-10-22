@@ -298,7 +298,7 @@ class RealLoRACheckpointTests(TestCase):
             for name in gpu.FILE_HASHES:
                 if not (directory / name).exists():
                     (directory / name).write_text('{}')
-            with patch('requests.sessions.Session.request', side_effect=AssertionError('Adapter loader must stay offline')) as network:
+            with patch('socket.socket.connect', side_effect=AssertionError('Adapter loader must stay offline')) as network:
                 model = gpu._recipe_model(directory, 'lora_adapter', 42, training=True)
                 frozen = {n: p.detach().clone() for n, p in model.named_parameters() if not p.requires_grad}
                 adapter = {n: p.detach().clone() for n, p in model.named_parameters() if p.requires_grad}

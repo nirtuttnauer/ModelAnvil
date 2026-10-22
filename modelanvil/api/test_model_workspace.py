@@ -36,6 +36,8 @@ class ModelWorkspaceTests(TransactionTestCase):
         raw.pre_tokenizer = Whitespace()
         tokenizer = PreTrainedTokenizerFast(tokenizer_object=raw, unk_token='<unk>', bos_token='<bos>', eos_token='<eos>')
         tokenizer.save_pretrained(cls.fixture.name)
+        # Transformers 5 stores special tokens in tokenizer_config; the pinned base also has this file.
+        (Path(cls.fixture.name) / "special_tokens_map.json").write_text(json.dumps(tokenizer.special_tokens_map))
         with torch.random.fork_rng():
             torch.manual_seed(42)
             model = LlamaForCausalLM(LlamaConfig(vocab_size=8, hidden_size=16, intermediate_size=32,
@@ -273,7 +275,7 @@ class ModelWorkspaceTests(TransactionTestCase):
             def __exit__(self, *args): pass
             def iter_content(self, chunk_size): return iter([raw[6:]])
         pin = {'sha256': hashlib.sha256(raw).hexdigest(), 'byte_size': len(raw)}
-        with patch('requests.get', return_value=Reply()) as request:
+        with patch('requests.sessions.Session.get', return_value=Reply()) as request:
             ref = download_file(item, 'model.safetensors', pin, SimpleNamespace(heartbeat=lambda: True))
             self.assertEqual(request.call_args.kwargs['headers'], {'Range': 'bytes=6-'})
             self.assertIn(item.revision, request.call_args.args[0])
@@ -468,7 +470,7 @@ class ModelWorkspaceTests(TransactionTestCase):
         self.assertEqual(entry['base_model_id'], str(base.model_version_id))
         self.assertEqual(entry['training_run_id'], str(run.run_id))
         body = {'model': str(candidate.model_version_id), 'messages': [{'role': 'user', 'content': 'hello world'}], 'max_tokens': 2}
-        with patch('requests.sessions.Session.request', side_effect=AssertionError('Candidate chat must stay offline')) as network:
+        with patch('socket.socket.connect', side_effect=AssertionError('Candidate chat must stay offline')) as network:
             response = self.client.post('/api/v1/inference/chat/completions', body, format='json')
             self.assertEqual(response.status_code, 200, response.content)
             self.assertEqual(response.data['usage']['prompt_tokens'], 2)
@@ -535,3 +537,13 @@ class ModelWorkspaceTests(TransactionTestCase):
         self.assertEqual(other.get('/api/v1/chat-comparisons/').data['results'], [])
         self.assertEqual(other.post('/api/v1/chat-comparisons/', payload, format='json').status_code, 400)
         self.assertEqual(other.post(path + 'vote/', {'vote': 'A'}, format='json').status_code, 404)
+        # A saved comparison cannot retain access to a model after its grant is revoked.
+        from modelanvil.identity.models import ProjectGrant
+        ModelVersion.all_objects.filter(pk=trained.pk).update(project=self.other)
+        grant = ProjectGrant.all_objects.create(tenant_id=self.tenant.pk, project=self.other,
+            granted_to_project=self.project, resource_type='modelversion', resource_id=trained.model_version_id)
+        self.assertEqual(self.client.get(path).status_code, 200)
+        grant.delete()
+        self.assertEqual(self.client.get(path).status_code, 404)
+        self.assertEqual(self.client.get('/api/v1/chat-comparisons/').data['results'], [])
+        self.assertEqual(self.client.post('/api/v1/chat-comparisons/', payload, format='json').status_code, 400)

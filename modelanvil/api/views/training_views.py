@@ -90,6 +90,7 @@ class TrainingRunSerializer(serializers.ModelSerializer):
     runtime = serializers.JSONField(source='hardware_config', read_only=True)
     purpose = serializers.ChoiceField(choices=['experiment', 'pilot'], default='experiment', write_only=True)
     preflight_token = serializers.CharField(write_only=True, required=False, max_length=2048)
+    setup_check = serializers.BooleanField(write_only=True, required=False, default=False)
 
     def get_execution_evidence(self, obj):
         return training_evidence(obj)
@@ -165,7 +166,7 @@ class TrainingRunSerializer(serializers.ModelSerializer):
     class Meta:
         model = TrainingRun
         fields = (
-            "execution_evidence", "execution_mode", "runner_manifest", "runtime", "preflight_token",
+            "execution_evidence", "execution_mode", "runner_manifest", "runtime", "preflight_token", "setup_check",
             "run_id", "project", "recipe_type", "base_model_version", "tokenizer_version",
             "recovery_parent", "recovery_checkpoint",
             "dataset_revision", "dataset_manifest_digest", "pool", "job",
@@ -273,6 +274,7 @@ class TrainingRunViewSet(TenantScopedViewSet):
         from modelanvil.jobs.models import Job
         attrs = serializer.validated_data
         proof = attrs.pop('preflight_token', None)
+        setup_check = bool(attrs.pop('setup_check', False))
         purpose = attrs.pop('purpose', 'experiment')
         if purpose == 'pilot' and (attrs.get('execution_mode', 'worker') != 'worker' or attrs.get('total_steps', 100) > 10):
             raise serializers.ValidationError('Measured pilots require a real worker execution of at most 10 optimizer steps.')
@@ -300,7 +302,7 @@ class TrainingRunViewSet(TenantScopedViewSet):
         if mode == 'simulation' and (attrs.get('pool') or budget_id or runner):
             raise serializers.ValidationError('Simulation cannot allocate workers or reserve compute budget.')
         run = serializer.save(tenant_id=tenant, project_id=project,
-            hardware_config={'execution_mode': mode, 'purpose': purpose, **({'pins': pins} if pins else {})})
+            hardware_config={'execution_mode': mode, 'purpose': purpose, 'setup_check': setup_check, **({'pins': pins} if pins else {})})
         if pins:
             gpu = pins.get('accelerator', {}).get('device')
             requirements = {'training_runtime': pins['contract_digest'], 'slots': 1}
@@ -323,6 +325,23 @@ class TrainingRunViewSet(TenantScopedViewSet):
                 'total_steps': run.total_steps, 'execution_mode': mode})
         out = self.get_serializer(run).data
         return Response(out, status=201, headers=self.get_success_headers(out))
+
+    @action(detail=True, methods=['get', 'post'], url_path='comparison')
+    def comparison(self, request, run_id=None):
+        from modelanvil.api.views.models_evals import EvaluationRunSerializer
+        from modelanvil.runners.guided_comparison import comparison_preview, queue_guided_comparison
+        run = self.get_queryset().select_related('job', 'dataset_revision', 'output_model_version', 'base_model_version', 'pool').get(pk=self.get_object().pk)
+        if request.method == 'GET':
+            return Response(comparison_preview(run))
+        if set(request.data) - {'confirm', 'max_tokens', 'questions'}:
+            raise serializers.ValidationError('Submit only confirm, max_tokens, and optional questions.')
+        maximum = serializers.IntegerField(min_value=1, max_value=32).run_validation(request.data.get('max_tokens', 32))
+        try:
+            evaluation, created = queue_guided_comparison(run, questions=request.data.get('questions'),
+                confirm=request.data.get('confirm') is True, max_tokens=maximum)
+        except (ValueError, TypeError, KeyError) as exc:
+            raise serializers.ValidationError({'comparison': str(exc)}) from exc
+        return Response(EvaluationRunSerializer(evaluation, context={'request': request}).data, status=201 if created else 200)
 
     @action(detail=False, methods=['get'], url_path='runtime-contract')
     def runtime_contract(self, request):

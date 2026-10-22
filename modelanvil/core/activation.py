@@ -24,8 +24,14 @@ def comparison_evidence(run, project):
         raise ValueError('Comparison inputs are unavailable in this project.')
     training = TrainingRun.all_objects.filter(tenant_id=project.tenant_id,
         output_model_version=run.candidate_model_version, status='completed', job__status='succeeded').first()
-    if (not training or not check_resource_access(training, project.pk, project.tenant_id)
-            or training_evidence(training)['level'] != 'integrated_execution'):
+    if not training or not check_resource_access(training, project.pk, project.tenant_id):
+        raise ValueError('The candidate needs actual completed worker training evidence.')
+    config = training.hardware_config or {}
+    if config.get('execution_mode') == 'simulation':
+        raise ValueError('A synthetic training fixture cannot be accepted as an improvement.')
+    if config.get('setup_check'):
+        raise ValueError('A three-step setup check cannot be accepted as an improvement.')
+    if training_evidence(training)['level'] != 'integrated_execution':
         raise ValueError('The candidate needs actual completed worker training evidence.')
     pins = run.protocol_ref.get('pins', {})
     if not pins or resolve_inputs(run, pins.get('max_tokens'))['pins'] != pins:

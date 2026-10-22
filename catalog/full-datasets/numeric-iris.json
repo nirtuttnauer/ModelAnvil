@@ -40,9 +40,9 @@
       "path": "notice/publisher-declaration",
       "archive_name": "numeric-iris-publisher-declaration.txt",
       "upstream_url": "https://archive.ics.uci.edu/dataset/53/iris",
-      "size": 585454,
-      "sha256": "e2dabb076017582312951e918cf6caedb7ff8335cc60ed3979673252316cee47",
-      "blob_sha1": "9e6adedf079d2d0077c5945a048ca87d9e5884ba"
+      "size": 603,
+      "sha256": "38e4809b12cdd6bf181bd4f8567dc289342adb6d506dfcb0742691e710feb895",
+      "blob_sha1": "942976aaef73f0680a5ba21bf0216c2157563ac4"
     }
   ],
   "training_recipe_qualified": false

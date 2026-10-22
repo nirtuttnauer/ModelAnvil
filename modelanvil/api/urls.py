@@ -12,6 +12,7 @@ from rest_framework.routers import DefaultRouter
 
 from modelanvil.api.views import accounts, guided_training
 from modelanvil.api.views import activation
+from modelanvil.api.views import privacy
 from modelanvil.api.views import audit as audit_views
 from modelanvil.api.views import annotation_views
 from modelanvil.api.views import infrastructure_views
@@ -99,12 +100,19 @@ router.register("release-versions", release_views.ReleaseVersionViewSet, basenam
 router.register("serving-endpoints", release_views.ServingEndpointViewSet, basename="serving-endpoint")
 
 urlpatterns = [
+    path('privacy/', privacy.ProjectPrivacy.as_view()),
+    path('privacy/diagnostics/', privacy.Diagnostics.as_view()),
+    path('privacy/purge-measurements/', privacy.PurgeMeasurements.as_view()),
     path('activation/events/', activation.ActivationEvents.as_view()),
     path('activation/report/', activation.ActivationReport.as_view()),
     path("accounts/status/", accounts.AccountStatus.as_view()),
     path("accounts/signup/", accounts.AccountSignUp.as_view()),
     path("accounts/signin/", accounts.AccountSignIn.as_view()),
     path("accounts/signout/", accounts.AccountSignOut.as_view()),
+    path("accounts/password-reset/", accounts.AccountPasswordReset.as_view()),
+    path("accounts/password-reset/confirm/", accounts.AccountPasswordResetConfirm.as_view()),
+    path("accounts/invitations/", accounts.AccountInvite.as_view()),
+    path("accounts/invitations/accept/", accounts.AccountInviteAccept.as_view()),
     path("fine-tuning/options/", guided_training.GuidedOptions.as_view()),
     path("fine-tuning/setup/", guided_training.GuidedSetup.as_view()),
     path("fine-tuning/preview/", guided_training.GuidedPreview.as_view()),

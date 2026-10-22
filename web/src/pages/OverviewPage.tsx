@@ -1,6 +1,7 @@
 import { Identifier } from '../components/Identifier';
 import { LocalMeasurements } from '../components/LocalMeasurements';
-import { Badge, Button, Card, MetricSummary } from '../components/ui';
+import { PrivacySettings } from '../components/PrivacySettings';
+import { Badge, Button, Card, Field, MetricSummary } from '../components/ui';
 import { useCallback, useEffect, useState } from 'react';
 import {
   ArrowRight,
@@ -31,10 +32,19 @@ interface RecentJob {
 
 interface Evaluation {
   execution_evidence?: { level: string; source: string };
+  improvement_decision?: { outcome: string; decision_id: string } | null;
   run_id: string;
   status: string;
   candidate_model_version: number;
   metrics: { key: string; value: number; sample_count: number; slice_name: string }[];
+}
+
+interface TrainingSummary {
+  run_id: string;
+  status: string;
+  metrics_log?: { step: number; loss: number }[];
+  execution_evidence?: { level: string; source: string };
+  runtime?: { execution_mode?: string; setup_check?: boolean };
 }
 
 const resourceIcons = {
@@ -92,6 +102,7 @@ export function OverviewPage({
     { name: string; value: number; more: boolean; total: boolean; page: string }[]
   >([]);
   const [jobs, setJobs] = useState<RecentJob[]>([]);
+  const [training, setTraining] = useState<TrainingSummary[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
@@ -100,6 +111,11 @@ export function OverviewPage({
   const [usage, setUsage] = useState<UsageSummaryResponse | null>(null);
   const [usageError, setUsageError] = useState<string | null>(null);
   const [usageLoading, setUsageLoading] = useState(true);
+  const [canInvite, setCanInvite] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteCode, setInviteCode] = useState('');
+  const [inviteError, setInviteError] = useState('');
+  const [inviteBusy, setInviteBusy] = useState(false);
 
   const load = useCallback(
     async (signal?: AbortSignal) => {
@@ -126,10 +142,12 @@ export function OverviewPage({
           }))
         );
         setJobs(pages[3].results.slice(0, 5));
+        setTraining(pages[2].results as unknown as TrainingSummary[]);
       } catch (e) {
         if (!signal?.aborted) {
           setCounts([]);
           setJobs([]);
+          setTraining([]);
           setError(errorMessage(e));
         }
       } finally {
@@ -152,8 +170,7 @@ export function OverviewPage({
     setEvaluations([]);
     apiPage<Evaluation>('/api/v1/evaluation-runs/', token, c.signal)
       .then((p) => {
-        if (!c.signal.aborted)
-          setEvaluations(p.results.filter((r) => r.status === 'completed').slice(0, 3));
+        if (!c.signal.aborted) setEvaluations(p.results.slice(0, 8));
       })
       .catch((e) => {
         if (!c.signal.aborted) setEvidenceError(errorMessage(e));
@@ -182,9 +199,46 @@ export function OverviewPage({
     return () => c.abort();
   }, [token, refreshKey]);
 
+  useEffect(() => {
+    if (token !== 'session') return;
+    const controller = new AbortController();
+    apiRequest<{ can_invite?: boolean }>('/api/v1/accounts/status/', token, { signal: controller.signal })
+      .then(status => { if (!controller.signal.aborted) setCanInvite(!!status.can_invite); })
+      .catch(() => { if (!controller.signal.aborted) setCanInvite(false); });
+    return () => controller.abort();
+  }, [token, refreshKey]);
+
+  async function inviteTeammate() {
+    setInviteBusy(true); setInviteError(''); setInviteCode('');
+    try {
+      const result = await apiRequest<{ invite_code: string }>('/api/v1/accounts/invitations/', token, {
+        method: 'POST', body: JSON.stringify({ email: inviteEmail.trim() }),
+      });
+      setInviteCode(result.invite_code);
+    } catch (reason) { setInviteError(errorMessage(reason)); }
+    finally { setInviteBusy(false); }
+  }
+
+  const completedEvaluations = evaluations.filter(item => item.status === 'completed');
+  const realTraining = training.filter(run => run.execution_evidence?.level === 'integrated_execution' && run.runtime?.execution_mode !== 'simulation' && !run.runtime?.setup_check);
+  const activeTraining = realTraining.find(run => ['pending', 'running'].includes(run.status));
+  const finishedTraining = realTraining.find(run => run.status === 'completed');
+  const openComparison = completedEvaluations.find(item => item.execution_evidence?.level === 'integrated_execution' && !item.improvement_decision);
+  const recordedDecision = completedEvaluations.find(item => item.improvement_decision);
+  const next = activeTraining ? { title: 'Training is running', body: 'Follow this run. The next step is to compare the candidate with the base model.', label: 'Follow training', page: 'Training' }
+    : openComparison ? { title: 'Record an accept or reject', body: 'The comparison is ready. Recording a choice does not deploy the model.', label: 'Record the decision', page: 'Training' }
+    : finishedTraining && !recordedDecision ? { title: 'Compare the candidate with the base model', body: 'Chat and a lower loss are not evidence that the model improved.', label: 'Compare and decide', page: 'Training' }
+    : recordedDecision ? { title: 'A decision is recorded', body: 'Local measurements below include that accept or reject. A downloaded model is not deployed.', label: 'Review the comparison', page: 'Evaluation' }
+    : { title: 'Fine-tune an LLM with your own dataset', body: 'The guided flow prepares a pretrained model and local compute for you.', label: 'Start guided fine-tuning', page: 'Training' };
+
   return (
     <>
-      <Card className="panel"><div className="panel-body"><h2>Fine-tune an LLM with your own dataset</h2><p>The guided flow prepares a pretrained model and local compute for you.</p><Button className="primary" onClick={() => onNavigate('Training')}>Start guided fine-tuning</Button></div></Card>
+      <Card className="panel"><div className="panel-body"><h2>{next.title}</h2><p>{next.body}</p><Button className="primary" onClick={() => onNavigate(next.page)}>{next.label}</Button></div></Card>
+      {canInvite && <Card className="panel"><div className="panel-body"><h2>Invite one teammate</h2><p>They can review the candidate and record the accept or reject decision. This workspace can have one teammate.</p>
+        <form className="guided-form" onSubmit={event => { event.preventDefault(); void inviteTeammate(); }}><label>Teammate email<Field type="email" required value={inviteEmail} disabled={inviteBusy} onChange={event => setInviteEmail(event.target.value)} /></label><Button className="primary" disabled={inviteBusy || !inviteEmail.trim()}>{inviteBusy ? 'Creating invitation…' : 'Create invitation'}</Button></form>
+        {inviteError && <p role="alert">{inviteError}</p>}
+        {inviteCode && <p role="status">Share this one-time code. It is shown only now: <strong>{inviteCode}</strong></p>}
+      </div></Card>}
       <OnboardingChecklist
         token={token}
         refreshKey={refreshKey}
@@ -195,33 +249,8 @@ export function OverviewPage({
         onPrerequisiteAdded={onPrerequisiteAdded || (() => {})}
       />
 
-      <div className="page-actions">
-        <a href="#training">Training</a>
-        <a href="#evaluation">Evaluation</a>
-      </div>
+      <div className="page-actions"><a href="#training">Training</a><a href="#evaluation">Evaluation</a></div>
 
-      <div className="section-heading">
-        <h2>Move your project forward</h2>
-        <span>Choose your next step</span>
-      </div>
-      <div className="workflow-grid">
-        {workflows.map(({ icon: Icon, ...w }) => (
-          <Button className="workflow-card" key={w.page} onClick={() => onNavigate(w.page)}>
-            <span className="workflow-icon">
-              <Icon size={19} aria-hidden="true" />
-            </span>
-            <div>
-              <strong>{w.title}</strong>
-              <p>{w.description}</p>
-            </div>
-            <span className="workflow-prerequisite">{w.prerequisite}</span>
-            <span className="workflow-link">
-              {w.action}
-              <ArrowRight size={15} aria-hidden="true" />
-            </span>
-          </Button>
-        ))}
-      </div>
       <div className="section-heading">
         <h2>Workspace resources</h2>
         <span>Counts describe inventory</span>
@@ -270,8 +299,8 @@ export function OverviewPage({
               <div className="evidence-empty">
                 <Activity size={24} aria-hidden="true" />
                 <h3>Your work will appear here</h3>
-                <p>Create a workflow to follow its execution and recorded attempts.</p>
-                <Button onClick={() => onNavigate('Workflows')}>Open workflows</Button>
+                <p>Training and evaluation jobs appear here after you start a fine-tune.</p>
+                <Button onClick={() => onNavigate('Training')}>Start fine-tuning</Button>
               </div>
             )}
             {jobs.map((j) => (
@@ -301,7 +330,7 @@ export function OverviewPage({
           </div>
           <div className="panel-body">
             <ResourceState loading={evidenceLoading} error={evidenceError} />
-            {!evidenceLoading && !evidenceError && !evaluations.length && (
+            {!evidenceLoading && !evidenceError && !completedEvaluations.length && (
               <div className="evidence-empty">
                 <CheckCheck size={24} aria-hidden="true" />
                 <h3>No completed evaluations yet</h3>
@@ -310,7 +339,7 @@ export function OverviewPage({
                 </p>
               </div>
             )}
-            {evaluations.map((e) => (
+            {completedEvaluations.map((e) => (
               <div className="activity-row" key={e.run_id}>
                 <div>
                   <strong>Candidate model</strong> <Identifier value={String(e.candidate_model_version)} label="Candidate model record ID" />
@@ -360,6 +389,7 @@ export function OverviewPage({
         </Button>
       </div>
       <LocalMeasurements token={token} />
+      <PrivacySettings token={token} />
     </>
   );
 }
