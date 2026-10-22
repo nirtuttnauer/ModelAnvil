@@ -1,0 +1,16 @@
+{
+  "observed_at": "2026-10-22T23:47:30.480Z",
+  "evidence": "synthetic HTTP responses; actual RunDetailPage and Storybook play assertions",
+  "attempts_loaded": 60,
+  "paging_exhausted": true,
+  "transient_failure_503": true,
+  "loaded_history_and_draft_retained": true,
+  "manual_reconnect": true,
+  "exhausted_cursor_stays_exhausted": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_overflow": false,
+  "page_errors": []
+}
