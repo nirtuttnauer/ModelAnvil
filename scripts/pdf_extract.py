@@ -19,7 +19,7 @@ def main():
     # macOS refuses RLIMIT_AS; stream/page/output caps and a parent timeout still apply.
     import pypdf
     from pypdf import filters
-    if pypdf.__version__ != "6.20.0":
+    if pypdf.__version__ != "6.21.2":
         return 2
     logging.disable(logging.CRITICAL)
     for setting in ("ZLIB_MAX_OUTPUT_LENGTH", "LZW_MAX_OUTPUT_LENGTH", "RUN_LENGTH_MAX_OUTPUT_LENGTH",
