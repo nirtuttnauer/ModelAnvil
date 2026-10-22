@@ -1,0 +1,26 @@
+{
+  "run_id": "6584aa0a-66e1-4730-b733-8aae24ba57a1",
+  "byte_size": 3497294120,
+  "path": "/Users/nirtuttnauer/Downloads/modelanvil-6584aa0a-66e1-4730-b733-8aae24ba57a1.zip",
+  "selected_step": 192,
+  "adapter_rank": 16,
+  "adapter_targets": [
+    "o_proj",
+    "gate_proj",
+    "k_proj",
+    "down_proj",
+    "v_proj",
+    "q_proj",
+    "up_proj"
+  ],
+  "files": [
+    "config.json",
+    "model.safetensors",
+    "special_tokens_map.json",
+    "tokenizer.json",
+    "tokenizer_config.json",
+    "adapter_model.safetensors",
+    "adapter_config.json",
+    "modelanvil-provenance.json"
+  ]
+}

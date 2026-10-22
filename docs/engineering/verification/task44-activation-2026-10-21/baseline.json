@@ -1,0 +1,100 @@
+{
+  "observed_at": "2026-10-21T20:04:56.520975+00:00",
+  "scope": "automated_fresh_database_cpu_reference",
+  "build": {
+    "revision": "c39a2e9554efdd6c5c644fb012580298f4bc78ca",
+    "source_digest": "778158e46b524bc63794d7e12f848340349634b0d5b6e21815c93f3c0f9c657b",
+    "protocol": "modelanvil.local-beta.v1",
+    "dataset_formats": [
+      "jsonl",
+      "csv",
+      "docx",
+      "json",
+      "pdf",
+      "training"
+    ],
+    "production_qualified": false
+  },
+  "python": "3.12.15",
+  "machine": "arm64",
+  "hardware": {
+    "os": "macOS-27.0.1-arm64-arm-64bit",
+    "architecture": "arm64",
+    "cpu_model": "Apple M5 Pro",
+    "physical_memory_bytes": 51539607552
+  },
+  "fresh_database": true,
+  "fresh_artifacts": true,
+  "dependency_installation_seconds": null,
+  "model_download_seconds": null,
+  "human_active_seconds": null,
+  "missing_timing_reason": "Existing Python dependencies and initialized local reference weights; no model download or human onboarding observed.",
+  "migration_seconds": 1.7676286669448018,
+  "resource_training_evaluation_seconds": 1.2213842920027673,
+  "fresh_database_to_decision_seconds": 3.330039459047839,
+  "candidate_pins": {
+    "version": "01a16011-18f4-7fd1-85aa-4988922aabaa",
+    "artifact_id": "01a16011-18f1-7261-a50b-b35d585c3aa4",
+    "sha256": "cb55e43509a0991524f3e10b4898db917a9c6ddf4029b9c2fdddedf113cda50c",
+    "tokenizer": "01a16011-1660-76af-ab85-92c31b354060"
+  },
+  "evaluation_pins": {
+    "runtime": "modelanvil.local-cpu-evaluation.v1",
+    "build_digest": "dd6579a6900362b92161bb958cdf1bc2ef0c7e6bfa43327f8373fc612ec29d06",
+    "candidate": {
+      "version": "01a16011-18f4-7fd1-85aa-4988922aabaa",
+      "artifact_id": "01a16011-18f1-7261-a50b-b35d585c3aa4",
+      "sha256": "cb55e43509a0991524f3e10b4898db917a9c6ddf4029b9c2fdddedf113cda50c",
+      "tokenizer": "01a16011-1660-76af-ab85-92c31b354060"
+    },
+    "baseline": {
+      "version": "01a16011-1667-7fe9-a7bf-41641ac7baa9",
+      "artifact_id": "01a16011-1663-712c-8c08-2f00c9948ea8",
+      "sha256": "6ea5ba2454cd232a1c3620cec7ff62497fad4fafc8102e96ce0536fad873a682",
+      "tokenizer": "01a16011-1660-76af-ab85-92c31b354060"
+    },
+    "suite_digest": "32c2639fa0468a9e0f787b5987642b176d7f2b2cd0cd20ab9207a1aacf4ebb97",
+    "max_tokens": 2,
+    "decoding": "greedy",
+    "prompt_format": "plain",
+    "device": "cpu",
+    "training_overlap": "known_lineage_checked"
+  },
+  "committed_steps": 2,
+  "evaluation_cases": 1,
+  "decision": "reject",
+  "report": {
+    "scope": "project",
+    "week_start": "2026-10-19T00:00:00+00:00",
+    "week_end": "2026-10-26T00:00:00+00:00",
+    "storage": "installation_database",
+    "external_analytics": "disabled",
+    "weekly_teams_with_decisions": 1,
+    "weekly_improvement_cycles": 1,
+    "weekly_accepted_improvements": 0,
+    "weekly_rejected_candidates": 1,
+    "workspace_sessions": 1,
+    "reported_active_seconds": 0.0,
+    "time_to_first_decision_seconds": 0.158394,
+    "timing_basis": "Browser-reported interaction time; server attempt wall time includes loading and checkpointing. Missing timings stay null.",
+    "decisions": [
+      {
+        "decision_id": "01a16011-1bc4-7411-85ec-b2233ac4d58c",
+        "evaluation_run": "01a16011-1908-74df-ba01-e92db26f6070",
+        "candidate": "01a16011-18f4-7fd1-85aa-4988922aabaa",
+        "outcome": "reject",
+        "accepted_improvement": false,
+        "training": {
+          "queue_seconds": 0.005858,
+          "execution_seconds": 0.549915
+        },
+        "evaluation": {
+          "queue_seconds": 0.004676,
+          "execution_seconds": 0.34627
+        }
+      }
+    ],
+    "model_acquisition": []
+  },
+  "quality_claim": "None. This is a one-case workflow baseline with a deliberately failing candidate, not useful-model qualification."
+}

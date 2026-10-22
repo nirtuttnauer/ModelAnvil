@@ -1,0 +1,31 @@
+{
+  "scope": "packaged_browser_local_beta",
+  "tasks": [
+    "PM001",
+    "PM002",
+    "PM003",
+    "PM004",
+    "PM005",
+    "PM006",
+    "PM007",
+    "PM009"
+  ],
+  "elapsed_seconds": 44.021,
+  "project": "P0 pilot 1791761201944",
+  "training_run": "1fcba427-87ad-4661-8ba1-c0010c56292d",
+  "candidate": "99f4747e-0067-4cb5-b2b4-5d5252f3226b",
+  "evaluation_run": "d6c97001-4905-4aaf-8b46-169fcd97a4b6",
+  "release_version": "e3c9f73c-e208-4b13-b519-3b224016c366",
+  "local_serving_verified": true,
+  "local_deployment": "aaee70c7-f03f-4de2-9a42-f632b38deaa5",
+  "local_acceptance_accuracy_threshold": 0,
+  "committed_steps": 2,
+  "known_overlap_check": "known_lineage_checked",
+  "failed_cases": 1,
+  "missing_cases": 0,
+  "review_state": "failing",
+  "production_qualified": false,
+  "reload_preserved": true,
+  "narrow_layout_passed": true,
+  "manual_api_requests": false
+}

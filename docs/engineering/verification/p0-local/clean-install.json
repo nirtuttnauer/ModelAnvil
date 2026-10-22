@@ -1,0 +1,10 @@
+{
+  "scope": "clean_local_cpu_install",
+  "fresh_virtual_environment": true,
+  "dependencies": "requirements.txt only; optional inference/GPU/specialist runtimes excluded",
+  "fresh_database_migrated": true,
+  "tests": 13,
+  "actual_training_evaluation_export_serving": true,
+  "elapsed_seconds": 26.478075708961114,
+  "production_qualified": false
+}

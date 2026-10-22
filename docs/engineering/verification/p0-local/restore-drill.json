@@ -1,0 +1,14 @@
+{
+  "scope": "local_sqlite_filesystem_restore",
+  "topology": "One local application service, trusted DB-polling workers and filesystem artifacts; broker not used.",
+  "database_integrity": "ok",
+  "elapsed_seconds": 2.9566613329807296,
+  "production_qualified": false,
+  "artifacts_verified": 49,
+  "accessible_reviewed_releases": 3,
+  "local_endpoints_reloaded": 1,
+  "duplicate_terminal_commits_refused": 12,
+  "usage_and_reservations_unchanged": true,
+  "unresolved_job_ownership": [],
+  "queued_jobs_retained": 1
+}
