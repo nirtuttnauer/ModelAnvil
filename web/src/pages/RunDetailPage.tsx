@@ -165,6 +165,7 @@ export function RunDetailPage({
   const noteDraft = useDraft('run-note', { note: '' }, `${kind}:${runId}`);
   const [note, setNote] = noteDraft.field('note');
   const hasDetail = useRef(false);
+  const attemptsInitialized = useRef(false);
 
   const load = useCallback(
     async (signal?: AbortSignal, quiet = false) => {
@@ -203,6 +204,7 @@ export function RunDetailPage({
     setConnectionError(null);
     setUpdatedAt(null);
     setPollMs(POLL_MS);
+    attemptsInitialized.current = false;
     setAttempts([]);
     setAttemptsNext(null);
     setAttemptsError(null);
@@ -250,7 +252,8 @@ export function RunDetailPage({
             });
           });
         }
-        if (append) setAttemptsNext(page.next || null);
+        if (append || !attemptsInitialized.current) setAttemptsNext(page.next || null);
+        attemptsInitialized.current = true;
         setAttemptsError(null);
       } catch (failure) {
         if (!signal?.aborted) setAttemptsError(errorMessage(failure));
