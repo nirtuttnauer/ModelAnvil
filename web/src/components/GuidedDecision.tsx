@@ -54,7 +54,7 @@ export function GuidedDecision({ token, runId }: { token: string; runId: string 
   }, [runId, token]);
 
   const activeStatuses = ['pending', 'running', 'completed'];
-  const evaluationId = evaluation && activeStatuses.includes(evaluation.status) ? evaluation.run_id
+  const evaluationId = evaluation ? (activeStatuses.includes(evaluation.status) ? evaluation.run_id : '')
     : preview?.existing_run_id && preview.existing_status && activeStatuses.includes(preview.existing_status) ? preview.existing_run_id : '';
   useEffect(() => {
     if (!evaluationId) return;
