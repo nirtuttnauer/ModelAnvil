@@ -11,6 +11,7 @@ a client and every error has a stable machine code.
 from __future__ import annotations
 
 import logging
+import uuid
 from typing import Callable
 
 from django.http import HttpRequest, HttpResponse, JsonResponse
@@ -30,7 +31,10 @@ class RequestIdMiddleware:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
-        request_id = request.headers.get("X-Request-Id") or str(uuid7())
+        try:
+            request_id = str(uuid.UUID(request.headers.get('X-Request-Id', '')))
+        except (ValueError, TypeError, AttributeError):
+            request_id = str(uuid7())
         request.modelanvil_request_id = request_id  # type: ignore[attr-defined]
         bind_request(request)
         response = self.get_response(request)

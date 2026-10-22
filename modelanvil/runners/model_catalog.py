@@ -12,6 +12,7 @@ import uuid
 from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
+from modelanvil.core.privacy import PrivacyRefused
 
 from modelanvil.artifacts.models import Artifact
 from modelanvil.artifacts.storage import artifact_storage_backend, upload_staged_artifact
@@ -47,11 +48,20 @@ def hub_token(tenant, project):
 
 
 def hub_client(tenant, project):
+    from modelanvil.core.privacy import require_destination, install_hub_guard
+    require_destination('https://huggingface.co')
+    install_hub_guard()
     from huggingface_hub import HfApi
     return HfApi(endpoint='https://huggingface.co', token=hub_token(tenant, project), library_name='modelanvil')
 
 
 def search_models(query, tenant, project):
+    from modelanvil.core.privacy import acquisition_scope
+    with acquisition_scope(tenant, project):
+        return _search_models(query, tenant, project)
+
+
+def _search_models(query, tenant, project):
     if not isinstance(query, str) or not 1 <= len(query.strip()) <= 120:
         raise ValueError('Search with 1–120 characters.')
     try:
@@ -59,6 +69,8 @@ def search_models(query, tenant, project):
         return [{'repo_id': m.id, 'revision': m.sha, 'task': m.pipeline_tag,
                  'license': (m.card_data or {}).get('license'), 'gated': bool(m.gated),
                  'downloads': m.downloads, 'architecture': (m.config or {}).get('model_type')} for m in rows]
+    except PrivacyRefused:
+        raise
     except Exception as exc:
         raise ValueError('Model discovery is unavailable; check Hub access and connectivity.') from exc
 
@@ -72,11 +84,19 @@ def filename_allowed(name):
 
 
 def inspect_model(identifier, revision, tenant, project, *, format='safetensors', filename=None):
+    from modelanvil.core.privacy import acquisition_scope
+    with acquisition_scope(tenant, project):
+        return _inspect_model(identifier, revision, tenant, project, format=format, filename=filename)
+
+
+def _inspect_model(identifier, revision, tenant, project, *, format='safetensors', filename=None):
     identifier, revision = repo_id(identifier), revision_id(revision)
     if format not in {'safetensors', 'gguf', 'mlx'}:
         raise ValueError('Select Safetensors, GGUF or MLX.')
     try:
         info = hub_client(tenant, project).model_info(identifier, revision=revision, files_metadata=True, timeout=15)
+    except PrivacyRefused:
+        raise
     except Exception as exc:
         raise ValueError('Pinned model metadata is unavailable; check revision and scoped Hub access.') from exc
     if info.sha != revision:
@@ -225,7 +245,7 @@ def publish_files(files, *, tenant, project, name, source, format, license_expre
 
 def download_file(item, name, pin, context):
     """Resume pinned HTTP bytes; short read timeouts keep cancellation bounded."""
-    import requests
+    from modelanvil.core.privacy import guarded_session, acquisition_scope
     from filelock import FileLock
     from huggingface_hub import hf_hub_url
     backend = artifact_storage_backend()
@@ -248,7 +268,7 @@ def download_file(item, name, pin, context):
         if offset < pin['byte_size']:
             if offset:
                 headers['Range'] = f'bytes={offset}-'
-            with requests.get(url, headers=headers, stream=True, timeout=(10, 10)) as response:
+            with acquisition_scope(item.tenant_id, item.project_id), guarded_session() as session, session.get(url, headers=headers, stream=True, timeout=(10, 10)) as response:
                 response.raise_for_status()
                 if response.status_code == 206:
                     if not response.headers.get('Content-Range', '').startswith(f'bytes {offset}-'):

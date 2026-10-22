@@ -54,9 +54,13 @@ def verified_model_directory(*, download=False):
     for name, expected in hashes.items():
         path = directory / name
         if not path.exists() and download:
+            from modelanvil.core.privacy import acquisition_scope, require_destination, install_hub_guard
             from huggingface_hub import hf_hub_download
-            hf_hub_download(source['repo_id'], name, revision=source['revision'],
-                            local_dir=directory, token=False)
+            with acquisition_scope(None, None, public_provisioning=True):
+                require_destination('https://huggingface.co')
+                install_hub_guard()
+                hf_hub_download(source['repo_id'], name, revision=source['revision'],
+                                local_dir=directory, token=False)
         try:
             maximum = hf_runtime.LIMITS['weight_bytes'] if name.endswith('.safetensors') else hf_runtime.LIMITS['aux_bytes']
             if not 1 <= path.stat().st_size <= maximum:
