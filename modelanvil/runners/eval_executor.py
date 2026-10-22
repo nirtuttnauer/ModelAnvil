@@ -14,6 +14,8 @@ from modelanvil.runners.models import (
     ModelVersion,
 )
 
+SCORER_VERSION = 'modelanvil.local-scorers.v1'
+
 
 def default_eval_scorer(
     predicted: str,
@@ -76,6 +78,9 @@ def validate_local_suite(cases, scorer_type, scorer_config):
                 raise ValueError(f'{field} must be text up to {limit} characters.')
         if not isinstance(case.get('slice', 'all'), str) or not 1 <= len(case.get('slice', 'all')) <= 64:
             raise ValueError('Slice names must have 1–64 characters.')
+        for field in ('source_group_id', 'sample_id'):
+            if field in case and (not isinstance(case[field], str) or not 1 <= len(case[field]) <= 128):
+                raise ValueError(f'{field} must be an identifier of 1–128 characters when supplied.')
 
 
 def _aggregate_metrics(results):

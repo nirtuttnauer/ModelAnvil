@@ -164,6 +164,11 @@ class LocalMlApiTests(TestCase):
         suite = EvaluationSuiteVersion.all_objects.get(pk=suite_id)
         response = self.client.post('/api/v1/evaluation-suite-versions/', {'suite': suite.suite_id, 'revision_no': 2, 'cases': [{'case_id': 'same', 'input_prompt': 'a', 'expected_output': 'b'}, {'case_id': 'same', 'input_prompt': 'c', 'expected_output': 'd'}]}, format='json')
         self.assertEqual(response.status_code, 400)
+        for field in ('source_group_id', 'sample_id'):
+            for value in ([], 42, '', 'x' * 129):
+                invalid = self.client.post('/api/v1/evaluation-suites/register-cpu/', {'name': 'Invalid source identity',
+                    'cases': [{'case_id': 'case', 'input_prompt': 'a', 'expected_output': 'b', field: value}]}, format='json')
+                self.assertEqual(invalid.status_code, 400, invalid.content)
         for method in (self.client.patch, self.client.delete):
             self.assertEqual(method(f'/api/v1/evaluation-suite-versions/{suite.suite_version_id}/', {}, format='json').status_code, 405)
 

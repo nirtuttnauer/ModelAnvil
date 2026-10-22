@@ -63,6 +63,11 @@ class DurableEvaluationTests(TestCase):
         self.assertEqual(run.status, 'completed', JobAttempt.all_objects.last().error)
         self.assertEqual(run.job.status, 'succeeded')
         self.assertEqual(run.case_results.count(), 1)
+        self.assertEqual(run.protocol_ref['pins']['scorer_version'], 'modelanvil.local-scorers.v1')
+        self.assertEqual(run.protocol_ref['pins']['protected_role'], 'protected_eval')
+        self.assertEqual(run.protocol_ref['environment']['device'], 'cpu')
+        self.assertTrue(run.protocol_ref['environment']['python'])
+        self.assertEqual(run.protocol_ref['environment']['build_digest'], run.protocol_ref['pins']['build_digest'])
         self.assertNotEqual(run.case_results.get().candidate_output, 'ANSWER_IS_NOT_ECHOED')
         self.assertFalse(run.case_results.get().passed)
         self.assertEqual(len(run.protocol_ref['baseline_results']), 1)
@@ -101,6 +106,13 @@ class DurableEvaluationTests(TestCase):
         self.assertIsNone(claim_job(self.evaluator, run.job))
         self.assertEqual(self.client.post(f'/api/v1/evaluation-runs/{run.run_id}/cancel/', {}, format='json').status_code, 200)
         self.assertEqual(UsageEvent.all_objects.filter(unit='evaluation_cases').count(), 1)
+        from modelanvil.runners.eval_worker import finalize_evaluation
+        completed_at = run.completed_at
+        finalize_evaluation(run.job, 'succeeded')  # Late duplicate cannot rewrite cancellation.
+        run.refresh_from_db()
+        self.assertEqual(run.status, 'cancelled')
+        self.assertEqual(run.completed_at, completed_at)
+        self.assertFalse(run.metrics.exists())
 
     def test_running_cancel_is_requested_until_worker_observes_it(self):
         run = self.queued()
