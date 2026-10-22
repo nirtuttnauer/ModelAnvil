@@ -1,4 +1,4 @@
-import { Button, Field, NavigationItem, Notice, WorkspaceHeader } from './components/ui';
+import { Button, Field, NavigationItem, Notice, WorkspaceHeader, WorkspaceTabs } from './components/ui';
 import { Welcome } from './components/Welcome';
 import { parseResourceRoute } from './api/resource-routes';
 import { DraftScope } from './components/Draft';
@@ -126,26 +126,26 @@ function slugFor(name: Page): string {
 
 const navigationGroups = [
   { label: 'Workspace', names: ['Overview'] },
-  { label: 'Data', names: ['Datasets', 'Recipes', 'Annotation'] },
-  { label: 'Develop', names: ['Models', 'Chat', 'Training', 'Alignment', 'Evaluation', 'Specialists'] },
-  { label: 'Context', names: ['RAG', 'Context Lab'] },
+  { label: 'Data', names: ['Datasets', 'Annotation'] },
+  { label: 'Develop', names: ['Models', 'Chat', 'Training', 'Specialists'] },
+  { label: 'Context', names: ['RAG'] },
   { label: 'Operations', names: ['Workflows', 'Infrastructure', 'Budgets', 'Audit', 'Releases'] },
 ];
 
 const descriptions: Record<Page, string> = {
   Overview: 'Your data, experiments, and next decisions. All in one workspace.',
   'Dataset Bank': 'Find source data and inspect its license and readiness.',
-  Datasets: 'Prepare reproducible data, inspect splits, and publish immutable versions.',
+  Datasets: 'Acquire, prepare, and publish data, including typed recipes.',
   Annotation: 'Review samples, refine labels, and build approved training snapshots.',
   Models: 'Keep model versions and their evaluation evidence together.',
   Chat: 'Run local models, save conversations and compare actual responses.',
   Specialists: 'Read image text and evaluate structured decisions with pinned local models.',
   Recipes: 'Compose typed transformations, preview actual generation and publish recoverable dataset runs.',
-  Training: 'Fine-tune a pretrained model with your own examples.',
+  Training: 'Fine-tune, align, and evaluate a model in one place.',
   Alignment: 'Configure preference learning and inspect recorded outcomes.',
   Evaluation: 'Compare pinned versions, inspect failures, and review the evidence.',
   Workflows: 'Follow durable work from the queue to its recorded outcome.',
-  RAG: 'Explore knowledge sources and inspect retrieved evidence.',
+  RAG: 'Retrieve source evidence, then compile it into an exact prompt.',
   'Context Lab': 'Compile a prompt from saved blocks and inspect how the token budget is allocated.',
   Releases: 'Inspect release versions, serving endpoints, and software provenance.',
   Infrastructure: 'Inspect worker pools, capabilities, and recorded availability.',
@@ -156,17 +156,39 @@ const descriptions: Record<Page, string> = {
     'Follow one run end to end: observed state, desired state, attempts, evidence and recovery blockers.',
 };
 
+function hashPath(hash = window.location.hash): string {
+  return hash.slice(1).split('?')[0];
+}
+
 function currentPage(): Page {
-  const slug = window.location.hash.slice(1).split('?')[0].split('/')[0];
-  if (slug === 'dataset-bank') return 'Datasets';
+  const slug = hashPath().split('/')[0];
+  if (slug === 'dataset-bank' || slug === 'datasets' || slug === 'recipes') return 'Datasets';
+  if (slug === 'training' || slug === 'alignment' || slug === 'evaluation') return 'Training';
+  if (slug === 'rag' || slug === 'context-lab') return 'RAG';
   return pages.find((p) => (p.slug ?? p.name.toLowerCase().replaceAll(' ', '-')) === slug)?.name || 'Overview';
+}
+
+function developMode(hash: string): 'train' | 'align' | 'evaluate' {
+  const path = hashPath(hash);
+  if (path === 'alignment' || path.startsWith('training/align')) return 'align';
+  if (path === 'evaluation' || path.startsWith('training/evaluate')) return 'evaluate';
+  return 'train';
+}
+
+function contextMode(hash: string): 'retrieve' | 'compile' {
+  const path = hashPath(hash);
+  if (path === 'context-lab' || path.endsWith('/compile')) return 'compile';
+  return 'retrieve';
 }
 
 function headingFor(name: Page): string {
   if (name === 'Overview') return 'Project overview';
-  if (name === 'RAG') return 'Retrieval workbench';
-  if (name === 'Context Lab') return 'Prompt compiler';
+  if (name === 'RAG') return 'Context';
   return name;
+}
+
+function navLabel(name: Page): string {
+  return name === 'RAG' ? 'Context' : name;
 }
 
 interface Organization {
@@ -181,6 +203,7 @@ interface OrganizationConnection {
 
 export function App() {
   const [active, setActive] = React.useState<Page>(currentPage);
+  const [routeHash, setRouteHash] = React.useState(window.location.hash);
   const [resourceRoute, setResourceRoute] = React.useState(() => parseResourceRoute(window.location.hash));
   const [runRoute, setRunRoute] = React.useState(() => parseRunRoute(window.location.hash));
   const [token, setTokenState] = React.useState<string>(
@@ -306,6 +329,7 @@ export function App() {
 
   React.useEffect(() => {
     const onHashChange = () => {
+      setRouteHash(window.location.hash);
       setRunRoute(parseRunRoute(window.location.hash));
       setResourceRoute(parseResourceRoute(window.location.hash));
       setActive(currentPage());
@@ -335,11 +359,12 @@ export function App() {
   }, [refreshKey]);
 
   function load(page: Page) {
-    setActive(page);
     setNavigationOpen(false);
     if (navigationOpen) document.getElementById('workspace-content')?.focus();
     window.scrollTo(0, 0);
     window.location.hash = slugFor(page);
+    setRouteHash(window.location.hash);
+    setActive(currentPage());
     if (page === 'Datasets') setDatasetRefreshKey((value) => value + 1);
   }
 
@@ -445,7 +470,7 @@ export function App() {
   if (!token || (!organizationLoading && !currentOrganization)) return <Welcome onConnected={welcomeConnected} />;
 
   const selectedNavigation = active === 'Resource Detail' ? resourceRoute?.kind === 'model-version' ? 'Models' : 'Datasets' : active === 'Run Detail'
-    ? runRoute?.kind === 'training' ? 'Training' : runRoute?.kind === 'evaluation' ? 'Evaluation' : 'Workflows'
+    ? runRoute?.kind === 'training' || runRoute?.kind === 'evaluation' ? 'Training' : 'Workflows'
     : active;
 
   return (
@@ -489,10 +514,10 @@ export function App() {
                     title={headingFor(name)}
                     selected={selectedNavigation === name}
                     icon={<Icon size={18} aria-hidden="true" />}
-                    aria-label={name === 'Context Lab' ? 'Prompt compiler' : name}
+                    aria-label={navLabel(name)}
                     onClick={() => load(name)}
                   >
-                    {name === 'Context Lab' ? 'Prompt compiler' : name}
+                    {navLabel(name)}
                   </NavigationItem>
                 ))}
             </div>
@@ -750,23 +775,25 @@ export function App() {
           ) : active === 'Specialists' ? (
             <SpecialistsPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
           ) : active === 'Training' ? (
-            <TrainingPage
-              key={`${token}-${activeProjectId}`}
-              token={token}
-              refreshKey={refreshKey}
-            />
+            <>
+              <WorkspaceTabs label="Model development" value={developMode(routeHash)} onChange={(mode) => {
+                window.location.hash = mode === 'align' ? 'training/align' : mode === 'evaluate' ? 'training/evaluate' : 'training';
+                setRouteHash(window.location.hash);
+              }} tabs={[{ value: 'train', label: 'Fine-tune' }, { value: 'align', label: 'Align' }, { value: 'evaluate', label: 'Evaluate' }]} />
+              {developMode(routeHash) === 'align' ? <AlignmentPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
+                : developMode(routeHash) === 'evaluate' ? <EvaluationPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
+                : <TrainingPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />}
+            </>
           ) : active === 'RAG' ? (
-            <ClusterExplorerPage
-              key={`${token}-${activeProjectId}`}
-              token={token}
-              refreshKey={refreshKey}
-            />
-          ) : active === 'Context Lab' ? (
-            <ContextLabPage
-              key={`${token}-${activeProjectId}`}
-              token={token}
-              refreshKey={refreshKey}
-            />
+            <>
+              <WorkspaceTabs label="Context workspace" value={contextMode(routeHash)} onChange={(mode) => {
+                window.location.hash = mode === 'compile' ? 'context-lab' : 'rag';
+                setRouteHash(window.location.hash);
+              }} tabs={[{ value: 'retrieve', label: 'Retrieve' }, { value: 'compile', label: 'Compile' }]} />
+              {contextMode(routeHash) === 'compile'
+                ? <ContextLabPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
+                : <ClusterExplorerPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />}
+            </>
           ) : active === 'Releases' ? (
             <ReleasesPage
               key={`${token}-${activeProjectId}`}

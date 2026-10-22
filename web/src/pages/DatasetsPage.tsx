@@ -2,6 +2,7 @@ import { Identifier } from '../components/Identifier';
 import { Button, FactList, Field, Notice, RecordTable, WorkspaceTabs } from '../components/ui';
 import { Feedback } from '../components/Feedback';
 import { DatasetBankPage } from './DatasetBankPage';
+import { RecipesPage } from './RecipesPage';
 import { apiRequest, apiPage, nextPagePath, errorMessage } from '../api/client';
 import { resourceHash } from '../api/resource-routes';
 import { useDraft, DraftStatus } from '../components/Draft';
@@ -22,10 +23,11 @@ export interface DatasetsPageProps {
   refreshKey?: number;
 }
 
-function datasetWorkspaceTab(): 'acquire' | 'prepare' | 'library' {
+function datasetWorkspaceTab(): 'acquire' | 'prepare' | 'library' | 'recipes' {
   const path = window.location.hash.slice(1).split('?')[0];
   if (path === 'dataset-bank' || path.startsWith('datasets/acquire')) return 'acquire';
   if (path.startsWith('datasets/prepare')) return 'prepare';
+  if (path === 'recipes' || path.startsWith('datasets/recipes')) return 'recipes';
   return 'library';
 }
 
@@ -244,20 +246,21 @@ export function DatasetsPage({ token, refreshKey }: DatasetsPageProps) {
   const emptyMessage = listingLoading ? 'Loading first page…' : listError
     ? 'This first page could not be loaded. Refresh explicitly to try again.'
     : 'Not loaded. Choose Refresh lists to fetch the first page.';
-  const [datasetTab, setDatasetTab] = useState<'acquire' | 'prepare' | 'library'>(() => datasetWorkspaceTab());
+  const [datasetTab, setDatasetTab] = useState<'acquire' | 'prepare' | 'library' | 'recipes'>(() => datasetWorkspaceTab());
   useEffect(() => {
     const sync = () => setDatasetTab(datasetWorkspaceTab());
     window.addEventListener('hashchange', sync);
     return () => window.removeEventListener('hashchange', sync);
   }, []);
-  function chooseDatasetTab(next: 'acquire' | 'prepare' | 'library') {
+  function chooseDatasetTab(next: 'acquire' | 'prepare' | 'library' | 'recipes') {
     window.location.hash = next === 'library' ? 'datasets' : `datasets/${next}`;
     setDatasetTab(next);
   }
 
   return <div className="datasets-page">
-    <WorkspaceTabs label="Dataset workspace" value={datasetTab} onChange={chooseDatasetTab} tabs={[{ value: 'acquire', label: 'Acquire' }, { value: 'prepare', label: 'Prepare' }, { value: 'library', label: 'Library' }]} />
+    <WorkspaceTabs label="Dataset workspace" value={datasetTab} onChange={chooseDatasetTab} tabs={[{ value: 'acquire', label: 'Acquire' }, { value: 'prepare', label: 'Prepare' }, { value: 'library', label: 'Library' }, { value: 'recipes', label: 'Recipes' }]} />
     <div hidden={datasetTab !== 'acquire'}><DatasetBankPage token={token} refreshKey={refreshKey} /></div>
+    {datasetTab === 'recipes' && <RecipesPage token={token} refreshKey={refreshKey} />}
     <div hidden={datasetTab !== 'prepare'}>
     <section className="datasets-capability" aria-labelledby={`${formId}-capability`}>
       <h2 id={`${formId}-capability`}>Supported upload formats</h2>

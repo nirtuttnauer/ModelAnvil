@@ -53,7 +53,8 @@ export const ContextOverrides: Story = {
     await expect(canvas.findByLabelText('Exact compiled prompt')).resolves.toHaveTextContent('What is the source?');
     await expect([...demoRequests].reverse().find(request => request.method === 'POST' && request.path.endsWith('/compile/'))?.body).toEqual({ variables: { question: 'What is the source?\n' } });
     await userEvent.click(canvas.getByRole('button', { name: 'Overview' }));
-    await userEvent.click(canvas.getByRole('button', { name: 'Prompt compiler' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Context' }));
+    await userEvent.click(canvas.getByRole('tab', { name: 'Compile' }));
     await expect(canvas.findByLabelText('Question override')).resolves.toHaveValue('What is the source?\n');
     await expect(demoRequests.filter(request => request.status >= 400)).toHaveLength(0);
     canvasElement.dataset.demoVerified = 'passed';

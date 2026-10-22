@@ -43,15 +43,15 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 const apiPaths: Record<string, string> = { Overview: 'training-runs', 'Dataset Bank': 'dataset-bank/sources', Datasets: 'datasets', Annotation: 'labeling-campaigns', Models: 'models', Training: 'fine-tuning/options', Alignment: 'alignment-runs', Evaluation: 'evaluation-runs', Workflows: 'jobs', RAG: 'index-versions', 'Context Lab': 'context-recipe-versions', Releases: 'release-versions', Infrastructure: 'worker-inventory', Budgets: 'usage-events/summary', Audit: 'audit', 'Run Detail': 'run-details/training/30000000-0000-4000-8000-000000000001' };
-const route = (name: string, hash?: string) => ({ demoHeading: name === 'Overview' ? 'Project overview' : name === 'RAG' ? 'Retrieval workbench' : name === 'Context Lab' ? 'Prompt compiler' : name === 'Run Detail' ? 'Anvil Assistant · SFT demo' : name, demoApiPath: `/api/v1/${apiPaths[name]}/`, demoRoute: hash ?? `#${name.toLowerCase().replaceAll(' ', '-')}` });
+const route = (name: string, hash?: string) => ({ demoHeading: name === 'Overview' ? 'Project overview' : name === 'RAG' || name === 'Context Lab' ? 'Context' : name === 'Run Detail' ? 'Anvil Assistant · SFT demo' : name, demoApiPath: `/api/v1/${apiPaths[name]}/`, demoRoute: hash ?? `#${name.toLowerCase().replaceAll(' ', '-')}` });
 export const Overview: Story = { name: '01 · Overview', parameters: route('Overview') };
 export const DatasetBank: Story = { name: '02 · Dataset Bank', parameters: { demoHeading: 'Datasets', demoApiPath: '/api/v1/dataset-bank/sources/', demoRoute: '#datasets/acquire' } };
 export const Datasets: Story = { name: '03 · Datasets', parameters: route('Datasets') };
 export const Annotation: Story = { name: '04 · Annotation', parameters: route('Annotation', '#annotation?campaign=60000000-0000-4000-8000-000000000001') };
 export const Models: Story = { name: '05 · Models', parameters: route('Models') };
 export const Training: Story = { name: '06 · Training', parameters: route('Training') };
-export const Alignment: Story = { name: '07 · Alignment', parameters: route('Alignment') };
-export const Evaluation: Story = { name: '08 · Evaluation', parameters: route('Evaluation') };
+export const Alignment: Story = { name: '07 · Alignment', parameters: { ...route('Alignment'), demoHeading: 'Training' } };
+export const Evaluation: Story = { name: '08 · Evaluation', parameters: { ...route('Evaluation'), demoHeading: 'Training' } };
 export const Workflows: Story = { name: '09 · Workflows', parameters: route('Workflows') };
 export const Rag: Story = {
   name: '10 · RAG', parameters: route('RAG'),
@@ -72,7 +72,7 @@ export const ContextLab: Story = {
   name: '11 · Context Lab', parameters: route('Context Lab'),
   play: async ({ canvasElement, parameters }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.findByRole('heading', { name: 'Prompt compiler', level: 1 })).resolves.toBeVisible();
+    await expect(canvas.findByRole('heading', { name: 'Context', level: 1 })).resolves.toBeVisible();
     const recipe = await canvas.findByLabelText('Recipe version');
     await waitFor(() => expect(within(recipe).getAllByRole('option').length).toBeGreaterThan(1));
     await userEvent.selectOptions(recipe, 'a0000000-0000-4000-8000-000000000001');
@@ -88,7 +88,7 @@ export const Infrastructure: Story = { name: '13 · Infrastructure', parameters:
 export const Budgets: Story = { name: '14 · Budgets', parameters: route('Budgets') };
 export const Audit: Story = { name: '15 · Audit', parameters: route('Audit') };
 export const RunDetail: Story = { name: '16 · Run Detail', parameters: route('Run Detail', '#runs/training/30000000-0000-4000-8000-000000000001') };
-export const Recipes: Story = { name: '17 · Recipes', parameters: { demoRoute: '#recipes', demoHeading: 'Recipes', demoApiPath: '/api/v1/recipes/' } };
+export const Recipes: Story = { name: '17 · Recipes', parameters: { demoRoute: '#recipes', demoHeading: 'Datasets', demoApiPath: '/api/v1/recipes/' } };
 export const Specialists: Story = { name: '18 · Specialists', parameters: { demoRoute: '#specialists', demoHeading: 'Specialists', demoApiPath: '/api/v1/specialists/' } };
 export const RagAuthoring: Story = {
   name: '17 · RAG authoring', parameters: route('RAG'),
