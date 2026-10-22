@@ -1,0 +1,119 @@
+{
+  "local_date": "2026-10-23",
+  "scope": "automated_fresh_account_cpu_onboarding",
+  "observed_at": "2026-10-22T22:31:43.230Z",
+  "connection_to_approved_preflight_seconds": 9.152,
+  "abandonment": {
+    "automated_attempts": 1,
+    "automated_completions": 1,
+    "representative_human_abandonment": null
+  },
+  "created_project_through_ui": true,
+  "real_pinned_cpu_base_and_tokenizer": true,
+  "keyboard_model_action": true,
+  "worker_registered_through_ui": true,
+  "operator_started_worker_from_one_time_credential": true,
+  "budget_training_steps": 20,
+  "published_rows": 4,
+  "project_scoped_readiness": [
+    3,
+    7
+  ],
+  "independent_training_drafts": true,
+  "checklist_survives_reload": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_page_overflow": false,
+  "page_errors": [],
+  "preflight": {
+    "status": "approved",
+    "sample_count": 4,
+    "token_counts": [
+      34,
+      39,
+      37,
+      44
+    ],
+    "checks": [
+      {
+        "check": "recipe-execution-mode",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "dataset_revision",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "base_model_version",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "tokenizer_version",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "runner_manifest",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "pool",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "dataset-published",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "model-tokenizer",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "runner-contract",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "pinned-inputs",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "worker-memory",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "worker-slots",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "budget",
+        "status": "pass",
+        "blocking": false
+      },
+      {
+        "check": "storage",
+        "status": "pass",
+        "blocking": false
+      }
+    ],
+    "monetary_cost_known": false
+  },
+  "limits": [
+    "Existing installed dependencies; dependency installation and model download excluded.",
+    "Automated local CPU correctness fixture, not representative customer onboarding or a GPU/model-quality qualification.",
+    "No run launched or training budget reserved by this preflight.",
+    "Disposable worker stopped after the observation."
+  ]
+}

@@ -558,7 +558,7 @@ export function App() {
               <FolderGit2 size={16} aria-hidden="true" />
               <select
                 aria-label="Project"
-                value={activeProjectId || ''}
+                value={activeProject?.id || ''}
                 disabled={organizationLoading || connectionBusy || projectLoading}
                 onChange={(e) => selectProject(e.target.value)}
               >
