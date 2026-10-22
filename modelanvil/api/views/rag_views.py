@@ -137,6 +137,10 @@ class IndexVersionViewSet(TenantScopedViewSet):
     lookup_field = "index_id"
     http_method_names = ["get", "post", "head", "options"]
 
+    def get_queryset(self):
+        from modelanvil.identity.models import get_accessible_queryset
+        return super().get_queryset().filter(knowledge_base__in=get_accessible_queryset(KnowledgeBase))
+
     def initial(self, request, *args, **kwargs):
         if self.action == "query":
             from modelanvil.identity.models import Role

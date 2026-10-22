@@ -1,5 +1,6 @@
 import { Identifier } from '../components/Identifier';
 import { LocalMeasurements } from '../components/LocalMeasurements';
+import { PrivacySettings } from '../components/PrivacySettings';
 import { Badge, Button, Card, Field, MetricSummary } from '../components/ui';
 import { useCallback, useEffect, useState } from 'react';
 import {
@@ -422,6 +423,7 @@ export function OverviewPage({
         </Button>
       </div>
       <LocalMeasurements token={token} />
+      <PrivacySettings token={token} />
     </>
   );
 }

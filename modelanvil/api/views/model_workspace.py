@@ -266,7 +266,9 @@ class ComparisonViewSet(TenantScopedViewSet):
 
     def get_queryset(self):
         selected_project()
-        return super().get_queryset()
+        versions = get_accessible_queryset(ModelVersion).values('pk')
+        return super().get_queryset().filter(first_request__model_version_id__in=versions,
+            second_request__model_version_id__in=versions)
 
     def create(self, request):
         import hashlib
@@ -288,7 +290,8 @@ class ComparisonViewSet(TenantScopedViewSet):
                     raise ValueError('Each response needs its request ID and bounded actual output text.')
                 identifier = serializers.UUIDField().run_validation(response['request_id'])
                 record = InferenceRequest.all_objects.filter(request_id=identifier, tenant_id=get_active_tenant(),
-                    project=project, principal_id=str(request.user.pk), status='completed').first()
+                    project=project, principal_id=str(request.user.pk), status='completed',
+                    model_version__in=get_accessible_queryset(ModelVersion)).first()
                 if record is None or record.input_digest != digest(messages):
                     raise ValueError('Use your completed requests for exactly the same comparison input.')
                 expected = hashlib.sha256(response['text'].encode()).hexdigest() if response['text'] else ''
