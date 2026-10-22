@@ -1,5 +1,5 @@
 import { Identifier } from './Identifier';
-import { Button } from './ui';
+import { Button, Notice } from './ui';
 import { useEffect, useRef, useState } from 'react';
 import { apiRequest, errorMessage } from '../api/client';
 import type { SpecialistJob, SpecialistResult } from '../api/specialists';
@@ -45,7 +45,7 @@ export function SpecialistJobs({ token, selected, onSelect, onResult }: {
 
   return <section className="detail-box specialist-jobs"><h3>Durable specialist jobs</h3>
     <p className="muted">Jobs continue after you leave this page. Completed requests restore their results; failed requests can retry within the admitted attempt quota.</p>
-    {error && <p role="alert" className="error-box">{error}</p>}
+    {error && <Notice tone="error" role="alert">{error}</Notice>}
     <label>Recent requests<select value={selected} onChange={e => onSelect(e.target.value)}>
       <option value="">Select a request</option>
       {recent.map((r, index) => <option key={r.request_id} value={r.request_id}>{r.kind?.toUpperCase()} · request {index + 1} · {r.status}</option>)}

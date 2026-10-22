@@ -241,26 +241,20 @@ test('overview page mounts onboarding checklist with derived readiness and actio
 });
 
 test('training and models pages provide in-product registration flows without API curl dead-ends', () => {
-  const trainingSource = readFileSync(
-    new URL('../src/pages/TrainingPage.tsx', import.meta.url),
-    'utf8'
-  );
-  assert.match(
-    trainingSource,
-    /import\s+\{[^}]*RegisterTokenizerModal[^}]*\}\s+from\s+['"]\.\.\/components\/PrerequisiteModals['"]/
-  );
-  assert.match(
-    trainingSource,
-    /import\s+\{[^}]*RegisterModelVersionModal[^}]*\}\s+from\s+['"]\.\.\/components\/PrerequisiteModals['"]/
-  );
-  assert.match(trainingSource, /<RegisterTokenizerModal/);
-  assert.match(trainingSource, /<RegisterModelVersionModal/);
+  const shared = readFileSync(new URL('../src/components/PrerequisiteActions.tsx', import.meta.url), 'utf8');
+  assert.match(shared, /<RegisterTokenizerModal/);
+  assert.match(shared, /<RegisterModelVersionModal/);
+  assert.match(shared, /openTokenizer/);
+
+  const trainingSource = readFileSync(new URL('../src/pages/TrainingPage.tsx', import.meta.url), 'utf8');
+  assert.match(trainingSource, /<PrerequisiteActions/);
+  assert.match(trainingSource, /openTokenizer=\{openTokenizer\}/);
+  assert.match(trainingSource, /setOpenTokenizer\(value => value \+ 1\)/);
+  assert.doesNotMatch(trainingSource, /<RegisterTokenizerModal/);
   assert.doesNotMatch(trainingSource, /Register a tokenizer through the API/);
 
-  const modelsSource = readFileSync(
-    new URL('../src/pages/ModelsPage.tsx', import.meta.url),
-    'utf8'
-  );
-  assert.match(modelsSource, /<RegisterTokenizerModal/);
-  assert.match(modelsSource, /<RegisterModelVersionModal/);
+  const modelsSource = readFileSync(new URL('../src/pages/ModelsPage.tsx', import.meta.url), 'utf8');
+  assert.match(modelsSource, /<PrerequisiteActions/);
+  assert.doesNotMatch(modelsSource, /<RegisterTokenizerModal/);
+  assert.doesNotMatch(modelsSource, /MetricsChart|MetricComparison|evaluation-runs/);
 });

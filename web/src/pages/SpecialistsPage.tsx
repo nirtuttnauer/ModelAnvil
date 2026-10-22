@@ -1,5 +1,5 @@
 import { Identifier } from '../components/Identifier';
-import { Button, Card, MultilineField } from '../components/ui';
+import { Button, Card, MultilineField, Notice } from '../components/ui';
 import { DataInspector, TextContent } from '../components/DataInspector';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { apiPage, apiRequest, errorMessage } from '../api/client';
@@ -113,8 +113,8 @@ export function SpecialistsPage({ token, refreshKey }: { token: string; refreshK
   const disabled = Boolean(busy) || !token.trim();
   const missingAdmission = durable && (!jobPool || !budget);
   return <div className="ml-page specialist-page">
-    {error && <div className="error-box" role="alert">{error}</div>}
-    {notice && <div className="success-box" role="status">{notice}</div>}
+    {error && <Notice tone="error" role="alert">{error}</Notice>}
+    {notice && <Notice tone="success" role="status">{notice}</Notice>}
     {busy && <p role="status">{busy}… Local inference allows up to 120 seconds.</p>}
     <Card className="panel ml-main-panel">
       <div className="panel-title"><div><h2>Local OCR &amp; typed decisions</h2><p>Read image text with GLM-OCR and ask Laya structured questions. Every run records its pinned model, device, input digest and measured usage.</p></div></div>

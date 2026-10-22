@@ -14,6 +14,8 @@ ModelAnvil is a work in progress. Several local execution paths run real computa
 
 See the [supported capability baseline](docs/engineering/supported-capabilities.md) for current operation-specific evidence and limits. Overview exposes local workflow measurements; Evaluation records explicit accept/reject decisions after verified candidate/baseline comparisons. These measurements stay in the installation and exclude prompts and credentials.
 
+The [main integration inventory](docs/engineering/integration-inventory.md) maps retained branches and remaining scopes. Current dependency pins require fresh GPU qualification; historical GPU reports do not qualify the upgraded stack.
+
 [Start locally](#local-development) · [Current capabilities](#current-capabilities) · [Architecture](#architecture) · [Checks](#checks) · [Limits and work in progress](#limits-and-work-in-progress) · [Contributing](CONTRIBUTING.md)
 
 ## Current capabilities

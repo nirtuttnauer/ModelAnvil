@@ -1,0 +1,46 @@
+{
+  "observed_at": "2026-10-22T23:22:00.704Z",
+  "legacy_routes": [
+    {
+      "route": "evaluation",
+      "group": "Model development",
+      "selected": "Evaluate"
+    },
+    {
+      "route": "alignment",
+      "group": "Model development",
+      "selected": "Align"
+    },
+    {
+      "route": "dataset-bank",
+      "group": "Dataset workspace",
+      "selected": "Acquire"
+    },
+    {
+      "route": "recipes",
+      "group": "Dataset workspace",
+      "selected": "Recipes"
+    },
+    {
+      "route": "context-lab",
+      "group": "Context workspace",
+      "selected": "Compile"
+    }
+  ],
+  "keyboard": [
+    "ArrowRight",
+    "End",
+    "wrap",
+    "Home"
+  ],
+  "one_selected_tab_stop": true,
+  "linked_tabpanels": true,
+  "one_page_h1": true,
+  "preserved_privacy_controls": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_page_overflow": false,
+  "page_errors": []
+}

@@ -25,13 +25,16 @@ export const FirstTrainingSetup: Story = { parameters: { demoRoute: '#training' 
 export const DatasetUpload: Story = { parameters: { demoRoute: '#datasets' }, play: async ({ canvasElement }) => {
   const canvas = within(canvasElement);
   await expect(canvas.findByRole('heading', { name: 'Dataset and revision lists' })).resolves.toBeVisible();
-  await expect(canvas.getByLabelText('Dataset name')).not.toBeVisible();
-  const toggle = canvas.getByText('Upload and prepare a dataset', { selector: 'summary' });
-  await userEvent.click(toggle);
-  const name = canvas.getByLabelText('Dataset name');
+  const name = canvas.getByRole('textbox', { name: 'Dataset name', hidden: true });
+  await expect(name).not.toBeVisible();
+  await userEvent.click(canvas.getByRole('tab', { name: 'Prepare' }));
+  await expect(canvas.getByRole('heading', { name: 'Dataset and revision lists', hidden: true })).not.toBeVisible();
   await expect(name).toBeVisible();
   await userEvent.type(name, 'My custom examples');
-  await userEvent.click(toggle); await userEvent.click(toggle);
+  await userEvent.click(canvas.getByRole('tab', { name: 'Library' }));
+  await expect(canvas.getByRole('heading', { name: 'Dataset and revision lists' })).toBeVisible();
+  await expect(name).toHaveValue('My custom examples');
+  await userEvent.click(canvas.getByRole('tab', { name: 'Prepare' }));
   await expect(name).toHaveValue('My custom examples');
   await expect(canvas.getByLabelText('Source file')).toBeVisible();
   passed(canvasElement);
@@ -39,7 +42,7 @@ export const DatasetUpload: Story = { parameters: { demoRoute: '#datasets' }, pl
 
 export const ModelCatalog: Story = { parameters: { demoRoute: '#models' }, play: async ({ canvasElement }) => {
   const canvas = within(canvasElement);
-  await expect(canvas.findByRole('heading', { name: 'Models & checkpoints' })).resolves.toBeVisible();
+  await expect(canvas.findByRole('heading', { name: 'Models', level: 1 })).resolves.toBeVisible();
   await expect(canvas.getByText('Acquire a model', { selector: 'h2' })).not.toBeVisible();
   await userEvent.click(canvas.getByText('Add or import a model', { selector: 'summary' }));
   await expect(canvas.findByRole('heading', { name: 'Acquire a model' })).resolves.toBeVisible();

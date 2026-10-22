@@ -19,7 +19,6 @@ import {
 import { apiPage, apiRequest, errorMessage } from '../api/client';
 import { ResourceState } from '../components/ResourceState';
 import { OnboardingChecklist } from '../components/OnboardingChecklist';
-import { BarChart, ChartPanel, LineChart } from '../components/Charts';
 import type { UsageSummaryResponse } from './BudgetsPage';
 import type { Project } from '../api/resources';
 import { runHash } from '../api/runs';
@@ -104,7 +103,6 @@ export function OverviewPage({
   >([]);
   const [jobs, setJobs] = useState<RecentJob[]>([]);
   const [training, setTraining] = useState<TrainingSummary[]>([]);
-  const [trainingId, setTrainingId] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
@@ -221,8 +219,6 @@ export function OverviewPage({
     finally { setInviteBusy(false); }
   }
 
-  const selectedTraining = training.find(r => r.run_id === trainingId) ?? training.find(r => r.metrics_log?.length) ?? training[0];
-  const jobStates = [...new Set(jobs.map(j => j.status))].map(label => ({ label: label.replaceAll('_', ' '), value: jobs.filter(j => j.status === label).length }));
   const completedEvaluations = evaluations.filter(item => item.status === 'completed');
   const realTraining = training.filter(run => run.execution_evidence?.level === 'integrated_execution' && run.runtime?.execution_mode !== 'simulation' && !run.runtime?.setup_check);
   const activeTraining = realTraining.find(run => ['pending', 'running'].includes(run.status));
@@ -253,16 +249,7 @@ export function OverviewPage({
         onPrerequisiteAdded={onPrerequisiteAdded || (() => {})}
       />
 
-      <div className="visualization-grid">
-        <ChartPanel title="Experiment performance" description={selectedTraining ? `Training run ${training.indexOf(selectedTraining) + 1} · ${selectedTraining.execution_evidence?.level || 'Evidence not reported'} · recorded measurements` : 'Training loss from your recorded experiments.'} action={training.length > 0 && <select aria-label="Overview training run" value={selectedTraining?.run_id || ''} onChange={e => setTrainingId(e.target.value)}>{training.map((r, index) => <option key={r.run_id} value={r.run_id}>Training run {index + 1} · {r.status}</option>)}</select>}>
-          {selectedTraining && <Identifier value={selectedTraining.run_id} label="Run ID" />}
-          <LineChart series={[{ name: 'Recorded training loss', points: (selectedTraining?.metrics_log ?? []).map(m => ({ x: m.step, y: m.loss })) }]} xLabel="Training step" yLabel="Loss" />
-        </ChartPanel>
-        <ChartPanel title="Active work" description="Status distribution of the recent jobs shown below; up to 5 loaded records.">
-          <BarChart data={jobStates} unit="Jobs" emptyMessage="Create a workflow to track its observed execution state here." />
-          <Button className="text-button" onClick={() => onNavigate('Workflows')}>Inspect execution <ArrowRight size={14} aria-hidden="true" /></Button>
-        </ChartPanel>
-      </div>
+      <div className="page-actions"><a href="#training">Training</a><a href="#evaluation">Evaluation</a></div>
 
       <details className="workspace-details">
         <summary>Other workflows</summary>
