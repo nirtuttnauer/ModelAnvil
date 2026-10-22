@@ -36,7 +36,7 @@ FILE_HASHES = {
     'tokenizer_config.json': '4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424',
     'special_tokens_map.json': 'e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3',
 }
-PACKAGES = {'torch': '2.9.0', 'transformers': '4.57.1', 'safetensors': '0.6.2', 'tokenizers': '0.22.2'}
+PACKAGES = {'torch': '2.13.0', 'transformers': '5.14.0', 'safetensors': '0.8.0', 'tokenizers': '0.22.2'}
 GUIDED_SOURCE = {'repo_id': 'HuggingFaceTB/SmolLM2-135M-Instruct', 'revision': '12fd25f77366fa6b3b4b768ec3050bf629380bac', 'license': 'Apache-2.0'}
 GUIDED_FILE_HASHES = {**FILE_HASHES,
     'model.safetensors': '5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c',
@@ -58,7 +58,7 @@ GUIDED_LORA = {**LORA, 'r': 16, 'lora_alpha': 32,
 CONTRACT = {'runtime': RUNTIME_ID, 'source': SOURCE, 'file_hashes': FILE_HASHES, 'packages': PACKAGES,
             'recipe': 'full_sft', 'precision': 'fp32', 'optimizer': OPTIMIZER, 'limits': LIMITS,
             'dropout': 'disabled', 'placement': 'one_trusted_local_worker',
-            'recipes': ['full_sft', 'lora_adapter', 'continued_pretraining'], 'lora': LORA, 'adapter_package': {'peft': '0.17.1'},
+            'recipes': ['full_sft', 'lora_adapter', 'continued_pretraining'], 'lora': LORA, 'adapter_package': {'peft': '0.21.2'},
             'lora_gradient_checkpointing': 'non_reentrant', 'deterministic_algorithms': True,
             'device_admission': 'exclusive_posix_user_host_v1',
             'chat_sft': 'native_template_assistant_labels_eos_v2',
@@ -84,8 +84,8 @@ def require_adapter_package():
         installed = importlib.metadata.version('peft')
     except importlib.metadata.PackageNotFoundError:
         installed = None
-    if installed != '0.17.1':
-        raise ValueError('Install peft==0.17.1 for the pinned FP32 LoRA recipe; QLoRA is not qualified here.')
+    if installed != '0.21.2':
+        raise ValueError('Install peft==0.21.2 for the pinned FP32 LoRA recipe; QLoRA is not qualified here.')
 
 
 def mps_memory():
@@ -400,7 +400,7 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
     if large_guided:
         pins['optimizer'] = {**profile.OPTIMIZER, 'learning_rate': 0.0002}
     if recipe_type == 'lora_adapter':
-        pins.update(adapter=GUIDED_LORA if large_guided else LORA, initialization_seed=initialization_seed, adapter_package={'peft': '0.17.1'})
+        pins.update(adapter=GUIDED_LORA if large_guided else LORA, initialization_seed=initialization_seed, adapter_package={'peft': '0.21.2'})
     if recipe_type == 'continued_pretraining':
         pins.update(objective='causal_next_token_continued_pretraining', initialization='pinned_pretrained_weights',
             corpus={'components': [{'revision_id': str(dataset.revision_id), 'manifest_digest': dataset.manifest_digest, 'weight': 1.0}],
