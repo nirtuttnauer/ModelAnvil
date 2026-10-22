@@ -49,8 +49,9 @@ export const RegisterEvaluationSuite: Story = {
     await waitFor(() => expect(register).toBeEnabled());
     await userEvent.click(register);
     await userEvent.type(canvas.getByLabelText('Suite name'), 'Storybook checks');
+    await userEvent.type(canvas.getByLabelText(/Source group ID/), 'storybook-held-out');
     await userEvent.click(canvas.getByRole('button', { name: 'Pin evaluation suite' }));
-    await expect(canvas.findByText('Evaluation suite pinned. Select a candidate to create an evaluation.')).resolves.toBeVisible();
+    await expect(canvas.findByText('Suite r1 pinned as protected evaluation with 1 source group.')).resolves.toBeVisible();
     await expect(canvas.getByLabelText('Evaluation suite version')).toHaveValue('3');
     await expect(demoRequests.filter(r => r.status >= 400)).toHaveLength(0);
     canvasElement.dataset.demoVerified = 'passed';

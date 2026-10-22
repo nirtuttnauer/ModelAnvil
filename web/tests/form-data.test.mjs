@@ -29,7 +29,7 @@ test('incomplete numeric fields and duplicate names never become a valid payload
 });
 
 test('evaluation cases preserve empty outputs and whitespace while rejecting duplicate IDs and limits', () => {
-  const row = { case_id: 'case-1', input_prompt: ' x\n', expected_output: '', slice: 'all', source: { pinned: true } };
+  const row = { case_id: 'case-1', input_prompt: ' x\n', expected_output: '', slice: 'all', source_group_id: 'held-out-source', sample_id: 'sample-1', source: { pinned: true } };
   assert.deepEqual(recordsInput(JSON.stringify([row]), evaluationFields, 64, 'case_id'), [row]);
   for (const rows of [[], [row, row], [{ ...row, case_id: ' ' }], [{ ...row, input_prompt: 'x'.repeat(1025) }], Array.from({ length: 65 }, (_, i) => ({ ...row, case_id: String(i) }))]) assert.throws(() => recordsInput(JSON.stringify(rows), evaluationFields, 64, 'case_id'));
 });
