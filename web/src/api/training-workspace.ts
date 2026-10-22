@@ -49,6 +49,7 @@ export function trainingLaunchPayload(config: TrainingConfiguration, steps: numb
     ...(config.mode === 'worker' && config.selectedPolicy ? { budget_policy_id: config.selectedPolicy } : {}),
     ...(config.mode === 'worker' && config.runner ? { runner_manifest: Number(config.runner) } : {}),
     ...(config.project ? { project: config.project } : {}),
+    ...(config.preset === 'quick' ? { setup_check: true } : {}),
   };
 }
 

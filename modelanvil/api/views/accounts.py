@@ -1,5 +1,6 @@
 """Self-service local accounts using CSRF-protected HttpOnly browser credentials."""
 from datetime import timedelta
+import secrets
 import uuid
 
 from django.conf import settings
@@ -16,7 +17,11 @@ from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
-from modelanvil.identity.models import ApiKey, Membership, Project, Role, Team, Tenant, User, generate_api_key, hash_api_key
+from modelanvil.core.tenancy import get_active_project, get_active_tenant
+from modelanvil.identity.auth import TenantRBAC
+from modelanvil.identity.models import (
+    AccountAction, ApiKey, Membership, Project, Role, Team, Tenant, User, generate_api_key, hash_api_key, role_at_least,
+)
 
 COOKIE = 'modelanvil_session'
 
@@ -48,8 +53,11 @@ class AccountStatus(APIView):
         secret = request.COOKIES.get(COOKIE, '')
         key = ApiKey.objects.filter(secret_hash=hash_api_key(secret), is_active=True, expires_at__gt=timezone.now(),
             tenant__status='active', created_by__is_active=True).first() if secret else None
-        authenticated = bool(key and Membership.objects.filter(tenant_id=key.tenant_id, user_id=key.created_by_id).exists())
-        response = Response({'signup_enabled': settings.MODELANVIL_SELF_SERVICE_ACCOUNTS, 'authenticated': authenticated})
+        membership = Membership.objects.filter(tenant_id=key.tenant_id, user_id=key.created_by_id).first() if key else None
+        authenticated = bool(membership)
+        response = Response({'signup_enabled': settings.MODELANVIL_SELF_SERVICE_ACCOUNTS, 'authenticated': authenticated,
+            'role': membership.role if membership else None, 'can_invite': bool(membership and membership.role == Role.OWNER),
+            'email': key.created_by.email if membership else None})
         response['Cache-Control'] = 'no-store'
         return response
 
@@ -97,6 +105,128 @@ class AccountSignIn(AccountSignUp):
         membership = Membership.objects.filter(user=user, tenant__status='active').order_by('-role_rank').first() if user else None
         if not user or not membership:
             return Response({'detail': 'Email or password is incorrect, or workspace access is unavailable.'}, status=401)
+        return browser_session(request, user, membership)
+
+
+def issue_action(purpose, email, *, tenant=None, project=None, role=Role.ENGINEER, hours=1):
+    secret = secrets.token_urlsafe(24)
+    AccountAction.objects.filter(purpose=purpose, email=email.lower(), used_at__isnull=True).update(used_at=timezone.now())
+    AccountAction.objects.create(purpose=purpose, email=email.lower(), secret_hash=hash_api_key(secret),
+        tenant=tenant, project=project, role=role, expires_at=timezone.now() + timedelta(hours=hours))
+    return secret
+
+
+def open_action(purpose, email, secret):
+    action = AccountAction.objects.filter(purpose=purpose, email=email.lower(), secret_hash=hash_api_key(secret),
+        used_at__isnull=True, expires_at__gt=timezone.now()).first()
+    if action is None:
+        raise serializers.ValidationError('That code is invalid or expired. Request a new one.')
+    return action
+
+
+def apply_password(user, password):
+    if len(password) < 10:
+        raise serializers.ValidationError({'password': 'Use at least 10 characters.'})
+    try:
+        validate_password(password, user)
+    except PasswordError as exc:
+        raise serializers.ValidationError({'password': exc.messages}) from None
+    user.set_password(password)
+    if user.pk:
+        user.save(update_fields=['password'])
+
+
+@method_decorator(csrf_protect, name='dispatch')
+class AccountPasswordReset(APIView):
+    authentication_classes = []
+    permission_classes = [permissions.AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'accounts'
+
+    def post(self, request):
+        email = serializers.EmailField().run_validation(request.data.get('email', '')).lower()
+        user = User.objects.filter(email=email, is_active=True).first()
+        code = issue_action(AccountAction.Purpose.PASSWORD_RESET, email, hours=1) if user else None
+        payload = {'status': 'ok'}
+        if code and settings.DEBUG:
+            payload['reset_code'] = code
+            payload['delivery'] = 'This installation has no email delivery. Use the reset code below.'
+        elif user:
+            payload['delivery'] = 'Email delivery is not configured on this installation.'
+        return Response(payload)
+
+
+@method_decorator(csrf_protect, name='dispatch')
+class AccountPasswordResetConfirm(APIView):
+    authentication_classes = []
+    permission_classes = [permissions.AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'accounts'
+
+    def post(self, request):
+        email = serializers.EmailField().run_validation(request.data.get('email', '')).lower()
+        password = serializers.CharField(trim_whitespace=False, min_length=1, max_length=256).run_validation(request.data.get('password', ''))
+        secret = serializers.CharField(trim_whitespace=False, min_length=8, max_length=128).run_validation(request.data.get('code', ''))
+        action = open_action(AccountAction.Purpose.PASSWORD_RESET, email, secret)
+        user = User.objects.filter(email=email, is_active=True).first()
+        membership = Membership.objects.filter(user=user, tenant__status='active').order_by('-role_rank').first() if user else None
+        if not user or not membership:
+            raise serializers.ValidationError('That code is invalid or expired. Request a new one.')
+        apply_password(user, password)
+        action.used_at = timezone.now()
+        action.save(update_fields=['used_at'])
+        return browser_session(request, user, membership)
+
+
+class AccountInvite(APIView):
+    permission_classes = [permissions.IsAuthenticated, TenantRBAC]
+    required_role = Role.OWNER
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'accounts'
+
+    def post(self, request):
+        email = serializers.EmailField().run_validation(request.data.get('email', '')).lower()
+        tenant_id = get_active_tenant()
+        project_id = get_active_project()
+        project = Project.objects.filter(pk=project_id, tenant_id=tenant_id).first() if project_id else Project.objects.filter(tenant_id=tenant_id).order_by('created_at').first()
+        if project is None:
+            raise serializers.ValidationError('Create a project before inviting a teammate.')
+        if User.objects.filter(email=email).exists() or Membership.objects.filter(tenant_id=tenant_id, user__email=email).exists():
+            raise serializers.ValidationError('That email already has a workspace account.')
+        if Membership.objects.filter(tenant_id=tenant_id).exclude(role=Role.OWNER).exists() or AccountAction.objects.filter(
+                purpose=AccountAction.Purpose.INVITATION, tenant_id=tenant_id, used_at__isnull=True, expires_at__gt=timezone.now()).exists():
+            raise serializers.ValidationError('This workspace already has a teammate invitation. One teammate can review and record the decision.')
+        code = issue_action(AccountAction.Purpose.INVITATION, email, tenant=Tenant.objects.get(pk=project.tenant_id), project=project, role=Role.ENGINEER, hours=72)
+        return Response({'email': email, 'invite_code': code, 'role': Role.ENGINEER,
+            'delivery': 'Share this one-time code. Your teammate can review results and record the accept or reject decision.',
+            'expires_in_hours': 72}, status=201)
+
+
+@method_decorator(csrf_protect, name='dispatch')
+class AccountInviteAccept(APIView):
+    authentication_classes = []
+    permission_classes = [permissions.AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'accounts'
+
+    def post(self, request):
+        email = serializers.EmailField().run_validation(request.data.get('email', '')).lower()
+        name = serializers.CharField(max_length=100, required=False).run_validation(request.data.get('name') or 'Teammate')
+        password = serializers.CharField(trim_whitespace=False, min_length=1, max_length=256).run_validation(request.data.get('password', ''))
+        secret = serializers.CharField(trim_whitespace=False, min_length=8, max_length=128).run_validation(request.data.get('code', ''))
+        action = open_action(AccountAction.Purpose.INVITATION, email, secret)
+        if not action.tenant_id or not action.tenant.is_active() or not role_at_least(action.role, Role.ENGINEER):
+            raise serializers.ValidationError('That invitation is no longer available.')
+        try:
+            with transaction.atomic():
+                user = User(email=email, name=name or 'Teammate')
+                apply_password(user, password)
+                user.save()
+                membership = Membership.objects.create(tenant=action.tenant, user=user, role=Role.ENGINEER)
+                action.used_at = timezone.now()
+                action.save(update_fields=['used_at'])
+        except IntegrityError:
+            raise serializers.ValidationError('That email already has an account.') from None
         return browser_session(request, user, membership)
 
 

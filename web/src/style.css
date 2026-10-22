@@ -75,6 +75,9 @@ p { line-height: 1.6; }
 .navigation-rail nav { overflow-y: auto; scrollbar-width: thin; margin: 0 -4px; padding: 0 var(--space-4) var(--space-16); }
 .nav-group+.nav-group { margin-top: var(--space-18); }
 .nav-label { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin: 0 var(--space-12) var(--space-6); font-weight: 650; }
+.nav-advanced { margin-top: var(--space-18); }
+.nav-advanced > summary { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin: 0 var(--space-12) var(--space-6); font-weight: 650; cursor: pointer; }
+.nav-advanced > summary::-webkit-details-marker { display: none; }
 .nav-group button { display: flex; width: 100%; min-height: 38px; gap: 11px; justify-content: flex-start; text-align: left; background: transparent; color: var(--text-secondary); border: 0; padding: 9px var(--space-12); font-size: var(--type-13); margin: 2px 0; font-weight: 450; }
 .nav-group button svg { color: var(--text-muted); flex-shrink: 0; }
 .nav-group button.selected { color: var(--primary-text); background: var(--primary-surface); font-weight: 600; }

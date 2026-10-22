@@ -541,3 +541,25 @@ def get_accessible_queryset(
         filters = filters | models.Q(**{f"{uuid_field}__in": granted_resource_uuids})
 
     return qs.filter(filters)
+
+
+class AccountAction(models.Model):
+    """One-time password reset or teammate invitation. Only the secret hash is stored."""
+
+    class Purpose(models.TextChoices):
+        PASSWORD_RESET = 'password_reset', 'Password reset'
+        INVITATION = 'invitation', 'Invitation'
+
+    id = models.UUIDField(primary_key=True, default=uuid7, editable=False)
+    purpose = models.CharField(max_length=32, choices=Purpose.choices)
+    email = models.EmailField()
+    secret_hash = models.CharField(max_length=64, unique=True)
+    tenant = models.ForeignKey(Tenant, null=True, blank=True, on_delete=models.CASCADE, related_name='account_actions')
+    project = models.ForeignKey(Project, null=True, blank=True, on_delete=models.CASCADE, related_name='account_actions')
+    role = models.CharField(max_length=16, choices=Role.choices, default=Role.ENGINEER)
+    expires_at = models.DateTimeField()
+    used_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        indexes = [models.Index(fields=['purpose', 'email'], name='identity_ac_purpose_d3dbfd_idx')]
