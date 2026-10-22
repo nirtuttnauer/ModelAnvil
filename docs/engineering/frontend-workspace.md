@@ -199,3 +199,6 @@ and browser checks at 1440, 1024, 768, and 390 px. Browser checks covered route
 rendering, panel overflow, light/dark display, theme persistence, responsive
 navigation, and connection dialog dismissal. Advanced builders, full lineage,
 project switching, and release gates retain the limitations documented above.
+
+Fresh-account CPU onboarding, project switching and prerequisite-aware preflight were
+[verified on 23 October 2026](verification/task3-onboarding-2026-10-23/report.md).
