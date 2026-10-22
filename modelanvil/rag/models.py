@@ -14,6 +14,7 @@ class KnowledgeBase(TenantContextModel):
     """Logical knowledge base corpus belonging to a tenant."""
 
     kb_id = models.UUIDField(default=uuid7, unique=True, editable=False)
+    project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, null=True, blank=True)
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
 

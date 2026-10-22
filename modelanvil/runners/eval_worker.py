@@ -293,6 +293,8 @@ def finalize_evaluation(job, status):
     run = EvaluationRun.all_objects.select_for_update().filter(job=job, tenant_id=job.tenant_id).first()
     if run is None:
         raise ValueError('Evaluation job has no matching owner.')
+    if run.status in ('completed', 'failed', 'cancelled'):
+        return run
     rows = list(run.case_results.values('case_id', 'passed', 'score', 'slice_name'))
     complete = len(rows) == run.protocol_ref['total_cases']
     terminal = 'completed' if status == 'succeeded' and complete else 'cancelled' if status == 'cancelled' else 'failed'

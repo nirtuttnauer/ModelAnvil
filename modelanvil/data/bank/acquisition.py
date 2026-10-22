@@ -148,7 +148,8 @@ class AcquisitionLeaseLost(RuntimeError):
 def https_transport(url: str, headers: dict[str, str]) -> "tuple[int, bytes, dict[str, str]]":
     request = urllib.request.Request(url, headers=headers, method="GET")
     try:
-        with urllib.request.urlopen(request, timeout=UPSTREAM_TIMEOUT_SECONDS) as response:
+        from modelanvil.core.privacy import open_acquisition
+        with open_acquisition(request, timeout=UPSTREAM_TIMEOUT_SECONDS) as response:
             body = response.read(MAX_TRANSFER_BYTES + 1)
             if len(body) > MAX_TRANSFER_BYTES:
                 raise UpstreamError("Upstream response exceeds the bounded transfer size.")
@@ -1170,7 +1171,10 @@ def bank_acquisition_executor(descriptor: dict[str, Any], context: Any) -> dict[
 def execute_acquisition(descriptor: dict[str, Any], context: Any) -> dict[str, Any]:
     """Persist failures outside publication transactions so verified records remain resumable."""
     try:
-        return _execute_acquisition(descriptor, context)
+        from modelanvil.core.privacy import acquisition_scope
+        snapshot = _execution_snapshot(descriptor)
+        with acquisition_scope(snapshot.tenant_id if snapshot else None, snapshot.project_id if snapshot else None):
+            return _execute_acquisition(descriptor, context)
     except AcquisitionCancelled:
         payload = descriptor.get("payload") or {}
         snapshot = _execution_snapshot(descriptor)

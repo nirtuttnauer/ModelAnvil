@@ -197,6 +197,15 @@ CORS_ALLOWED_ORIGINS = [
 # ---------------------------------------------------------------------------
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
+
+# Private workloads never use external judges, generation, analytics or support upload.
+MODELANVIL_OFFLINE = os.environ.get('MODELANVIL_OFFLINE', '0') == '1'
+MODELANVIL_PUBLIC_MODEL_DOWNLOADS = os.environ.get('MODELANVIL_PUBLIC_MODEL_DOWNLOADS', '0') == '1'
+MODELANVIL_ACQUISITION_ORIGINS = [v.strip() for v in os.environ.get('MODELANVIL_ACQUISITION_ORIGINS',
+    'https://huggingface.co,https://cdn-lfs.huggingface.co,https://cdn-lfs-us-1.hf.co,https://cas-bridge.xethub.hf.co,https://cdn-lfs.hf.co,https://api.github.com,https://raw.githubusercontent.com,https://github.com,https://archive.ics.uci.edu').split(',') if v.strip()]
+os.environ['HF_HUB_DISABLE_TELEMETRY'] = '1'
+os.environ['HF_HUB_DISABLE_XET'] = '1'
+os.environ['DO_NOT_TRACK'] = '1'
 USE_I18N = True
 USE_TZ = True
 
@@ -250,4 +259,6 @@ LOGGING = {
         "handlers": ["console"],
         "level": os.environ.get("LOG_LEVEL", "INFO"),
     },
+    "loggers": {name: {"handlers": ["console"], "level": "INFO", "propagate": False}
+                for name in ('django.server', 'django.request')},
 }

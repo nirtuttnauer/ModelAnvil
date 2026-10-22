@@ -1,0 +1,12 @@
+{
+  "observed_at": "2026-10-22T22:45:33.101Z",
+  "saved_offline_policy_survives_reload": true,
+  "independent_project_policy": true,
+  "diagnostics_content_free": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_page_overflow": false,
+  "page_errors": []
+}

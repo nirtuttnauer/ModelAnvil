@@ -275,7 +275,7 @@ class ModelWorkspaceTests(TransactionTestCase):
             def __exit__(self, *args): pass
             def iter_content(self, chunk_size): return iter([raw[6:]])
         pin = {'sha256': hashlib.sha256(raw).hexdigest(), 'byte_size': len(raw)}
-        with patch('requests.get', return_value=Reply()) as request:
+        with patch('requests.sessions.Session.get', return_value=Reply()) as request:
             ref = download_file(item, 'model.safetensors', pin, SimpleNamespace(heartbeat=lambda: True))
             self.assertEqual(request.call_args.kwargs['headers'], {'Range': 'bytes=6-'})
             self.assertIn(item.revision, request.call_args.args[0])
@@ -537,3 +537,13 @@ class ModelWorkspaceTests(TransactionTestCase):
         self.assertEqual(other.get('/api/v1/chat-comparisons/').data['results'], [])
         self.assertEqual(other.post('/api/v1/chat-comparisons/', payload, format='json').status_code, 400)
         self.assertEqual(other.post(path + 'vote/', {'vote': 'A'}, format='json').status_code, 404)
+        # A saved comparison cannot retain access to a model after its grant is revoked.
+        from modelanvil.identity.models import ProjectGrant
+        ModelVersion.all_objects.filter(pk=trained.pk).update(project=self.other)
+        grant = ProjectGrant.all_objects.create(tenant_id=self.tenant.pk, project=self.other,
+            granted_to_project=self.project, resource_type='modelversion', resource_id=trained.model_version_id)
+        self.assertEqual(self.client.get(path).status_code, 200)
+        grant.delete()
+        self.assertEqual(self.client.get(path).status_code, 404)
+        self.assertEqual(self.client.get('/api/v1/chat-comparisons/').data['results'], [])
+        self.assertEqual(self.client.post('/api/v1/chat-comparisons/', payload, format='json').status_code, 400)

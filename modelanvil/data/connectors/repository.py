@@ -48,7 +48,8 @@ class RepositoryConnector(BaseConnector):
 
         self._validate_destination(url)
         req = urllib.request.Request(url, headers=headers)
-        with urllib.request.urlopen(req, timeout=self.config.timeout_seconds) as resp:
+        from modelanvil.core.privacy import open_acquisition
+        with open_acquisition(req, timeout=self.config.timeout_seconds) as resp:
             return resp.status, resp.read(), dict(resp.headers)
 
     def acquire(self, *, limit: Optional[int] = None) -> ConnectorResult:
