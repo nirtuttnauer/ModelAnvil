@@ -256,6 +256,7 @@ class ComparisonSerializer(serializers.ModelSerializer):
                 value.update(model=str(request.model_version.model_version_id) if request.model_version_id is not None else request.provider_snapshot['id'],
                     name=request.model_version.model.name if request.model_version_id is not None else request.provider_snapshot['name'],
                     destination=request.provider_snapshot.get('endpoint', 'local execution host'), credential_id=request.provider_snapshot.get('credential_id'),
+                    requested_model=request.provider_snapshot.get('model'), reported_model=request.provider_snapshot.get('reported_model'),
                     usage=request.usage, elapsed_seconds=request.elapsed_seconds, configuration=request.configuration)
             if roles:
                 value['role'] = roles[request.model_version_id]
@@ -456,9 +457,10 @@ class InferenceViewSet(TenantScopedViewSet):
             from django.utils import timezone
             import hashlib
             final = final or {}
+            provider_evidence = {'provider_snapshot': {**record.provider_snapshot, 'reported_model': final.get('provider_model')}} if provider is not None and status == 'completed' else {}
             InferenceRequest.all_objects.filter(pk=record.pk, status='running').update(status=status,
                 completed_at=timezone.now(), usage=final.get('usage'), elapsed_seconds=final.get('elapsed_seconds'),
-                output_digest=hashlib.sha256(output.encode()).hexdigest() if output else '')
+                output_digest=hashlib.sha256(output.encode()).hexdigest() if output else '', **provider_evidence)
 
         try:
             from modelanvil.runners.inference import snapshot_guard

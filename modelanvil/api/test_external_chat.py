@@ -54,6 +54,7 @@ class ExternalChatTests(TestCase):
                 if owner.mode != 'no_usage': chunks.append({'choices': [], 'usage': usage})
                 if owner.mode == 'error': chunks = [{'error': {'message': 'secret-test-upstream-key'}}]
                 for value in chunks:
+                    value['model'] = 'explicit-upstream-revision'
                     self.wfile.write(('data: ' + json.dumps(value) + '\r\n\r\n').encode()); self.wfile.flush()
                 self.wfile.write(b'data: [DONE]\r\n\r\n'); self.wfile.flush()
         server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
@@ -86,6 +87,8 @@ class ExternalChatTests(TestCase):
         privacy = self.client.get('/api/v1/privacy/').json()
         self.assertFalse(privacy['external_generation']); self.assertEqual(privacy['installed_generation_targets'], [self.target])
         self.assertNotIn('secret-test-upstream-key', json.dumps(privacy))
+        from django.views.debug import SafeExceptionReporterFilter
+        self.assertEqual(SafeExceptionReporterFilter().get_safe_settings()['MODELANVIL_EXTERNAL_PROVIDER_KEYS'], '********************')
         self.assertEqual(self.client.get('/api/v1/inference/models/').json()['data'], [])
         with patch('socket.socket.connect') as connect:
             self.assertEqual(self.client.post('/api/v1/inference/chat/completions', self.body, format='json').status_code, 404)
@@ -96,7 +99,7 @@ class ExternalChatTests(TestCase):
         self.assertEqual(self.received[0]['authorization'], 'Bearer secret-test-upstream-key')
         self.assertEqual(self.received[0]['body']['messages'], self.body['messages'])
         request = InferenceRequest.all_objects.get()
-        self.assertIsNone(request.model_version_id); self.assertEqual(request.provider_snapshot, self.target)
+        self.assertIsNone(request.model_version_id); self.assertEqual(request.provider_snapshot, {**self.target, 'reported_model': 'explicit-upstream-revision'})
         self.assertEqual(request.status, 'completed'); self.assertGreater(request.elapsed_seconds, 0)
         self.assertNotIn('secret-test-upstream-key', json.dumps(request.configuration))
         other_secret, hashed = generate_api_key()
@@ -161,6 +164,7 @@ class ExternalChatTests(TestCase):
         def wire(values, done=True):
             return io.BytesIO((''.join('data: ' + json.dumps(v) + '\n\n' for v in values) + ('data: [DONE]\n\n' if done else '')).encode())
         invalid = [wire([{'choices': [{'delta': {'tool_calls': []}}]}]),
+            wire([{'model': 'one', 'choices': []}, {'model': 'two', 'choices': []}]),
             wire([{'choices': [{'delta': {'content': 'x' * 32001}}]}]),
             wire([{'choices': [{'delta': {}, 'finish_reason': 'tool_calls'}]}]),
             wire([{'choices': [{'delta': {'content': 'unfinished'}}]}], done=False)]
@@ -201,6 +205,7 @@ class ExternalChatTests(TestCase):
             'responses': [{'request_id': item['id'][9:], 'text': item['choices'][0]['message']['content']} for item in (first, second)]}
         saved = self.client.post('/api/v1/chat-comparisons/', body, format='json')
         self.assertEqual(saved.status_code, 201, saved.content)
+        self.assertFalse(saved.json()['review_eligible'])
         self.assertTrue(all('model' not in side for side in saved.json()['sides']))
         path = '/api/v1/chat-comparisons/' + saved.json()['comparison_id'] + '/'
         voted = self.client.post(path + 'vote/', {'vote': 'tie'}, format='json')

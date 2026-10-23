@@ -1,0 +1,650 @@
+{
+  "scope": "Bounded CPU SmolLM2 base/candidate over actual same-host compatible HTTP transport; no paid service, third-party provider or production qualification.",
+  "catalog_after_actual_loads": {
+    "object": "list",
+    "data": [
+      {
+        "id": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+        "object": "model",
+        "created": 1792767816,
+        "owned_by": "modelanvil",
+        "name": "arena-cpu-base",
+        "format": "safetensors",
+        "load_tested": true,
+        "devices": [
+          "cpu",
+          "mps:0"
+        ],
+        "max_tokens": 256,
+        "context_limit": 2048,
+        "tokenizer_kind": null,
+        "training_run_id": null,
+        "base_model_id": null,
+        "has_chat_template": false,
+        "chat_template": ""
+      },
+      {
+        "id": "01a1694a-14be-773b-8f10-8cca819bba8b",
+        "object": "model",
+        "created": 1792767825,
+        "owned_by": "modelanvil",
+        "name": "smollm2-cpu-sft-01a16949-f6b8-7e01-9ed7-7fadfcffb06e",
+        "format": "safetensors",
+        "load_tested": true,
+        "devices": [
+          "cpu",
+          "mps:0"
+        ],
+        "max_tokens": 256,
+        "context_limit": 2048,
+        "tokenizer_kind": null,
+        "training_run_id": "01a16949-f6b8-7e01-9ed7-7fadfcffb06e",
+        "base_model_id": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+        "has_chat_template": false,
+        "chat_template": ""
+      },
+      {
+        "id": "06a93606-48bd-51d5-9f05-bc6d30d387cc",
+        "name": "Self-hosted CPU base over HTTP",
+        "endpoint": "http://127.0.0.1:18771/api/v1/inference/chat/completions",
+        "model": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+        "credential_id": "loopback-engineer",
+        "object": "model",
+        "format": "external",
+        "owned_by": "external-provider",
+        "load_tested": false,
+        "chat_template": "",
+        "devices": [
+          "external"
+        ],
+        "max_tokens": 256,
+        "context_limit": null,
+        "tokenizer_kind": "upstream",
+        "base_model_id": null,
+        "training_run_id": null
+      }
+    ]
+  },
+  "native_template_override": {
+    "id": "chatcmpl-01a16959f69a799eb0c3b8fe88ed6311",
+    "created": 1792768867,
+    "model": "01a1694a-14be-773b-8f10-8cca819bba8b",
+    "object": "chat.completion",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "A telescope collectsassistant\nAssistant"
+        },
+        "finish_reason": "length"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 20,
+      "completion_tokens": 8,
+      "total_tokens": 28
+    },
+    "modelanvil": {
+      "device": "cpu",
+      "elapsed_seconds": 0.10607274999983929
+    }
+  },
+  "context_overflow_refusal": {
+    "error": {
+      "code": "validation_failed",
+      "message": "Validation failed.",
+      "details": [
+        {
+          "path": "(root)",
+          "message": "Prompt and output must fit within 2048 tokens; shorten the conversation."
+        }
+      ],
+      "request_id": "01a16959-fee3-7a5d-9ef4-4ea431a0db6d"
+    }
+  },
+  "provider_revocation_refusal": {
+    "error": {
+      "code": "resource_not_found",
+      "message": "The requested resource was not found.",
+      "request_id": "01a1695a-06e1-78a2-8f5a-7ef462e6dffe"
+    }
+  },
+  "final_fixture_offline": {
+    "offline": true,
+    "acquisition_origins": [],
+    "installation_origins": [
+      "https://huggingface.co",
+      "https://us.aws.cdn.hf.co",
+      "https://us.gcp.cdn.hf.co",
+      "https://cdn-lfs.huggingface.co",
+      "https://cdn-lfs-us-1.hf.co",
+      "https://cas-bridge.xethub.hf.co",
+      "https://cdn-lfs.hf.co",
+      "https://api.github.com",
+      "https://raw.githubusercontent.com",
+      "https://github.com",
+      "https://archive.ics.uci.edu"
+    ],
+    "measurement_retention_days": 30,
+    "external_judges": false,
+    "external_generation": false,
+    "external_generation_targets": [],
+    "installed_generation_targets": [
+      {
+        "id": "06a93606-48bd-51d5-9f05-bc6d30d387cc",
+        "name": "Self-hosted CPU base over HTTP",
+        "endpoint": "http://127.0.0.1:18771/api/v1/inference/chat/completions",
+        "model": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+        "credential_id": "loopback-engineer"
+      }
+    ],
+    "external_analytics": false,
+    "support_upload": false,
+    "diagnostic_content_collection": false,
+    "product_history_retention": "Retained until explicitly deleted through the authorized product APIs."
+  },
+  "inference_records": [
+    {
+      "request_id": "01a1694c-0ccc-73ab-9772-e72decfb6acd",
+      "model_version_id": 2,
+      "provider_snapshot": {},
+      "status": "completed",
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 8,
+        "total_tokens": 11
+      },
+      "elapsed_seconds": 0.1173249170001327,
+      "input_digest": "833853b32ad55a465fde42bd52af33172a9580139915aefc5bc1b6908e4e1ab2",
+      "output_digest": "19e6d5855048038050a038faec68c75a53b6be1e3a409d2aa8b618a4f7a19841",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "cpu",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "01a1694c-1ae2-7982-9c57-5af368e95988",
+      "model_version_id": null,
+      "provider_snapshot": {
+        "id": "06a93606-48bd-51d5-9f05-bc6d30d387cc",
+        "name": "Self-hosted CPU base over HTTP",
+        "endpoint": "http://127.0.0.1:18771/api/v1/inference/chat/completions",
+        "model": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+        "credential_id": "loopback-engineer"
+      },
+      "status": "failed",
+      "usage": null,
+      "elapsed_seconds": null,
+      "input_digest": "833853b32ad55a465fde42bd52af33172a9580139915aefc5bc1b6908e4e1ab2",
+      "output_digest": "",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "external",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "01a1694e-be61-7710-855f-22ce799f1c84",
+      "model_version_id": 2,
+      "provider_snapshot": {},
+      "status": "completed",
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 8,
+        "total_tokens": 11
+      },
+      "elapsed_seconds": 0.11207533400011016,
+      "input_digest": "833853b32ad55a465fde42bd52af33172a9580139915aefc5bc1b6908e4e1ab2",
+      "output_digest": "19e6d5855048038050a038faec68c75a53b6be1e3a409d2aa8b618a4f7a19841",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "cpu",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "01a1694e-cc72-74b6-ad55-199ee270d62b",
+      "model_version_id": null,
+      "provider_snapshot": {
+        "id": "06a93606-48bd-51d5-9f05-bc6d30d387cc",
+        "name": "Self-hosted CPU base over HTTP",
+        "endpoint": "http://127.0.0.1:18771/api/v1/inference/chat/completions",
+        "model": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+        "credential_id": "loopback-engineer"
+      },
+      "status": "completed",
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 8,
+        "total_tokens": 11
+      },
+      "elapsed_seconds": 0.1879324579999775,
+      "input_digest": "833853b32ad55a465fde42bd52af33172a9580139915aefc5bc1b6908e4e1ab2",
+      "output_digest": "77ef5a8438b732ecd5a9914d46c3d4856ed6bfef952aa157db3407e5f915473b",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "external",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "01a1694e-cc7b-70d8-a602-faf2f4b2ef31",
+      "model_version_id": 1,
+      "provider_snapshot": {},
+      "status": "completed",
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 8,
+        "total_tokens": 11
+      },
+      "elapsed_seconds": 0.12559158299973205,
+      "input_digest": "833853b32ad55a465fde42bd52af33172a9580139915aefc5bc1b6908e4e1ab2",
+      "output_digest": "77ef5a8438b732ecd5a9914d46c3d4856ed6bfef952aa157db3407e5f915473b",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "cpu",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "01a16950-6502-736f-b7f8-4232496dbac3",
+      "model_version_id": 2,
+      "provider_snapshot": {},
+      "status": "completed",
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 8,
+        "total_tokens": 11
+      },
+      "elapsed_seconds": 0.11425041699976646,
+      "input_digest": "833853b32ad55a465fde42bd52af33172a9580139915aefc5bc1b6908e4e1ab2",
+      "output_digest": "19e6d5855048038050a038faec68c75a53b6be1e3a409d2aa8b618a4f7a19841",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "cpu",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "01a16950-6d73-77ec-b20a-60a4bc888e50",
+      "model_version_id": null,
+      "provider_snapshot": {
+        "id": "06a93606-48bd-51d5-9f05-bc6d30d387cc",
+        "name": "Self-hosted CPU base over HTTP",
+        "endpoint": "http://127.0.0.1:18771/api/v1/inference/chat/completions",
+        "model": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+        "credential_id": "loopback-engineer"
+      },
+      "status": "completed",
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 8,
+        "total_tokens": 11
+      },
+      "elapsed_seconds": 0.17399479200003043,
+      "input_digest": "833853b32ad55a465fde42bd52af33172a9580139915aefc5bc1b6908e4e1ab2",
+      "output_digest": "77ef5a8438b732ecd5a9914d46c3d4856ed6bfef952aa157db3407e5f915473b",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "external",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "01a16950-6d7b-7dcc-93f5-7c38fa5d0ce8",
+      "model_version_id": 1,
+      "provider_snapshot": {},
+      "status": "completed",
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 8,
+        "total_tokens": 11
+      },
+      "elapsed_seconds": 0.11414191699986986,
+      "input_digest": "833853b32ad55a465fde42bd52af33172a9580139915aefc5bc1b6908e4e1ab2",
+      "output_digest": "77ef5a8438b732ecd5a9914d46c3d4856ed6bfef952aa157db3407e5f915473b",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "cpu",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "01a16951-9119-7c33-b603-233ba7b52fd9",
+      "model_version_id": 2,
+      "provider_snapshot": {},
+      "status": "completed",
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 8,
+        "total_tokens": 11
+      },
+      "elapsed_seconds": 0.1122574999999415,
+      "input_digest": "833853b32ad55a465fde42bd52af33172a9580139915aefc5bc1b6908e4e1ab2",
+      "output_digest": "19e6d5855048038050a038faec68c75a53b6be1e3a409d2aa8b618a4f7a19841",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "cpu",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "01a16951-998a-77ba-a799-0ea2884d6e40",
+      "model_version_id": null,
+      "provider_snapshot": {
+        "id": "06a93606-48bd-51d5-9f05-bc6d30d387cc",
+        "name": "Self-hosted CPU base over HTTP",
+        "endpoint": "http://127.0.0.1:18771/api/v1/inference/chat/completions",
+        "model": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+        "credential_id": "loopback-engineer"
+      },
+      "status": "completed",
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 8,
+        "total_tokens": 11
+      },
+      "elapsed_seconds": 0.17366270800039274,
+      "input_digest": "833853b32ad55a465fde42bd52af33172a9580139915aefc5bc1b6908e4e1ab2",
+      "output_digest": "77ef5a8438b732ecd5a9914d46c3d4856ed6bfef952aa157db3407e5f915473b",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "external",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "01a16951-9992-775a-ae9d-d46964e97c93",
+      "model_version_id": 1,
+      "provider_snapshot": {},
+      "status": "completed",
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 8,
+        "total_tokens": 11
+      },
+      "elapsed_seconds": 0.11535966600013126,
+      "input_digest": "833853b32ad55a465fde42bd52af33172a9580139915aefc5bc1b6908e4e1ab2",
+      "output_digest": "77ef5a8438b732ecd5a9914d46c3d4856ed6bfef952aa157db3407e5f915473b",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "cpu",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "01a16951-a207-7f3e-901a-9f3f4525bb6f",
+      "model_version_id": 2,
+      "provider_snapshot": {},
+      "status": "cancelled",
+      "usage": null,
+      "elapsed_seconds": null,
+      "input_digest": "7956498f24179474641d7e601d9c5f65ebabf2f1985acffad640b5ddcfcd1062",
+      "output_digest": "2922accd47d3516c1aed2ac33ea2d635bb2297c1e305a77d667681b13d2eab50",
+      "configuration": {
+        "max_tokens": 128,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "cpu",
+        "stream": true,
+        "prompt_format": "plain",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "01a16958-8f61-76ce-b154-194360f43d10",
+      "model_version_id": 2,
+      "provider_snapshot": {},
+      "status": "completed",
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 8,
+        "total_tokens": 11
+      },
+      "elapsed_seconds": 0.11211800000000949,
+      "input_digest": "833853b32ad55a465fde42bd52af33172a9580139915aefc5bc1b6908e4e1ab2",
+      "output_digest": "19e6d5855048038050a038faec68c75a53b6be1e3a409d2aa8b618a4f7a19841",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "cpu",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "01a16958-9d54-768c-9e0c-c7afdd0fa2e7",
+      "model_version_id": null,
+      "provider_snapshot": {
+        "id": "06a93606-48bd-51d5-9f05-bc6d30d387cc",
+        "name": "Self-hosted CPU base over HTTP",
+        "endpoint": "http://127.0.0.1:18771/api/v1/inference/chat/completions",
+        "model": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+        "credential_id": "loopback-engineer",
+        "reported_model": "01a16949-f3a6-751f-ad2c-76e870c2ecef"
+      },
+      "status": "completed",
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 8,
+        "total_tokens": 11
+      },
+      "elapsed_seconds": 0.17132983300007254,
+      "input_digest": "833853b32ad55a465fde42bd52af33172a9580139915aefc5bc1b6908e4e1ab2",
+      "output_digest": "77ef5a8438b732ecd5a9914d46c3d4856ed6bfef952aa157db3407e5f915473b",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "external",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "01a16958-9d5d-7df1-8e46-f3ca547cc8c9",
+      "model_version_id": 1,
+      "provider_snapshot": {},
+      "status": "completed",
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 8,
+        "total_tokens": 11
+      },
+      "elapsed_seconds": 0.1145101249999243,
+      "input_digest": "833853b32ad55a465fde42bd52af33172a9580139915aefc5bc1b6908e4e1ab2",
+      "output_digest": "77ef5a8438b732ecd5a9914d46c3d4856ed6bfef952aa157db3407e5f915473b",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "cpu",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "01a16958-a60f-7db2-8672-a1a52696f7a1",
+      "model_version_id": 2,
+      "provider_snapshot": {},
+      "status": "cancelled",
+      "usage": null,
+      "elapsed_seconds": null,
+      "input_digest": "7956498f24179474641d7e601d9c5f65ebabf2f1985acffad640b5ddcfcd1062",
+      "output_digest": "2922accd47d3516c1aed2ac33ea2d635bb2297c1e305a77d667681b13d2eab50",
+      "configuration": {
+        "max_tokens": 128,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "cpu",
+        "stream": true,
+        "prompt_format": "plain",
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    {
+      "request_id": "01a16959-f69a-799e-b0c3-b8fe88ed6311",
+      "model_version_id": 2,
+      "provider_snapshot": {},
+      "status": "completed",
+      "usage": {
+        "prompt_tokens": 20,
+        "completion_tokens": 8,
+        "total_tokens": 28
+      },
+      "elapsed_seconds": 0.10607274999983929,
+      "input_digest": "8cf0d15fde0b96f5d196f48ceb9ef5cd59351a768c96b065b41ffcc03e750855",
+      "output_digest": "246f984389c7410aa2143381a065ab8af988b718a683f8040b449a47571c73fa",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "cpu",
+        "stream": false,
+        "prompt_format": "chatml"
+      }
+    },
+    {
+      "request_id": "01a16959-fee7-7837-b46c-a59209d43e43",
+      "model_version_id": 2,
+      "provider_snapshot": {},
+      "status": "failed",
+      "usage": null,
+      "elapsed_seconds": null,
+      "input_digest": "136e564f708b152378be56e017251f8a7d4c2d5060e5c82d4aadfc8581d34d38",
+      "output_digest": "",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "cpu",
+        "stream": false,
+        "prompt_format": "model"
+      }
+    }
+  ],
+  "model_versions": [
+    {
+      "model_version_id": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+      "state": "draft",
+      "architecture_ref": "modelanvil.smollm2-cpu-sft.v1",
+      "artifact_manifest_id": "01a16949-ecc1-7861-9ac4-31cf886bdb63",
+      "metadata": {
+        "snapshot_manifest": {
+          "artifact_id": "01a16949-ecc1-7861-9ac4-31cf886bdb63",
+          "sha256": "3f5c8e8e8702adbca443b4e1dc106fd35f5df8f11974ec5697f83696f9e36a70",
+          "byte_size": 1027
+        },
+        "vocab_size": 49152,
+        "source": {
+          "repo_id": "HuggingFaceTB/SmolLM2-135M",
+          "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+          "license": "Apache-2.0"
+        }
+      }
+    },
+    {
+      "model_version_id": "01a1694a-14be-773b-8f10-8cca819bba8b",
+      "state": "draft",
+      "architecture_ref": "modelanvil.smollm2-cpu-sft.v1",
+      "artifact_manifest_id": "01a1694a-14ae-7b22-9c29-523d91bbbf98",
+      "metadata": {
+        "source_run_id": "01a16949-f6b8-7e01-9ed7-7fadfcffb06e",
+        "selected_checkpoint_step": 3,
+        "weights_sha256": "022d348b24f344f9a50be627a302d5c1d96061e6a36580286c809532ed46bca6",
+        "runtime_contract": "db3b11b1ad38cf0085c6b494a964d78bd8ad0de12138f6d73664820173524613",
+        "checkpoint_digest": "fb435d3ec36445a669c994891ee2dfddef018f235f374f44642195c942e5c7eb"
+      }
+    }
+  ],
+  "source_sha256": {
+    "modelanvil/api/views/model_workspace.py": "4334772476de7a6d0edda3d6c2d53693f9b968ccc6f08b1f8e6cb953725be21f",
+    "modelanvil/api/views/privacy.py": "26ab09fd40c0d03f86e20277a1e2656307193ebfdcf71899a5ddd484f73d0106",
+    "modelanvil/core/privacy.py": "7fc6e4fb97f6347cf76f3d1acf4fd73ee23e44995a1badbc2e77a72a3d505a7f",
+    "modelanvil/runners/external_inference.py": "3d69f15ec21ae56da4f17d4dfeb49d51cd69e567d0cf28fab89d05605d942cb1",
+    "web/src/pages/ChatPage.tsx": "76c5f7a40dec9473c2fa2b88d10ecae059931e648d4940372e4b94cff84d72bc",
+    "web/src/components/PrivacySettings.tsx": "51e7f18e6e2d25ff41c5a03cb73aaa9beb8618bafbf49bf42b38e1665da4b4c6"
+  }
+}

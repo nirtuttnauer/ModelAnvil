@@ -70,7 +70,7 @@ def accessible_request(record, tenant, project):
         return check_resource_access(record.model_version, project, tenant)
     try:
         value = resolve(record.provider_snapshot['id'], tenant, project)
-        return public_target(record.provider_snapshot['id'], value) == record.provider_snapshot
+        return public_target(record.provider_snapshot['id'], value) == {k: v for k, v in record.provider_snapshot.items() if k != 'reported_model'}
     except (ValueError, KeyError):
         return False
 
@@ -103,7 +103,7 @@ def session(value, messages, *, max_tokens, temperature, seed, prompt_format, de
 def parts(response):
     started = time.monotonic()
     pending, total, output_size = b'', 0, 0
-    usage, finish = None, None
+    usage, finish, reported_model = None, None, None
     while True:
         if time.monotonic() - started > 30:
             raise ValueError('External generation exceeded its time limit.')
@@ -122,11 +122,16 @@ def parts(response):
             if data == b'[DONE]':
                 if finish is None:
                     raise ValueError('External stream omitted its finish reason.')
-                yield {'finish_reason': finish, 'usage': usage, 'elapsed_seconds': time.monotonic() - started}
+                yield {'finish_reason': finish, 'usage': usage, 'elapsed_seconds': time.monotonic() - started, 'provider_model': reported_model}
                 return
             item = json.loads(data)
             if not isinstance(item, dict) or 'error' in item:
                 raise ValueError('External provider returned an error.')
+            if item.get('model') is not None:
+                name = item['model']
+                if not isinstance(name, str) or not 1 <= len(name) <= 200 or reported_model is not None and name != reported_model:
+                    raise ValueError('External stream changed its reported model identity.')
+                reported_model = name
             if item.get('usage') is not None:
                 supplied = item['usage']
                 keys = ('prompt_tokens', 'completion_tokens', 'total_tokens')

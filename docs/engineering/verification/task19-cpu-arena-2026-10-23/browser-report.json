@@ -1,0 +1,156 @@
+{
+  "actual_inference": true,
+  "scope": "Bounded CPU SmolLM2 base/candidate over actual same-host compatible HTTP transport; no paid service, third-party provider or production qualification.",
+  "viewports": [
+    1440,
+    390
+  ],
+  "privacy_policy": {
+    "offline": false,
+    "acquisition_origins": [
+      "https://api.github.com",
+      "https://archive.ics.uci.edu",
+      "https://cas-bridge.xethub.hf.co",
+      "https://cdn-lfs-us-1.hf.co",
+      "https://cdn-lfs.hf.co",
+      "https://cdn-lfs.huggingface.co",
+      "https://github.com",
+      "https://huggingface.co",
+      "https://raw.githubusercontent.com",
+      "https://us.aws.cdn.hf.co",
+      "https://us.gcp.cdn.hf.co"
+    ],
+    "installation_origins": [
+      "https://huggingface.co",
+      "https://us.aws.cdn.hf.co",
+      "https://us.gcp.cdn.hf.co",
+      "https://cdn-lfs.huggingface.co",
+      "https://cdn-lfs-us-1.hf.co",
+      "https://cas-bridge.xethub.hf.co",
+      "https://cdn-lfs.hf.co",
+      "https://api.github.com",
+      "https://raw.githubusercontent.com",
+      "https://github.com",
+      "https://archive.ics.uci.edu"
+    ],
+    "measurement_retention_days": 30,
+    "external_judges": false,
+    "external_generation": true,
+    "external_generation_targets": [
+      "06a93606-48bd-51d5-9f05-bc6d30d387cc"
+    ],
+    "installed_generation_targets": [
+      {
+        "id": "06a93606-48bd-51d5-9f05-bc6d30d387cc",
+        "name": "Self-hosted CPU base over HTTP",
+        "endpoint": "http://127.0.0.1:18771/api/v1/inference/chat/completions",
+        "model": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+        "credential_id": "loopback-engineer"
+      }
+    ],
+    "external_analytics": false,
+    "support_upload": false,
+    "diagnostic_content_collection": false,
+    "product_history_retention": "Retained until explicitly deleted through the authorized product APIs."
+  },
+  "comparison": {
+    "comparison_id": "01a16958-9f2b-7fc0-8cf1-0ceff7917f59",
+    "conversation_id": "01a16958-9f24-7c89-8b56-d9d258d700d6",
+    "messages": [
+      {
+        "role": "user",
+        "content": "A telescope collects"
+      }
+    ],
+    "sides": [
+      {
+        "label": "A",
+        "text": " light from a star and records the colors"
+      },
+      {
+        "label": "B",
+        "text": " light from distant objects.\n\nThe"
+      }
+    ],
+    "vote": "",
+    "created_at": "2026-10-23T15:19:38.027001Z",
+    "voted_at": null,
+    "review_campaign_id": null,
+    "review_eligible": false
+  },
+  "voted_comparison": {
+    "comparison_id": "01a16958-9f2b-7fc0-8cf1-0ceff7917f59",
+    "conversation_id": "01a16958-9f24-7c89-8b56-d9d258d700d6",
+    "messages": [
+      {
+        "role": "user",
+        "content": "A telescope collects"
+      }
+    ],
+    "sides": [
+      {
+        "label": "A",
+        "text": " light from a star and records the colors",
+        "model": "06a93606-48bd-51d5-9f05-bc6d30d387cc",
+        "name": "Self-hosted CPU base over HTTP",
+        "destination": "http://127.0.0.1:18771/api/v1/inference/chat/completions",
+        "credential_id": "loopback-engineer",
+        "requested_model": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+        "reported_model": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+        "usage": {
+          "prompt_tokens": 3,
+          "completion_tokens": 8,
+          "total_tokens": 11
+        },
+        "elapsed_seconds": 0.17132983300007254,
+        "configuration": {
+          "max_tokens": 8,
+          "temperature": 0,
+          "seed": 42,
+          "device": "external",
+          "stream": true,
+          "prompt_format": "model",
+          "stream_options": {
+            "include_usage": true
+          }
+        }
+      },
+      {
+        "label": "B",
+        "text": " light from distant objects.\n\nThe",
+        "model": "01a1694a-14be-773b-8f10-8cca819bba8b",
+        "name": "smollm2-cpu-sft-01a16949-f6b8-7e01-9ed7-7fadfcffb06e",
+        "destination": "local execution host",
+        "credential_id": null,
+        "requested_model": null,
+        "reported_model": null,
+        "usage": {
+          "prompt_tokens": 3,
+          "completion_tokens": 8,
+          "total_tokens": 11
+        },
+        "elapsed_seconds": 0.11211800000000949,
+        "configuration": {
+          "max_tokens": 8,
+          "temperature": 0,
+          "seed": 42,
+          "device": "cpu",
+          "stream": true,
+          "prompt_format": "model",
+          "stream_options": {
+            "include_usage": true
+          }
+        }
+      }
+    ],
+    "vote": "tie",
+    "created_at": "2026-10-23T15:19:38.027001Z",
+    "voted_at": "2026-10-23T15:19:39.386249Z",
+    "review_campaign_id": null,
+    "review_eligible": false
+  },
+  "destination_visible_before_send": "External destination: http://127.0.0.1:18771/api/v1/inference/chat/completions · model: 01a16949-f3a6-751f-ad2c-76e870c2ecef · credential: loopback-engineer. Sending a prompt shares the system prompt and selected conversation history with this provider. Token counts are provider-reported; missing usage stays unavailable.",
+  "keyboard_send": true,
+  "stopped_notice": "Generation stopped. Partial output was not saved. No completed output has been saved.",
+  "page_errors": []
+}
