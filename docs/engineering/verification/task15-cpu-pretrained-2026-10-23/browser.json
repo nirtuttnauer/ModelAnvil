@@ -1,0 +1,518 @@
+{
+  "observed_at": "2026-10-23T12:50:25.340Z",
+  "reports": [
+    {
+      "recipe": "lora_adapter",
+      "pins": {
+        "runtime": "modelanvil.smollm2-cpu-sft.v1",
+        "contract_digest": "db3b11b1ad38cf0085c6b494a964d78bd8ad0de12138f6d73664820173524613",
+        "build_digest": "56948a80848b31a448afbc43a8aecd86cabbd19220b7706c6fd102b7e58e9856",
+        "dataset_id": "01a168ca-e3a3-71cc-a025-320070ff6f23",
+        "dataset_digest": "90b90f9548f1c2d55748a5ebfdd1ea90d2d2ec56731453ce04f9c12c7a818fa2",
+        "base_id": "01a168ca-e398-7b97-aead-e8f80da75170",
+        "base_artifact_id": "01a168ca-de68-709d-9765-935f0ba452c8",
+        "base_digest": "f0e87ed37bd46e10f49ec593486995fd74d1b2c70ac6be34496cfbb37dcde1c0",
+        "tokenizer_id": "01a168ca-e394-784e-8874-143d83d11943",
+        "tokenizer_digest": "42d7582f2e64f3d23f2ef188ac9a992925c79d4ca5f83b4dd1a6f9940bff0380",
+        "runner_id": "01a168ca-e3a6-7346-9a87-33e25390dd6a",
+        "runner_digest": "c11e2b1051e30467b48e814a6abf424c2163e16a1c97dff648136f4f05358946",
+        "pool_id": 1,
+        "steps": 3,
+        "config": {
+          "architectures": [
+            "LlamaForCausalLM"
+          ],
+          "attention_bias": false,
+          "attention_dropout": 0,
+          "bos_token_id": 0,
+          "eos_token_id": 0,
+          "hidden_act": "silu",
+          "hidden_size": 576,
+          "initializer_range": 0.041666666666666664,
+          "intermediate_size": 1536,
+          "is_llama_config": true,
+          "max_position_embeddings": 8192,
+          "model_type": "llama",
+          "num_attention_heads": 9,
+          "num_hidden_layers": 30,
+          "num_key_value_heads": 3,
+          "pretraining_tp": 1,
+          "rms_norm_eps": 1e-05,
+          "rope_interleaved": false,
+          "rope_scaling": null,
+          "rope_theta": 100000,
+          "tie_word_embeddings": true,
+          "torch_dtype": "bfloat16",
+          "transformers_version": "4.40.1",
+          "use_cache": true,
+          "vocab_size": 49152,
+          "runtime": "modelanvil.smollm2-cpu-sft.v1"
+        },
+        "optimizer": {
+          "algorithm": "adamw",
+          "learning_rate": 2e-05,
+          "beta1": 0.9,
+          "beta2": 0.999,
+          "epsilon": 1e-08,
+          "weight_decay": 0
+        },
+        "sample_digest": "c64d29c23438f99841ddd3d410b9727239023a9c56768993ec048f1186cc192f",
+        "splits": {
+          "consumed": "train",
+          "train_rows": 4,
+          "excluded_rows": {
+            "test": 3,
+            "validation": 3
+          },
+          "excluded_digest": "84efefc8cec93034c2d9a60bc11f4e75db98d3552aa042cb3ddf62b4b5849252"
+        },
+        "accelerator": {
+          "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+          "device": {
+            "id": "cpu",
+            "backend": "cpu",
+            "torch_device": "cpu",
+            "name": "Apple M5 Pro",
+            "total_memory_bytes": 51539607552
+          },
+          "packages": {
+            "torch": "2.13.0",
+            "transformers": "5.14.0",
+            "safetensors": "0.8.0",
+            "tokenizers": "0.22.2"
+          },
+          "capacity_source": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+        },
+        "worker_id": 1,
+        "chat_sft": false,
+        "recipe": "lora_adapter",
+        "adapter": {
+          "r": 8,
+          "lora_alpha": 16,
+          "target_modules": [
+            "q_proj",
+            "v_proj"
+          ],
+          "lora_dropout": 0,
+          "bias": "none",
+          "task_type": "CAUSAL_LM"
+        },
+        "initialization_seed": 42,
+        "adapter_package": {
+          "peft": "0.21.2"
+        },
+        "trainable_parameters": 460800
+      },
+      "requirements": {
+        "runtime": "modelanvil.smollm2-cpu-sft.v1",
+        "recipe": "lora_adapter",
+        "config": {
+          "architectures": [
+            "LlamaForCausalLM"
+          ],
+          "attention_bias": false,
+          "attention_dropout": 0,
+          "bos_token_id": 0,
+          "eos_token_id": 0,
+          "hidden_act": "silu",
+          "hidden_size": 576,
+          "initializer_range": 0.041666666666666664,
+          "intermediate_size": 1536,
+          "is_llama_config": true,
+          "max_position_embeddings": 8192,
+          "model_type": "llama",
+          "num_attention_heads": 9,
+          "num_hidden_layers": 30,
+          "num_key_value_heads": 3,
+          "pretraining_tp": 1,
+          "rms_norm_eps": 1e-05,
+          "rope_interleaved": false,
+          "rope_scaling": null,
+          "rope_theta": 100000,
+          "tie_word_embeddings": true,
+          "torch_dtype": "bfloat16",
+          "transformers_version": "4.40.1",
+          "use_cache": true,
+          "vocab_size": 49152,
+          "runtime": "modelanvil.smollm2-cpu-sft.v1"
+        },
+        "optimizer": {
+          "algorithm": "adamw",
+          "learning_rate": 2e-05,
+          "beta1": 0.9,
+          "beta2": 0.999,
+          "epsilon": 1e-08,
+          "weight_decay": 0
+        },
+        "cpu_slots": 1,
+        "memory_bytes": 17179869184,
+        "storage_bytes": 571011984,
+        "checkpoint_count": 3,
+        "storage_assumption": "Immutable shared base references plus FP32 adapter weights and Adam moments per step; shared local host.",
+        "device_memory": {
+          "total_bytes": 51539607552,
+          "required_bytes": 17179869184,
+          "scope": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+        },
+        "gpu_count": 0,
+        "accelerator": {
+          "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+          "device": {
+            "id": "cpu",
+            "backend": "cpu",
+            "torch_device": "cpu",
+            "name": "Apple M5 Pro",
+            "total_memory_bytes": 51539607552
+          },
+          "packages": {
+            "torch": "2.13.0",
+            "transformers": "5.14.0",
+            "safetensors": "0.8.0",
+            "tokenizers": "0.22.2"
+          },
+          "capacity_source": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+        },
+        "precision": "fp32",
+        "adapter": {
+          "r": 8,
+          "lora_alpha": 16,
+          "target_modules": [
+            "q_proj",
+            "v_proj"
+          ],
+          "lora_dropout": 0,
+          "bias": "none",
+          "task_type": "CAUSAL_LM"
+        },
+        "trainable_parameters": 460800
+      },
+      "samples": [
+        {
+          "sample_id": "2dd4b9fe-4634-46eb-b139-7e80f3673b9d",
+          "text_preview": "A telescope collects light from distant stars to study the universe.",
+          "token_ids": [
+            49,
+            13776,
+            23805,
+            1420,
+            429,
+            9931,
+            5703,
+            288,
+            1108,
+            260,
+            6128,
+            30
+          ],
+          "token_count": 12
+        },
+        {
+          "sample_id": "f22ca5b7-0052-4879-89ff-82fa53da41f8",
+          "text_preview": "Trees absorb sunlight and grow leaves through photosynthesis.",
+          "token_ids": [
+            46059,
+            6024,
+            8118,
+            284,
+            1075,
+            3711,
+            738,
+            19173,
+            30
+          ],
+          "token_count": 9
+        },
+        {
+          "sample_id": "3e0552da-049c-437e-81b3-03254634ddb8",
+          "text_preview": "An orchestra plays music with strings, wind instruments and percussion.",
+          "token_ids": [
+            2089,
+            30172,
+            4566,
+            2477,
+            351,
+            12345,
+            28,
+            2251,
+            6907,
+            284,
+            37700,
+            30
+          ],
+          "token_count": 12
+        },
+        {
+          "sample_id": "d10f5646-791f-477c-ac8c-be2e3198f6f6",
+          "text_preview": "A library organizes books so that readers can find useful information.",
+          "token_ids": [
+            49,
+            4971,
+            43049,
+            2905,
+            588,
+            338,
+            4419,
+            416,
+            1042,
+            3465,
+            1096,
+            30
+          ],
+          "token_count": 12
+        }
+      ]
+    },
+    {
+      "recipe": "full_sft",
+      "pins": {
+        "runtime": "modelanvil.smollm2-cpu-sft.v1",
+        "contract_digest": "db3b11b1ad38cf0085c6b494a964d78bd8ad0de12138f6d73664820173524613",
+        "build_digest": "56948a80848b31a448afbc43a8aecd86cabbd19220b7706c6fd102b7e58e9856",
+        "dataset_id": "01a168ca-e3a3-71cc-a025-320070ff6f23",
+        "dataset_digest": "90b90f9548f1c2d55748a5ebfdd1ea90d2d2ec56731453ce04f9c12c7a818fa2",
+        "base_id": "01a168ca-e398-7b97-aead-e8f80da75170",
+        "base_artifact_id": "01a168ca-de68-709d-9765-935f0ba452c8",
+        "base_digest": "f0e87ed37bd46e10f49ec593486995fd74d1b2c70ac6be34496cfbb37dcde1c0",
+        "tokenizer_id": "01a168ca-e394-784e-8874-143d83d11943",
+        "tokenizer_digest": "42d7582f2e64f3d23f2ef188ac9a992925c79d4ca5f83b4dd1a6f9940bff0380",
+        "runner_id": "01a168ca-e3a6-7346-9a87-33e25390dd6a",
+        "runner_digest": "c11e2b1051e30467b48e814a6abf424c2163e16a1c97dff648136f4f05358946",
+        "pool_id": 1,
+        "steps": 3,
+        "config": {
+          "architectures": [
+            "LlamaForCausalLM"
+          ],
+          "attention_bias": false,
+          "attention_dropout": 0,
+          "bos_token_id": 0,
+          "eos_token_id": 0,
+          "hidden_act": "silu",
+          "hidden_size": 576,
+          "initializer_range": 0.041666666666666664,
+          "intermediate_size": 1536,
+          "is_llama_config": true,
+          "max_position_embeddings": 8192,
+          "model_type": "llama",
+          "num_attention_heads": 9,
+          "num_hidden_layers": 30,
+          "num_key_value_heads": 3,
+          "pretraining_tp": 1,
+          "rms_norm_eps": 1e-05,
+          "rope_interleaved": false,
+          "rope_scaling": null,
+          "rope_theta": 100000,
+          "tie_word_embeddings": true,
+          "torch_dtype": "bfloat16",
+          "transformers_version": "4.40.1",
+          "use_cache": true,
+          "vocab_size": 49152,
+          "runtime": "modelanvil.smollm2-cpu-sft.v1"
+        },
+        "optimizer": {
+          "algorithm": "adamw",
+          "learning_rate": 2e-05,
+          "beta1": 0.9,
+          "beta2": 0.999,
+          "epsilon": 1e-08,
+          "weight_decay": 0
+        },
+        "sample_digest": "c64d29c23438f99841ddd3d410b9727239023a9c56768993ec048f1186cc192f",
+        "splits": {
+          "consumed": "train",
+          "train_rows": 4,
+          "excluded_rows": {
+            "test": 3,
+            "validation": 3
+          },
+          "excluded_digest": "84efefc8cec93034c2d9a60bc11f4e75db98d3552aa042cb3ddf62b4b5849252"
+        },
+        "accelerator": {
+          "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+          "device": {
+            "id": "cpu",
+            "backend": "cpu",
+            "torch_device": "cpu",
+            "name": "Apple M5 Pro",
+            "total_memory_bytes": 51539607552
+          },
+          "packages": {
+            "torch": "2.13.0",
+            "transformers": "5.14.0",
+            "safetensors": "0.8.0",
+            "tokenizers": "0.22.2"
+          },
+          "capacity_source": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+        },
+        "worker_id": 1,
+        "chat_sft": false,
+        "recipe": "full_sft"
+      },
+      "requirements": {
+        "runtime": "modelanvil.smollm2-cpu-sft.v1",
+        "recipe": "full_sft",
+        "config": {
+          "architectures": [
+            "LlamaForCausalLM"
+          ],
+          "attention_bias": false,
+          "attention_dropout": 0,
+          "bos_token_id": 0,
+          "eos_token_id": 0,
+          "hidden_act": "silu",
+          "hidden_size": 576,
+          "initializer_range": 0.041666666666666664,
+          "intermediate_size": 1536,
+          "is_llama_config": true,
+          "max_position_embeddings": 8192,
+          "model_type": "llama",
+          "num_attention_heads": 9,
+          "num_hidden_layers": 30,
+          "num_key_value_heads": 3,
+          "pretraining_tp": 1,
+          "rms_norm_eps": 1e-05,
+          "rope_interleaved": false,
+          "rope_scaling": null,
+          "rope_theta": 100000,
+          "tie_word_embeddings": true,
+          "torch_dtype": "bfloat16",
+          "transformers_version": "4.40.1",
+          "use_cache": true,
+          "vocab_size": 49152,
+          "runtime": "modelanvil.smollm2-cpu-sft.v1"
+        },
+        "optimizer": {
+          "algorithm": "adamw",
+          "learning_rate": 2e-05,
+          "beta1": 0.9,
+          "beta2": 0.999,
+          "epsilon": 1e-08,
+          "weight_decay": 0
+        },
+        "cpu_slots": 1,
+        "memory_bytes": 17179869184,
+        "storage_bytes": 8077059440,
+        "checkpoint_count": 3,
+        "storage_assumption": "FP32 weights and Adam moments for the planned checkpoint cadence, plus staging/candidate headroom; shared local host.",
+        "device_memory": {
+          "total_bytes": 51539607552,
+          "required_bytes": 17179869184,
+          "scope": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+        },
+        "gpu_count": 0,
+        "accelerator": {
+          "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+          "device": {
+            "id": "cpu",
+            "backend": "cpu",
+            "torch_device": "cpu",
+            "name": "Apple M5 Pro",
+            "total_memory_bytes": 51539607552
+          },
+          "packages": {
+            "torch": "2.13.0",
+            "transformers": "5.14.0",
+            "safetensors": "0.8.0",
+            "tokenizers": "0.22.2"
+          },
+          "capacity_source": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+        },
+        "precision": "fp32"
+      },
+      "samples": [
+        {
+          "sample_id": "2dd4b9fe-4634-46eb-b139-7e80f3673b9d",
+          "text_preview": "A telescope collects light from distant stars to study the universe.",
+          "token_ids": [
+            49,
+            13776,
+            23805,
+            1420,
+            429,
+            9931,
+            5703,
+            288,
+            1108,
+            260,
+            6128,
+            30
+          ],
+          "token_count": 12
+        },
+        {
+          "sample_id": "f22ca5b7-0052-4879-89ff-82fa53da41f8",
+          "text_preview": "Trees absorb sunlight and grow leaves through photosynthesis.",
+          "token_ids": [
+            46059,
+            6024,
+            8118,
+            284,
+            1075,
+            3711,
+            738,
+            19173,
+            30
+          ],
+          "token_count": 9
+        },
+        {
+          "sample_id": "3e0552da-049c-437e-81b3-03254634ddb8",
+          "text_preview": "An orchestra plays music with strings, wind instruments and percussion.",
+          "token_ids": [
+            2089,
+            30172,
+            4566,
+            2477,
+            351,
+            12345,
+            28,
+            2251,
+            6907,
+            284,
+            37700,
+            30
+          ],
+          "token_count": 12
+        },
+        {
+          "sample_id": "d10f5646-791f-477c-ac8c-be2e3198f6f6",
+          "text_preview": "A library organizes books so that readers can find useful information.",
+          "token_ids": [
+            49,
+            4971,
+            43049,
+            2905,
+            588,
+            338,
+            4419,
+            416,
+            1042,
+            3465,
+            1096,
+            30
+          ],
+          "token_count": 12
+        }
+      ]
+    }
+  ],
+  "run_id": "01a168d0-036c-71c0-aea9-10c73b294722",
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_overflow": false,
+  "page_errors": [],
+  "worker_execution": {
+    "outcome": {
+      "claimed": true,
+      "committed": true,
+      "status": "succeeded"
+    },
+    "status": "completed",
+    "steps": 3,
+    "candidate_id": "01a168d0-b99c-71ec-83c1-a15e681d661b",
+    "weights_sha256": "0ea2dec34fec4638f5f53ad97f541735f04bccfe5c95876aa69791b4d169cb9e",
+    "settled_steps": "3.000000"
+  }
+}

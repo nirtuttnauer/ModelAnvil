@@ -12,7 +12,7 @@ import sys
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--model-dir', type=Path, required=True, help='Verified pinned local SmolLM2 snapshot')
-parser.add_argument('--device', required=True, help='Explicit mps:0, cuda:N, rocm:N or xpu:N')
+parser.add_argument('--device', required=True, help='Explicit cpu, mps:0, cuda:N, rocm:N or xpu:N')
 parser.add_argument('--output', type=Path, required=True, help='New directory for isolated state and evidence')
 parser.add_argument('--recipe', choices=['full_sft', 'lora_adapter', 'qlora_adapter', 'continued_pretraining'], default='full_sft')
 parser.add_argument('--samples', type=Path, help='Optional real versioned canonical text corpus; otherwise use synthetic correctness fixtures')
@@ -37,8 +37,8 @@ from modelanvil.runners.models import TrainingRun
 from modelanvil.jobs.models import Worker,claim_job,JobAttempt,Job
 from modelanvil.jobs.executor import execute_claim
 from modelanvil.runners.training.executor import training_worker_executor
-from modelanvil.runners.training import hf_runtime, mlx_runtime
-runtime = mlx_runtime if args.recipe == 'qlora_adapter' else hf_runtime
+from modelanvil.runners.training import hf_runtime, mlx_runtime, cpu_hf_runtime
+runtime = cpu_hf_runtime if args.device == 'cpu' else mlx_runtime if args.recipe == 'qlora_adapter' else hf_runtime
 checkpoint_bundle, staged_files = runtime.checkpoint_bundle, runtime.staged_files
 from modelanvil.runners.training.hardware import hardware_report
 from modelanvil.budgets.models import UsageEvent,BudgetReservation

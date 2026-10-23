@@ -357,7 +357,7 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
     if recipe_type == 'lora_adapter':
         require_adapter_package()
     if type(steps) is not int or not 1 <= steps <= profile.LIMITS['steps']:
-        raise ValueError(f'GPU full SFT supports 1–{profile.LIMITS["steps"]} optimizer steps.')
+        raise ValueError(f'This pinned training profile supports 1–{profile.LIMITS["steps"]} optimizer steps.')
     if not all([dataset, base, tokenizer, runner, pool]) or any(not check_resource_access(r, project, tenant) for r in [dataset, base, tokenizer, runner, pool]):
         raise ValueError('Select accessible published data, base weights, tokenizer, runner and pool.')
     source = base.metadata.get('source', SOURCE)
@@ -371,7 +371,7 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
         raise ValueError('Select a pinned SmolLM2 snapshot and its matching tokenizer.')
     if (not runner.enabled or runner.manifest != profile.runner_manifest() or runner.digest != digest(profile.runner_manifest())
             or runner.compatibility.get('contract_digest') != profile.CONTRACT_DIGEST or (pool.status != 'active' and (require_capacity or pool.status != 'draining'))):
-        raise ValueError('Enable the exact GPU runtime manifest and activate its worker pool.')
+        raise ValueError('Enable the exact training runtime manifest and activate its worker pool.')
     manifest = base.metadata.get('snapshot_manifest', {})
     artifact = _artifact({'artifact_id': str(base.artifact_manifest_id),
                           'sha256': manifest.get('sha256'), 'byte_size': manifest.get('byte_size')}, tenant, project)
@@ -387,7 +387,7 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
     matching = [w for w in workers if profile.capable_worker(w)]
     # This first local runtime does not share GPUs between independently registered workers.
     if len(workers) != 1 or len(matching) != 1:
-        raise ValueError('Use a dedicated pool with exactly one single-slot GPU worker for this contract.')
+        raise ValueError('Use a dedicated pool with exactly one single-slot worker for this contract.')
     worker = matching[0]
     if large_guided and worker.capabilities['memory_bytes'] < 32 * 1024**3:
         raise ValueError('The 1.7B adapter profile requires at least 32 GiB host memory; use the small guided model.')
@@ -397,9 +397,9 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
     if large_guided and mps_memory()['process_headroom_bytes'] < 12 * 1024**3:
         raise ValueError('The 1.7B adapter profile needs 12 GiB of free process memory headroom. Release GPU allocations before launch.')
     if observed['device']['backend'] != worker.capabilities['gpu_backend']:
-        raise ValueError('GPU worker backend changed; re-register the worker before launch.')
+        raise ValueError('Training worker backend changed; re-register the worker before launch.')
     if require_capacity and worker.slots < 1:
-        raise ValueError('Free the GPU worker slot before launching.')
+        raise ValueError('Free the training worker slot before launching.')
     if require_capacity and not device_available(worker.capabilities['gpu_device']):
         raise ValueError('The selected local device is busy; retry preflight when it finishes.')
     with staged_files(files, tenant, project) as directory:
@@ -535,7 +535,9 @@ def deterministic_updates():
         torch.use_deterministic_algorithms(previous, warn_only=warn_only)
 
 
-def execute_training(run, context):
+def execute_training(run, context, *, profile=None):
+    import sys
+    profile = profile or sys.modules[__name__]
     import torch
     from modelanvil.runners.models import RunnerManifest
     pins = run.hardware_config['pins']
@@ -544,7 +546,7 @@ def execute_training(run, context):
     runner = RunnerManifest.all_objects.get(manifest_id=pins['runner_id'], tenant_id=run.tenant_id)
     inputs = resolve_inputs(dataset=run.dataset_revision, base=run.base_model_version, tokenizer=run.tokenizer_version,
         runner=runner, pool=run.pool, tenant=run.tenant_id, project=run.project_id, steps=run.total_steps, require_capacity=False,
-        recipe_type=run.recipe_type, initialization_seed=run.initialization_seed)
+        recipe_type=run.recipe_type, initialization_seed=run.initialization_seed, profile=profile)
     if inputs['pins'] != pins or context.attempt.worker_id != pins['worker_id']:
         raise ValueError('Pinned GPU inputs, placement or runtime changed; create a new run.')
     latest = run.checkpoints.order_by('-step').first()
@@ -558,15 +560,16 @@ def execute_training(run, context):
     with device_lease(pins['accelerator']['device']['id']), deterministic_updates():
         if not context.heartbeat():
             return
-        if observed_device(pins['accelerator']['device']['id'])!=pins['accelerator']:
+        if profile.observed_device(pins['accelerator']['device']['id'])!=pins['accelerator']:
             raise ValueError('GPU placement changed immediately before allocation.')
         try:
             _execute_updates(run, context, inputs, device, recovery, files, latest)
         finally:
             import gc
             gc.collect()
-            api = getattr(torch, 'cuda' if device.type == 'cuda' else device.type)
-            api.empty_cache()
+            if device.type != 'cpu':
+                api = getattr(torch, 'cuda' if device.type == 'cuda' else device.type)
+                api.empty_cache()
 
 
 def _validation_loss(model, samples, device):
@@ -625,7 +628,7 @@ def _execute_updates(run, context, inputs, device, recovery, files, latest):
                 ids = torch.tensor([sample['token_ids']], device=device, dtype=torch.long)
                 backend = pins['accelerator']['device']['backend']
                 api = getattr(torch, 'cuda' if backend == 'rocm' else backend)
-                if backend != 'mps':
+                if backend not in {'cpu', 'mps'}:
                     api.reset_peak_memory_stats(device)
                 cpu_started, wall_started = time.process_time(), time.perf_counter()
                 optimizer.zero_grad()
@@ -633,7 +636,7 @@ def _execute_updates(run, context, inputs, device, recovery, files, latest):
                 loss.backward()
                 if loss.device != device or not torch.isfinite(loss).item() or any(
                         p.device != device or p.grad is None or not torch.isfinite(p.grad).all().item() for p in trainable):
-                    raise ValueError('Training gradients are non-finite or left the selected GPU.')
+                    raise ValueError('Training gradients are non-finite or left the selected device.')
                 if any(p.grad is not None for p in model.parameters() if not p.requires_grad):
                     raise ValueError('Frozen base parameters unexpectedly acquired gradients.')
                 grad_norm = torch.linalg.vector_norm(torch.stack([torch.linalg.vector_norm(p.grad.detach()) for p in trainable])).item()
@@ -642,17 +645,18 @@ def _execute_updates(run, context, inputs, device, recovery, files, latest):
                 with torch.no_grad():
                     post_loss = model(input_ids=ids, labels=torch.tensor([sample.get('labels', sample['token_ids'])], device=device, dtype=torch.long)).loss.item()
                 if not torch.isfinite(torch.tensor(post_loss)).item():
-                    raise ValueError('GPU update produced non-finite loss.')
-                api.synchronize() if backend == 'mps' else api.synchronize(device)
+                    raise ValueError('Training update produced non-finite loss.')
+                if backend != 'cpu':
+                    api.synchronize() if backend == 'mps' else api.synchronize(device)
                 metrics = {'step': step, 'loss': loss.item(), 'post_update_loss': post_loss, 'sample_id': sample['sample_id'],
                            'training_pairs': sum(label != -100 for label in sample.get('labels', sample['token_ids'])[1:]), 'cpu_seconds': time.process_time() - cpu_started,
                            'engine_wall_seconds': time.perf_counter() - wall_started, 'gpu_backend': backend,
                            'gpu_device': str(device), 'device_residency_checked': True,
                            'gradient_norm': grad_norm, 'trainable_parameters': sum(p.numel() for p in trainable),
                            'total_parameters': sum(p.numel() for p in model.parameters()), 'measured_at': timezone.now().isoformat(),
-                           'peak_allocated_bytes': None if backend == 'mps' else api.max_memory_allocated(device),
-                           'peak_reserved_bytes': None if backend == 'mps' else api.max_memory_reserved(device),
-                           'gpu_allocated_bytes': api.current_allocated_memory() if backend == 'mps' else api.memory_allocated(device)}
+                           'peak_allocated_bytes': None if backend in {'cpu', 'mps'} else api.max_memory_allocated(device),
+                           'peak_reserved_bytes': None if backend in {'cpu', 'mps'} else api.max_memory_reserved(device),
+                           'gpu_allocated_bytes': None if backend == 'cpu' else api.current_allocated_memory() if backend == 'mps' else api.memory_allocated(device)}
                 metrics['tokens_per_second'] = metrics['training_pairs'] / metrics['engine_wall_seconds']
                 metrics['gpu_utilization_percent'] = None  # No portable utilization measurement is available in this runtime.
                 if backend == 'mps':

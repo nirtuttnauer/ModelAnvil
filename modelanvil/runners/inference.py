@@ -88,17 +88,18 @@ def staged_snapshot(files, tenant, project):
 
 
 def snapshot(version, tenant, project):
+    from modelanvil.runners.training import cpu_hf_runtime
     if not check_resource_access(version, project, tenant) or not check_resource_access(version.tokenizer, project, tenant):
         raise ValueError('Model or tokenizer is outside this project.')
     import io
     ref = version.metadata.get('snapshot_manifest')
     if not ref:
         from modelanvil.runners.models import TrainingRun
-        from modelanvil.runners.training import hf_runtime, mlx_runtime
+        from modelanvil.runners.training import hf_runtime, mlx_runtime, cpu_hf_runtime
         from modelanvil.runners.training.registry import runtime_for_run
         from modelanvil.runners.training.runtime import digest
         run = TrainingRun.all_objects.filter(output_model_version=version, tenant_id=tenant,
-            status='completed', job__status='succeeded', base_model_version__architecture_ref__in=[hf_runtime.RUNTIME_ID, mlx_runtime.RUNTIME_ID]).first()
+            status='completed', job__status='succeeded', base_model_version__architecture_ref__in=[cpu_hf_runtime.RUNTIME_ID, hf_runtime.RUNTIME_ID, mlx_runtime.RUNTIME_ID]).first()
         if run is None or not check_resource_access(run, project, tenant) or run.tokenizer_version_id != version.tokenizer_id:
             raise ValueError('Import a snapshot or complete a supported transformer training run before inference.')
         checkpoint = run.checkpoints.filter(step=version.metadata.get('selected_checkpoint_step', run.total_steps)).first()
@@ -123,12 +124,12 @@ def snapshot(version, tenant, project):
     copy_verified(ref, tenant, project, target)
     try:
         value = json.loads(target.getvalue())
-        if isinstance(value, dict) and set(value) == {'source', 'files'} and version.metadata.get('managed_local'):
+        if isinstance(value, dict) and set(value) == {'source', 'files'} and (version.metadata.get('managed_local') or version.architecture_ref == cpu_hf_runtime.RUNTIME_ID):
             from modelanvil.runners.training import hf_runtime
             source = value['source']
-            expected = hf_runtime.LARGE_GUIDED_FILE_HASHES if source == hf_runtime.LARGE_GUIDED_SOURCE else hf_runtime.GUIDED_FILE_HASHES if source == hf_runtime.GUIDED_SOURCE else None
+            expected = cpu_hf_runtime.FILE_HASHES if version.architecture_ref == cpu_hf_runtime.RUNTIME_ID and source == cpu_hf_runtime.SOURCE else hf_runtime.LARGE_GUIDED_FILE_HASHES if source == hf_runtime.LARGE_GUIDED_SOURCE else hf_runtime.GUIDED_FILE_HASHES if source == hf_runtime.GUIDED_SOURCE else None
             files = value['files']
-            if (version.architecture_ref != hf_runtime.RUNTIME_ID or source != version.metadata.get('source') or expected is None
+            if (version.architecture_ref not in (hf_runtime.RUNTIME_ID, cpu_hf_runtime.RUNTIME_ID) or source != version.metadata.get('source') or expected is None
                     or not isinstance(files, dict) or set(files) != set(expected)
                     or any(not isinstance(files[name], dict) or files[name].get('sha256') != sha for name, sha in expected.items())):
                 raise ValueError()
