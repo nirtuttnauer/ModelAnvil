@@ -3906,7 +3906,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Scoped result"
+            "description": "Pinned immutable import plan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelImportPlan"
+                }
+              }
+            }
           },
           "400": {
             "description": "Unsupported or invalid inputs"
@@ -12637,6 +12644,79 @@
           }
         },
         "description": "Exact-match fraction includes failures in the denominator and declares completion coverage. This bounded reference experiment does not establish general model quality or injection safety."
+      },
+      "ModelImportPlan": {
+        "type": "object",
+        "properties": {
+          "repo_id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{40}$"
+          },
+          "architecture": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "parameters_count": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "byte_size": {
+            "type": "integer"
+          },
+          "license": {
+            "type": "string"
+          },
+          "gated": {
+            "type": "boolean"
+          },
+          "files": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "byte_size": {
+                  "type": "integer"
+                },
+                "sha256": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "training_supported": {
+            "type": "boolean"
+          },
+          "runtime_actions": {
+            "type": "object",
+            "properties": {
+              "chat": {
+                "enum": [
+                  "load_validation_required",
+                  "unsupported_in_current_runtime",
+                  "requires_cpu_llama_cpp",
+                  "requires_native_mlx_runtime"
+                ]
+              },
+              "training": {
+                "enum": [
+                  "pinned_recipe_supported",
+                  "unsupported_in_current_recipe"
+                ]
+              }
+            }
+          }
+        },
+        "description": "Server-reinspected immutable source metadata and current bounded runtime eligibility. Import verifies source/container bytes and supported text tensor shapes; no production or successful model-load qualification is inferred."
       }
     }
   }

@@ -153,6 +153,16 @@ class ModelWorkspaceTests(TransactionTestCase):
         self.assertEqual(self.import_model().status_code, 201)
         self.assertEqual(self.import_model(name='Different name').status_code, 400)
 
+    def test_import_refuses_safe_but_missing_or_mismatched_tensors(self):
+        import torch
+        from safetensors.torch import load_file, save
+        original=load_file(str(Path(self.fixture.name)/'model.safetensors'))
+        for tensors in [dict(list(original.items())[1:]),{**original,next(iter(original)):torch.zeros((1,1))}]:
+            ref=_store(io.BytesIO(save(tensors)),tenant=self.tenant.pk,project=self.project.pk,name='model.safetensors')
+            failed=self.import_model(files={**self.files,'model.safetensors':ref})
+            self.assertEqual(failed.status_code,400,failed.content)
+            self.assertEqual(ModelVersion.all_objects.count(),0)
+
     def test_browser_upload_registers_verified_bytes_and_rejects_invalid_configuration(self):
         from django.core.files.uploadedfile import SimpleUploadedFile
         refs = {}
@@ -181,6 +191,7 @@ class ModelWorkspaceTests(TransactionTestCase):
                 'files': {n: {'byte_size': r['byte_size'], 'sha256': r['sha256']} for n, r in self.files.items()}}
         item = launch_import(plan, name='Downloaded', tenant=self.tenant.pk, project=self.project, pool=pool,
                              accepted_license='apache-2.0', idempotency_key='hub-1')
+        self.assertEqual(item.job.project_id,self.project.pk)
         claim = claim_job(worker)
         self.assertIsNotNone(claim)
         with patch('modelanvil.runners.model_catalog.download_file', side_effect=lambda item, name, pin, context: self.files[name]):
@@ -255,6 +266,13 @@ class ModelWorkspaceTests(TransactionTestCase):
         self.assertEqual(other.get(path).status_code, 404)
         self.assertEqual(other.post('/api/v1/inference/chat/completions', body, format='json').status_code, 404)
         self.assertEqual(other.get('/api/v1/inference/models').data['data'], [])
+
+    def test_hub_credentials_are_explicitly_project_scoped(self):
+        from modelanvil.runners.model_catalog import hub_token
+        scope=f'{self.tenant.pk}:{self.project.pk}'
+        with patch.dict('os.environ',{'HF_TOKEN':'ambient-test-credential'}), override_settings(MODELANVIL_HUB_TOKENS={scope:'scoped-test-credential'}):
+            self.assertEqual(hub_token(self.tenant.pk,self.project.pk),'scoped-test-credential')
+            self.assertIs(hub_token(self.tenant.pk,self.other.pk),False)
 
     def test_download_resumes_partial_bytes_and_rejects_checksum_changes(self):
         from types import SimpleNamespace

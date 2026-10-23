@@ -16,6 +16,7 @@ export function validateModelFiles(files: { name: string; size: number }[], veri
   const names = [...Object.keys(verified), ...files.map(file => file.name)];
   if (names.length > 64 || new Set(names).size !== names.length) throw new Error('A selected filename is already verified or duplicated. Remove its saved reference before replacing it.');
   if (files.some(file => !/^[a-zA-Z0-9_.-]{1,180}$/.test(file.name) || file.name === '..' || file.size <= 0 || file.size > 8 * 1024**3)) throw new Error('Use supported filenames of 1 byte–8 GiB.');
+  if (files.reduce((sum, file) => sum + file.size, 0) + Object.values(verified).reduce((sum, ref) => sum + ref.byte_size, 0) > 8 * 1024**3) throw new Error('A snapshot supports at most 8 GiB total, including previously verified files.');
   if (names.length === 1 && names[0].endsWith('.gguf')) return;
   if (!names.includes('config.json') || !names.some(name => name.endsWith('.safetensors')) ||
       !(names.includes('tokenizer.json') || names.includes('tokenizer.model') || (names.includes('vocab.json') && names.includes('merges.txt')))) {
