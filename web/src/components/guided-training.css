@@ -64,3 +64,8 @@
 .welcome-logo-dark { display: none; }
 :root[data-theme="dark"] .welcome-logo-light { display: none; }
 :root[data-theme="dark"] .welcome-logo-dark { display: inline-block; }
+
+.team-access ul { padding: 0; list-style: none; }
+.team-access li { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; padding: .75rem 0; border-bottom: 1px solid var(--border); }
+.team-access li span { flex: 1 1 16rem; overflow-wrap: anywhere; min-width: 0; }
+.team-access input[readonly] { max-width: 100%; }

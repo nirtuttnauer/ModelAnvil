@@ -1,7 +1,9 @@
+import { TeamAccess } from '../components/TeamAccess';
+import { useReviewOnly } from '../components/Access';
 import { Identifier } from '../components/Identifier';
 import { LocalMeasurements } from '../components/LocalMeasurements';
 import { PrivacySettings } from '../components/PrivacySettings';
-import { Badge, Button, Card, Field, MetricSummary } from '../components/ui';
+import { Badge, Button, Card, MetricSummary } from '../components/ui';
 import { useCallback, useEffect, useState } from 'react';
 import {
   ArrowRight,
@@ -111,11 +113,7 @@ export function OverviewPage({
   const [usage, setUsage] = useState<UsageSummaryResponse | null>(null);
   const [usageError, setUsageError] = useState<string | null>(null);
   const [usageLoading, setUsageLoading] = useState(true);
-  const [canInvite, setCanInvite] = useState(false);
-  const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteCode, setInviteCode] = useState('');
-  const [inviteError, setInviteError] = useState('');
-  const [inviteBusy, setInviteBusy] = useState(false);
+  const reviewOnly = useReviewOnly();
 
   const load = useCallback(
     async (signal?: AbortSignal) => {
@@ -199,26 +197,6 @@ export function OverviewPage({
     return () => c.abort();
   }, [token, refreshKey]);
 
-  useEffect(() => {
-    if (token !== 'session') return;
-    const controller = new AbortController();
-    apiRequest<{ can_invite?: boolean }>('/api/v1/accounts/status/', token, { signal: controller.signal })
-      .then(status => { if (!controller.signal.aborted) setCanInvite(!!status.can_invite); })
-      .catch(() => { if (!controller.signal.aborted) setCanInvite(false); });
-    return () => controller.abort();
-  }, [token, refreshKey]);
-
-  async function inviteTeammate() {
-    setInviteBusy(true); setInviteError(''); setInviteCode('');
-    try {
-      const result = await apiRequest<{ invite_code: string }>('/api/v1/accounts/invitations/', token, {
-        method: 'POST', body: JSON.stringify({ email: inviteEmail.trim() }),
-      });
-      setInviteCode(result.invite_code);
-    } catch (reason) { setInviteError(errorMessage(reason)); }
-    finally { setInviteBusy(false); }
-  }
-
   const completedEvaluations = evaluations.filter(item => item.status === 'completed');
   const realTraining = training.filter(run => run.execution_evidence?.level === 'integrated_execution' && run.runtime?.execution_mode !== 'simulation' && !run.runtime?.setup_check);
   const activeTraining = realTraining.find(run => ['pending', 'running'].includes(run.status));
@@ -231,14 +209,12 @@ export function OverviewPage({
     : recordedDecision ? { title: 'A decision is recorded', body: 'Local measurements below include that accept or reject. A downloaded model is not deployed.', label: 'Review the comparison', page: 'Evaluation' }
     : { title: 'Fine-tune an LLM with your own dataset', body: 'The guided flow prepares a pretrained model and local compute for you.', label: 'Start guided fine-tuning', page: 'Training' };
 
+  if (reviewOnly) return <Card className="panel"><div className="panel-body"><h2>Review workspace evidence</h2><p>Inspect workspace evidence here. Your assigned role determines whether you can submit reviews and record decisions.</p><div className="actions"><Button onClick={() => onNavigate('Annotation')}>Review labels</Button><Button onClick={() => onNavigate('Evaluation')}>Review evaluations</Button></div></div></Card>;
+
   return (
     <>
       <Card className="panel"><div className="panel-body"><h2>{next.title}</h2><p>{next.body}</p><Button className="primary" onClick={() => onNavigate(next.page)}>{next.label}</Button></div></Card>
-      {canInvite && <Card className="panel"><div className="panel-body"><h2>Invite one teammate</h2><p>They can review the candidate and record the accept or reject decision. This workspace can have one teammate.</p>
-        <form className="guided-form" onSubmit={event => { event.preventDefault(); void inviteTeammate(); }}><label>Teammate email<Field type="email" required value={inviteEmail} disabled={inviteBusy} onChange={event => setInviteEmail(event.target.value)} /></label><Button className="primary" disabled={inviteBusy || !inviteEmail.trim()}>{inviteBusy ? 'Creating invitation…' : 'Create invitation'}</Button></form>
-        {inviteError && <p role="alert">{inviteError}</p>}
-        {inviteCode && <p role="status">Share this one-time code. It is shown only now: <strong>{inviteCode}</strong></p>}
-      </div></Card>}
+      <TeamAccess token={token} refreshKey={refreshKey} />
       <OnboardingChecklist
         token={token}
         refreshKey={refreshKey}

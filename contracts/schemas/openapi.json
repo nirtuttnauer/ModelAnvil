@@ -7458,6 +7458,259 @@
           }
         }
       }
+    },
+    "/accounts/access/": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "operationId": "accountAccess",
+        "summary": "Read current authenticated role (personal keys are capped by current membership)",
+        "security": [
+          {
+            "BrowserSession": [],
+            "CSRFToken": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Read current authenticated role (personal keys are capped by current membership)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "owner",
+                        "admin",
+                        "manager",
+                        "engineer",
+                        "reviewer",
+                        "viewer",
+                        "worker"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role or CSRF rejected"
+          }
+        }
+      }
+    },
+    "/accounts/invitations/": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "operationId": "listInvitations",
+        "summary": "Owner-only member and recent invitation list; never includes secret or hash",
+        "security": [
+          {
+            "BrowserSession": [],
+            "CSRFToken": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Owner-only member and recent invitation list; never includes secret or hash",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "members": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "invitations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role or CSRF rejected"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "operationId": "issueInvitation",
+        "summary": "Owner issues one 72-hour, single-use reviewer invitation; secret returned once with no-store",
+        "security": [
+          {
+            "BrowserSession": [],
+            "CSRFToken": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Owner issues one 72-hour, single-use reviewer invitation; secret returned once with no-store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "invite_code": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "const": "reviewer"
+                    },
+                    "expires_in_hours": {
+                      "const": 72
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role or CSRF rejected"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/invitations/{invitation_id}/": {
+      "parameters": [
+        {
+          "name": "invitation_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "delete": {
+        "tags": [
+          "Identity"
+        ],
+        "operationId": "revokeInvitation",
+        "summary": "Owner revokes an unused invitation in the current workspace",
+        "security": [
+          {
+            "BrowserSession": [],
+            "CSRFToken": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Owner revokes an unused invitation in the current workspace"
+          },
+          "403": {
+            "description": "Insufficient role or CSRF rejected"
+          }
+        }
+      }
+    },
+    "/accounts/invitations/accept/": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "operationId": "acceptInvitation",
+        "summary": "Create a new reviewer account using the matching email and a valid unused code",
+        "security": [
+          {
+            "CSRFToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Create a new reviewer account using the matching email and a valid unused code",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrowserAccountSession"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role or CSRF rejected"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BrowserAccountInput"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "code"
+                    ],
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "minLength": 8,
+                        "maxLength": 128,
+                        "writeOnly": true
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -7802,6 +8055,7 @@
               "admin",
               "manager",
               "engineer",
+              "reviewer",
               "viewer",
               "worker"
             ]
@@ -7850,6 +8104,7 @@
               "admin",
               "manager",
               "engineer",
+              "reviewer",
               "viewer",
               "worker"
             ],
@@ -7911,6 +8166,7 @@
               "admin",
               "manager",
               "engineer",
+              "reviewer",
               "viewer",
               "worker"
             ]
@@ -7946,6 +8202,7 @@
               "admin",
               "manager",
               "engineer",
+              "reviewer",
               "viewer",
               "worker"
             ]
@@ -7966,6 +8223,7 @@
               "admin",
               "manager",
               "engineer",
+              "reviewer",
               "viewer",
               "worker"
             ]
@@ -11614,6 +11872,18 @@
           "organization": {
             "type": "string",
             "format": "uuid"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "owner",
+              "admin",
+              "manager",
+              "engineer",
+              "reviewer",
+              "viewer",
+              "worker"
+            ]
           }
         }
       },

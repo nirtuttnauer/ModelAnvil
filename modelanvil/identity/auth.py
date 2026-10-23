@@ -59,12 +59,13 @@ class ApiKeyAuthentication(authentication.BaseAuthentication):
         if not tenant.is_active():
             raise exceptions.AuthenticationFailed("Tenant is not active.")
 
-        if cookie:
+        if cookie or key.created_by_id:
             from modelanvil.identity.models import Membership
             membership = Membership.objects.filter(tenant=tenant, user=key.created_by, user__is_active=True).first()
             if membership is None:
                 raise exceptions.AuthenticationFailed("Workspace access is no longer available.")
-            key.role = membership.role
+            if cookie or not role_at_least(membership.role, key.role):
+                key.role = membership.role
 
         # Resolve project scope from key or request header
         project_id = key.project_id

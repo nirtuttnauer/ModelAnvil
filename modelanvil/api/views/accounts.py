@@ -20,7 +20,7 @@ from rest_framework.views import APIView
 from modelanvil.core.tenancy import get_active_project, get_active_tenant
 from modelanvil.identity.auth import TenantRBAC
 from modelanvil.identity.models import (
-    AccountAction, ApiKey, Membership, Project, Role, Team, Tenant, User, generate_api_key, hash_api_key, role_at_least,
+    AccountAction, ApiKey, Membership, Project, Role, Team, Tenant, User, generate_api_key, hash_api_key,
 )
 
 COOKIE = 'modelanvil_session'
@@ -37,7 +37,7 @@ def browser_session(request, user, membership):
     ApiKey.objects.create(tenant=membership.tenant, role=membership.role, created_by=user,
                           name='Browser session', secret_hash=hashed, expires_at=timezone.now() + timedelta(hours=24))
     rotate_token(request)
-    response = Response({'token': 'session', 'name': user.name, 'organization': str(membership.tenant_id)})
+    response = Response({'token': 'session', 'name': user.name, 'organization': str(membership.tenant_id), 'role': membership.role})
     response.set_cookie(COOKIE, secret, max_age=86400, httponly=True, secure=not settings.DEBUG,
                         samesite='Lax', path='/api/v1/')
     response['Cache-Control'] = 'no-store'
@@ -110,7 +110,10 @@ class AccountSignIn(AccountSignUp):
 
 def issue_action(purpose, email, *, tenant=None, project=None, role=Role.ENGINEER, hours=1):
     secret = secrets.token_urlsafe(24)
-    AccountAction.objects.filter(purpose=purpose, email=email.lower(), used_at__isnull=True).update(used_at=timezone.now())
+    prior = AccountAction.objects.filter(purpose=purpose, email=email.lower(), used_at__isnull=True)
+    if purpose == AccountAction.Purpose.INVITATION:
+        prior = prior.filter(tenant=tenant)
+    prior.update(revoked_at=timezone.now())
     AccountAction.objects.create(purpose=purpose, email=email.lower(), secret_hash=hash_api_key(secret),
         tenant=tenant, project=project, role=role, expires_at=timezone.now() + timedelta(hours=hours))
     return secret
@@ -118,7 +121,7 @@ def issue_action(purpose, email, *, tenant=None, project=None, role=Role.ENGINEE
 
 def open_action(purpose, email, secret):
     action = AccountAction.objects.filter(purpose=purpose, email=email.lower(), secret_hash=hash_api_key(secret),
-        used_at__isnull=True, expires_at__gt=timezone.now()).first()
+        used_at__isnull=True, revoked_at__isnull=True, expires_at__gt=timezone.now()).first()
     if action is None:
         raise serializers.ValidationError('That code is invalid or expired. Request a new one.')
     return action
@@ -126,7 +129,7 @@ def open_action(purpose, email, secret):
 
 def consume_action(action):
     now = timezone.now()
-    if AccountAction.objects.filter(pk=action.pk, used_at__isnull=True, expires_at__gt=now).update(used_at=now) != 1:
+    if AccountAction.objects.filter(pk=action.pk, used_at__isnull=True, revoked_at__isnull=True, expires_at__gt=now).update(used_at=now) != 1:
         raise serializers.ValidationError('That code is invalid or expired. Request a new one.')
 
 
@@ -186,27 +189,69 @@ class AccountPasswordResetConfirm(APIView):
 
 
 class AccountInvite(APIView):
+    http_method_names = ["get", "post", "head", "options"]
     permission_classes = [permissions.IsAuthenticated, TenantRBAC]
     required_role = Role.OWNER
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = 'accounts'
 
+    def get(self, request):
+        tenant = get_active_tenant()
+        invitations = AccountAction.objects.filter(tenant_id=tenant, purpose=AccountAction.Purpose.INVITATION).order_by('-created_at')[:20]
+        members = Membership.objects.filter(tenant_id=tenant).select_related('user').order_by('-role_rank')
+        now = timezone.now()
+        response = Response({'invitations': [{'id': str(a.pk), 'email': a.email, 'role': a.role,
+            'expires_at': a.expires_at, 'status': 'revoked' if a.revoked_at else 'accepted' if a.used_at else 'expired' if a.expires_at <= now else 'pending'} for a in invitations],
+            'members': [{'id': str(m.pk), 'email': m.user.email, 'role': m.role} for m in members]})
+        response['Cache-Control'] = 'no-store'
+        return response
+
+    @transaction.atomic
     def post(self, request):
         email = serializers.EmailField().run_validation(request.data.get('email', '')).lower()
         tenant_id = get_active_tenant()
+        tenant = Tenant.objects.select_for_update().get(pk=tenant_id)
         project_id = get_active_project()
         project = Project.objects.filter(pk=project_id, tenant_id=tenant_id).first() if project_id else Project.objects.filter(tenant_id=tenant_id).order_by('created_at').first()
         if project is None:
             raise serializers.ValidationError('Create a project before inviting a teammate.')
-        if User.objects.filter(email=email).exists() or Membership.objects.filter(tenant_id=tenant_id, user__email=email).exists():
+        if User.objects.filter(email=email).exists():
             raise serializers.ValidationError('That email already has a workspace account.')
         if Membership.objects.filter(tenant_id=tenant_id).exclude(role=Role.OWNER).exists() or AccountAction.objects.filter(
-                purpose=AccountAction.Purpose.INVITATION, tenant_id=tenant_id, used_at__isnull=True, expires_at__gt=timezone.now()).exists():
-            raise serializers.ValidationError('This workspace already has a teammate invitation. One teammate can review and record the decision.')
-        code = issue_action(AccountAction.Purpose.INVITATION, email, tenant=Tenant.objects.get(pk=project.tenant_id), project=project, role=Role.ENGINEER, hours=72)
-        return Response({'email': email, 'invite_code': code, 'role': Role.ENGINEER,
-            'delivery': 'Share this one-time code. Your teammate can review results and record the accept or reject decision.',
+                purpose=AccountAction.Purpose.INVITATION, tenant_id=tenant_id, used_at__isnull=True,
+                revoked_at__isnull=True, expires_at__gt=timezone.now()).exists():
+            raise serializers.ValidationError('This workspace already has a teammate or pending invitation. Revoke an unused invitation before creating another.')
+        code = issue_action(AccountAction.Purpose.INVITATION, email, tenant=tenant, project=project, role=Role.REVIEWER, hours=72)
+        response = Response({'email': email, 'invite_code': code, 'role': Role.REVIEWER,
+            'delivery': 'Share this one-time code privately. The reviewer can inspect workspace evidence and submit reviews, without launching jobs or managing access.',
             'expires_in_hours': 72}, status=201)
+        response['Cache-Control'] = 'no-store'
+        return response
+
+    @transaction.atomic
+    def delete(self, request, invitation_id):
+        Tenant.objects.select_for_update().get(pk=get_active_tenant())
+        action = AccountAction.objects.filter(pk=invitation_id, tenant_id=get_active_tenant(), purpose=AccountAction.Purpose.INVITATION).first()
+        if action is None:
+            return Response(status=404)
+        if action.used_at:
+            raise serializers.ValidationError('This invitation was accepted. Remove the membership to revoke access.')
+        action.revoked_at = timezone.now()
+        action.save(update_fields=['revoked_at'])
+        return Response(status=204)
+
+
+class AccountInviteRevoke(AccountInvite):
+    http_method_names = ["delete", "options"]
+
+
+class AccountAccess(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        response = Response({'role': request.modelanvil_role})
+        response['Cache-Control'] = 'no-store'
+        return response
 
 
 @method_decorator(csrf_protect, name='dispatch')
@@ -222,15 +267,16 @@ class AccountInviteAccept(APIView):
         password = serializers.CharField(trim_whitespace=False, min_length=1, max_length=256).run_validation(request.data.get('password', ''))
         secret = serializers.CharField(trim_whitespace=False, min_length=8, max_length=128).run_validation(request.data.get('code', ''))
         action = open_action(AccountAction.Purpose.INVITATION, email, secret)
-        if not action.tenant_id or not action.tenant.is_active() or not role_at_least(action.role, Role.ENGINEER):
+        if not action.tenant_id or not action.tenant.is_active() or action.role not in (Role.REVIEWER, Role.ENGINEER):
             raise serializers.ValidationError('That invitation is no longer available.')
         try:
             with transaction.atomic():
+                Tenant.objects.select_for_update().get(pk=action.tenant_id)
                 consume_action(action)
                 user = User(email=email, name=name or 'Teammate')
                 apply_password(user, password)
                 user.save()
-                membership = Membership.objects.create(tenant=action.tenant, user=user, role=Role.ENGINEER)
+                membership = Membership.objects.create(tenant=action.tenant, user=user, role=Role.REVIEWER)
         except IntegrityError:
             raise serializers.ValidationError('That email already has an account.') from None
         return browser_session(request, user, membership)

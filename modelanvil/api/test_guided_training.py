@@ -163,7 +163,7 @@ class AccountTests(TestCase):
         invited = self.client.post('/api/v1/accounts/invitations/', {'email': 'teammate@example.invalid'},
             format='json', HTTP_X_CSRFTOKEN=self.csrf())
         self.assertEqual(invited.status_code, 201, invited.data)
-        self.assertEqual(invited.data['role'], Role.ENGINEER)
+        self.assertEqual(invited.data['role'], Role.REVIEWER)
         again = self.client.post('/api/v1/accounts/invitations/', {'email': 'second@example.invalid'},
             format='json', HTTP_X_CSRFTOKEN=self.csrf())
         self.assertEqual(again.status_code, 400, again.json())
@@ -177,7 +177,7 @@ class AccountTests(TestCase):
             'password': 'teammate-testing-password-937!'}, format='json', HTTP_X_CSRFTOKEN=guest.cookies['csrftoken'].value)
         self.assertEqual(accepted.status_code, 200, accepted.data)
         membership = Membership.objects.get(user__email='teammate@example.invalid')
-        self.assertEqual(membership.role, Role.ENGINEER)
+        self.assertEqual(membership.role, Role.REVIEWER)
         self.assertEqual(membership.tenant_id, Membership.objects.get(user__email='owner@example.invalid').tenant_id)
         self.assertEqual(guest.get('/api/v1/accounts/status/').data['can_invite'], False)
 

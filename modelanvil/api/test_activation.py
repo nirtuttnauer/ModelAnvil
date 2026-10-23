@@ -45,6 +45,17 @@ class ActivationTests(TestCase):
         data = {'event_id': str(uuid.uuid4()), 'session_id': str(uuid.uuid4()), 'kind': 'workspace_opened', **values}
         return self.client.post('/api/v1/activation/events/', data, format='json', **self.headers)
 
+    def test_reviewer_can_record_a_measured_decision_but_viewer_cannot(self):
+        from rest_framework.test import APIClient
+        secret, hashed = generate_api_key()
+        key = ApiKey.objects.create(tenant=self.tenant, name='Reviewer', role=Role.VIEWER, secret_hash=hashed)
+        client = APIClient(); client.credentials(HTTP_AUTHORIZATION=f'Bearer {secret}')
+        self.assertEqual(client.post(self.url, {'outcome': 'reject'}, format='json', **self.headers).status_code, 403)
+        key.role = Role.REVIEWER; key.save()
+        response = client.post(self.url, {'outcome': 'reject'}, format='json', **self.headers)
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertFalse(response.data['production_qualified'])
+
     def test_actual_decision_is_immutable_idempotent_and_does_not_deploy(self):
         self.assertEqual(self.report()['weekly_improvement_cycles'], 0)
         opened = self.event()

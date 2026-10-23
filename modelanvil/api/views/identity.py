@@ -42,6 +42,15 @@ from modelanvil.identity.models import (
 )
 
 
+def remove_membership(membership):
+    with transaction.atomic():
+        Tenant.objects.select_for_update().get(pk=membership.tenant_id)
+        if membership.role == Role.OWNER:
+            raise serializers.ValidationError('Owner access cannot be removed here.')
+        ApiKey.objects.filter(tenant_id=membership.tenant_id, created_by_id=membership.user_id).update(is_active=False)
+        membership.delete()
+
+
 # ---------------------------------------------------------------------------
 # Shared RBAC-aware ViewSet base
 # ---------------------------------------------------------------------------
@@ -157,7 +166,8 @@ class UserViewSet(_TenantRBACViewSet):
     def destroy(self, request, *args: object, **kwargs: object) -> Response:
         tenant = _active_tenant()
         user = self.get_object()
-        Membership.objects.filter(tenant_id=tenant, user_id=user.id).delete()
+        membership = Membership.objects.get(tenant_id=tenant, user_id=user.id)
+        remove_membership(membership)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -205,6 +215,8 @@ class ApiKeyViewSet(_TenantRBACViewSet):
         tenant = _active_tenant()
         ser = ApiKeyCreateSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
+        if not role_at_least(request.modelanvil_role, ser.validated_data["role"]):
+            raise serializers.ValidationError({"role": "Cannot grant a role above your own."})
         secret, secret_hash = generate_api_key()
         project_id = ser.validated_data.get("project")
         if project_id:
@@ -307,7 +319,7 @@ class MembershipViewSet(_TenantRBACViewSet):
         return Response(MembershipSerializer(instance).data)
 
     def destroy(self, request, *args: object, **kwargs: object) -> Response:
-        self.get_object().delete()
+        remove_membership(self.get_object())
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

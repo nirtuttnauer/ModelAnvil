@@ -1,0 +1,7 @@
+# Private-team access
+
+Create an account on a self-service-enabled installation to provision a workspace, team and first project. The owner opens Overview → Team access, enters the reviewer's email and shares the one-time code privately. The invitee chooses **Have an invitation code?** on the welcome screen, supplies the matching email, name and new password, then joins. A code expires after 72 hours, works once and is shown only when issued. Pending invitations can be revoked and replaced. No email delivery is sent by this flow.
+
+A workspace supports one non-owner teammate or pending invitation. Reviewers can inspect its projects and evidence, submit or escalate labels and record an evaluation decision. They cannot launch jobs, publish batches, change memberships or deploy models. Owners manage invitations and can remove the teammate in Team access. Removal immediately invalidates existing browser and personal API credentials for the workspace. Service credentials without a user remain separate operator-managed credentials.
+
+Invitations require an unused account email; linking an existing account or inviting a reviewer to only one project is not supported. Production self-service creation requires `MODELANVIL_SELF_SERVICE_ACCOUNTS=1` in a configured HTTPS deployment. See [TASK-49 evidence](verification/task49-team-access-2026-10-23/report.md) for actual local two-user, keyboard, mobile, permission and lifecycle checks.
