@@ -1,0 +1,202 @@
+{
+  "tenant_id": "01a16949-eb63-7b27-a127-3fb0b1f8e3f4",
+  "project_id": "01a16949-eb64-7da6-a8de-7cacdd297a0b",
+  "training_run": "01a16949-f6b8-7e01-9ed7-7fadfcffb06e",
+  "base": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+  "candidate": "01a1694a-14be-773b-8f10-8cca819bba8b",
+  "metrics": [
+    {
+      "step": 1,
+      "loss": 9.084617614746094,
+      "post_update_loss": 7.663388729095459,
+      "sample_id": "1deeaeab-b1fc-4921-a1c8-e5038b0a0e73",
+      "training_pairs": 6,
+      "cpu_seconds": 0.5194099999999997,
+      "engine_wall_seconds": 0.5226707499996337,
+      "gpu_backend": "cpu",
+      "gpu_device": "cpu",
+      "device_residency_checked": true,
+      "gradient_norm": 164.74232482910156,
+      "trainable_parameters": 134515008,
+      "total_parameters": 134515008,
+      "measured_at": "2026-10-23T15:03:38.534548+00:00",
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "gpu_allocated_bytes": null,
+      "tokens_per_second": 11.479502153132168,
+      "gpu_utilization_percent": null,
+      "updates_since_checkpoint": 1
+    },
+    {
+      "step": 2,
+      "loss": 5.662904739379883,
+      "post_update_loss": 4.974298000335693,
+      "sample_id": "f8ec5198-568c-453f-adf7-947d211212e2",
+      "training_pairs": 5,
+      "cpu_seconds": 0.3744530000000008,
+      "engine_wall_seconds": 0.3746522910000749,
+      "gpu_backend": "cpu",
+      "gpu_device": "cpu",
+      "device_residency_checked": true,
+      "gradient_norm": 173.9940185546875,
+      "trainable_parameters": 134515008,
+      "total_parameters": 134515008,
+      "measured_at": "2026-10-23T15:03:40.625620+00:00",
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "gpu_allocated_bytes": null,
+      "tokens_per_second": 13.345707793894153,
+      "gpu_utilization_percent": null,
+      "updates_since_checkpoint": 1
+    },
+    {
+      "step": 3,
+      "loss": 7.092765808105469,
+      "post_update_loss": 6.4545979499816895,
+      "sample_id": "764f1e7d-2088-4155-968b-11901128609c",
+      "training_pairs": 4,
+      "cpu_seconds": 0.3491489999999988,
+      "engine_wall_seconds": 0.34930837499996414,
+      "gpu_backend": "cpu",
+      "gpu_device": "cpu",
+      "device_residency_checked": true,
+      "gradient_norm": 272.1990966796875,
+      "trainable_parameters": 134515008,
+      "total_parameters": 134515008,
+      "measured_at": "2026-10-23T15:03:42.535509+00:00",
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "gpu_allocated_bytes": null,
+      "tokens_per_second": 11.451199817354539,
+      "gpu_utilization_percent": null,
+      "updates_since_checkpoint": 1
+    }
+  ],
+  "pins": {
+    "runtime": "modelanvil.smollm2-cpu-sft.v1",
+    "contract_digest": "db3b11b1ad38cf0085c6b494a964d78bd8ad0de12138f6d73664820173524613",
+    "build_digest": "56948a80848b31a448afbc43a8aecd86cabbd19220b7706c6fd102b7e58e9856",
+    "dataset_id": "01a16949-f3ad-7f51-8b76-f60fe9b48513",
+    "dataset_digest": "0b742ab7d391a2fec1521d7fff16c51767345a4942a59e0d54616d36a29f0dcb",
+    "base_id": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+    "base_artifact_id": "01a16949-ecc1-7861-9ac4-31cf886bdb63",
+    "base_digest": "3f5c8e8e8702adbca443b4e1dc106fd35f5df8f11974ec5697f83696f9e36a70",
+    "tokenizer_id": "01a16949-f3a3-7d7a-994e-41625e989fec",
+    "tokenizer_digest": "ed6eb2fc370e2a61685185c2a7fc33221746c15cc8de3f832484596cdc09ec94",
+    "runner_id": "01a16949-f3af-7ca9-b075-9f973153a1a9",
+    "runner_digest": "c11e2b1051e30467b48e814a6abf424c2163e16a1c97dff648136f4f05358946",
+    "pool_id": 1,
+    "steps": 3,
+    "config": {
+      "architectures": [
+        "LlamaForCausalLM"
+      ],
+      "attention_bias": false,
+      "attention_dropout": 0.0,
+      "bos_token_id": 0,
+      "eos_token_id": 0,
+      "hidden_act": "silu",
+      "hidden_size": 576,
+      "initializer_range": 0.041666666666666664,
+      "intermediate_size": 1536,
+      "is_llama_config": true,
+      "max_position_embeddings": 8192,
+      "model_type": "llama",
+      "num_attention_heads": 9,
+      "num_hidden_layers": 30,
+      "num_key_value_heads": 3,
+      "pretraining_tp": 1,
+      "rms_norm_eps": 1e-05,
+      "rope_interleaved": false,
+      "rope_scaling": null,
+      "rope_theta": 100000,
+      "tie_word_embeddings": true,
+      "torch_dtype": "bfloat16",
+      "transformers_version": "4.40.1",
+      "use_cache": true,
+      "vocab_size": 49152,
+      "runtime": "modelanvil.smollm2-cpu-sft.v1"
+    },
+    "optimizer": {
+      "algorithm": "adamw",
+      "learning_rate": 2e-05,
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "epsilon": 1e-08,
+      "weight_decay": 0.0
+    },
+    "sample_digest": "5cfa0b0d576a8a1d4ed2bf0521d66288367d4cb839a8f2910b7b1d071c75fed1",
+    "splits": {
+      "consumed": "train",
+      "train_rows": 6,
+      "excluded_rows": {
+        "test": 0,
+        "validation": 4
+      },
+      "excluded_digest": "99b4b06fb8551ab1fb80a5bb4d7ec02d34c8e976e99ff5b9917184d5aa87cf19"
+    },
+    "accelerator": {
+      "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+      "device": {
+        "id": "cpu",
+        "backend": "cpu",
+        "torch_device": "cpu",
+        "name": "Apple M5 Pro",
+        "total_memory_bytes": 51539607552
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "capacity_source": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+    },
+    "worker_id": 1,
+    "chat_sft": false,
+    "recipe": "full_sft"
+  },
+  "catalog_before_generation": [
+    {
+      "id": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+      "object": "model",
+      "created": 1792767816,
+      "owned_by": "modelanvil",
+      "name": "arena-cpu-base",
+      "format": "safetensors",
+      "load_tested": false,
+      "devices": [
+        "cpu",
+        "mps:0"
+      ],
+      "max_tokens": 256,
+      "context_limit": 2048,
+      "tokenizer_kind": null,
+      "training_run_id": null,
+      "base_model_id": null,
+      "has_chat_template": false,
+      "chat_template": ""
+    },
+    {
+      "id": "01a1694a-14be-773b-8f10-8cca819bba8b",
+      "object": "model",
+      "created": 1792767825,
+      "owned_by": "modelanvil",
+      "name": "smollm2-cpu-sft-01a16949-f6b8-7e01-9ed7-7fadfcffb06e",
+      "format": "safetensors",
+      "load_tested": false,
+      "devices": [
+        "cpu",
+        "mps:0"
+      ],
+      "max_tokens": 256,
+      "context_limit": 2048,
+      "tokenizer_kind": null,
+      "training_run_id": "01a16949-f6b8-7e01-9ed7-7fadfcffb06e",
+      "base_model_id": "01a16949-f3a6-751f-ad2c-76e870c2ecef",
+      "has_chat_template": false,
+      "chat_template": ""
+    }
+  ],
+  "scope": "Bounded CPU SmolLM2 base/candidate over actual same-host compatible HTTP transport; no paid service, third-party provider or production qualification."
+}

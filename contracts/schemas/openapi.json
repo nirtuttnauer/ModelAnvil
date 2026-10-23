@@ -4128,7 +4128,7 @@
     },
     "/inference/chat/completions": {
       "post": {
-        "summary": "Generate bounded local chat completions with optional SSE",
+        "summary": "Generate bounded local or explicitly enabled external chat completions with SSE",
         "tags": [
           "Models"
         ],
@@ -8610,6 +8610,68 @@
         }
       }
     },
+    "/privacy/": {
+      "get": {
+        "summary": "Inspect scoped privacy policy and public installed provider targets",
+        "responses": {
+          "200": {
+            "description": "No credential values; includes installed_generation_targets and enabled external_generation_targets."
+          }
+        }
+      },
+      "put": {
+        "summary": "Administrator approval of installed acquisition and optional external chat targets",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectPrivacyInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Saved project restrictions; installation configuration still applies."
+          },
+          "403": {
+            "description": "Administrator required"
+          }
+        }
+      }
+    },
+    "/inference/models/": {
+      "get": {
+        "summary": "List accessible local models and project-approved external provider targets",
+        "responses": {
+          "200": {
+            "description": "Local capabilities and actual completed-load state; external entries include endpoint, upstream model and credential ID only. No credential values."
+          }
+        }
+      }
+    },
+    "/chat-comparisons/": {
+      "post": {
+        "summary": "Save an informal arena pair from two actual identical-input completed inference requests",
+        "responses": {
+          "201": {
+            "description": "Randomized blind pair. After voting, reveal exact local model or external target snapshot, settings, measured latency and actual/provider-reported usage."
+          },
+          "400": {
+            "description": "Forged output, mismatched settings/input, duplicate models, withdrawn scope or incomplete inference refused."
+          }
+        }
+      },
+      "get": {
+        "summary": "List accessible project-scoped informal comparisons",
+        "responses": {
+          "200": {
+            "description": "Pairs whose local versions or enabled external targets remain accessible."
+          }
+        }
+      }
+    },
     "/alignment-runs/{run_id}/resume/": {
       "post": {
         "tags": [
@@ -11828,7 +11890,8 @@
             ],
             "default": "model"
           }
-        }
+        },
+        "description": "Select a local model UUID or installed, project-approved external provider target UUID. External targets require device external and native model formatting; endpoint and credential are server-configured and cannot be supplied in request bodies. Missing upstream usage remains null; reported usage is not independently tokenized."
       },
       "ModelImportInput": {
         "type": "object",
@@ -14686,6 +14749,41 @@
           "created_at": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "ProjectPrivacyInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "offline",
+          "acquisition_origins",
+          "measurement_retention_days"
+        ],
+        "properties": {
+          "offline": {
+            "type": "boolean"
+          },
+          "acquisition_origins": {
+            "type": "array",
+            "maxItems": 30,
+            "items": {
+              "type": "string"
+            }
+          },
+          "measurement_retention_days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 365
+          },
+          "external_generation_targets": {
+            "type": "array",
+            "maxItems": 16,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Optional exact installed target UUIDs approved by a project administrator; omitted list preserves an existing policy. Disabled by default and overridden by offline mode."
           }
         }
       }

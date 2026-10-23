@@ -20,6 +20,15 @@ class PolicyInput(serializers.Serializer):
     offline = serializers.BooleanField()
     acquisition_origins = serializers.ListField(child=serializers.CharField(max_length=255), max_length=30)
     measurement_retention_days = serializers.IntegerField(min_value=1, max_value=365)
+    external_generation_targets = serializers.ListField(child=serializers.UUIDField(), max_length=16, required=False)
+
+    def validate_external_generation_targets(self, values):
+        from modelanvil.runners.external_inference import installed_targets
+        from modelanvil.core.tenancy import get_active_tenant, get_active_project
+        available = {value['id'] for value in installed_targets(get_active_tenant(), get_active_project())}
+        if any(str(value) not in available for value in values):
+            raise serializers.ValidationError('Select only installed provider targets for this project.')
+        return sorted({str(value) for value in values})
 
     def validate_acquisition_origins(self, values):
         from django.conf import settings
@@ -28,8 +37,8 @@ class PolicyInput(serializers.Serializer):
         return sorted(set(values))
 
     def validate(self, attrs):
-        if set(self.initial_data) != set(self.fields):
-            raise serializers.ValidationError('Submit only offline, acquisition_origins and measurement_retention_days.')
+        if set(self.initial_data) - set(self.fields) or set(self.fields) - {'external_generation_targets'} - set(self.initial_data):
+            raise serializers.ValidationError('Submit offline, acquisition_origins, measurement_retention_days and optional external_generation_targets.')
         return attrs
 
 
@@ -57,6 +66,7 @@ class ProjectPrivacy(APIView):
         from modelanvil.annotation.feedback import shorten_retention
         shorten_retention(project,form.validated_data['measurement_retention_days'])
         record_audit('update', 'project_privacy', project.pk, input_snapshot={'offline': form.validated_data['offline'],
+            'external_target_ids': form.validated_data.get('external_generation_targets', []),
             'origin_count': len(form.validated_data['acquisition_origins']), 'measurement_retention_days': form.validated_data['measurement_retention_days']})
         return self.response(project)
 

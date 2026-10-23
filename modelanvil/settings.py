@@ -24,6 +24,10 @@ MODELANVIL_DEVICE_LOCK_ROOT = os.environ.get('MODELANVIL_DEVICE_LOCK_ROOT',
 
 # Operator secrets are keyed by tenant UUID:project UUID; ambient Hub credentials are ignored.
 MODELANVIL_HUB_TOKENS = json.loads(os.environ.get('MODELANVIL_HUB_TOKENS', '{}'))
+MODELANVIL_EXTERNAL_PROVIDERS = json.loads(os.environ.get('MODELANVIL_EXTERNAL_PROVIDERS', '{}'))
+MODELANVIL_EXTERNAL_PROVIDER_KEYS = json.loads(os.environ.get('MODELANVIL_EXTERNAL_PROVIDER_KEYS', '{}'))
+if not isinstance(MODELANVIL_EXTERNAL_PROVIDERS, dict) or not isinstance(MODELANVIL_EXTERNAL_PROVIDER_KEYS, dict):
+    raise ValueError('MODELANVIL_EXTERNAL_PROVIDERS must map tenant:project identifiers to installed targets.')
 if not isinstance(MODELANVIL_HUB_TOKENS, dict) or any(not isinstance(v, str) or not v for v in MODELANVIL_HUB_TOKENS.values()):
     raise ValueError('MODELANVIL_HUB_TOKENS must map tenant:project identifiers to nonempty tokens.')
 
