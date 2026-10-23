@@ -101,6 +101,18 @@ class ActualAlignmentExecutionTests(TestCase):
             'total_steps': 4, 'hyperparameters': {'budget_policy_id': str(self.policy.policy_id)}, 'verifier_spec': {'type': 'substring'}}
         return {**body, **changes}
 
+    def test_dpo_and_reward_inputs_refuse_shared_source_groups_even_with_different_prompts(self):
+        train = self.preference_artifact([{'prompt': 'a', 'chosen': 'ab', 'rejected': 'cd',
+            'metadata': {'source_group_id': 'one-source'}}])
+        held = self.preference_artifact([{'prompt': 'f', 'chosen': 'ab', 'rejected': 'cd',
+            'metadata': {'source_group_id': 'one-source'}}])
+        for algorithm in ('dpo', 'reward_model'):
+            response = self.client.post('/api/v1/alignment-runs/', self.body(algorithm,
+                train_dataset_artifact=str(train.artifact_id), held_out_dataset_artifact=str(held.artifact_id)), format='json')
+            self.assertEqual(response.status_code, 400, response.content)
+            self.assertIn('source groups', response.content.decode())
+        self.assertEqual(BudgetReservation.all_objects.count(), 0)
+
     def create(self, algorithm='dpo', **changes):
         response = self.client.post('/api/v1/alignment-runs/', self.body(algorithm, **changes), format='json')
         self.assertEqual(response.status_code, 201, response.content)

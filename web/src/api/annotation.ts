@@ -3,6 +3,7 @@ export interface Review {
   human_label: { label?: unknown }; original_prediction: unknown; created_at: string;
 }
 export interface AnnotationTask {
+  formal_preference?:boolean; assigned_to_me?:boolean; reviewed_by_me?:boolean;
   assigned_reviewer: string; needs_adjudication: boolean; task_id: string; sample_ref: string; status: string;
   content: Record<string, unknown> & { draft_prediction?: { predicted_label?: unknown; model_version_id?: string } };
   latest_review: Review | null;
@@ -21,9 +22,10 @@ export function validLabel(schema: LabelSchema, label: unknown): boolean {
   return schema.kind === 'text_generation' && !!label.trim();
 }
 export function matchesQueue(task: AnnotationTask, filter: string, search = ''): boolean {
-  const matches = filter === 'pending' ? !task.latest_review && !task.needs_adjudication
+  const pending = task.formal_preference ? !!task.assigned_to_me && !task.reviewed_by_me && task.status !== 'adjudicated' : !task.latest_review && !task.needs_adjudication;
+  const matches = filter === 'pending' ? pending
     : filter === 'flagged' ? task.needs_adjudication
-    : filter === 'reviewed' ? !!task.latest_review
+    : filter === 'reviewed' ? task.formal_preference ? !!task.reviewed_by_me : !!task.latest_review
     : filter === 'skipped' ? task.latest_review?.decision === 'skipped' : true;
   const source = [task.sample_ref, ...Object.entries(task.content).filter(([key]) => !['draft_prediction', 'arena_vote', 'comparison_origin'].includes(key)).map(([, value]) => typeof value === 'string' ? value : '')].join(' ').toLocaleLowerCase();
   return matches && source.includes(search.trim().toLocaleLowerCase());
@@ -31,7 +33,7 @@ export function matchesQueue(task: AnnotationTask, filter: string, search = ''):
 export function nextPending(tasks: AnnotationTask[], current: string): string | null {
   const index = tasks.findIndex(task => task.task_id === current);
   const ordered = [...tasks.slice(index + 1), ...tasks.slice(0, Math.max(0, index))];
-  return ordered.find(task => !task.latest_review && !task.needs_adjudication)?.task_id || null;
+  return ordered.find(task => matchesQueue(task, 'pending'))?.task_id || null;
 }
 
 // Batches are bounded to 500 samples, matching the API's import limit.

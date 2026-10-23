@@ -10,6 +10,7 @@ from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.response import Response
 
 from modelanvil.annotation.campaign_engine import CampaignEngine
+from modelanvil.annotation import preferences
 from modelanvil.annotation.models import (
     AnnotationRecord, AnnotationTask, CampaignBatch, CumulativeSnapshot,
     LabelingCampaign, LabelSchema, RubricRevision,
@@ -71,14 +72,20 @@ class SnapshotSerializer(serializers.ModelSerializer):
 class BatchSerializer(serializers.ModelSerializer):
     drafting_model_id = serializers.UUIDField(source="assigned_drafting_model.model_version_id", read_only=True, allow_null=True)
     reviewed_count = serializers.SerializerMethodField()
+    preference_coverage = serializers.SerializerMethodField()
+
+    def get_preference_coverage(self, batch):
+        return preferences.coverage(batch) if preferences.formal(batch.campaign) else None
 
     def get_reviewed_count(self, batch):
+        if preferences.formal(batch.campaign):
+            return preferences.coverage(batch)['resolved_pairs']
         return batch.tasks.filter(records__isnull=False).distinct().count()
 
     class Meta:
         model = CampaignBatch
         fields = ("batch_id", "cycle_no", "status", "sample_count", "reviewed_count", "approved_count",
-                  "snapshot_manifest_digest", "drafting_model_id", "draft_configuration", "created_at")
+                  "snapshot_manifest_digest", "drafting_model_id", "draft_configuration", "created_at", "preference_coverage")
 
 
 class CampaignSerializer(serializers.ModelSerializer):
@@ -87,6 +94,13 @@ class CampaignSerializer(serializers.ModelSerializer):
     active_model_id = serializers.UUIDField(source="active_drafting_model.model_version_id", read_only=True, allow_null=True)
     batches = BatchSerializer(many=True, read_only=True)
     snapshots = SnapshotSerializer(many=True, read_only=True)
+
+    def to_representation(self, campaign):
+        data = super().to_representation(campaign)
+        if preferences.formal(campaign):
+            data['configuration'] = {'origin': preferences.ORIGIN,
+                'required_reviewers': len(campaign.configuration['reviewers'])}
+        return data
 
     class Meta:
         model = LabelingCampaign
@@ -144,6 +158,31 @@ class CampaignViewSet(ReadWorkflowViewSet):
     queryset = LabelingCampaign.objects.select_related("label_schema", "rubric", "active_drafting_model").prefetch_related("batches", "snapshots")
     serializer_class = CampaignSerializer
     lookup_field = "campaign_id"
+
+    @action(detail=True, methods=['get', 'post'], url_path='generated-pairs')
+    @transaction.atomic
+    def generated_pairs(self, request, campaign_id=None):
+        if not role_at_least(request.modelanvil_role, Role.MANAGER):
+            raise PermissionDenied('Assigning formal blind pairs requires a manager.')
+        campaign = self.get_queryset().select_for_update(of=('self',)).get(pk=self.get_object().pk)
+        if request.method == 'GET':
+            from modelanvil.runners.models import ChatComparison
+            return Response({'reviewers': [{'principal_id': f'api_key:{key.pk}', 'name': key.name}
+                for key in preferences.reviewers(get_active_tenant(), campaign.project_id)],
+                'comparisons': [{'id': str(pair.comparison_id), 'prompt': pair.messages, 'created_at': pair.created_at}
+                    for pair in get_accessible_queryset(ChatComparison).filter(review_campaign__isnull=True,
+                        first_request__model_version__isnull=False, second_request__model_version__isnull=False).order_by('-created_at')[:32]]})
+        if set(request.data) - {'comparisons', 'reviewers', 'source_revision'}:
+            raise ValidationError('Formal assignment accepts only comparison IDs, reviewer IDs and an optional source revision.')
+        identifiers = serializers.ListField(child=serializers.UUIDField(), min_length=1, max_length=32).run_validation(request.data.get('comparisons'))
+        assigned = serializers.ListField(child=serializers.CharField(max_length=128), min_length=2, max_length=8).run_validation(request.data.get('reviewers'))
+        source = serializers.UUIDField(required=False, allow_null=True).run_validation(request.data.get('source_revision'))
+        try:
+            batch = preferences.start_batch(campaign, [str(v) for v in identifiers], assigned, preferences.principal(request), source)
+        except (ValueError, TypeError) as exc:
+            raise ValidationError(str(exc)) from exc
+        audit(request, 'preference.assign', 'labeling_batch', batch.batch_id, assigned_reviewers=assigned)
+        return Response(BatchSerializer(batch).data, status=201)
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
@@ -223,6 +262,8 @@ class CampaignViewSet(ReadWorkflowViewSet):
     @transaction.atomic
     def batches(self, request, campaign_id=None):
         campaign = self.get_queryset().select_for_update(of=("self",)).get(pk=self.get_object().pk)
+        if preferences.formal(campaign):
+            raise Conflict('Formal campaigns accept verified generated pairs, not imported labels or response text.')
         if campaign.status != "active" or campaign.current_cycle >= campaign.max_cycles:
             raise Conflict("The campaign must be active and have a remaining cycle.")
         if campaign.configuration.get('cycle') and any(not snap.qualification for snap in campaign.snapshots.filter(training_run__isnull=False)):
@@ -312,7 +353,9 @@ def validate_label(schema, value):
 class RecordSerializer(serializers.ModelSerializer):
     def to_representation(self, record):
         data = super().to_representation(record)
-        if self.context.get('blind') or (self.context.get('request') and self.context['request'].query_params.get('blind') == '1'):
+        request = self.context.get('request')
+        formal_blind = preferences.formal(record.task.campaign) and (request is None or not role_at_least(request.modelanvil_role, Role.MANAGER))
+        if formal_blind or self.context.get('blind') or (request and request.query_params.get('blind') == '1'):
             data.update(human_label={}, original_prediction={}, preference_choice='')
         return data
 
@@ -326,6 +369,14 @@ class TaskSerializer(serializers.ModelSerializer):
         from copy import deepcopy
         data = super().to_representation(task)
         request = self.context.get('request')
+        if preferences.formal(task.campaign):
+            data['content'] = {key: task.content[key] for key in ('prompt', 'candidate_a', 'candidate_b')}
+            actor = preferences.principal(request) if request else ''
+            data['formal_preference'] = True
+            data['assigned_to_me'] = actor in task.campaign.configuration['reviewers']
+            data['reviewed_by_me'] = task.records.filter(reviewer_id=actor, is_adjudication=False).exists()
+            if data['latest_review']:
+                data['latest_review'].update(human_label={}, original_prediction={}, preference_choice='')
         if self.context.get('blind') or (request and request.query_params.get('blind') == '1'):
             data['content'] = deepcopy(data['content']); data['content'].pop('draft_prediction', None); data['content'].pop('arena_vote', None); data['content'].pop('comparison_origin', None)
             if data['latest_review']:
@@ -372,11 +423,20 @@ class BatchViewSet(ReadWorkflowViewSet):
             return Response(SnapshotSerializer(campaign.snapshots.get(cycle_no=batch.cycle_no)).data)
         if campaign.status != "active":
             raise Conflict("Resume the campaign before closing this batch.")
+        if preferences.formal(campaign):
+            if not role_at_least(request.modelanvil_role, Role.MANAGER):
+                raise PermissionDenied('Formal preference publication requires a manager.')
+            coverage = preferences.coverage(batch)
+            if coverage['missing_reviews'] or coverage['disagreements']:
+                raise Conflict('Collect every assigned review or abstention and resolve disagreements before closure.')
         if batch.tasks.filter(records__isnull=True).exists():
             raise Conflict("Review or skip every sample before closing the batch.")
         if batch.tasks.filter(needs_adjudication=True).exists():
             raise Conflict('Resolve escalated or conflicting reviews before closing this batch.')
         snapshot = CampaignEngine().close_batch(batch)
+        if preferences.formal(campaign):
+            try: preferences.export(snapshot)
+            except ValueError as exc: raise ValidationError(str(exc)) from exc
         from modelanvil.annotation.publication import publish_snapshot
         try: publish_snapshot(snapshot)
         except ValueError as exc: raise ValidationError({'publication': str(exc)}) from exc
@@ -384,7 +444,7 @@ class BatchViewSet(ReadWorkflowViewSet):
             from modelanvil.annotation.cycles import dispatch_training
             dispatch_training(campaign, snapshot, request)
         campaign.refresh_from_db()
-        if campaign.current_cycle >= campaign.max_cycles and not campaign.configuration.get('cycle'):
+        if (preferences.formal(campaign) or campaign.current_cycle >= campaign.max_cycles) and not campaign.configuration.get('cycle'):
             campaign.status = "completed"
             campaign.save(update_fields=["status", "updated_at"])
         audit(request, "create", "annotation_snapshot", snapshot.snapshot_id, digest=snapshot.manifest_digest)
@@ -428,10 +488,16 @@ class TaskViewSet(ReadWorkflowViewSet):
                 raise ValidationError('Supply an independently reviewed correction to the failed prediction.')
         principal = f'{request.modelanvil_actor_kind}:{request.modelanvil_actor_id}'
         adjudicate = data.pop('adjudicate')
-        blind = data.pop('blind_review') or request.query_params.get('blind') == '1'
+        formal = preferences.formal(campaign)
+        blind = data.pop('blind_review') or request.query_params.get('blind') == '1' or formal
         if adjudicate and not role_at_least(request.modelanvil_role, Role.MANAGER):
             raise PermissionDenied('Adjudication requires a manager.')
-        if task.needs_adjudication and not adjudicate:
+        if formal and not adjudicate and request.modelanvil_role != Role.REVIEWER:
+            raise PermissionDenied('Initial formal choices require an assigned reviewer credential; managers adjudicate.')
+        if formal:
+            try: preferences.validate_review(task, principal, data, adjudicate)
+            except ValueError as exc: raise ValidationError(str(exc)) from exc
+        if task.needs_adjudication and not adjudicate and not formal:
             raise Conflict('This task requires an authorized adjudication.')
         if task.assigned_reviewer and task.assigned_reviewer != principal and not adjudicate:
             raise PermissionDenied('This task is assigned to another reviewer.')
@@ -446,7 +512,8 @@ class TaskViewSet(ReadWorkflowViewSet):
                 raise ValidationError({"decision": "Accept requires an unchanged imported prediction. Use Save label for manual work."})
         record = CampaignEngine().submit_review(task=task,
             reviewer_id=f'{request.modelanvil_actor_kind}:{request.modelanvil_actor_id}',
-            **data, preference_choice=data["human_label"].get("label", "") if campaign.label_schema.kind == "preference_ranking" else "")
+            **data, is_blind_preference=formal,
+            preference_choice=data["human_label"].get("label", "") if campaign.label_schema.kind == "preference_ranking" else "")
         record.is_blind_review, record.is_adjudication = blind, adjudicate
         record.save(update_fields=['is_blind_review', 'is_adjudication', 'updated_at'])
         disagreement = bool(latest and latest.reviewer_id != principal and latest.human_label != record.human_label
@@ -454,6 +521,8 @@ class TaskViewSet(ReadWorkflowViewSet):
         task.needs_adjudication = False if adjudicate else disagreement
         if adjudicate: task.status = AnnotationTask.Status.ADJUDICATED
         task.save(update_fields=['needs_adjudication', 'status', 'updated_at'])
+        if formal:
+            preferences.reconcile(task, adjudicate)
         audit(request, "create", "annotation_review", record.record_id, task_id=str(task.task_id), decision=record.decision)
         return Response(TaskSerializer(task, context={'request': request, 'blind': blind}).data, status=201)
 
@@ -481,6 +550,8 @@ class TaskViewSet(ReadWorkflowViewSet):
         task = self._locked_task()
         if not role_at_least(request.modelanvil_role, Role.MANAGER):
             raise PermissionDenied('Reviewer assignment requires a manager.')
+        if preferences.formal(task.campaign) and request.method == 'POST':
+            raise Conflict('Formal batch reviewer assignments are frozen; create another campaign to change them.')
         keys = ApiKey.objects.filter(tenant_id=get_active_tenant(), is_active=True)
         eligible = [key for key in keys if not key.is_expired() and role_at_least(key.role, Role.REVIEWER) and (not key.project_id or key.project_id == task.campaign.project_id)]
         if request.method == 'GET':
@@ -501,7 +572,22 @@ class SnapshotViewSet(ReadWorkflowViewSet):
     serializer_class = SnapshotSerializer
     lookup_field = "snapshot_id"
 
+    @action(detail=True, methods=['get'], url_path='preference-pairs')
+    def preference_pairs(self, request, snapshot_id=None):
+        snapshot = self.get_object()
+        if not preferences.formal(snapshot.campaign) or not role_at_least(request.modelanvil_role, Role.MANAGER):
+            raise PermissionDenied('Reviewed preference bytes require a manager and a formal snapshot.')
+        try: return Response(preferences.read_export(snapshot))
+        except ValueError as exc: raise ValidationError(str(exc)) from exc
+
     @action(detail=True, methods=["get"])
     def export(self, request, snapshot_id=None):
         snapshot = self.get_object()
+        if preferences.formal(snapshot.campaign) and not role_at_least(request.modelanvil_role, Role.MANAGER):
+            raise PermissionDenied('Preference provenance exports require a manager.')
+        if preferences.formal(snapshot.campaign):
+            try:
+                preferences.require_live(snapshot.campaign)
+                for task in snapshot.campaign.tasks.all(): preferences.require_pairs_live(task)
+            except ValueError as exc: raise ValidationError(str(exc)) from exc
         return Response({**self.get_serializer(snapshot).data, "items": snapshot.items})

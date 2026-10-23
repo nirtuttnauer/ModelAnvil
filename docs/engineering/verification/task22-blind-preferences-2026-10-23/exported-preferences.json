@@ -1,0 +1,123 @@
+{
+  "excluded": {
+    "abstain": 1,
+    "tie": 1
+  },
+  "pairs": [
+    {
+      "chosen": "b",
+      "metadata": {
+        "origin": {
+          "comparison": "01a169b8-ce86-76a9-891f-4cf826c3463f",
+          "messages": [
+            {
+              "content": "abcdef a",
+              "role": "user"
+            }
+          ],
+          "models": [
+            {
+              "identity": "038976f4c54a05b6b1cadbc60d10bfe873f1e6310395089c9b9b315158a8c663",
+              "manifest": {
+                "artifact_id": "01a169b8-cdc4-78f5-9547-e8fe92c73801",
+                "byte_size": 2340,
+                "sha256": "686a199837df6d68a7d0cf4c9a918511941074984ac55391d85a501839b548ea"
+              },
+              "model_version": "01a169b8-cdc7-7eaf-83ac-686a6d918051",
+              "tokenizer": "01a169b8-cdc2-741c-b903-20f76ee50bcf"
+            },
+            {
+              "identity": "6325326c158d518f27ed09b21fa270e49f3dbb6538732073ae530387073d5a3d",
+              "manifest": {
+                "artifact_id": "01a169b8-cdc8-780f-a306-fed8aad09cd6",
+                "byte_size": 2340,
+                "sha256": "7cf47b4a4b90e77751d7696b83057416f3ccc710934bea5dadd001a795c4d6b4"
+              },
+              "model_version": "01a169b8-cdca-75f1-8fc0-60de39b2955c",
+              "tokenizer": "01a169b8-cdc2-741c-b903-20f76ee50bcf"
+            }
+          ],
+          "raw_single_user_prompt": true,
+          "requests": [
+            "01a169b8-ce6e-79f4-a545-ae6feb3d9ccd",
+            "01a169b8-ce77-7952-b031-7e5ef9ceae6d"
+          ],
+          "rubric": {
+            "criteria": [],
+            "guidelines": "Compare the exact responses against the prompt. Give a rubric reason. Use tie or abstain when appropriate. This authored exercise tests review mechanics, not domain quality.",
+            "id": "01a169b8-ceb7-7ece-8d6f-008c26ced437",
+            "revision": 1
+          },
+          "settings": [
+            {
+              "max_tokens": 4,
+              "prompt_format": "model",
+              "seed": 42,
+              "temperature": 0
+            },
+            {
+              "max_tokens": 4,
+              "prompt_format": "model",
+              "seed": 42,
+              "temperature": 0
+            }
+          ],
+          "source": {
+            "manifest_digest": "24f627a4eff4f2014f4de35dc1afac5524d9dfed7d76ba9d1cb8f993a491f630",
+            "provenance": {
+              "content_sha256": "ca4a88d82298f6cde9a97b19261be6660f73b1b045c0a8598d3ffc6c5c3b31f3",
+              "source_record_key": "0",
+              "source_snapshot_ref": "authored-review-inputs"
+            },
+            "revision": "01a169b8-cdec-70a6-8e7e-7b4bc04eb2dd",
+            "sample_id": "446db8f7-c7d9-4407-986a-7a9baac32754"
+          },
+          "source_group": "authored-preference-0"
+        },
+        "reviews": [
+          {
+            "adjudication": false,
+            "choice": {
+              "label": "candidate_a",
+              "reason": "Authored reviewer_one fixture: candidate_a under the pinned guidelines; mechanics only."
+            },
+            "record": "01a169bc-ff6c-7583-9c1c-8cc40ff4c560",
+            "reviewer": "api_key:01a169b8-cdc1-79c4-8b2e-7ff73183ad14",
+            "revision": 1
+          },
+          {
+            "adjudication": false,
+            "choice": {
+              "label": "candidate_b",
+              "reason": "Authored reviewer_two fixture: candidate_b under the pinned guidelines; mechanics only."
+            },
+            "record": "01a169bd-19a4-782b-bd56-86c637d32f2a",
+            "reviewer": "api_key:01a169b8-cdc2-7cbf-b118-ba564628cb12",
+            "revision": 2
+          },
+          {
+            "adjudication": true,
+            "choice": {
+              "label": "candidate_a",
+              "reason": "Authored manager fixture inspected both conflicting reviews; explicit adjudication tests mechanics, not domain quality."
+            },
+            "record": "01a169bd-2ed5-7a90-9ac1-d3914b5b96aa",
+            "reviewer": "api_key:01a169b8-cdc1-7969-ac8b-620e57a2899a",
+            "revision": 3
+          }
+        ],
+        "snapshot": "01a169bd-30cc-7498-9fa4-74ad0b8f25ac",
+        "source_group_id": "authored-preference-0"
+      },
+      "prompt": "abcdef a",
+      "rejected": "c"
+    }
+  ],
+  "rubric": {
+    "criteria": [],
+    "guidelines": "Compare the exact responses against the prompt. Give a rubric reason. Use tie or abstain when appropriate. This authored exercise tests review mechanics, not domain quality.",
+    "id": "01a169b8-ceb7-7ece-8d6f-008c26ced437",
+    "revision": 1
+  },
+  "schema_version": "modelanvil.preference-pairs.v1"
+}

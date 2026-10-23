@@ -1,0 +1,128 @@
+{
+  "scope": "One actual CPU update each for DPO and reward training consumes the exact reviewed artifact; distinct authored held-out control is not a human preference quality evaluation. No release or quality improvement claim.",
+  "reviewed_artifact": {
+    "artifact_id": "01a169bd-3128-7b76-80fd-bc11a4264fd4",
+    "sha256": "0fa8a7e4c51740a98a7ea245bada90b54349eda8ce4549432ae99a9b147e5932",
+    "byte_size": 3293
+  },
+  "pairs_consumed": 1,
+  "results": [
+    {
+      "algorithm": "dpo",
+      "run_id": "01a169c1-7b40-7d44-8b81-8df4408074f5",
+      "actual_completed_steps": 1,
+      "metrics": {
+        "step": 1,
+        "loss": 0.6931471805599453,
+        "reward_margin": 0.0,
+        "preference_accuracy": 0.0,
+        "gradient_norm": 0.006749156448592093,
+        "weights_changed": 1,
+        "cpu_seconds": 0.0005820420000000048,
+        "held_out_preference_accuracy": 1.0,
+        "held_out_loss": 0.6931471439223889,
+        "held_out_margin": 7.327511424293222e-08,
+        "held_out_sample_count": 1,
+        "held_out_evaluation": {
+          "held_out_preference_accuracy": 1.0,
+          "held_out_loss": 0.6931471439223889,
+          "held_out_margin": 7.327511424293222e-08,
+          "held_out_sample_count": 1
+        }
+      },
+      "execution_pins": {
+        "runtime": "modelanvil.cpu-character-alignment.v1",
+        "algorithm": "dpo",
+        "steps": 1,
+        "dataset_manifest_digest": "0fa8a7e4c51740a98a7ea245bada90b54349eda8ce4549432ae99a9b147e5932",
+        "held_out_validation_digest": "ae5983a44a270bd3729751194ca63e3a7894c1bd0cd25b78c92706766e2b61e1",
+        "train_artifact_id": "01a169bd-3128-7b76-80fd-bc11a4264fd4",
+        "held_out_artifact_id": "01a169c1-7b32-7226-891a-d8ea2e84b533",
+        "policy_model_version_id": "01a169b8-cdc7-7eaf-83ac-686a6d918051",
+        "policy_artifact_digest": "686a199837df6d68a7d0cf4c9a918511941074984ac55391d85a501839b548ea",
+        "tokenizer_digest": "bde30dc6fb390a58751502b23b58ed833898f8071fe46846deb39175caad0e0a",
+        "hyperparameters": {
+          "learning_rate": 0.05,
+          "max_gradient_norm": 1.0,
+          "beta": 0.1
+        },
+        "verifier_spec": {},
+        "build_digest": "efa51477a63921ac45a6174427d46dac7c79a617f8ffe1a599cd7aa7b328368d",
+        "reference_model_version_id": "01a169b8-cdc7-7eaf-83ac-686a6d918051",
+        "reference_artifact_digest": "686a199837df6d68a7d0cf4c9a918511941074984ac55391d85a501839b548ea"
+      },
+      "output_model": "01a169c1-7b54-7cef-863d-f999ffc7564d",
+      "output_artifact_sha256": "58eb4756d6ff5fed7882f466130085c729e70114dfbd6df2bf7c117ff3c42829",
+      "independent_stdlib_loader": {
+        "weights_sha256": "b4d68bf85f080ed0154d4b7a6fd24fb32a2c5603baa2dd557339313a6e883614",
+        "tensor_count": 4,
+        "logits": [
+          -0.0002094350766777147,
+          -0.0002094350766777147,
+          0.0017906987009616222,
+          -0.0002094350766777147,
+          0.0023887834736837045,
+          -0.002308346166814552,
+          -0.00019565538627333117,
+          -0.0002094350766777147,
+          -0.0002094350766777147,
+          -0.0002094350766777147,
+          -0.0002094350766777147,
+          -0.0002094350766777147
+        ]
+      },
+      "settled_steps": 1
+    },
+    {
+      "algorithm": "reward_model",
+      "run_id": "01a169c2-71c1-7bc3-9f8c-1a2598eca26d",
+      "actual_completed_steps": 1,
+      "metrics": {
+        "step": 1,
+        "loss": 0.6931471805599453,
+        "reward_margin": 0.0,
+        "preference_accuracy": 0.0,
+        "gradient_norm": 0.019134286932708525,
+        "weights_changed": 1,
+        "cpu_seconds": 0.0004407090000000391,
+        "held_out_preference_accuracy": 1.0,
+        "held_out_loss": 0.6931288746810463,
+        "held_out_margin": 3.6612092909177315e-05,
+        "held_out_sample_count": 1,
+        "held_out_evaluation": {
+          "held_out_preference_accuracy": 1.0,
+          "held_out_loss": 0.6931288746810463,
+          "held_out_margin": 3.6612092909177315e-05,
+          "held_out_sample_count": 1
+        }
+      },
+      "execution_pins": {
+        "runtime": "modelanvil.cpu-character-alignment.v1",
+        "algorithm": "reward_model",
+        "steps": 1,
+        "dataset_manifest_digest": "0fa8a7e4c51740a98a7ea245bada90b54349eda8ce4549432ae99a9b147e5932",
+        "held_out_validation_digest": "ae5983a44a270bd3729751194ca63e3a7894c1bd0cd25b78c92706766e2b61e1",
+        "train_artifact_id": "01a169bd-3128-7b76-80fd-bc11a4264fd4",
+        "held_out_artifact_id": "01a169c1-7b32-7226-891a-d8ea2e84b533",
+        "policy_model_version_id": "01a169b8-cdc7-7eaf-83ac-686a6d918051",
+        "policy_artifact_digest": "686a199837df6d68a7d0cf4c9a918511941074984ac55391d85a501839b548ea",
+        "tokenizer_digest": "bde30dc6fb390a58751502b23b58ed833898f8071fe46846deb39175caad0e0a",
+        "hyperparameters": {
+          "learning_rate": 0.05,
+          "max_gradient_norm": 1.0
+        },
+        "verifier_spec": {},
+        "build_digest": "efa51477a63921ac45a6174427d46dac7c79a617f8ffe1a599cd7aa7b328368d"
+      },
+      "output_model": "01a169c2-71d3-78f2-9160-f12658cac2bb",
+      "output_artifact_sha256": "37e1adcf0a3285a40a03b049dd2ffe562fab393e3b174f5e22afe501a9ed9725",
+      "independent_stdlib_loader": {
+        "weights_sha256": "9af1ec9dcb0c198d605f6d8de032f76201fd9e21873375ffa2008dd55dd1b129",
+        "tensor_count": 4,
+        "reward_head_sha256": "82f26463d45440cc4b0bd56500da53a40137ba16f5b26da1767b97386376ff10",
+        "reward_head_nonzero_parameters": 4
+      },
+      "settled_steps": 1
+    }
+  ]
+}
