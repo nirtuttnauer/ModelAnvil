@@ -95,9 +95,9 @@ def tokenizer_spec(tokenizer):
     return {'kind': 'byte-v1', 'vocab_size': LIMITS['vocab_size'], 'pad_id': 0, 'bos_id': 1, 'eos_id': 2, 'unk_id': 3}
 
 
-def encode(text, spec):
+def encode(text, spec, *, enforce_limit=True):
     ids = ByteTokenizer().encode(text)
-    if len(ids) > LIMITS['context_window']:
+    if enforce_limit and len(ids) > LIMITS['context_window']:
         raise ValueError(
             f'A training sample exceeds {LIMITS["context_window"]} encoded byte tokens; prepare shorter text samples.')
     return ids
