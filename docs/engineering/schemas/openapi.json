@@ -8520,6 +8520,95 @@
           }
         ]
       }
+    },
+    "/index-versions/{index_id}/generations/": {
+      "get": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "listGroundedGenerations",
+        "parameters": [
+          {
+            "name": "index_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "summary": "Read up to twenty saved runs with current source/model authorization",
+        "responses": {
+          "200": {
+            "description": "Currently accessible output only",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/GroundedGeneration"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "generateGroundedAnswer",
+        "parameters": [
+          {
+            "name": "index_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "summary": "Run a pinned local CPU text model with an explicit evidence condition",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroundedGenerationInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Actual run; can answer, abstain or refuse invalid citations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroundedGeneration"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported model, unavailable source/model, context overflow or changed authorization"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Index unavailable in current project"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -14391,6 +14480,118 @@
           },
           "report": {
             "type": "object"
+          }
+        }
+      },
+      "GroundedGenerationInput": {
+        "type": "object",
+        "required": [
+          "query",
+          "model_version"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 8192
+          },
+          "model_version": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "condition": {
+            "enum": [
+              "none",
+              "retrieved",
+              "human"
+            ],
+            "default": "retrieved"
+          },
+          "retrieval_mode": {
+            "enum": [
+              "lexical",
+              "dense",
+              "hybrid"
+            ],
+            "default": "lexical"
+          },
+          "human_chunk_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 5,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "top_k": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "default": 3
+          },
+          "max_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 128,
+            "default": 64
+          },
+          "overflow_policy": {
+            "enum": [
+              "fail",
+              "omit_optional_evidence"
+            ],
+            "default": "fail"
+          }
+        }
+      },
+      "GroundedGeneration": {
+        "type": "object",
+        "description": "Actual local model output with source-membership-only validation. Model/policy abstention and invalid citations remain distinct; answer correctness is not certified.",
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "model_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "query": {
+            "type": "string"
+          },
+          "condition": {
+            "enum": [
+              "none",
+              "retrieved",
+              "human"
+            ]
+          },
+          "status": {
+            "enum": [
+              "answered",
+              "model_abstain",
+              "policy_abstain",
+              "validation_refusal"
+            ]
+          },
+          "answer": {
+            "type": "string"
+          },
+          "raw_output": {
+            "type": "string"
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "receipt": {
+            "type": "object"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       }

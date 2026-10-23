@@ -275,3 +275,18 @@ class EmbeddingTrainingExposure(TenantContextModel):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=('project','source_group_digest','prompt_digest','role'),name='embedding_exposure_uniq')]
+
+
+class RAGGeneration(TenantContextModel):
+    """Actual local model output with source, decoding and budget receipts."""
+    run_id = models.UUIDField(default=uuid7,unique=True,editable=False)
+    project = models.ForeignKey('identity.Project',on_delete=models.PROTECT)
+    index = models.ForeignKey(IndexVersion,on_delete=models.PROTECT,related_name='generations')
+    model_version = models.ForeignKey('runners.ModelVersion',on_delete=models.PROTECT)
+    condition = models.CharField(max_length=16,choices=[('none','No retrieval'),('retrieved','Retrieved evidence'),('human','Human-supplied evidence')])
+    query = models.TextField()
+    status = models.CharField(max_length=32)
+    answer = models.TextField(blank=True)
+    raw_output = models.TextField(blank=True)
+    citations = models.JSONField(default=list)
+    receipt = models.JSONField(default=dict)

@@ -1,0 +1,48 @@
+{
+  "knowledge_base_id": "01a167ad-1166-7878-8a27-14831eae3169",
+  "index_id": "01a167ad-118b-7086-84db-28cd07ba2bd6",
+  "model_version_id": "01a167a6-b65c-7e9e-9647-efe800779493",
+  "runs": [
+    {
+      "run_id": "01a167b1-e26c-7fde-8ecf-97c54afd009b",
+      "condition": "none",
+      "status": "validation_refusal",
+      "usage": {
+        "prompt_tokens": 105,
+        "completion_tokens": 12,
+        "total_tokens": 117
+      },
+      "citations": 0
+    },
+    {
+      "run_id": "01a167b1-e603-7f66-b696-7f30b2cccfed",
+      "condition": "retrieved",
+      "status": "answered",
+      "usage": {
+        "prompt_tokens": 150,
+        "completion_tokens": 49,
+        "total_tokens": 199
+      },
+      "citations": 3
+    },
+    {
+      "run_id": "01a167b1-e90b-788b-9a7f-7924d126f9ce",
+      "condition": "human",
+      "status": "validation_refusal",
+      "usage": {
+        "prompt_tokens": 117,
+        "completion_tokens": 13,
+        "total_tokens": 130
+      },
+      "citations": 0
+    }
+  ],
+  "viewports": [
+    1440,
+    390
+  ],
+  "overflow": false,
+  "browser_errors": [],
+  "private_browser_draft": false,
+  "reload": true
+}

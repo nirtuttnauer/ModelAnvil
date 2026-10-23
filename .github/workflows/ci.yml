@@ -97,10 +97,20 @@ jobs:
         env:
           MODELANVIL_BENCHMARK_CACHE: ${{ runner.temp }}/retrieval-benchmark
         run: python -c "from modelanvil.rag.benchmark_corpus import cache_corpus; cache_corpus()"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/rag-decoder
+          key: rag-decoder-${{ hashFiles('modelanvil/rag/decoder-pins.json') }}
+      - name: Cache verified public CPU RAG decoder
+        env:
+          MODELANVIL_RAG_DECODER_CACHE: ${{ runner.temp }}/rag-decoder
+        run: python manage.py cache_rag_decoder
       - run: python manage.py test --noinput --tag=pg
         env:
           HF_HOME: ${{ runner.temp }}/embedding-model
           MODELANVIL_BENCHMARK_CACHE: ${{ runner.temp }}/retrieval-benchmark
+          MODELANVIL_RAG_DECODER_CACHE: ${{ runner.temp }}/rag-decoder
+          MODELANVIL_RAG_GENERATION_REPORT: ${{ runner.temp }}/rag-generation-report.json
           MODELANVIL_RETRIEVAL_REPORT: ${{ runner.temp }}/retrieval-controls-report.json
           HF_HUB_OFFLINE: "1"
           TRANSFORMERS_OFFLINE: "1"
@@ -117,5 +127,13 @@ jobs:
         with:
           name: retrieval-controls-${{ github.sha }}
           path: ${{ runner.temp }}/retrieval-controls-report.json
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Preserve actual grounded generation report
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: rag-generation-${{ github.sha }}
+          path: ${{ runner.temp }}/rag-generation-report.json
           if-no-files-found: ignore
           retention-days: 14
