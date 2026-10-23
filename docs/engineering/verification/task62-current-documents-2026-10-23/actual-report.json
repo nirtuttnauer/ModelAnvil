@@ -1,0 +1,1033 @@
+{
+  "source_main": "4b4ba7220e5e4afb5b368df5eca05496fe5eceb5",
+  "runtime_digest": "c40bb5b7386ecf2eeb8a39f77ca9bb2283dc40fec5c90c7f37f4274fb486b418",
+  "model_pins": {
+    "ocr": {
+      "repo_id": "mlx-community/GLM-OCR-bf16",
+      "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e",
+      "files": {
+        "chat_template.jinja": {
+          "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+          "byte_size": 4606
+        },
+        "config.json": {
+          "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+          "byte_size": 1875
+        },
+        "generation_config.json": {
+          "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+          "byte_size": 165
+        },
+        "model.safetensors": {
+          "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+          "byte_size": 2214872319
+        },
+        "model.safetensors.index.json": {
+          "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+          "byte_size": 39232
+        },
+        "preprocessor_config.json": {
+          "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+          "byte_size": 367
+        },
+        "processor_config.json": {
+          "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+          "byte_size": 597
+        },
+        "tokenizer.json": {
+          "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+          "byte_size": 6838609
+        },
+        "tokenizer_config.json": {
+          "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+          "byte_size": 1066
+        }
+      },
+      "license": "mit",
+      "name": "GLM-OCR",
+      "format": "mlx",
+      "parameters_count": null,
+      "task": "ocr"
+    },
+    "layout": {
+      "repo_id": "PaddlePaddle/PP-DocLayoutV3_safetensors",
+      "revision": "e4f489dc536556fc1be02b973ba06756e0d4a2ac",
+      "license": "Apache-2.0",
+      "files": {
+        "config.json": {
+          "sha256": "3cf834b91d23a756b1519bce4db42c09e852f3e35c35092dd5a3e253a50c071a",
+          "byte_size": 2460
+        },
+        "preprocessor_config.json": {
+          "sha256": "519fe0187a43a1ca429e3ad8317bab8700f0d5e8fb3a6e3a0a413ffac078ba42",
+          "byte_size": 575
+        },
+        "model.safetensors": {
+          "sha256": "5ea422c6cc5fe759a47e1357c35639b58173508e025a3131cbe4b6ac59e2b85e",
+          "byte_size": 133270468
+        }
+      },
+      "name": "PP-DocLayoutV3",
+      "task": "document_layout",
+      "parameters_count": 33175165
+    }
+  },
+  "job_admission": {
+    "request_id": "01a168c2-553c-78f2-b61f-3ad41c5ba0d9",
+    "job_id": "01a168c2-553a-7210-80af-6e20b814ee79",
+    "status": "queued"
+  },
+  "job_outcome": {
+    "claimed": true,
+    "committed": true,
+    "status": "succeeded"
+  },
+  "completed_pages": [
+    1,
+    2
+  ],
+  "actual_result": {
+    "text": "Readable source page before a scanned page.\n\nSCANNED PAGE FIXTURE\n\nInvoice sample: 2 review items\n\nThis text exists only as image pixels.",
+    "pages": [
+      {
+        "page": 1,
+        "image_dimensions": [
+          1224,
+          600
+        ],
+        "raster_sha256": "de90bb182da4f3c36fa55bc877f3cc33d5a3d5c0d3e0cac42049ec309b39d63d",
+        "text": "Readable source page before a scanned page."
+      },
+      {
+        "page": 2,
+        "image_dimensions": [
+          1224,
+          600
+        ],
+        "raster_sha256": "db497b65444593680df27df4a37e71614d79fe1f1d2fc03f3d7618b1064c5c99",
+        "text": "SCANNED PAGE FIXTURE\n\nInvoice sample: 2 review items\n\nThis text exists only as image pixels."
+      }
+    ],
+    "rasterization": {
+      "source_format": "pdf",
+      "renderer": "pypdfium2==5.14.0",
+      "max_scale": 2,
+      "normalization": "pdfium_rgb",
+      "page_count": 2
+    },
+    "device": "mlx:0",
+    "runtime_versions": {
+      "laya": "0.4.3",
+      "torch": "2.13.0",
+      "transformers": "5.14.0",
+      "mlx-vlm": "0.7.6",
+      "mlx": "0.32.3",
+      "Pillow": "13.0.0",
+      "safetensors": "0.8.0",
+      "pypdfium2": "5.14.0",
+      "torchvision": "0.28.0"
+    },
+    "image_dimensions": [
+      1224,
+      600
+    ],
+    "usage": {
+      "input_tokens": 1880,
+      "output_tokens": 39,
+      "total_tokens": 1919,
+      "peak_memory_gb": 3.415124878
+    },
+    "finish_reason": "stop",
+    "resume": {
+      "reused_pages": [],
+      "processed_pages": [
+        1,
+        2
+      ],
+      "page_count": 2
+    },
+    "elapsed_seconds": 8.1751,
+    "provenance": {
+      "source": {
+        "license": "mit",
+        "repo_id": "mlx-community/GLM-OCR-bf16",
+        "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+      },
+      "snapshot_sha256": "33e7724ec4f81796f42baa1a5cddc4eab212d64254c96858547d35276af02393",
+      "runtime_code_sha256": "a5df6e16e0e3f587715d3a89da0862d963ebd2514e7b6eb5cf6a03902f5f8905",
+      "files": {
+        "chat_template.jinja": {
+          "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+          "byte_size": 4606
+        },
+        "config.json": {
+          "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+          "byte_size": 1875
+        },
+        "generation_config.json": {
+          "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+          "byte_size": 165
+        },
+        "model.safetensors": {
+          "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+          "byte_size": 2214872319
+        },
+        "model.safetensors.index.json": {
+          "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+          "byte_size": 39232
+        },
+        "preprocessor_config.json": {
+          "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+          "byte_size": 367
+        },
+        "processor_config.json": {
+          "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+          "byte_size": 597
+        },
+        "tokenizer.json": {
+          "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+          "byte_size": 6838609
+        },
+        "tokenizer_config.json": {
+          "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+          "byte_size": 1066
+        }
+      },
+      "image": {
+        "artifact_id": "01a168ba-b459-7142-b0f9-afd8785cf04f",
+        "sha256": "522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+        "byte_size": 20760
+      }
+    },
+    "request_id": "01a168c2-553c-78f2-b61f-3ad41c5ba0d9",
+    "output_artifact": {
+      "artifact_id": "01a168c2-7543-738a-aeaf-f8f5fcea8eee",
+      "sha256": "301be61fec81cafc53f6aa8893f060008afabc123764502ab9b7de634f22754d",
+      "byte_size": 5599
+    },
+    "envelope": {
+      "schema_version": "1.0",
+      "sample_id": "50788788-de71-5e42-82ce-a8bd70919973",
+      "source_group_id": "source-sha256:522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+      "blocks": [
+        {
+          "block_id": "text",
+          "type": "text",
+          "text": "Readable source page before a scanned page.",
+          "location": {
+            "source_path": "page/1",
+            "page": 1
+          }
+        }
+      ],
+      "provenance": {
+        "source_snapshot_ref": "sha256:522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+        "source_record_key": "page/1",
+        "content_sha256": "c990ce6cabb261140798ef972b5bd74088517c82138c62e1b289e69cfe7f698b",
+        "transformation_revision_ref": "modelanvil.glm-ocr.v2"
+      },
+      "metadata": {
+        "source_format": "ocr",
+        "model": {
+          "source": {
+            "license": "mit",
+            "repo_id": "mlx-community/GLM-OCR-bf16",
+            "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+          },
+          "snapshot_sha256": "33e7724ec4f81796f42baa1a5cddc4eab212d64254c96858547d35276af02393",
+          "runtime_code_sha256": "a5df6e16e0e3f587715d3a89da0862d963ebd2514e7b6eb5cf6a03902f5f8905",
+          "files": {
+            "chat_template.jinja": {
+              "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+              "byte_size": 4606
+            },
+            "config.json": {
+              "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+              "byte_size": 1875
+            },
+            "generation_config.json": {
+              "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+              "byte_size": 165
+            },
+            "model.safetensors": {
+              "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+              "byte_size": 2214872319
+            },
+            "model.safetensors.index.json": {
+              "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+              "byte_size": 39232
+            },
+            "preprocessor_config.json": {
+              "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+              "byte_size": 367
+            },
+            "processor_config.json": {
+              "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+              "byte_size": 597
+            },
+            "tokenizer.json": {
+              "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+              "byte_size": 6838609
+            },
+            "tokenizer_config.json": {
+              "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+              "byte_size": 1066
+            }
+          },
+          "image": {
+            "artifact_id": "01a168ba-b459-7142-b0f9-afd8785cf04f",
+            "sha256": "522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+            "byte_size": 20760
+          }
+        },
+        "rasterization": {
+          "source_format": "pdf",
+          "renderer": "pypdfium2==5.14.0",
+          "max_scale": 2,
+          "normalization": "pdfium_rgb",
+          "page_count": 2
+        },
+        "image_dimensions": [
+          1224,
+          600
+        ],
+        "raster_sha256": "de90bb182da4f3c36fa55bc877f3cc33d5a3d5c0d3e0cac42049ec309b39d63d",
+        "regions": [],
+        "runtime_versions": {
+          "laya": "0.4.3",
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "mlx-vlm": "0.7.6",
+          "mlx": "0.32.3",
+          "Pillow": "13.0.0",
+          "safetensors": "0.8.0",
+          "pypdfium2": "5.14.0",
+          "torchvision": "0.28.0"
+        },
+        "review_required": true
+      }
+    },
+    "envelopes": [
+      {
+        "schema_version": "1.0",
+        "sample_id": "50788788-de71-5e42-82ce-a8bd70919973",
+        "source_group_id": "source-sha256:522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+        "blocks": [
+          {
+            "block_id": "text",
+            "type": "text",
+            "text": "Readable source page before a scanned page.",
+            "location": {
+              "source_path": "page/1",
+              "page": 1
+            }
+          }
+        ],
+        "provenance": {
+          "source_snapshot_ref": "sha256:522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+          "source_record_key": "page/1",
+          "content_sha256": "c990ce6cabb261140798ef972b5bd74088517c82138c62e1b289e69cfe7f698b",
+          "transformation_revision_ref": "modelanvil.glm-ocr.v2"
+        },
+        "metadata": {
+          "source_format": "ocr",
+          "model": {
+            "source": {
+              "license": "mit",
+              "repo_id": "mlx-community/GLM-OCR-bf16",
+              "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+            },
+            "snapshot_sha256": "33e7724ec4f81796f42baa1a5cddc4eab212d64254c96858547d35276af02393",
+            "runtime_code_sha256": "a5df6e16e0e3f587715d3a89da0862d963ebd2514e7b6eb5cf6a03902f5f8905",
+            "files": {
+              "chat_template.jinja": {
+                "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+                "byte_size": 4606
+              },
+              "config.json": {
+                "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+                "byte_size": 1875
+              },
+              "generation_config.json": {
+                "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+                "byte_size": 165
+              },
+              "model.safetensors": {
+                "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+                "byte_size": 2214872319
+              },
+              "model.safetensors.index.json": {
+                "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+                "byte_size": 39232
+              },
+              "preprocessor_config.json": {
+                "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+                "byte_size": 367
+              },
+              "processor_config.json": {
+                "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+                "byte_size": 597
+              },
+              "tokenizer.json": {
+                "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+                "byte_size": 6838609
+              },
+              "tokenizer_config.json": {
+                "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+                "byte_size": 1066
+              }
+            },
+            "image": {
+              "artifact_id": "01a168ba-b459-7142-b0f9-afd8785cf04f",
+              "sha256": "522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+              "byte_size": 20760
+            }
+          },
+          "rasterization": {
+            "source_format": "pdf",
+            "renderer": "pypdfium2==5.14.0",
+            "max_scale": 2,
+            "normalization": "pdfium_rgb",
+            "page_count": 2
+          },
+          "image_dimensions": [
+            1224,
+            600
+          ],
+          "raster_sha256": "de90bb182da4f3c36fa55bc877f3cc33d5a3d5c0d3e0cac42049ec309b39d63d",
+          "regions": [],
+          "runtime_versions": {
+            "laya": "0.4.3",
+            "torch": "2.13.0",
+            "transformers": "5.14.0",
+            "mlx-vlm": "0.7.6",
+            "mlx": "0.32.3",
+            "Pillow": "13.0.0",
+            "safetensors": "0.8.0",
+            "pypdfium2": "5.14.0",
+            "torchvision": "0.28.0"
+          },
+          "review_required": true
+        }
+      },
+      {
+        "schema_version": "1.0",
+        "sample_id": "4c56ef88-54b9-54ef-85c0-c899a9b58288",
+        "source_group_id": "source-sha256:522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+        "blocks": [
+          {
+            "block_id": "text",
+            "type": "text",
+            "text": "SCANNED PAGE FIXTURE\n\nInvoice sample: 2 review items\n\nThis text exists only as image pixels.",
+            "location": {
+              "source_path": "page/2",
+              "page": 2
+            }
+          }
+        ],
+        "provenance": {
+          "source_snapshot_ref": "sha256:522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+          "source_record_key": "page/2",
+          "content_sha256": "835ae871f4b2ec8ad69d93550eff0192f7935ac61a45a8518fdd3577a5b7ce63",
+          "transformation_revision_ref": "modelanvil.glm-ocr.v2"
+        },
+        "metadata": {
+          "source_format": "ocr",
+          "model": {
+            "source": {
+              "license": "mit",
+              "repo_id": "mlx-community/GLM-OCR-bf16",
+              "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+            },
+            "snapshot_sha256": "33e7724ec4f81796f42baa1a5cddc4eab212d64254c96858547d35276af02393",
+            "runtime_code_sha256": "a5df6e16e0e3f587715d3a89da0862d963ebd2514e7b6eb5cf6a03902f5f8905",
+            "files": {
+              "chat_template.jinja": {
+                "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+                "byte_size": 4606
+              },
+              "config.json": {
+                "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+                "byte_size": 1875
+              },
+              "generation_config.json": {
+                "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+                "byte_size": 165
+              },
+              "model.safetensors": {
+                "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+                "byte_size": 2214872319
+              },
+              "model.safetensors.index.json": {
+                "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+                "byte_size": 39232
+              },
+              "preprocessor_config.json": {
+                "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+                "byte_size": 367
+              },
+              "processor_config.json": {
+                "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+                "byte_size": 597
+              },
+              "tokenizer.json": {
+                "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+                "byte_size": 6838609
+              },
+              "tokenizer_config.json": {
+                "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+                "byte_size": 1066
+              }
+            },
+            "image": {
+              "artifact_id": "01a168ba-b459-7142-b0f9-afd8785cf04f",
+              "sha256": "522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+              "byte_size": 20760
+            }
+          },
+          "rasterization": {
+            "source_format": "pdf",
+            "renderer": "pypdfium2==5.14.0",
+            "max_scale": 2,
+            "normalization": "pdfium_rgb",
+            "page_count": 2
+          },
+          "image_dimensions": [
+            1224,
+            600
+          ],
+          "raster_sha256": "db497b65444593680df27df4a37e71614d79fe1f1d2fc03f3d7618b1064c5c99",
+          "regions": [],
+          "runtime_versions": {
+            "laya": "0.4.3",
+            "torch": "2.13.0",
+            "transformers": "5.14.0",
+            "mlx-vlm": "0.7.6",
+            "mlx": "0.32.3",
+            "Pillow": "13.0.0",
+            "safetensors": "0.8.0",
+            "pypdfium2": "5.14.0",
+            "torchvision": "0.28.0"
+          },
+          "review_required": true
+        }
+      },
+      {
+        "schema_version": "1.0",
+        "sample_id": "000d2bf7-30f8-55ea-9e75-24ba3dc2c640",
+        "source_group_id": "source-sha256:d00a938fdabf0eaef1de25a01df1663e4461101b6c730c6ae975b8d16f98cb07",
+        "blocks": [
+          {
+            "block_id": "text",
+            "type": "text",
+            "text": "First DOCX source paragraph.",
+            "location": {
+              "source_path": "word/document.xml/paragraph/1"
+            }
+          }
+        ],
+        "provenance": {
+          "source_snapshot_ref": "sha256:d00a938fdabf0eaef1de25a01df1663e4461101b6c730c6ae975b8d16f98cb07",
+          "source_record_key": "word/document.xml/paragraph/1",
+          "content_sha256": "4b6e90a76c03b87c6e5515284b52deed99bab099e2a0d2e38625ab60ddfb19df",
+          "transformation_revision_ref": "modelanvil.source-extraction.v1"
+        },
+        "metadata": {
+          "source_format": "docx",
+          "input_artifact": {
+            "artifact_id": "01a168c3-0533-7e2d-9cb6-07eb7ce775dc",
+            "sha256": "d00a938fdabf0eaef1de25a01df1663e4461101b6c730c6ae975b8d16f98cb07",
+            "byte_size": 622
+          }
+        }
+      },
+      {
+        "schema_version": "1.0",
+        "sample_id": "1451cbcb-4d90-50ec-aa36-f67bd8ebce5d",
+        "source_group_id": "source-sha256:d00a938fdabf0eaef1de25a01df1663e4461101b6c730c6ae975b8d16f98cb07",
+        "blocks": [
+          {
+            "block_id": "text",
+            "type": "text",
+            "text": "Second DOCX source paragraph.",
+            "location": {
+              "source_path": "word/document.xml/paragraph/2"
+            }
+          }
+        ],
+        "provenance": {
+          "source_snapshot_ref": "sha256:d00a938fdabf0eaef1de25a01df1663e4461101b6c730c6ae975b8d16f98cb07",
+          "source_record_key": "word/document.xml/paragraph/2",
+          "content_sha256": "70557f9a950b875e3b0aa4c0f5e8f2c079da09575cb6a395593fd76366775f1f",
+          "transformation_revision_ref": "modelanvil.source-extraction.v1"
+        },
+        "metadata": {
+          "source_format": "docx",
+          "input_artifact": {
+            "artifact_id": "01a168c3-0533-7e2d-9cb6-07eb7ce775dc",
+            "sha256": "d00a938fdabf0eaef1de25a01df1663e4461101b6c730c6ae975b8d16f98cb07",
+            "byte_size": 622
+          }
+        }
+      },
+      {
+        "schema_version": "1.0",
+        "sample_id": "221d32d9-ca59-5c6d-8094-19b3c5b53614",
+        "source_group_id": "source-sha256:f724442169c5d97c9d001ec722a0d4c896439ed30ba6129cde535ab0895db776",
+        "blocks": [
+          {
+            "block_id": "text",
+            "type": "text",
+            "text": "First CSV source record.",
+            "location": {
+              "source_path": "record/1"
+            }
+          }
+        ],
+        "provenance": {
+          "source_snapshot_ref": "sha256:f724442169c5d97c9d001ec722a0d4c896439ed30ba6129cde535ab0895db776",
+          "source_record_key": "record/1",
+          "content_sha256": "28d707f90d0781c13623e81da971df399bf87c32154b61d4020bc2898fe9480d",
+          "transformation_revision_ref": "modelanvil.source-extraction.v1"
+        },
+        "metadata": {
+          "source_format": "csv",
+          "input_artifact": {
+            "artifact_id": "01a168c3-0538-7951-a8df-484bc2ae8998",
+            "sha256": "f724442169c5d97c9d001ec722a0d4c896439ed30ba6129cde535ab0895db776",
+            "byte_size": 56
+          }
+        }
+      },
+      {
+        "schema_version": "1.0",
+        "sample_id": "c0611824-2bfe-51c4-9f6d-4be4f64f0a43",
+        "source_group_id": "source-sha256:f724442169c5d97c9d001ec722a0d4c896439ed30ba6129cde535ab0895db776",
+        "blocks": [
+          {
+            "block_id": "text",
+            "type": "text",
+            "text": "Second CSV source record.",
+            "location": {
+              "source_path": "record/2"
+            }
+          }
+        ],
+        "provenance": {
+          "source_snapshot_ref": "sha256:f724442169c5d97c9d001ec722a0d4c896439ed30ba6129cde535ab0895db776",
+          "source_record_key": "record/2",
+          "content_sha256": "b0c695d45ad536372689a2e26c7bbb7ca6a0c4db440fb36caa9c519b24094826",
+          "transformation_revision_ref": "modelanvil.source-extraction.v1"
+        },
+        "metadata": {
+          "source_format": "csv",
+          "input_artifact": {
+            "artifact_id": "01a168c3-0538-7951-a8df-484bc2ae8998",
+            "sha256": "f724442169c5d97c9d001ec722a0d4c896439ed30ba6129cde535ab0895db776",
+            "byte_size": 56
+          }
+        }
+      }
+    ]
+  },
+  "inputs": {
+    "mixed-scanned.pdf": {
+      "sha256": "522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+      "byte_size": 20760
+    },
+    "paragraphs.docx": {
+      "sha256": "d00a938fdabf0eaef1de25a01df1663e4461101b6c730c6ae975b8d16f98cb07",
+      "byte_size": 622
+    },
+    "rows.csv": {
+      "sha256": "f724442169c5d97c9d001ec722a0d4c896439ed30ba6129cde535ab0895db776",
+      "byte_size": 56
+    }
+  },
+  "rows_by_format": {
+    "ocr": 2,
+    "docx": 2,
+    "csv": 2
+  },
+  "published": {
+    "id": 1,
+    "dataset_name": "Verified mixed PDF DOCX CSV",
+    "revision_id": "01a168c3-05ba-7451-9283-efefb1049bcf",
+    "project": "01a168ba-a4ed-7ac3-be3d-f23eb1d50852",
+    "dataset": 1,
+    "revision_no": 1,
+    "schema_version": "1.0",
+    "manifest_digest": "e98e263ec3a6fd2f9007b6cc5f9df34aa4028d6d63a377373269948fbcc9f486",
+    "manifest_artifact": 32,
+    "recipe_digest": "df31393ca744e99f889d09e8366fb42d632f0752b2bc185079bbecdcfc54db03",
+    "source_snapshots": [],
+    "row_count": 6,
+    "state": "published",
+    "published_at": "2026-10-23T12:36:13.881746Z",
+    "metadata": {
+      "preparation_kind": "bounded_local_jsonl_v1",
+      "input_artifact_id": "01a168c3-053e-7542-9d0e-187bf2b690a0",
+      "input_sha256": "7a8cf7f7cca75b358a87ba64b99c9821d9dc2456b46f1a50bb65b81e5bc90950",
+      "recipe": {
+        "algorithm": "source_group_sha256_v1",
+        "seed": "0",
+        "validation_percent": 10,
+        "test_percent": 10
+      },
+      "source_group_count": 3,
+      "split_counts": {
+        "train": 6,
+        "validation": 0,
+        "test": 0
+      }
+    }
+  },
+  "manifest_digest": "e98e263ec3a6fd2f9007b6cc5f9df34aa4028d6d63a377373269948fbcc9f486",
+  "source_groups_disjoint": true,
+  "review_required_preserved": true,
+  "canonical_rows": [
+    {
+      "blocks": [
+        {
+          "block_id": "text",
+          "location": {
+            "page": 1,
+            "source_path": "page/1"
+          },
+          "text": "Readable source page before a scanned page.",
+          "type": "text"
+        }
+      ],
+      "metadata": {
+        "image_dimensions": [
+          1224,
+          600
+        ],
+        "model": {
+          "files": {
+            "chat_template.jinja": {
+              "byte_size": 4606,
+              "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c"
+            },
+            "config.json": {
+              "byte_size": 1875,
+              "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354"
+            },
+            "generation_config.json": {
+              "byte_size": 165,
+              "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5"
+            },
+            "model.safetensors": {
+              "byte_size": 2214872319,
+              "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74"
+            },
+            "model.safetensors.index.json": {
+              "byte_size": 39232,
+              "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b"
+            },
+            "preprocessor_config.json": {
+              "byte_size": 367,
+              "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff"
+            },
+            "processor_config.json": {
+              "byte_size": 597,
+              "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077"
+            },
+            "tokenizer.json": {
+              "byte_size": 6838609,
+              "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a"
+            },
+            "tokenizer_config.json": {
+              "byte_size": 1066,
+              "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb"
+            }
+          },
+          "image": {
+            "artifact_id": "01a168ba-b459-7142-b0f9-afd8785cf04f",
+            "byte_size": 20760,
+            "sha256": "522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4"
+          },
+          "runtime_code_sha256": "a5df6e16e0e3f587715d3a89da0862d963ebd2514e7b6eb5cf6a03902f5f8905",
+          "snapshot_sha256": "33e7724ec4f81796f42baa1a5cddc4eab212d64254c96858547d35276af02393",
+          "source": {
+            "license": "mit",
+            "repo_id": "mlx-community/GLM-OCR-bf16",
+            "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+          }
+        },
+        "raster_sha256": "de90bb182da4f3c36fa55bc877f3cc33d5a3d5c0d3e0cac42049ec309b39d63d",
+        "rasterization": {
+          "max_scale": 2,
+          "normalization": "pdfium_rgb",
+          "page_count": 2,
+          "renderer": "pypdfium2==5.14.0",
+          "source_format": "pdf"
+        },
+        "regions": [],
+        "review_required": true,
+        "runtime_versions": {
+          "Pillow": "13.0.0",
+          "laya": "0.4.3",
+          "mlx": "0.32.3",
+          "mlx-vlm": "0.7.6",
+          "pypdfium2": "5.14.0",
+          "safetensors": "0.8.0",
+          "torch": "2.13.0",
+          "torchvision": "0.28.0",
+          "transformers": "5.14.0"
+        },
+        "source_format": "ocr"
+      },
+      "provenance": {
+        "content_sha256": "c990ce6cabb261140798ef972b5bd74088517c82138c62e1b289e69cfe7f698b",
+        "source_record_key": "page/1",
+        "source_snapshot_ref": "sha256:522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+        "transformation_revision_ref": "modelanvil.glm-ocr.v2"
+      },
+      "sample_id": "50788788-de71-5e42-82ce-a8bd70919973",
+      "schema_version": "1.0",
+      "source_group_id": "source-sha256:522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4"
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "text",
+          "location": {
+            "page": 2,
+            "source_path": "page/2"
+          },
+          "text": "SCANNED PAGE FIXTURE\n\nInvoice sample: 2 review items\n\nThis text exists only as image pixels.",
+          "type": "text"
+        }
+      ],
+      "metadata": {
+        "image_dimensions": [
+          1224,
+          600
+        ],
+        "model": {
+          "files": {
+            "chat_template.jinja": {
+              "byte_size": 4606,
+              "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c"
+            },
+            "config.json": {
+              "byte_size": 1875,
+              "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354"
+            },
+            "generation_config.json": {
+              "byte_size": 165,
+              "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5"
+            },
+            "model.safetensors": {
+              "byte_size": 2214872319,
+              "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74"
+            },
+            "model.safetensors.index.json": {
+              "byte_size": 39232,
+              "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b"
+            },
+            "preprocessor_config.json": {
+              "byte_size": 367,
+              "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff"
+            },
+            "processor_config.json": {
+              "byte_size": 597,
+              "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077"
+            },
+            "tokenizer.json": {
+              "byte_size": 6838609,
+              "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a"
+            },
+            "tokenizer_config.json": {
+              "byte_size": 1066,
+              "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb"
+            }
+          },
+          "image": {
+            "artifact_id": "01a168ba-b459-7142-b0f9-afd8785cf04f",
+            "byte_size": 20760,
+            "sha256": "522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4"
+          },
+          "runtime_code_sha256": "a5df6e16e0e3f587715d3a89da0862d963ebd2514e7b6eb5cf6a03902f5f8905",
+          "snapshot_sha256": "33e7724ec4f81796f42baa1a5cddc4eab212d64254c96858547d35276af02393",
+          "source": {
+            "license": "mit",
+            "repo_id": "mlx-community/GLM-OCR-bf16",
+            "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+          }
+        },
+        "raster_sha256": "db497b65444593680df27df4a37e71614d79fe1f1d2fc03f3d7618b1064c5c99",
+        "rasterization": {
+          "max_scale": 2,
+          "normalization": "pdfium_rgb",
+          "page_count": 2,
+          "renderer": "pypdfium2==5.14.0",
+          "source_format": "pdf"
+        },
+        "regions": [],
+        "review_required": true,
+        "runtime_versions": {
+          "Pillow": "13.0.0",
+          "laya": "0.4.3",
+          "mlx": "0.32.3",
+          "mlx-vlm": "0.7.6",
+          "pypdfium2": "5.14.0",
+          "safetensors": "0.8.0",
+          "torch": "2.13.0",
+          "torchvision": "0.28.0",
+          "transformers": "5.14.0"
+        },
+        "source_format": "ocr"
+      },
+      "provenance": {
+        "content_sha256": "835ae871f4b2ec8ad69d93550eff0192f7935ac61a45a8518fdd3577a5b7ce63",
+        "source_record_key": "page/2",
+        "source_snapshot_ref": "sha256:522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+        "transformation_revision_ref": "modelanvil.glm-ocr.v2"
+      },
+      "sample_id": "4c56ef88-54b9-54ef-85c0-c899a9b58288",
+      "schema_version": "1.0",
+      "source_group_id": "source-sha256:522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4"
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "text",
+          "location": {
+            "source_path": "word/document.xml/paragraph/1"
+          },
+          "text": "First DOCX source paragraph.",
+          "type": "text"
+        }
+      ],
+      "metadata": {
+        "input_artifact": {
+          "artifact_id": "01a168c3-0533-7e2d-9cb6-07eb7ce775dc",
+          "byte_size": 622,
+          "sha256": "d00a938fdabf0eaef1de25a01df1663e4461101b6c730c6ae975b8d16f98cb07"
+        },
+        "source_format": "docx"
+      },
+      "provenance": {
+        "content_sha256": "4b6e90a76c03b87c6e5515284b52deed99bab099e2a0d2e38625ab60ddfb19df",
+        "source_record_key": "word/document.xml/paragraph/1",
+        "source_snapshot_ref": "sha256:d00a938fdabf0eaef1de25a01df1663e4461101b6c730c6ae975b8d16f98cb07",
+        "transformation_revision_ref": "modelanvil.source-extraction.v1"
+      },
+      "sample_id": "000d2bf7-30f8-55ea-9e75-24ba3dc2c640",
+      "schema_version": "1.0",
+      "source_group_id": "source-sha256:d00a938fdabf0eaef1de25a01df1663e4461101b6c730c6ae975b8d16f98cb07"
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "text",
+          "location": {
+            "source_path": "word/document.xml/paragraph/2"
+          },
+          "text": "Second DOCX source paragraph.",
+          "type": "text"
+        }
+      ],
+      "metadata": {
+        "input_artifact": {
+          "artifact_id": "01a168c3-0533-7e2d-9cb6-07eb7ce775dc",
+          "byte_size": 622,
+          "sha256": "d00a938fdabf0eaef1de25a01df1663e4461101b6c730c6ae975b8d16f98cb07"
+        },
+        "source_format": "docx"
+      },
+      "provenance": {
+        "content_sha256": "70557f9a950b875e3b0aa4c0f5e8f2c079da09575cb6a395593fd76366775f1f",
+        "source_record_key": "word/document.xml/paragraph/2",
+        "source_snapshot_ref": "sha256:d00a938fdabf0eaef1de25a01df1663e4461101b6c730c6ae975b8d16f98cb07",
+        "transformation_revision_ref": "modelanvil.source-extraction.v1"
+      },
+      "sample_id": "1451cbcb-4d90-50ec-aa36-f67bd8ebce5d",
+      "schema_version": "1.0",
+      "source_group_id": "source-sha256:d00a938fdabf0eaef1de25a01df1663e4461101b6c730c6ae975b8d16f98cb07"
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "text",
+          "location": {
+            "source_path": "record/1"
+          },
+          "text": "First CSV source record.",
+          "type": "text"
+        }
+      ],
+      "metadata": {
+        "input_artifact": {
+          "artifact_id": "01a168c3-0538-7951-a8df-484bc2ae8998",
+          "byte_size": 56,
+          "sha256": "f724442169c5d97c9d001ec722a0d4c896439ed30ba6129cde535ab0895db776"
+        },
+        "source_format": "csv"
+      },
+      "provenance": {
+        "content_sha256": "28d707f90d0781c13623e81da971df399bf87c32154b61d4020bc2898fe9480d",
+        "source_record_key": "record/1",
+        "source_snapshot_ref": "sha256:f724442169c5d97c9d001ec722a0d4c896439ed30ba6129cde535ab0895db776",
+        "transformation_revision_ref": "modelanvil.source-extraction.v1"
+      },
+      "sample_id": "221d32d9-ca59-5c6d-8094-19b3c5b53614",
+      "schema_version": "1.0",
+      "source_group_id": "source-sha256:f724442169c5d97c9d001ec722a0d4c896439ed30ba6129cde535ab0895db776"
+    },
+    {
+      "blocks": [
+        {
+          "block_id": "text",
+          "location": {
+            "source_path": "record/2"
+          },
+          "text": "Second CSV source record.",
+          "type": "text"
+        }
+      ],
+      "metadata": {
+        "input_artifact": {
+          "artifact_id": "01a168c3-0538-7951-a8df-484bc2ae8998",
+          "byte_size": 56,
+          "sha256": "f724442169c5d97c9d001ec722a0d4c896439ed30ba6129cde535ab0895db776"
+        },
+        "source_format": "csv"
+      },
+      "provenance": {
+        "content_sha256": "b0c695d45ad536372689a2e26c7bbb7ca6a0c4db440fb36caa9c519b24094826",
+        "source_record_key": "record/2",
+        "source_snapshot_ref": "sha256:f724442169c5d97c9d001ec722a0d4c896439ed30ba6129cde535ab0895db776",
+        "transformation_revision_ref": "modelanvil.source-extraction.v1"
+      },
+      "sample_id": "c0611824-2bfe-51c4-9f6d-4be4f64f0a43",
+      "schema_version": "1.0",
+      "source_group_id": "source-sha256:f724442169c5d97c9d001ec722a0d4c896439ed30ba6129cde535ab0895db776"
+    }
+  ],
+  "usage": [
+    {
+      "unit": "specialist_attempts",
+      "quantity": "1.000000"
+    },
+    {
+      "unit": "specialist_attempts",
+      "quantity": "1.000000"
+    }
+  ],
+  "settlements": [
+    {
+      "reserved": "3.000000",
+      "settled": "1.000000"
+    },
+    {
+      "reserved": "3.000000",
+      "settled": "1.000000"
+    }
+  ],
+  "scope": "Authored English two-page mixed PDF, two DOCX paragraphs and two CSV records on this exact current Mac/runtime/model. No generalized OCR/layout/language/customer/production qualification.",
+  "publication_elapsed_seconds": 0.14322779094800353,
+  "elapsed_seconds_note": "Publication-only resume measurement; actual model execution is actual_result.elapsed_seconds. The earlier layout-guided job is retained separately."
+}

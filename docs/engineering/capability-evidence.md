@@ -110,3 +110,6 @@ Private-team onboarding: integrated local two-browser account/invitation/reviewe
 
 23 October 2026 — TASK-7 adds byte-identical v2 CPU archives with a frozen standalone consumer and current evidence/access checks. [Fresh external loading and stale-review evidence](verification/task7-export-2026-10-23/report.md) verifies actual weights in an empty Python environment, negative quality controls and invalidated export/serving gates. No quality or production qualification is inferred.
 23 October 2026 — TASK-66 replaces new lexical-index character slices with an offline, checksum-pinned MiniLM WordPiece tokenizer, exact Unicode spans, measured maximum overlap and immutable per-recipe chunk sets. [Fresh token-window and reimport evidence](verification/task66-token-chunks-2026-10-23/report.md) covers source reconstruction and retained historical indexes; embeddings remain separate TASK-67 work.
+
+
+23 October 2026 — TASK-62 current addendum: actual pinned MLX OCR recognized the authored scanned page and published six mixed PDF/DOCX/CSV rows with page/source/model/runtime provenance. [Current receipt and layout limitation](verification/task62-current-documents-2026-10-23/report.md) preserve the earlier layout-guided heading omission and review requirement. This bounded English fixture does not qualify general layout/language accuracy or production.

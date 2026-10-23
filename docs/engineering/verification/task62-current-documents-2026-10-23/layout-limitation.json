@@ -1,0 +1,815 @@
+{
+  "admission": {
+    "request_id": "01a168bc-b490-763a-a066-d21de5def76a",
+    "job_id": "01a168bc-b48f-7c9b-a678-f266766b6f27",
+    "status": "queued"
+  },
+  "outcome": {
+    "claimed": true,
+    "committed": true,
+    "status": "succeeded"
+  },
+  "status": {
+    "request_id": "01a168bc-b490-763a-a066-d21de5def76a",
+    "job_id": "01a168bc-b48f-7c9b-a678-f266766b6f27",
+    "status": "succeeded",
+    "kind": "ocr",
+    "desired_action": "run",
+    "attempt_count": 1,
+    "max_attempts": 3,
+    "progress": 1.0,
+    "error": "",
+    "completed_pages": [
+      1,
+      2
+    ],
+    "page_count": 2,
+    "result": {
+      "text": "Readable source page before a scanned page.\n\nInvoice sample: 2 review items\n\nThis text exists only as image pixels.",
+      "pages": [
+        {
+          "page": 1,
+          "image_dimensions": [
+            1224,
+            600
+          ],
+          "raster_sha256": "de90bb182da4f3c36fa55bc877f3cc33d5a3d5c0d3e0cac42049ec309b39d63d",
+          "regions": [
+            {
+              "region_id": "page-1-region-1",
+              "order": 1,
+              "label": "text",
+              "confidence": 0.823232,
+              "box": [
+                73.428,
+                93.981,
+                665.978,
+                131.932
+              ],
+              "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+              "crop_box": [
+                71,
+                91,
+                668,
+                134
+              ],
+              "crop_sha256": "fa79fbf9332e16f49f95009d0a4630af8d99fdcd206e5554af654a241fe0e284",
+              "text": "Readable source page before a scanned page."
+            }
+          ],
+          "text": "Readable source page before a scanned page."
+        },
+        {
+          "page": 2,
+          "image_dimensions": [
+            1224,
+            600
+          ],
+          "raster_sha256": "db497b65444593680df27df4a37e71614d79fe1f1d2fc03f3d7618b1064c5c99",
+          "regions": [
+            {
+              "region_id": "page-2-region-1",
+              "order": 1,
+              "label": "text",
+              "confidence": 0.731013,
+              "box": [
+                50.344,
+                224.153,
+                508.878,
+                260.523
+              ],
+              "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+              "crop_box": [
+                48,
+                222,
+                511,
+                263
+              ],
+              "crop_sha256": "aa82753634ee706bbe48ef68c4f82ed047dac4989ba3d1c7e96a259128124e3b",
+              "text": "Invoice sample: 2 review items"
+            },
+            {
+              "region_id": "page-2-region-2",
+              "order": 2,
+              "label": "text",
+              "confidence": 0.832703,
+              "box": [
+                50.617,
+                305.757,
+                590.753,
+                343.411
+              ],
+              "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+              "crop_box": [
+                48,
+                303,
+                593,
+                346
+              ],
+              "crop_sha256": "9c63a7da37beecbda2dc5653ae75b91395998ecb0606044950a83fb02cf99330",
+              "text": "This text exists only as image pixels."
+            }
+          ],
+          "text": "Invoice sample: 2 review items\n\nThis text exists only as image pixels."
+        }
+      ],
+      "rasterization": {
+        "source_format": "pdf",
+        "renderer": "pypdfium2==5.14.0",
+        "max_scale": 2,
+        "normalization": "pdfium_rgb",
+        "page_count": 2
+      },
+      "device": "mlx:0",
+      "runtime_versions": {
+        "laya": "0.4.3",
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "mlx-vlm": "0.7.6",
+        "mlx": "0.32.3",
+        "Pillow": "13.0.0",
+        "safetensors": "0.8.0",
+        "pypdfium2": "5.14.0",
+        "torchvision": "0.28.0"
+      },
+      "image_dimensions": [
+        1224,
+        600
+      ],
+      "usage": {
+        "input_tokens": 145,
+        "output_tokens": 29,
+        "total_tokens": 174,
+        "peak_memory_gb": 2.442798808
+      },
+      "finish_reason": "stop",
+      "resume": {
+        "reused_pages": [],
+        "processed_pages": [
+          1,
+          2
+        ],
+        "page_count": 2
+      },
+      "elapsed_seconds": 23.7361,
+      "provenance": {
+        "source": {
+          "license": "mit",
+          "repo_id": "mlx-community/GLM-OCR-bf16",
+          "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+        },
+        "snapshot_sha256": "33e7724ec4f81796f42baa1a5cddc4eab212d64254c96858547d35276af02393",
+        "runtime_code_sha256": "a5df6e16e0e3f587715d3a89da0862d963ebd2514e7b6eb5cf6a03902f5f8905",
+        "files": {
+          "chat_template.jinja": {
+            "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+            "byte_size": 4606
+          },
+          "config.json": {
+            "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+            "byte_size": 1875
+          },
+          "generation_config.json": {
+            "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+            "byte_size": 165
+          },
+          "model.safetensors": {
+            "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+            "byte_size": 2214872319
+          },
+          "model.safetensors.index.json": {
+            "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+            "byte_size": 39232
+          },
+          "preprocessor_config.json": {
+            "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+            "byte_size": 367
+          },
+          "processor_config.json": {
+            "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+            "byte_size": 597
+          },
+          "tokenizer.json": {
+            "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+            "byte_size": 6838609
+          },
+          "tokenizer_config.json": {
+            "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+            "byte_size": 1066
+          }
+        },
+        "layout_model": {
+          "source": {
+            "license": "Apache-2.0",
+            "repo_id": "PaddlePaddle/PP-DocLayoutV3_safetensors",
+            "revision": "e4f489dc536556fc1be02b973ba06756e0d4a2ac"
+          },
+          "snapshot_sha256": "a55ee17d19e5503c046e24d0585dd4886ea687043dd4e9f9d65c7d614ae7c4b3",
+          "files": {
+            "config.json": {
+              "sha256": "3cf834b91d23a756b1519bce4db42c09e852f3e35c35092dd5a3e253a50c071a",
+              "byte_size": 2460
+            },
+            "model.safetensors": {
+              "sha256": "5ea422c6cc5fe759a47e1357c35639b58173508e025a3131cbe4b6ac59e2b85e",
+              "byte_size": 133270468
+            },
+            "preprocessor_config.json": {
+              "sha256": "519fe0187a43a1ca429e3ad8317bab8700f0d5e8fb3a6e3a0a413ffac078ba42",
+              "byte_size": 575
+            }
+          }
+        },
+        "image": {
+          "artifact_id": "01a168ba-b459-7142-b0f9-afd8785cf04f",
+          "sha256": "522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+          "byte_size": 20760
+        }
+      },
+      "request_id": "01a168bc-b490-763a-a066-d21de5def76a",
+      "output_artifact": {
+        "artifact_id": "01a168bd-1165-7fe8-9ab3-24a39d944147",
+        "sha256": "ca49dd905a72a08079ada3abf3ef3254349105f5624842107c8d7ceb43cbf96c",
+        "byte_size": 9338
+      },
+      "envelope": {
+        "schema_version": "1.0",
+        "sample_id": "7465999a-9b80-53f4-970e-d1a279781ef1",
+        "source_group_id": "source-sha256:522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+        "blocks": [
+          {
+            "block_id": "page-1-region-1",
+            "type": "text",
+            "text": "Readable source page before a scanned page.",
+            "location": {
+              "source_path": "page/1/page-1-region-1",
+              "page": 1,
+              "coordinates": [
+                73.428,
+                93.981,
+                665.978,
+                131.932
+              ],
+              "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+            },
+            "metadata": {
+              "region_id": "page-1-region-1",
+              "order": 1,
+              "label": "text",
+              "confidence": 0.823232,
+              "box": [
+                73.428,
+                93.981,
+                665.978,
+                131.932
+              ],
+              "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+              "crop_box": [
+                71,
+                91,
+                668,
+                134
+              ],
+              "crop_sha256": "fa79fbf9332e16f49f95009d0a4630af8d99fdcd206e5554af654a241fe0e284"
+            }
+          }
+        ],
+        "provenance": {
+          "source_snapshot_ref": "sha256:522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+          "source_record_key": "page/1",
+          "content_sha256": "c990ce6cabb261140798ef972b5bd74088517c82138c62e1b289e69cfe7f698b",
+          "transformation_revision_ref": "modelanvil.glm-ocr-layout.v1"
+        },
+        "metadata": {
+          "source_format": "ocr",
+          "model": {
+            "source": {
+              "license": "mit",
+              "repo_id": "mlx-community/GLM-OCR-bf16",
+              "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+            },
+            "snapshot_sha256": "33e7724ec4f81796f42baa1a5cddc4eab212d64254c96858547d35276af02393",
+            "runtime_code_sha256": "a5df6e16e0e3f587715d3a89da0862d963ebd2514e7b6eb5cf6a03902f5f8905",
+            "files": {
+              "chat_template.jinja": {
+                "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+                "byte_size": 4606
+              },
+              "config.json": {
+                "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+                "byte_size": 1875
+              },
+              "generation_config.json": {
+                "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+                "byte_size": 165
+              },
+              "model.safetensors": {
+                "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+                "byte_size": 2214872319
+              },
+              "model.safetensors.index.json": {
+                "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+                "byte_size": 39232
+              },
+              "preprocessor_config.json": {
+                "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+                "byte_size": 367
+              },
+              "processor_config.json": {
+                "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+                "byte_size": 597
+              },
+              "tokenizer.json": {
+                "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+                "byte_size": 6838609
+              },
+              "tokenizer_config.json": {
+                "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+                "byte_size": 1066
+              }
+            },
+            "layout_model": {
+              "source": {
+                "license": "Apache-2.0",
+                "repo_id": "PaddlePaddle/PP-DocLayoutV3_safetensors",
+                "revision": "e4f489dc536556fc1be02b973ba06756e0d4a2ac"
+              },
+              "snapshot_sha256": "a55ee17d19e5503c046e24d0585dd4886ea687043dd4e9f9d65c7d614ae7c4b3",
+              "files": {
+                "config.json": {
+                  "sha256": "3cf834b91d23a756b1519bce4db42c09e852f3e35c35092dd5a3e253a50c071a",
+                  "byte_size": 2460
+                },
+                "model.safetensors": {
+                  "sha256": "5ea422c6cc5fe759a47e1357c35639b58173508e025a3131cbe4b6ac59e2b85e",
+                  "byte_size": 133270468
+                },
+                "preprocessor_config.json": {
+                  "sha256": "519fe0187a43a1ca429e3ad8317bab8700f0d5e8fb3a6e3a0a413ffac078ba42",
+                  "byte_size": 575
+                }
+              }
+            },
+            "image": {
+              "artifact_id": "01a168ba-b459-7142-b0f9-afd8785cf04f",
+              "sha256": "522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+              "byte_size": 20760
+            }
+          },
+          "rasterization": {
+            "source_format": "pdf",
+            "renderer": "pypdfium2==5.14.0",
+            "max_scale": 2,
+            "normalization": "pdfium_rgb",
+            "page_count": 2
+          },
+          "image_dimensions": [
+            1224,
+            600
+          ],
+          "raster_sha256": "de90bb182da4f3c36fa55bc877f3cc33d5a3d5c0d3e0cac42049ec309b39d63d",
+          "regions": [
+            {
+              "region_id": "page-1-region-1",
+              "order": 1,
+              "label": "text",
+              "confidence": 0.823232,
+              "box": [
+                73.428,
+                93.981,
+                665.978,
+                131.932
+              ],
+              "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+              "crop_box": [
+                71,
+                91,
+                668,
+                134
+              ],
+              "crop_sha256": "fa79fbf9332e16f49f95009d0a4630af8d99fdcd206e5554af654a241fe0e284",
+              "text": "Readable source page before a scanned page."
+            }
+          ],
+          "runtime_versions": {
+            "laya": "0.4.3",
+            "torch": "2.13.0",
+            "transformers": "5.14.0",
+            "mlx-vlm": "0.7.6",
+            "mlx": "0.32.3",
+            "Pillow": "13.0.0",
+            "safetensors": "0.8.0",
+            "pypdfium2": "5.14.0",
+            "torchvision": "0.28.0"
+          },
+          "review_required": true
+        }
+      },
+      "envelopes": [
+        {
+          "schema_version": "1.0",
+          "sample_id": "7465999a-9b80-53f4-970e-d1a279781ef1",
+          "source_group_id": "source-sha256:522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+          "blocks": [
+            {
+              "block_id": "page-1-region-1",
+              "type": "text",
+              "text": "Readable source page before a scanned page.",
+              "location": {
+                "source_path": "page/1/page-1-region-1",
+                "page": 1,
+                "coordinates": [
+                  73.428,
+                  93.981,
+                  665.978,
+                  131.932
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+              },
+              "metadata": {
+                "region_id": "page-1-region-1",
+                "order": 1,
+                "label": "text",
+                "confidence": 0.823232,
+                "box": [
+                  73.428,
+                  93.981,
+                  665.978,
+                  131.932
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  71,
+                  91,
+                  668,
+                  134
+                ],
+                "crop_sha256": "fa79fbf9332e16f49f95009d0a4630af8d99fdcd206e5554af654a241fe0e284"
+              }
+            }
+          ],
+          "provenance": {
+            "source_snapshot_ref": "sha256:522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+            "source_record_key": "page/1",
+            "content_sha256": "c990ce6cabb261140798ef972b5bd74088517c82138c62e1b289e69cfe7f698b",
+            "transformation_revision_ref": "modelanvil.glm-ocr-layout.v1"
+          },
+          "metadata": {
+            "source_format": "ocr",
+            "model": {
+              "source": {
+                "license": "mit",
+                "repo_id": "mlx-community/GLM-OCR-bf16",
+                "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+              },
+              "snapshot_sha256": "33e7724ec4f81796f42baa1a5cddc4eab212d64254c96858547d35276af02393",
+              "runtime_code_sha256": "a5df6e16e0e3f587715d3a89da0862d963ebd2514e7b6eb5cf6a03902f5f8905",
+              "files": {
+                "chat_template.jinja": {
+                  "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+                  "byte_size": 4606
+                },
+                "config.json": {
+                  "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+                  "byte_size": 1875
+                },
+                "generation_config.json": {
+                  "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+                  "byte_size": 165
+                },
+                "model.safetensors": {
+                  "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+                  "byte_size": 2214872319
+                },
+                "model.safetensors.index.json": {
+                  "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+                  "byte_size": 39232
+                },
+                "preprocessor_config.json": {
+                  "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+                  "byte_size": 367
+                },
+                "processor_config.json": {
+                  "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+                  "byte_size": 597
+                },
+                "tokenizer.json": {
+                  "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+                  "byte_size": 6838609
+                },
+                "tokenizer_config.json": {
+                  "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+                  "byte_size": 1066
+                }
+              },
+              "layout_model": {
+                "source": {
+                  "license": "Apache-2.0",
+                  "repo_id": "PaddlePaddle/PP-DocLayoutV3_safetensors",
+                  "revision": "e4f489dc536556fc1be02b973ba06756e0d4a2ac"
+                },
+                "snapshot_sha256": "a55ee17d19e5503c046e24d0585dd4886ea687043dd4e9f9d65c7d614ae7c4b3",
+                "files": {
+                  "config.json": {
+                    "sha256": "3cf834b91d23a756b1519bce4db42c09e852f3e35c35092dd5a3e253a50c071a",
+                    "byte_size": 2460
+                  },
+                  "model.safetensors": {
+                    "sha256": "5ea422c6cc5fe759a47e1357c35639b58173508e025a3131cbe4b6ac59e2b85e",
+                    "byte_size": 133270468
+                  },
+                  "preprocessor_config.json": {
+                    "sha256": "519fe0187a43a1ca429e3ad8317bab8700f0d5e8fb3a6e3a0a413ffac078ba42",
+                    "byte_size": 575
+                  }
+                }
+              },
+              "image": {
+                "artifact_id": "01a168ba-b459-7142-b0f9-afd8785cf04f",
+                "sha256": "522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+                "byte_size": 20760
+              }
+            },
+            "rasterization": {
+              "source_format": "pdf",
+              "renderer": "pypdfium2==5.14.0",
+              "max_scale": 2,
+              "normalization": "pdfium_rgb",
+              "page_count": 2
+            },
+            "image_dimensions": [
+              1224,
+              600
+            ],
+            "raster_sha256": "de90bb182da4f3c36fa55bc877f3cc33d5a3d5c0d3e0cac42049ec309b39d63d",
+            "regions": [
+              {
+                "region_id": "page-1-region-1",
+                "order": 1,
+                "label": "text",
+                "confidence": 0.823232,
+                "box": [
+                  73.428,
+                  93.981,
+                  665.978,
+                  131.932
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  71,
+                  91,
+                  668,
+                  134
+                ],
+                "crop_sha256": "fa79fbf9332e16f49f95009d0a4630af8d99fdcd206e5554af654a241fe0e284",
+                "text": "Readable source page before a scanned page."
+              }
+            ],
+            "runtime_versions": {
+              "laya": "0.4.3",
+              "torch": "2.13.0",
+              "transformers": "5.14.0",
+              "mlx-vlm": "0.7.6",
+              "mlx": "0.32.3",
+              "Pillow": "13.0.0",
+              "safetensors": "0.8.0",
+              "pypdfium2": "5.14.0",
+              "torchvision": "0.28.0"
+            },
+            "review_required": true
+          }
+        },
+        {
+          "schema_version": "1.0",
+          "sample_id": "7ced5394-4878-5b22-81f4-953e12b91918",
+          "source_group_id": "source-sha256:522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+          "blocks": [
+            {
+              "block_id": "page-2-region-1",
+              "type": "text",
+              "text": "Invoice sample: 2 review items",
+              "location": {
+                "source_path": "page/2/page-2-region-1",
+                "page": 2,
+                "coordinates": [
+                  50.344,
+                  224.153,
+                  508.878,
+                  260.523
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+              },
+              "metadata": {
+                "region_id": "page-2-region-1",
+                "order": 1,
+                "label": "text",
+                "confidence": 0.731013,
+                "box": [
+                  50.344,
+                  224.153,
+                  508.878,
+                  260.523
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  48,
+                  222,
+                  511,
+                  263
+                ],
+                "crop_sha256": "aa82753634ee706bbe48ef68c4f82ed047dac4989ba3d1c7e96a259128124e3b"
+              }
+            },
+            {
+              "block_id": "page-2-region-2",
+              "type": "text",
+              "text": "This text exists only as image pixels.",
+              "location": {
+                "source_path": "page/2/page-2-region-2",
+                "page": 2,
+                "coordinates": [
+                  50.617,
+                  305.757,
+                  590.753,
+                  343.411
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy"
+              },
+              "metadata": {
+                "region_id": "page-2-region-2",
+                "order": 2,
+                "label": "text",
+                "confidence": 0.832703,
+                "box": [
+                  50.617,
+                  305.757,
+                  590.753,
+                  343.411
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  48,
+                  303,
+                  593,
+                  346
+                ],
+                "crop_sha256": "9c63a7da37beecbda2dc5653ae75b91395998ecb0606044950a83fb02cf99330"
+              }
+            }
+          ],
+          "provenance": {
+            "source_snapshot_ref": "sha256:522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+            "source_record_key": "page/2",
+            "content_sha256": "b3a61a15344d888a60b3c0a77e2fbb7bbd48ad6df428d428a20ab2b12a5787e6",
+            "transformation_revision_ref": "modelanvil.glm-ocr-layout.v1"
+          },
+          "metadata": {
+            "source_format": "ocr",
+            "model": {
+              "source": {
+                "license": "mit",
+                "repo_id": "mlx-community/GLM-OCR-bf16",
+                "revision": "24f15402e83baa0a80eeeaecf5480e172abc6f2e"
+              },
+              "snapshot_sha256": "33e7724ec4f81796f42baa1a5cddc4eab212d64254c96858547d35276af02393",
+              "runtime_code_sha256": "a5df6e16e0e3f587715d3a89da0862d963ebd2514e7b6eb5cf6a03902f5f8905",
+              "files": {
+                "chat_template.jinja": {
+                  "sha256": "062e7ee4cc8defa88a5938b5d456dc60366ffd80647f918946ee747bf09ddc7c",
+                  "byte_size": 4606
+                },
+                "config.json": {
+                  "sha256": "7bf6a133be2edf17779af72f5fb7e9252199ef58fe6b29c26bf249c071087354",
+                  "byte_size": 1875
+                },
+                "generation_config.json": {
+                  "sha256": "4e2a3412f65b2a21d315d928986c55723d3e60dfb92c3982a5b9fd56835b0aa5",
+                  "byte_size": 165
+                },
+                "model.safetensors": {
+                  "sha256": "3e93839427cf081600cd96651ba4d9edf6d6120f042555eb9fcfa36153905f74",
+                  "byte_size": 2214872319
+                },
+                "model.safetensors.index.json": {
+                  "sha256": "b25dcc93cd6c638d344ee12f9a0da2352c7fe6673debc5c324d248637480549b",
+                  "byte_size": 39232
+                },
+                "preprocessor_config.json": {
+                  "sha256": "02cc50c36240882ae35e8cd4077a25a379664108185d728d261cb785aefeccff",
+                  "byte_size": 367
+                },
+                "processor_config.json": {
+                  "sha256": "19dafea5bd6415c50e2da43a31583dab39f9496673260ad33d9fa6c638a1d077",
+                  "byte_size": 597
+                },
+                "tokenizer.json": {
+                  "sha256": "aa0fd058c73a5718bb191f6672dc16d122ee0147b20c123d1726514298f9968a",
+                  "byte_size": 6838609
+                },
+                "tokenizer_config.json": {
+                  "sha256": "7a76fcb27abbc2cb0249d81884fef972b2c27194e3e13db54baae50f58f141fb",
+                  "byte_size": 1066
+                }
+              },
+              "layout_model": {
+                "source": {
+                  "license": "Apache-2.0",
+                  "repo_id": "PaddlePaddle/PP-DocLayoutV3_safetensors",
+                  "revision": "e4f489dc536556fc1be02b973ba06756e0d4a2ac"
+                },
+                "snapshot_sha256": "a55ee17d19e5503c046e24d0585dd4886ea687043dd4e9f9d65c7d614ae7c4b3",
+                "files": {
+                  "config.json": {
+                    "sha256": "3cf834b91d23a756b1519bce4db42c09e852f3e35c35092dd5a3e253a50c071a",
+                    "byte_size": 2460
+                  },
+                  "model.safetensors": {
+                    "sha256": "5ea422c6cc5fe759a47e1357c35639b58173508e025a3131cbe4b6ac59e2b85e",
+                    "byte_size": 133270468
+                  },
+                  "preprocessor_config.json": {
+                    "sha256": "519fe0187a43a1ca429e3ad8317bab8700f0d5e8fb3a6e3a0a413ffac078ba42",
+                    "byte_size": 575
+                  }
+                }
+              },
+              "image": {
+                "artifact_id": "01a168ba-b459-7142-b0f9-afd8785cf04f",
+                "sha256": "522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+                "byte_size": 20760
+              }
+            },
+            "rasterization": {
+              "source_format": "pdf",
+              "renderer": "pypdfium2==5.14.0",
+              "max_scale": 2,
+              "normalization": "pdfium_rgb",
+              "page_count": 2
+            },
+            "image_dimensions": [
+              1224,
+              600
+            ],
+            "raster_sha256": "db497b65444593680df27df4a37e71614d79fe1f1d2fc03f3d7618b1064c5c99",
+            "regions": [
+              {
+                "region_id": "page-2-region-1",
+                "order": 1,
+                "label": "text",
+                "confidence": 0.731013,
+                "box": [
+                  50.344,
+                  224.153,
+                  508.878,
+                  260.523
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  48,
+                  222,
+                  511,
+                  263
+                ],
+                "crop_sha256": "aa82753634ee706bbe48ef68c4f82ed047dac4989ba3d1c7e96a259128124e3b",
+                "text": "Invoice sample: 2 review items"
+              },
+              {
+                "region_id": "page-2-region-2",
+                "order": 2,
+                "label": "text",
+                "confidence": 0.832703,
+                "box": [
+                  50.617,
+                  305.757,
+                  590.753,
+                  343.411
+                ],
+                "coordinate_system": "normalized_page_rgb_pixels_xyxy",
+                "crop_box": [
+                  48,
+                  303,
+                  593,
+                  346
+                ],
+                "crop_sha256": "9c63a7da37beecbda2dc5653ae75b91395998ecb0606044950a83fb02cf99330",
+                "text": "This text exists only as image pixels."
+              }
+            ],
+            "runtime_versions": {
+              "laya": "0.4.3",
+              "torch": "2.13.0",
+              "transformers": "5.14.0",
+              "mlx-vlm": "0.7.6",
+              "mlx": "0.32.3",
+              "Pillow": "13.0.0",
+              "safetensors": "0.8.0",
+              "pypdfium2": "5.14.0",
+              "torchvision": "0.28.0"
+            },
+            "review_required": true
+          }
+        }
+      ]
+    }
+  }
+}
