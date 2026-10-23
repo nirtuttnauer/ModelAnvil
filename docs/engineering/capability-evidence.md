@@ -1,8 +1,12 @@
 # Capability evidence audit
 
-Current delivery addendum (23 October 2026): see the [integration inventory](integration-inventory.md), [operation-specific capability baseline](supported-capabilities.md), and dated verification reports. The original review below is historical; current dependency pins still require fresh GPU qualification. Customer discovery remains blocked on customer input.
+Current delivery addendum (23 October 2026): see the [integration inventory](integration-inventory.md), [operation-specific capability baseline](supported-capabilities.md), and dated verification reports. The original review below is historical; current dependency pins require operation-specific GPU qualification; the bounded current MPS evidence is recorded below. Customer discovery remains blocked on customer input.
 
 For current operation-specific support, artifact references and remaining qualification, see the [updated capability baseline](supported-capabilities.md). This audit retains its original scenario-by-scenario review scope.
+
+## Current Apple MPS operation evidence — 23 October 2026
+
+A [new current-stack run](verification/task40-current-mps-2026-10-23/report.md) executes actual three-step FP32 full SFT and rank-8 q/v LoRA on this Apple M5 Pro with PyTorch 2.13/Transformers 5.14. Independent CPU/MPS reloads match, expired-lease recovery reproduces exact final bytes, and cancellation/corruption settle only committed work. This is the named correctness/recovery envelope; MLX/QLoRA, mixed precision, other hardware, customer quality and production qualification retain separate gates. Archived reports and baseline JSON flags are preserved.
 
 ## Current merged CPU and control-plane evidence — 23 October 2026
 
