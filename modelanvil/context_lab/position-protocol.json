@@ -1,0 +1,53 @@
+{
+  "id": "authored-code-position-v1",
+  "license": "CC0-1.0",
+  "positions": [
+    "start",
+    "middle",
+    "end"
+  ],
+  "repeats": 2,
+  "distractor_count": 12,
+  "decoding": {
+    "temperature": 0.0,
+    "seed": 42,
+    "max_tokens": 24,
+    "prompt_format": "model",
+    "device": "cpu"
+  },
+  "context_limit": 2048,
+  "system": "Read the supplied evidence and answer with only the requested access code. Do not include an explanation or citation. If the evidence does not give the code, answer UNKNOWN.",
+  "cases": [
+    {
+      "case_id": "island",
+      "question": "What is the access code for the island beacon?",
+      "fact": "The access code for the island beacon is WILLOW.",
+      "expected": "WILLOW"
+    },
+    {
+      "case_id": "valley",
+      "question": "What is the access code for the valley station?",
+      "fact": "The access code for the valley station is CEDAR.",
+      "expected": "CEDAR"
+    },
+    {
+      "case_id": "harbor",
+      "question": "What is the access code for the harbor tower?",
+      "fact": "The access code for the harbor tower is MAPLE.",
+      "expected": "MAPLE"
+    }
+  ],
+  "distractor": "Maintenance record {number}: The weather was partly cloudy. The walkway was inspected in the morning. The water tank was full and the door was closed. This record contains no access code.",
+  "scoring": {
+    "metric": "normalized_exact_match",
+    "normalization": "Unicode NFKC, casefold, collapse whitespace, remove terminal period; no extraction of answer words from explanations",
+    "unit": "fraction",
+    "denominator": "all scheduled actual forwards; runtime failures abort the report",
+    "variation": "per-repeat accuracy, population standard deviation, per-case unique raw outputs",
+    "middle_dip": "middle accuracy < arithmetic mean of start and end; descriptive only, no significance claim"
+  },
+  "reproduction_tolerance": {
+    "accuracy_absolute": 0.3333333333333333,
+    "basis": "At most one of three authored cases per position; fixed before model measurements. Structure/pins/counts must match exactly. No model quality threshold."
+  }
+}
