@@ -1,0 +1,21 @@
+{
+  "modelanvil/runners/training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+  "modelanvil/runners/training/runtime.py": "f132720bca806401c9436b73237a8c45a5f447683de5e7012577e882642640e3",
+  "modelanvil/runners/training/executor.py": "b0fe20e843d14bbebcfe98e4869dfda7a929ce265552f929e3ea9e6d8ae60a5c",
+  "modelanvil/runners/training/registry.py": "8d3f8a800600215046cf1f95fe352f535cfdd19354828603bb4f4055180c8e61",
+  "modelanvil/runners/training/admission.py": "1f2e3c312d14fd7321c994fa676cded922d94a43bdc1b9190218480c21566fd6",
+  "modelanvil/accelerators.py": "b928897f385219596cf6f8ddec049d55a520a1024e02046c2a060e9a1afadfbc",
+  "modelanvil/device_admission.py": "3dad22f6c16aaa525579c38f0a935ab2e60ebbc94418eeb7e65a0cb0efbe4295",
+  "modelanvil/data/training_import.py": "e4c206050e4fd365058ee1e532f97739d7cf9cab1f89bf6550a687b15e92ad8d",
+  "modelanvil/jobs/models.py": "e52b97e97d7a0e34fd4048e1c7d6874c20a2c57b16a734e9fac6fb9859e9b1ca",
+  "modelanvil/api/training_admission.py": "1252d5f85d839670752bd25d23f445b03fcb9f1390153e54470e091acaccb414",
+  "modelanvil/runners/training/preflight_report.py": "be0019e8260d76f95789479b59685407f569653271d348a28734f413522de8b9",
+  "modelanvil/runners/training/mlx_runtime.py": "5fa3920f551a14fa6f196cf135884794c53ba31c7e8023549856c519c2f097d0",
+  "modelanvil/runners/inference.py": "36f1401d73b4db961ad3b432f67efb0eff9f57d12303fc0a0cb4453dee29f08f",
+  "modelanvil/runners/capabilities.py": "6e6c2674e8d5dd2a3cd5752601434cd6c349f08d60fb8502d348c979b3d29239",
+  "modelanvil/api/views/model_workspace.py": "c5fb3c5e430635337b179dca8c1c47c3f43a62e3f72fe18b194020c54601ce0f",
+  "scripts/hf_candidate_infer.py": "5772a1a290e9079fff70b45e48ea0119cbdb77a131104cecd84728851e66ee2d",
+  "scripts/hf_candidate_score.py": "f8196592d0cf7189bc763f6f986b7e2b97cb5e831809c701717c68fa80ac600e",
+  "scripts/mlx_candidate_infer.py": "2ad996a7a7e80bae14b439f389123c9ee47275214546391fd1dc1efb7ae61522",
+  "scripts/qualify_hf_gpu.py": "bc575e248045333d292725d5a4c636d16f9554e0fad5eb1639e7b378b4286966"
+}

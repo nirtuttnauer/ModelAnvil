@@ -111,7 +111,8 @@ with archive_path.open('wb') as target:
 download.close()
 import zipfile
 with zipfile.ZipFile(archive_path) as archive:
- assert set(archive.namelist()) == set(bundle['files']) | {'modelanvil-provenance.json'}
+ assert set(archive.namelist()) == set(bundle['files']) | {'modelanvil-provenance.json', 'LICENSE.txt'}
+ assert archive.read('LICENSE.txt') == (Path(runtime.__file__).parent / 'assets/Apache-2.0.txt').read_bytes()
  for filename,ref in bundle['files'].items():
   with archive.open(filename) as source:
    sha=hashlib.sha256()
@@ -132,15 +133,17 @@ report={'run_id':str(run.run_id),'tenant_id':str(tenant.pk),'project_id':str(pro
 (args.output / 'task13-gpu-pilot.json').write_text(json.dumps(report,indent=2,default=str)+'\n')
 print('saved real GPU report',flush=True)
 
-inference = subprocess.run([sys.executable, str(root / ('scripts/mlx_candidate_infer.py' if args.recipe == 'qlora_adapter' else 'scripts/hf_candidate_infer.py')),
-    str(destination), '--device', 'cpu'], capture_output=True, text=True, check=True, timeout=120)
+with device_lease('cpu'):
+ inference = subprocess.run([sys.executable, str(root / ('scripts/mlx_candidate_infer.py' if args.recipe == 'qlora_adapter' else 'scripts/hf_candidate_infer.py')),
+     str(destination), '--device', 'cpu'], capture_output=True, text=True, check=True, timeout=120)
 independent = json.loads(inference.stdout)
 assert independent['weights_sha256'] == report['checkpoints'][-1]['weights_sha256']
 assert independent['completion'] and not independent['consumer_imported_modelanvil_or_django']
 (args.output / 'task13-gpu-independent-inference.json').write_text(json.dumps(independent, indent=2)+'\n')
 print('independent inference passed', flush=True)
-gpu_inference = subprocess.run([sys.executable, str(root / ('scripts/mlx_candidate_infer.py' if args.recipe == 'qlora_adapter' else 'scripts/hf_candidate_infer.py')),
-    str(destination), '--device', args.device], capture_output=True, text=True, check=True, timeout=120)
+with device_lease(args.device):
+ gpu_inference = subprocess.run([sys.executable, str(root / ('scripts/mlx_candidate_infer.py' if args.recipe == 'qlora_adapter' else 'scripts/hf_candidate_infer.py')),
+     str(destination), '--device', args.device], capture_output=True, text=True, check=True, timeout=120)
 gpu_result = json.loads(gpu_inference.stdout)
 assert gpu_result['weights_sha256'] == independent['weights_sha256']
 assert gpu_result['generated_token_ids'] == independent['generated_token_ids']
@@ -162,8 +165,9 @@ if args.samples:
    'split':'train_consumed' if split=='train' else split,'text':'\n'.join(b['text'] for b in row['blocks'])})
  quality_path=args.output/'quality-samples.json'
  quality_path.write_text(json.dumps({'dataset_digest':run.dataset_revision.manifest_digest,'samples':quality_samples}))
- measured=subprocess.run([sys.executable,str(root/'scripts/hf_candidate_score.py'), '--runtime', ('mlx' if args.recipe == 'qlora_adapter' else 'torch'),'--base-dir',str(args.model_dir),
-  '--candidate-dir',str(destination),'--samples',str(quality_path)],capture_output=True,text=True,check=True,timeout=240)
+ with device_lease('mlx:0' if args.recipe == 'qlora_adapter' else 'cpu'):
+  measured=subprocess.run([sys.executable,str(root/'scripts/hf_candidate_score.py'), '--runtime', ('mlx' if args.recipe == 'qlora_adapter' else 'torch'),'--base-dir',str(args.model_dir),
+   '--candidate-dir',str(destination),'--samples',str(quality_path)],capture_output=True,text=True,check=True,timeout=240)
  quality=json.loads(measured.stdout)
  assert not quality['consumer_imported_modelanvil_or_django']
  (args.output/'quality-verification.json').write_text(json.dumps(quality,indent=2)+'\n')

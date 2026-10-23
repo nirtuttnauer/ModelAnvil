@@ -1,5 +1,7 @@
 # Bounded local SmolLM2 GPU training
 
+The [23 October current recipe qualification](verification/task77-gpu-recipes-2026-10-23/report.md) executes three-step MPS full-SFT/LoRA and native MLX four-bit adapter updates, exact recovery and independent held-out scoring on the pinned current dependencies. Full-SFT/LoRA pass the bounded loss check. QLoRA execution passes while its quality comparison against the unquantized base fails. The report records exact per-run source builds and browser previews; other hardware and production remain unqualified. Operator-created exact GPU bases now work in the training picker and chat catalog, with actual load proof tracked separately per device.
+
 TASK-13 implements an independent ModelAnvil runtime, `modelanvil.smollm2-gpu-sft.v1`, using PyTorch and Hugging Face Transformers. The existing CPU runtimes remain separate. The runtime supports full FP32 SFT and FP32 rank-8 q/v LoRA with AdamW, one text sample per step, 2–128 actual tokenizer tokens, 1–1000 steps and at most 1000 published rows. It consumes only the protected train split and rejects truncation, chat roles, incompatible inputs and unknown GPU memory capacity.
 
 Apple Silicon also has a separate [native four-bit adapter profile](native-apple-adapter-training.md), selected with `--device mlx:0 --recipe qlora_adapter`. Its exported weights and adapter files use the standard MLX format and its measured quantization quality limit is recorded explicitly.

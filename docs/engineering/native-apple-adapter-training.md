@@ -21,6 +21,8 @@ Measured telemetry includes gradient norm, active/peak MLX memory and prediction
 
 ## Mac evidence and quality limit
 
+The [23 October current-stack qualification](verification/task77-gpu-recipes-2026-10-23/report.md) repeats actual native updates, exact recovery, independent CPU/GPU reload, current API inference and desktop/mobile encoded-sample previews. On its separate authored mechanics corpus, the candidate exceeds the unquantized base's loss by about 27% on validation and 18% on test. Both fail the five-percent quality tolerance. The operation mechanics pass; this does not qualify model quality. The older report below retains its own corpus, pins and different measurements.
+
 The [Mac evidence](verification/modelanvil-native-adapter-mac-2026-10-12.json) records three actual updates, exact resumed adapter bytes, cancellation after one committed step, corruption without charging steps, verified ZIP contents, independent CPU/Metal reload and actual API candidate generation. The independent consumer imports neither Django nor ModelAnvil.
 
 The corpus is the same deduplicated, pinned engineering-document corpus used for the FP32 profiles. Training loss must decrease against the identically quantized base, and protected validation/test loss may regress at most five percent. Those adapter checks pass. A separate comparison against the unquantized MLX FP32 base records the cost of quantization: validation loss exceeds the five-percent tolerance slightly, while test loss stays within it. **Overall model-quality acceptance fails for this three-step four-bit candidate.** The evidence retains this result; the runtime does not qualify a production release or bypass its quality gate.
