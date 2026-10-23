@@ -1,5 +1,6 @@
 """Real tensor reload/generation plus import isolation and byte verification."""
 import importlib.util
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -416,7 +417,7 @@ class ModelWorkspaceTests(TransactionTestCase):
             other = APIClient(); other.credentials(HTTP_AUTHORIZATION=f'Bearer {secret}')
             self.assertEqual(other.get(path).status_code, 404)
 
-    def test_adapter_export_contains_only_adapter_files_and_base_provenance(self):
+    def test_adapter_export_contains_portable_tokenizer_config_and_base_provenance_without_base_weights(self):
         import zipfile
         from modelanvil.runners.models import TrainingRun
         from modelanvil.runners.training import hf_runtime
@@ -437,11 +438,19 @@ class ModelWorkspaceTests(TransactionTestCase):
             self.assertEqual(response.status_code, 200)
             raw = b''.join(response.streaming_content); response.close()
             with zipfile.ZipFile(io.BytesIO(raw)) as archive:
-                self.assertEqual(set(archive.namelist()), {'adapter_config.json', 'adapter_model.safetensors', 'modelanvil-provenance.json'})
+                expected = {'adapter_config.json', 'adapter_model.safetensors', 'config.json', 'tokenizer.json', 'tokenizer_config.json', 'special_tokens_map.json'}
+                self.assertEqual(set(archive.namelist()), expected | {'modelanvil-provenance.json', 'LICENSE.txt'})
+                self.assertNotIn('model.safetensors', archive.namelist())
+                config = json.loads(archive.read('adapter_config.json'))
+                self.assertEqual(config['base_model_name_or_path'], hf_runtime.SOURCE['repo_id'])
+                self.assertEqual(config['revision'], hf_runtime.SOURCE['revision'])
                 self.assertEqual(archive.read('adapter_model.safetensors'), b'fixture-adapter-bytes')
                 provenance = json.loads(archive.read('modelanvil-provenance.json'))
                 self.assertEqual(provenance['source'], hf_runtime.SOURCE)
-                self.assertEqual(provenance['included_files'], ['adapter_config.json', 'adapter_model.safetensors'])
+                self.assertEqual(provenance['included_files'], sorted(expected))
+                for name in expected:
+                    self.assertEqual(provenance['export_files'][name]['sha256'], hashlib.sha256(archive.read(name)).hexdigest())
+                self.assertTrue(all(v.date_time == (1980,1,1,0,0,0) for v in archive.infolist()))
             run.status = 'pending'; run.save(update_fields=['status'])
             self.assertEqual(self.client.get(path).data['export_options'], [])
             self.assertEqual(self.client.get(path + 'download/?export_format=adapter').status_code, 400)

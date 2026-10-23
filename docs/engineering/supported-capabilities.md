@@ -72,3 +72,5 @@ The seven restored historical reports match the SHA-256 values already published
 
 
 23 October 2026 — TASK-15 adds a separate bounded pretrained CPU full-SFT/LoRA profile, retaining GPU/QLoRA requirements in TASK-77. [Actual CPU training, independent held-out scoring and recovery evidence](verification/task15-cpu-pretrained-2026-10-23/report.md) covers the exact 135M base, three measured updates per recipe and immutable export; no customer quality or production qualification is inferred.
+
+23 October 2026 — TASK-27 adds [bounded pretrained CPU weight exports](cpu-weight-exports.md): actual full/merged Safetensors, adapter-only PEFT and Q8_0 GGUF loading, private conversion recovery and immutable local download. The bounded WikiText comparison does not establish domain or production quality. Actual private Hub publication requires separately authorized live qualification.

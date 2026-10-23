@@ -1,0 +1,29 @@
+{
+  "measured_quantized_weights": {
+    "sha256": "d98d85ab3a18c5cd3b0fc8ba19b37d7e263cf7cfae24a5f1c75c8873ea2659d4",
+    "byte_size": 144810496
+  },
+  "archives": {
+    "browser-q8.zip": {
+      "archive": {
+        "sha256": "94ddc51c7d26e8ecd79310acea8a54fc0fe3c31695756f850445c888388364b4",
+        "byte_size": 148355189
+      },
+      "quantized_weights": {
+        "sha256": "d98d85ab3a18c5cd3b0fc8ba19b37d7e263cf7cfae24a5f1c75c8873ea2659d4",
+        "byte_size": 144810496
+      }
+    },
+    "lora_adapter-gguf-q8.zip": {
+      "archive": {
+        "sha256": "8facab3bbd7d88640b04cd43b9743054ff4596aa4f721d41279fdcd861f49c11",
+        "byte_size": 148355189
+      },
+      "quantized_weights": {
+        "sha256": "d98d85ab3a18c5cd3b0fc8ba19b37d7e263cf7cfae24a5f1c75c8873ea2659d4",
+        "byte_size": 144810496
+      }
+    }
+  },
+  "all_weights_match": true
+}

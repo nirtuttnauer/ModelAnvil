@@ -83,3 +83,13 @@ test('wrong formats and server errors never create a completed export', async ()
 test('byte labels keep actual binary units visible', () => {
   assert.equal(exportBytes(0), '0 B'); assert.equal(exportBytes(1024), '1.0 KiB'); assert.equal(exportBytes(1024**2), '1.0 MiB'); assert.equal(exportBytes(1024**3), '1.00 GiB');
 });
+
+test('prepared merged and Q8 exports retain the scoped disk download path', async () => {
+  for (const format of ['merged', 'gguf-q8']) {
+    await fixture(response(), {}, async f => {
+      await downloadModelExport('run-id', { ...native, format }, 'token', f.controller.signal, () => {});
+      assert.equal(f.calls.find(v => v.path).path, `/api/v1/training-runs/run-id/download/?export_format=${format}`);
+      assert.equal(f.calls[0].picker.suggestedName, `modelanvil-run-id-${format}.zip`);
+    });
+  }
+});

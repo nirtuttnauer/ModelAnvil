@@ -328,6 +328,8 @@ class ArtifactSerializer(serializers.ModelSerializer):
     def validate(self,attrs):
         if not isinstance(attrs.get('metadata',{}),dict):
             raise serializers.ValidationError({'metadata':'Use an object for artifact metadata.'})
+        if 'cpu_export' in attrs.get('metadata',{}) or (self.instance and isinstance(self.instance.metadata, dict) and 'cpu_export' in self.instance.metadata):
+            raise serializers.ValidationError('Prepared CPU export provenance is operator-owned and immutable.')
         if attrs.get('metadata',{}).get('application_feedback_id'):
             raise serializers.ValidationError('Application feedback provenance is server-owned.')
         if self.instance and isinstance(self.instance.metadata,dict) and self.instance.metadata.get('application_feedback_id'):

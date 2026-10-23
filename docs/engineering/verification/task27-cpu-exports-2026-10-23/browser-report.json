@@ -1,0 +1,45 @@
+{
+  "scope": "Real local browser download controls on actual CPU exports; emulated browser without File System Access API exercises the bounded fallback.",
+  "viewports": [
+    {
+      "width": 1440,
+      "options": [
+        "Safetensors snapshot (ZIP)",
+        "LoRA adapter only (ZIP)",
+        "Merged Safetensors (ZIP)",
+        "CPU GGUF Q8_0 (ZIP)",
+        "Snapshot manifest (JSON)"
+      ],
+      "document_overflow": false
+    },
+    {
+      "width": 390,
+      "options": [
+        "Safetensors snapshot (ZIP)",
+        "LoRA adapter only (ZIP)",
+        "Merged Safetensors (ZIP)",
+        "CPU GGUF Q8_0 (ZIP)",
+        "Snapshot manifest (JSON)"
+      ],
+      "document_overflow": false
+    }
+  ],
+  "downloads": [
+    {
+      "viewport": 1440,
+      "format": "gguf-q8",
+      "sha256": "94ddc51c7d26e8ecd79310acea8a54fc0fe3c31695756f850445c888388364b4",
+      "byte_size": 148355189,
+      "filename": "modelanvil-01a169e9-0e86-7401-a2a4-f8b2240dffe7-gguf-q8.zip"
+    },
+    {
+      "viewport": 390,
+      "format": "adapter",
+      "sha256": "0eb6516862ff123705413292f582f44b0f02398613640063af408db5c04036fa",
+      "byte_size": 3988283,
+      "filename": "modelanvil-01a169e9-0e86-7401-a2a4-f8b2240dffe7-adapter.zip"
+    }
+  ],
+  "page_errors": [],
+  "large_fallback_refused": true
+}

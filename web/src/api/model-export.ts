@@ -1,6 +1,6 @@
 import { ApiRequestError, apiPath, authHeaders, getActiveProjectId } from './client.ts';
 
-export interface ModelExportOption { format: 'native' | 'adapter' | 'json'; label: string; extension: 'zip' | 'json'; description: string; method?: 'GET' | 'POST' }
+export interface ModelExportOption { format: 'native' | 'adapter' | 'json' | 'merged' | 'gguf-q8'; label: string; extension: 'zip' | 'json'; description: string; method?: 'GET' | 'POST' }
 export interface ExportProgress { phase: 'choosing' | 'preparing' | 'downloading' | 'complete'; received: number; total: number | null }
 export const EXPORT_BUFFER_LIMIT = 256 * 1024**2;
 export function exportBytes(bytes: number): string {
@@ -14,7 +14,7 @@ export function exportBytes(bytes: number): string {
 export async function downloadModelExport(runId: string, option: ModelExportOption, token: string,
   signal: AbortSignal, onProgress: (progress: ExportProgress) => void): Promise<'saved' | 'browser'> {
   if (!token.trim()) throw new Error('Connect to your workspace before downloading.');
-  if (!['native', 'adapter', 'json'].includes(option.format)) throw new Error('Unsupported export format.');
+  if (!['native', 'adapter', 'json', 'merged', 'gguf-q8'].includes(option.format)) throw new Error('Unsupported export format.');
   const project = getActiveProjectId();
   const filename = `modelanvil-${runId}-${option.format}.${option.extension}`;
   const picker = (window as unknown as { showSaveFilePicker?: (options: { suggestedName: string }) => Promise<{ createWritable(): Promise<WritableStream<Uint8Array>> }> }).showSaveFilePicker;

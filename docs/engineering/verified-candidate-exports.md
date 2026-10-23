@@ -7,3 +7,5 @@ A reviewed v2 bundle contains actual weights, tokenizer/configuration, frozen re
 Current checks revalidate evidence and access. The UI reports frozen and checked times; missing or changed evidence makes the review stale, hides its frozen case content and blocks export/serving. Restore authorized inputs, rerun an outdated evaluation and create a fresh review. Older reviews without immutable consumer/evidence pins also require a fresh review. A passing frozen review, endpoint pointer and old startup record alone do not establish current live serving readiness.
 
 See [actual browser, empty-environment and stale-evidence verification](verification/task7-export-2026-10-23/report.md).
+
+Pretrained CPU runs additionally support [recoverable merged Safetensors and Q8_0 GGUF exports](cpu-weight-exports.md), with separate format, held-out regression and release gates. The frozen reference release profile above remains bounded.

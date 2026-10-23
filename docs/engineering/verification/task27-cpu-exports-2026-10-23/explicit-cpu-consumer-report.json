@@ -1,0 +1,83 @@
+{
+  "scope": "Final explicit CPU PEFT loading; every loaded parameter checked on CPU before generation. Native and adapter-only browser archives plus the final merged archive generated identical greedy tokens. Numeric weights match the original sequential native comparison.",
+  "independent_consumers": {
+    "lora_adapter-api-native.zip": {
+      "archive_sha256": "5fa1ccf29af7112fbc3c4e4357455a8e4f359ab11c7dce4b39399c168e4669bc",
+      "adapter": true,
+      "device": "cpu",
+      "runtime": "independent Transformers/PEFT",
+      "generated_token_ids": [
+        1420,
+        429,
+        253,
+        4870,
+        284,
+        4585,
+        260,
+        4683
+      ],
+      "completion": " light from a star and records the colors",
+      "production_qualified": false
+    },
+    "lora_adapter-api-adapter.zip": {
+      "archive_sha256": "0eb6516862ff123705413292f582f44b0f02398613640063af408db5c04036fa",
+      "adapter": true,
+      "device": "cpu",
+      "runtime": "independent Transformers/PEFT",
+      "generated_token_ids": [
+        1420,
+        429,
+        253,
+        4870,
+        284,
+        4585,
+        260,
+        4683
+      ],
+      "completion": " light from a star and records the colors",
+      "production_qualified": false
+    },
+    "lora_adapter-merged.zip": {
+      "archive_sha256": "22fa645219de18bdd7364ccf7d69c06be6af28e3949e1b42414aa1617690cd85",
+      "adapter": false,
+      "device": "cpu",
+      "runtime": "independent Transformers/PEFT",
+      "generated_token_ids": [
+        1420,
+        429,
+        253,
+        4870,
+        284,
+        4585,
+        260,
+        4683
+      ],
+      "completion": " light from a star and records the colors",
+      "production_qualified": false
+    }
+  },
+  "archives_bound_to_measured_weights": {
+    "browser-q8.zip": {
+      "archive": {
+        "sha256": "94ddc51c7d26e8ecd79310acea8a54fc0fe3c31695756f850445c888388364b4",
+        "byte_size": 148355189
+      },
+      "quantized_weights": {
+        "sha256": "d98d85ab3a18c5cd3b0fc8ba19b37d7e263cf7cfae24a5f1c75c8873ea2659d4",
+        "byte_size": 144810496
+      }
+    },
+    "lora_adapter-gguf-q8.zip": {
+      "archive": {
+        "sha256": "8facab3bbd7d88640b04cd43b9743054ff4596aa4f721d41279fdcd861f49c11",
+        "byte_size": 148355189
+      },
+      "quantized_weights": {
+        "sha256": "d98d85ab3a18c5cd3b0fc8ba19b37d7e263cf7cfae24a5f1c75c8873ea2659d4",
+        "byte_size": 144810496
+      }
+    }
+  },
+  "exact_public_corpus_guard_passed": true,
+  "production_qualified": false
+}

@@ -1,0 +1,18 @@
+{
+  "interrupted_staging": {
+    "artifact_id": "01a16a10-ff60-7fe3-9b54-92b88f901b45",
+    "state": "staging",
+    "sha256": "2ce3f5a9eb189eb6bd54fe695accdc509de52d553bd3820ff77eef307a17abd0",
+    "byte_size": 148354573,
+    "object_key": "cpu-exports/3553b9d4d2e9ddd16aa361b014fefd7201ac689245f6f0d5e6de70bccf63ec02/export.zip"
+  },
+  "recovered": {
+    "artifact_id": "01a16a10-ff60-7fe3-9b54-92b88f901b45",
+    "sha256": "2ce3f5a9eb189eb6bd54fe695accdc509de52d553bd3820ff77eef307a17abd0",
+    "byte_size": 148354573
+  },
+  "staging_download_http_status": 400,
+  "numerical_conversion_not_repeated": true,
+  "repeated_delivery_same_identity": true,
+  "interruption_exit_code": 93
+}
