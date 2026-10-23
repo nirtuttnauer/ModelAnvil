@@ -9,3 +9,6 @@ pika==1.3.2
 boto3==1.43.110
 pyarrow==26.0.0
 numpy==2.3.3
+# Offline RAG tokenizer; bytes are bundled and pinned, no runtime download.
+tokenizers==0.22.2
+huggingface-hub==1.33.0

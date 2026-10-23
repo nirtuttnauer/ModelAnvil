@@ -10389,20 +10389,21 @@
                 }
               }
             },
-            "description": "At most 2 MB UTF-8 text and 10,000 chunks per import."
+            "description": "At most 2 MB UTF-8 active source text and 10,000 chunks per local index. Stable source identifiers reuse unchanged document revisions."
           },
           "chunk_size": {
             "type": "integer",
-            "minimum": 100,
-            "maximum": 10000,
-            "default": 1200
+            "minimum": 16,
+            "maximum": 4096,
+            "default": 254,
+            "description": "Content tokens under the bundled SHA-pinned all-MiniLM-L6-v2 WordPiece tokenizer; no padding/truncation or added special tokens."
           },
           "chunk_overlap": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 1000,
-            "default": 100,
-            "description": "At most half the chunk size."
+            "maximum": 2048,
+            "default": 32,
+            "description": "Maximum independently encoded overlapping content tokens, at most half the chunk size. Actual overlap can be smaller at normalization/WordPiece boundaries and is recorded per chunk."
           }
         }
       },

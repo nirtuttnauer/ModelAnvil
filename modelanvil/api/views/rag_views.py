@@ -55,16 +55,14 @@ class DocumentInputSerializer(serializers.Serializer):
 
 class IndexInputSerializer(serializers.Serializer):
     documents = DocumentInputSerializer(many=True, allow_empty=False, max_length=50)
-    chunk_size = serializers.IntegerField(default=1200, min_value=100, max_value=10000)
-    chunk_overlap = serializers.IntegerField(default=100, min_value=0, max_value=1000)
+    chunk_size = serializers.IntegerField(default=254, min_value=16, max_value=4096)
+    chunk_overlap = serializers.IntegerField(default=32, min_value=0, max_value=2048)
 
     def validate(self, data):
         if data["chunk_overlap"] > data["chunk_size"] // 2:
             raise serializers.ValidationError({"chunk_overlap": "Overlap must be at most half the chunk size."})
         if sum(len(item["content"].encode("utf-8")) for item in data["documents"]) > 2000000:
             raise serializers.ValidationError({"documents": "Import at most 2 MB of UTF-8 text at once."})
-        if sum(max(1, math.ceil(max(0, len(item["content"]) - data["chunk_overlap"]) / (data["chunk_size"] - data["chunk_overlap"]))) for item in data["documents"]) > 10000:
-            raise serializers.ValidationError({"documents": "Import at most 10,000 chunks at once."})
         sources = [item["source_uri"] for item in data["documents"] if item.get("source_uri")]
         if len(sources) != len(set(sources)):
             raise serializers.ValidationError({"documents": "Source URIs must be unique within an import."})
@@ -137,7 +135,7 @@ class IndexVersionSerializer(serializers.ModelSerializer):
     def get_source_pins(self,index):
         config=index.configuration
         sources=config.get('source_revisions',[])
-        return {key:config.get(key) for key in ('source_scope','chunk_recipe','chunk_size','chunk_overlap','retrieval','embeddings_generated')} | {
+        return {key:config.get(key) for key in ('source_scope','chunk_recipe','chunk_size','chunk_overlap','chunk_units','tokenizer','chunk_recipe_digest','boundary_preference','overlap_semantics','retrieval','embeddings_generated')} | {
             'source_revisions':sources[:50],'source_revision_count':len(sources),'source_revisions_truncated':len(sources)>50,
             'build_mode':'bounded_atomic_transaction'}
 
