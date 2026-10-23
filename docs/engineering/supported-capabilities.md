@@ -2,7 +2,7 @@
 
 23 October 2026 · TASK-44 · Small teams building private AI products
 
-ModelAnvil executes real local data preparation, bounded training, inference, evaluation, export and CPU serving. Support is specific to each operation, recipe and tested environment. The archived guided Apple GPU journey and the current CPU evaluation/release journey have different support envelopes. The GPU reports predate the current dependency upgrade and require fresh hardware qualification. Complete R1 and production model qualification remain open.
+ModelAnvil executes real local data preparation, bounded training, inference, evaluation, export and CPU serving. Support is specific to each operation, recipe and tested environment. The archived guided Apple GPU journey and the current CPU evaluation/release journey have different support envelopes. Archived GPU reports predate the current dependency upgrade. New [bounded MPS FP32 full-SFT/LoRA evidence](verification/task40-current-mps-2026-10-23/report.md) records current pins for that exact operation/device envelope; other GPU profiles require separate qualification. Complete R1 and production model qualification remain open.
 
 The [machine-readable evidence index](supported-capabilities.json) retains its baseline operation snapshots, artifact identities and archived report checksums. Current merged additions are recorded in the operation-specific addendum below. The [11 October audit](capability-evidence.md) and [historical status ledger](status.md) retain their original review history; this baseline incorporates the later implementations and verification below.
 

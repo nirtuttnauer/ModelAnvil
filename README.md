@@ -14,7 +14,7 @@ ModelAnvil is a work in progress. Several local execution paths run real computa
 
 See the [supported capability baseline](docs/engineering/supported-capabilities.md) for current operation-specific evidence and limits. Overview exposes local workflow measurements; Evaluation records explicit accept/reject decisions after verified candidate/baseline comparisons. These measurements stay in the installation and exclude prompts and credentials.
 
-The [main integration inventory](docs/engineering/integration-inventory.md) maps all local/remote refs, retained checkouts, original uncommitted scopes and their merged deliveries or remaining holds. Current dependency pins require fresh GPU qualification; historical GPU reports do not qualify the upgraded stack.
+The [main integration inventory](docs/engineering/integration-inventory.md) maps all local/remote refs, retained checkouts, original uncommitted scopes and their merged deliveries or remaining holds. Current [MPS FP32 full-SFT/LoRA evidence](docs/engineering/verification/task40-current-mps-2026-10-23/report.md) covers a bounded three-step correctness/recovery check. Other GPU/runtime profiles retain separate qualification gates.
 
 [Start locally](#local-development) · [Current capabilities](#current-capabilities) · [Architecture](#architecture) · [Checks](#checks) · [Limits and work in progress](#limits-and-work-in-progress) · [Contributing](CONTRIBUTING.md)
 
