@@ -561,7 +561,7 @@ class R1AcceptanceScenariosTests(TestCase):
         chunk3 = DocumentChunk.objects.create(tenant_id=self.tenant.tenant_id, document=doc, chunk_index=2, text="p3", content_hash="h3", embedding=[0.0, 1.0, 0.0])
 
         explorer = ClusterExplorer(index_ver)
-        artifact = explorer.build_and_save_projection(method="umap", num_clusters=2)
+        artifact = explorer.build_and_save_projection(method="pca", num_clusters=2)
         self.assertEqual(len(artifact.coordinates), 3)
 
         table = explorer.export_accessible_table(artifact)

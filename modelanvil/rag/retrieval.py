@@ -23,12 +23,20 @@ def cosine_similarity(v1: Sequence[float], v2: Sequence[float]) -> float:
     """Cosine similarity between two numerical vectors."""
     if not v1 or not v2 or len(v1) != len(v2):
         return 0.0
-    dot = sum(a * b for a, b in zip(v1, v2))
-    norm1 = math.sqrt(sum(a * a for a in v1))
-    norm2 = math.sqrt(sum(b * b for b in v2))
-    if norm1 == 0.0 or norm2 == 0.0:
+    try:
+        left, right = [float(v) for v in v1], [float(v) for v in v2]
+    except (TypeError, ValueError):
+        raise ValueError('Embedding coordinates must be finite numbers.') from None
+    if not all(math.isfinite(v) for v in (*left, *right)):
+        raise ValueError('Embedding coordinates must be finite numbers.')
+    scale1, scale2 = max(map(abs,left)), max(map(abs,right))
+    if not scale1 or not scale2:
         return 0.0
-    return dot / (norm1 * norm2)
+    left, right = [v/scale1 for v in left], [v/scale2 for v in right]
+    dot = sum(a*b for a,b in zip(left,right))
+    norm1, norm2 = math.sqrt(sum(v*v for v in left)), math.sqrt(sum(v*v for v in right))
+    return max(-1.0,min(1.0,dot/(norm1*norm2)))
+
 
 
 class RetrievalEngine:

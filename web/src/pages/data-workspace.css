@@ -10,3 +10,7 @@
 .data-license-consent input { width: auto; flex: none; margin-top: .25rem; }
 
 .data-source-table button { white-space: nowrap; }
+
+.data-workspace label.data-license-consent { display: flex; align-items: flex-start; }
+.data-workspace label.data-license-consent input[type="checkbox"] { width: auto; flex: none; }
+@media (max-width: 768px) { .rag-workspace .record-table > caption { display: block; width: 100%; text-align: left; padding: var(--space-12) 0; } }

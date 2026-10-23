@@ -1,11 +1,11 @@
-"""End-to-end RAG query pipeline, citation generation, abstention policy, and trace logging (TECH-022, TECH-024)."""
+"""Authorized retrieval evidence and trace logging; generation is not connected."""
 from __future__ import annotations
 
 import time
-from typing import Any, Optional, Sequence
+from typing import Sequence
 
 from modelanvil.rag.models import IndexVersion, QueryTrace
-from modelanvil.rag.retrieval import RetrievalEngine, ScoredChunk
+from modelanvil.rag.retrieval import RetrievalEngine
 
 
 class RAGPipeline:
@@ -28,7 +28,7 @@ class RAGPipeline:
         caller_identity: str = "api-user",
         query_embedding: Sequence[float] | None = None,
     ) -> QueryTrace:
-        """Execute RAG pipeline: retrieval -> reranking -> context assembly -> generation/abstention -> trace."""
+        """Retrieve source evidence, apply abstention and record a trace without generating an answer."""
         start_time = time.monotonic()
 
         if mode == "lexical":

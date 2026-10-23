@@ -1,3 +1,4 @@
+import { RetrievalComparison } from '../components/RetrievalComparison';
 import { Identifier } from '../components/Identifier';
 import { Badge, Button, Card, Field, MultilineField, Notice } from '../components/ui';
 import { Feedback } from '../components/Feedback';
@@ -10,8 +11,8 @@ import { ResourceState } from '../components/ResourceState';
 import { BarChart, ChartEmpty, ChartPanel, EventTimeline } from '../components/Charts';
 import { Database, FileText, Search, Plus } from 'lucide-react';
 import './data-workspace.css';
-interface KB { knowledge_base_id: string; name: string; description: string }
-interface Index { index_id: string; knowledge_base: number; revision_no: number; status: string; chunk_count: number }
+interface KB { id?: number; knowledge_base_id: string; name: string; description: string }
+interface Index { source_pins?: Record<string, unknown>; adapter_type?: string; index_id: string; knowledge_base: number; revision_no: number; status: string; chunk_count: number }
 interface Chunk { chunk_id: string; text: string; score: number; metadata: Record<string, unknown> }
 
 export function ClusterExplorerPage({ token = '', refreshKey = 0 }: { token?: string; refreshKey?: number }) {
@@ -37,6 +38,7 @@ export function ClusterExplorerPage({ token = '', refreshKey = 0 }: { token?: st
   const [sourceUri, setSourceUri] = draft.field('sourceUri');
   const [notice, setNotice] = useState('');
   const [retry, setRetry] = useState(0);
+  const [evidenceRefresh, setEvidenceRefresh] = useState(0);
   const [moreAvailable, setMoreAvailable] = useState(false);
   const searchGeneration = useRef(0);
   const selected = results.find(chunk => chunk.chunk_id === selectedId) || results[0];
@@ -80,7 +82,7 @@ export function ClusterExplorerPage({ token = '', refreshKey = 0 }: { token?: st
     const generation = searchGeneration.current;
     try {
       const body = await apiRequest<{ results: Chunk[] }>(`/api/v1/index-versions/${index}/query/`, token, { method: 'POST', body: JSON.stringify({ query: query.trim(), mode: 'lexical', top_k: Number(topK) }) });
-      if (generation === searchGeneration.current) { setResults(body.results); setQueried(true); }
+      if (generation === searchGeneration.current) { setResults(body.results); setQueried(true); setEvidenceRefresh(v => v + 1); }
     } catch(e) { if (generation === searchGeneration.current) setError(errorMessage(e)); } finally { setBusy(false); }
   }
 
@@ -104,11 +106,13 @@ export function ClusterExplorerPage({ token = '', refreshKey = 0 }: { token?: st
       {knowledgeBases}
       <form className="rag-query-form" onSubmit={search}><DraftStatus draft={draft} disabled={busy} /><label className="rag-query">Query<div className="data-search"><Search size={17} aria-hidden="true" /><Field required value={query} onChange={event => { setQuery(event.target.value); clearResults(); }} placeholder="Search indexed knowledge chunks…" /></div></label><label>Results to retrieve<select value={topK} onChange={event => { setTopK(event.target.value); clearResults(); }}>{[5, 10, 20].map(count => <option value={count} key={count}>{count} chunks</option>)}</select></label><label className="rag-index">Index version<select required value={index} onChange={event => { setIndex(event.target.value); clearResults(); }}><option value="">Choose a registered index</option>{indexes.map(item => <option key={item.index_id} value={item.index_id}>KB record #{item.knowledge_base} · r{item.revision_no} · {item.status} · {item.chunk_count} chunks</option>)}</select></label><Button className="primary" disabled={busy || loading || !index || !query.trim()}>{busy ? 'Querying…' : 'Run query'}</Button></form>
       {selectedIndex && <div className="data-query-context"><Badge className="badge">LEXICAL SEARCH</Badge><span>Revision {selectedIndex.revision_no}</span><span>{selectedIndex.chunk_count.toLocaleString()} indexed chunks</span><Badge className={`state state-${selectedIndex.status}`}>{selectedIndex.status}</Badge></div>}
+      {selectedIndex?.source_pins && <details><summary>Frozen source and chunking receipt</summary><DataInspector value={selectedIndex.source_pins} /></details>}
       {!loading && !indexes.length && <p className="muted">No registered indexes. Import document text to build your first searchable index.</p>}
     </div></Card>
     <div className="visualization-grid equal"><ChartPanel title="Retrieval ranking" description="Exact lexical scores returned by the index. These are not embedding similarities."><BarChart data={results.map((chunk, rank) => ({ label: `Chunk ${rank + 1}`, value: chunk.score, color: selected?.chunk_id === chunk.chunk_id ? 0 : 4 }))} unit="Lexical score" emptyMessage={queried ? 'No document chunks matched this query.' : 'Select an index and run a query to compare retrieved chunk scores.'} /></ChartPanel>
       <Card className="panel data-result-panel"><div className="panel-title"><div><h2>Retrieved chunks</h2><p>{queried ? `${results.length} returned · requested top ${topK}` : 'Results stay linked to the current query and index.'}</p></div><Badge className="badge">LEXICAL</Badge></div><div className="rag-results">{results.map((chunk, rank) => <RetrievalEvidenceCard key={chunk.chunk_id} chunk={chunk} rank={rank + 1} query={query} selected={selected?.chunk_id === chunk.chunk_id} onSelect={() => setSelectedId(chunk.chunk_id)} />)}{!results.length && <Feedback state={busy ? 'loading' : 'empty'} title={busy ? 'Retrieving chunks…' : queried ? 'No matches found' : 'Explore your knowledge'} description={queried ? 'Try more specific terms or choose a different index.' : 'Run a lexical query to inspect its ranked source evidence.'} />}</div></Card></div>
     <div className="visualization-grid equal"><Card className="panel"><div className="panel-title"><div><h2>Chunk inspector</h2><p>Full source text and exact metadata.</p></div><FileText size={19} aria-hidden="true" /></div><div className="panel-body">{selected ? <><Identifier value={selected.chunk_id} label="Chunk ID" /><div className="rag-chunk-text preserve-lines">{selected.text}</div><details><summary>Chunk metadata</summary><DataInspector value={selected.metadata} /></details></> : <ChartEmpty message="Retrieved chunks will be available for source inspection after a query." />}</div></Card>
-      <ChartPanel title="Retrieval trace" description="Current query and registered index; only retrieval is connected."><EventTimeline events={[{ label: 'Query', detail: query.trim() || 'Enter your search terms.', status: query.trim() ? 'ready' : 'pending' }, { label: 'Retrieve', detail: selectedIndex ? `Lexical search · index revision ${selectedIndex.revision_no}${queried ? ` · ${results.length} chunks returned` : ''}` : 'Select a registered index.', status: queried ? 'completed' : 'pending' }, { label: 'Assemble context & answer', detail: 'Context assembly and answer generation are not connected in this workbench.', status: 'pending' }]} /><div className="data-evidence-note"><strong>Embedding projection unavailable</strong><p>No projection coordinates are returned by this API. Ranking uses recorded lexical scores.</p></div></ChartPanel></div>
+      <ChartPanel title="Retrieval trace" description="Current query and registered index; only retrieval is connected."><EventTimeline events={[{ label: 'Query', detail: query.trim() || 'Enter your search terms.', status: query.trim() ? 'ready' : 'pending' }, { label: 'Retrieve', detail: selectedIndex ? `Lexical search · index revision ${selectedIndex.revision_no}${queried ? ` · ${results.length} chunks returned` : ''}` : 'Select a registered index.', status: queried ? 'completed' : 'pending' }, { label: 'Assemble context & answer', detail: 'Context assembly and answer generation are not connected in this workbench.', status: 'pending' }]} /><p className="muted">Saved traces and measured projection provenance are below. Ranking uses recorded lexical scores.</p></ChartPanel></div>
+    {selectedIndex && <RetrievalComparison key={`${token}:${selectedIndex.index_id}`} token={token} index={selectedIndex} indexes={indexes} query={query} cutoff={Number(topK)} refreshKey={refreshKey + evidenceRefresh} knowledgeBaseId={bases.find(base => base.id === selectedIndex.knowledge_base)?.knowledge_base_id} onSourcesChanged={() => { clearResults(); setRetry(v => v + 1); setEvidenceRefresh(v => v + 1); }} />}
   </div>;
 }

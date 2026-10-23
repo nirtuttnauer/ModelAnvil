@@ -1,0 +1,35 @@
+{
+  "observed_at": "2026-10-23T00:51:46.281Z",
+  "source": "synthetic operator-provided numeric vectors; no embedding model qualified",
+  "method": "pca",
+  "settings": {
+    "method_version": "pca-svd-v1",
+    "numpy_version": "2.3.3",
+    "input_digest": "46b760fdd190860b5cfebe380cc4873961f51bd537db415efa6068e1f14f7c33",
+    "explained_variance_ratio": [
+      0.777848879788996,
+      0.22215112021100397
+    ],
+    "clustering": "bounded-kmeans-original-vectors",
+    "num_clusters": 3,
+    "input_dimension": 2,
+    "effective_rank": 2,
+    "max_points": 512,
+    "max_dimension": 4096,
+    "limits": "PCA preserves variance, not all neighbors or semantic meaning. Clusters describe provided vectors; no retrieval-quality qualification is inferred."
+  },
+  "geometry": [
+    3,
+    4,
+    5
+  ],
+  "geometry_tolerance": 0.00001,
+  "table_matches_points": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_overflow": false,
+  "revocation_hides_saved_projection_and_table": true,
+  "page_errors": []
+}

@@ -10,6 +10,7 @@ from django.db.models import Max
 from rest_framework.exceptions import ValidationError
 
 from modelanvil.core.ids import uuid7
+from modelanvil.core.tenancy import get_active_project
 from modelanvil.rag.models import DocumentChunk, EmbeddingSpace, IndexVersion, KnowledgeBase, SourceDocument
 
 @transaction.atomic
@@ -44,7 +45,7 @@ def index_documents(knowledge_base: KnowledgeBase, documents: list[dict], chunk_
     latest = {}
     for document in SourceDocument.objects.filter(knowledge_base=base).order_by("source_uri", "revision_no"):
         latest[document.source_uri] = document
-    document_ids = [document.pk for document in latest.values() if not document.is_deleted and not document.is_revoked]
+    document_ids = {document.pk for document in latest.values() if not document.is_deleted and not document.is_revoked}
     manifest = list(DocumentChunk.objects.filter(document_id__in=document_ids).order_by("chunk_id").values_list("chunk_id", "content_hash"))
     if len(manifest) > 10000:
         raise ValidationError({"documents": "A local lexical index supports at most 10,000 chunks."})
@@ -63,7 +64,7 @@ def index_documents(knowledge_base: KnowledgeBase, documents: list[dict], chunk_
         configuration={"chunk_ids": chunk_ids, "chunk_size": chunk_size, "chunk_overlap": chunk_overlap,
                        "retrieval": "lexical-token-overlap-v1", "embeddings_generated": False,
                        "source_scope": {"tenant_id":str(base.tenant_id), "project_id":str(base.project_id) if base.project_id else None,
-                                        "knowledge_base_id":str(base.kb_id), "current_permissions_required":True},
+                                        "knowledge_base_id":str(base.kb_id), "build_project_id":str(get_active_project()) if get_active_project() else None, "current_permissions_required":True},
                        "source_revisions":[{"document_id":str(d.doc_id),"revision":d.revision_no,"content_hash":d.content_hash} for d in latest.values() if d.pk in document_ids],
                        "chunk_recipe":"character-slices-v1"},
     )

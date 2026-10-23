@@ -1,0 +1,66 @@
+{
+  "observed_at": "2026-10-23T00:48:09.190Z",
+  "evidence": "actual private app/API; two immutable local text index revisions; manually declared synthetic relevance fixture",
+  "source_pins": {
+    "source_scope": {
+      "tenant_id": "01a165b1-8311-75ed-bf86-1505da224364",
+      "project_id": "01a165b1-846d-708b-be51-ce65452b6156",
+      "knowledge_base_id": "01a1663a-bb9c-76ea-bf2c-d2425f107157",
+      "build_project_id": "01a165b1-846d-708b-be51-ce65452b6156",
+      "current_permissions_required": true
+    },
+    "chunk_recipe": "character-slices-v1",
+    "chunk_size": 1200,
+    "chunk_overlap": 100,
+    "retrieval": "lexical-token-overlap-v1",
+    "embeddings_generated": false,
+    "source_revisions": [
+      {
+        "document_id": "01a1663a-bc0d-7e40-8b3d-a10e95d0384f",
+        "revision": 1,
+        "content_hash": "4169555aebae8b9f54333c943feb788463fc82ae8414841364efabd06bb10155"
+      }
+    ],
+    "source_revision_count": 1,
+    "source_revisions_truncated": false,
+    "build_mode": "bounded_atomic_transaction"
+  },
+  "versions": [
+    "01a1663a-bc10-7220-91f2-00530e7a7377",
+    "01a1663a-bcce-7e38-8ef8-22dafb4122bb"
+  ],
+  "paired_qrels_digest": "5c8975161dd6d29a9cc2222dc73789c2307bebcf232dffaccc979825c9981fa9",
+  "metrics": [
+    {
+      "revision": 2,
+      "precision_at_5": 0.2,
+      "recall_at_5": 1,
+      "cutoff": 5,
+      "unit": "fraction",
+      "coverage": {
+        "queries_total": 1,
+        "queries_with_positive_qrels": 1,
+        "queries_without_positive_qrels": 0
+      }
+    },
+    {
+      "revision": 1,
+      "precision_at_5": 0.2,
+      "recall_at_5": 1,
+      "cutoff": 5,
+      "unit": "fraction",
+      "coverage": {
+        "queries_total": 1,
+        "queries_with_positive_qrels": 1,
+        "queries_without_positive_qrels": 0
+      }
+    }
+  ],
+  "reports_survive_reload": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_overflow": false,
+  "page_errors": []
+}

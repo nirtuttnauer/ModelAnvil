@@ -64,7 +64,7 @@ def visible_traces(index, limit=50):
 @transaction.atomic
 def compare(index, *, qrels_version, cases, modes, top_k, comparison_id=None):
     eligible = {str(chunk.chunk_id) for chunk in RetrievalEngine(index).get_eligible_chunks()}
-    if not index.manifest_digest or 'chunk_ids' not in index.configuration:
+    if index.status != 'ready' or not index.manifest_digest or 'chunk_ids' not in index.configuration:
         raise ValueError('Build a frozen index revision before comparing retrieval.')
     for case in cases:
         if set(case['qrels']) - eligible:
@@ -79,7 +79,7 @@ def compare(index, *, qrels_version, cases, modes, top_k, comparison_id=None):
         for case in cases:
             trace,rows=trace_query(index,case['query'],mode,top_k,case.get('query_embedding'))
             grades=case['qrels'];relevant={key for key,value in grades.items() if value>0}
-            per_query.append({'query_id':case['query_id'],'trace_id':str(trace.trace_id),
+            per_query.append({'query_id':case['query_id'],'query':case['query'],'trace_id':str(trace.trace_id),
                 'retrieved_ids':[row['chunk_id'] for row in rows], 'metrics':compute_all_retrieval_metrics(
                     [row['chunk_id'] for row in rows],relevant,grades,top_k),'judged':bool(relevant)})
         judged=sum(row['judged'] for row in per_query)
@@ -113,6 +113,6 @@ def report(run):
         and set(run.protocol_ref.get('input_chunk_ids',[]))<=eligible)
     if not valid:
         return {'run_id':str(run.run_id),'valid':False,'reason':'Inputs are unavailable, changed or unqualified; metrics and query content are withheld.'}
-    return {'run_id':str(run.run_id),'valid':True,'index_id':str(index.index_id),'mode':run.mode,
+    return {'run_id':str(run.run_id),'valid':True,'index_id':str(index.index_id),'index_revision':index.revision_no,'mode':run.mode,
         'comparison_id':run.protocol_ref.get('comparison_id'),'qrels_version':run.qrels_version,'qrels_digest':run.qrels_digest,'top_k':run.top_k,
         **run.metrics_summary,'queries':run.protocol_ref['queries'],'reranker':'none','generation':'not_executed'}

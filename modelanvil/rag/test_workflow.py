@@ -147,3 +147,8 @@ class RagWorkflowTests(TestCase):
         with self.assertRaises(ValueError):explorer.overlay_query_and_relevance(artifact,'alpha',[],[])
         with self.assertRaises(ValueError):explorer.get_original_space_neighbors(str(self.alpha.chunk_id))
         response=self.client.get(self.path(index,'projection'));self.assertEqual(response.status_code,409)
+
+    def test_large_finite_query_vectors_keep_real_cosine_scores(self):
+        from modelanvil.rag.retrieval import cosine_similarity
+        self.assertAlmostEqual(cosine_similarity([1e300,1e300],[1,1]),1)
+        with self.assertRaises(ValueError):cosine_similarity([float('nan'),1],[1,1])

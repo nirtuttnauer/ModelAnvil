@@ -40,3 +40,5 @@ TASK-36 is accepted in Aftur. TASK-13 adds a real pinned SmolLM2-135M FP32 GPU w
 
 
 23 October 2026 — TASK-10 adds the opt-in bounded reviewed-label CPU training/evaluation cycle. [Fresh software and negative-control evidence](verification/task10-labeling-2026-10-23/report.md) records two actual executions and correct candidate rejection; it makes no customer quality or GPU claim. Draft predictions remain imported; advancement is an explicit user action.
+
+23 October 2026 — TASK-11 adds frozen text-index receipts, source-safe saved traces, versioned paired relevance reports and measured PCA with an equivalent table. [Fresh retrieval and revocation evidence](verification/task11-rag-2026-10-23/report.md) qualifies bounded software behavior; model generation, semantic encoder quality and hardware qualification are not inferred.

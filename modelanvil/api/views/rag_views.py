@@ -132,6 +132,15 @@ class KnowledgeBaseViewSet(TenantScopedViewSet):
 
 
 class IndexVersionSerializer(serializers.ModelSerializer):
+    source_pins = serializers.SerializerMethodField()
+
+    def get_source_pins(self,index):
+        config=index.configuration
+        sources=config.get('source_revisions',[])
+        return {key:config.get(key) for key in ('source_scope','chunk_recipe','chunk_size','chunk_overlap','retrieval','embeddings_generated')} | {
+            'source_revisions':sources[:50],'source_revision_count':len(sources),'source_revisions_truncated':len(sources)>50,
+            'build_mode':'bounded_atomic_transaction'}
+
     chunk_count = serializers.IntegerField(source="chunks_count", read_only=True)
     revision_no = serializers.IntegerField(default=1, min_value=1)
 
@@ -150,8 +159,8 @@ class IndexVersionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IndexVersion
-        fields = ("index_id", "knowledge_base", "embedding_space", "revision_no", "status", "chunk_count", "adapter_type", "manifest_digest", "created_at")
-        read_only_fields = ("index_id", "status", "chunk_count", "adapter_type", "manifest_digest", "created_at")
+        fields = ("index_id", "knowledge_base", "embedding_space", "revision_no", "status", "chunk_count", "adapter_type", "manifest_digest", "source_pins", "created_at")
+        read_only_fields = ("index_id", "status", "chunk_count", "adapter_type", "manifest_digest", "source_pins", "created_at")
 
 
 class IndexVersionViewSet(TenantScopedViewSet):
@@ -265,7 +274,7 @@ class IndexVersionViewSet(TenantScopedViewSet):
                 'settings':settings,'points':artifact.coordinates,'table':table,
                 'total_points':artifact.total_points,'displayed_points':artifact.displayed_points})
         except ValueError as exc:
-            return Response({'available':False,'reason':str(exc)},status=409)
+            return Response({'available':False,'reason':str(exc),'detail':str(exc)},status=409)
 
 
 class RetrievalComparisonCase(serializers.Serializer):

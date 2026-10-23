@@ -1278,8 +1278,8 @@
         "tags": [
           "RAG"
         ],
-        "summary": "Execute hybrid RAG retrieval query",
         "operationId": "queryIndexVersion",
+        "summary": "Retrieve actual source spans and record a scoped non-generative trace",
         "parameters": [
           {
             "name": "index_id",
@@ -1293,7 +1293,86 @@
         ],
         "responses": {
           "200": {
-            "description": "Retrieved chunks"
+            "description": "Current scoped evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/RetrievalChunk"
+                      }
+                    },
+                    "mode": {
+                      "type": "string"
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "manifest_digest": {
+                      "type": "string"
+                    },
+                    "generation": {
+                      "const": "not_executed"
+                    },
+                    "reranker": {
+                      "const": "none"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or unsupported mode"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current scope"
+          },
+          "409": {
+            "description": "Inputs unavailable or unqualified"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "maxLength": 10000
+                  },
+                  "mode": {
+                    "enum": [
+                      "lexical",
+                      "dense",
+                      "hybrid"
+                    ],
+                    "default": "hybrid"
+                  },
+                  "top_k": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100
+                  },
+                  "query_embedding": {
+                    "type": "array",
+                    "maxItems": 4096,
+                    "items": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -6699,6 +6778,492 @@
         "operationId": "labelingCampaignRollback",
         "description": "Requires current engineer permission and project scope. Configuration and gates are revalidated; previous labels, runs and decisions are retained."
       }
+    },
+    "/index-versions/": {
+      "get": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "listFrozenIndexes",
+        "summary": "List accessible frozen index revisions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Current scoped evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/KnowledgeIndexVersion"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or unsupported mode"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current scope"
+          },
+          "409": {
+            "description": "Inputs unavailable or unqualified"
+          }
+        }
+      }
+    },
+    "/index-versions/{index_id}/": {
+      "get": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "getFrozenIndex",
+        "summary": "Read a frozen source and chunking receipt",
+        "parameters": [
+          {
+            "name": "index_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current scoped evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeIndexVersion"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or unsupported mode"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current scope"
+          },
+          "409": {
+            "description": "Inputs unavailable or unqualified"
+          }
+        }
+      }
+    },
+    "/index-versions/{index_id}/traces/": {
+      "get": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "listRetrievalTraces",
+        "summary": "Read up to 50 source-safe traces; revoked source-bearing traces are withheld",
+        "parameters": [
+          {
+            "name": "index_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current scoped evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/RetrievalTrace"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or unsupported mode"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current scope"
+          },
+          "409": {
+            "description": "Inputs unavailable or unqualified"
+          }
+        }
+      }
+    },
+    "/index-versions/{index_id}/judgment-pool/": {
+      "get": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "listRetrievalJudgmentPool",
+        "summary": "Read current authorized source spans in bounded pages",
+        "parameters": [
+          {
+            "name": "index_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000,
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current scoped evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "maxItems": 50,
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "next_offset": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or unsupported mode"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current scope"
+          },
+          "409": {
+            "description": "Inputs unavailable or unqualified"
+          }
+        }
+      }
+    },
+    "/index-versions/{index_id}/comparisons/": {
+      "get": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "listRetrievalComparisons",
+        "summary": "Read saved reports and paired index peers with current-input checks",
+        "parameters": [
+          {
+            "name": "index_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current scoped evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/RetrievalComparisonReport"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or unsupported mode"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current scope"
+          },
+          "409": {
+            "description": "Inputs unavailable or unqualified"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "compareFrozenRetrieval",
+        "summary": "Measure retrieval against versioned relevance judgments",
+        "parameters": [
+          {
+            "name": "index_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current scoped evidence"
+          },
+          "400": {
+            "description": "Invalid input or unsupported mode"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current scope"
+          },
+          "409": {
+            "description": "Inputs unavailable or unqualified"
+          },
+          "201": {
+            "description": "Current scoped evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/RetrievalComparisonReport"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RetrievalComparisonInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index-versions/{index_id}/projection/": {
+      "get": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "readMeasuredProjection",
+        "summary": "Read a measured PCA and equivalent table with current-input checks",
+        "parameters": [
+          {
+            "name": "index_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current scoped evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeasuredProjection"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or unsupported mode"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current scope"
+          },
+          "409": {
+            "description": "Inputs unavailable or unqualified"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "buildMeasuredProjection",
+        "summary": "Compute bounded measured PCA from compatible actual vectors",
+        "parameters": [
+          {
+            "name": "index_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current scoped evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeasuredProjection"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or unsupported mode"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current scope"
+          },
+          "409": {
+            "description": "Inputs unavailable or unqualified"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "num_clusters": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 20
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/knowledge-bases/{knowledge_base_id}/revoke-document/": {
+      "post": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "revokeKnowledgeDocument",
+        "summary": "Revoke owned source content in all historical retrieval views",
+        "parameters": [
+          {
+            "name": "knowledge_base_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current scoped evidence"
+          },
+          "400": {
+            "description": "Invalid input or unsupported mode"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current scope"
+          },
+          "409": {
+            "description": "Inputs unavailable or unqualified"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "document_id"
+                ],
+                "properties": {
+                  "document_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -11453,6 +12018,287 @@
           "max_evaluation_cases"
         ],
         "description": "Opt-in real CPU character training and protected evaluation; quantity budgets and campaign caps required. Currency costs are unmeasured; budget_limit_dollars must be0. Suite digest is pinned by the server."
+      },
+      "KnowledgeIndexVersion": {
+        "type": "object",
+        "properties": {
+          "index_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "knowledge_base": {
+            "type": "integer"
+          },
+          "revision_no": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "chunk_count": {
+            "type": "integer"
+          },
+          "adapter_type": {
+            "type": "string",
+            "enum": [
+              "lexical",
+              "dense",
+              "hybrid"
+            ]
+          },
+          "manifest_digest": {
+            "type": "string"
+          },
+          "source_pins": {
+            "type": "object",
+            "description": "Frozen owner/build scope, current-permission requirement, source revisions and chunk recipe. Source revision preview is capped at 50 with explicit count/truncation."
+          }
+        }
+      },
+      "RetrievalChunk": {
+        "type": "object",
+        "properties": {
+          "chunk_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "text": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Authoritative source title/URI/revision/hash and exact character spans override untrusted chunk metadata."
+          }
+        }
+      },
+      "RetrievalTrace": {
+        "type": "object",
+        "properties": {
+          "trace_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "query": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "latency_ms": {
+            "type": "number"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RetrievalChunk"
+            }
+          },
+          "generation": {
+            "const": "not_executed"
+          },
+          "reranker": {
+            "const": "none"
+          }
+        }
+      },
+      "RetrievalComparisonInput": {
+        "type": "object",
+        "required": [
+          "qrels_version",
+          "cases"
+        ],
+        "properties": {
+          "qrels_version": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "top_k": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 5
+          },
+          "baseline_index_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "modes": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "uniqueItems": true,
+            "default": [
+              "lexical"
+            ],
+            "items": {
+              "enum": [
+                "lexical",
+                "dense",
+                "hybrid"
+              ]
+            }
+          },
+          "cases": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 64,
+            "items": {
+              "type": "object",
+              "required": [
+                "query_id",
+                "query"
+              ],
+              "properties": {
+                "query_id": {
+                  "type": "string",
+                  "maxLength": 128
+                },
+                "query": {
+                  "type": "string",
+                  "maxLength": 2048
+                },
+                "qrels": {
+                  "type": "object",
+                  "maxProperties": 1000,
+                  "additionalProperties": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 10
+                  },
+                  "description": "Current authorized chunk UUIDs to relevance grades; no positive grades yields N/A."
+                },
+                "query_embedding": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 4096,
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Bounded synchronous retrieval comparison on frozen indexes. Optional baseline must share the knowledge base and all judged chunks. Dense/hybrid require actual caller vectors and a compatible index; semantic model qualification is not inferred."
+      },
+      "RetrievalComparisonReport": {
+        "type": "object",
+        "required": [
+          "run_id",
+          "valid"
+        ],
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "valid": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "index_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "index_revision": {
+            "type": "integer"
+          },
+          "comparison_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "qrels_version": {
+            "type": "string"
+          },
+          "qrels_digest": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "cutoff": {
+            "type": "integer"
+          },
+          "unit": {
+            "const": "fraction"
+          },
+          "metrics": {
+            "type": "object",
+            "additionalProperties": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "coverage": {
+            "type": "object"
+          },
+          "queries": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "generation": {
+            "const": "not_executed"
+          },
+          "reranker": {
+            "const": "none"
+          }
+        },
+        "description": "Invalidated/legacy reports withhold metrics and query content. Positive-qrels coverage is explicit; N/A cases are excluded from aggregate means."
+      },
+      "MeasuredProjection": {
+        "type": "object",
+        "required": [
+          "available"
+        ],
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "artifact_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "method": {
+            "const": "pca"
+          },
+          "settings": {
+            "type": "object",
+            "description": "Measured method/version/input digest, actual rank/dimension/variance, bounds and limitations. PCA basis and means are not exported."
+          },
+          "points": {
+            "type": "array",
+            "maxItems": 512,
+            "items": {
+              "type": "object"
+            }
+          },
+          "table": {
+            "type": "array",
+            "maxItems": 512,
+            "items": {
+              "type": "object"
+            }
+          },
+          "total_points": {
+            "type": "integer"
+          },
+          "displayed_points": {
+            "type": "integer"
+          }
+        },
+        "description": "Real centered SVD PCA and bounded k-means on provided vectors. Unsupported UMAP and legacy hash coordinates refuse; changed/revoked/tombstoned inputs invalidate the projection."
       }
     }
   }

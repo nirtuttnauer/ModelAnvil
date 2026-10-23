@@ -46,14 +46,15 @@ class ClusterExplorer:
         if type(num_clusters) is not int or not 1 <= num_clusters <= min(20, len(chunks)):
             raise ValueError('Choose1–20 clusters, no more than the input points.')
         matrix = np.asarray([c.embedding for c in chunks], dtype=np.float64)
-        if not np.isfinite(matrix).all():
+        if not np.isfinite(matrix).all() or np.max(np.abs(matrix)) > 1e12:
             raise ValueError('Embedding values must be finite.')
         mean = matrix.mean(axis=0)
         centered = matrix - mean
         _, singular, vectors = np.linalg.svd(centered, full_matrices=False)
+        tolerance = np.finfo(float).eps * max(matrix.shape) * max(float(singular[0]), 1)
         basis = np.zeros((2, dimension))
         for i in range(min(2, len(vectors))):
-            if singular[i] > np.finfo(float).eps * max(matrix.shape) * max(float(singular[0]), 1):
+            if singular[i] > tolerance:
                 row = vectors[i]
                 basis[i] = row if row[np.argmax(np.abs(row))] >= 0 else -row
         projected = centered @ basis.T
@@ -84,6 +85,7 @@ class ClusterExplorer:
             settings={'method_version':METHOD_VERSION, 'numpy_version':np.__version__, 'input_digest':digest,
                 'mean':mean.tolist(), 'components':basis.tolist(), 'explained_variance_ratio':ratios,
                 'clustering':'bounded-kmeans-original-vectors', 'num_clusters':len(centers),
+                'input_dimension':dimension, 'effective_rank':int(np.count_nonzero(singular > tolerance)),
                 'max_points':MAX_POINTS, 'max_dimension':MAX_DIMENSION,
                 'limits':'PCA preserves variance, not all neighbors or semantic meaning. Clusters describe provided vectors; no retrieval-quality qualification is inferred.'},
             total_points=len(chunks), displayed_points=len(chunks))

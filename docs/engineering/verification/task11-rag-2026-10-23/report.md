@@ -1,0 +1,21 @@
+# TASK-11 measured versioned retrieval
+
+23 October 2026. The existing text import now records its frozen source revisions, owning/build project scope and character chunking recipe. Imports remain bounded synchronous atomic transactions (50 documents, 2 MB per request and 10,000 chunks); this does not claim a background index worker. Interrupted imports roll back their rows, and building indexes cannot be queried. Latest source revisions enter new indexes while older memberships remain fixed.
+
+Queries save actual retrieval mode, latency, source revisions, hashes and exact character spans. Authoritative source fields override untrusted chunk metadata. The workbench records retrieval only: reranking and model generation are explicitly unexecuted. The older pipeline's concatenated evidence is no longer described as a verified generated answer.
+
+The browser can judge authorized source spans, version the judgments and compare the same cases against a prior index in the same collection. Saved reports pin query text, judgment digest, index manifest, mode, cutoff and fractional units. Precision, recall, hit rate, MRR and nDCG are N/A without positive judgments; aggregate means exclude those cases and report coverage. Missing vectors, foreign source IDs and incompatible paired judgments fail atomically. API comparisons also support actual caller-provided dense/hybrid vectors; the browser's measured comparison is lexical. Caller vectors do not establish semantic encoder quality.
+
+Current source access, revocation and deletion tombstones are rechecked for old-index queries, trace reads, reports, original-vector neighbors and explorer tables. Source-bearing traces are withheld after revocation. Reports with unavailable inputs withhold both query content and metrics. Saved projections reject changed or unavailable inputs rather than exposing their old table/coordinates.
+
+The former hash-based projection has been replaced with actual centered SVD PCA and bounded k-means on provided vectors. Saved provenance records NumPy/method versions, input digest, dimensions, rank, variance and limits. Unsupported UMAP refuses explicitly. Projection is bounded to 512 points and 4,096 dimensions; source text and exact coordinates have an equivalent responsive semantic table. Query coordinates require an actual compatible vector. Lexical import generates no embeddings and cannot claim a measured embedding projection.
+
+## Fresh verification
+
+- Full backend: **970 tests pass, six optional skips**. Targeted RAG/API/project/privacy/evidence checks: **54 pass**. A clean base runtime passes **36 checks, three optional skips**. Schema migrations have no pending changes.
+- Frontend: **226 tests**, production build and Storybook build pass. OpenAPI copies remain identical and reference-complete. The explicit NumPy 2.3.3 base dependency has no known vulnerabilities in the live base-requirements audit.
+- Actual local browser/API: two immutable text indexes, source-linked lexical query, manually declared positive relevance, paired reports with matching judgment digests, precision@5 of 0.2 and recall@5 of 1.0, and reload persistence. These controlled judgments test reporting, not customer relevance quality.
+- Actual measured projection: operator-provided synthetic two-dimensional vectors at (0,0), (3,0), (0,4) preserve distances 3/4/5 within 0.00001 under PCA. The table contains the same authorized points. Revoking a source through the browser removes the saved projection/table. This establishes numeric projection behavior, not model-generated semantic geometry.
+- Desktop/mobile inspection at 1440/390 has no page errors or document overflow. Source selection, versioned comparison, report reopening, measured PCA and native-confirmed source revocation use the actual local authenticated app. Mobile table captions remain readable above the equivalent source cards.
+
+Final PR-head CI must pass before merge, including PostgreSQL and HTTPS production-deployment checks. No paid provider, GPU, customer data or external judge was used. Credentials, databases, weights and raw private payloads are excluded. Token chunking, model-generated embeddings, SQL retrieval and qualified reranking remain separate backlog scopes.
