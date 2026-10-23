@@ -22,7 +22,7 @@ from modelanvil.runners.training import runtime
 from modelanvil.runners.training.engine import TrainingEngine
 
 RUNTIME_ID = 'modelanvil.cpu-character-alignment.v1'
-ALGORITHMS = ['dpo', 'reward_model', 'ppo_rlhf', 'verifier_rl']
+ALGORITHMS = ['dpo', 'reward_model', 'ppo_rlhf', 'verifier_rl', 'grpo']
 LIMITS = {'steps': 100, 'rows': 32, 'response_characters': 32, 'sequence_tokens': 64}
 
 
@@ -122,6 +122,15 @@ def validate_alignment_inputs(run):
         tolerance = run.verifier_spec.get('tolerance', 0.0001)
         if type(tolerance) not in (int, float) or not math.isfinite(tolerance) or not 0 <= tolerance <= 1000000:
             raise ValueError('Verifier tolerance must be finite and between 0 and 1000000.')
+    if run.algorithm == 'grpo':
+        from . import grpo, verifier_runtime
+        grpo.groups(train, heldout)
+        pins['verifier_spec'] = grpo.verifier_spec(run.verifier_spec)
+        pins['verifier_runtime'] = verifier_runtime.contract()
+        pins['seed'] = 42
+        paths = [Path(__file__).parent / name for name in ('execution.py', 'numerical.py', 'grpo.py', 'verifier_runtime.py')]
+        paths.append(verifier_runtime.SCRIPT)
+        pins['build_digest'] = hashlib.sha256(b''.join(path.read_bytes() for path in paths)).hexdigest()
     return {'pins': pins, **bundles, 'train_preferences': train, 'heldout_preferences': heldout,
             'hyperparameters': hp}
 
@@ -132,13 +141,18 @@ def alignment_capabilities(run):
     if can_execute:
         try:
             validate_alignment_inputs(run)
+            if run.algorithm == 'grpo' and _budget(run) is None:
+                raise ValueError('GRPO requires an enabled training_steps budget.')
         except (ValueError, TypeError, AttributeError) as exc:
             can_execute, reason = False, str(exc)
     elif run.status == AlignmentRun.Status.COMPLETED and run.execution_pins:
         reason = 'Completed with verified candidate weights.'
     else:
         reason = f'This {run.status} run cannot be launched.'
-    return {'can_execute': can_execute, 'supported_algorithms': ALGORITHMS,
+    return {'can_execute': can_execute,
+            'can_resume': bool(run.algorithm == 'grpo' and run.current_step and run.execution_pins
+                and run.status in (AlignmentRun.Status.RUNNING, AlignmentRun.Status.INTERRUPTED)),
+            'supported_algorithms': ALGORITHMS,
             'runtime': RUNTIME_ID, 'reason': reason, 'limits': LIMITS}
 
 
@@ -153,7 +167,7 @@ def _settle(run):
     UsageEvent.record(tenant_id=run.tenant_id, provider_event_key=f'alignment:{run.run_id}',
         quantity=run.current_step, unit='training_steps', reservation=reservation,
         detail={'runtime': RUNTIME_ID, 'algorithm': run.algorithm, 'status': run.status,
-                'cpu_seconds': sum(m.get('cpu_seconds', 0) for m in run.metrics_history),
+                'cpu_seconds': sum(m.get('cpu_seconds', 0) + m.get('verifier_cpu_seconds', 0) for m in run.metrics_history),
                 'production_qualified': False})
 
 
@@ -176,34 +190,68 @@ class ExecutionStopped(ValueError):
     pass
 
 
+def _grpo_budget(run):
+    reservation = BudgetReservation.all_objects.filter(tenant_id=run.tenant_id,
+        reservation_id=run.resource_reservation_id, job_id=run.run_id, state='reserved').first()
+    policy = (BudgetPolicy.all_objects.select_for_update().filter(pk=reservation.policy_id, tenant_id=run.tenant_id).first()
+              if reservation else None)
+    period, committed = BudgetReservation.current_commitment(policy) if policy else (None, None)
+    if (not policy or not policy.enabled or policy.unit != 'training_steps' or policy.currency
+            or reservation.estimated_amount != run.total_steps or reservation.period_start != period
+            or committed > policy.limit_amount):
+        raise ValueError('GRPO step budget changed or is no longer authorized.')
+
+
 def _live(run, token):
     locked = AlignmentRun.all_objects.select_for_update().get(pk=run.pk, tenant_id=run.tenant_id)
     if locked.status != AlignmentRun.Status.RUNNING or locked.execution_token != token:
         raise ExecutionStopped('Alignment execution stopped; no further weights will be published.')
+    if locked.algorithm == 'grpo':
+        _grpo_budget(locked)
     return locked
 
 
-def execute_alignment(run):
+def execute_alignment(run, *, resume=False):
     """Numerical work outside transactions; each checkpoint and candidate checks the claim."""
     from .numerical import train_alignment
+    resume_bundle = None
     with transaction.atomic():
         locked = AlignmentRun.all_objects.select_for_update().get(pk=run.pk, tenant_id=run.tenant_id)
         if locked.status == AlignmentRun.Status.COMPLETED and locked.execution_pins:
             load_character_bundle(locked.output_model_version, tenant=locked.tenant_id, project=locked.project_id)
             return locked
-        if locked.status != AlignmentRun.Status.PENDING or locked.current_step:
-            raise ValueError('Only a pending, unexecuted plan can be launched. Cancel stale execution and create a new plan.')
-        inputs = validate_alignment_inputs(locked)
-        policy = _budget(locked)
-        if policy:
-            reservation = BudgetReservation.reserve(tenant_id=locked.tenant_id, policy=policy,
-                job_id=locked.run_id, estimated_amount=locked.total_steps)
-            locked.resource_reservation_id = reservation.reservation_id
-        locked.execution_pins = inputs['pins']
-        locked.dataset_manifest_digest = inputs['pins']['dataset_manifest_digest']
-        locked.held_out_validation_digest = inputs['pins']['held_out_validation_digest']
+        if resume:
+            if (locked.algorithm != 'grpo' or locked.status not in (AlignmentRun.Status.RUNNING, AlignmentRun.Status.INTERRUPTED)
+                    or not locked.current_step or not locked.execution_pins):
+                raise ValueError('Only an interrupted/running GRPO run with a committed checkpoint can be taken over.')
+            inputs = validate_alignment_inputs(locked)
+            if inputs['pins'] != locked.execution_pins:
+                raise ValueError('GRPO pinned inputs or runtime changed; recovery refused.')
+            checkpoint = locked.checkpoints.filter(step=locked.current_step, is_valid=True).first()
+            if (checkpoint is None or runtime.digest(checkpoint.policy_state) != checkpoint.state_digest
+                    or checkpoint.policy_state.get('pins') != inputs['pins']
+                    or checkpoint.policy_state.get('run_id') != str(locked.run_id)
+                    or checkpoint.policy_state.get('step') != locked.current_step):
+                raise ValueError('GRPO checkpoint integrity verification failed.')
+            resume_bundle = checkpoint.policy_state['bundle']
+            TrainingEngine.verify_external_loadable(resume_bundle)
+            _grpo_budget(locked)
+        else:
+            if locked.status != AlignmentRun.Status.PENDING or locked.current_step:
+                raise ValueError('Only a pending, unexecuted plan can be launched. Use explicit GRPO checkpoint takeover for interrupted work.')
+            inputs = validate_alignment_inputs(locked)
+            policy = _budget(locked)
+            if locked.algorithm == 'grpo' and policy is None:
+                raise ValueError('GRPO requires an enabled training_steps budget.')
+            if policy:
+                reservation = BudgetReservation.reserve(tenant_id=locked.tenant_id, policy=policy,
+                    job_id=locked.run_id, estimated_amount=locked.total_steps)
+                locked.resource_reservation_id = reservation.reservation_id
+            locked.execution_pins = inputs['pins']
+            locked.dataset_manifest_digest = inputs['pins']['dataset_manifest_digest']
+            locked.held_out_validation_digest = inputs['pins']['held_out_validation_digest']
         locked.execution_token = token = uuid.uuid4()
-        locked.started_at, locked.status = timezone.now(), AlignmentRun.Status.RUNNING
+        locked.started_at, locked.status = locked.started_at or timezone.now(), AlignmentRun.Status.RUNNING
         locked.save()
         run = locked
 
@@ -228,11 +276,16 @@ def execute_alignment(run):
             locked.rollouts_log = [*locked.rollouts_log, *rollouts][-20:]
             locked.save(update_fields=['current_step', 'metrics_history', 'latest_metrics', 'rollouts_log', 'updated_at'])
 
+    def check_live():
+        with transaction.atomic():
+            _live(run, token)
+
     try:
         result = train_alignment(run.algorithm, inputs['policy_bundle'], inputs['train_preferences'],
             inputs['heldout_preferences'], reference_bundle=inputs['reference_bundle'],
             reward_bundle=inputs['reward_bundle'], steps=run.total_steps,
-            hyperparameters=inputs['hyperparameters'], verifier_spec=run.verifier_spec, on_step=checkpoint)
+            hyperparameters=inputs['hyperparameters'], verifier_spec=run.verifier_spec, on_step=checkpoint,
+            **({'resume_bundle': resume_bundle, 'before_step': check_live} if run.algorithm == 'grpo' else {}))
         with transaction.atomic():
             locked = _live(run, token)
             # Reverify input pins before committing the candidate, including scope and actual bytes.
@@ -262,7 +315,7 @@ def execute_alignment(run):
                     'source_run_id': str(run.run_id), 'weights_sha256': bundle['weights_manifest.json']['weights_sha256'],
                     'checkpoint_digest': cp.state_digest, 'trained': True, 'production_qualified': False,
                     'model_role': 'reward_model' if run.algorithm == 'reward_model' else 'policy'})
-            locked.latest_metrics = {**result['latest_metrics'], 'held_out_evaluation': result['heldout_metrics']}
+            locked.latest_metrics = {**locked.latest_metrics, **result['latest_metrics'], 'held_out_evaluation': result['heldout_metrics']}
             locked.status, locked.stop_reason, locked.completed_at = AlignmentRun.Status.COMPLETED, 'completed', timezone.now()
             locked.save()
             _settle(locked)

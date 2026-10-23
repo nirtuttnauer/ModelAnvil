@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('runners', '0017_uuid7_identifiers'),
+        ('runners', '0018_add_grpo_algorithm'),
     ]
 
     operations = [

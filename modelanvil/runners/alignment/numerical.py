@@ -31,6 +31,9 @@ def normalize_hyperparameters(algorithm, params=None):
         definitions.update(kl_coefficient=(.1, 0., 2.), clip_range=(.2, .01, .5),
                            ppo_epochs=(2, 1, 4), rollout_batch_size=(2, 1, 4),
                            max_new_tokens=(8, 1, 16), value_learning_rate=(.05, .000001, .2))
+    elif algorithm == 'grpo':
+        definitions.update(kl_coefficient=(.1, 0., 2.), clip_range=(.2, .01, .5),
+                           ppo_epochs=(2, 1, 4), group_size=(4, 2, 8), max_new_tokens=(8, 1, 16))
     elif algorithm != 'reward_model':
         raise ValueError('Unsupported CPU alignment algorithm.')
     if params is not None and not isinstance(params, dict):
@@ -328,12 +331,18 @@ def _heldout(model, reference, spec, rows, algorithm, hp, reward_weights, reward
 
 
 def train_alignment(algorithm, policy_bundle, train_preferences, heldout_preferences, *, reference_bundle=None,
-                    reward_bundle=None, steps=20, hyperparameters=None, seed=42, verifier_spec=None, on_step=None):
+                    reward_bundle=None, steps=20, hyperparameters=None, seed=42, verifier_spec=None, on_step=None, resume_bundle=None, before_step=None):
     """Train actual tensors. Callback exceptions propagate; no later step executes after cancellation.
 
     Every callback bundle is float32 canonical state, reloaded before the next update.
     The frozen reference/reward encoders are never updated or aliased to the policy.
     """
+    if algorithm == 'grpo':
+        from .grpo import train
+        return train(policy_bundle, train_preferences, heldout_preferences, reference_bundle=reference_bundle,
+            steps=steps, hyperparameters=hyperparameters, seed=seed, rule=verifier_spec, on_step=on_step, resume_bundle=resume_bundle, before_step=before_step)
+    if resume_bundle is not None:
+        raise ValueError('Checkpoint resume is available only for the bounded GRPO recipe.')
     hp = normalize_hyperparameters(algorithm, hyperparameters)
     if type(steps) is not int or not 1 <= steps <= 100 or type(seed) is not int or not 0 <= seed <= 2147483647:
         raise ValueError('Use 1–100 steps and a nonnegative 32-bit initialization seed.')

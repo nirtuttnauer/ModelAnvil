@@ -490,13 +490,14 @@ class TrainingCheckpointViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class PreferencePairSerializer(serializers.Serializer):
+    source_group_id = serializers.CharField(max_length=128, required=False, trim_whitespace=False)
     prompt = serializers.CharField(max_length=62, trim_whitespace=False)
     chosen = serializers.CharField(max_length=62, trim_whitespace=False)
     rejected = serializers.CharField(max_length=62, trim_whitespace=False)
 
     def validate(self, pair):
         if any(not value.strip() for value in pair.values()):
-            raise serializers.ValidationError('Prompt and both responses must be nonempty.')
+            raise serializers.ValidationError('Prompt, responses and any source group ID must be nonempty.')
         if pair['chosen'] == pair['rejected']:
             raise serializers.ValidationError('Chosen and rejected responses must differ.')
         if len(pair['prompt']) + max(len(pair['chosen']), len(pair['rejected'])) > 62:
@@ -544,6 +545,10 @@ class AlignmentRunSerializer(serializers.ModelSerializer):
         if self.instance and (self.instance.status != AlignmentRun.Status.PENDING or self.instance.started_at or self.instance.current_step):
             raise serializers.ValidationError('Started alignment plans are immutable; create a new run.')
         algo = attrs.get("algorithm", getattr(self.instance, "algorithm", None))
+        if algo == 'grpo':
+            unknown = set(self.initial_data) - set(self.fields)
+            if unknown:
+                raise serializers.ValidationError({'grpo_options': 'Unsupported GRPO options: ' + ', '.join(sorted(unknown))})
         total_steps = attrs.get("total_steps", getattr(self.instance, "total_steps", 100))
         if total_steps <= 0:
             raise serializers.ValidationError({"total_steps": "Total steps must be greater than 0."})
@@ -645,6 +650,16 @@ class AlignmentRunViewSet(TenantScopedViewSet):
         except ValueError as exc:
             raise serializers.ValidationError({'execution': str(exc)}) from exc
         self._audit_execution(request, 'alignment.execute', run)
+        return Response(self.get_serializer(run).data)
+
+    @action(detail=True, methods=['post'])
+    def resume(self, request, run_id=None):
+        from modelanvil.runners.alignment.execution import execute_alignment
+        try:
+            run = execute_alignment(self.get_object(), resume=True)
+        except ValueError as exc:
+            raise serializers.ValidationError({'recovery': str(exc)}) from exc
+        self._audit_execution(request, 'alignment.resume', run)
         return Response(self.get_serializer(run).data)
 
     @action(detail=True, methods=['post'])

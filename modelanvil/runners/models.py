@@ -508,6 +508,7 @@ class AlignmentRun(TenantContextModel):
         REWARD_MODEL = "reward_model", "Bradley-Terry Reward Model"
         PPO_RLHF = "ppo_rlhf", "Learned-Reward PPO RLHF"
         VERIFIER_RL = "verifier_rl", "Verifier Rule-Guided RL"
+        GRPO = "grpo", "Group Relative Policy Optimization"
 
     class Status(models.TextChoices):
         PENDING = "pending", "Pending"
