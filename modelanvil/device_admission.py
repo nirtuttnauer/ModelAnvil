@@ -12,6 +12,13 @@ class DeviceBusy(ValueError):
     pass
 
 
+def host_key():
+    """Stable local coordination namespace; remote hosts/accounts require separate qualification."""
+    import hashlib,socket
+    value=f'{socket.gethostname()}:{os.getuid()}:{Path(settings.MODELANVIL_DEVICE_LOCK_ROOT).resolve()}'
+    return hashlib.sha256(value.encode()).hexdigest()
+
+
 def device_key(selector):
     if not isinstance(selector, str):
         raise ValueError('Select an explicit supported local device.')

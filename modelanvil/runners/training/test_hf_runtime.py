@@ -96,6 +96,11 @@ class GPUInputTests(TestCase):
             with self.assertRaisesRegex(ValueError, 'fallback'):
                 gpu.observed_device('mps:0')
 
+    def test_missing_discrete_gpu_hardware_identity_refuses_admission(self):
+        with patch.object(gpu,'inventory',return_value={'framework':{}}),patch.object(gpu,'select_device',return_value={
+                'backend':'cuda','total_memory_bytes':8*1024**3,'uuid':None}):
+            with self.assertRaisesRegex(ValueError,'hardware identity'):gpu.observed_device('cuda:0')
+
     def test_missing_committed_bytes_are_actionable(self):
         backend = artifact_storage_backend()
         backend._path(self.tenant.pk, self.artifact.object_key, create_parent=False).unlink()
