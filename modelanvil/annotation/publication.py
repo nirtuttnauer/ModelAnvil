@@ -57,6 +57,10 @@ def sample_fingerprint(text):
 
 
 def publish_snapshot(snapshot):
+    from modelanvil.annotation.feedback import require_campaign_live
+    feedback=require_campaign_live(snapshot.campaign)
+    if feedback and any(item['decision']!='corrected' for item in snapshot.items):
+        raise ValueError('Application failures require reviewed corrections before training publication.')
     if snapshot.dataset_revision_id or not snapshot.items:
         return snapshot.dataset_revision
     campaign = snapshot.campaign
@@ -85,11 +89,16 @@ def publish_snapshot(snapshot):
     artifact = Artifact.all_objects.create(tenant_id=campaign.tenant_id, project_id=campaign.project_id,
         storage_location_id='local', object_key=f'annotation/{snapshot.snapshot_id}/approved.jsonl',
         sha256=hashlib.sha256(payload).hexdigest(), byte_size=len(payload), media_type='application/x-ndjson',
-        metadata={'kind': 'approved_annotation', 'snapshot_id': str(snapshot.snapshot_id)})
+        metadata={'kind': 'approved_annotation', 'snapshot_id': str(snapshot.snapshot_id),
+            **({'application_feedback_id':str(feedback.feedback_id)} if feedback else {})})
     upload_staged_artifact(artifact, io.BytesIO(payload), backend=artifact_storage_backend())
     dataset = Dataset.all_objects.create(tenant_id=campaign.tenant_id, project_id=campaign.project_id,
         name=f'{campaign.name} · approved cycle {snapshot.cycle_no}')
     revision = publish_prepared_dataset(dataset, artifact, validation_percent=0, test_percent=0)
+    if feedback:
+        feedback.evaluation_role='training_feedback_inspected';feedback.save(update_fields=['evaluation_role','updated_at'])
+        if feedback.evaluation_suite_id:
+            type(feedback.evaluation_suite).all_objects.filter(pk=feedback.evaluation_suite_id).update(protected_role='training_feedback_inspected')
     snapshot.dataset_revision = revision
     snapshot.save(update_fields=['dataset_revision', 'updated_at'])
     return revision

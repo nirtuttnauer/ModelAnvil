@@ -325,6 +325,14 @@ class JobAttemptViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ArtifactSerializer(serializers.ModelSerializer):
+    def validate(self,attrs):
+        if not isinstance(attrs.get('metadata',{}),dict):
+            raise serializers.ValidationError({'metadata':'Use an object for artifact metadata.'})
+        if attrs.get('metadata',{}).get('application_feedback_id'):
+            raise serializers.ValidationError('Application feedback provenance is server-owned.')
+        if self.instance and isinstance(self.instance.metadata,dict) and self.instance.metadata.get('application_feedback_id'):
+            raise serializers.ValidationError('Manage application feedback artifacts through their owned feedback record.')
+        return attrs
     class Meta:
         model = Artifact
         fields = ("artifact_id", "project", "storage_location_id", "object_key", "object_version", "sha256", "byte_size", "media_type", "state", "committed_at", "tombstoned_at", "metadata", "created_at")
@@ -478,6 +486,9 @@ class ArtifactViewSet(ScopedViewSet):
     @action(detail=True, methods=("get",))
     def download(self, request, artifact_id=None):
         artifact = self.get_object()
+        from modelanvil.annotation.feedback import artifact_live
+        try:artifact_live(artifact)
+        except ValueError as exc:raise NotFound('Feedback artifact is unavailable.') from exc
         if artifact.state == Artifact.State.TOMBSTONED:
             raise NotFound()
         if artifact.state != Artifact.State.COMMITTED:

@@ -53,6 +53,8 @@ def _documents(raw):
 
 
 def _read_verified_input(artifact, backend):
+    from modelanvil.annotation.feedback import artifact_live
+    artifact_live(artifact)
     if artifact.byte_size < 1 or artifact.byte_size > MAX_INPUT_BYTES:
         raise DatasetPreparationError("Input must contain 1 byte to 16 MiB of source data.")
     digest = hashlib.sha256()
@@ -166,7 +168,8 @@ def publish_prepared_dataset(dataset, artifact, *, split_seed="0", validation_pe
         tenant_id=dataset.tenant_id, project_id=dataset.project_id, storage_location_id="local",
         object_key=f"datasets/{dataset.dataset_id}/{uuid.uuid4()}.json",
         sha256=hashlib.sha256(payload).hexdigest(), byte_size=len(payload), media_type="application/json",
-        metadata={"kind": "prepared_dataset", "input_artifact_id": str(artifact.artifact_id)})
+        metadata={"kind": "prepared_dataset", "input_artifact_id": str(artifact.artifact_id),
+            **({"application_feedback_id":artifact.metadata["application_feedback_id"]} if artifact.metadata.get("application_feedback_id") else {})})
     upload_staged_artifact(manifest, io.BytesIO(payload), backend=backend)
     latest = DatasetRevision.all_objects.filter(dataset=dataset, tenant_id=dataset.tenant_id).aggregate(
         number=Max("revision_no"))["number"] or 0

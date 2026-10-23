@@ -209,3 +209,40 @@ class CumulativeSnapshot(TenantContextModel):
 
     def __str__(self) -> str:
         return f"Snapshot cycle {self.cycle_no} ({self.item_count} items) for {self.campaign.name}"
+
+
+class ApplicationFeedbackPolicy(TenantContextModel):
+    project = models.OneToOneField('identity.Project',on_delete=models.PROTECT)
+    enabled = models.BooleanField(default=False)
+    collect_content = models.BooleanField(default=False)
+    retention_days = models.PositiveSmallIntegerField(default=30)
+
+
+class ApplicationFeedback(TenantContextModel):
+    """Immutable ingestion receipt; content lives only in its owned review task."""
+    feedback_id = models.UUIDField(default=uuid7,unique=True,editable=False)
+    project = models.ForeignKey('identity.Project',on_delete=models.PROTECT)
+    receipt_key = models.CharField(max_length=64)
+    request_digest = models.CharField(max_length=64)
+    application = models.CharField(max_length=128)
+    application_version = models.CharField(max_length=128)
+    source_id = models.CharField(max_length=128)
+    source_group_id = models.CharField(max_length=128)
+    source_group_digest = models.CharField(max_length=64)
+    prompt_digest = models.CharField(max_length=64,blank=True)
+    model_version = models.ForeignKey('runners.ModelVersion',on_delete=models.PROTECT)
+    rubric = models.CharField(max_length=2000)
+    verdict = models.CharField(max_length=16)
+    origin_role = models.CharField(max_length=32)
+    evaluation_role = models.CharField(max_length=32)
+    evaluation_suite = models.ForeignKey('runners.EvaluationSuiteVersion',null=True,blank=True,on_delete=models.PROTECT)
+    evaluation_case_id = models.CharField(max_length=128,blank=True)
+    content_collected = models.BooleanField(default=False)
+    consented_by = models.CharField(max_length=128,blank=True)
+    campaign = models.OneToOneField(LabelingCampaign,null=True,blank=True,on_delete=models.PROTECT,related_name='application_feedback')
+    expires_at = models.DateTimeField(db_index=True)
+    deleted_at = models.DateTimeField(null=True,blank=True)
+    cleanup_pending = models.BooleanField(default=False)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=('tenant_id','project','receipt_key'),name='feedback_project_receipt_uniq')]
