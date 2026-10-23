@@ -15,6 +15,8 @@ def review_comparison(comparison):
         if campaign is None: raise ValueError('The review campaign is inaccessible in this project.')
         return campaign, False
     for request in (comparison.first_request, comparison.second_request):
+        if request.model_version_id is None:
+            raise ValueError('External arena responses remain informal; independent feedback review requires local model versions.')
         if request.status != 'completed' or not check_resource_access(request.model_version, get_active_project(), comparison.tenant_id):
             raise ValueError('Comparison models must remain accessible and generated responses must be complete.')
     prompts = {message['content'] for message in comparison.messages if message['role'] == 'user'}

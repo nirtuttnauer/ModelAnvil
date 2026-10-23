@@ -15,7 +15,7 @@ from modelanvil.api.views.registries import TenantScopedViewSet
 from modelanvil.core.tenancy import get_active_project, get_active_tenant
 from modelanvil.identity.models import Project
 from modelanvil.jobs.models import WorkerPool
-from modelanvil.runners import model_catalog
+from modelanvil.runners import model_catalog, external_inference
 from modelanvil.runners.inference import generate, local_session, validate_messages
 from modelanvil.runners.models import ChatComparison, ChatConversation, InferenceRequest, ModelImport, ModelVersion
 from modelanvil.identity.models import get_accessible_queryset
@@ -190,6 +190,9 @@ class ConversationSerializer(serializers.ModelSerializer):
             try:
                 identifier = serializers.UUIDField().run_validation(identifier)
                 exists = get_accessible_queryset(ModelVersion).filter(model_version_id=identifier).exists()
+                if not exists:
+                    external_inference.resolve(identifier, get_active_tenant(), get_active_project())
+                    exists = True
             except (ValueError, TypeError, serializers.ValidationError):
                 exists = False
             if not exists:
@@ -230,6 +233,10 @@ class ComparisonSerializer(serializers.ModelSerializer):
     review_campaign_id = serializers.UUIDField(source='review_campaign.campaign_id', read_only=True, allow_null=True)
     conversation_id = serializers.UUIDField(source='conversation.conversation_id', read_only=True, allow_null=True)
     sides = serializers.SerializerMethodField()
+    review_eligible = serializers.SerializerMethodField()
+
+    def get_review_eligible(self, comparison):
+        return comparison.first_request.model_version_id is not None and comparison.second_request.model_version_id is not None
 
     def get_sides(self, comparison):
         roles = {}
@@ -239,14 +246,16 @@ class ComparisonSerializer(serializers.ModelSerializer):
             first, second = comparison.first_request.model_version_id, comparison.second_request.model_version_id
             lineage = get_accessible_queryset(TrainingRun).filter(status='completed', job__status='succeeded').filter(
                 Q(base_model_version_id=first, output_model_version_id=second) | Q(base_model_version_id=second, output_model_version_id=first)).first()
-            if lineage:
+            if lineage and first is not None and second is not None:
                 roles = {lineage.base_model_version_id: 'base', lineage.output_model_version_id: 'trained'}
         sides = []
         for label, first in (('A', comparison.first_is_a), ('B', not comparison.first_is_a)):
             request = comparison.first_request if first else comparison.second_request
             value = {'label': label, 'text': comparison.first_text if first else comparison.second_text}
             if comparison.vote or roles:
-                value.update(model=str(request.model_version.model_version_id), name=request.model_version.model.name,
+                value.update(model=str(request.model_version.model_version_id) if request.model_version_id is not None else request.provider_snapshot['id'],
+                    name=request.model_version.model.name if request.model_version_id is not None else request.provider_snapshot['name'],
+                    destination=request.provider_snapshot.get('endpoint', 'local execution host'), credential_id=request.provider_snapshot.get('credential_id'),
                     usage=request.usage, elapsed_seconds=request.elapsed_seconds, configuration=request.configuration)
             if roles:
                 value['role'] = roles[request.model_version_id]
@@ -255,7 +264,7 @@ class ComparisonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ChatComparison
-        fields = ['comparison_id', 'conversation_id', 'messages', 'sides', 'vote', 'created_at', 'voted_at', 'review_campaign_id']
+        fields = ['comparison_id', 'conversation_id', 'messages', 'sides', 'vote', 'created_at', 'voted_at', 'review_campaign_id', 'review_eligible']
         read_only_fields = fields
 
 
@@ -267,9 +276,12 @@ class ComparisonViewSet(TenantScopedViewSet):
 
     def get_queryset(self):
         selected_project()
+        from django.db.models import Q
         versions = get_accessible_queryset(ModelVersion).values('pk')
-        return super().get_queryset().filter(first_request__model_version_id__in=versions,
-            second_request__model_version_id__in=versions)
+        targets = [value['id'] for value in external_inference.catalog(get_active_tenant(), get_active_project())]
+        return super().get_queryset().filter(
+            Q(first_request__model_version_id__in=versions) | Q(first_request__model_version__isnull=True, first_request__provider_snapshot__id__in=targets),
+            Q(second_request__model_version_id__in=versions) | Q(second_request__model_version__isnull=True, second_request__provider_snapshot__id__in=targets))
 
     def create(self, request):
         import hashlib
@@ -291,18 +303,18 @@ class ComparisonViewSet(TenantScopedViewSet):
                     raise ValueError('Each response needs its request ID and bounded actual output text.')
                 identifier = serializers.UUIDField().run_validation(response['request_id'])
                 record = InferenceRequest.all_objects.filter(request_id=identifier, tenant_id=get_active_tenant(),
-                    project=project, principal_id=str(request.user.pk), status='completed',
-                    model_version__in=get_accessible_queryset(ModelVersion)).first()
-                if record is None or record.input_digest != digest(messages):
+                    project=project, principal_id=str(request.user.pk), status='completed').first()
+                if record is None or not external_inference.accessible_request(record, get_active_tenant(), project.pk) or record.input_digest != digest(messages):
                     raise ValueError('Use your completed requests for exactly the same comparison input.')
                 expected = hashlib.sha256(response['text'].encode()).hexdigest() if response['text'] else ''
                 if expected != record.output_digest:
                     raise ValueError('Comparison output differs from its measured inference request.')
                 results.append((record, response['text']))
             (first, first_text), (second, second_text) = sorted(results, key=lambda item: str(item[0].request_id))
-            if first.pk == second.pk or first.model_version_id == second.model_version_id:
+            identity = lambda r: str(r.model_version_id) if r.model_version_id is not None else r.provider_snapshot['id']
+            if first.pk == second.pk or identity(first) == identity(second):
                 raise ValueError('Compare two distinct model versions and requests.')
-            settings = lambda record: {k: v for k, v in record.configuration.items() if k not in {'device'}}
+            settings = lambda record: {k: v for k, v in record.configuration.items() if k not in {'device', 'stream', 'stream_options'}}
             if settings(first) != settings(second):
                 raise ValueError('Comparison generation settings must match; devices may differ.')
             with transaction.atomic():
@@ -395,7 +407,7 @@ class InferenceViewSet(TenantScopedViewSet):
         for run in trained_runs:
             if run.output_model_version_id:
                 lineage.setdefault(run.output_model_version_id, run)
-        rows = self.get_queryset().filter(Q(metadata__imported=True) | Q(metadata__managed_local=True) | Q(pk__in=lineage) | Q(architecture_ref__in=[runtime.RUNTIME_ID, general_runtime.RUNTIME_ID])).exclude(architecture_ref__in=['modelanvil.ocr.v1', 'modelanvil.laya.v1'])
+        rows = self.get_queryset().filter(Q(metadata__imported=True) | Q(metadata__managed_local=True) | Q(pk__in=lineage) | Q(architecture_ref__in=[runtime.RUNTIME_ID, general_runtime.RUNTIME_ID, cpu_hf_runtime.RUNTIME_ID])).exclude(architecture_ref__in=['modelanvil.ocr.v1', 'modelanvil.laya.v1'])
         from modelanvil.runners.capabilities import model_capabilities
         from modelanvil.runners.inference import model_chat_template
         eligible = [(v, model_capabilities(v)['chat']) for v in rows]
@@ -407,7 +419,7 @@ class InferenceViewSet(TenantScopedViewSet):
             'tokenizer_kind': capability.get('tokenizer_kind'),
             'training_run_id': str(lineage[v.pk].run_id) if v.pk in lineage else None,
             'base_model_id': str(lineage[v.pk].base_model_version.model_version_id) if v.pk in lineage and str(lineage[v.pk].base_model_version.model_version_id) in eligible_ids else None,
-            'has_chat_template': bool(model_chat_template(v)), 'chat_template': model_chat_template(v)} for v, capability in eligible if capability['eligible']]})
+            'has_chat_template': bool(model_chat_template(v)), 'chat_template': model_chat_template(v)} for v, capability in eligible if capability['eligible']] + external_inference.catalog(get_active_tenant(), get_active_project())})
 
     @action(detail=False, methods=['post'], url_path='chat/completions')
     def completions(self, request):
@@ -415,12 +427,17 @@ class InferenceViewSet(TenantScopedViewSet):
         form = CompletionInput(data=request.data); form.is_valid(raise_exception=True)
         options = form.validated_data
         version = self.get_queryset().filter(model_version_id=options['model']).first()
+        provider = None
         if version is None:
-            from rest_framework.exceptions import NotFound
-            raise NotFound('Model is unavailable in this project.')
+            try:
+                provider = external_inference.resolve(options['model'], get_active_tenant(), project.pk)
+            except ValueError:
+                from rest_framework.exceptions import NotFound
+                raise NotFound('Model or provider is unavailable in this project.') from None
         stack = ExitStack()
         from modelanvil.runners.training.runtime import digest
         record = InferenceRequest.all_objects.create(tenant_id=get_active_tenant(), project=project, model_version=version,
+            provider_snapshot=external_inference.public_target(str(options['model']), provider) if provider else {},
             principal_id=str(request.user.pk), input_digest=digest(options['messages']),
             configuration={k: v for k, v in options.items() if k not in {'messages', 'model'}})
         output = ''
@@ -445,10 +462,18 @@ class InferenceViewSet(TenantScopedViewSet):
 
         try:
             from modelanvil.runners.inference import snapshot_guard
-            guard = snapshot_guard(version, tenant, project.pk)
-            session = stack.enter_context(local_session(version, tenant=get_active_tenant(), project=project.pk, device=options['device']))
-            parts = generate(session, options['messages'], max_tokens=options['max_tokens'],
-                             temperature=options['temperature'], seed=options['seed'], prompt_format=options['prompt_format'])
+            if provider is not None:
+                def guard():
+                    if external_inference.resolve(options['model'], tenant, project.pk) != provider:
+                        raise ValueError('External provider configuration changed.')
+                guard()
+                parts = stack.enter_context(external_inference.session(provider, options['messages'], max_tokens=options['max_tokens'],
+                    temperature=options['temperature'], seed=options['seed'], prompt_format=options['prompt_format'], device=options['device']))
+            else:
+                guard = snapshot_guard(version, tenant, project.pk)
+                session = stack.enter_context(local_session(version, tenant=get_active_tenant(), project=project.pk, device=options['device']))
+                parts = generate(session, options['messages'], max_tokens=options['max_tokens'],
+                                 temperature=options['temperature'], seed=options['seed'], prompt_format=options['prompt_format'])
             first = next(parts)
             assert_current()
         except Exception as exc:
@@ -457,7 +482,7 @@ class InferenceViewSet(TenantScopedViewSet):
             message = str(exc) if isinstance(exc, ValueError) else 'Model could not load or generate; check runtime compatibility and memory.'
             raise serializers.ValidationError(message) from exc
         identifier, created = 'chatcmpl-' + record.request_id.hex, int(time.time())
-        base = {'id': identifier, 'created': created, 'model': str(version.model_version_id)}
+        base = {'id': identifier, 'created': created, 'model': str(options['model'])}
 
         def events():
             nonlocal output
@@ -476,12 +501,12 @@ class InferenceViewSet(TenantScopedViewSet):
                         chunk['modelanvil'] = {'elapsed_seconds': part['elapsed_seconds'], 'device': options['device']}
                         record_finish('completed', part)
                     yield 'data: ' + json.dumps(chunk) + '\n\n'
-                    if done and options.get('stream_options', {}).get('include_usage'):
+                    if done and part['usage'] is not None and options.get('stream_options', {}).get('include_usage'):
                         assert_current()
                         yield 'data: ' + json.dumps({**base, 'object': 'chat.completion.chunk', 'choices': [], 'usage': part['usage']}) + '\n\n'
             except Exception:
                 record_finish('failed')
-                yield 'data: ' + json.dumps({'error': {'message': 'Local generation failed; inspect runtime compatibility.', 'type': 'inference_error'}}) + '\n\n'
+                yield 'data: ' + json.dumps({'error': {'message': 'Generation failed; check the selected runtime, destination and access.', 'type': 'inference_error'}}) + '\n\n'
             finally:
                 parts.close()
                 # Release admission before DONE lets clients start the next arena request.
