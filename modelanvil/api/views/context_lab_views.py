@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from modelanvil.api.views.registries import TenantScopedViewSet
 from modelanvil.context_lab.compiler import ContextCompiler, ContextOverflowError
 from modelanvil.context_lab.experiments import ContextExperimentRunner
-from modelanvil.context_lab.measured import model_codec, pinned_compiler, run_pair, visible_experiment, TEMPLATE
+from modelanvil.context_lab.measured import model_codec, pinned_compiler, run_pair, visible_experiment, TEMPLATE, serialize as serialize_context
 from modelanvil.runners.models import ModelVersion
 from modelanvil.identity.models import get_accessible_queryset, check_resource_access
 from modelanvil.context_lab.models import (
@@ -44,7 +44,7 @@ class ContextVersionInputSerializer(serializers.Serializer):
 
     model_limit_tokens = serializers.IntegerField(default=4096, min_value=1, max_value=1000000)
     output_reserve_tokens = serializers.IntegerField(default=512, min_value=0, max_value=1000000)
-    budget_policy = serializers.ChoiceField(choices=("fail_on_overflow", "trim_lowest_priority"), default="trim_lowest_priority")
+    budget_policy = serializers.ChoiceField(choices=("fail_on_overflow", "trim_lowest_priority", "trim_optional_evidence"), default="trim_lowest_priority")
     blocks = ContextBlockRevisionSerializer(many=True, allow_empty=False, max_length=100)
 
     def validate(self, data):
@@ -58,9 +58,11 @@ class ContextVersionInputSerializer(serializers.Serializer):
         model=data.get('model_version')
         if model:
             try:
-                pins,_,limit=model_codec(model)
+                pins,count,limit=model_codec(model)
                 if data['model_limit_tokens']>limit or not 1<=data['output_reserve_tokens']<=32:
                     raise ValueError(f'This CPU runtime supports at most {limit} context tokens and 1–32 output tokens.')
+                if count(serialize_context([]))+data['output_reserve_tokens']>data['model_limit_tokens']:
+                    raise ValueError('The empty pinned template and output reserve already exceed the configured limit.')
             except ValueError as exc: raise serializers.ValidationError({'model_version':str(exc)}) from exc
         return data
 
@@ -206,6 +208,12 @@ class ContextRecipeVersionViewSet(TenantScopedViewSet):
                 "runtime_pins": version.runtime_pins,
                 "output_reserve_tokens": result.output_reserve_tokens,
                 "model_limit_tokens": result.model_limit_tokens,
+                "budget": {"input_tokens":result.total_input_tokens,"output_reserve_tokens":result.output_reserve_tokens,
+                    "total_reserved_tokens":result.total_input_tokens+result.output_reserve_tokens,
+                    "configured_limit_tokens":result.model_limit_tokens,"runtime_limit_tokens":compiler.runtime_limit_tokens,
+                    "remaining_tokens":result.model_limit_tokens-result.total_input_tokens-result.output_reserve_tokens,
+                    "runtime_validated":compiler.runtime_limit_tokens is not None,"overflow_policy":version.budget_policy,
+                    "per_block_counts":"marginal_serialized_prefix_tokens","required_priority":1},
             })
         except (ContextOverflowError,ValueError) as exc:
             return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)

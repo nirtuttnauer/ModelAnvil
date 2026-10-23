@@ -49,7 +49,10 @@ def estimate_tokens(text: str) -> int:
 class ContextCompiler:
     """Compiles typed context blocks into exact serialized model input with token limits and omission records."""
 
-    def __init__(self, recipe_version: ContextRecipeVersion, *, token_counter=estimate_tokens, serializer=None) -> None:
+    def __init__(self, recipe_version: ContextRecipeVersion, *, token_counter=estimate_tokens, serializer=None, runtime_limit_tokens=None) -> None:
+        if getattr(recipe_version,'model_version_id',None) and token_counter is estimate_tokens:
+            raise ValueError('A pinned recipe must use pinned_compiler and its verified runtime tokenizer.')
+        self.runtime_limit_tokens = runtime_limit_tokens
         self.recipe_version = recipe_version
         self.count = token_counter
         self.serialize = serializer or (lambda blocks: "\n".join(f"<|im_start|>{b.role}\n{b.rendered_content}<|im_end|>" for b in blocks))
@@ -60,6 +63,12 @@ class ContextCompiler:
         memory_snapshot: Optional[SessionMemorySnapshot] = None,
     ) -> ContextCompilationResult:
         """Compile blocks into serialized input, enforcing token limits and output reserve."""
+        if (self.runtime_limit_tokens is not None
+                and self.recipe_version.model_limit_tokens > self.runtime_limit_tokens):
+            raise ContextOverflowError('The configured input/output limit exceeds the pinned runtime context.')
+        allowed = set(ContextRecipeVersion.BudgetPolicy.values)
+        if self.recipe_version.budget_policy not in allowed:
+            raise ContextOverflowError('Unknown overflow policy. Save a revision with an explicit supported policy.')
         max_budget = self.recipe_version.model_limit_tokens - self.recipe_version.output_reserve_tokens
         if max_budget <= 0:
             raise ContextOverflowError(
@@ -92,6 +101,8 @@ class ContextCompiler:
             original_tokens = self.count(rendered)
             was_truncated = False
             if b.max_tokens is not None and original_tokens > b.max_tokens:
+                if b.priority <= 1:
+                    raise ContextOverflowError(f'Required block {b.block_key} exceeds its declared block cap; required content is never truncated.')
                 low, high = 0, len(rendered)
                 while low < high:
                     middle = (low + high + 1) // 2
@@ -100,8 +111,10 @@ class ContextCompiler:
                     else:
                         high = middle - 1
                 rendered = rendered[:low]
+                if self.count(rendered)>b.max_tokens:
+                    raise ContextOverflowError(f'Block {b.block_key} cannot fit its declared token cap, including tokenizer overhead.')
                 was_truncated = True
-                truncated.append({"block_key": b.block_key, "reason": "block_token_limit", "original_tokens": original_tokens, "tokens_retained": self.count(rendered)})
+                truncated.append({"block_key": b.block_key, "reason": "block_token_limit", "original_tokens": original_tokens, "tokens_retained": self.count(rendered), "block_type":b.block_type, "required":False})
             tok_count = self.count(rendered)
 
             candidate_blocks.append(
@@ -136,13 +149,12 @@ class ContextCompiler:
             # Retain order when trimming
             active_list = list(candidate_blocks)
             while self.count(serialized(active_list)) > max_budget and active_list:
-                # Find lowest priority (max priority number)
-                lowest = max(active_list, key=lambda x: x.priority)
-                if lowest.priority == 1:
-                    # Critical system instructions cannot fit!
-                    raise ContextOverflowError(
-                        "Cannot trim further: Essential priority-1 instructions exceed token budget!"
-                    )
+                optional = [block for block in active_list if block.priority>1]
+                if self.recipe_version.budget_policy == ContextRecipeVersion.BudgetPolicy.TRIM_OPTIONAL_EVIDENCE:
+                    optional = [block for block in optional if block.block_type==ContextBlockRevision.BlockType.EVIDENCE]
+                if not optional:
+                    raise ContextOverflowError('Required context, unselected categories or template overhead exceed the budget; no declared optional blocks can be omitted.')
+                lowest = max(optional,key=lambda block:block.priority)
 
                 tokens_before = self.count(serialized(active_list))
                 active_list.remove(lowest)
@@ -150,6 +162,8 @@ class ContextCompiler:
                     "block_key": lowest.block_key,
                     "reason": "token_budget_overflow",
                     "priority": lowest.priority,
+                    "block_type": lowest.block_type,
+                    "required":False,
                     "tokens_omitted": tokens_before - self.count(serialized(active_list)),
                 })
 
@@ -157,11 +171,16 @@ class ContextCompiler:
         else:
             included = candidate_blocks
 
+        included_keys={block.block_key for block in included}
+        for row in truncated:row['included_in_final']=row['block_key'] in included_keys
+
         # Step 3: Serialize prompt in strict block order
         included.sort(key=lambda x: block_order[x.block_key])
 
         serialized = self.serialize(included)
         final_input_tokens = self.count(serialized)
+        if final_input_tokens>max_budget:
+            raise ContextOverflowError('The serialized template exceeds the input budget after optional omissions. Increase the limit or reduce the output reserve.')
         # Prefix differences attribute wrappers and special tokens without inventing per-block counts.
         prior = 0
         for position, block in enumerate(included):

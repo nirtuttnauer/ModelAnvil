@@ -17,7 +17,8 @@ class ContextExperimentRunner:
 
     def __init__(self, recipe_version: ContextRecipeVersion) -> None:
         self.recipe_version = recipe_version
-        self.compiler = ContextCompiler(recipe_version)
+        from modelanvil.context_lab.measured import pinned_compiler
+        self.compiler = pinned_compiler(recipe_version)
 
     def run_history_strategy_comparison(
         self,

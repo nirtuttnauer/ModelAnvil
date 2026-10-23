@@ -1,0 +1,55 @@
+{
+  "recipe_id": "01a16727-c9ed-7168-9586-7c0f40fbd650",
+  "version_id": "01a16727-c9ee-7045-b324-0e6f1d2e0124",
+  "invalid_version_id": "01a16727-cb4f-75ab-84df-7bc79409029a",
+  "runtime_budget": {
+    "input_tokens": 35,
+    "output_reserve_tokens": 4,
+    "total_reserved_tokens": 39,
+    "configured_limit_tokens": 64,
+    "runtime_limit_tokens": 64,
+    "remaining_tokens": 25,
+    "runtime_validated": true,
+    "overflow_policy": "trim_optional_evidence",
+    "per_block_counts": "marginal_serialized_prefix_tokens",
+    "required_priority": 1
+  },
+  "token_count": 35,
+  "prompt_characters": 33,
+  "omitted_blocks": [
+    {
+      "block_key": "evidence",
+      "reason": "token_budget_overflow",
+      "priority": 2,
+      "block_type": "evidence",
+      "required": false,
+      "tokens_omitted": 105
+    }
+  ],
+  "truncated_blocks": [
+    {
+      "block_key": "evidence",
+      "reason": "block_token_limit",
+      "original_tokens": 242,
+      "tokens_retained": 100,
+      "block_type": "evidence",
+      "required": false,
+      "included_in_final": false
+    }
+  ],
+  "required_system_and_question_preserved": true,
+  "required_block_cap_status": 400,
+  "actual_paired_experiment": "01a1672a-d0c0-73a5-884b-ad57510e8cc6",
+  "actual_baseline_usage": {
+    "prompt_tokens": 35,
+    "completion_tokens": 4,
+    "total_tokens": 39
+  },
+  "candidate_failed_before_generation": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "overflow": false,
+  "browser_errors": 0
+}
