@@ -17,6 +17,7 @@ The fixture verifies lexical SQL functions, bounded RRF, narrow membership after
 - Full backend before PR40 integration: **1,022 tests passed, six optional skips**.
 - Final required PostgreSQL suite: **19 tests passed**, including fixed MiniLM encoding, real RabbitMQ delivery/recovery/cancellation, native vectors/PCA, feedback concurrency and five SQL retrieval tests.
 - Final actual MiniLM build/query check exercises API-selected exact mode and confirms the persisted receipt matches the response.
+- After normally merging main01f6c035 (PR40), **61 integrated context/authoring/RAG/chunking/OpenAPI tests** passed; the final five real SQL tests also passed, including empty-result persistence. Schema merge preserves both context-budget and retrieval-execution contracts.
 - Clean base runtime: **34 RAG/chunking/OpenAPI tests passed**.
 - Migration drift: no changes detected; OpenAPI mirrors include dense_search and retrieval_config.
 - Backend execution and inspectable API metadata only; no new frontend layout.
