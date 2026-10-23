@@ -1,0 +1,50 @@
+{
+  "tenant_id": "01a16997-5295-72df-a209-96a177f21d6d",
+  "project_id": "01a16997-5296-71c9-b296-b7d10909af33",
+  "base": "01a16997-5a9b-7018-b18f-171faa45cbf7",
+  "fixture": "01a16997-5c13-7c25-b657-d24de9016c76",
+  "fixture_weights": "919b2eab4fa346a7b6c803a38127d6509250e582a9315d2f534ea70a2ff1efb7",
+  "fixture_training": {
+    "initial_loss": [
+      3.465735902799726,
+      3.465735902799726,
+      3.465735902799726
+    ],
+    "final_loss": [
+      0.13830344333835096,
+      0.12082064376005375,
+      0.10064711198194627
+    ],
+    "updates": 288,
+    "learning_rate": 0.05,
+    "scope": "Three authored sequences, real Safetensors fixture mechanics only; no representative quality claim."
+  },
+  "pool": 2,
+  "worker": 2,
+  "policy": "01a16997-5c15-7a3f-88c2-80d77c41bff5",
+  "dataset": "01a16997-5c15-7741-bf85-7c2816c6bd68",
+  "sources": {
+    "json": {
+      "artifact_id": "01a16997-5c74-7dad-bc7e-f3b16c0d7d7d",
+      "sha256": "946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+      "byte_size": 66
+    },
+    "csv": {
+      "artifact_id": "01a16997-5c77-7d08-b3ca-bf249a6d911d",
+      "sha256": "47542fda821e0d2192effbfc2c6635b6c76361db789f21824548693f7dd46622",
+      "byte_size": 59
+    },
+    "docx": {
+      "artifact_id": "01a16997-5c79-7129-a8d9-61f1fcec13a8",
+      "sha256": "70a2937b4886624850388898d8e4e099af460998fdaf7f612ddb096a06097bb5",
+      "byte_size": 260
+    },
+    "pdf": {
+      "artifact_id": "01a16997-5c7b-7d1e-919e-bcd20b7dbcac",
+      "sha256": "45c0b9c555f26c2ed4b9ae61cd2b5c36dd8639f89cd357ccb4176b27e2b762e3",
+      "byte_size": 1058
+    }
+  },
+  "runtime": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+  "base_source_revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2"
+}

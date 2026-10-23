@@ -112,6 +112,11 @@ class QualityFlagTests(SimpleTestCase):
         row = envelope(text="abcd" * 10)
         self.assertIn("quality.repetitive", quality_flags(row))
 
+    def test_single_short_unit_and_two_copies_are_not_three_repetitions(self):
+        for text in ('DOCUMENT', 'v=56789;', 'abcdefgh' * 2):
+            self.assertNotIn('quality.repetitive', quality_flags(envelope(text=text)))
+        self.assertIn('quality.repetitive', quality_flags(envelope(text='abcdefgh' * 3)))
+
     def test_normal_text_is_clean(self):
         row = envelope()
         self.assertEqual(quality_flags(row), [])

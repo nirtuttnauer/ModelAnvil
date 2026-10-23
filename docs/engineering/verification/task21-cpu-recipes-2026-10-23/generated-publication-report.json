@@ -1,0 +1,143 @@
+{
+  "scope": "Actual full pretrained CPU generation after an automated authored preview review; not independent domain quality approval.",
+  "run_id": "01a1699c-a2d4-720a-ab6e-ade054a65a70",
+  "publication": {
+    "report": {
+      "artifact_id": "01a1699c-af4a-7682-bb11-526b6046c104",
+      "sha256": "41ba9f33d479d59091792c5dc0f1fcb95a473735d79ab3ff68e58125caa297dc",
+      "byte_size": 2753
+    },
+    "row_count": 2,
+    "rejected_count": 0,
+    "preview": false,
+    "usage": {
+      "prompt_tokens": 6,
+      "completion_tokens": 16,
+      "total_tokens": 22,
+      "completed_generation_calls": 2
+    },
+    "output_artifact": {
+      "artifact_id": "01a1699c-af4c-70d9-8ab6-8c0092fcd1db",
+      "sha256": "40cba83dc80fee6feb361d37e2aa8f09b6ee1d0d5b851282889d2ba9f20c2867",
+      "byte_size": 2598
+    },
+    "revision_id": "01a1699c-af55-7462-ad4e-f2ba82a437e1"
+  },
+  "actual": {
+    "rows": [
+      {
+        "schema_version": "1.0",
+        "sample_id": "cf312fc3-e9c6-5b48-8759-6054c71eb6d4",
+        "source_group_id": "source-sha256:946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+        "blocks": [
+          {
+            "block_id": "generated",
+            "type": "text",
+            "text": " light from a star and records the colors",
+            "location": {
+              "source_path": "/0"
+            }
+          }
+        ],
+        "provenance": {
+          "source_snapshot_ref": "sha256:946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+          "source_record_key": "/0",
+          "content_sha256": "77ef5a8438b732ecd5a9914d46c3d4856ed6bfef952aa157db3407e5f915473b",
+          "transformation_revision_ref": "modelanvil.recipe.v1",
+          "parent_sample_refs": [
+            "991745ad-5ab0-5f95-8737-375d1bd97165"
+          ]
+        },
+        "metadata": {
+          "recipe_sha256": "901c1bf6e77fcba0c3d345f8e712c0a4bd4c0f4c669515d30d6bb1b00129846d",
+          "model_snapshot_sha256": "923e85b025272ba292e4676bdb9e9d39b14072eda7936826d0c2ab4519d58e66",
+          "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+          "steps": [
+            "source",
+            "generate"
+          ],
+          "source_sample_id": "991745ad-5ab0-5f95-8737-375d1bd97165",
+          "generation_calls": {
+            "e519b0547dbd57c1a3f3a41b137ff0b7af89c92f311a8e1c369e27b05a73b5b3": {
+              "usage": {
+                "prompt_tokens": 3,
+                "completion_tokens": 8,
+                "total_tokens": 11
+              },
+              "finish_reason": "length"
+            }
+          },
+          "review_required": true,
+          "source_locations": [
+            {
+              "source_path": "/0"
+            }
+          ]
+        }
+      },
+      {
+        "schema_version": "1.0",
+        "sample_id": "017f3187-cbd6-57cd-8ab7-955257e4e643",
+        "source_group_id": "source-sha256:946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+        "blocks": [
+          {
+            "block_id": "generated",
+            "type": "text",
+            "text": " the same path as the moon, but",
+            "location": {
+              "source_path": "/1"
+            }
+          }
+        ],
+        "provenance": {
+          "source_snapshot_ref": "sha256:946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+          "source_record_key": "/1",
+          "content_sha256": "e91f1bd196cfb0e717ec15bfa1bf8f2c216459a05915892476ad0ed5a3fb47ce",
+          "transformation_revision_ref": "modelanvil.recipe.v1",
+          "parent_sample_refs": [
+            "d29ecf24-9a92-57e0-9188-dbdb3f8c206c"
+          ]
+        },
+        "metadata": {
+          "recipe_sha256": "901c1bf6e77fcba0c3d345f8e712c0a4bd4c0f4c669515d30d6bb1b00129846d",
+          "model_snapshot_sha256": "923e85b025272ba292e4676bdb9e9d39b14072eda7936826d0c2ab4519d58e66",
+          "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+          "steps": [
+            "source",
+            "generate"
+          ],
+          "source_sample_id": "d29ecf24-9a92-57e0-9188-dbdb3f8c206c",
+          "generation_calls": {
+            "f4f490965515d34d0aee3b07f5e678092089949388cf51ac43cfa8b03e17b3e0": {
+              "usage": {
+                "prompt_tokens": 3,
+                "completion_tokens": 8,
+                "total_tokens": 11
+              },
+              "finish_reason": "length"
+            }
+          },
+          "review_required": true,
+          "source_locations": [
+            {
+              "source_path": "/1"
+            }
+          ]
+        }
+      }
+    ],
+    "rejected": [],
+    "preview": false,
+    "usage": {
+      "prompt_tokens": 6,
+      "completion_tokens": 16,
+      "total_tokens": 22,
+      "completed_generation_calls": 2
+    }
+  },
+  "settled_attempts": 1,
+  "revision_count": 1,
+  "replayed_same_run": true,
+  "model_source_recipe_lineage_edges": 7,
+  "published_training_picker_api": true
+}

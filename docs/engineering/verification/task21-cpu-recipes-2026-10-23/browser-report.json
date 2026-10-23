@@ -1,0 +1,430 @@
+{
+  "scope": "Automated authored review tests publication mechanics, not independent human/domain quality.",
+  "viewports": [
+    1440,
+    390
+  ],
+  "imported_graph_and_accessible_list": true,
+  "restored_preview": {
+    "run_id": "01a1699a-8f8c-7bff-82a8-910561c94608",
+    "job_id": "01a1699a-8f8c-7038-b346-4b3f7a781da7",
+    "name": "Authored four-format reviewed publication",
+    "status": "completed",
+    "preview": true
+  },
+  "review_not_restored_after_reload": true,
+  "published": {
+    "run_id": "01a1699a-9d4b-72db-9de8-1049afb58134",
+    "job_id": "01a1699a-9d4b-758a-8db9-f2150a56d301",
+    "status": "succeeded",
+    "desired_action": "run",
+    "definition": {
+      "name": "Authored four-format reviewed publication",
+      "schema": "modelanvil.recipe.v1",
+      "steps": [
+        {
+          "format": "json",
+          "id": "json",
+          "type": "source"
+        },
+        {
+          "format": "csv",
+          "id": "csv",
+          "type": "source"
+        },
+        {
+          "format": "docx",
+          "id": "docx",
+          "type": "source"
+        },
+        {
+          "format": "pdf",
+          "id": "pdf",
+          "type": "source"
+        },
+        {
+          "id": "merge",
+          "inputs": [
+            "json",
+            "csv",
+            "docx",
+            "pdf"
+          ],
+          "type": "merge"
+        },
+        {
+          "id": "clean",
+          "input": "merge",
+          "operation": "strip",
+          "type": "expression"
+        },
+        {
+          "id": "output",
+          "input": "clean",
+          "type": "output"
+        }
+      ]
+    },
+    "bindings": {
+      "recipe": "01a1699a-8f5b-7379-96e8-05dc1ae5150f",
+      "sources": {
+        "json": "01a1699a-8f66-7846-ad97-94726b4c68a0",
+        "csv": "01a1699a-8f6f-7ff2-9dae-784787f2454a",
+        "docx": "01a1699a-8f77-7bda-8991-f7f24f234150",
+        "pdf": "01a1699a-8f7f-782c-9377-6f583bb6b057"
+      },
+      "model": null,
+      "device": "cpu",
+      "pool": 2,
+      "budget_policy": "01a16997-5c15-7a3f-88c2-80d77c41bff5",
+      "protected_sources": []
+    },
+    "attempt_count": 1,
+    "max_attempts": 3,
+    "preview": false,
+    "completed_steps": [
+      "json",
+      "csv",
+      "docx",
+      "pdf",
+      "merge",
+      "clean",
+      "output"
+    ],
+    "saved_rows": 7,
+    "publication": {
+      "report": {
+        "artifact_id": "01a1699a-a01d-7ee7-98bb-3aaca4d60743",
+        "sha256": "e7e11522b175fc7d4ad51c46716f5412c1588c60068ac67fff31b2b56043e80c",
+        "byte_size": 7683
+      },
+      "row_count": 7,
+      "rejected_count": 0,
+      "preview": false,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0,
+        "completed_generation_calls": 0
+      },
+      "output_artifact": {
+        "artifact_id": "01a1699a-a01e-73b0-90ed-9674e29b40a1",
+        "sha256": "0f970efe211c8a581d235207f1c2b7edc25d90dae36e47827a2a07cc7178956b",
+        "byte_size": 7525
+      },
+      "revision_id": "01a1699a-a027-7e3a-8c1b-66040fe7cf0a"
+    },
+    "result": {
+      "rows": [
+        {
+          "schema_version": "1.0",
+          "sample_id": "5193ddc4-1357-5326-a002-614d7d95aa43",
+          "source_group_id": "source-sha256:946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+          "blocks": [
+            {
+              "block_id": "generated",
+              "type": "text",
+              "text": "A telescope collects",
+              "location": {
+                "source_path": "/0"
+              }
+            }
+          ],
+          "provenance": {
+            "source_snapshot_ref": "sha256:946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+            "source_record_key": "/0",
+            "content_sha256": "a0a8a25df699b59d8f0efa3374d7b49225281e8df2282bae62b46236b6405025",
+            "transformation_revision_ref": "modelanvil.recipe.v1",
+            "parent_sample_refs": [
+              "991745ad-5ab0-5f95-8737-375d1bd97165"
+            ]
+          },
+          "metadata": {
+            "recipe_sha256": "83d3d89bd7c80729199aa2c0d6eea61f8c34222a5a3b95dd090b5ab33e068178",
+            "model_snapshot_sha256": null,
+            "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+            "steps": [
+              "json",
+              "clean"
+            ],
+            "source_sample_id": "991745ad-5ab0-5f95-8737-375d1bd97165",
+            "generation_calls": {},
+            "review_required": true,
+            "source_locations": [
+              {
+                "source_path": "/0"
+              }
+            ]
+          }
+        },
+        {
+          "schema_version": "1.0",
+          "sample_id": "b6e2c623-de16-526f-a86c-5c1aafcaf723",
+          "source_group_id": "source-sha256:946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+          "blocks": [
+            {
+              "block_id": "generated",
+              "type": "text",
+              "text": "Ocean tides follow",
+              "location": {
+                "source_path": "/1"
+              }
+            }
+          ],
+          "provenance": {
+            "source_snapshot_ref": "sha256:946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+            "source_record_key": "/1",
+            "content_sha256": "9bf9f11a138cb9cc415755431dc500d188a73cd9eb56e2a1b9e0b80b14b9c757",
+            "transformation_revision_ref": "modelanvil.recipe.v1",
+            "parent_sample_refs": [
+              "d29ecf24-9a92-57e0-9188-dbdb3f8c206c"
+            ]
+          },
+          "metadata": {
+            "recipe_sha256": "83d3d89bd7c80729199aa2c0d6eea61f8c34222a5a3b95dd090b5ab33e068178",
+            "model_snapshot_sha256": null,
+            "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+            "steps": [
+              "json",
+              "clean"
+            ],
+            "source_sample_id": "d29ecf24-9a92-57e0-9188-dbdb3f8c206c",
+            "generation_calls": {},
+            "review_required": true,
+            "source_locations": [
+              {
+                "source_path": "/1"
+              }
+            ]
+          }
+        },
+        {
+          "schema_version": "1.0",
+          "sample_id": "87b1796f-2a71-5620-810e-064d176d7295",
+          "source_group_id": "source-sha256:47542fda821e0d2192effbfc2c6635b6c76361db789f21824548693f7dd46622",
+          "blocks": [
+            {
+              "block_id": "generated",
+              "type": "text",
+              "text": "Maintenance starts at 14:30 UTC.",
+              "location": {
+                "source_path": "record/1"
+              }
+            }
+          ],
+          "provenance": {
+            "source_snapshot_ref": "sha256:47542fda821e0d2192effbfc2c6635b6c76361db789f21824548693f7dd46622",
+            "source_record_key": "record/1",
+            "content_sha256": "73ffbe090b613377f5978c7a11ad01ac9a705b6079d10a28bdc7bf0b42e0c512",
+            "transformation_revision_ref": "modelanvil.recipe.v1",
+            "parent_sample_refs": [
+              "3f195a21-cd4a-5dc7-9121-0eef432f075a"
+            ]
+          },
+          "metadata": {
+            "recipe_sha256": "83d3d89bd7c80729199aa2c0d6eea61f8c34222a5a3b95dd090b5ab33e068178",
+            "model_snapshot_sha256": null,
+            "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+            "steps": [
+              "csv",
+              "clean"
+            ],
+            "source_sample_id": "3f195a21-cd4a-5dc7-9121-0eef432f075a",
+            "generation_calls": {},
+            "review_required": true,
+            "source_locations": [
+              {
+                "source_path": "record/1"
+              }
+            ]
+          }
+        },
+        {
+          "schema_version": "1.0",
+          "sample_id": "f0048e7e-1dcd-56f0-9f86-34480d571cc8",
+          "source_group_id": "source-sha256:47542fda821e0d2192effbfc2c6635b6c76361db789f21824548693f7dd46622",
+          "blocks": [
+            {
+              "block_id": "generated",
+              "type": "text",
+              "text": "Power checks passed.",
+              "location": {
+                "source_path": "record/2"
+              }
+            }
+          ],
+          "provenance": {
+            "source_snapshot_ref": "sha256:47542fda821e0d2192effbfc2c6635b6c76361db789f21824548693f7dd46622",
+            "source_record_key": "record/2",
+            "content_sha256": "acf8185f8013240f35cc762ff9f411ba447b9c74910e74298cc4bc2fe46a7fd8",
+            "transformation_revision_ref": "modelanvil.recipe.v1",
+            "parent_sample_refs": [
+              "db1b9c7b-e708-55a0-9004-6ff6586e61cc"
+            ]
+          },
+          "metadata": {
+            "recipe_sha256": "83d3d89bd7c80729199aa2c0d6eea61f8c34222a5a3b95dd090b5ab33e068178",
+            "model_snapshot_sha256": null,
+            "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+            "steps": [
+              "csv",
+              "clean"
+            ],
+            "source_sample_id": "db1b9c7b-e708-55a0-9004-6ff6586e61cc",
+            "generation_calls": {},
+            "review_required": true,
+            "source_locations": [
+              {
+                "source_path": "record/2"
+              }
+            ]
+          }
+        },
+        {
+          "schema_version": "1.0",
+          "sample_id": "d1db29e8-6364-5312-9533-daa894927d7b",
+          "source_group_id": "source-sha256:70a2937b4886624850388898d8e4e099af460998fdaf7f612ddb096a06097bb5",
+          "blocks": [
+            {
+              "block_id": "generated",
+              "type": "text",
+              "text": "Retention is thirty days.",
+              "location": {
+                "source_path": "word/document.xml/paragraph/1"
+              }
+            }
+          ],
+          "provenance": {
+            "source_snapshot_ref": "sha256:70a2937b4886624850388898d8e4e099af460998fdaf7f612ddb096a06097bb5",
+            "source_record_key": "word/document.xml/paragraph/1",
+            "content_sha256": "c738349e8bdd635e8f14b12f8558082d6e1435bc0ba1faffcc2e0a046b08783d",
+            "transformation_revision_ref": "modelanvil.recipe.v1",
+            "parent_sample_refs": [
+              "a407b4bc-70c7-54e2-bca9-96a200c872fb"
+            ]
+          },
+          "metadata": {
+            "recipe_sha256": "83d3d89bd7c80729199aa2c0d6eea61f8c34222a5a3b95dd090b5ab33e068178",
+            "model_snapshot_sha256": null,
+            "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+            "steps": [
+              "docx",
+              "clean"
+            ],
+            "source_sample_id": "a407b4bc-70c7-54e2-bca9-96a200c872fb",
+            "generation_calls": {},
+            "review_required": true,
+            "source_locations": [
+              {
+                "source_path": "word/document.xml/paragraph/1"
+              }
+            ]
+          }
+        },
+        {
+          "schema_version": "1.0",
+          "sample_id": "44ae2d55-7f0f-5e03-974e-1df089f8db0d",
+          "source_group_id": "source-sha256:45c0b9c555f26c2ed4b9ae61cd2b5c36dd8639f89cd357ccb4176b27e2b762e3",
+          "blocks": [
+            {
+              "block_id": "generated",
+              "type": "text",
+              "text": "First engineering page.",
+              "location": {
+                "source_path": "page/1",
+                "page": 1
+              }
+            }
+          ],
+          "provenance": {
+            "source_snapshot_ref": "sha256:45c0b9c555f26c2ed4b9ae61cd2b5c36dd8639f89cd357ccb4176b27e2b762e3",
+            "source_record_key": "page/1",
+            "content_sha256": "c4ed9deda53d264227e9de175ea71eb1df889c5ca94f00967ddf93750b94faf2",
+            "transformation_revision_ref": "modelanvil.recipe.v1",
+            "parent_sample_refs": [
+              "cda2ad6e-80d3-508e-984a-a472fe80cbb5"
+            ]
+          },
+          "metadata": {
+            "recipe_sha256": "83d3d89bd7c80729199aa2c0d6eea61f8c34222a5a3b95dd090b5ab33e068178",
+            "model_snapshot_sha256": null,
+            "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+            "steps": [
+              "pdf",
+              "clean"
+            ],
+            "source_sample_id": "cda2ad6e-80d3-508e-984a-a472fe80cbb5",
+            "generation_calls": {},
+            "review_required": true,
+            "source_locations": [
+              {
+                "source_path": "page/1",
+                "page": 1
+              }
+            ]
+          }
+        },
+        {
+          "schema_version": "1.0",
+          "sample_id": "579db761-c36b-5cfa-8e0a-9105c1fce3d5",
+          "source_group_id": "source-sha256:45c0b9c555f26c2ed4b9ae61cd2b5c36dd8639f89cd357ccb4176b27e2b762e3",
+          "blocks": [
+            {
+              "block_id": "generated",
+              "type": "text",
+              "text": "Second engineering page.",
+              "location": {
+                "source_path": "page/2",
+                "page": 2
+              }
+            }
+          ],
+          "provenance": {
+            "source_snapshot_ref": "sha256:45c0b9c555f26c2ed4b9ae61cd2b5c36dd8639f89cd357ccb4176b27e2b762e3",
+            "source_record_key": "page/2",
+            "content_sha256": "5febc0b049e56fcb62e1fe4370ba9571b35b2e345b7da1ead050ee0611a04985",
+            "transformation_revision_ref": "modelanvil.recipe.v1",
+            "parent_sample_refs": [
+              "0069b322-3868-501c-ad81-b40651252716"
+            ]
+          },
+          "metadata": {
+            "recipe_sha256": "83d3d89bd7c80729199aa2c0d6eea61f8c34222a5a3b95dd090b5ab33e068178",
+            "model_snapshot_sha256": null,
+            "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+            "steps": [
+              "pdf",
+              "clean"
+            ],
+            "source_sample_id": "0069b322-3868-501c-ad81-b40651252716",
+            "generation_calls": {},
+            "review_required": true,
+            "source_locations": [
+              {
+                "source_path": "page/2",
+                "page": 2
+              }
+            ]
+          }
+        }
+      ],
+      "rejected": [],
+      "preview": false,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0,
+        "completed_generation_calls": 0
+      }
+    },
+    "error": ""
+  },
+  "published_link": "#resources/dataset-revision/01a1699a-a027-7e3a-8c1b-66040fe7cf0a",
+  "training_picker_options": [
+    "Select an exact revision",
+    "Authored reviewed recipe output · r1 · published",
+    "recipe-cpu-data · r1 · published"
+  ],
+  "page_errors": [],
+  "continuation": "Publication UI assertions passed in recipe-browser.cjs; exact Training picker locator and reload were confirmed in recipe-browser-finish.cjs without republishing."
+}
