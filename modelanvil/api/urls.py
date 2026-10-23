@@ -27,7 +27,7 @@ from modelanvil.api.views import model_workspace
 from modelanvil.api.views import specialists
 from modelanvil.api.views import recipes as recipe_views
 from modelanvil.api.views import openapi as openapi_views
-from modelanvil.api.views import rag_views
+from modelanvil.api.views import rag_views, embeddings
 from modelanvil.api.views import registries as registry_views
 from modelanvil.api.views import release_views
 from modelanvil.api.views import run_detail_views
@@ -93,6 +93,8 @@ router.register("training-runs", training_views.TrainingRunViewSet, basename="tr
 router.register("alignment-runs", training_views.AlignmentRunViewSet, basename="alignment-run")
 
 # RAG & Context Lab
+router.register("embedding-spaces", embeddings.EmbeddingSpaceViewSet, basename="embedding-space")
+router.register("embedding-builds", embeddings.EmbeddingBuildViewSet, basename="embedding-build")
 router.register("knowledge-bases", rag_views.KnowledgeBaseViewSet, basename="knowledge-base")
 router.register("index-versions", rag_views.IndexVersionViewSet, basename="index-version")
 router.register("context-recipes", context_lab_views.ContextRecipeViewSet, basename="context-recipe")

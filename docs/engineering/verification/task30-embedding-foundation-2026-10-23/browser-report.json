@@ -1,0 +1,17 @@
+{
+  "build_id": "01a166e8-2c05-7fa8-acef-8a957152c668",
+  "index_id": "01a166e8-2c02-72c2-9c57-9ba6a7f2b3e6",
+  "source_index_id": "01a166e4-6402-7719-be05-e903a31c317e",
+  "completed_chunks": 6,
+  "job_status": "succeeded",
+  "index_status": "ready",
+  "browser_errors": 0,
+  "viewports": [
+    1440,
+    390
+  ],
+  "semantic_query": "A sleeping feline on a couch",
+  "qrels_comparison": true,
+  "pca": true,
+  "reload": true
+}

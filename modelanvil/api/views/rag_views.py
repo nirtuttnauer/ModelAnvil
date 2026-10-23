@@ -79,8 +79,6 @@ class RetrievalQuerySerializer(serializers.Serializer):
         vector = data.get("query_embedding")
         if vector and not all(math.isfinite(value) for value in vector):
             raise serializers.ValidationError({"query_embedding": "Embedding values must be finite."})
-        if data["mode"] == "dense" and not vector:
-            raise serializers.ValidationError({"query_embedding": "Dense retrieval requires a query embedding."})
         if not vector and not data["query"].strip():
             raise serializers.ValidationError({"query": "Enter a query for lexical retrieval."})
         return data
@@ -135,9 +133,9 @@ class IndexVersionSerializer(serializers.ModelSerializer):
     def get_source_pins(self,index):
         config=index.configuration
         sources=config.get('source_revisions',[])
-        return {key:config.get(key) for key in ('source_scope','chunk_recipe','chunk_size','chunk_overlap','chunk_units','tokenizer','chunk_recipe_digest','boundary_preference','overlap_semantics','retrieval','embeddings_generated')} | {
+        return {key:config.get(key) for key in ('source_scope','chunk_recipe','chunk_size','chunk_overlap','chunk_units','tokenizer','chunk_recipe_digest','boundary_preference','overlap_semantics','retrieval','embeddings_generated','embedding_profile','embedding_build_runtime')} | {
             'source_revisions':sources[:50],'source_revision_count':len(sources),'source_revisions_truncated':len(sources)>50,
-            'build_mode':'bounded_atomic_transaction'}
+            'build_mode':'durable_worker' if config.get('embedding_profile') else 'bounded_atomic_transaction'}
 
     chunk_count = serializers.IntegerField(source="chunks_count", read_only=True)
     revision_no = serializers.IntegerField(default=1, min_value=1)
@@ -193,8 +191,10 @@ class IndexVersionViewSet(TenantScopedViewSet):
                 return Response({"detail": "This index supports lexical retrieval only."}, status=400)
             if len(query_embedding) != index_version.embedding_space.dimension:
                 return Response({"query_embedding": "Embedding dimension does not match the index space."}, status=400)
-        if not query_embedding:
-            mode = "lexical"
+        if not query_embedding and not index_version.configuration.get('embedding_profile'):
+            if mode == 'dense':
+                raise serializers.ValidationError({'query_embedding':'Dense retrieval requires a compatible query embedding.'})
+            mode = 'lexical'
 
         from modelanvil.rag.workflow import trace_query
         try:
@@ -248,7 +248,8 @@ class IndexVersionViewSet(TenantScopedViewSet):
         try:
             rows=compare(index,**data,comparison_id=group)
             if baseline is not None:
-                rows+=compare(baseline,**data,comparison_id=group)
+                baseline_data={**data,'modes':['lexical']} if baseline.adapter_type=='lexical' else data
+                rows+=compare(baseline,**baseline_data,comparison_id=group)
         except ValueError as exc: raise serializers.ValidationError(str(exc)) from exc
         return Response({'results':rows},status=201)
 

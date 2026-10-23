@@ -55,7 +55,10 @@ class RetrievalEngine:
             pk=self.index_version.pk, tenant_id=self.tenant_id, status='ready').first()
         if ((tenant is not None and str(tenant) != str(self.tenant_id))
                 or current is None
+                or not check_resource_access(current, tenant_id=self.tenant_id)
                 or not check_resource_access(current.knowledge_base, tenant_id=self.tenant_id)):
+            return []
+        if current.configuration.get('embedding_profile') and not check_resource_access(current.embedding_space,tenant_id=self.tenant_id):
             return []
         self.index_version = current
         chunks = DocumentChunk.objects.filter(
@@ -117,6 +120,36 @@ class RetrievalEngine:
             raise ValueError(
                 f"Query embedding dimension {len(query_embedding)} does not match index space dimension {expected_dim}."
             )
+
+        if self.index_version.configuration.get('embeddings_generated'):
+            from django.db import connection
+            from django.db.models.functions import Cast
+            from pgvector.django import VectorField, CosineDistance
+            from modelanvil.rag.models import ChunkEmbedding
+            from modelanvil.rag.embedding_adapter import validate_vectors, vector_digest
+            eligible = {c.pk:c for c in chunks}
+            vectors = ChunkEmbedding.all_objects.filter(tenant_id=self.tenant_id,
+                space=self.index_version.embedding_space,chunk_id__in=eligible)
+            if vectors.count() != len(eligible):
+                raise ValueError('The ready index has missing vectors; rebuild it before querying.')
+            if connection.vendor != 'postgresql':
+                raise ValueError('Real vector search requires PostgreSQL with pgvector.')
+            distances = vectors.annotate(distance=CosineDistance(Cast('vector',VectorField(dimensions=expected_dim)),list(query_embedding)))
+            ranked = list(distances.order_by('distance')[:top_k])
+            if len(ranked) < min(top_k,len(eligible)):
+                # ANN post-filters can underfill after permission or membership
+                # filtering. The declared 1000-chunk bound permits exact fallback.
+                from django.db.models import F, Value
+                ranked = list(distances.order_by(F('distance')+Value(0.0),'chunk_id')[:top_k])
+            result=[]
+            for rank,row in enumerate(ranked,1):
+                validate_vectors([row.vector],1)
+                if (row.content_hash!=eligible[row.chunk_id].content_hash or vector_digest(row.vector)!=row.vector_digest
+                        or row.runtime_digest!=self.index_version.configuration['embedding_build_runtime']):
+                    raise ValueError('Stored vector checksums changed; rebuild this index.')
+                result.append(ScoredChunk(chunk_id=str(eligible[row.chunk_id].chunk_id),chunk=eligible[row.chunk_id],
+                    score=1-float(row.distance),rank=rank,channel='dense'))
+            return result
 
         scored = []
         for c in chunks:

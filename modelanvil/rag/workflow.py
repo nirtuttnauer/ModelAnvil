@@ -22,6 +22,18 @@ def retrieve(index, query, mode, top_k, embedding=None):
     engine = RetrievalEngine(index)
     if mode == 'lexical':
         return engine.retrieve_lexical(query, top_k=top_k)
+    if index.configuration.get('embedding_profile') and index.configuration.get('embeddings_generated'):
+        if embedding is not None:
+            raise ValueError('Pinned vector indexes encode queries locally; omit caller-provided vectors.')
+        from modelanvil.rag import embedding_adapter, embedding_jobs
+        from modelanvil.identity.models import check_resource_access
+        if not check_resource_access(index.embedding_space):
+            raise ValueError('Embedding space is unavailable in this project.')
+        if embedding_jobs.space_pins(index.embedding_space) != index.configuration['embedding_profile']:
+            raise ValueError('The embedding-space pins changed.')
+        if embedding_jobs.runtime_digest() != index.configuration['embedding_build_runtime']:
+            raise ValueError('This embedding index requires its pinned runtime; rebuild under the current profile.')
+        embedding = embedding_adapter.encode([query])[0].tolist()
     if index.adapter_type == 'lexical' or embedding is None:
         raise ValueError('Dense/hybrid retrieval needs a compatible vector index and actual query embedding.')
     if len(embedding) != index.embedding_space.dimension or not all(math.isfinite(v) for v in embedding):
@@ -33,6 +45,9 @@ def trace_query(index, query, mode, top_k, embedding=None):
     started = time.monotonic()
     rows = retrieve(index,query,mode,top_k,embedding)
     payload = [chunk_payload(row) for row in rows]
+    if mode != 'lexical' and index.configuration.get('embedding_profile'):
+        for row in payload:
+            row['metadata'].update(embedding_space=index.configuration['embedding_profile'],query_embedding_source='pinned_local_cpu')
     trace = QueryTrace.objects.create(tenant_id=index.tenant_id,index_version=index,query=query,mode=mode,
         retrieved_chunk_ids=[row['chunk_id'] for row in payload], reranked_chunk_ids=[],
         supplied_context='',answer='',citations=[{'chunk_id':row['chunk_id'], 'score':row['score'], **row['metadata']} for row in payload],
@@ -54,7 +69,8 @@ def visible_traces(index, limit=50):
             rows.append({'chunk_id':str(chunk.chunk_id),'text':chunk.text,'score':ref.get('score'),
                 'metadata':{**chunk.metadata,'document_title':chunk.document.title,'document_revision':chunk.document.revision_no,
                     'source_uri':chunk.document.source_uri,'content_hash':chunk.content_hash,
-                    'span':f'{chunk.span_start}:{chunk.span_end}'}})
+                    'span':f'{chunk.span_start}:{chunk.span_end}',
+                    **({k:ref[k] for k in ('embedding_space','query_embedding_source') if k in ref})}})
         result.append({'trace_id':str(trace.trace_id),'query':trace.query,'mode':trace.mode,
             'created_at':trace.created_at.isoformat(),'latency_ms':trace.latency_ms,'results':rows,
             'reranker':'none','generation':'not_executed','context_chunk_ids':[r['chunk_id'] for r in rows]})
@@ -91,9 +107,10 @@ def compare(index, *, qrels_version, cases, modes, top_k, comparison_id=None):
         run.metrics_summary={'metrics':means,'unit':'fraction','cutoff':top_k,'coverage':{'queries_total':len(cases),
             'queries_with_positive_qrels':judged,'queries_without_positive_qrels':len(cases)-judged},
             'na_semantics':'No positive qrels means N/A; unjudged cases are excluded from aggregate means.',
-            'profile':'lexical-token-overlap-v1' if mode=='lexical' else 'caller-provided-vectors; semantic qualification not inferred'}
+            'profile':'lexical-token-overlap-v1' if mode=='lexical' else 'pinned-local-minilm-pgvector-cosine-v1' if index.configuration.get('embedding_profile') else 'caller-provided-vectors; semantic qualification not inferred'}
         run.protocol_ref={'comparison_id':comparison_id,'index_manifest_digest':index.manifest_digest,'input_chunk_ids':sorted(eligible),
-            'judgments':judgments,'queries':per_query,'reranker':'none','generation':'not_executed'}
+            'judgments':judgments,'queries':per_query,'reranker':'none','generation':'not_executed',
+            'embedding_profile':index.configuration.get('embedding_profile'),'embedding_runtime':index.configuration.get('embedding_build_runtime')}
         run.status='completed';run.save(update_fields=['metrics_summary','protocol_ref','status','updated_at'])
         for key,value in means.items():
             RetrievalMetric.objects.create(tenant_id=index.tenant_id,run=run,key=key,k=top_k,
