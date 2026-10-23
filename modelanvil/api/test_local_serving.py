@@ -90,3 +90,13 @@ class LocalServingTests(TestCase):
         self.assertEqual(self.client.get(self.path+'local-health/').status_code, 503)
         self.assertEqual(self.client.post(self.path+'completions/', {'prompt':'x'}, format='json').status_code, 400)
         self.assertEqual(ServingEndpoint.all_objects.get(endpoint_id=self.endpoint).deployments.count(), 1)
+
+    def test_stale_evaluation_blocks_serving_even_with_a_previously_passing_review(self):
+        first=self.client.post(self.path+'deploy-local/',self.deploy_body,format='json')
+        self.assertEqual(first.status_code,201,first.content)
+        self.evaluation.status='failed';self.evaluation.save()
+        self.assertEqual(self.client.get(self.path+'local-health/').status_code,503)
+        self.assertEqual(self.client.post(self.path+'completions/',{'prompt':'x'},format='json').status_code,400)
+        self.assertEqual(self.client.post(self.path+'deploy-local/',self.deploy_body,format='json').status_code,409)
+        endpoint=ServingEndpoint.all_objects.get(endpoint_id=self.endpoint)
+        self.assertEqual(str(endpoint.active_deployment.deployment_id),first.data['deployment_id'])

@@ -6,7 +6,6 @@ from datetime import datetime, timezone
 from django.db import transaction
 
 from modelanvil.identity.models import check_resource_access
-from modelanvil.releases.artifacts import release_model_bundle
 from modelanvil.releases.models import DeploymentRevision, ReleaseVersion, ServingEndpoint
 from modelanvil.runners.training.runtime import digest
 
@@ -25,9 +24,8 @@ def verified_release(version, project):
         raise ValueError('Local serving requires an approved frozen candidate review; failures and missing evidence cannot be waived.')
     if not check_resource_access(version, project, version.tenant_id) or not check_resource_access(version.model_version, project, version.tenant_id):
         raise ValueError('Release or model is unavailable in the endpoint project.')
-    material = release_model_bundle(version)
-    if not material or material['artifact'].sha256 != review['model_artifact']['sha256']:
-        raise ValueError('Reviewed model bytes changed or are unavailable.')
+    from modelanvil.releases.review import assert_current_review
+    material, _ = assert_current_review(version, project)
     return material
 
 
