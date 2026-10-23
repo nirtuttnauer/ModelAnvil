@@ -18,7 +18,7 @@ def chunk_payload(row):
             'span_end':chunk.span_end, 'rank':row.rank, 'channel':row.channel}}
 
 
-def retrieve(index, query, mode, top_k, embedding=None, *, dense_search=None, engine=None):
+def retrieve(index, query, mode, top_k, embedding=None, *, dense_search=None, ef_search=None, engine=None):
     engine = engine or RetrievalEngine(index)
     if mode == 'lexical':
         return engine.retrieve_lexical(query, top_k=top_k)
@@ -38,14 +38,14 @@ def retrieve(index, query, mode, top_k, embedding=None, *, dense_search=None, en
         raise ValueError('Dense/hybrid retrieval needs a compatible vector index and actual query embedding.')
     if len(embedding) != index.embedding_space.dimension or not all(math.isfinite(v) for v in embedding):
         raise ValueError('Query vector must be finite and match the index embedding dimension.')
-    return engine.retrieve_dense(embedding,top_k=top_k,dense_search=dense_search) if mode == 'dense' else engine.retrieve_hybrid(query,embedding,top_k=top_k,dense_search=dense_search)
+    return engine.retrieve_dense(embedding,top_k=top_k,dense_search=dense_search,ef_search=ef_search) if mode == 'dense' else engine.retrieve_hybrid(query,embedding,top_k=top_k,dense_search=dense_search,ef_search=ef_search)
 
 
-def trace_query(index, query, mode, top_k, embedding=None, *, dense_search=None):
+def trace_query(index, query, mode, top_k, embedding=None, *, dense_search=None, ef_search=None):
     started = time.monotonic()
     engine=RetrievalEngine(index)
-    rows = retrieve(index,query,mode,top_k,embedding,dense_search=dense_search,engine=engine)
-    config = engine.settings(top_k,dense_search)
+    rows = retrieve(index,query,mode,top_k,embedding,dense_search=dense_search,ef_search=ef_search,engine=engine)
+    config = engine.settings(top_k,dense_search,ef_search)
     payload = [chunk_payload(row) for row in rows]
     for row in payload:row['metadata']['retrieval_config']=config
     if mode != 'lexical' and index.configuration.get('embedding_profile'):

@@ -74,6 +74,7 @@ class RetrievalQuerySerializer(serializers.Serializer):
     top_k = serializers.IntegerField(default=5, min_value=1, max_value=100)
     mode = serializers.ChoiceField(choices=("lexical", "dense", "hybrid"), default="hybrid")
     dense_search = serializers.ChoiceField(choices=('exact','hnsw'),required=False)
+    ef_search = serializers.IntegerField(min_value=1,max_value=1000,required=False)
     query_embedding = serializers.ListField(child=serializers.FloatField(), required=False, max_length=4096, allow_empty=False)
 
     def validate(self, data):
@@ -199,7 +200,7 @@ class IndexVersionViewSet(TenantScopedViewSet):
 
         from modelanvil.rag.workflow import trace_query
         try:
-            trace, rows = trace_query(index_version,query_text,mode,top_k,query_embedding,dense_search=data.get('dense_search'))
+            trace, rows = trace_query(index_version,query_text,mode,top_k,query_embedding,dense_search=data.get('dense_search'),ef_search=data.get('ef_search'))
         except ValueError as exc:
             raise serializers.ValidationError(str(exc)) from exc
         return Response({'results':rows,'mode':mode,'retrieval_config':trace.retrieval_config,'index_id':str(index_version.index_id),

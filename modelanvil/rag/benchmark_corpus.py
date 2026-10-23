@@ -93,4 +93,10 @@ def select(docs,claims):
     ids+=sorted(set(docs)-required,key=lambda key:ordered_key('document',key))[:PROTOCOL['document_count']-len(ids)]
     by_role={role:{r['source_group'] for r in selected if r['role']==role} for role in roles}
     if by_role['development']&by_role['held_out']:raise ValueError('Source groups cross the evaluation split.')
+    normalized={}
+    for row in selected:
+        query=' '.join(row['query'].casefold().split())
+        if query in normalized and normalized[query]!=row['role']:
+            raise ValueError('Duplicate normalized query text crosses the source-group evaluation split.')
+        normalized[query]=row['role']
     return [docs[key] for key in ids],selected
