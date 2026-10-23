@@ -1,0 +1,400 @@
+{
+  "scope": "Authored correctness fixture labels with explicit test-owner attestation; no human/customer quality qualification.",
+  "production_qualified": false,
+  "runtime": "modelanvil.smollm2-mps-dpo.v1",
+  "build_digest": "30d8564c49a6a50492963112dafdbc1970f2e00610b0747eb60683a3cefe1c9d",
+  "accelerator": {
+    "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+    "host": {
+      "system": "Darwin",
+      "machine": "arm64",
+      "release": "27.0.0"
+    },
+    "device": {
+      "id": "mps:0",
+      "backend": "mps",
+      "torch_device": "mps:0",
+      "name": "Metal Performance Shaders device",
+      "vendor": "Apple",
+      "total_memory_bytes": null,
+      "memory_scope": "shared_unified",
+      "runtime_recommended_memory_bytes": 40200896512
+    },
+    "framework": {
+      "name": "torch",
+      "version": "2.13.0",
+      "cuda_version": null,
+      "hip_version": null
+    },
+    "packages": {
+      "torch": "2.13.0",
+      "transformers": "5.14.0",
+      "safetensors": "0.8.0",
+      "tokenizers": "0.22.2"
+    },
+    "capacity_source": "MPS recommended shared-memory budget",
+    "python": "3.12.15",
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "alignment_packages": {
+      "torch": "2.13.0",
+      "transformers": "5.14.0",
+      "safetensors": "0.8.0",
+      "tokenizers": "0.22.2",
+      "peft": "0.21.2",
+      "accelerate": "1.15.0"
+    }
+  },
+  "fixture_inputs": {
+    "train": {
+      "artifact_id": "01a16af5-575d-797b-a9b5-3a082ef81ca4",
+      "name": "train authored correctness fixtures",
+      "sha256": "57f832da30b70b76252139646a5e9f7f9ddc3bef93d8e3db2c5ae5310e14a740",
+      "byte_size": 518,
+      "row_count": 3,
+      "state": "committed"
+    },
+    "heldout": {
+      "artifact_id": "01a16af5-576f-7799-adcb-15e5c7316a05",
+      "name": "heldout authored correctness fixtures",
+      "sha256": "82d852fa9cc4cf6f54651215ebc7762e9fa3e5a18824ed60a5ac48ec7348a5e3",
+      "byte_size": 422,
+      "row_count": 2,
+      "state": "committed"
+    },
+    "regression": {
+      "artifact_id": "01a16af5-577d-7376-a657-5f6d16800c27",
+      "name": "regression authored correctness fixtures",
+      "sha256": "834e49d9050ab66d38749c6acd19b2a640589aeb1249aee1e83f3e8003c7cd92",
+      "byte_size": 427,
+      "row_count": 2,
+      "state": "committed"
+    }
+  },
+  "baseline_result": {
+    "claimed": true,
+    "committed": true,
+    "status": "succeeded"
+  },
+  "baseline": {
+    "run_id": "01a16af5-5868-7e7e-9957-34a1a8ba1047",
+    "metrics": [
+      {
+        "step": 1,
+        "loss": 0.6931471824645996,
+        "post_update_loss": 0.6927764415740967,
+        "beta": 0.1,
+        "source_group_id": "authored-fixture-train-1",
+        "prompt_tokens": 4,
+        "response_tokens": 4,
+        "policy_chosen_logp": -11.75721549987793,
+        "policy_rejected_logp": -11.874563217163086,
+        "reference_chosen_logp": -11.771084785461426,
+        "reference_rejected_logp": -11.881017684936523,
+        "gradient_norm": 0.10170773416757584,
+        "trainable_parameters": 460800,
+        "changed_parameter_values": 184320,
+        "total_parameters": 134975808,
+        "gpu_backend": "mps",
+        "gpu_device": "mps:0",
+        "device_residency_checked": true,
+        "reference_frozen": true,
+        "engine_wall_seconds": 1.076417041997047,
+        "cpu_seconds": 0.941519999999997,
+        "response_tokens_per_second": 3.716031838904102,
+        "gpu_allocated_bytes": 1091344896,
+        "mps_memory": {
+          "recommended_bytes": 40200896512,
+          "process_limit_bytes": 36180806860,
+          "driver_allocated_bytes": 1160937472,
+          "process_headroom_bytes": 35019869388,
+          "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+        },
+        "peak_allocated_bytes": null,
+        "peak_reserved_bytes": null,
+        "production_qualified": false
+      },
+      {
+        "step": 2,
+        "loss": 0.6931371688842773,
+        "post_update_loss": 0.6929089426994324,
+        "beta": 0.1,
+        "source_group_id": "authored-fixture-train-0",
+        "prompt_tokens": 3,
+        "response_tokens": 4,
+        "policy_chosen_logp": -10.208276748657227,
+        "policy_rejected_logp": -10.439956665039062,
+        "reference_chosen_logp": -10.20911979675293,
+        "reference_rejected_logp": -10.43603515625,
+        "gradient_norm": 0.10410869866609573,
+        "trainable_parameters": 460800,
+        "changed_parameter_values": 460798,
+        "total_parameters": 134975808,
+        "gpu_backend": "mps",
+        "gpu_device": "mps:0",
+        "device_residency_checked": true,
+        "reference_frozen": true,
+        "engine_wall_seconds": 0.9601727500012203,
+        "cpu_seconds": 0.8044469999999997,
+        "response_tokens_per_second": 4.165917018572873,
+        "gpu_allocated_bytes": 1091920896,
+        "mps_memory": {
+          "recommended_bytes": 40200896512,
+          "process_limit_bytes": 36180806860,
+          "driver_allocated_bytes": 1160970240,
+          "process_headroom_bytes": 35019836620,
+          "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+        },
+        "peak_allocated_bytes": null,
+        "peak_reserved_bytes": null,
+        "production_qualified": false
+      },
+      {
+        "step": 3,
+        "loss": 0.692952036857605,
+        "post_update_loss": 0.6922838091850281,
+        "beta": 0.1,
+        "source_group_id": "authored-fixture-train-2",
+        "prompt_tokens": 5,
+        "response_tokens": 4,
+        "policy_chosen_logp": -16.47365379333496,
+        "policy_rejected_logp": -20.008914947509766,
+        "reference_chosen_logp": -16.4837646484375,
+        "reference_rejected_logp": -20.001750946044922,
+        "gradient_norm": 0.3386625051498413,
+        "trainable_parameters": 460800,
+        "changed_parameter_values": 460794,
+        "total_parameters": 134975808,
+        "gpu_backend": "mps",
+        "gpu_device": "mps:0",
+        "device_residency_checked": true,
+        "reference_frozen": true,
+        "engine_wall_seconds": 0.8800311250015511,
+        "cpu_seconds": 0.7555610000000001,
+        "response_tokens_per_second": 4.5452937815045455,
+        "gpu_allocated_bytes": 1091275776,
+        "mps_memory": {
+          "recommended_bytes": 40200896512,
+          "process_limit_bytes": 36180806860,
+          "driver_allocated_bytes": 1162051584,
+          "process_headroom_bytes": 35018755276,
+          "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+        },
+        "peak_allocated_bytes": null,
+        "peak_reserved_bytes": null,
+        "production_qualified": false
+      }
+    ],
+    "weights_sha256": "d35468c2141077e2c6096e3c7ed7d8642deeae39977ca1f7349328744b3be23f",
+    "optimizer_sha256": "eec1a2328367d56d0d38db8e6a978994bbea2c38bb55602fd1707342d964a9ff",
+    "evaluation": {
+      "status": "completed",
+      "passed": true,
+      "report": {
+        "schema_version": "modelanvil.independent-dpo-evaluation.v1",
+        "manifest_sha256": "25650140a2487e697c893bf1bc32827c73f22b23e6b4932bbf733f7ba382cfd9",
+        "file_sha256": {
+          "base": {
+            "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+            "model.safetensors": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+            "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+            "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+            "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424"
+          },
+          "candidate": {
+            "adapter_config.json": "e26975b1208fefabaf728899009234d2c3c8a896d8cdc7a51177e67706ea1d08",
+            "adapter_model.safetensors": "d35468c2141077e2c6096e3c7ed7d8642deeae39977ca1f7349328744b3be23f",
+            "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+            "model.safetensors": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+            "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+            "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+            "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424"
+          }
+        },
+        "input_sha256": {
+          "preferences": "82d852fa9cc4cf6f54651215ebc7762e9fa3e5a18824ed60a5ac48ec7348a5e3",
+          "regression": "834e49d9050ab66d38749c6acd19b2a640589aeb1249aee1e83f3e8003c7cd92"
+        },
+        "source_groups": {
+          "preferences": [
+            "authored-fixture-heldout-0",
+            "authored-fixture-heldout-1"
+          ],
+          "regression": [
+            "authored-fixture-regression-0",
+            "authored-fixture-regression-1"
+          ]
+        },
+        "baseline": {
+          "pairs": [
+            {
+              "chosen_logp": -9.436269760131836,
+              "rejected_logp": -12.431591033935547,
+              "margin": 2.995321273803711,
+              "win": 1.0
+            },
+            {
+              "chosen_logp": -13.173395156860352,
+              "rejected_logp": -14.11388874053955,
+              "margin": 0.9404935836791992,
+              "win": 1.0
+            }
+          ],
+          "regression_negative_log_likelihood": 19.671295166015625,
+          "regression_tokens": 6,
+          "preference_accuracy": 1.0,
+          "regression_loss": 3.2785491943359375
+        },
+        "candidate": {
+          "pairs": [
+            {
+              "chosen_logp": -9.437865257263184,
+              "rejected_logp": -12.43281078338623,
+              "margin": 2.994945526123047,
+              "win": 1.0
+            },
+            {
+              "chosen_logp": -13.156219482421875,
+              "rejected_logp": -14.103687286376953,
+              "margin": 0.9474678039550781,
+              "win": 1.0
+            }
+          ],
+          "regression_negative_log_likelihood": 19.664939880371094,
+          "regression_tokens": 6,
+          "preference_accuracy": 1.0,
+          "regression_loss": 3.277489980061849
+        },
+        "dpo_loss": 0.6929822266101837,
+        "beta": 0.1,
+        "checks": {
+          "preference_accuracy_not_regressed": true,
+          "reference_relative_preference_loss_not_regressed": true,
+          "separate_regression_loss_within_five_percent": true
+        },
+        "passed": true,
+        "production_qualified": false,
+        "consumer_imported_modelanvil_or_django": false,
+        "scope": "Independent bounded CPU held-out preference and separate chosen-response regression scoring; no customer or production qualification."
+      },
+      "production_qualified": false
+    }
+  },
+  "adapter_archive_sha256": "69898da57607c4e0d1741b06555ac2fe0e0f55b41d1a863eea5f15a752d24f1e",
+  "recovery": {
+    "exact_adapter_and_optimizer": true,
+    "stale_result_refused": true,
+    "committed_steps": 3,
+    "checkpoints": 3,
+    "attempts": 2
+  },
+  "cancellation": {
+    "committed_steps": 1,
+    "candidate_published": false,
+    "settled_steps": 1
+  },
+  "failed_quality_gate": {
+    "status": "completed",
+    "passed": false,
+    "report": {
+      "schema_version": "modelanvil.independent-dpo-evaluation.v1",
+      "manifest_sha256": "a22cd6e9ccf62a7888bb2db99a2d77697a167ab8cb53be2cde5e667c33f3bd48",
+      "file_sha256": {
+        "base": {
+          "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+          "model.safetensors": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+          "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+          "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+          "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424"
+        },
+        "candidate": {
+          "adapter_config.json": "e26975b1208fefabaf728899009234d2c3c8a896d8cdc7a51177e67706ea1d08",
+          "adapter_model.safetensors": "d35468c2141077e2c6096e3c7ed7d8642deeae39977ca1f7349328744b3be23f",
+          "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+          "model.safetensors": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+          "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+          "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+          "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424"
+        }
+      },
+      "input_sha256": {
+        "preferences": "9b9d283c8b2866d589bf1482b8877bba869d8ec94276d693e1a127c7dc8cd227",
+        "regression": "834e49d9050ab66d38749c6acd19b2a640589aeb1249aee1e83f3e8003c7cd92"
+      },
+      "source_groups": {
+        "preferences": [
+          "authored-fixture-heldout-0",
+          "authored-fixture-heldout-1"
+        ],
+        "regression": [
+          "authored-fixture-regression-0",
+          "authored-fixture-regression-1"
+        ]
+      },
+      "baseline": {
+        "pairs": [
+          {
+            "chosen_logp": -12.431591033935547,
+            "rejected_logp": -9.436269760131836,
+            "margin": -2.995321273803711,
+            "win": 0.0
+          },
+          {
+            "chosen_logp": -14.11388874053955,
+            "rejected_logp": -13.173395156860352,
+            "margin": -0.9404935836791992,
+            "win": 0.0
+          }
+        ],
+        "regression_negative_log_likelihood": 19.671295166015625,
+        "regression_tokens": 6,
+        "preference_accuracy": 0.0,
+        "regression_loss": 3.2785491943359375
+      },
+      "candidate": {
+        "pairs": [
+          {
+            "chosen_logp": -12.43281078338623,
+            "rejected_logp": -9.437865257263184,
+            "margin": -2.994945526123047,
+            "win": 0.0
+          },
+          {
+            "chosen_logp": -14.103687286376953,
+            "rejected_logp": -13.156219482421875,
+            "margin": -0.9474678039550781,
+            "win": 0.0
+          }
+        ],
+        "regression_negative_log_likelihood": 19.664939880371094,
+        "regression_tokens": 6,
+        "preference_accuracy": 0.0,
+        "regression_loss": 3.277489980061849
+      },
+      "dpo_loss": 0.6933121681213379,
+      "beta": 0.1,
+      "checks": {
+        "preference_accuracy_not_regressed": true,
+        "reference_relative_preference_loss_not_regressed": false,
+        "separate_regression_loss_within_five_percent": true
+      },
+      "passed": false,
+      "production_qualified": false,
+      "consumer_imported_modelanvil_or_django": false,
+      "scope": "Independent bounded CPU held-out preference and separate chosen-response regression scoring; no customer or production qualification."
+    },
+    "production_qualified": false
+  },
+  "unavailable_quality_gate": {
+    "status": "unavailable",
+    "passed": false,
+    "reason": "Independent CPU scoring was unavailable or failed; model qualification is blocked.",
+    "production_qualified": false,
+    "fault_injection": "Missing scoring child executable after genuine MPS updates."
+  },
+  "mps_allocated_after_unload": 0,
+  "cleanup": {
+    "fixture_keys_revoked": 1,
+    "workers_offline": 2,
+    "fixture_tenants_suspended": true
+  }
+}

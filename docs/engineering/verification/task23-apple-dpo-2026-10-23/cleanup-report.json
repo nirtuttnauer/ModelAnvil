@@ -1,0 +1,10 @@
+{
+  "active_fixture_keys": 0,
+  "all_fixture_workers_offline": true,
+  "all_fixture_slots_zero": true,
+  "all_fixture_tenants_suspended": true,
+  "unsettled_reservations": 0,
+  "active_jobs": 0,
+  "source_build_digest": "30d8564c49a6a50492963112dafdbc1970f2e00610b0747eb60683a3cefe1c9d",
+  "browser_fixture_keys_revoked": 1
+}

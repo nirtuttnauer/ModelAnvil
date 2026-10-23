@@ -1,0 +1,32 @@
+{
+  "base_main": "ef28a2c1a478d896d75cf46dc3b6ac1f74c9ce1d",
+  "runtime_build_digest": "30d8564c49a6a50492963112dafdbc1970f2e00610b0747eb60683a3cefe1c9d",
+  "files": {
+    "contracts/schemas/openapi.json": "5ec1f6eb9df84c036209e02153c75ecb36564de357276f89cc2581248d6a00cc",
+    "modelanvil/api/views/jobs_artifacts.py": "51c0441ea6d0657cf523f2148e40ee2204de08440896cd087b2ea9a2942e5b6f",
+    "modelanvil/api/views/model_workspace.py": "a68843d1b9c1543a6eebf0b030a5cce3f3b3340f31db0c8068d5193c6b8d3a94",
+    "modelanvil/api/views/models_evals.py": "aff6b394e82a03ef3e7d6002f022f0503dc1a49b8a55e184de8653b92384ce9f",
+    "modelanvil/api/views/training_views.py": "b5e7c6036cbfa5c6b3123db27c69614b3e8dd04b33a6b9baabaeb80577c2a062",
+    "modelanvil/jobs/access.py": "eb789505af7c05ebc3536f5600ff4adcc9504d0c92be258e3d63a598296b2742",
+    "modelanvil/jobs/models.py": "87970d8bdb35a3c749cb68637704f260d051a000018a68f7efa2fe38ca81098c",
+    "modelanvil/runners/alignment/execution.py": "2612a8a86d789dac11645055f7ea27ec4bf1e2575d501ba52fd3191b091e2c94",
+    "modelanvil/runners/alignment/mps_dpo.py": "b25a44651094b5762829d6577bcf1bc9dc5778fa8e376dda9686464b57c0cbca",
+    "modelanvil/runners/alignment/preference_groups.py": "12678ac5ed0795969fc20afce7375df6660fdc764f63bf32916697e8454c050a",
+    "modelanvil/runners/alignment/release_gate.py": "a563a78bf8954bf4631c24881fa50ae96a1b37901b75dc352fe8a67b7c19d115",
+    "modelanvil/runners/alignment/test_alignment_execution.py": "dc767296d4295585e5329c26905432396f9fe4db222bc6dd35f0c1a5b2cb3f12",
+    "modelanvil/runners/alignment/test_mps_dpo_jobs.py": "1a950252dc0bc944bd47b48e84814cb25d1d7761c8d732072251ef14c230a11c",
+    "modelanvil/runners/alignment/test_torch_dpo.py": "088cc198b6b31e0b7cb9a5cb9a27ff37054e251d1840f2e2b13cd57702683675",
+    "modelanvil/runners/alignment/torch_dpo.py": "03393d9be32332adae1c4138b0a1262468e6c3d712ba2d3ef2753b66890097aa",
+    "modelanvil/runners/evidence.py": "1e879e8b5f0f45ee12813f02a0935431750c607181dc8c9ac7d9470db4400e95",
+    "modelanvil/runners/inference.py": "4ed122b4c47b1bf6cb39d746fb68aee72ab4509aa4269162f7a6d0c30a24cb0f",
+    "modelanvil/runners/management/commands/setup_mps_dpo_worker.py": "37bf41b28f08f4c5c9207ecfb481b05498bb25e9f412afda39ed96d23b430a96",
+    "modelanvil/runners/migrations/0020_gpu_alignment_job.py": "e7fe90d6d9f2e19fe0562e353214ed9cdbbb75e697542c7cc3a06d7fdc63a1f7",
+    "modelanvil/runners/models.py": "464d95fdde8ce2d6057362fa41abb581fdbfa76b24b4ee139dd68d69c738af33",
+    "modelanvil/runners/training/admission.py": "4b136158f7bc3e1a4d986fde2e39e0038ce031a50a29fadb58b38a36859b5e0d",
+    "scripts/qualify_mps_dpo.py": "541ab86877cd0d570b52ffdcc09786d95cf0cfa72458e100591c7635aabae975",
+    "scripts/score_dpo_candidate.py": "1ccf30e7c345a3994f7cb178feefaed69314ba3e1d1263ce00be2d4872b38986",
+    "web/src/api/alignment.ts": "3f96935c815d8d85d2774f75a22d7b14c0302cb70a00e59246f799a8d363c1cd",
+    "web/src/api/model-export.ts": "566f91f4b5a9a3f749df2932c38f7b6415777b4e196a37e0caef0f620ad69099",
+    "web/src/pages/AlignmentPage.tsx": "6d46848054bfaae5b43e73b96ea5b327f927218e801fce0f04ae0447297473cc"
+  }
+}

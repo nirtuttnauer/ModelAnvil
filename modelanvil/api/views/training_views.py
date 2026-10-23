@@ -535,6 +535,7 @@ class PreferencePairSerializer(serializers.Serializer):
 class PreferenceRegistrationSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=200)
     samples = PreferencePairSerializer(many=True, min_length=1, max_length=32)
+    labels_reviewed = serializers.BooleanField(default=False)
 
     def validate_samples(self, pairs):
         from modelanvil.runners.alignment.execution import validate_preference_pairs
@@ -550,6 +551,10 @@ class AlignmentRunSerializer(serializers.ModelSerializer):
         queryset=Artifact.objects.all())
     held_out_dataset_artifact = serializers.SlugRelatedField(slug_field='artifact_id', required=False, allow_null=True,
         queryset=Artifact.objects.all())
+    regression_dataset_artifact = serializers.SlugRelatedField(slug_field='artifact_id', required=False, allow_null=True,
+        queryset=Artifact.objects.all())
+    job_id = serializers.UUIDField(source='job.job_id', read_only=True, default=None)
+    job_status = serializers.CharField(source='job.status', read_only=True, default=None)
     execution_capabilities = serializers.SerializerMethodField()
 
     def get_execution_capabilities(self, obj):
@@ -561,15 +566,16 @@ class AlignmentRunSerializer(serializers.ModelSerializer):
     def get_execution_evidence(self, obj):
         if obj.execution_pins:
             result = evidence('integrated_execution' if obj.current_step else 'configuration_only',
+                'Bounded Apple GPU DPO on pinned preference bytes and model weights; independent qualification gates apply.' if obj.job_id else
                 'Bounded CPU character alignment on pinned preference bytes and model weights; no hardware or production qualification.')
-            result['runtime_scope'] = 'modelanvil.cpu-character-alignment.v1'
+            result['runtime_scope'] = obj.execution_pins.get('runtime')
             return result
         if obj.current_step or obj.status in (AlignmentRun.Status.COMPLETED, AlignmentRun.Status.RUNNING):
             return evidence('simulation', 'Legacy alignment fixture metrics; no verified preference weight training.')
         return evidence('configuration_only', 'Saved alignment plan; no preference weight training has executed.')
 
     def validate(self, attrs):
-        if self.instance and (self.instance.status != AlignmentRun.Status.PENDING or self.instance.started_at or self.instance.current_step):
+        if self.instance and (self.instance.job_id or self.instance.status != AlignmentRun.Status.PENDING or self.instance.started_at or self.instance.current_step):
             raise serializers.ValidationError('Started alignment plans are immutable; create a new run.')
         algo = attrs.get("algorithm", getattr(self.instance, "algorithm", None))
         if algo == 'grpo':
@@ -591,7 +597,7 @@ class AlignmentRunSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({'preference_artifacts': 'Pin both training and held-out preference artifacts.'})
             fields = {field: attrs.get(field, getattr(self.instance, field, None)) for field in (
                 'algorithm', 'policy_model_version', 'reference_model_version', 'reward_model_version',
-                'train_dataset_artifact', 'held_out_dataset_artifact')}
+                'train_dataset_artifact', 'held_out_dataset_artifact', 'regression_dataset_artifact', 'worker_pool')}
             requested_project = attrs.get('project', getattr(self.instance, 'project', None))
             fields.update(tenant_id=get_active_tenant(), project_id=get_active_project() or getattr(requested_project, 'pk', None),
                 total_steps=total_steps, hyperparameters=hyp,
@@ -641,6 +647,7 @@ class AlignmentRunSerializer(serializers.ModelSerializer):
             "run_id", "project", "algorithm", "status",
             "policy_model_version", "reference_model_version", "reward_model_version",
             "train_dataset_artifact", "held_out_dataset_artifact", "execution_pins", "resource_reservation_id",
+            "regression_dataset_artifact", "worker_pool", "job_id", "job_status",
             "verifier_spec", "dataset_manifest_digest", "held_out_validation_digest",
             "hyperparameters", "current_step", "total_steps", "latest_metrics",
             "metrics_history", "rollouts_log", "output_model_version", "stop_reason",
@@ -649,6 +656,7 @@ class AlignmentRunSerializer(serializers.ModelSerializer):
         read_only_fields = (
             "run_id", "current_step", "status", "latest_metrics",
             "execution_pins", "resource_reservation_id", "stop_reason",
+            "job_id", "job_status",
             "metrics_history", "rollouts_log", "output_model_version",
             "created_at", "updated_at", "started_at", "completed_at"
         )
@@ -711,9 +719,40 @@ class AlignmentRunViewSet(TenantScopedViewSet):
                 'output_model_version_id': str(run.output_model_version.model_version_id) if run.output_model_version_id else None})
 
     def perform_destroy(self, instance):
-        if instance.status != AlignmentRun.Status.PENDING or instance.started_at or instance.current_step:
+        if instance.job_id or instance.status != AlignmentRun.Status.PENDING or instance.started_at or instance.current_step:
             raise serializers.ValidationError('Started alignment plans and execution results are immutable.')
         return super().perform_destroy(instance)
+
+    @action(detail=True, methods=['get'])
+    def download(self, request, run_id=None):
+        import tempfile
+        import zipfile
+        from pathlib import Path
+        from django.http import FileResponse
+        from modelanvil.runners.alignment import mps_dpo
+        from modelanvil.runners.inference import snapshot
+        from modelanvil.runners.training import hf_runtime
+        run = self.get_object()
+        if not run.job_id or run.status != 'completed' or not run.output_model_version_id:
+            raise serializers.ValidationError('Complete an Apple GPU DPO run before downloading its adapter.')
+        try:
+            plan = snapshot(run.output_model_version, run.tenant_id, run.project_id)
+            bundle = mps_dpo.candidate_bundle(run.output_model_version, run.tenant_id, run.project_id)
+            stream = tempfile.SpooledTemporaryFile(max_size=8 * 1024**2)
+            with hf_runtime.staged_files({name: plan['files'][name] for name in
+                    ('adapter_model.safetensors', 'adapter_config.json')}, run.tenant_id, run.project_id) as directory:
+                with zipfile.ZipFile(stream, 'w', compression=zipfile.ZIP_STORED) as archive:
+                    for name in ('adapter_model.safetensors', 'adapter_config.json'):
+                        archive.write(directory / name, name)
+                    archive.write(Path(hf_runtime.__file__).parent / 'assets/Apache-2.0.txt', 'LICENSE.txt')
+                    archive.writestr('provenance.json', json.dumps({**bundle,
+                        'independent_evaluation': run.latest_metrics.get('independent_evaluation'),
+                        'archive_scope': 'Adapter only; acquire the exact pinned base revision separately.'}, sort_keys=True))
+            stream.seek(0)
+        except (ValueError, OSError) as exc:
+            if 'stream' in locals(): stream.close()
+            raise serializers.ValidationError({'download': str(exc)}) from exc
+        return FileResponse(stream, as_attachment=True, filename=f'dpo-{run.run_id}-adapter.zip', content_type='application/zip')
 
     @action(detail=False, methods=['get'], url_path='preference-artifacts')
     def preference_artifacts(self, request):
@@ -737,7 +776,9 @@ class AlignmentRunViewSet(TenantScopedViewSet):
         serializer = PreferenceRegistrationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
-        payload = json.dumps({'schema_version': 'modelanvil.preference-pairs.v1', 'pairs': data['samples']},
+        review = {'method': 'owner_attestation', 'labels_reviewed': data['labels_reviewed'],
+            'actor_id': str(request.modelanvil_actor_id), 'actor_kind': request.modelanvil_actor_kind}
+        payload = json.dumps({'schema_version': 'modelanvil.preference-pairs.v1', 'pairs': data['samples'], 'review': review},
             sort_keys=True, separators=(',', ':'), ensure_ascii=False, allow_nan=False).encode('utf-8')
         artifact = Artifact.all_objects.create(tenant_id=get_active_tenant(), project_id=get_active_project(),
             storage_location_id='local', object_key=f'alignment/preferences/{uuid.uuid4()}.json',

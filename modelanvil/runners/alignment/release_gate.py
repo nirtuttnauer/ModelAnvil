@@ -35,7 +35,7 @@ def evaluate_alignment_release_gate(
     independent held-out human or verifier evaluation (TECH-019 / PRD Scenario 13).
     """
     reasons: list[str] = [
-        "Bounded CPU alignment has no production model qualification."
+        "Bounded local alignment has no production model qualification."
         if alignment_run.execution_pins
         else "Alignment uses fixture execution; production model qualification is unavailable."
     ]

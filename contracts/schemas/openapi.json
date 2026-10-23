@@ -3783,6 +3783,11 @@
                     "items": {
                       "$ref": "#/components/schemas/PreferencePair"
                     }
+                  },
+                  "labels_reviewed": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Explicit owner review attestation, frozen with authenticated actor identity in the committed preference bytes and bound to registration audit. Does not imply formal multi-reviewer or model quality approval."
                   }
                 }
               }
@@ -8743,7 +8748,7 @@
           "Alignment"
         ],
         "summary": "Take over a committed running/interrupted GRPO checkpoint",
-        "operationId": "resumeGRPOAlignmentRun",
+        "operationId": "resumeAlignmentRun",
         "parameters": [
           {
             "name": "run_id",
@@ -8775,7 +8780,8 @@
           "404": {
             "description": "Run unavailable in tenant/project scope"
           }
-        }
+        },
+        "description": "Resume a bounded CPU GRPO checkpoint or a reserved interrupted Apple GPU DPO job. Active GPU claims cannot be taken over."
       }
     },
     "/labeling-campaigns/{campaign_id}/generated-pairs/": {
@@ -8962,6 +8968,42 @@
           }
         ],
         "description": "Manager only. Revalidates current model/tokenizer/rubric/source pins and reads committed checksummed bytes. Ties, abstentions and missing reviews never become binary choices. Eligible bounded artifacts appear directly in alignment preferences; larger formatted conversations are exported with explicit compatibility limits."
+      }
+    },
+    "/alignment-runs/{run_id}/download/": {
+      "get": {
+        "operationId": "downloadDPOAdapter",
+        "summary": "Download a verified completed DPO adapter with pinned base revision, license and evaluation provenance",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Adapter-only ZIP; exact base acquired separately",
+            "content": {
+              "application/zip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Incomplete or unverifiable candidate"
+          },
+          "404": {
+            "description": "Unavailable in this tenant/project"
+          }
+        }
       }
     }
   },
@@ -11306,13 +11348,28 @@
             ],
             "format": "uuid",
             "description": "Committed, accessible filesystem preference artifact, checked by digest and size. Training and held-out prompts must be disjoint."
+          },
+          "regression_dataset_artifact": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "description": "Separate reviewed regression preference artifact; protected prompts and source groups must be disjoint from training and held-out preferences."
+          },
+          "worker_pool": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Operator-registered same-host Apple MPS DPO worker pool. Omit for the CPU character recipes."
           }
         },
         "required": [
           "algorithm",
           "policy_model_version"
         ],
-        "description": "Pending alignment plan. Actual execution requires both committed preference artifact UUIDs. Digest-only legacy plans are readable but cannot execute. DPO and PPO require a reference; PPO additionally requires an actual serialized reward head. GRPO requires grouped disjoint preference artifacts, an enabled training_steps budget and exact_match or numeric_tolerance; the initial policy is frozen as reference when no explicit reference is supplied.",
+        "description": "Pending alignment plan. Actual execution requires both committed preference artifact UUIDs. Digest-only legacy plans are readable but cannot execute. DPO and PPO require a reference; PPO additionally requires an actual serialized reward head. GRPO requires grouped disjoint preference artifacts, an enabled training_steps budget and exact_match or numeric_tolerance; the initial policy is frozen as reference when no explicit reference is supplied. Apple GPU DPO uses a registered worker_pool, the exact plain SmolLM2-135M base/reference and same tokenizer, explicitly reviewed and audited input bytes, three disjoint preference/regression artifacts, an enabled step budget, and 1\u201320 updates. Queued plans are immutable. Independent quality checks are separate from execution; ORPO/KTO remain unavailable.",
         "anyOf": [
           {
             "required": [
@@ -11473,6 +11530,40 @@
                       ]
                     }
                   }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "worker_pool"
+              ],
+              "properties": {
+                "worker_pool": {
+                  "type": "integer"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "train_dataset_artifact",
+                "held_out_dataset_artifact",
+                "regression_dataset_artifact",
+                "reference_model_version"
+              ],
+              "properties": {
+                "algorithm": {
+                  "const": "dpo"
+                },
+                "total_steps": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 20
+                },
+                "regression_dataset_artifact": {
+                  "type": "string",
+                  "format": "uuid"
                 }
               }
             }
@@ -12127,6 +12218,36 @@
           },
           "stop_reason": {
             "type": "string",
+            "readOnly": true
+          },
+          "regression_dataset_artifact": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "description": "Separate reviewed regression preference artifact; protected prompts and source groups must be disjoint from training and held-out preferences."
+          },
+          "worker_pool": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Operator-registered same-host Apple MPS DPO worker pool. Omit for the CPU character recipes."
+          },
+          "job_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "readOnly": true
+          },
+          "job_status": {
+            "type": [
+              "string",
+              "null"
+            ],
             "readOnly": true
           }
         }

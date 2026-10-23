@@ -3,6 +3,9 @@ from modelanvil.device_admission import device_available,device_key
 
 
 def gpu_claim_plan(job,worker):
+    if isinstance(job.payload, dict) and job.payload.get('type') == 'qualified_dpo':
+        from modelanvil.runners.alignment.mps_dpo import gpu_claim_plan as dpo_claim_plan
+        return dpo_claim_plan(job, worker)
     if not isinstance(job.payload,dict) or job.payload.get('type')!='qualified_training':
         return None
     from modelanvil.runners.models import TrainingRun

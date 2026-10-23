@@ -49,8 +49,8 @@ def model_evidence(model):
         output_model_version=model, status=AlignmentRun.Status.COMPLETED).exclude(execution_pins={}).first()
     if alignment:
         result = evidence('integrated_execution',
-            f'Candidate produced by pinned CPU character {alignment.algorithm} alignment; measured checkpoints and held-out scores')
-        result['runtime_scope'] = 'modelanvil.cpu-character-alignment.v1'
+            f'Candidate produced by pinned {"Apple GPU" if alignment.job_id else "CPU character"} {alignment.algorithm} alignment; measured checkpoints and held-out scores')
+        result['runtime_scope'] = alignment.execution_pins.get('runtime')
         return result
     if model.metadata.get("source_run_id"):
         return evidence("simulation", "Candidate from CPU training/alignment fixture")
