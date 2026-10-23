@@ -18,7 +18,7 @@ The reviewer used keyboard activation to label an actual source sample, reloaded
 
 ## Verification
 
-Full pre-final-refinement backend: 985 tests passed, six optional skips (before importing independent merged device-admission changes). Final 31 focused account/identity/review/actual-evaluation/OpenAPI tests, the actual PostgreSQL invitation race, migration checks, 226 frontend tests, production build and Storybook passed; logs are recorded in the private factory evidence. Actual executed CPU evaluation fixture confirms reviewer decision submission and viewer rejection; no model-quality or deployment qualification is claimed. Final PR-head CI is required before merge.
+Full pre-final-refinement backend: 985 tests passed, six optional skips (before importing independent merged device-admission changes). Final 31 focused account/identity/review/actual-evaluation/OpenAPI tests, the actual PostgreSQL invitation race, migration checks, 226 frontend tests, production build and Storybook passed; logs are recorded in the private factory evidence. Actual executed CPU evaluation fixture confirms reviewer decision submission and viewer rejection; no model-quality or deployment qualification is claimed. After integrating merged device admission, 26 affected guards passed. The clean base runtime passed 22 account/access/OpenAPI checks without optional ML packages. Final PR-head CI is required before merge.
 
 ## Bounds
 
