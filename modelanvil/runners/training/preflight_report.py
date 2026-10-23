@@ -55,7 +55,7 @@ def estimate_from_pilot(inputs, *, tenant, pool, project):
     if not inputs:
         return estimate
     pins = inputs['pins']
-    if pins.get('accelerator'):
+    if pins.get('accelerator', {}).get('device', {}).get('backend') not in (None, 'cpu'):
         estimate['units']['duration'] = 'GPU wall seconds (unknown until a matching GPU pilot is qualified)'
         estimate['source'] = 'GPU estimate unavailable; CPU process time is not GPU elapsed time.'
         return estimate
@@ -168,7 +168,7 @@ def build_preflight_report(*, recipe_type, tokenizer_version, base_model_version
                 requirements['device_memory']=module.memory_observation(inputs['pins']['accelerator']['device']['id'])
             except (ValueError,OSError) as exc:
                 check('device-current-memory','capacity',False,str(exc),'Release GPU allocations or repair the runtime, then preview again.')
-            requirements.update(gpu_count=1, accelerator=inputs['pins']['accelerator'], precision=module.CONTRACT['precision'],
+            requirements.update(gpu_count=0 if module.CONTRACT.get('cpu_threads') else 1, accelerator=inputs['pins']['accelerator'], precision=module.CONTRACT['precision'],
                 storage_assumption='FP32 weights and Adam moments for the planned checkpoint cadence, plus staging/candidate headroom; shared local host.')
             if recipe_type in {'lora_adapter', 'qlora_adapter'}:
                 requirements.update(adapter=inputs['pins']['adapter'], trainable_parameters=inputs['pins']['trainable_parameters'],

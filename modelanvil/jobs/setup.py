@@ -10,6 +10,7 @@ from modelanvil.jobs.models import Worker, WorkerCredential
 PROFILES = {
     "cpu-embeddings": ("Local CPU embeddings", "modelanvil.rag.embedding_jobs"),
     "cpu-character": ("CPU character SFT", "modelanvil.runners.training.runtime"),
+    "cpu-pretrained": ("Pretrained CPU full SFT and LoRA", "modelanvil.runners.training.cpu_hf_runtime"),
     "cpu-transformer": ("Small CPU transformer SFT", "modelanvil.runners.training.general_runtime"),
     "model-import": ("Model snapshot acquisition", "modelanvil.runners.model_catalog"),
     "cpu-evaluation": ("CPU candidate evaluation", "modelanvil.runners.eval_worker"),
@@ -54,6 +55,13 @@ def profile_details(profile):
                     'Install requirements.inference.txt in the service environment first.' if not available else
                     'Gated access uses administrator-provisioned project Hub credentials.']}
     runtime = profile_runtime(profile)
+    if profile == 'cpu-pretrained':
+        try:
+            runtime.require_packages()
+            runtime.observed_device('cpu')
+        except ValueError as exc:
+            return {'id': profile, 'name': PROFILES[profile][0], 'memory_bytes': runtime.LIMITS['memory_bytes'],
+                    'available': False, 'limitations': [str(exc)]}
     return {'id': profile, 'name': PROFILES[profile][0], 'memory_bytes': runtime.LIMITS['memory_bytes'],
             'available': True, 'limitations': runtime.runner_manifest()['limitations']}
 
@@ -152,6 +160,10 @@ def observe_local_worker(worker, profile, secret):
     elif profile == 'cpu-evaluation':
         runtime = profile_runtime(profile)
         capabilities.update(evaluation_runtime=runtime.CONTRACT_DIGEST, evaluation_build=runtime.BUILD_DIGEST)
+    elif profile == 'cpu-pretrained':
+        runtime = profile_runtime(profile)
+        runtime.observed_device('cpu')
+        capabilities.update(training_runtime=runtime.CONTRACT_DIGEST, gpu_backend='cpu', gpu_device='cpu', gpu_packages=runtime.PACKAGES)
     else:
         capabilities['training_runtime'] = profile_runtime(profile).CONTRACT_DIGEST
     values = {"capabilities": capabilities, "last_heartbeat_at": timezone.now()}

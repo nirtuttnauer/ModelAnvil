@@ -9,7 +9,7 @@ def training_memory_requirements(architecture_ref, source=None):
     module = runtime_for_architecture(architecture_ref)
     if module is None:
         return None
-    from modelanvil.runners.training import hf_runtime, mlx_runtime
+    from modelanvil.runners.training import hf_runtime, mlx_runtime, cpu_hf_runtime
     large = module is hf_runtime and source == hf_runtime.LARGE_GUIDED_SOURCE
     return {'host_memory_bytes': 32 * 1024**3 if large else module.LIMITS['memory_bytes'],
             'accelerator_memory_bytes': 12 * 1024**3 if large else module.LIMITS.get('gpu_memory_bytes', 0),
@@ -20,7 +20,7 @@ def training_memory_requirements(architecture_ref, source=None):
 
 
 def model_capabilities(version):
-    from modelanvil.runners.training import general_runtime, hf_runtime, mlx_runtime
+    from modelanvil.runners.training import general_runtime, hf_runtime, mlx_runtime, cpu_hf_runtime
     from modelanvil.runners.training import runtime as character
     result = {'train': {'eligible': False, 'recipes': [], 'reason': 'No supported verified training inputs.'},
               'evaluate': {'eligible': False, 'reason': 'This model needs a supported evaluation runtime.'},
@@ -102,8 +102,8 @@ def model_capabilities(version):
                           'reason': 'Snapshot inputs verified; actual loading and memory admission are checked at generation.'}
         if format == 'safetensors' and 'cpu' in devices:
             result['evaluate'] = {'eligible': True, 'reason': 'Verified bounded CPU snapshot; evaluation rechecks exact inputs and context.'}
-        if module in (hf_runtime, mlx_runtime):
-            recipes = ['full_sft', 'lora_adapter', 'continued_pretraining'] if module is hf_runtime else ['qlora_adapter']
+        if module in (hf_runtime, mlx_runtime, cpu_hf_runtime):
+            recipes = module.CONTRACT['recipes']
             result['train'] = {'eligible': True, 'recipes': recipes, 'reason': 'Pinned profile; training preflight checks exact runtime, tokenizer, device and input bytes.'}
     except (ValueError, TypeError, KeyError, OSError) as exc:
         result['chat']['reason'] = str(exc) if isinstance(exc, ValueError) else 'Snapshot inputs are unavailable or incompatible.'
