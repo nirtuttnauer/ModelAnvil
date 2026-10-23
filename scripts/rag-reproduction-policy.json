@@ -1,0 +1,11 @@
+{
+  "id": "rag-end-to-end-reproduction-v1",
+  "retrieval_metrics_absolute_tolerance": 0.000001,
+  "ann_mean_neighbor_recall_absolute_tolerance": 0.05,
+  "position_accuracy_absolute_tolerance": 0.3333333333333333,
+  "generation_statuses_and_abstention_counts": "exact",
+  "pins_corpus_qrels_schedule_and_coverage": "exact",
+  "latency_and_hardware": "recorded, not compared across hosts",
+  "answer_strings": "retained, not exact-string assertions",
+  "limits": "Frozen before this combined-report measurement. ANN graph construction may vary; position tolerance is at most one of three cases. No tuning or general quality threshold is implied."
+}

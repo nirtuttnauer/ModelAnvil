@@ -18,6 +18,23 @@ The [main integration inventory](docs/engineering/integration-inventory.md) maps
 
 [Start locally](#local-development) · [Current capabilities](#current-capabilities) · [Architecture](#architecture) · [Checks](#checks) · [Limits and work in progress](#limits-and-work-in-progress) · [Contributing](CONTRIBUTING.md)
 
+## Measured RAG reference
+
+<!-- rag-results:start -->
+| Measured CPU reference | Result | Scope |
+| --- | --- | --- |
+| MiniLM relevance nDCG@5 | 1.0000 | 20 judged queries; closed 200-document SciFact subset |
+| Seeded random-vector nDCG@5 | 0.0215 | 20 judged queries; closed 200-document SciFact subset |
+| Strict SQL full-text AND nDCG@5 | 0.0000 | 20 judged queries; closed 200-document SciFact subset |
+| Generation conditions with accepted citations | 1/3 | No evidence / retrieved / human evidence; membership validation only |
+| Known-unanswerable outcomes | 0 model abstentions, 1 policy abstentions, 1 format refusals | 2 authored cases; separate from retrieval relevance |
+| Start position code-only exact match | 0.0000 (0/6) | Code-only format required; descriptive middle dip not observed |
+| Middle position code-only exact match | 0.0000 (0/6) | Code-only format required; descriptive middle dip not observed |
+| End position code-only exact match | 0.0000 (0/6) | Code-only format required; descriptive middle dip not observed |
+
+Source measurement: `04916ee723f894ab0b3cec50b2ccc43596bceae0`. [Complete report and reproduction limits](docs/engineering/verification/task73-end-to-end-2026-10-23/report.md). This table is generated only from its saved JSON.
+<!-- rag-results:end -->
+
 ## Current capabilities
 
 | Area | Implemented scope | Guide |

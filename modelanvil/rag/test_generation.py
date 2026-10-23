@@ -127,7 +127,8 @@ class ActualGroundedGenerationTests(TransactionTestCase):
         path=os.environ.get('MODELANVIL_RAG_GENERATION_REPORT')
         if path:
             from pathlib import Path
-            with Path(path).open('x') as stream:json.dump({'runs':actual,'labels':labels,'abstention':abstention,'retrieval_relevance':relevance,'model':decoder.PINS,'fixture_license':'CC0-1.0 authored software qualification'},stream,indent=2)
+            from scripts.rag_report import provenance
+            with Path(path).open('x') as stream:json.dump({'provenance':provenance(),'runs':actual,'labels':labels,'abstention':abstention,'retrieval_relevance':relevance,'model':decoder.PINS,'fixture_license':'CC0-1.0 authored software qualification'},stream,indent=2)
         print('TASK70_ACTUAL '+json.dumps([{'condition':r['condition'],'status':r['status'],'answer':r['answer'],'raw_output':r['raw_output'],
             'usage':r['receipt'].get('usage'),'reason':r['receipt']['reason']} for r in actual]))
         # Revoke a source after actual generation but before publication: nothing escapes.
