@@ -18,6 +18,79 @@ from modelanvil.device_admission import device_lease
 
 _allocation = threading.Lock()
 MAX_BYTES = 8 * 1024**3
+_RUNTIME_CODE = {name: hashlib.sha256((Path(__file__).parent / name).read_bytes()).hexdigest()
+                 for name in ('inference.py', 'gguf_runtime.py', 'training/hf_runtime.py', 'capabilities.py',
+                              '../api/views/model_workspace.py', '../../scripts/mlx_candidate_infer.py')}
+
+
+def generation_configuration(configuration):
+    """Compare generation controls, keeping server observations out of A/B settings."""
+    return {key: configuration[key] for key in ('max_tokens', 'temperature', 'seed', 'prompt_format') if key in configuration}
+
+
+def runtime_provenance(format, device):
+    import importlib.metadata
+    import platform
+    from modelanvil.device_admission import host_key
+    from modelanvil.runners.training.hardware import cpu_brand
+    packages = {'safetensors': ['torch', 'transformers', 'tokenizers', 'safetensors'],
+                'mlx': ['mlx', 'mlx-metal', 'mlx-lm', 'transformers', 'tokenizers'],
+                'gguf': ['xllamacpp', 'gguf', 'requests']}.get(format, [])
+    versions = {}
+    for name in packages:
+        try: versions[name] = importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError: versions[name] = None
+    return {'implementation': _RUNTIME_CODE, 'format': format, 'device': device,
+        'host': host_key(), 'cpu': cpu_brand(), 'platform': platform.platform(), 'python': platform.python_version(),
+        'packages': versions}
+
+
+def runtime_signature(format, device):
+    return hashlib.sha256(json.dumps(runtime_provenance(format, device), sort_keys=True).encode()).hexdigest()
+
+
+def runtime_input_identity(version):
+    fields = lambda obj: {field.attname: getattr(obj, field.attname) for field in obj._meta.concrete_fields}
+    return hashlib.sha256(json.dumps({'model': fields(version), 'tokenizer': fields(version.tokenizer)},
+        sort_keys=True, default=str, allow_nan=False).encode()).hexdigest()
+
+
+def probed_devices(version, format, devices, tenant, project):
+    from modelanvil.runners.models import InferenceRequest
+    rows = InferenceRequest.all_objects.filter(tenant_id=tenant, project_id=project, model_version=version,
+        status='completed', configuration___runtime__input_identity=runtime_input_identity(version))
+    return [device for device in devices if rows.filter(configuration__device=device,
+        configuration___runtime__signature=runtime_signature(format, device)).exists()]
+
+
+def validate_mlx_profile(config, weight_bytes, *, native_adapter=False):
+    from scripts.mlx_candidate_infer import QUANTIZATION
+    expected = {'model_type': 'llama', 'hidden_size': 576, 'num_hidden_layers': 30, 'vocab_size': 49152,
+                'intermediate_size': 1536, 'num_attention_heads': 9, 'num_key_value_heads': 3, 'tie_word_embeddings': True}
+    if (any(config.get(key) != value for key, value in expected.items()) or not 0 < weight_bytes <= 1024**3
+            or config.get('quantization') not in ((None, QUANTIZATION) if native_adapter else (None,))
+            or config.get('quantization_config')):
+        raise ValueError('The current MLX inference profile accepts the bounded dense SmolLM2-135M base or its verified native adapter checkpoint; other models/quantizations require qualification.')
+
+
+def runtime_observation(session):
+    value = {'format': session['format'], 'actual_device': session.get('device', 'cpu')}
+    if session['format'] == 'mlx':
+        import mlx.core as mx
+        value.update(backend='apple-mlx', active_bytes=mx.get_active_memory(), peak_allocated_bytes=mx.get_peak_memory(),
+                     reserved_bytes=None, memory_scope='MLX process allocations; no reserved/global-free-memory measurement.')
+    elif session['format'] == 'safetensors':
+        value['tensor_devices'] = sorted({str(p.device) for p in session['model'].parameters()})
+        if str(session['device']).startswith('mps'):
+            import torch
+            from modelanvil.runners.training.hf_runtime import mps_memory
+            value.update(backend='torch-mps', memory=mps_memory(), peak_allocated_bytes=None, reserved_bytes=None,
+                         current_allocated_bytes=torch.mps.current_allocated_memory(),
+                         memory_scope='Observed PyTorch process allocations/headroom; no true peak/reserved counters.')
+        else: value['backend'] = 'torch-cpu' if session['device'] == 'cpu' else 'torch-device'
+    elif session['format'] == 'gguf':
+        value.update(backend='llama.cpp-cpu', gpu_layers=0, kv_offload=False, op_offload=False)
+    return value
 
 
 def safetensors_limits(plan):
@@ -149,9 +222,10 @@ def snapshot_guard(version, tenant, project):
     def fields(obj):
         return {f.attname: deepcopy(getattr(obj, f.attname)) for f in obj._meta.concrete_fields}
     model_pin, tokenizer_pin = fields(version), fields(version.tokenizer)
-    refs = []
+    refs, plan = [], None
     if version.architecture_ref not in (runtime.RUNTIME_ID, general_runtime.RUNTIME_ID):
-        refs.extend(snapshot(version, tenant, project)['files'].values())
+        plan = snapshot(version, tenant, project)
+        refs.extend(plan['files'].values())
     if version.artifact_manifest_id:
         manifest = Artifact.all_objects.filter(artifact_id=version.artifact_manifest_id, tenant_id=tenant).first()
         if manifest is None:
@@ -168,6 +242,7 @@ def snapshot_guard(version, tenant, project):
         for ref in refs:
             verified_artifact(ref, tenant, project)
     check()
+    check.format = plan['format'] if plan else 'cpu-reference'
     check.identity = hashlib.sha256(json.dumps({'model': model_pin, 'tokenizer': tokenizer_pin, 'artifacts': refs},
         sort_keys=True, default=str, allow_nan=False).encode()).hexdigest()
     return check
@@ -247,12 +322,12 @@ def local_session(version, *, tenant, project, device='cpu'):
                 if not mx.metal.is_available() or mx.default_device() != mx.gpu:
                     raise ValueError('MLX Metal must be available and selected; CPU fallback is disabled.')
                 config = json.loads((directory / 'config.json').read_text())
-                if config.get('model_type') not in {'llama', 'qwen2', 'mistral', 'gemma', 'gemma2'}:
-                    raise ValueError('This MLX runtime supports Llama, Qwen2, Mistral and Gemma snapshots.')
                 weight_bytes = sum(verified_artifact(ref, tenant, project).byte_size for n, ref in plan['files'].items() if n.endswith('.safetensors'))
+                validate_mlx_profile(config, weight_bytes, native_adapter=bool(plan.get('trained') and plan.get('recipe') == 'qlora_adapter'))
                 allowance = mx.device_info().get('max_recommended_working_set_size')
                 if type(allowance) is not int or allowance - mx.get_active_memory() < 2 * weight_bytes + 256 * 1024**2:
                     raise ValueError('MLX recommended process memory headroom is unknown or insufficient.')
+                mx.reset_peak_memory()
                 if 'adapters.safetensors' in plan['files']:
                     if not plan.get('trained') or plan.get('recipe') != 'qlora_adapter':
                         raise ValueError('Native adapter inference requires a completed verified QLoRA candidate.')
@@ -383,7 +458,7 @@ def generate(session, messages, *, max_tokens=128, temperature=0.0, seed=42, pro
         return
     if session['format'] == 'mlx':
         import mlx.core as mx
-        from mlx_lm import stream_generate
+        from mlx_lm.models.cache import make_prompt_cache
         from mlx_lm.sample_utils import make_sampler
         tokenizer = session['tokenizer']
         ids = tokenizer.encode(rendered_prompt(tokenizer, messages, prompt_format),
@@ -392,19 +467,32 @@ def generate(session, messages, *, max_tokens=128, temperature=0.0, seed=42, pro
             raise ValueError('MLX prompt and output must fit within 2,048 tokens and the model context.')
         observe(len(ids), 0)
         mx.random.seed(seed)
-        iterator = stream_generate(session['model'], tokenizer, ids, max_tokens=max_tokens,
-                                   sampler=make_sampler(temp=temperature), prefill_step_size=128)
-        try:
-            for part in iterator:
-                count = part.generation_tokens
-                observe(len(ids), count)
-                if cancelled():
-                    finish = 'cancelled'; break
-                if part.text:
-                    yield {'text': part.text}
-                finish = part.finish_reason or finish
-        finally:
-            iterator.close()
+        sampler, cache = make_sampler(temp=temperature), make_prompt_cache(session['model'])
+        current, detokenizer = mx.array(ids, dtype=mx.int32), tokenizer.detokenizer
+        # Synchronous steps avoid mlx-lm's speculative one-token lookahead on cancellation.
+        for _ in range(max_tokens):
+            if cancelled():
+                finish = 'cancelled'; break
+            if mx.default_device() != mx.gpu:
+                raise ValueError('MLX GPU selection changed; CPU fallback is disabled.')
+            logits = session['model'](current[None], cache=cache)[:, -1, :].astype(mx.float32)
+            if not mx.all(mx.isfinite(logits)).item():
+                raise ValueError('MLX inference produced non-finite logits.')
+            token = int(sampler(logits - mx.logsumexp(logits, keepdims=True)).item())
+            count += 1
+            observe(len(ids), count)
+            if token in tokenizer.eos_token_ids:
+                finish = 'stop'; break
+            detokenizer.add_token(token)
+            segment = detokenizer.last_segment
+            current = mx.array([token], dtype=mx.int32)
+            if segment:
+                yield {'text': segment}
+        if finish != 'cancelled':
+            detokenizer.finalize()
+            segment = detokenizer.last_segment
+            if segment:
+                yield {'text': segment}
         yield {'finish_reason': finish, 'elapsed_seconds': time.monotonic() - started,
                'usage': {'prompt_tokens': len(ids), 'completion_tokens': count, 'total_tokens': len(ids) + count}}
         return

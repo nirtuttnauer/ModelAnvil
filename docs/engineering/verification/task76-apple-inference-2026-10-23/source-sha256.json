@@ -1,0 +1,10 @@
+{
+  "modelanvil/runners/inference.py": "0153524eee12777f3b985b4e7e8b43da8eae137eb8f1f26cece7f322dce9ac72",
+  "modelanvil/runners/capabilities.py": "6e6c2674e8d5dd2a3cd5752601434cd6c349f08d60fb8502d348c979b3d29239",
+  "modelanvil/runners/gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+  "modelanvil/runners/training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+  "modelanvil/api/views/model_workspace.py": "3f4e865a5a5d7abb2aaa926eee37660f9b94662a859547a10306f59f2f3829c0",
+  "modelanvil/annotation/preferences.py": "1b9dc39342ad2e443a9badc2ff9be5c2d6b9a3efa9847e2f83c7323381d99a4e",
+  "scripts/mlx_candidate_infer.py": "2ad996a7a7e80bae14b439f389123c9ee47275214546391fd1dc1efb7ae61522",
+  "scripts/qualify_apple_inference.py": "42670209c733cedb7cfbdf243f941316a4a27ef14ac5edf83d0d960c15d6b2ac"
+}

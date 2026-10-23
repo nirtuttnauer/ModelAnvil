@@ -69,6 +69,40 @@ class ModelWorkspaceTests(TransactionTestCase):
         inputs = {'files': self.files, 'name': 'Tiny real Llama', 'accepted_license': 'apache-2.0', 'idempotency_key': 'local-1', **overrides}
         return self.client.post('/api/v1/model-imports/', inputs, format='json')
 
+    def test_load_probe_is_bound_to_device_project_inputs_and_current_runtime(self):
+        imported = self.import_model()
+        version = ModelVersion.all_objects.get(model_version_id=imported.data['candidate_id'])
+        catalog = lambda: self.client.get('/api/v1/inference/models/').data['data'][0]
+        self.assertFalse(catalog()['load_tested'])
+        body = {'model': str(version.model_version_id), 'messages': [{'role': 'user', 'content': 'hello'}], 'max_tokens': 4, 'device': 'cpu'}
+        completed = self.client.post('/api/v1/inference/chat/completions', body, format='json')
+        self.assertEqual(completed.status_code, 200, completed.content)
+        self.assertEqual(catalog()['load_tested_devices'], ['cpu'])
+        record = InferenceRequest.all_objects.get()
+        runtime = completed.data['modelanvil']['runtime']
+        self.assertEqual(runtime, record.configuration['_runtime'])
+        self.assertEqual(runtime['observation']['tensor_devices'], ['cpu'])
+        from modelanvil.runners.inference import probed_devices
+        self.assertEqual(probed_devices(version, 'safetensors', ['cpu'], self.tenant.pk, self.other.pk), [])
+        with patch('modelanvil.runners.inference.runtime_signature', return_value='changed-runtime'):
+            self.assertFalse(catalog()['load_tested'])
+        # A legacy completed row without a receipt cannot qualify a current runtime.
+        record.configuration.pop('_runtime'); record.save(update_fields=['configuration'])
+        self.assertFalse(catalog()['load_tested'])
+
+    def test_mlx_profile_and_generation_comparison_exclude_unqualified_inputs(self):
+        from modelanvil.runners.inference import generation_configuration, validate_mlx_profile
+        config = {'model_type': 'llama', 'hidden_size': 576, 'num_hidden_layers': 30, 'vocab_size': 49152,
+                  'intermediate_size': 1536, 'num_attention_heads': 9, 'num_key_value_heads': 3, 'tie_word_embeddings': True}
+        validate_mlx_profile(config, 270000000)
+        for changes, size in (({'hidden_size': 4096}, 270000000), ({}, 2 * 1024**3),
+                              ({'quantization': {'bits': 4}}, 270000000)):
+            with self.assertRaises(ValueError):
+                validate_mlx_profile({**config, **changes}, size)
+        self.assertEqual(generation_configuration({'max_tokens': 4, 'temperature': 0, 'seed': 42,
+            'prompt_format': 'plain', 'device': 'mlx:0', '_runtime': {'private': 'observations'}}),
+            {'max_tokens': 4, 'temperature': 0, 'seed': 42, 'prompt_format': 'plain'})
+
     def test_stream_withholds_prefetched_output_after_authority_or_input_changes(self):
         from django.utils import timezone
         from datetime import timedelta
@@ -549,6 +583,14 @@ class ModelWorkspaceTests(TransactionTestCase):
             adapter(input_ids=ids, labels=ids).loss.backward(); optimizer.step()
             adapter.save_pretrained(temp, safe_serialization=True, save_embedding_layers=False)
             save_file(hf._optimizer_state(adapter, optimizer), str(directory / 'optimizer.safetensors'))
+            configuration = json.loads((directory / 'adapter_config.json').read_text())
+            reloaded = hf._recipe_model(directory, 'lora_adapter')
+            self.assertEqual({str(p.device) for p in reloaded.parameters()}, {'cpu'})
+            for change in ({'base_model_name_or_path': 'another/base'}, {'revision': '0' * 40}):
+                (directory / 'adapter_config.json').write_text(json.dumps({**configuration, **change}))
+                with self.assertRaisesRegex(ValueError, 'Adapter base model or exact revision'):
+                    hf._recipe_model(directory, 'lora_adapter')
+            (directory / 'adapter_config.json').write_text(json.dumps(configuration))
             for name in ('adapter_config.json', 'adapter_model.safetensors', 'optimizer.safetensors'):
                 with (directory / name).open('rb') as source:
                     ref = _store(source, tenant=self.tenant.pk, project=self.project.pk, name=name)

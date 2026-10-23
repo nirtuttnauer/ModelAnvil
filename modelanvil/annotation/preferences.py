@@ -143,8 +143,8 @@ def start_batch(campaign, identifiers, assigned, creator, source_revision=None):
             pins.append(model_pin(request.model_version, campaign.tenant_id, campaign.project_id))
         if pins[0]['model_version'] == pins[1]['model_version'] or records[0][1] == records[1][1]:
             raise ValueError('Preference pairs need distinct local models and different responses.')
-        settings = [{k: v for k, v in request.configuration.items() if k not in ('device', 'stream', 'stream_options')}
-            for request, _ in records]
+        from modelanvil.runners.inference import generation_configuration
+        settings = [generation_configuration(request.configuration) for request, _ in records]
         if settings[0] != settings[1]:
             raise ValueError('Comparison generation settings must match.')
         from modelanvil.runners.inference import model_chat_template

@@ -276,9 +276,13 @@ def _recipe_model(directory, recipe_type='full_sft', seed=42, *, training=False,
     model = _load_model(base)
     if (directory / 'adapter_model.safetensors').exists():
         config = json.loads((directory / 'adapter_config.json').read_text())
+        expected_source = source or SOURCE
+        if (config.get('base_model_name_or_path') != expected_source['repo_id']
+                or config.get('revision') != expected_source['revision']):
+            raise ValueError('Adapter base model or exact revision differs from the pinned source.')
         if any(config.get(k) != value for k, value in adapter.items() if k != 'target_modules') or set(config.get('target_modules', [])) != set(adapter['target_modules']):
             raise ValueError('Adapter configuration differs from the pinned LoRA profile.')
-        model = PeftModel.from_pretrained(model, str(directory), is_trainable=training, local_files_only=True)
+        model = PeftModel.from_pretrained(model, str(directory), is_trainable=training, local_files_only=True, torch_device='cpu')
         from safetensors.torch import load_file
         saved = load_file(str(directory / 'adapter_model.safetensors'))
         expected = get_peft_model_state_dict(model, save_embedding_layers=False)

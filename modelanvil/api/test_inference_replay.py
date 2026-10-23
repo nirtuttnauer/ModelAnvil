@@ -32,6 +32,23 @@ from modelanvil.runners.training.runtime import RUNTIME_ID
 class InferenceReplayTests(TransactionTestCase):
     path = '/api/v1/inference/chat/completions'
 
+    def test_unopened_stream_accounts_before_native_resources_unload(self):
+        from contextlib import ExitStack
+        from modelanvil.api.views.model_workspace import CompletionStream
+        events = []
+        stack = ExitStack(); stack.callback(lambda: events.append('unloaded'))
+        def native_parts():
+            try:
+                yield 'prefetched'
+            finally:
+                self.assertNotIn('unloaded', events)
+                events.append('accounted')
+        parts = native_parts(); next(parts)
+        unopened = (value for value in ())
+        stream = CompletionStream(unopened, stack, parts.close)
+        stream.close(); stream.close()
+        self.assertEqual(events, ['accounted', 'unloaded'])
+
     def setUp(self):
         self.root = tempfile.TemporaryDirectory(); self.addCleanup(self.root.cleanup)
         override = override_settings(MODELANVIL={**settings.MODELANVIL, 'artifact_backend': 'filesystem', 'artifact_root': self.root.name})

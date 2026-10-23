@@ -335,7 +335,8 @@ class ComparisonViewSet(TenantScopedViewSet):
             identity = lambda r: str(r.model_version_id) if r.model_version_id is not None else r.provider_snapshot['id']
             if first.pk == second.pk or identity(first) == identity(second):
                 raise ValueError('Compare two distinct model versions and requests.')
-            settings = lambda record: {k: v for k, v in record.configuration.items() if k not in {'device', 'stream', 'stream_options'}}
+            from modelanvil.runners.inference import generation_configuration
+            settings = lambda record: generation_configuration(record.configuration)
             if settings(first) != settings(second):
                 raise ValueError('Comparison generation settings must match; devices may differ.')
             with transaction.atomic():
@@ -400,8 +401,10 @@ class CompletionStream:
             try:
                 self.context.run(self.iterator.close)
             finally:
-                self.context.run(self.stack.close)
-                self.context.run(self.on_close)
+                try:
+                    self.context.run(self.on_close)
+                finally:
+                    self.context.run(self.stack.close)
 
 
 class CompletionEventRenderer(JSONRenderer):
@@ -445,7 +448,7 @@ class InferenceViewSet(TenantScopedViewSet):
         eligible_ids = {str(v.model_version_id) for v, capability in eligible if capability['eligible']}
         return Response({'object': 'list', 'data': [{'id': str(v.model_version_id), 'object': 'model',
             'created': int(v.created_at.timestamp()), 'owned_by': 'modelanvil', 'name': v.model.name,
-            'format': capability.get('format', v.metadata.get('format', 'safetensors')), 'load_tested': v.inference_requests.filter(status='completed').exists(),
+            'format': capability.get('format', v.metadata.get('format', 'safetensors')), 'load_tested': bool(capability.get('load_tested_devices')), 'load_tested_devices': capability.get('load_tested_devices', []),
             'devices': capability['devices'], 'max_tokens': capability['max_tokens'], 'context_limit': capability['context_limit'],
             'tokenizer_kind': capability.get('tokenizer_kind'),
             'training_run_id': str(lineage[v.pk].run_id) if v.pk in lineage else None,
@@ -486,11 +489,18 @@ class InferenceViewSet(TenantScopedViewSet):
         replay, replayed = inference_replay.reserve(request, options, guard.identity)
         tenant = get_active_tenant()
         record = None
+        runtime_evidence = {}
+        if version is not None:
+            from modelanvil.runners.inference import runtime_signature, runtime_input_identity, runtime_provenance
+            runtime_evidence = {'format': guard.format, 'signature': runtime_signature(guard.format, options['device']),
+                                'input_identity': runtime_input_identity(version), 'device': options['device'],
+                                'provenance': runtime_provenance(guard.format, options['device'])}
         if not replayed:
             record = InferenceRequest.all_objects.create(tenant_id=tenant, project=project, model_version=version,
                 provider_snapshot=external_inference.public_target(str(options['model']), provider) if provider else {},
                 principal_id=str(request.user.pk), input_digest=digest(options['messages']),
-                configuration={k: v for k, v in options.items() if k not in {'messages', 'model'}})
+                configuration={**{k: v for k, v in options.items() if k not in {'messages', 'model'}},
+                               **({'_runtime': runtime_evidence} if runtime_evidence else {})})
         output = ''
         measurement = {}
 
@@ -521,7 +531,8 @@ class InferenceViewSet(TenantScopedViewSet):
         def completion_body(final):
             return {**base, 'object': 'chat.completion', 'choices': [{'index': 0,
                 'message': {'role': 'assistant', 'content': output}, 'finish_reason': final['finish_reason']}],
-                'usage': final['usage'], 'modelanvil': {'device': options['device'], 'elapsed_seconds': final['elapsed_seconds']}}
+                'usage': final['usage'], 'modelanvil': {'device': options['device'], 'elapsed_seconds': final['elapsed_seconds'],
+                    **({'runtime': runtime_evidence} if runtime_evidence else {})}}
 
         def record_finish(status, final=None):
             from django.utils import timezone
@@ -529,10 +540,15 @@ class InferenceViewSet(TenantScopedViewSet):
             final = final or measurement
             provider_evidence = {'provider_snapshot': {**record.provider_snapshot, 'reported_model': final.get('provider_model')}} if provider is not None and status == 'completed' else {}
             from django.db import transaction
+            if status == 'completed' and provider is None:
+                from modelanvil.runners.inference import runtime_observation
+                runtime_evidence['observation'] = runtime_observation(session)
+                record.configuration['_runtime'] = runtime_evidence
             with transaction.atomic():
                 changed = InferenceRequest.all_objects.filter(pk=record.pk, status='running').update(status=status,
                     completed_at=timezone.now(), usage=final.get('usage'), elapsed_seconds=final.get('elapsed_seconds'),
-                    output_digest=hashlib.sha256(output.encode()).hexdigest() if output else '', **provider_evidence)
+                    output_digest=hashlib.sha256(output.encode()).hexdigest() if output else '',
+                    configuration=record.configuration, **provider_evidence)
                 if changed:
                     inference_replay.finish(replay, completion_body(final) if status == 'completed' else None)
 
@@ -569,8 +585,8 @@ class InferenceViewSet(TenantScopedViewSet):
                     chunk = {**base, 'object': 'chat.completion.chunk', 'choices': [{'index': 0,
                         'delta': {'content': part['text']} if 'text' in part else {}, 'finish_reason': done}]}
                     if done:
-                        chunk['modelanvil'] = {'elapsed_seconds': part['elapsed_seconds'], 'device': options['device']}
                         record_finish('completed', part)
+                        chunk['modelanvil'] = completion_body(part)['modelanvil']
                     yield 'data: ' + json.dumps(chunk) + '\n\n'
                     if done and part['usage'] is not None and options.get('stream_options', {}).get('include_usage'):
                         assert_current()
@@ -579,16 +595,22 @@ class InferenceViewSet(TenantScopedViewSet):
                 record_finish('failed')
                 yield 'data: ' + json.dumps({'error': {'message': 'Generation failed; check the selected runtime, destination and access.', 'type': 'inference_error'}}) + '\n\n'
             finally:
-                parts.close()
-                # Release admission before DONE lets clients start the next arena request.
-                stack.close()
-                record_finish('cancelled')
+                try:
+                    parts.close()
+                finally:
+                    try:
+                        record_finish('cancelled')
+                    finally:
+                        # Release admission before clients receive DONE.
+                        stack.close()
             yield 'data: [DONE]\n\n'
 
         if options['stream']:
             def closed():
-                parts.close()
-                record_finish('cancelled')
+                try:
+                    parts.close()
+                finally:
+                    record_finish('cancelled')
             response = StreamingHttpResponse(CompletionStream(events(), stack, closed), content_type='text/event-stream')
             response['Cache-Control'] = 'no-cache'
             response['X-Accel-Buffering'] = 'no'
