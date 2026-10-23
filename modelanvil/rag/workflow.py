@@ -18,8 +18,8 @@ def chunk_payload(row):
             'span_end':chunk.span_end, 'rank':row.rank, 'channel':row.channel}}
 
 
-def retrieve(index, query, mode, top_k, embedding=None):
-    engine = RetrievalEngine(index)
+def retrieve(index, query, mode, top_k, embedding=None, *, dense_search=None, engine=None):
+    engine = engine or RetrievalEngine(index)
     if mode == 'lexical':
         return engine.retrieve_lexical(query, top_k=top_k)
     if index.configuration.get('embedding_profile') and index.configuration.get('embeddings_generated'):
@@ -38,17 +38,20 @@ def retrieve(index, query, mode, top_k, embedding=None):
         raise ValueError('Dense/hybrid retrieval needs a compatible vector index and actual query embedding.')
     if len(embedding) != index.embedding_space.dimension or not all(math.isfinite(v) for v in embedding):
         raise ValueError('Query vector must be finite and match the index embedding dimension.')
-    return engine.retrieve_dense(embedding,top_k=top_k) if mode == 'dense' else engine.retrieve_hybrid(query,embedding,top_k=top_k)
+    return engine.retrieve_dense(embedding,top_k=top_k,dense_search=dense_search) if mode == 'dense' else engine.retrieve_hybrid(query,embedding,top_k=top_k,dense_search=dense_search)
 
 
-def trace_query(index, query, mode, top_k, embedding=None):
+def trace_query(index, query, mode, top_k, embedding=None, *, dense_search=None):
     started = time.monotonic()
-    rows = retrieve(index,query,mode,top_k,embedding)
+    engine=RetrievalEngine(index)
+    rows = retrieve(index,query,mode,top_k,embedding,dense_search=dense_search,engine=engine)
+    config = engine.settings(top_k,dense_search)
     payload = [chunk_payload(row) for row in rows]
+    for row in payload:row['metadata']['retrieval_config']=config
     if mode != 'lexical' and index.configuration.get('embedding_profile'):
         for row in payload:
             row['metadata'].update(embedding_space=index.configuration['embedding_profile'],query_embedding_source='pinned_local_cpu')
-    trace = QueryTrace.objects.create(tenant_id=index.tenant_id,index_version=index,query=query,mode=mode,
+    trace = QueryTrace.objects.create(tenant_id=index.tenant_id,index_version=index,query=query,mode=mode,retrieval_config=config,
         retrieved_chunk_ids=[row['chunk_id'] for row in payload], reranked_chunk_ids=[],
         supplied_context='',answer='',citations=[{'chunk_id':row['chunk_id'], 'score':row['score'], **row['metadata']} for row in payload],
         abstained=not bool(payload),latency_ms=round((time.monotonic()-started)*1000,3))
@@ -70,9 +73,9 @@ def visible_traces(index, limit=50):
                 'metadata':{**chunk.metadata,'document_title':chunk.document.title,'document_revision':chunk.document.revision_no,
                     'source_uri':chunk.document.source_uri,'content_hash':chunk.content_hash,
                     'span':f'{chunk.span_start}:{chunk.span_end}',
-                    **({k:ref[k] for k in ('embedding_space','query_embedding_source') if k in ref})}})
+                    **({k:ref[k] for k in ('embedding_space','query_embedding_source','retrieval_config') if k in ref})}})
         result.append({'trace_id':str(trace.trace_id),'query':trace.query,'mode':trace.mode,
-            'created_at':trace.created_at.isoformat(),'latency_ms':trace.latency_ms,'results':rows,
+            'retrieval_config':trace.retrieval_config,'created_at':trace.created_at.isoformat(),'latency_ms':trace.latency_ms,'results':rows,
             'reranker':'none','generation':'not_executed','context_chunk_ids':[r['chunk_id'] for r in rows]})
     return result
 
@@ -107,10 +110,10 @@ def compare(index, *, qrels_version, cases, modes, top_k, comparison_id=None):
         run.metrics_summary={'metrics':means,'unit':'fraction','cutoff':top_k,'coverage':{'queries_total':len(cases),
             'queries_with_positive_qrels':judged,'queries_without_positive_qrels':len(cases)-judged},
             'na_semantics':'No positive qrels means N/A; unjudged cases are excluded from aggregate means.',
-            'profile':'lexical-token-overlap-v1' if mode=='lexical' else 'pinned-local-minilm-pgvector-cosine-v1' if index.configuration.get('embedding_profile') else 'caller-provided-vectors; semantic qualification not inferred'}
+            'profile':RetrievalEngine(index).settings(top_k)['lexical'] if mode=='lexical' else 'pinned-local-minilm-pgvector-cosine-v1' if index.configuration.get('embedding_profile') else 'caller-provided-vectors; semantic qualification not inferred'}
         run.protocol_ref={'comparison_id':comparison_id,'index_manifest_digest':index.manifest_digest,'input_chunk_ids':sorted(eligible),
             'judgments':judgments,'queries':per_query,'reranker':'none','generation':'not_executed',
-            'embedding_profile':index.configuration.get('embedding_profile'),'embedding_runtime':index.configuration.get('embedding_build_runtime')}
+            'retrieval_config':RetrievalEngine(index).settings(top_k),'embedding_profile':index.configuration.get('embedding_profile'),'embedding_runtime':index.configuration.get('embedding_build_runtime')}
         run.status='completed';run.save(update_fields=['metrics_summary','protocol_ref','status','updated_at'])
         for key,value in means.items():
             RetrievalMetric.objects.create(tenant_id=index.tenant_id,run=run,key=key,k=top_k,

@@ -1336,6 +1336,9 @@
                     },
                     "reranker": {
                       "const": "none"
+                    },
+                    "retrieval_config": {
+                      "$ref": "#/components/schemas/RetrievalExecutionConfig"
                     }
                   }
                 }
@@ -1385,6 +1388,13 @@
                     "items": {
                       "type": "number"
                     }
+                  },
+                  "dense_search": {
+                    "enum": [
+                      "exact",
+                      "hnsw"
+                    ],
+                    "description": "Native PostgreSQL vector strategy. Default is the pinned index strategy (hnsw for current builds). Exact bypasses ANN ordering."
                   }
                 }
               }
@@ -13309,6 +13319,9 @@
           },
           "reranker": {
             "const": "none"
+          },
+          "retrieval_config": {
+            "$ref": "#/components/schemas/RetrievalExecutionConfig"
           }
         }
       },
@@ -14171,6 +14184,45 @@
           "created_at": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "RetrievalExecutionConfig": {
+        "type": "object",
+        "description": "Recorded backend, SQL lexical profile, requested dense strategy, HNSW options, RRF parameters and actual fallback/pgvector execution evidence. SQLite is a labeled compatibility path.",
+        "properties": {
+          "backend": {
+            "enum": [
+              "postgresql",
+              "sqlite_compatibility"
+            ]
+          },
+          "lexical": {
+            "type": "string"
+          },
+          "dense_search": {
+            "enum": [
+              "exact",
+              "hnsw"
+            ]
+          },
+          "hnsw": {
+            "type": "object"
+          },
+          "execution": {
+            "type": "object"
+          },
+          "rrf_k": {
+            "type": "integer"
+          },
+          "candidate_count": {
+            "type": "integer"
+          },
+          "candidate_count_per_channel": {
+            "type": "boolean"
+          },
+          "underfill_policy": {
+            "const": "exact_fallback"
           }
         }
       },

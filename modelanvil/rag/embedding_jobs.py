@@ -176,7 +176,7 @@ def create_hnsw(space):
     if dimension!=adapter.PINS['dimension']:raise ValueError('Unsupported HNSW dimension.')
     quote=connection.ops.quote_name;name=f'embedding_space_{key}_hnsw'
     with connection.cursor() as cursor:
-        cursor.execute(f'CREATE INDEX IF NOT EXISTS {quote(name)} ON {quote(ChunkEmbedding._meta.db_table)} USING hnsw ((vector::vector({dimension})) vector_cosine_ops) WHERE space_id = {key}')
+        cursor.execute(f'CREATE INDEX IF NOT EXISTS {quote(name)} ON {quote(ChunkEmbedding._meta.db_table)} USING hnsw ((vector::vector({dimension})) vector_cosine_ops) WITH (m = 16, ef_construction = 64) WHERE space_id = {key}')
     return name
 
 
@@ -191,6 +191,7 @@ def finalize_job(job,status):
             space=EmbeddingSpace.all_objects.select_for_update().get(pk=index.embedding_space_id)
             hnsw=create_hnsw(space)
             index.configuration={**index.configuration,'embeddings_generated':True,'hnsw_index':hnsw,
+                'retrieval_settings':{'dense_search':'hnsw','hnsw':{'m':16,'ef_construction':64,'ef_search':100,'iterative_scan':'strict_order','max_scan_tuples':20000},'rrf_k':60,'candidate_multiplier':2,'lexical':'postgresql-ts-rank-cd-simple-v1'},
                 'vector_manifest':digest([(str(c.chunk_id),rows[c.pk].vector_digest) for c in chunks])}
             index.status='ready';build.error=''
         except (ValueError,PermissionError):

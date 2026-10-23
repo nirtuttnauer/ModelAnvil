@@ -87,6 +87,14 @@ class EmbeddingWorkerTests(TransactionTestCase):
         self.assertEqual(response.status_code,200,response.content)
         self.assertEqual(len(response.json()['results']),3)
         self.assertEqual(response.json()['results'][0]['metadata']['query_embedding_source'],'pinned_local_cpu')
+        self.assertEqual(response.json()['retrieval_config']['dense_search'],'hnsw')
+        exact=self.client.post(f'/api/v1/index-versions/{build.index.index_id}/query/',{'query':'A sleeping feline on a couch','mode':'dense','top_k':3,'dense_search':'exact'},format='json')
+        self.assertEqual(exact.status_code,200,exact.content)
+        self.assertEqual(exact.json()['retrieval_config']['dense_search'],'exact')
+        from modelanvil.rag.models import QueryTrace
+        trace=QueryTrace.all_objects.get(trace_id=exact.json()['trace_id'])
+        self.assertEqual(trace.retrieval_config,exact.json()['retrieval_config'])
+        self.assertEqual(trace.retrieval_config['execution']['exact_fallback_used'],False)
         comparison=self.client.post(f'/api/v1/index-versions/{build.index.index_id}/comparisons/',{
             'baseline_index_id':str(self.source.index_id),'qrels_version':'real-encoder-control-v1','modes':['dense'],
             'cases':[{'query_id':'control','query':'sleeping cat','qrels':{self.source.configuration['chunk_ids'][0]:1}}]},format='json')

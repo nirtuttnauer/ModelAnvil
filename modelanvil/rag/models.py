@@ -225,6 +225,7 @@ class QueryTrace(TenantContextModel):
     index_version = models.ForeignKey(IndexVersion, on_delete=models.CASCADE, related_name="traces")
     query = models.TextField()
     mode = models.CharField(max_length=32, default="hybrid")
+    retrieval_config = models.JSONField(default=dict, blank=True)
     retrieved_chunk_ids = models.JSONField(default=list)
     reranked_chunk_ids = models.JSONField(default=list)
     supplied_context = models.TextField(blank=True)
