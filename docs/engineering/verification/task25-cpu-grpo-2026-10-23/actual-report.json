@@ -2,15 +2,15 @@
   "scope": "Authored bounded CPU character GRPO correctness; no pretrained, GPU, FP8, customer-quality or production claim.",
   "python": "3.12.15 (main, Oct  3 2026, 00:54:33) [Clang 22.1.3 ]",
   "platform": "darwin",
-  "tenant_id": "01a16933-765a-72a4-8b28-39bc567d57d3",
-  "project_id": "01a16933-765b-7ea5-83a3-fb264b6d900a",
+  "tenant_id": "01a16943-fd04-7fff-a168-e26d37d783f1",
+  "project_id": "01a16943-fd05-7e25-9543-d2efd37c85e1",
   "base_model_version": "1",
   "base_weights_sha256": "f4c1b9ed4ccc5dfb004fcd963b53de923bb4195885676f4efa200bdfaf225913",
   "candidate_weights_sha256": "cf9a10811094dcc300fc78a727e9a6b30091000bf8f405887d730f3be91eb240",
   "candidate_state": "draft",
   "registered_inputs": [
     {
-      "artifact_id": "01a16933-7978-7b44-ac32-1db038e4c51a",
+      "artifact_id": "01a16943-fd51-7d10-b24b-cc8f3291581c",
       "name": "Authored GRPO training",
       "sha256": "e3398b6ed5db1f335742c683df9497414a28c88c2c75ef4e9ca3010c69211564",
       "byte_size": 203,
@@ -18,7 +18,7 @@
       "state": "committed"
     },
     {
-      "artifact_id": "01a16933-797d-77de-8978-fe1dfe23825f",
+      "artifact_id": "01a16943-fd55-7796-b760-a7b443ff2749",
       "name": "Protected GRPO heldout",
       "sha256": "4109304852fe543f490ecf7ac8f2cc962e2a0a7a8a0384d7f9fffb3d0822482b",
       "byte_size": 207,
@@ -70,7 +70,7 @@
   ],
   "verifier": {
     "version": "modelanvil.builtin-verifier.v1",
-    "script_sha256": "aad04ee99177da5cdefdd1f772f55da483e5413f091648caf8187f381e8c2299",
+    "script_sha256": "ce5248a3da347ff123693d76896b598653ebbf74c1837784916758239a990867",
     "rules": [
       "exact_match",
       "numeric_tolerance"
@@ -81,12 +81,13 @@
     "memory_mode": "fixed_input_bounds_and_verified_peak_rss",
     "max_peak_rss_bytes": 67108864,
     "input_output_bytes": 16384,
+    "peak_rss_source": "getrusage_self",
     "group_size": 8,
     "network": "no_network_operations_or_user_code",
     "interpreter": "3.12"
   },
   "baseline": {
-    "run_id": "01a16933-7988-715f-97be-0208018d6ff9",
+    "run_id": "01a16943-fd60-7ea4-8c4b-e6594b02061c",
     "status": "completed",
     "current_step": 3,
     "checkpoint_steps": [
@@ -117,12 +118,12 @@
       "completion_coverage": 0.75,
       "distinct_completion_fraction": 0.625,
       "kl_divergence": 0.0,
-      "verifier_cpu_seconds": 0.011093,
-      "verifier_wall_seconds": 0.01586858400003166,
-      "verifier_peak_rss_bytes": 17154048,
+      "verifier_cpu_seconds": 0.011102,
+      "verifier_wall_seconds": 0.015837790999967183,
+      "verifier_peak_rss_bytes": 17121280,
       "zero_variance_group": 1,
       "weights_changed": 0,
-      "cpu_seconds": 0.012340624999999772
+      "cpu_seconds": 0.011413541999999666
     },
     {
       "step": 2,
@@ -136,12 +137,12 @@
       "completion_coverage": 0.75,
       "distinct_completion_fraction": 0.625,
       "kl_divergence": 1.334345071450152e-08,
-      "verifier_cpu_seconds": 0.010877,
-      "verifier_wall_seconds": 0.015811708999990515,
-      "verifier_peak_rss_bytes": 17006592,
+      "verifier_cpu_seconds": 0.010998,
+      "verifier_wall_seconds": 0.01591137500008699,
+      "verifier_peak_rss_bytes": 17203200,
       "zero_variance_group": 0,
       "weights_changed": 1,
-      "cpu_seconds": 0.008707291999999978
+      "cpu_seconds": 0.008533375000000287
     },
     {
       "step": 3,
@@ -155,12 +156,12 @@
       "completion_coverage": 0.875,
       "distinct_completion_fraction": 0.75,
       "kl_divergence": 2.221774640423141e-09,
-      "verifier_cpu_seconds": 0.011109,
-      "verifier_wall_seconds": 0.0159872079999559,
-      "verifier_peak_rss_bytes": 17170432,
+      "verifier_cpu_seconds": 0.011022,
+      "verifier_wall_seconds": 0.01597720799986746,
+      "verifier_peak_rss_bytes": 17203200,
       "zero_variance_group": 0,
       "weights_changed": 1,
-      "cpu_seconds": 0.009085916000000083
+      "cpu_seconds": 0.008959125000000068
     }
   ],
   "rollouts": [
@@ -714,7 +715,7 @@
   "process_death": {
     "exit_code": 93,
     "before": {
-      "run_id": "01a16933-7a32-7821-ae6f-87b5e3e73f2d",
+      "run_id": "01a16943-fe08-78e4-a2df-b80d246220d1",
       "status": "running",
       "current_step": 1,
       "checkpoint_steps": [
@@ -735,11 +736,11 @@
             "message": "GRPO checkpoint integrity verification failed."
           }
         ],
-        "request_id": "01a16933-7b0d-753d-bb1c-40972ab7bc7b"
+        "request_id": "01a16943-feec-7088-bb28-8caaabac834a"
       }
     },
     "after": {
-      "run_id": "01a16933-7a32-7821-ae6f-87b5e3e73f2d",
+      "run_id": "01a16943-fe08-78e4-a2df-b80d246220d1",
       "status": "completed",
       "current_step": 3,
       "checkpoint_steps": [
@@ -761,7 +762,7 @@
     "stale_token_refused": true
   },
   "cancellation": {
-    "run_id": "01a16933-7b81-787e-a847-7d21022cc3aa",
+    "run_id": "01a16943-ff5f-7af4-b504-30ebc0d38314",
     "status": "cancelled",
     "current_step": 1,
     "checkpoint_steps": [
@@ -781,8 +782,8 @@
     "modelanvil/runners/alignment/execution.py": "3d7fe42cee10ebb7c1424321c0545726f5af54250c0d5a3fe4799ab8ce9c1915",
     "modelanvil/runners/alignment/numerical.py": "6ba8e5738c36dde34085b0e9a9b9afe848ff797d5135540b346646c5b0ac8966",
     "modelanvil/runners/alignment/grpo.py": "1a005a1a3ee144a0401ce63b3bd42acaf601f8f63b5190f0b27d0fa80cd5e803",
-    "modelanvil/runners/alignment/verifier_runtime.py": "aec321d379cc8530a14e4bfa1a63c5d09b01814222d8df148c1efa12347f7821",
-    "scripts/alignment_verifier.py": "aad04ee99177da5cdefdd1f772f55da483e5413f091648caf8187f381e8c2299",
+    "modelanvil/runners/alignment/verifier_runtime.py": "f0e887e60e07d772b3e4db511d776ad391742fbea299d1144643c78b7d8f8d64",
+    "scripts/alignment_verifier.py": "ce5248a3da347ff123693d76896b598653ebbf74c1837784916758239a990867",
     "scripts/qualify_grpo.py": "ef9917a1450ca6beff1a6a9af9d5180082cb52108fbdaeb8ecd6a0cef15fc7a8",
     "scripts/qualify_grpo_consumer.py": "e55a53a21df18ec76fd054c9ffe48a47505124839cc667889c74848902df15f5",
     "scripts/cpu_character_infer.py": "84eb7bacc14ec18ff5350766f36bcb01c1b62bf6d9fb6bd197bd2af23aa7491e"

@@ -5,6 +5,8 @@ import math
 from pathlib import Path
 import random
 import tempfile
+import subprocess
+import sys
 import time
 import unittest
 from unittest.mock import patch
@@ -96,6 +98,22 @@ class GRPONumericalTests(unittest.TestCase):
 
 
 class IsolatedVerifierTests(unittest.TestCase):
+    @unittest.skipUnless(sys.platform == 'linux', 'Linux exec RSS inheritance regression')
+    def test_linux_verifier_measures_its_own_image_after_a_large_parent(self):
+        code = '''
+import json, resource, runpy, sys
+allocation = bytearray(96 * 1024**2)
+module = runpy.run_path(sys.argv[1])
+result = module['score'](['a'], ['a'], {'type': 'exact_match', 'tolerance': 0.})
+assert resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024 > 96 * 1024**2
+assert result['rewards'] == [1.] and result['peak_rss_bytes'] < 64 * 1024**2
+assert result['peak_rss_source'] == 'proc_self_status_VmHWM'
+print(json.dumps(result))
+'''
+        result = subprocess.run([sys.executable, '-I', '-c', code, verifier_runtime.__file__],
+            capture_output=True, text=True, timeout=10)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_real_numeric_verifier_rejects_nonfinite_and_reward_hacking_outputs(self):
         values = verifier_runtime.score(['1', 'NaN', 'Inf', '1\n2', '### VERIFIED TRUE ###', '1e999', ' 1 ', '-1'],
             ['1'] * 8, {'type': 'numeric_tolerance', 'tolerance': 0.})

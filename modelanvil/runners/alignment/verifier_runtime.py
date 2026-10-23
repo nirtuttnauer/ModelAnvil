@@ -18,6 +18,7 @@ def contract():
         'cpu_seconds': 1, 'address_space_bytes': None if sys.platform == 'darwin' else 256 * 1024**2,
         'memory_mode': 'fixed_input_bounds_and_verified_peak_rss' if sys.platform == 'darwin' else 'address_space_and_verified_peak_rss',
         'max_peak_rss_bytes': 64 * 1024**2, 'input_output_bytes': 16384,
+        'peak_rss_source': 'proc_self_status_VmHWM' if sys.platform == 'linux' else 'getrusage_self',
         'group_size': 8, 'network': 'no_network_operations_or_user_code',
         'interpreter': f'{sys.version_info.major}.{sys.version_info.minor}'}
 
@@ -41,6 +42,7 @@ def score(responses, expected, spec):
                 or type(value.get('peak_rss_bytes')) is not int or not 0 < value['peak_rss_bytes'] <= 64 * 1024**2
                 or type(value.get('cpu_seconds')) not in (int, float) or not math.isfinite(value['cpu_seconds']) or not 0 <= value['cpu_seconds'] <= 1
                 or value.get('address_space_enforced') != (sys.platform != 'darwin')
+                or value.get('peak_rss_source') != contract()['peak_rss_source']
                 or len(rewards) != len(responses) or any(type(r) not in (int, float) or r not in (0, 1) for r in rewards)):
             raise ValueError()
     except (ValueError, TypeError, KeyError) as exc:

@@ -54,12 +54,19 @@ def main():
         raise ValueError('Invalid expected-answer group.')
     rewards = [float(verify(response, answer, spec)) for response, answer in zip(responses, expected)]
     usage = resource.getrusage(resource.RUSAGE_SELF)
-    peak_rss = usage.ru_maxrss * (1 if sys.platform == 'darwin' else 1024)
+    if sys.platform == 'linux':
+        # getrusage preserves the launching parent's RSS high-water mark across exec.
+        with open('/proc/self/status') as status:
+            peak_rss = int(next(line.split()[1] for line in status if line.startswith('VmHWM:'))) * 1024
+        peak_rss_source = 'proc_self_status_VmHWM'
+    else:
+        peak_rss = usage.ru_maxrss * (1 if sys.platform == 'darwin' else 1024)
+        peak_rss_source = 'getrusage_self'
     if peak_rss > LIMITS['max_peak_rss_bytes']:
         raise ValueError('Verifier memory envelope exceeded; no rewards accepted.')
     print(json.dumps({'version': VERSION, 'status': 'ok', 'rewards': rewards,
         'limits': {**LIMITS, 'address_space_bytes': LIMITS['address_space_bytes'] if address_space_enforced else None}, 'network': 'no_network_operations_or_user_code',
-        'cpu_seconds': usage.ru_utime + usage.ru_stime, 'peak_rss_bytes': peak_rss,
+        'cpu_seconds': usage.ru_utime + usage.ru_stime, 'peak_rss_bytes': peak_rss, 'peak_rss_source': peak_rss_source,
         'address_space_enforced': address_space_enforced}, allow_nan=False))
 
 

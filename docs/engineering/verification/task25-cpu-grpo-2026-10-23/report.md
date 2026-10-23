@@ -31,7 +31,7 @@ Numeric reward-hacking probes (`NaN`, infinity, multiple answers, verification b
 
 ## Verifier limits
 
-Fixed exact/numeric data rules only: no arbitrary verifier code, application imports, file operations or network operations. Two-second parent wall timeout, one-second POSIX CPU limit, zero file-output limit, 16 KiB input/output, eight records and 32 characters per answer. Accepted measured peak RSS must be at most 64 MiB. Linux additionally enforces 256 MiB address space. Darwin rejects lowering its address-space limit: this Mac receipt explicitly records **no OS address-space cap**, using fixed input bounds and measured peak RSS instead. This is not a general-purpose hostile-code sandbox.
+Fixed exact/numeric data rules only: no arbitrary verifier code, application imports, user file operations or network operations; Linux reads only its own fixed `/proc/self/status` memory telemetry. Two-second parent wall timeout, one-second POSIX CPU limit, zero file-output limit, 16 KiB input/output, eight records and 32 characters per answer. Accepted measured peak RSS must be at most 64 MiB. Linux additionally enforces 256 MiB address space. Darwin rejects lowering its address-space limit: this Mac receipt explicitly records **no OS address-space cap**, using fixed input bounds and measured peak RSS instead. This is not a general-purpose hostile-code sandbox.
 
 ## Reproduction and validation
 
@@ -40,3 +40,7 @@ Fixed exact/numeric data rules only: no arbitrary verifier code, application imp
 Backend: 1,070 tests passed, 42 optional environment skips; focused alignment/OpenAPI: 45 tests passed. Frontend: 228 tests passed and production build passed. Migration generation check passed. Required remote CI must pass on the exact PR head before merge.
 
 Algorithm and limits are documented in [CPU character alignment](../../cpu-character-alignment.md), with the primary DeepSeekMath reference and explicit differences.
+
+## Linux CI correction
+
+Initial remote backend CI refused rewards because Linux `getrusage` retained the large parent image's RSS high-water mark across `exec`. The [Linux manual](https://www.man7.org/linux/man-pages/man2/getrusage.2.html) documents that resource usage survives exec. A network-disabled Linux container reproduced failure with a 96 MiB parent. The child now measures its own process-image `VmHWM` from `/proc/self/status`, explicitly pinning the metric source; Darwin keeps `getrusage`. The 64 MiB RSS ceiling and Linux 256 MiB address-space cap are unchanged. [The actual regression receipt](linux-inherited-rss.json) shows accepted actual rewards and the small child image. The full alignment suite passes in Linux and the refreshed Mac run still resumes to identical tensors.
