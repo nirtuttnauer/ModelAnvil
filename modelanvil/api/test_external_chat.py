@@ -10,7 +10,7 @@ import uuid
 from unittest.mock import patch
 
 from django.conf import settings
-from django.test import TestCase, override_settings
+from django.test import TransactionTestCase, override_settings
 from rest_framework.test import APIClient
 
 from modelanvil.artifacts.models import Artifact
@@ -25,7 +25,7 @@ from modelanvil.runners.training.runtime import RUNTIME_ID
 
 
 @override_settings(ALLOWED_HOSTS=['testserver'], DEBUG=True)
-class ExternalChatTests(TestCase):
+class ExternalChatTests(TransactionTestCase):
     def setUp(self):
         self.root = tempfile.TemporaryDirectory(); self.addCleanup(self.root.cleanup)
         self.tenant = Tenant.objects.create(slug='external', name='External')
