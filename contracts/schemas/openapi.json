@@ -4382,7 +4382,9 @@
               "enum": [
                 "native",
                 "adapter",
-                "json"
+                "json",
+                "merged",
+                "gguf-q8"
               ],
               "default": "native"
             },
@@ -4391,7 +4393,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Verified ZIP archive or JSON bundle/manifest. Native ZIP includes base weights and separate adapters; adapter ZIP requires the recorded base model. Optimizer state remains in checkpoints.",
+            "description": "Verified ZIP archive or JSON bundle/manifest. Native includes separate base and adapters. Adapter-only includes tokenizer/configuration and exact base provenance. Prepared merged or Q8_0 archives retain immutable IDs and checksum ETags; no API conversion or release approval is implied.",
             "content": {
               "application/zip": {
                 "schema": {
@@ -4403,6 +4405,21 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true
+                }
+              }
+            },
+            "headers": {
+              "ETag": {
+                "description": "Prepared merged/GGUF archive SHA-256 in quotes; absent on legacy exports.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Artifact-ID": {
+                "description": "Immutable artifact identity for prepared merged/GGUF archives.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
                 }
               }
             }
@@ -4442,7 +4459,9 @@
               "enum": [
                 "native",
                 "adapter",
-                "json"
+                "json",
+                "merged",
+                "gguf-q8"
               ],
               "default": "native"
             },
@@ -4451,7 +4470,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Verified ZIP archive or JSON bundle/manifest. Native ZIP includes base weights and separate adapters; adapter ZIP requires the recorded base model. Optimizer state remains in checkpoints.",
+            "description": "Verified ZIP archive or JSON bundle/manifest. Native includes separate base and adapters. Adapter-only includes tokenizer/configuration and exact base provenance. Prepared merged or Q8_0 archives retain immutable IDs and checksum ETags; no API conversion or release approval is implied.",
             "content": {
               "application/zip": {
                 "schema": {
@@ -4463,6 +4482,21 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true
+                }
+              }
+            },
+            "headers": {
+              "ETag": {
+                "description": "Prepared merged/GGUF archive SHA-256 in quotes; absent on legacy exports.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Artifact-ID": {
+                "description": "Immutable artifact identity for prepared merged/GGUF archives.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
                 }
               }
             }
@@ -10512,7 +10546,7 @@
           "export_options": {
             "type": "array",
             "readOnly": true,
-            "description": "Supported download formats for this completed run; empty before completion. No format conversion is implied.",
+            "description": "Supported formats for this completed run. Merged Safetensors and Q8_0 GGUF appear only after trusted local preparation. Loadability, quality and release gates are separate.",
             "items": {
               "type": "object",
               "required": [
@@ -10527,7 +10561,9 @@
                   "enum": [
                     "native",
                     "adapter",
-                    "json"
+                    "json",
+                    "merged",
+                    "gguf-q8"
                   ]
                 },
                 "label": {

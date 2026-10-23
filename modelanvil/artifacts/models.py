@@ -69,6 +69,8 @@ class Artifact(TenantContextModel):
             if (isinstance(previous.metadata,dict) and previous.metadata.get('application_feedback_id')
                     and (not isinstance(self.metadata,dict) or self.metadata.get('application_feedback_id')!=previous.metadata['application_feedback_id'])):
                 raise ValueError('Feedback artifact provenance is immutable.')
+            if isinstance(previous.metadata, dict) and 'cpu_export' in previous.metadata and (self.metadata != previous.metadata or self.project_id != previous.project_id):
+                raise ValueError('Prepared CPU export provenance and project are immutable.')
             protected = ("tenant_id", "storage_location_id", "object_key", "object_version", "sha256", "byte_size", "media_type")
             if previous.state == self.State.COMMITTED and any(getattr(previous, field) != getattr(self, field) for field in protected):
                 raise ValueError("Committed artifact metadata is immutable.")

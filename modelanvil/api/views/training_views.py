@@ -7,6 +7,7 @@ import hashlib
 import json
 import uuid
 from decimal import Decimal
+from pathlib import Path
 from django.utils import timezone
 from django.db import transaction
 from modelanvil.api.views.registries import TenantScopedViewSet
@@ -50,6 +51,12 @@ def training_export_options(run):
         if module in (hf_runtime, cpu_hf_runtime) and run.recipe_type == TrainingRun.RecipeType.LORA_ADAPTER:
             options.append({'format': 'adapter', 'label': 'LoRA adapter only (ZIP)', 'extension': 'zip',
                             'description': 'Includes adapter weights, adapter configuration and base provenance. Requires the exact base model recorded in the provenance.'})
+    if module is cpu_hf_runtime:
+        from modelanvil.runners.training.cpu_exports import export_records, FORMATS
+        prepared = {v['cpu_export']['format'] for v in export_records(run).values_list('metadata', flat=True)}
+        options.extend({'format': name, 'label': label, 'extension': 'zip',
+                        'description': 'Prepared immutable CPU export with verified files and load receipt. Quality and release qualification remain separate.'}
+                       for name, label in FORMATS.items() if name in prepared)
     options.append({'format': 'json', 'label': 'Snapshot manifest (JSON)' if transformer else 'Reference bundle (JSON)', 'extension': 'json',
                     'description': 'Artifact references and provenance only; model weights are downloaded with the ZIP options.' if transformer
                                    else 'Includes embedded reference weights, tokenizer configuration and provenance for the ModelAnvil reference runtime.'})
@@ -369,6 +376,16 @@ class TrainingRunViewSet(TenantScopedViewSet):
         selected_format = request.query_params.get('export_format', 'native')
         if selected_format not in {option['format'] for option in training_export_options(run)}:
             raise serializers.ValidationError('Choose a supported export format from a completed training run.')
+        if selected_format in {'merged', 'gguf-q8'}:
+            from modelanvil.runners.training.cpu_exports import open_export
+            try:
+                record, stream = open_export(run, selected_format)
+            except (ValueError, OSError) as exc:
+                raise serializers.ValidationError(str(exc)) from exc
+            response = FileResponse(stream, as_attachment=True, filename=f'modelanvil-{run.run_id}-{selected_format}.zip', content_type='application/zip')
+            response['ETag'] = '"' + record.sha256 + '"'
+            response['X-Artifact-ID'] = str(record.artifact_id)
+            return response
         if is_worker_run(run):
             bundle = self._worker_bundle(run)
         else:
@@ -386,17 +403,27 @@ class TrainingRunViewSet(TenantScopedViewSet):
                 return FileResponse(output, as_attachment=True, filename=f'modelanvil-{run.run_id}.json', content_type='application/json')
             files = bundle['files']
             if selected_format == 'adapter':
-                names = {'adapter_model.safetensors', 'adapter_config.json'}
+                names = {'adapter_model.safetensors', 'adapter_config.json', 'config.json', 'tokenizer.json', 'tokenizer_config.json', 'special_tokens_map.json'}
                 if not names.issubset(files):
                     raise ValueError('The selected checkpoint does not contain a complete LoRA adapter.')
                 files = {name: files[name] for name in sorted(names)}
             with module.staged_files(files, run.tenant_id, run.project_id) as directory:
+                if selected_format == 'adapter':
+                    config = json.loads((directory / 'adapter_config.json').read_text())
+                    config.update(base_model_name_or_path=bundle['source']['repo_id'], revision=bundle['source']['revision'])
+                    (directory / 'adapter_config.json').write_text(json.dumps(config, sort_keys=True, allow_nan=False))
                 with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_STORED, allowZip64=True) as archive:
-                    for name in files:
-                        with (directory / name).open('rb') as source, archive.open(name, 'w', force_zip64=True) as target:
+                    for name in sorted(files):
+                        with (directory / name).open('rb') as source, archive.open(zipfile.ZipInfo(name, (1980,1,1,0,0,0)), 'w', force_zip64=True) as target:
                             shutil.copyfileobj(source, target, length=1024 * 1024)
-                    provenance = bundle if selected_format == 'native' else {**bundle, 'export_format': selected_format, 'included_files': sorted(files)}
-                    archive.writestr('modelanvil-provenance.json', json.dumps(provenance, indent=2, allow_nan=False))
+                    provenance = bundle
+                    if selected_format == 'adapter':
+                        from modelanvil.runners.training.cpu_exports import pin
+                        provenance = {**bundle, 'export_format': selected_format, 'included_files': sorted(files),
+                                      'export_files': {name: pin(directory / name) for name in sorted(files)}}
+                    license_path = Path(module.__file__).parent / 'assets' / 'Apache-2.0.txt'
+                    archive.writestr(zipfile.ZipInfo('LICENSE.txt', (1980,1,1,0,0,0)), license_path.read_bytes())
+                    archive.writestr(zipfile.ZipInfo('modelanvil-provenance.json', (1980,1,1,0,0,0)), json.dumps(provenance, sort_keys=True, allow_nan=False))
             output.seek(0)
             return FileResponse(output, as_attachment=True, filename=f'modelanvil-{run.recipe_type}-{run.run_id}.zip', content_type='application/zip')
         except (ValueError, OSError) as exc:

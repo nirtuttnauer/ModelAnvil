@@ -1,0 +1,27 @@
+{
+  "llama_commit": "f5027fb21307eb264aed483242603d68c87b0fe3",
+  "cpu_only_build": {
+    "GGML_METAL": false,
+    "GGML_CUDA": false,
+    "GGML_VULKAN": false,
+    "GGML_BLAS": false,
+    "LLAMA_OPENSSL": false,
+    "build_jobs": 2
+  },
+  "binary_sha256": {
+    "quantize": "18d68da34d7efd3677a16f7e6867171e1adec8ff0eb9cb0857d05865ee786a89",
+    "cli": "5299db0f060d0c2d8fbdd7cda1206345503b8a0dac9afd5c325e23ab2595066e"
+  },
+  "python": "3.12.15",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "packages": {
+    "torch": "2.13.0",
+    "transformers": "5.14.0",
+    "peft": "0.21.2",
+    "gguf": "0.19.0",
+    "cmake": "4.1.3",
+    "sentencepiece": "0.2.1",
+    "huggingface_hub": "1.33.0"
+  },
+  "background_host_workloads": "Present; not controlled. Cold-process timings do not imply cold filesystem caches or a general performance guarantee."
+}

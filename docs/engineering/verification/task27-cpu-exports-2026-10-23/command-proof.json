@@ -1,0 +1,10 @@
+{
+  "management_command": {
+    "artifact_id": "01a16a10-3eb8-750c-972b-0044dabddebf",
+    "sha256": "e29454c5b5ecd16f6ebd57958fbe988d0c6c186bea76fa8888b6e0777ef53c84",
+    "same_prepared_identity": true
+  },
+  "exact_published_corpus_guard_passed": true,
+  "completed_training_units": 6.0,
+  "live_hub_publication": "not authorized or attempted; proposed TASK-78"
+}

@@ -1,0 +1,236 @@
+{
+  "full_sft": {
+    "formats": [
+      "native",
+      "merged",
+      "gguf-q8",
+      "json"
+    ],
+    "exports": {
+      "native": {
+        "identity": {
+          "sha256": "b5013887b842d5b51c9ee2eb8fc4abe2962bf1687d8922839be799d3c8efe6a8",
+          "byte_size": 540217175
+        },
+        "headers": {},
+        "independent_consumer": {
+          "archive_sha256": "b5013887b842d5b51c9ee2eb8fc4abe2962bf1687d8922839be799d3c8efe6a8",
+          "adapter": false,
+          "device": "cpu",
+          "runtime": "independent Transformers/PEFT",
+          "generated_token_ids": [
+            1420,
+            429,
+            9931,
+            3401,
+            30,
+            198,
+            198,
+            504
+          ],
+          "completion": " light from distant objects.\n\nThe",
+          "production_qualified": false
+        }
+      },
+      "merged": {
+        "identity": {
+          "sha256": "e29454c5b5ecd16f6ebd57958fbe988d0c6c186bea76fa8888b6e0777ef53c84",
+          "byte_size": 541634420
+        },
+        "headers": {
+          "ETag": "\"e29454c5b5ecd16f6ebd57958fbe988d0c6c186bea76fa8888b6e0777ef53c84\"",
+          "X-Artifact-ID": "01a16a10-3eb8-750c-972b-0044dabddebf"
+        },
+        "independent_consumer": {
+          "archive_sha256": "e29454c5b5ecd16f6ebd57958fbe988d0c6c186bea76fa8888b6e0777ef53c84",
+          "adapter": false,
+          "device": "cpu",
+          "runtime": "independent Transformers/PEFT",
+          "generated_token_ids": [
+            1420,
+            429,
+            9931,
+            3401,
+            30,
+            198,
+            198,
+            504
+          ],
+          "completion": " light from distant objects.\n\nThe",
+          "production_qualified": false
+        }
+      },
+      "gguf-q8": {
+        "identity": {
+          "sha256": "2ce3f5a9eb189eb6bd54fe695accdc509de52d553bd3820ff77eef307a17abd0",
+          "byte_size": 148354573
+        },
+        "headers": {
+          "ETag": "\"2ce3f5a9eb189eb6bd54fe695accdc509de52d553bd3820ff77eef307a17abd0\"",
+          "X-Artifact-ID": "01a16a10-ff60-7fe3-9b54-92b88f901b45"
+        },
+        "independent_consumer": {
+          "structure": {
+            "architecture": "llama",
+            "vocabulary_size": 49152,
+            "chat_template": "",
+            "tensor_count": 272,
+            "reader_version": "0.19.0",
+            "validation": "structure-and-payload-bounds",
+            "load_tested": false,
+            "tensor_types": [
+              "F32",
+              "Q8_0"
+            ]
+          },
+          "runtime": "independent llama.cpp completion CLI",
+          "decoded_output": " light from distant objects.\n\nThe\n\n",
+          "converter_revision": "f5027fb21307eb264aed483242603d68c87b0fe3",
+          "quantization": "Q8_0",
+          "device": "cpu"
+        }
+      },
+      "json": {
+        "identity": {
+          "sha256": "c4128cf998b3aa89aec954efa9cb3b44cfc2fe2ee6afc2d789a39c6411572c51",
+          "byte_size": 5776
+        },
+        "headers": {},
+        "scope": "Manifest references only; not a standalone weight export."
+      }
+    }
+  },
+  "lora_adapter": {
+    "formats": [
+      "native",
+      "adapter",
+      "merged",
+      "gguf-q8",
+      "json"
+    ],
+    "exports": {
+      "native": {
+        "identity": {
+          "sha256": "5fa1ccf29af7112fbc3c4e4357455a8e4f359ab11c7dce4b39399c168e4669bc",
+          "byte_size": 273048123
+        },
+        "headers": {},
+        "independent_consumer": {
+          "archive_sha256": "5fa1ccf29af7112fbc3c4e4357455a8e4f359ab11c7dce4b39399c168e4669bc",
+          "adapter": true,
+          "device": "cpu",
+          "runtime": "independent Transformers/PEFT",
+          "generated_token_ids": [
+            1420,
+            429,
+            253,
+            4870,
+            284,
+            4585,
+            260,
+            4683
+          ],
+          "completion": " light from a star and records the colors",
+          "production_qualified": false
+        }
+      },
+      "adapter": {
+        "identity": {
+          "sha256": "0eb6516862ff123705413292f582f44b0f02398613640063af408db5c04036fa",
+          "byte_size": 3988283
+        },
+        "headers": {},
+        "independent_consumer": {
+          "archive_sha256": "0eb6516862ff123705413292f582f44b0f02398613640063af408db5c04036fa",
+          "adapter": true,
+          "device": "cpu",
+          "runtime": "independent Transformers/PEFT",
+          "generated_token_ids": [
+            1420,
+            429,
+            253,
+            4870,
+            284,
+            4585,
+            260,
+            4683
+          ],
+          "completion": " light from a star and records the colors",
+          "production_qualified": false
+        }
+      },
+      "merged": {
+        "identity": {
+          "sha256": "e0a9858fdb40e91305433d6dd916566dcc2ab5877be167b89f6bf0f49f97d885",
+          "byte_size": 541635035
+        },
+        "headers": {
+          "ETag": "\"e0a9858fdb40e91305433d6dd916566dcc2ab5877be167b89f6bf0f49f97d885\"",
+          "X-Artifact-ID": "01a16a10-81e6-7cda-aa21-3131cb4ac888"
+        },
+        "independent_consumer": {
+          "archive_sha256": "e0a9858fdb40e91305433d6dd916566dcc2ab5877be167b89f6bf0f49f97d885",
+          "adapter": false,
+          "device": "cpu",
+          "runtime": "independent Transformers/PEFT",
+          "generated_token_ids": [
+            1420,
+            429,
+            253,
+            4870,
+            284,
+            4585,
+            260,
+            4683
+          ],
+          "completion": " light from a star and records the colors",
+          "production_qualified": false
+        }
+      },
+      "gguf-q8": {
+        "identity": {
+          "sha256": "94ddc51c7d26e8ecd79310acea8a54fc0fe3c31695756f850445c888388364b4",
+          "byte_size": 148355189
+        },
+        "headers": {
+          "ETag": "\"94ddc51c7d26e8ecd79310acea8a54fc0fe3c31695756f850445c888388364b4\"",
+          "X-Artifact-ID": "01a16a0f-e6ba-7e91-a4c2-9c284279b3b3"
+        },
+        "independent_consumer": {
+          "structure": {
+            "architecture": "llama",
+            "vocabulary_size": 49152,
+            "chat_template": "",
+            "tensor_count": 272,
+            "reader_version": "0.19.0",
+            "validation": "structure-and-payload-bounds",
+            "load_tested": false,
+            "tensor_types": [
+              "F32",
+              "Q8_0"
+            ]
+          },
+          "runtime": "independent llama.cpp completion CLI",
+          "decoded_output": " light from a distant object and records the\n\n",
+          "converter_revision": "f5027fb21307eb264aed483242603d68c87b0fe3",
+          "quantization": "Q8_0",
+          "device": "cpu"
+        }
+      },
+      "json": {
+        "identity": {
+          "sha256": "baff477a8c74b17f7ca33f1eb963a80f8e542973bca16552c2d90ce57c18b065",
+          "byte_size": 6565
+        },
+        "headers": {},
+        "scope": "Manifest references only; not a standalone weight export."
+      }
+    }
+  },
+  "hub_publication": {
+    "state": "held",
+    "reason": "No explicit project publication target/credential or live Hub upload authorization. No network upload attempted."
+  },
+  "archived_identity_refused": true,
+  "completed_training_runs": 2
+}

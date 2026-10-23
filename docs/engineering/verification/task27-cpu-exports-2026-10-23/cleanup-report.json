@@ -1,0 +1,8 @@
+{
+  "fixture_keys_revoked": 1,
+  "project_offline": true,
+  "workers_offline": true,
+  "completed_training_runs": 2,
+  "settled_training_steps": 6,
+  "owned_servers_stopped": true
+}

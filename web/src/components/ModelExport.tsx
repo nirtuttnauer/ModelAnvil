@@ -37,7 +37,7 @@ export function ModelExport({ runId, options, token, checkpointStep, synthetic =
       {busy && <Button type="button" onClick={() => request.current?.abort()}><XCircle size={16} aria-hidden="true" />Cancel download</Button>}
     </div>
     {choice && <p>{choice.description}</p>}
-    <p className="muted">GGUF conversion and merging adapter weights are not available here.</p>
+    <p className="muted">Prepared exports appear when they are ready. Evaluate model quality before release.</p>
     {progress && <div className="model-export-progress">
       <p role="status">{progress.phase === 'choosing' ? 'Choose where to save your export…' : progress.phase === 'preparing' ? 'Preparing and verifying export files…' : progress.phase === 'complete' ? 'Transfer complete' : `Downloading${percent === null ? '' : ` · ${percent}%`}`}</p>
       {progress.phase !== 'choosing' && <progress aria-label="Model export download" {...(progress.phase === 'complete' ? { value: 100, max: 100 } : percent === null ? {} : { value: percent, max: 100 })} />}

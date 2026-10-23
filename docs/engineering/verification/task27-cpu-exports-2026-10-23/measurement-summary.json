@@ -1,0 +1,28 @@
+{
+  "scope": "Bounded corpus regression check only. Pretraining contamination and domain quality remain unqualified.",
+  "metrics": {
+    "baseline": {
+      "weight_bytes": 270885376,
+      "perplexity": 27.1527,
+      "native_generation_peak_rss_bytes": 307904512,
+      "median_cold_generation_wall_seconds": 0.18296662500142702
+    },
+    "quantized": {
+      "weight_bytes": 144810496,
+      "perplexity": 27.1308,
+      "native_generation_peak_rss_bytes": 323878912,
+      "median_cold_generation_wall_seconds": 0.12910554200061597
+    }
+  },
+  "quality_gate": {
+    "metric": "perplexity",
+    "baseline": 27.1527,
+    "quantized": 27.1308,
+    "relative_change": -0.0008065496248991222,
+    "maximum_relative_increase": 0.05,
+    "state": "passed",
+    "production_qualified": false,
+    "scope": "Bounded corpus regression check only. Pretraining contamination and domain quality remain unqualified."
+  },
+  "production_qualified": false
+}

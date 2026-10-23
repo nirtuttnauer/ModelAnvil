@@ -1,0 +1,12 @@
+{
+  "sha256": "60869b19adb8bd51d357269ce3afd8952a8cc4ee90ff9822f9f9394ecaf9604e",
+  "byte_size": 32112,
+  "split": "test",
+  "fixture": false,
+  "source_revision": "b08601e04326c79dfdd32d625aee71d232d685c3",
+  "source_repo": "Salesforce/wikitext",
+  "source_path": "wikitext-2-raw-v1/test-00000-of-00001.parquet",
+  "source_sha256": "5f1bea067869d04849c0f975a2b29c4ff47d867f484f5010ea5e861eab246d91",
+  "license": "CC-BY-SA-3.0 and GFDL, publisher metadata; retain original corpus attribution",
+  "selection": "First 32000 Unicode characters of concatenated official test rows. Never used for these fine-tuning runs; pretraining contamination unknown."
+}

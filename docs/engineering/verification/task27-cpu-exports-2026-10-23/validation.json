@@ -1,0 +1,21 @@
+{
+  "full_backend": {
+    "passed": true,
+    "tests": 1121,
+    "seconds": 276.813,
+    "optional_skips": 11,
+    "database": "file-backed SQLite, same setting as CI",
+    "cpu_thread_environment": 1
+  },
+  "focused_api_export_http": 49,
+  "final_admission_guards": 4,
+  "web_tests": 230,
+  "production_build": true,
+  "storybook_build": true,
+  "system_check": true,
+  "migration_check": true,
+  "diff_check": true,
+  "hub_live_qualification": "proposed TASK-78; not authorized or attempted",
+  "production_qualified": false,
+  "final_export_module_tests": 14
+}
