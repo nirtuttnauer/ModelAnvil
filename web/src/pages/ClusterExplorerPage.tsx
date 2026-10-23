@@ -16,7 +16,7 @@ interface Index { source_pins?: Record<string, unknown>; adapter_type?: string; 
 interface Chunk { chunk_id: string; text: string; score: number; metadata: Record<string, unknown> }
 
 export function ClusterExplorerPage({ token = '', refreshKey = 0 }: { token?: string; refreshKey?: number }) {
-  const draft = useDraft('rag-author', { showForm: false as boolean, name: '', description: '', showImport: false as boolean, baseId: '', documentTitle: '', documentContent: '', sourceUri: '', index: '', query: '', topK: '5' });
+  const draft = useDraft('rag-author', { showForm: false as boolean, name: '', description: '', showImport: false as boolean, baseId: '', documentTitle: '', documentContent: '', sourceUri: '', chunkTokens: '254', overlapTokens: '32', index: '', query: '', topK: '5' });
   const [bases, setBases] = useState<KB[]>([]);
   const [indexes, setIndexes] = useState<Index[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,6 +36,8 @@ export function ClusterExplorerPage({ token = '', refreshKey = 0 }: { token?: st
   const [documentTitle, setDocumentTitle] = draft.field('documentTitle');
   const [documentContent, setDocumentContent] = draft.field('documentContent');
   const [sourceUri, setSourceUri] = draft.field('sourceUri');
+  const [chunkTokens, setChunkTokens] = draft.field('chunkTokens');
+  const [overlapTokens, setOverlapTokens] = draft.field('overlapTokens');
   const [notice, setNotice] = useState('');
   const [retry, setRetry] = useState(0);
   const [evidenceRefresh, setEvidenceRefresh] = useState(0);
@@ -65,7 +67,7 @@ export function ClusterExplorerPage({ token = '', refreshKey = 0 }: { token?: st
   async function importDocument(event: React.FormEvent) {
     event.preventDefault(); setBusy(true); setError(null); clearResults();
     try {
-      const created = await apiRequest<Index>(`/api/v1/knowledge-bases/${baseId}/index/`, token, { method: 'POST', body: JSON.stringify({ documents: [{ title: documentTitle.trim(), content: documentContent, ...(sourceUri.trim() ? { source_uri: sourceUri.trim() } : {}) }] }) });
+      const created = await apiRequest<Index>(`/api/v1/knowledge-bases/${baseId}/index/`, token, { method: 'POST', body: JSON.stringify({ chunk_size: Number(chunkTokens), chunk_overlap: Number(overlapTokens), documents: [{ title: documentTitle.trim(), content: documentContent, ...(sourceUri.trim() ? { source_uri: sourceUri.trim() } : {}) }] }) });
       setIndex(created.index_id); setShowImport(false); setDocumentContent(''); setRetry(value => value + 1);
       setNotice(`Index r${created.revision_no} ready · ${created.chunk_count} source-linked chunks.`);
     } catch(e) { setError(errorMessage(e)); } finally { setBusy(false); }
@@ -100,7 +102,8 @@ export function ClusterExplorerPage({ token = '', refreshKey = 0 }: { token?: st
         <label>Document title<Field required maxLength={255} value={documentTitle} onChange={event => setDocumentTitle(event.target.value)} /></label>
         <label>Source identifier (optional)<Field maxLength={512} value={sourceUri} onChange={event => setSourceUri(event.target.value)} placeholder="Stable identifier for future revisions" /></label>
         <label className="full-width">Document text<MultilineField required rows={8} maxLength={500000} value={documentContent} onChange={event => setDocumentContent(event.target.value)} /></label>
-        <p className="muted full-width">Text is indexed locally with exact source spans and content hashes. Reusing a source identifier creates a document revision. Each index keeps its original chunk membership.</p>
+        <label>Chunk size (MiniLM tokens)<Field type="number" required min="16" max="4096" value={chunkTokens} onChange={e => setChunkTokens(e.target.value)} /></label><label>Maximum overlap (tokens)<Field type="number" required min="0" max={Math.floor(Number(chunkTokens) / 2)} value={overlapTokens} onChange={e => setOverlapTokens(e.target.value)} /></label>
+        <p className="muted full-width">The bundled, pinned MiniLM WordPiece tokenizer runs offline, preferring paragraph and sentence boundaries. Limits count content tokens without model special tokens. Text is indexed locally with exact source spans and content hashes. Reusing an unchanged source identifier preserves its document revision; changed content creates a revision. Rechunking keeps older index memberships intact. Each index keeps its original chunk membership.</p>
         <Button className="primary" disabled={busy || !baseId || !documentTitle.trim() || !documentContent.trim()}>{busy ? 'Building index…' : 'Build lexical index'}</Button>
       </form>}
       {knowledgeBases}

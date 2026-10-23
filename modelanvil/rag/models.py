@@ -57,6 +57,7 @@ class DocumentChunk(TenantContextModel):
     chunk_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     document = models.ForeignKey(SourceDocument, on_delete=models.CASCADE, related_name="chunks")
     chunk_index = models.PositiveIntegerField()
+    recipe_digest = models.CharField(max_length=64, default="", blank=True)
     text = models.TextField()
     content_hash = models.CharField(max_length=64)
     span_start = models.PositiveIntegerField(default=0)
@@ -67,7 +68,7 @@ class DocumentChunk(TenantContextModel):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=("document", "chunk_index"), name="chunk_doc_index_uniq")
+            models.UniqueConstraint(fields=("document", "recipe_digest", "chunk_index"), name="chunk_doc_recipe_index_uniq")
         ]
 
     def __str__(self) -> str:

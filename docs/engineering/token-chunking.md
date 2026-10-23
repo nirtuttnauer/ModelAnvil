@@ -1,0 +1,9 @@
+# Token-based RAG chunks
+
+Knowledge-base import now uses a bundled, immutable MiniLM WordPiece tokenizer. The UI and API accept chunk size and maximum overlap in **content tokens**. Defaults are 254 and 32; sizes range from 16 to 4096, and overlap cannot exceed half the size. Chunk text and spans preserve the exact original Unicode source. Paragraph/sentence boundaries are preferred without breaking the token bound; actual overlap can be smaller than requested and is recorded per chunk. Padding, truncation and added special tokens are disabled.
+
+The source tokenizer is [all-MiniLM-L6-v2 at the immutable revision](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/tree/1110a243fdf4706b3f48f1d95db1a4f5529b4d41), paired with [Tokenizers 0.22.2 offset APIs](https://github.com/huggingface/tokenizers/blob/v0.22.2/bindings/python/py_src/tokenizers/__init__.pyi). Bundled bytes, package version and recipe digest are checked and exposed in the frozen receipt. Runtime chunking has no network fetch. The asset notice and Apache-2.0 license are under `modelanvil/rag/assets/`.
+
+Supply a stable source identifier to reuse an unchanged document revision. Changed content creates a source revision; changed chunk settings create another immutable chunk set on the same source revision. Older indexes preserve their original membership and continue respecting current access, revocation and tombstones. Reindexing includes all current source documents under the selected recipe. Active text is bounded to 2 MB per local index and output to 10,000 chunks; the operation is atomic. Old character-based indexes retain their recorded recipe.
+
+Chunk content tokens do not include an inference runtime's special tokens or establish its context capacity. Embedding execution and semantic quality are separate TASK-67 work. See [actual Unicode/reimport/rechunk verification](verification/task66-token-chunks-2026-10-23/report.md).

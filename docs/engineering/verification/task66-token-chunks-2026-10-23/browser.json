@@ -1,0 +1,39 @@
+{
+  "observed_at": "2026-10-23T02:31:37.469Z",
+  "evidence": "actual app/API; authored Unicode source; no external model inference",
+  "index_revisions": [
+    1,
+    2,
+    3
+  ],
+  "unchanged_manifest_reused": true,
+  "document_revision_unchanged_on_rechunk": true,
+  "old_index_query_retained": true,
+  "original_unicode_spans_preserved": true,
+  "tokenizer": {
+    "model": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+    "library": "tokenizers",
+    "version": "0.22.2",
+    "add_special_tokens": false,
+    "truncation": false,
+    "padding": false
+  },
+  "token_windows": [
+    [
+      32,
+      8
+    ],
+    [
+      20,
+      3
+    ]
+  ],
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_overflow": false,
+  "page_errors": []
+}

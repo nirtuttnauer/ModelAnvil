@@ -49,7 +49,7 @@ class RagWorkflowTests(TestCase):
         trace=QueryTrace.all_objects.get(trace_id=data['trace_id'])
         self.assertEqual(trace.retrieved_chunk_ids,[str(self.alpha.chunk_id)])
         self.assertEqual(trace.answer,'');self.assertEqual(trace.reranked_chunk_ids,[])
-        self.assertEqual(self.index.configuration['chunk_recipe'],'character-slices-v1')
+        self.assertEqual(self.index.configuration['chunk_recipe'],'minilm-wordpiece-spans-v1')
         self.assertTrue(self.index.configuration['source_scope']['current_permissions_required'])
         self.assertEqual(len(self.index.configuration['source_revisions']),2)
         history=self.client.get(self.path(action='traces')).json()['results']
