@@ -9,7 +9,7 @@ from django.utils import timezone
 from modelanvil.annotation.models import ApplicationFeedback, ApplicationFeedbackPolicy, AnnotationRecord, AnnotationTask, LabelSchema, RubricRevision
 from modelanvil.annotation.campaign_engine import CampaignEngine
 from modelanvil.core.privacy import project_policy
-from modelanvil.identity.models import check_resource_access
+from modelanvil.identity.models import check_resource_access, get_accessible_queryset
 from modelanvil.runners.models import EvaluationSuiteVersion
 
 DEVELOPMENT_ROLES = {'development','development_inspected','training_feedback_inspected'}
@@ -33,12 +33,12 @@ def policy(project):
 
 def protected_source(event,prompt=None):
     if event.origin_role=='final_test':return True
-    if ApplicationFeedback.all_objects.filter(tenant_id=event.tenant_id,origin_role='final_test',source_group_digest=event.source_group_digest).exists():return True
-    for suite in EvaluationSuiteVersion.all_objects.filter(tenant_id=event.tenant_id).exclude(protected_role__in=DEVELOPMENT_ROLES):
+    if get_accessible_queryset(ApplicationFeedback,project_id=event.project_id,tenant_id=event.tenant_id).filter(origin_role='final_test',source_group_digest=event.source_group_digest).exists():return True
+    for suite in get_accessible_queryset(EvaluationSuiteVersion,project_id=event.project_id,tenant_id=event.tenant_id).exclude(protected_role__in=DEVELOPMENT_ROLES):
         for case in suite.cases:
             if not isinstance(case,dict):continue
             if (case.get('source_group_id')==event.source_group_id
-                    or event.prompt_digest and prompt_fingerprint(event.tenant_id,case.get('input_prompt',''))==event.prompt_digest):
+                    or event.prompt_digest and isinstance(case.get('input_prompt'),str) and prompt_fingerprint(event.tenant_id,case['input_prompt'])==event.prompt_digest):
                 return True
     return False
 
@@ -46,12 +46,13 @@ def protected_source(event,prompt=None):
 def require_live(event):
     if event.deleted_at or event.expires_at<=timezone.now():raise ValueError('This feedback has expired or been deleted.')
     if protected_source(event):raise ValueError('Final-test cases and their source groups cannot enter training feedback.')
+    if event.evaluation_suite_id and not check_resource_access(event.evaluation_suite,event.project_id,event.tenant_id):raise ValueError('The original evaluation source is no longer accessible.')
     if not check_resource_access(event.model_version,event.project_id,event.tenant_id):raise ValueError('The original model version is no longer accessible.')
 
 
 def assert_uninspected_cases(tenant,cases):
     if not isinstance(cases,list) or any(not isinstance(c,dict) for c in cases):raise ValueError('Supply a list of evaluation cases.')
-    exposed=ApplicationFeedback.all_objects.filter(tenant_id=tenant)
+    exposed=get_accessible_queryset(ApplicationFeedback,tenant_id=tenant)
     groups={fingerprint(tenant,c['source_group_id']) for c in cases if isinstance(c.get('source_group_id'),str) and c['source_group_id']}
     prompts={prompt_fingerprint(tenant,c.get('input_prompt','')) for c in cases if isinstance(c.get('input_prompt'),str) and c['input_prompt']}
     if exposed.filter(Q(source_group_digest__in=groups)|Q(prompt_digest__in=prompts)).exists():
@@ -131,7 +132,8 @@ def artifact_live(artifact):
     # A second registry row for the same storage object cannot strip expiry.
     ids=set(Artifact.all_objects.filter(tenant_id=artifact.tenant_id,storage_location_id=artifact.storage_location_id,
         object_key=artifact.object_key,metadata__has_key='application_feedback_id').values_list('metadata__application_feedback_id',flat=True))
-    if artifact.metadata.get('application_feedback_id'):ids.add(artifact.metadata['application_feedback_id'])
+    ids.discard(None)
+    if isinstance(artifact.metadata,dict) and artifact.metadata.get('application_feedback_id'):ids.add(artifact.metadata['application_feedback_id'])
     for id in ids:
         event=ApplicationFeedback.all_objects.select_related('model_version').filter(tenant_id=artifact.tenant_id,feedback_id=id).first()
         if not event or event.project_id!=artifact.project_id:raise ValueError('Feedback artifact source is unavailable.')

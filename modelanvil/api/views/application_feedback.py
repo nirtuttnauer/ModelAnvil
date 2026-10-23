@@ -14,6 +14,10 @@ from modelanvil.identity.models import Role, get_accessible_queryset, role_at_le
 from modelanvil.runners.models import ModelVersion, EvaluationSuiteVersion
 
 
+def audit(request,action,resource,id,**detail):
+    record_audit(action,resource,id,actor_id=request.modelanvil_actor_id,actor_kind=request.modelanvil_actor_kind,input_snapshot=detail)
+
+
 class ContentInput(StrictInput):
     prompt=serializers.CharField(max_length=16000,trim_whitespace=False)
     prediction=serializers.CharField(max_length=16000,trim_whitespace=False,allow_blank=True)
@@ -50,6 +54,8 @@ class PolicyInput(StrictInput):
 
 
 class FeedbackSerializer(serializers.ModelSerializer):
+    model_version_id=serializers.UUIDField(source='model_version.model_version_id',read_only=True)
+    evaluation_suite_id=serializers.UUIDField(source='evaluation_suite.suite_version_id',read_only=True,allow_null=True)
     campaign_id=serializers.UUIDField(source='campaign.campaign_id',read_only=True,allow_null=True)
     review_state=serializers.SerializerMethodField()
     def get_review_state(self,event):
@@ -66,7 +72,7 @@ class FeedbackSerializer(serializers.ModelSerializer):
         return data
     class Meta:
         model=ApplicationFeedback
-        fields=('feedback_id','application','application_version','source_id','source_group_id','rubric','verdict',
+        fields=('feedback_id','model_version_id','evaluation_suite_id','application','application_version','source_id','source_group_id','rubric','verdict',
             'origin_role','evaluation_role','evaluation_case_id','content_collected','campaign_id','review_state','expires_at','deleted_at','cleanup_pending','created_at')
         read_only_fields=fields
 
@@ -88,7 +94,7 @@ class ApplicationFeedbackViewSet(TenantScopedViewSet):
         if not model or values.get('evaluation_suite') and not suite:raise NotFound()
         try:event,created=workflow.ingest(project=project,principal=str(request.modelanvil_actor_id),values=values,model=model,suite=suite)
         except ValueError as exc:raise serializers.ValidationError(str(exc)) from exc
-        record_audit('create','application_feedback',event.feedback_id,input_snapshot={'content_collected':event.content_collected,'deduplicated':not created})
+        audit(request,'create','application_feedback',event.feedback_id,content_collected=event.content_collected,deduplicated=not created)
         response=Response(self.get_serializer(event).data,status=201 if created else 200);response['Cache-Control']='no-store';return response
     @action(detail=False,methods=['get','post'])
     @transaction.atomic
@@ -100,14 +106,14 @@ class ApplicationFeedbackViewSet(TenantScopedViewSet):
             if form.validated_data['retention_days']>maximum:raise serializers.ValidationError('Feedback retention cannot exceed the project privacy retention period.')
             ApplicationFeedbackPolicy.all_objects.update_or_create(tenant_id=project.tenant_id,project=project,defaults=form.validated_data)
             workflow.shorten_retention(project,form.validated_data['retention_days'])
-            record_audit('update','application_feedback_policy',project.pk,input_snapshot=form.validated_data)
+            audit(request,'update','application_feedback_policy',project.pk,**form.validated_data)
         return Response({**workflow.policy(project),'can_administer':role_at_least(request.modelanvil_role,Role.ADMIN)})
     def destroy(self,request,*args,**kwargs):
         event=self.get_object();workflow.erase(event)
-        record_audit('delete','application_feedback',event.feedback_id,input_snapshot={'content_erased':True})
+        audit(request,'delete','application_feedback',event.feedback_id,content_erased=True)
         event.refresh_from_db();return Response({'feedback_id':str(event.feedback_id),'cleanup_pending':event.cleanup_pending})
     @action(detail=False,methods=['post'])
     def purge(self,request):
         if request.data!={'confirm':'delete_expired_feedback'}:raise serializers.ValidationError('Confirm delete_expired_feedback, including its owned review and published source artifacts.')
-        project=project_scope();count=workflow.purge(project);record_audit('delete','expired_application_feedback',project.pk,input_snapshot={'count':count})
+        project=project_scope();count=workflow.purge(project);audit(request,'delete','expired_application_feedback',project.pk,count=count)
         return Response({'deleted_feedback':count})

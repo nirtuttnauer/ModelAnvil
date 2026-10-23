@@ -271,7 +271,7 @@ export function AnnotationPage({ token, refreshKey }: { token: string; refreshKe
   }
 
   return <><div className="page-actions">{!reviewOnly && <Button className="primary" disabled={loading || busy} onClick={() => setSetup(v => !v)}>{setup ? 'Close setup' : 'New campaign'}</Button>}</div>
-  <ApplicationFeedback key={token} token={token} refreshKey={refreshKey} reviewOnly={reviewOnly} onReview={id => { feedbackReview.current = id; selectCampaign(id); setRetry(v => v + 1); }} onDeleted={() => { reviewDraft.discard(); selectCampaign(''); setRetry(v => v + 1); }} />
+  <ApplicationFeedback key={token} token={token} refreshKey={refreshKey} reviewOnly={reviewOnly} onReview={id => { feedbackReview.current = id; selectCampaign(id); setRetry(v => v + 1); }} onDeleted={id => { if (id && id === campaignId) { reviewDraft.discard(); selectCampaign(''); } setRetry(v => v + 1); }} />
   <Card className="panel annotation-page">
     <div className="panel-body">
       <>{handoffError && <p role="alert">{handoffError}</p>}{!online && <p role="status">Offline. Your edits stay in this tab; reconnect before saving a review.</p>}</><ResourceState loading={loading} error={error} onRetry={() => { setRetry(v => v + 1); setQueueRetry(v => v + 1); }} />

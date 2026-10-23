@@ -1,0 +1,19 @@
+{
+  "private_review_has_session_backup": false,
+  "accept_original_failure_action_hidden": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "overflow": false,
+  "actual_review_publication": true,
+  "deleted_owned_feedback": [
+    "01a16706-1739-72a1-9931-41ab9fb29eb3",
+    "01a16704-f97b-7736-a03d-634028489acc"
+  ],
+  "owned_input_download_after_delete": 404,
+  "owned_campaign_after_delete": 404,
+  "collection_restored_disabled": true,
+  "content_collection_restored_disabled": true,
+  "browser_errors": 0
+}

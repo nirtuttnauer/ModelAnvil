@@ -64,6 +64,8 @@ class ApplicationFeedbackTests(TestCase):
         response=self.client.post(self.url,values,format='json');self.assertEqual(response.status_code,201,response.content)
         self.assertEqual(response.json()['review_state'],'metadata_only');self.assertEqual(AnnotationTask.all_objects.count(),0)
         self.policy();self.assertEqual(self.client.post(self.url,self.payload(event_id='two',content_consent=False),format='json').status_code,400)
+        for prompt in ['x'*16001,'漢'*12000]:
+            self.assertEqual(self.client.post(self.url,self.payload(event_id='oversize',content={'prompt':prompt,'prediction':'bad'}),format='json').status_code,400)
         self.assertEqual(self.client.post(self.url,self.payload(event_id='two',authorized=False),format='json').status_code,400)
 
     def test_original_prediction_preserved_and_only_correction_publishes_immutable_training(self):
@@ -160,6 +162,31 @@ class ApplicationFeedbackTests(TestCase):
         task=AnnotationTask.all_objects.get(campaign=event.campaign)
         self.assertEqual(task.content['draft_prediction']['predicted_label'],'')
         self.review_publish(event)
+
+    def test_unrelated_private_project_group_names_do_not_leak_or_block_each_other(self):
+        self.policy();self.ingest()
+        self.scope(self.other)
+        body={'name':'Other private project control','cases':[{'case_id':'one','source_group_id':'development-group',
+            'input_prompt':'Other private project case','expected_output':'ok'}],'protected_role':'protected_eval'}
+        response=self.client.post('/api/v1/evaluation-suites/register-cpu/',body,format='json')
+        self.assertEqual(response.status_code,201,response.content)
+        self.scope(self.project)
+        self.ingest(event_id='second-same-project-event')
+
+    def test_feedback_artifact_provenance_cannot_be_removed_or_forged(self):
+        self.policy();event=self.ingest();snapshot=self.review_publish(event);artifact=snapshot.dataset_revision.manifest_artifact
+        response=self.client.patch(f'/api/v1/artifacts/{artifact.artifact_id}/',{'metadata':{}},format='json')
+        self.assertEqual(response.status_code,400,response.content)
+        values={'storage_location_id':'local','object_key':'unowned.json','sha256':'a'*64,'byte_size':1,'media_type':'application/json'}
+        for metadata in [[],{'application_feedback_id':str(event.feedback_id)}]:
+            response=self.client.post('/api/v1/artifacts/',{**values,'metadata':metadata},format='json')
+            self.assertEqual(response.status_code,400,response.content)
+        from modelanvil.runners.training.runtime import read_artifact
+        ApplicationFeedback.all_objects.filter(pk=event.pk).update(expires_at=timezone.now()-timedelta(seconds=1))
+        with self.assertRaises(ValueError):read_artifact(artifact,event.tenant_id,self.project.pk)
+        from modelanvil.artifacts.worker_access import require_feedback_artifact
+        from rest_framework.exceptions import PermissionDenied
+        with self.assertRaises(PermissionDenied):require_feedback_artifact(artifact)
 
 
 @tag('pg')

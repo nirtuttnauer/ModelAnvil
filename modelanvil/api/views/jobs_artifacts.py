@@ -326,9 +326,11 @@ class JobAttemptViewSet(viewsets.ReadOnlyModelViewSet):
 
 class ArtifactSerializer(serializers.ModelSerializer):
     def validate(self,attrs):
+        if not isinstance(attrs.get('metadata',{}),dict):
+            raise serializers.ValidationError({'metadata':'Use an object for artifact metadata.'})
         if attrs.get('metadata',{}).get('application_feedback_id'):
             raise serializers.ValidationError('Application feedback provenance is server-owned.')
-        if self.instance and self.instance.metadata.get('application_feedback_id'):
+        if self.instance and isinstance(self.instance.metadata,dict) and self.instance.metadata.get('application_feedback_id'):
             raise serializers.ValidationError('Manage application feedback artifacts through their owned feedback record.')
         return attrs
     class Meta:
