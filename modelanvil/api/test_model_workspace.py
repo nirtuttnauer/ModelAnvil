@@ -103,6 +103,30 @@ class ModelWorkspaceTests(TransactionTestCase):
             'prompt_format': 'plain', 'device': 'mlx:0', '_runtime': {'private': 'observations'}}),
             {'max_tokens': 4, 'temperature': 0, 'seed': 42, 'prompt_format': 'plain'})
 
+    def test_operator_gpu_bases_use_exact_source_files_without_managed_flag(self):
+        from modelanvil.runners.inference import snapshot
+        from modelanvil.runners.training import hf_runtime, mlx_runtime
+        imported = self.import_model()
+        version = ModelVersion.all_objects.get(model_version_id=imported.data['candidate_id'])
+        hashes = {name: ref['sha256'] for name, ref in self.files.items()}
+        for profile, format in ((hf_runtime, 'safetensors'), (mlx_runtime, 'mlx')):
+            manifest = _store(io.BytesIO(json.dumps({'source': profile.SOURCE, 'files': self.files}).encode()),
+                              tenant=self.tenant.pk, project=self.project.pk, name='snapshot.json')
+            version.architecture_ref = profile.RUNTIME_ID
+            version.artifact_manifest_id = manifest['artifact_id']
+            version.metadata = {'source': profile.SOURCE, 'snapshot_manifest': manifest}
+            ModelVersion.all_objects.filter(pk=version.pk).update(architecture_ref=version.architecture_ref,
+                artifact_manifest_id=version.artifact_manifest_id, metadata=version.metadata)
+            with patch.object(profile, 'FILE_HASHES', hashes):
+                self.assertEqual(snapshot(version, self.tenant.pk, self.project.pk)['format'], format)
+                if profile is hf_runtime:
+                    row = self.client.get(f'/api/v1/model-versions/{version.model_version_id}/').data
+                    self.assertTrue(row['capabilities']['train']['eligible'], row['capabilities'])
+                    self.assertIn(str(version.model_version_id), [row['id'] for row in self.client.get('/api/v1/inference/models/').data['data']])
+            with patch.object(profile, 'FILE_HASHES', {**hashes, 'config.json': '0' * 64}):
+                with self.assertRaises(ValueError):
+                    snapshot(version, self.tenant.pk, self.project.pk)
+
     def test_stream_withholds_prefetched_output_after_authority_or_input_changes(self):
         from django.utils import timezone
         from datetime import timedelta

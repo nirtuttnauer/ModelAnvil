@@ -1,0 +1,2179 @@
+{
+  "scope": "Three-step GPU execution/recovery mechanics on Apple M5 Pro with authored source-group-held-out text; no domain or production qualification. QLoRA quality fails versus the unquantized base.",
+  "corpus_sha256": "4c3262c4da22005467e659cb184ddbfb10785e207f35f6c0f71b365a197c052b",
+  "host": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "machine": "arm64",
+    "processor": "arm",
+    "system": "Darwin",
+    "release": "27.0.0",
+    "cpu_brand": "Apple M5 Pro",
+    "logical_cores": 18,
+    "physical_cores": 18,
+    "total_memory_bytes": 51539607552,
+    "python": {
+      "version": "3.12.15",
+      "implementation": "CPython",
+      "compiler": "Clang 22.1.3 "
+    }
+  },
+  "corpus_groups": 20,
+  "recipes": {
+    "full_sft": {
+      "numerical_source_main": "ecc9bd103902e7e4814b7da0250981c87d96431c",
+      "source_build_digest_verified": true,
+      "run_id": "01a16a9a-5bd9-70a3-b616-e4863b3b795d",
+      "candidate": "01a16a9a-8327-72d0-99f3-de28997f1444",
+      "pins": {
+        "runtime": "modelanvil.smollm2-gpu-sft.v1",
+        "contract_digest": "563cb3bb9995d4fac2714a78189582163c55d490208f0ce23d6f05feab29d6f2",
+        "build_digest": "6654d264e3bc39d3f90949caade5279521cb9f8d1e81466225c3100cebdac8fe",
+        "dataset_id": "01a16a9a-5863-7e5e-a799-986eff15d9cc",
+        "dataset_digest": "c379ab03e68825362fe6892b41b031eae72374b5077885d9fd369cd47c554fab",
+        "base_id": "01a16a9a-585a-76d5-87ee-ae7ae4725ff7",
+        "base_artifact_id": "01a16a9a-52e0-7406-aa41-67183782628b",
+        "base_digest": "25394011b3f03535d8f3725e7de4325c1bba5bd73d5cacf5e5a53ff56facf5e9",
+        "tokenizer_id": "01a16a9a-5858-72e9-a376-da9bc8c8dc62",
+        "tokenizer_digest": "46e8c05ba12813b47f3dfbec68bc21ec11f35e9169ef117ffb0eecae1e4e59f9",
+        "runner_id": "01a16a9a-5864-77fe-ab98-741e0620590b",
+        "runner_digest": "814df89b62520f1f1bd06e3338bac6b0fcbbcf0536b18864965ebacd07862651",
+        "pool_id": 1,
+        "steps": 3,
+        "config": {
+          "architectures": [
+            "LlamaForCausalLM"
+          ],
+          "attention_bias": false,
+          "attention_dropout": 0.0,
+          "bos_token_id": 0,
+          "eos_token_id": 0,
+          "hidden_act": "silu",
+          "hidden_size": 576,
+          "initializer_range": 0.041666666666666664,
+          "intermediate_size": 1536,
+          "is_llama_config": true,
+          "max_position_embeddings": 8192,
+          "model_type": "llama",
+          "num_attention_heads": 9,
+          "num_hidden_layers": 30,
+          "num_key_value_heads": 3,
+          "pretraining_tp": 1,
+          "rms_norm_eps": 1e-05,
+          "rope_interleaved": false,
+          "rope_scaling": null,
+          "rope_theta": 100000,
+          "tie_word_embeddings": true,
+          "torch_dtype": "bfloat16",
+          "transformers_version": "4.40.1",
+          "use_cache": true,
+          "vocab_size": 49152,
+          "runtime": "modelanvil.smollm2-gpu-sft.v1"
+        },
+        "optimizer": {
+          "algorithm": "adamw",
+          "learning_rate": 2e-05,
+          "beta1": 0.9,
+          "beta2": 0.999,
+          "epsilon": 1e-08,
+          "weight_decay": 0.0
+        },
+        "sample_digest": "dae3838574a9cbc7e2a71a952acb5f0cc08846fd071b07aa075953da2719fb40",
+        "splits": {
+          "consumed": "train",
+          "train_rows": 13,
+          "excluded_rows": {
+            "test": 4,
+            "validation": 3
+          },
+          "excluded_digest": "d6d8c903b82db5739143be876afb325555dfe688094c762812f350f558574471"
+        },
+        "accelerator": {
+          "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+          "host": {
+            "system": "Darwin",
+            "machine": "arm64",
+            "release": "27.0.0"
+          },
+          "device": {
+            "id": "mps:0",
+            "backend": "mps",
+            "torch_device": "mps:0",
+            "name": "Metal Performance Shaders device",
+            "vendor": "Apple",
+            "total_memory_bytes": null,
+            "memory_scope": "shared_unified",
+            "runtime_recommended_memory_bytes": 40200896512
+          },
+          "framework": {
+            "name": "torch",
+            "version": "2.13.0",
+            "cuda_version": null,
+            "hip_version": null
+          },
+          "packages": {
+            "torch": "2.13.0",
+            "transformers": "5.14.0",
+            "safetensors": "0.8.0",
+            "tokenizers": "0.22.2"
+          },
+          "capacity_source": "MPS recommended shared-memory budget"
+        },
+        "worker_id": 1,
+        "chat_sft": false,
+        "recipe": "full_sft"
+      },
+      "metrics": [
+        {
+          "step": 1,
+          "loss": 3.8208513259887695,
+          "post_update_loss": 2.9352970123291016,
+          "sample_id": "3b1ad0b2-cb4f-5474-a300-bc8cf916109b",
+          "training_pairs": 6,
+          "cpu_seconds": 0.30154699999999934,
+          "engine_wall_seconds": 1.4054565830010688,
+          "gpu_backend": "mps",
+          "gpu_device": "mps:0",
+          "device_residency_checked": true,
+          "gradient_norm": 144.99830627441406,
+          "trainable_parameters": 134515008,
+          "total_parameters": 134515008,
+          "measured_at": "2026-10-23T21:11:05.497770+00:00",
+          "peak_allocated_bytes": null,
+          "peak_reserved_bytes": null,
+          "gpu_allocated_bytes": 2236342016,
+          "tokens_per_second": 4.26907531158893,
+          "gpu_utilization_percent": null,
+          "unified_memory": {
+            "recommended_bytes": 40200896512,
+            "process_limit_bytes": 36180806860,
+            "driver_allocated_bytes": 3378642944,
+            "process_headroom_bytes": 32802163916,
+            "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+          },
+          "updates_since_checkpoint": 1
+        },
+        {
+          "step": 2,
+          "loss": 3.1829216480255127,
+          "post_update_loss": 2.4483723640441895,
+          "sample_id": "6c7c1c43-9078-5197-a3d8-a7a36beb51e4",
+          "training_pairs": 8,
+          "cpu_seconds": 0.17046399999999906,
+          "engine_wall_seconds": 0.5662121249988559,
+          "gpu_backend": "mps",
+          "gpu_device": "mps:0",
+          "device_residency_checked": true,
+          "gradient_norm": 140.66348266601562,
+          "trainable_parameters": 134515008,
+          "total_parameters": 134515008,
+          "measured_at": "2026-10-23T21:11:07.860522+00:00",
+          "peak_allocated_bytes": null,
+          "peak_reserved_bytes": null,
+          "gpu_allocated_bytes": 2236434432,
+          "tokens_per_second": 14.128980371121804,
+          "gpu_utilization_percent": null,
+          "unified_memory": {
+            "recommended_bytes": 40200896512,
+            "process_limit_bytes": 36180806860,
+            "driver_allocated_bytes": 3405709312,
+            "process_headroom_bytes": 32775097548,
+            "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+          },
+          "updates_since_checkpoint": 1
+        },
+        {
+          "step": 3,
+          "loss": 2.797581911087036,
+          "post_update_loss": 2.3820371627807617,
+          "sample_id": "9164d6b8-63b0-55bd-ae83-33993c1c8daa",
+          "training_pairs": 12,
+          "cpu_seconds": 0.17765499999999967,
+          "engine_wall_seconds": 1.012842542000726,
+          "gpu_backend": "mps",
+          "gpu_device": "mps:0",
+          "device_residency_checked": true,
+          "gradient_norm": 95.96726989746094,
+          "trainable_parameters": 134515008,
+          "total_parameters": 134515008,
+          "measured_at": "2026-10-23T21:11:10.692783+00:00",
+          "peak_allocated_bytes": null,
+          "peak_reserved_bytes": null,
+          "gpu_allocated_bytes": 2236262400,
+          "tokens_per_second": 11.847843571317325,
+          "gpu_utilization_percent": null,
+          "unified_memory": {
+            "recommended_bytes": 40200896512,
+            "process_limit_bytes": 36180806860,
+            "driver_allocated_bytes": 3426222080,
+            "process_headroom_bytes": 32754584780,
+            "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+          },
+          "updates_since_checkpoint": 1
+        }
+      ],
+      "checkpoints": [
+        {
+          "step": 1,
+          "state_digest": "9fe3501ff0bf4a001aad22efb4ed879952e21dac4c0706a63f8dc7b9b5a54400",
+          "weights_sha256": "2251d4174928a2ad6b3cef1df2f93165696b48cc0b66887c4295813fac66d704"
+        },
+        {
+          "step": 2,
+          "state_digest": "c0f22cae67b02d9620181fce61f3f63d0d69ed6dd8d4b507b671b61ca9178e70",
+          "weights_sha256": "ca639f8a481c4a5b968128095925fcf8116b13ac88d358dcd0a84627009e9747"
+        },
+        {
+          "step": 3,
+          "state_digest": "29b22009ad2161bf22eb36b8f76b196a6db1920b975f2e2909dfb94a17f9a420",
+          "weights_sha256": "3bc5b37092041f3c38fc3782b76e00be79af2375a345897c539c402fd700272f"
+        }
+      ],
+      "bundle_files": {
+        "config.json": {
+          "artifact_id": "01a16a9a-52d8-71dd-a8d1-737399f1c62f",
+          "byte_size": 704,
+          "sha256": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843"
+        },
+        "model.safetensors": {
+          "artifact_id": "01a16a9a-7b24-71d6-8527-b1de3f076986",
+          "sha256": "3bc5b37092041f3c38fc3782b76e00be79af2375a345897c539c402fd700272f",
+          "byte_size": 538090408
+        },
+        "special_tokens_map.json": {
+          "artifact_id": "01a16a9a-52df-717d-9b5e-a84cb08106b6",
+          "byte_size": 831,
+          "sha256": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3"
+        },
+        "tokenizer.json": {
+          "artifact_id": "01a16a9a-52db-7168-883b-5b11b022b7ef",
+          "byte_size": 2104556,
+          "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+        },
+        "tokenizer_config.json": {
+          "artifact_id": "01a16a9a-52de-7b21-927d-24320d2b2c7f",
+          "byte_size": 3658,
+          "sha256": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424"
+        }
+      },
+      "source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "independent_cpu": {
+        "weights_sha256": "3bc5b37092041f3c38fc3782b76e00be79af2375a345897c539c402fd700272f",
+        "prompt": "Once upon a time",
+        "file_hashes": {
+          "model.safetensors": "3bc5b37092041f3c38fc3782b76e00be79af2375a345897c539c402fd700272f",
+          "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+          "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+          "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+          "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3"
+        },
+        "generated_token_ids": [
+          28,
+          665,
+          436,
+          253,
+          1838,
+          8180,
+          3365,
+          14176
+        ],
+        "completion": ", there was a little girl named Lily",
+        "parameter_count": 134515008,
+        "execution": {
+          "backend": "cpu",
+          "device": "cpu",
+          "precision": "fp32",
+          "device_residency_checked": true,
+          "wall_seconds": 0.08878050000203075,
+          "allocated_bytes": null
+        },
+        "consumer_imported_modelanvil_or_django": false,
+        "scope": "Independent process, cpu FP32 inference from actual GPU-produced candidate; no quality or production claim."
+      },
+      "independent_gpu": {
+        "weights_sha256": "3bc5b37092041f3c38fc3782b76e00be79af2375a345897c539c402fd700272f",
+        "prompt": "Once upon a time",
+        "file_hashes": {
+          "model.safetensors": "3bc5b37092041f3c38fc3782b76e00be79af2375a345897c539c402fd700272f",
+          "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+          "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+          "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+          "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3"
+        },
+        "generated_token_ids": [
+          28,
+          665,
+          436,
+          253,
+          1838,
+          8180,
+          3365,
+          14176
+        ],
+        "completion": ", there was a little girl named Lily",
+        "parameter_count": 134515008,
+        "execution": {
+          "backend": "mps",
+          "device": "mps:0",
+          "precision": "fp32",
+          "device_residency_checked": true,
+          "wall_seconds": 0.2543841250007972,
+          "allocated_bytes": 538060800,
+          "driver_allocated_bytes": 1116635136,
+          "recommended_bytes": 40200896512,
+          "process_headroom_bytes": 35064171724
+        },
+        "consumer_imported_modelanvil_or_django": false,
+        "scope": "Independent process, mps:0 FP32 inference from actual GPU-produced candidate; no quality or production claim."
+      },
+      "recovery": {
+        "recovery": {
+          "run_id": "01a16a9a-b33b-7990-8a04-c9e8ddd1fbf4",
+          "attempts": 2,
+          "final_weights_sha256": "3bc5b37092041f3c38fc3782b76e00be79af2375a345897c539c402fd700272f",
+          "exactly_matches_uninterrupted": true,
+          "steps": 3
+        },
+        "cancel": {
+          "run_id": "01a16a9a-e189-751e-bbdc-071391af39d9",
+          "steps": 1,
+          "settled": "1.000000",
+          "candidate": null
+        },
+        "corruption": {
+          "run_id": "01a16a9a-f180-7ffd-a004-9b0ada897858",
+          "steps": 0,
+          "settled": "0",
+          "candidate": null
+        },
+        "scope": "Real mps:0 SmolLM2 GPU worker, isolated database, live fencing/cancellation/corruption/accounting. Does not qualify other vendors or production scheduling."
+      },
+      "quality": {
+        "runtime": "torch",
+        "unquantized_base": null,
+        "quantization_checks_within_five_percent": null,
+        "overall_quality_passed": true,
+        "samples_sha256": "a595801e9b1f6d5c12ec73a461fd9da730ccbc322782f929d0fab6d4d25293db",
+        "dataset_digest": "c379ab03e68825362fe6892b41b031eae72374b5077885d9fd369cd47c554fab",
+        "source_groups": {
+          "gpu77-authored-0": "validation",
+          "gpu77-authored-1": "validation",
+          "gpu77-authored-2": "test",
+          "gpu77-authored-3": "train_consumed",
+          "gpu77-authored-4": "test",
+          "gpu77-authored-5": "train_consumed",
+          "gpu77-authored-6": "train_consumed",
+          "gpu77-authored-11": "validation",
+          "gpu77-authored-15": "test",
+          "gpu77-authored-19": "test"
+        },
+        "base": {
+          "validation": {
+            "negative_log_likelihood": 75.27407479286194,
+            "prediction_tokens": 20,
+            "samples": 3,
+            "loss": 3.763703739643097
+          },
+          "test": {
+            "negative_log_likelihood": 120.51491045951843,
+            "prediction_tokens": 29,
+            "samples": 4,
+            "loss": 4.155686567569601
+          },
+          "train_consumed": {
+            "negative_log_likelihood": 82.68712663650513,
+            "prediction_tokens": 26,
+            "samples": 3,
+            "loss": 3.180274101404043
+          }
+        },
+        "candidate": {
+          "validation": {
+            "negative_log_likelihood": 73.37130784988403,
+            "prediction_tokens": 20,
+            "samples": 3,
+            "loss": 3.6685653924942017
+          },
+          "test": {
+            "negative_log_likelihood": 117.54663753509521,
+            "prediction_tokens": 29,
+            "samples": 4,
+            "loss": 4.053332328796387
+          },
+          "train_consumed": {
+            "negative_log_likelihood": 59.57294750213623,
+            "prediction_tokens": 26,
+            "samples": 3,
+            "loss": 2.291267211620624
+          }
+        },
+        "checks": {
+          "consumed_training_loss_decreased": true,
+          "validation_regression_within_five_percent": true,
+          "test_regression_within_five_percent": true
+        },
+        "passed": true,
+        "consumer_imported_modelanvil_or_django": false,
+        "scope": "Independent offline token-weighted loss on explicit consumed train and file-group-held-out text. This bounded corpus/three-step pilot does not establish broader task quality or production qualification."
+      },
+      "current_candidate_api": {
+        "candidate": "01a16a9a-8327-72d0-99f3-de28997f1444",
+        "matches_independent_consumer": true,
+        "completion": {
+          "id": "chatcmpl-01a16aa61c2672cb8b358c2b6fc0d4f3",
+          "created": 1792790636,
+          "model": "01a16a9a-8327-72d0-99f3-de28997f1444",
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": ", there was a little girl named Lily"
+              },
+              "finish_reason": "length"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 4,
+            "completion_tokens": 8,
+            "total_tokens": 12
+          },
+          "modelanvil": {
+            "device": "mps:0",
+            "elapsed_seconds": 0.24526354200133937,
+            "runtime": {
+              "format": "safetensors",
+              "signature": "e18c27c32b1abcf695a86c1156f02e81e997c985201869d4e3b767578961e27d",
+              "input_identity": "3cee724412ea327a5b8428a616ea4ad3470579a41c032f36e6443395aa6c4415",
+              "device": "mps:0",
+              "provenance": {
+                "implementation": {
+                  "inference.py": "36f1401d73b4db961ad3b432f67efb0eff9f57d12303fc0a0cb4453dee29f08f",
+                  "gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+                  "training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+                  "capabilities.py": "6e6c2674e8d5dd2a3cd5752601434cd6c349f08d60fb8502d348c979b3d29239",
+                  "../api/views/model_workspace.py": "c5fb3c5e430635337b179dca8c1c47c3f43a62e3f72fe18b194020c54601ce0f",
+                  "../../scripts/mlx_candidate_infer.py": "2ad996a7a7e80bae14b439f389123c9ee47275214546391fd1dc1efb7ae61522"
+                },
+                "format": "safetensors",
+                "device": "mps:0",
+                "host": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+                "cpu": "Apple M5 Pro",
+                "platform": "macOS-27.0.1-arm64-arm-64bit",
+                "python": "3.12.15",
+                "packages": {
+                  "torch": "2.13.0",
+                  "transformers": "5.14.0",
+                  "tokenizers": "0.22.2",
+                  "safetensors": "0.8.0"
+                }
+              },
+              "observation": {
+                "format": "safetensors",
+                "actual_device": "mps:0",
+                "tensor_devices": [
+                  "mps:0"
+                ],
+                "backend": "torch-mps",
+                "memory": {
+                  "recommended_bytes": 40200896512,
+                  "process_limit_bytes": 36180806860,
+                  "driver_allocated_bytes": 1116553216,
+                  "process_headroom_bytes": 35064253644,
+                  "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+                },
+                "peak_allocated_bytes": null,
+                "reserved_bytes": null,
+                "current_allocated_bytes": 538060544,
+                "memory_scope": "Observed PyTorch process allocations/headroom; no true peak/reserved counters."
+              }
+            }
+          }
+        }
+      },
+      "budget": [
+        {
+          "reserved": "3.000000",
+          "settled": "3.000000"
+        }
+      ],
+      "usage": [
+        {
+          "quantity": "3.000000",
+          "unit": "training_steps",
+          "detail": {
+            "runtime": "modelanvil.smollm2-gpu-sft.v1",
+            "cpu_seconds": 0.6496659999999981,
+            "training_pairs": 26,
+            "status": "completed"
+          }
+        }
+      ],
+      "cleanup": {
+        "active_keys": 0,
+        "available_worker_slots": 0,
+        "active_tenants": 0
+      },
+      "production_qualified": false,
+      "browser": {
+        "actual_api": true,
+        "recipes": {
+          "full_sft": {
+            "status": "approved",
+            "requirements": {
+              "runtime": "modelanvil.smollm2-gpu-sft.v1",
+              "recipe": "full_sft",
+              "config": {
+                "architectures": [
+                  "LlamaForCausalLM"
+                ],
+                "attention_bias": false,
+                "attention_dropout": 0,
+                "bos_token_id": 0,
+                "eos_token_id": 0,
+                "hidden_act": "silu",
+                "hidden_size": 576,
+                "initializer_range": 0.041666666666666664,
+                "intermediate_size": 1536,
+                "is_llama_config": true,
+                "max_position_embeddings": 8192,
+                "model_type": "llama",
+                "num_attention_heads": 9,
+                "num_hidden_layers": 30,
+                "num_key_value_heads": 3,
+                "pretraining_tp": 1,
+                "rms_norm_eps": 1e-05,
+                "rope_interleaved": false,
+                "rope_scaling": null,
+                "rope_theta": 100000,
+                "tie_word_embeddings": true,
+                "torch_dtype": "bfloat16",
+                "transformers_version": "4.40.1",
+                "use_cache": true,
+                "vocab_size": 49152,
+                "runtime": "modelanvil.smollm2-gpu-sft.v1"
+              },
+              "optimizer": {
+                "algorithm": "adamw",
+                "learning_rate": 2e-05,
+                "beta1": 0.9,
+                "beta2": 0.999,
+                "epsilon": 1e-08,
+                "weight_decay": 0
+              },
+              "cpu_slots": 1,
+              "memory_bytes": 8589934592,
+              "storage_bytes": 8077059440,
+              "checkpoint_count": 3,
+              "storage_assumption": "FP32 weights and Adam moments for the planned checkpoint cadence, plus staging/candidate headroom; shared local host.",
+              "device_memory": {
+                "recommended_bytes": 40200896512,
+                "process_limit_bytes": 36180806860,
+                "driver_allocated_bytes": 458752,
+                "process_headroom_bytes": 36180348108,
+                "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation.",
+                "headroom_bytes": 36180348108,
+                "observed_at": "2026-10-23T21:18:58.645717+00:00"
+              },
+              "gpu_count": 1,
+              "accelerator": {
+                "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+                "host": {
+                  "system": "Darwin",
+                  "machine": "arm64",
+                  "release": "27.0.0"
+                },
+                "device": {
+                  "id": "mps:0",
+                  "backend": "mps",
+                  "torch_device": "mps:0",
+                  "name": "Metal Performance Shaders device",
+                  "vendor": "Apple",
+                  "total_memory_bytes": null,
+                  "memory_scope": "shared_unified",
+                  "runtime_recommended_memory_bytes": 40200896512
+                },
+                "framework": {
+                  "name": "torch",
+                  "version": "2.13.0",
+                  "cuda_version": null,
+                  "hip_version": null
+                },
+                "packages": {
+                  "torch": "2.13.0",
+                  "transformers": "5.14.0",
+                  "safetensors": "0.8.0",
+                  "tokenizers": "0.22.2"
+                },
+                "capacity_source": "MPS recommended shared-memory budget"
+              },
+              "precision": "fp32"
+            },
+            "sample_count": 13,
+            "samples": [
+              {
+                "sample_id": "3b1ad0b2-cb4f-5474-a300-bc8cf916109b",
+                "text_preview": "Trees absorb sunlight through their leaves.",
+                "token_ids": [
+                  46059,
+                  6024,
+                  8118,
+                  738,
+                  480,
+                  3711,
+                  30
+                ],
+                "token_count": 7
+              },
+              {
+                "sample_id": "6c7c1c43-9078-5197-a3d8-a7a36beb51e4",
+                "text_preview": "Rainwater flows into rivers and the sea.",
+                "token_ids": [
+                  36951,
+                  3510,
+                  8634,
+                  618,
+                  7626,
+                  284,
+                  260,
+                  3426,
+                  30
+                ],
+                "token_count": 9
+              },
+              {
+                "sample_id": "9164d6b8-63b0-55bd-ae83-33993c1c8daa",
+                "text_preview": "Bicycles use two wheels, pedals and a chain.",
+                "token_ids": [
+                  50,
+                  8744,
+                  3042,
+                  722,
+                  827,
+                  14296,
+                  28,
+                  7622,
+                  781,
+                  284,
+                  253,
+                  5891,
+                  30
+                ],
+                "token_count": 13
+              },
+              {
+                "sample_id": "4b529b7c-72db-5a60-8fa1-b83ea52d6153",
+                "text_preview": "An orchestra combines strings and wind instruments.",
+                "token_ids": [
+                  2089,
+                  30172,
+                  11473,
+                  12345,
+                  284,
+                  2251,
+                  6907,
+                  30
+                ],
+                "token_count": 8
+              },
+              {
+                "sample_id": "16c9639d-4b45-5b88-a7d6-814e948e0dfc",
+                "text_preview": "Libraries organize books for readers.",
+                "token_ids": [
+                  60,
+                  2054,
+                  2372,
+                  11242,
+                  2905,
+                  327,
+                  4419,
+                  30
+                ],
+                "token_count": 8
+              }
+            ],
+            "blocking_checks": [],
+            "viewports": [
+              1440,
+              390
+            ],
+            "horizontal_overflow": false,
+            "launch_performed": false
+          },
+          "lora_adapter": {
+            "status": "approved",
+            "requirements": {
+              "runtime": "modelanvil.smollm2-gpu-sft.v1",
+              "recipe": "lora_adapter",
+              "config": {
+                "architectures": [
+                  "LlamaForCausalLM"
+                ],
+                "attention_bias": false,
+                "attention_dropout": 0,
+                "bos_token_id": 0,
+                "eos_token_id": 0,
+                "hidden_act": "silu",
+                "hidden_size": 576,
+                "initializer_range": 0.041666666666666664,
+                "intermediate_size": 1536,
+                "is_llama_config": true,
+                "max_position_embeddings": 8192,
+                "model_type": "llama",
+                "num_attention_heads": 9,
+                "num_hidden_layers": 30,
+                "num_key_value_heads": 3,
+                "pretraining_tp": 1,
+                "rms_norm_eps": 1e-05,
+                "rope_interleaved": false,
+                "rope_scaling": null,
+                "rope_theta": 100000,
+                "tie_word_embeddings": true,
+                "torch_dtype": "bfloat16",
+                "transformers_version": "4.40.1",
+                "use_cache": true,
+                "vocab_size": 49152,
+                "runtime": "modelanvil.smollm2-gpu-sft.v1"
+              },
+              "optimizer": {
+                "algorithm": "adamw",
+                "learning_rate": 2e-05,
+                "beta1": 0.9,
+                "beta2": 0.999,
+                "epsilon": 1e-08,
+                "weight_decay": 0
+              },
+              "cpu_slots": 1,
+              "memory_bytes": 8589934592,
+              "storage_bytes": 571011984,
+              "checkpoint_count": 3,
+              "storage_assumption": "Immutable shared base references plus FP32 adapter weights and Adam moments per step; shared local host.",
+              "device_memory": {
+                "recommended_bytes": 40200896512,
+                "process_limit_bytes": 36180806860,
+                "driver_allocated_bytes": 458752,
+                "process_headroom_bytes": 36180348108,
+                "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation.",
+                "headroom_bytes": 36180348108,
+                "observed_at": "2026-10-23T21:18:59.197590+00:00"
+              },
+              "gpu_count": 1,
+              "accelerator": {
+                "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+                "host": {
+                  "system": "Darwin",
+                  "machine": "arm64",
+                  "release": "27.0.0"
+                },
+                "device": {
+                  "id": "mps:0",
+                  "backend": "mps",
+                  "torch_device": "mps:0",
+                  "name": "Metal Performance Shaders device",
+                  "vendor": "Apple",
+                  "total_memory_bytes": null,
+                  "memory_scope": "shared_unified",
+                  "runtime_recommended_memory_bytes": 40200896512
+                },
+                "framework": {
+                  "name": "torch",
+                  "version": "2.13.0",
+                  "cuda_version": null,
+                  "hip_version": null
+                },
+                "packages": {
+                  "torch": "2.13.0",
+                  "transformers": "5.14.0",
+                  "safetensors": "0.8.0",
+                  "tokenizers": "0.22.2"
+                },
+                "capacity_source": "MPS recommended shared-memory budget"
+              },
+              "precision": "fp32",
+              "adapter": {
+                "r": 8,
+                "lora_alpha": 16,
+                "target_modules": [
+                  "q_proj",
+                  "v_proj"
+                ],
+                "lora_dropout": 0,
+                "bias": "none",
+                "task_type": "CAUSAL_LM"
+              },
+              "trainable_parameters": 460800
+            },
+            "sample_count": 13,
+            "samples": [
+              {
+                "sample_id": "3b1ad0b2-cb4f-5474-a300-bc8cf916109b",
+                "text_preview": "Trees absorb sunlight through their leaves.",
+                "token_ids": [
+                  46059,
+                  6024,
+                  8118,
+                  738,
+                  480,
+                  3711,
+                  30
+                ],
+                "token_count": 7
+              },
+              {
+                "sample_id": "6c7c1c43-9078-5197-a3d8-a7a36beb51e4",
+                "text_preview": "Rainwater flows into rivers and the sea.",
+                "token_ids": [
+                  36951,
+                  3510,
+                  8634,
+                  618,
+                  7626,
+                  284,
+                  260,
+                  3426,
+                  30
+                ],
+                "token_count": 9
+              },
+              {
+                "sample_id": "9164d6b8-63b0-55bd-ae83-33993c1c8daa",
+                "text_preview": "Bicycles use two wheels, pedals and a chain.",
+                "token_ids": [
+                  50,
+                  8744,
+                  3042,
+                  722,
+                  827,
+                  14296,
+                  28,
+                  7622,
+                  781,
+                  284,
+                  253,
+                  5891,
+                  30
+                ],
+                "token_count": 13
+              },
+              {
+                "sample_id": "4b529b7c-72db-5a60-8fa1-b83ea52d6153",
+                "text_preview": "An orchestra combines strings and wind instruments.",
+                "token_ids": [
+                  2089,
+                  30172,
+                  11473,
+                  12345,
+                  284,
+                  2251,
+                  6907,
+                  30
+                ],
+                "token_count": 8
+              },
+              {
+                "sample_id": "16c9639d-4b45-5b88-a7d6-814e948e0dfc",
+                "text_preview": "Libraries organize books for readers.",
+                "token_ids": [
+                  60,
+                  2054,
+                  2372,
+                  11242,
+                  2905,
+                  327,
+                  4419,
+                  30
+                ],
+                "token_count": 8
+              }
+            ],
+            "blocking_checks": [],
+            "viewports": [
+              1440,
+              390
+            ],
+            "horizontal_overflow": false,
+            "launch_performed": false
+          }
+        },
+        "page_errors": [],
+        "scope": "Actual browser recipe selection and real tokenizer preflight; existing numerical worker execution is recorded separately. Authored mechanics fixture, no customer quality claim."
+      }
+    },
+    "lora_adapter": {
+      "numerical_source_main": "b0dedf1933e51be8c705812c6d9fe53d486351bf",
+      "source_build_digest_verified": true,
+      "run_id": "01a16a9b-eae6-73d8-9008-37d8ea3b0821",
+      "candidate": "01a16a9b-f42e-7a7d-bf2e-e5aa8fea96fc",
+      "pins": {
+        "runtime": "modelanvil.smollm2-gpu-sft.v1",
+        "contract_digest": "563cb3bb9995d4fac2714a78189582163c55d490208f0ce23d6f05feab29d6f2",
+        "build_digest": "7a7e72cc822d08f0b18aa0c08d90e7e86fa3d0980a88884ef541833400066596",
+        "dataset_id": "01a16a9b-e71e-746c-896e-2c8ce48da235",
+        "dataset_digest": "c379ab03e68825362fe6892b41b031eae72374b5077885d9fd369cd47c554fab",
+        "base_id": "01a16a9b-e714-7298-abe8-ce6a13ca2b48",
+        "base_artifact_id": "01a16a9b-dfd4-784d-b743-bb109a867dc9",
+        "base_digest": "5b3d3d65a034ae50fa123f3ac2b7d6844d15c103dc888cf0e731f86a79dc9a23",
+        "tokenizer_id": "01a16a9b-e711-7b5b-b06a-4e52a3938361",
+        "tokenizer_digest": "210581f45a22cc725333553c2b87fecb9fe2a541a06aa577cdaea58676273301",
+        "runner_id": "01a16a9b-e71f-789a-a3f5-53632948de75",
+        "runner_digest": "814df89b62520f1f1bd06e3338bac6b0fcbbcf0536b18864965ebacd07862651",
+        "pool_id": 1,
+        "steps": 3,
+        "config": {
+          "architectures": [
+            "LlamaForCausalLM"
+          ],
+          "attention_bias": false,
+          "attention_dropout": 0.0,
+          "bos_token_id": 0,
+          "eos_token_id": 0,
+          "hidden_act": "silu",
+          "hidden_size": 576,
+          "initializer_range": 0.041666666666666664,
+          "intermediate_size": 1536,
+          "is_llama_config": true,
+          "max_position_embeddings": 8192,
+          "model_type": "llama",
+          "num_attention_heads": 9,
+          "num_hidden_layers": 30,
+          "num_key_value_heads": 3,
+          "pretraining_tp": 1,
+          "rms_norm_eps": 1e-05,
+          "rope_interleaved": false,
+          "rope_scaling": null,
+          "rope_theta": 100000,
+          "tie_word_embeddings": true,
+          "torch_dtype": "bfloat16",
+          "transformers_version": "4.40.1",
+          "use_cache": true,
+          "vocab_size": 49152,
+          "runtime": "modelanvil.smollm2-gpu-sft.v1"
+        },
+        "optimizer": {
+          "algorithm": "adamw",
+          "learning_rate": 2e-05,
+          "beta1": 0.9,
+          "beta2": 0.999,
+          "epsilon": 1e-08,
+          "weight_decay": 0.0
+        },
+        "sample_digest": "dae3838574a9cbc7e2a71a952acb5f0cc08846fd071b07aa075953da2719fb40",
+        "splits": {
+          "consumed": "train",
+          "train_rows": 13,
+          "excluded_rows": {
+            "test": 4,
+            "validation": 3
+          },
+          "excluded_digest": "d6d8c903b82db5739143be876afb325555dfe688094c762812f350f558574471"
+        },
+        "accelerator": {
+          "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+          "host": {
+            "system": "Darwin",
+            "machine": "arm64",
+            "release": "27.0.0"
+          },
+          "device": {
+            "id": "mps:0",
+            "backend": "mps",
+            "torch_device": "mps:0",
+            "name": "Metal Performance Shaders device",
+            "vendor": "Apple",
+            "total_memory_bytes": null,
+            "memory_scope": "shared_unified",
+            "runtime_recommended_memory_bytes": 40200896512
+          },
+          "framework": {
+            "name": "torch",
+            "version": "2.13.0",
+            "cuda_version": null,
+            "hip_version": null
+          },
+          "packages": {
+            "torch": "2.13.0",
+            "transformers": "5.14.0",
+            "safetensors": "0.8.0",
+            "tokenizers": "0.22.2"
+          },
+          "capacity_source": "MPS recommended shared-memory budget"
+        },
+        "worker_id": 1,
+        "chat_sft": false,
+        "recipe": "lora_adapter",
+        "adapter": {
+          "r": 8,
+          "lora_alpha": 16,
+          "target_modules": [
+            "q_proj",
+            "v_proj"
+          ],
+          "lora_dropout": 0.0,
+          "bias": "none",
+          "task_type": "CAUSAL_LM"
+        },
+        "initialization_seed": 42,
+        "adapter_package": {
+          "peft": "0.21.2"
+        },
+        "trainable_parameters": 460800
+      },
+      "metrics": [
+        {
+          "step": 1,
+          "loss": 3.8208513259887695,
+          "post_update_loss": 3.817286729812622,
+          "sample_id": "3b1ad0b2-cb4f-5474-a300-bc8cf916109b",
+          "training_pairs": 6,
+          "cpu_seconds": 0.20458199999999938,
+          "engine_wall_seconds": 0.6726712499985297,
+          "gpu_backend": "mps",
+          "gpu_device": "mps:0",
+          "device_residency_checked": true,
+          "gradient_norm": 0.9937211871147156,
+          "trainable_parameters": 460800,
+          "total_parameters": 134975808,
+          "measured_at": "2026-10-23T21:12:46.961348+00:00",
+          "peak_allocated_bytes": null,
+          "peak_reserved_bytes": null,
+          "gpu_allocated_bytes": 548142336,
+          "tokens_per_second": 8.919661721848696,
+          "gpu_utilization_percent": null,
+          "unified_memory": {
+            "recommended_bytes": 40200896512,
+            "process_limit_bytes": 36180806860,
+            "driver_allocated_bytes": 1128415232,
+            "process_headroom_bytes": 35052391628,
+            "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+          },
+          "updates_since_checkpoint": 1
+        },
+        {
+          "step": 2,
+          "loss": 3.192934274673462,
+          "post_update_loss": 3.1896533966064453,
+          "sample_id": "6c7c1c43-9078-5197-a3d8-a7a36beb51e4",
+          "training_pairs": 8,
+          "cpu_seconds": 0.11543599999999987,
+          "engine_wall_seconds": 0.1642129579995526,
+          "gpu_backend": "mps",
+          "gpu_device": "mps:0",
+          "device_residency_checked": true,
+          "gradient_norm": 1.7593886852264404,
+          "trainable_parameters": 460800,
+          "total_parameters": 134975808,
+          "measured_at": "2026-10-23T21:12:47.214010+00:00",
+          "peak_allocated_bytes": null,
+          "peak_reserved_bytes": null,
+          "gpu_allocated_bytes": 548130304,
+          "tokens_per_second": 48.71722729714056,
+          "gpu_utilization_percent": null,
+          "unified_memory": {
+            "recommended_bytes": 40200896512,
+            "process_limit_bytes": 36180806860,
+            "driver_allocated_bytes": 1130299392,
+            "process_headroom_bytes": 35050507468,
+            "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+          },
+          "updates_since_checkpoint": 1
+        },
+        {
+          "step": 3,
+          "loss": 2.851006507873535,
+          "post_update_loss": 2.8491084575653076,
+          "sample_id": "9164d6b8-63b0-55bd-ae83-33993c1c8daa",
+          "training_pairs": 12,
+          "cpu_seconds": 0.11903600000000036,
+          "engine_wall_seconds": 0.2881543750008859,
+          "gpu_backend": "mps",
+          "gpu_device": "mps:0",
+          "device_residency_checked": true,
+          "gradient_norm": 1.4340189695358276,
+          "trainable_parameters": 460800,
+          "total_parameters": 134975808,
+          "measured_at": "2026-10-23T21:12:47.583879+00:00",
+          "peak_allocated_bytes": null,
+          "peak_reserved_bytes": null,
+          "gpu_allocated_bytes": 548130304,
+          "tokens_per_second": 41.644344285812444,
+          "gpu_utilization_percent": null,
+          "unified_memory": {
+            "recommended_bytes": 40200896512,
+            "process_limit_bytes": 36180806860,
+            "driver_allocated_bytes": 1152909312,
+            "process_headroom_bytes": 35027897548,
+            "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+          },
+          "updates_since_checkpoint": 1
+        }
+      ],
+      "checkpoints": [
+        {
+          "step": 1,
+          "state_digest": "c7f9133e5cf43aca195af369fa70199c82cefe555f81b6a5c3c01f5d56e617c9",
+          "weights_sha256": "fbbe0058dab3f4329f3f8dd3d9ee386643ea16e86fb7438753aa92eac41da72d"
+        },
+        {
+          "step": 2,
+          "state_digest": "db1aeccafca53406c5867aaf92617e90ebcccd5ada37ea9a750f1d2528612bca",
+          "weights_sha256": "b1a51ca32d61a5aefcf3fb01a8cfc03ad587ab118f2d840aa21e113acbc01114"
+        },
+        {
+          "step": 3,
+          "state_digest": "3a00073b353419cfa1213b0e8120d98bd49e8030fd5e1f9d565f2233b3bf8e51",
+          "weights_sha256": "6f7edd6aee8abe658ad983765fdc476c086f596d9dea2429bfc678e5bfda7486"
+        }
+      ],
+      "bundle_files": {
+        "config.json": {
+          "artifact_id": "01a16a9b-dfcc-745e-a568-9bbc1dd1ba2f",
+          "byte_size": 704,
+          "sha256": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843"
+        },
+        "model.safetensors": {
+          "artifact_id": "01a16a9b-df5a-730c-88ce-c5842bc8dc21",
+          "byte_size": 269060552,
+          "sha256": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1"
+        },
+        "special_tokens_map.json": {
+          "artifact_id": "01a16a9b-dfd2-7119-aec4-d380e3a84680",
+          "byte_size": 831,
+          "sha256": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3"
+        },
+        "tokenizer.json": {
+          "artifact_id": "01a16a9b-dfce-7ab8-8e56-d938f57b23b7",
+          "byte_size": 2104556,
+          "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+        },
+        "tokenizer_config.json": {
+          "artifact_id": "01a16a9b-dfd1-74ba-956b-e656c09bdc82",
+          "byte_size": 3658,
+          "sha256": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424"
+        },
+        "adapter_model.safetensors": {
+          "artifact_id": "01a16a9b-f323-74f4-8747-56b03c05755f",
+          "sha256": "6f7edd6aee8abe658ad983765fdc476c086f596d9dea2429bfc678e5bfda7486",
+          "byte_size": 1858776
+        },
+        "adapter_config.json": {
+          "artifact_id": "01a16a9b-f325-7011-90c7-8206eb821517",
+          "sha256": "b8a79cd82e332a7ee43c339316daf1f2bc7a57078b5e71fad745cc663dda2af2",
+          "byte_size": 1141
+        }
+      },
+      "source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "independent_cpu": {
+        "weights_sha256": "6f7edd6aee8abe658ad983765fdc476c086f596d9dea2429bfc678e5bfda7486",
+        "prompt": "Once upon a time",
+        "file_hashes": {
+          "adapter_model.safetensors": "6f7edd6aee8abe658ad983765fdc476c086f596d9dea2429bfc678e5bfda7486",
+          "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+          "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+          "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+          "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+          "model.safetensors": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+          "adapter_config.json": "b8a79cd82e332a7ee43c339316daf1f2bc7a57078b5e71fad745cc663dda2af2"
+        },
+        "generated_token_ids": [
+          28,
+          665,
+          436,
+          253,
+          1838,
+          8180,
+          3365,
+          14176
+        ],
+        "completion": ", there was a little girl named Lily",
+        "parameter_count": 134975808,
+        "execution": {
+          "backend": "cpu",
+          "device": "cpu",
+          "precision": "fp32",
+          "device_residency_checked": true,
+          "wall_seconds": 0.09305637500074226,
+          "allocated_bytes": null
+        },
+        "consumer_imported_modelanvil_or_django": false,
+        "scope": "Independent process, cpu FP32 inference from actual GPU-produced candidate; no quality or production claim."
+      },
+      "independent_gpu": {
+        "weights_sha256": "6f7edd6aee8abe658ad983765fdc476c086f596d9dea2429bfc678e5bfda7486",
+        "prompt": "Once upon a time",
+        "file_hashes": {
+          "adapter_model.safetensors": "6f7edd6aee8abe658ad983765fdc476c086f596d9dea2429bfc678e5bfda7486",
+          "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+          "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+          "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+          "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+          "model.safetensors": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+          "adapter_config.json": "b8a79cd82e332a7ee43c339316daf1f2bc7a57078b5e71fad745cc663dda2af2"
+        },
+        "generated_token_ids": [
+          28,
+          665,
+          436,
+          253,
+          1838,
+          8180,
+          3365,
+          14176
+        ],
+        "completion": ", there was a little girl named Lily",
+        "parameter_count": 134975808,
+        "execution": {
+          "backend": "mps",
+          "device": "mps:0",
+          "precision": "fp32",
+          "device_residency_checked": true,
+          "wall_seconds": 0.27572945800056914,
+          "allocated_bytes": 539904000,
+          "driver_allocated_bytes": 1116635136,
+          "recommended_bytes": 40200896512,
+          "process_headroom_bytes": 35064171724
+        },
+        "consumer_imported_modelanvil_or_django": false,
+        "scope": "Independent process, mps:0 FP32 inference from actual GPU-produced candidate; no quality or production claim."
+      },
+      "recovery": {
+        "recovery": {
+          "run_id": "01a16a9c-19fd-77a1-a1ac-a48ea663555a",
+          "attempts": 2,
+          "final_weights_sha256": "6f7edd6aee8abe658ad983765fdc476c086f596d9dea2429bfc678e5bfda7486",
+          "exactly_matches_uninterrupted": true,
+          "steps": 3
+        },
+        "cancel": {
+          "run_id": "01a16a9c-24d8-79d9-b52f-88add983e03d",
+          "steps": 1,
+          "settled": "1.000000",
+          "candidate": null
+        },
+        "corruption": {
+          "run_id": "01a16a9c-29f0-7064-bc03-575655534913",
+          "steps": 0,
+          "settled": "0",
+          "candidate": null
+        },
+        "scope": "Real mps:0 SmolLM2 GPU worker, isolated database, live fencing/cancellation/corruption/accounting. Does not qualify other vendors or production scheduling."
+      },
+      "quality": {
+        "runtime": "torch",
+        "unquantized_base": null,
+        "quantization_checks_within_five_percent": null,
+        "overall_quality_passed": true,
+        "samples_sha256": "a595801e9b1f6d5c12ec73a461fd9da730ccbc322782f929d0fab6d4d25293db",
+        "dataset_digest": "c379ab03e68825362fe6892b41b031eae72374b5077885d9fd369cd47c554fab",
+        "source_groups": {
+          "gpu77-authored-0": "validation",
+          "gpu77-authored-1": "validation",
+          "gpu77-authored-2": "test",
+          "gpu77-authored-3": "train_consumed",
+          "gpu77-authored-4": "test",
+          "gpu77-authored-5": "train_consumed",
+          "gpu77-authored-6": "train_consumed",
+          "gpu77-authored-11": "validation",
+          "gpu77-authored-15": "test",
+          "gpu77-authored-19": "test"
+        },
+        "base": {
+          "validation": {
+            "negative_log_likelihood": 75.27407479286194,
+            "prediction_tokens": 20,
+            "samples": 3,
+            "loss": 3.763703739643097
+          },
+          "test": {
+            "negative_log_likelihood": 120.51491045951843,
+            "prediction_tokens": 29,
+            "samples": 4,
+            "loss": 4.155686567569601
+          },
+          "train_consumed": {
+            "negative_log_likelihood": 82.68712663650513,
+            "prediction_tokens": 26,
+            "samples": 3,
+            "loss": 3.180274101404043
+          }
+        },
+        "candidate": {
+          "validation": {
+            "negative_log_likelihood": 75.24967193603516,
+            "prediction_tokens": 20,
+            "samples": 3,
+            "loss": 3.762483596801758
+          },
+          "test": {
+            "negative_log_likelihood": 120.49364018440247,
+            "prediction_tokens": 29,
+            "samples": 4,
+            "loss": 4.154953109806981
+          },
+          "train_consumed": {
+            "negative_log_likelihood": 82.57100772857666,
+            "prediction_tokens": 26,
+            "samples": 3,
+            "loss": 3.175807989560641
+          }
+        },
+        "checks": {
+          "consumed_training_loss_decreased": true,
+          "validation_regression_within_five_percent": true,
+          "test_regression_within_five_percent": true
+        },
+        "passed": true,
+        "consumer_imported_modelanvil_or_django": false,
+        "scope": "Independent offline token-weighted loss on explicit consumed train and file-group-held-out text. This bounded corpus/three-step pilot does not establish broader task quality or production qualification."
+      },
+      "current_candidate_api": {
+        "candidate": "01a16a9b-f42e-7a7d-bf2e-e5aa8fea96fc",
+        "matches_independent_consumer": true,
+        "completion": {
+          "id": "chatcmpl-01a16aa62e397758ac7bad1213835afa",
+          "created": 1792790640,
+          "model": "01a16a9b-f42e-7a7d-bf2e-e5aa8fea96fc",
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": ", there was a little girl named Lily"
+              },
+              "finish_reason": "length"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 4,
+            "completion_tokens": 8,
+            "total_tokens": 12
+          },
+          "modelanvil": {
+            "device": "mps:0",
+            "elapsed_seconds": 0.26384041599885677,
+            "runtime": {
+              "format": "safetensors",
+              "signature": "e18c27c32b1abcf695a86c1156f02e81e997c985201869d4e3b767578961e27d",
+              "input_identity": "6a6e74b5f3b9ab9dc6cbe2b96e1e808b02bff9dfd3dc307090a3b3ba801658a1",
+              "device": "mps:0",
+              "provenance": {
+                "implementation": {
+                  "inference.py": "36f1401d73b4db961ad3b432f67efb0eff9f57d12303fc0a0cb4453dee29f08f",
+                  "gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+                  "training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+                  "capabilities.py": "6e6c2674e8d5dd2a3cd5752601434cd6c349f08d60fb8502d348c979b3d29239",
+                  "../api/views/model_workspace.py": "c5fb3c5e430635337b179dca8c1c47c3f43a62e3f72fe18b194020c54601ce0f",
+                  "../../scripts/mlx_candidate_infer.py": "2ad996a7a7e80bae14b439f389123c9ee47275214546391fd1dc1efb7ae61522"
+                },
+                "format": "safetensors",
+                "device": "mps:0",
+                "host": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+                "cpu": "Apple M5 Pro",
+                "platform": "macOS-27.0.1-arm64-arm-64bit",
+                "python": "3.12.15",
+                "packages": {
+                  "torch": "2.13.0",
+                  "transformers": "5.14.0",
+                  "tokenizers": "0.22.2",
+                  "safetensors": "0.8.0"
+                }
+              },
+              "observation": {
+                "format": "safetensors",
+                "actual_device": "mps:0",
+                "tensor_devices": [
+                  "mps:0"
+                ],
+                "backend": "torch-mps",
+                "memory": {
+                  "recommended_bytes": 40200896512,
+                  "process_limit_bytes": 36180806860,
+                  "driver_allocated_bytes": 1116553216,
+                  "process_headroom_bytes": 35064253644,
+                  "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+                },
+                "peak_allocated_bytes": null,
+                "reserved_bytes": null,
+                "current_allocated_bytes": 539903744,
+                "memory_scope": "Observed PyTorch process allocations/headroom; no true peak/reserved counters."
+              }
+            }
+          }
+        }
+      },
+      "budget": [
+        {
+          "reserved": "3.000000",
+          "settled": "3.000000"
+        }
+      ],
+      "usage": [
+        {
+          "quantity": "3.000000",
+          "unit": "training_steps",
+          "detail": {
+            "runtime": "modelanvil.smollm2-gpu-sft.v1",
+            "cpu_seconds": 0.4390539999999996,
+            "training_pairs": 26,
+            "status": "completed"
+          }
+        }
+      ],
+      "cleanup": {
+        "active_keys": 0,
+        "available_worker_slots": 0,
+        "active_tenants": 0
+      },
+      "production_qualified": false
+    },
+    "qlora_adapter": {
+      "numerical_source_main": "ecc9bd103902e7e4814b7da0250981c87d96431c",
+      "source_build_digest_verified": true,
+      "run_id": "01a16a98-eae3-7a5d-ace0-9fc5a654fd53",
+      "candidate": "01a16a98-ef18-7d28-9477-b9e4c0989590",
+      "pins": {
+        "runtime": "modelanvil.smollm2-mlx-qlora.v1",
+        "contract_digest": "259e3c4a452dfd56de01b25ae569f7cafa3659781338c8e6b2c5e9769fc7bc74",
+        "build_digest": "16e8bbbc5c72fd240823ba252cae277bf7625adbde8175d047d196b209a20041",
+        "dataset_id": "01a16a98-e747-76ed-a95b-65597a149977",
+        "dataset_digest": "c379ab03e68825362fe6892b41b031eae72374b5077885d9fd369cd47c554fab",
+        "base_id": "01a16a98-e73e-7b5a-9d9e-747e16b5916b",
+        "base_artifact_id": "01a16a98-e1d7-7efa-9d50-135b1c82214b",
+        "base_digest": "61da86ed92962f5162a38c36b91a569091a512b3fb7ff5aacbf9084d01c869ab",
+        "tokenizer_id": "01a16a98-e73c-7c01-8f34-264443868099",
+        "tokenizer_digest": "0319ee3246c16cb8262a1fcc8d3a84925e30fd9e5a936a2581e02149d4838577",
+        "runner_id": "01a16a98-e748-786c-910c-5ce3bc76b216",
+        "runner_digest": "33dc8a25d204dd19ae1ddf5700b9c451ed1e05d982e01f539fb22bb2815c06c9",
+        "pool_id": 1,
+        "steps": 3,
+        "config": {
+          "architectures": [
+            "LlamaForCausalLM"
+          ],
+          "attention_bias": false,
+          "attention_dropout": 0.0,
+          "bos_token_id": 0,
+          "eos_token_id": 0,
+          "hidden_act": "silu",
+          "hidden_size": 576,
+          "initializer_range": 0.041666666666666664,
+          "intermediate_size": 1536,
+          "is_llama_config": true,
+          "max_position_embeddings": 8192,
+          "model_type": "llama",
+          "num_attention_heads": 9,
+          "num_hidden_layers": 30,
+          "num_key_value_heads": 3,
+          "pretraining_tp": 1,
+          "rms_norm_eps": 1e-05,
+          "rope_interleaved": false,
+          "rope_scaling": null,
+          "rope_theta": 100000,
+          "tie_word_embeddings": true,
+          "torch_dtype": "bfloat16",
+          "transformers_version": "4.40.1",
+          "use_cache": true,
+          "vocab_size": 49152,
+          "runtime": "modelanvil.smollm2-mlx-qlora.v1"
+        },
+        "optimizer": {
+          "algorithm": "adamw",
+          "learning_rate": 2e-05,
+          "beta1": 0.9,
+          "beta2": 0.999,
+          "epsilon": 1e-08,
+          "weight_decay": 0.0
+        },
+        "sample_digest": "dae3838574a9cbc7e2a71a952acb5f0cc08846fd071b07aa075953da2719fb40",
+        "splits": {
+          "consumed": "train",
+          "train_rows": 13,
+          "excluded_rows": {
+            "test": 4,
+            "validation": 3
+          },
+          "excluded_digest": "d6d8c903b82db5739143be876afb325555dfe688094c762812f350f558574471"
+        },
+        "accelerator": {
+          "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+          "device": {
+            "id": "mlx:0",
+            "backend": "mlx",
+            "name": "Apple M5 Pro",
+            "runtime_recommended_memory_bytes": 40200896512,
+            "memory_scope": "shared_unified"
+          },
+          "framework": {
+            "name": "mlx",
+            "version": "0.32.3"
+          },
+          "packages": {
+            "torch": "2.13.0",
+            "transformers": "5.14.0",
+            "safetensors": "0.8.0",
+            "tokenizers": "0.22.2",
+            "mlx": "0.32.3",
+            "mlx-metal": "0.32.3",
+            "mlx-lm": "0.29.1"
+          },
+          "capacity_source": "MLX recommended process working set, not system-wide free memory"
+        },
+        "worker_id": 1,
+        "chat_sft": false,
+        "recipe": "qlora_adapter",
+        "trainable_parameters": 460800,
+        "adapter": {
+          "rank": 8,
+          "scale": 2.0,
+          "dropout": 0.0,
+          "keys": [
+            "self_attn.q_proj",
+            "self_attn.v_proj"
+          ]
+        },
+        "quantization": {
+          "group_size": 32,
+          "bits": 4,
+          "mode": "affine"
+        },
+        "initialization_seed": 42,
+        "adapter_package": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "safetensors": "0.8.0",
+          "tokenizers": "0.22.2",
+          "mlx": "0.32.3",
+          "mlx-metal": "0.32.3",
+          "mlx-lm": "0.29.1"
+        }
+      },
+      "metrics": [
+        {
+          "step": 1,
+          "loss": 5.204682350158691,
+          "post_update_loss": 5.188168525695801,
+          "sample_id": "3b1ad0b2-cb4f-5474-a300-bc8cf916109b",
+          "training_pairs": 6,
+          "cpu_seconds": 0.04707500000000042,
+          "engine_wall_seconds": 0.05714062500192085,
+          "gpu_backend": "mlx",
+          "gpu_device": "mlx:0",
+          "device_residency_checked": true,
+          "gradient_norm": 2.0487117767333984,
+          "trainable_parameters": 460800,
+          "gpu_allocated_bytes": 210867644,
+          "peak_allocated_bytes": 215528084,
+          "peak_reserved_bytes": null,
+          "gpu_utilization_percent": null,
+          "tokens_per_second": 105.0041017191937,
+          "measured_at": "2026-10-23T21:09:29.489242+00:00",
+          "quantization": {
+            "group_size": 32,
+            "bits": 4,
+            "mode": "affine"
+          }
+        },
+        {
+          "step": 2,
+          "loss": 3.8271918296813965,
+          "post_update_loss": 3.817370891571045,
+          "sample_id": "6c7c1c43-9078-5197-a3d8-a7a36beb51e4",
+          "training_pairs": 8,
+          "cpu_seconds": 0.03980500000000031,
+          "engine_wall_seconds": 0.0554117080027936,
+          "gpu_backend": "mlx",
+          "gpu_device": "mlx:0",
+          "device_residency_checked": true,
+          "gradient_norm": 1.4013456106185913,
+          "trainable_parameters": 460800,
+          "gpu_allocated_bytes": 208970820,
+          "peak_allocated_bytes": 230193356,
+          "peak_reserved_bytes": null,
+          "gpu_utilization_percent": null,
+          "tokens_per_second": 144.37382077442328,
+          "measured_at": "2026-10-23T21:09:29.733661+00:00",
+          "quantization": {
+            "group_size": 32,
+            "bits": 4,
+            "mode": "affine"
+          }
+        },
+        {
+          "step": 3,
+          "loss": 3.506711959838867,
+          "post_update_loss": 3.495617628097534,
+          "sample_id": "9164d6b8-63b0-55bd-ae83-33993c1c8daa",
+          "training_pairs": 12,
+          "cpu_seconds": 0.037511000000000294,
+          "engine_wall_seconds": 0.044595791998290224,
+          "gpu_backend": "mlx",
+          "gpu_device": "mlx:0",
+          "device_residency_checked": true,
+          "gradient_norm": 1.763715147972107,
+          "trainable_parameters": 460800,
+          "gpu_allocated_bytes": 209478752,
+          "peak_allocated_bytes": 239604680,
+          "peak_reserved_bytes": null,
+          "gpu_utilization_percent": null,
+          "tokens_per_second": 269.08368395969,
+          "measured_at": "2026-10-23T21:09:29.795967+00:00",
+          "quantization": {
+            "group_size": 32,
+            "bits": 4,
+            "mode": "affine"
+          }
+        }
+      ],
+      "checkpoints": [
+        {
+          "step": 1,
+          "state_digest": "e1db132cea0d20446d9a6d5b5bdd1ba6eb3a00cd98205f66223879d6bacf70b2",
+          "weights_sha256": "60005383dba2c3291a71565ef4fdf5e415dd7f16b2e031fb69a8101cb4cfb21c"
+        },
+        {
+          "step": 2,
+          "state_digest": "75827bfa98351c758fd656e9bf5891e4666e11f91aac88fa177d9400ff8e119a",
+          "weights_sha256": "c669fe59dfdd0b5fb314ef220959a8a268e66216d8a8c5d89c60ae25ec86d625"
+        },
+        {
+          "step": 3,
+          "state_digest": "5c49840f604a4ccb44db0fe0e11b310176eb49d9bd0a6c601b2f65914afad713",
+          "weights_sha256": "7475a979f63fd7cfac30f13867a348b2e072d7e2be9f6d45747fad4c2f592702"
+        }
+      ],
+      "bundle_files": {
+        "config.json": {
+          "artifact_id": "01a16a98-edbf-76c3-94ef-029ab2f0e502",
+          "sha256": "b318f8f680fdc84ea9a7ab75fa06b44dbc6adc2c7f782e97149b83d93ed1db36",
+          "byte_size": 708
+        },
+        "model.safetensors": {
+          "artifact_id": "01a16a98-ed70-7146-b8bb-8faadf71ab74",
+          "sha256": "c1031ac14cb9aa189ade8d81afe9ff3c4dd3dce6e3aa15c401af49c1f48fc320",
+          "byte_size": 193087993
+        },
+        "special_tokens_map.json": {
+          "artifact_id": "01a16a98-e1d5-7988-ab85-164a5ca255db",
+          "byte_size": 831,
+          "sha256": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3"
+        },
+        "tokenizer.json": {
+          "artifact_id": "01a16a98-e1d1-76d8-b526-09786763b170",
+          "byte_size": 2104556,
+          "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+        },
+        "tokenizer_config.json": {
+          "artifact_id": "01a16a98-e1d4-741f-94fc-e111aa9b40c8",
+          "byte_size": 3658,
+          "sha256": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424"
+        },
+        "adapters.safetensors": {
+          "artifact_id": "01a16a98-ee49-74f9-8817-e5d567463e2d",
+          "sha256": "7475a979f63fd7cfac30f13867a348b2e072d7e2be9f6d45747fad4c2f592702",
+          "byte_size": 1855881
+        },
+        "adapter_config.json": {
+          "artifact_id": "01a16a98-ee4c-7b8d-8ef3-0ff922369185",
+          "sha256": "7cfb822cd9d1dd9300965ccf7e07bc30fa6afb05b24a32929652381fbb3ec5e2",
+          "byte_size": 156
+        }
+      },
+      "source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "independent_cpu": {
+        "prompt": "Once upon a time",
+        "completion": ", the world was a very different place",
+        "generated_token_ids": [
+          28,
+          260,
+          905,
+          436,
+          253,
+          1035,
+          896,
+          1379
+        ],
+        "weights_sha256": "7475a979f63fd7cfac30f13867a348b2e072d7e2be9f6d45747fad4c2f592702",
+        "execution": {
+          "backend": "cpu",
+          "device_residency_checked": true
+        },
+        "consumer_imported_modelanvil_or_django": false
+      },
+      "independent_gpu": {
+        "prompt": "Once upon a time",
+        "completion": ", the world was a very different place",
+        "generated_token_ids": [
+          28,
+          260,
+          905,
+          436,
+          253,
+          1035,
+          896,
+          1379
+        ],
+        "weights_sha256": "7475a979f63fd7cfac30f13867a348b2e072d7e2be9f6d45747fad4c2f592702",
+        "execution": {
+          "backend": "mlx",
+          "device_residency_checked": true
+        },
+        "consumer_imported_modelanvil_or_django": false
+      },
+      "recovery": {
+        "recovery": {
+          "run_id": "01a16a99-19c7-7996-a908-2b9e36606a47",
+          "attempts": 2,
+          "final_weights_sha256": "7475a979f63fd7cfac30f13867a348b2e072d7e2be9f6d45747fad4c2f592702",
+          "exactly_matches_uninterrupted": true,
+          "steps": 3
+        },
+        "cancel": {
+          "run_id": "01a16a99-2168-7e72-b5d6-febabcc36be3",
+          "steps": 1,
+          "settled": "1.000000",
+          "candidate": null
+        },
+        "corruption": {
+          "run_id": "01a16a99-257e-76dc-887d-6181a3f33662",
+          "steps": 0,
+          "settled": "0",
+          "candidate": null
+        },
+        "scope": "Real mlx:0 SmolLM2 GPU worker, isolated database, live fencing/cancellation/corruption/accounting. Does not qualify other vendors or production scheduling."
+      },
+      "quality": {
+        "runtime": "mlx",
+        "unquantized_base": {
+          "validation": {
+            "negative_log_likelihood": 75.26674580574036,
+            "prediction_tokens": 20,
+            "samples": 3,
+            "loss": 3.763337290287018
+          },
+          "test": {
+            "negative_log_likelihood": 120.49591779708862,
+            "prediction_tokens": 29,
+            "samples": 4,
+            "loss": 4.15503164817547
+          },
+          "train_consumed": {
+            "negative_log_likelihood": 82.64282894134521,
+            "prediction_tokens": 26,
+            "samples": 3,
+            "loss": 3.178570343897893
+          }
+        },
+        "quantization_checks_within_five_percent": {
+          "validation": false,
+          "test": false
+        },
+        "overall_quality_passed": false,
+        "samples_sha256": "a595801e9b1f6d5c12ec73a461fd9da730ccbc322782f929d0fab6d4d25293db",
+        "dataset_digest": "c379ab03e68825362fe6892b41b031eae72374b5077885d9fd369cd47c554fab",
+        "source_groups": {
+          "gpu77-authored-0": "validation",
+          "gpu77-authored-1": "validation",
+          "gpu77-authored-2": "test",
+          "gpu77-authored-3": "train_consumed",
+          "gpu77-authored-4": "test",
+          "gpu77-authored-5": "train_consumed",
+          "gpu77-authored-6": "train_consumed",
+          "gpu77-authored-11": "validation",
+          "gpu77-authored-15": "test",
+          "gpu77-authored-19": "test"
+        },
+        "base": {
+          "validation": {
+            "negative_log_likelihood": 95.64067125320435,
+            "prediction_tokens": 20,
+            "samples": 3,
+            "loss": 4.782033562660217
+          },
+          "test": {
+            "negative_log_likelihood": 141.83020305633545,
+            "prediction_tokens": 29,
+            "samples": 4,
+            "loss": 4.890696657115016
+          },
+          "train_consumed": {
+            "negative_log_likelihood": 103.90430164337158,
+            "prediction_tokens": 26,
+            "samples": 3,
+            "loss": 3.99631929397583
+          }
+        },
+        "candidate": {
+          "validation": {
+            "negative_log_likelihood": 95.46381092071533,
+            "prediction_tokens": 20,
+            "samples": 3,
+            "loss": 4.773190546035766
+          },
+          "test": {
+            "negative_log_likelihood": 141.73731565475464,
+            "prediction_tokens": 29,
+            "samples": 4,
+            "loss": 4.887493643267401
+          },
+          "train_consumed": {
+            "negative_log_likelihood": 103.41865158081055,
+            "prediction_tokens": 26,
+            "samples": 3,
+            "loss": 3.97764044541579
+          }
+        },
+        "checks": {
+          "consumed_training_loss_decreased": true,
+          "validation_regression_within_five_percent": true,
+          "test_regression_within_five_percent": true
+        },
+        "passed": true,
+        "consumer_imported_modelanvil_or_django": false,
+        "scope": "Independent offline token-weighted loss on explicit consumed train and file-group-held-out text. This bounded corpus/three-step pilot does not establish broader task quality or production qualification."
+      },
+      "current_candidate_api": {
+        "candidate": "01a16a98-ef18-7d28-9477-b9e4c0989590",
+        "matches_independent_consumer": true,
+        "completion": {
+          "id": "chatcmpl-01a16aa63d017bca9143618bcf0018f3",
+          "created": 1792790644,
+          "model": "01a16a98-ef18-7d28-9477-b9e4c0989590",
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": ", the world was a very different place"
+              },
+              "finish_reason": "length"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 4,
+            "completion_tokens": 8,
+            "total_tokens": 12
+          },
+          "modelanvil": {
+            "device": "mlx:0",
+            "elapsed_seconds": 0.08537375000014435,
+            "runtime": {
+              "format": "mlx",
+              "signature": "ff7c562bfb81a99ee9e329a037d7bd18a05cbc2eb76304bd9c79cebdae5f28ca",
+              "input_identity": "0fab439e63aa99b7c0c1d950608f93311c51563a9632f2e6353b43ecc6fd5887",
+              "device": "mlx:0",
+              "provenance": {
+                "implementation": {
+                  "inference.py": "36f1401d73b4db961ad3b432f67efb0eff9f57d12303fc0a0cb4453dee29f08f",
+                  "gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+                  "training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+                  "capabilities.py": "6e6c2674e8d5dd2a3cd5752601434cd6c349f08d60fb8502d348c979b3d29239",
+                  "../api/views/model_workspace.py": "c5fb3c5e430635337b179dca8c1c47c3f43a62e3f72fe18b194020c54601ce0f",
+                  "../../scripts/mlx_candidate_infer.py": "2ad996a7a7e80bae14b439f389123c9ee47275214546391fd1dc1efb7ae61522"
+                },
+                "format": "mlx",
+                "device": "mlx:0",
+                "host": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+                "cpu": "Apple M5 Pro",
+                "platform": "macOS-27.0.1-arm64-arm-64bit",
+                "python": "3.12.15",
+                "packages": {
+                  "mlx": "0.32.3",
+                  "mlx-metal": "0.32.3",
+                  "mlx-lm": "0.29.1",
+                  "transformers": "5.14.0",
+                  "tokenizers": "0.22.2"
+                }
+              },
+              "observation": {
+                "format": "mlx",
+                "actual_device": "mlx:0",
+                "backend": "apple-mlx",
+                "active_bytes": 199406600,
+                "peak_allocated_bytes": 281082436,
+                "reserved_bytes": null,
+                "memory_scope": "MLX process allocations; no reserved/global-free-memory measurement."
+              }
+            }
+          }
+        }
+      },
+      "budget": [
+        {
+          "reserved": "3.000000",
+          "settled": "3.000000"
+        }
+      ],
+      "usage": [
+        {
+          "quantity": "3.000000",
+          "unit": "training_steps",
+          "detail": {
+            "runtime": "modelanvil.smollm2-mlx-qlora.v1",
+            "cpu_seconds": 0.12439100000000103,
+            "training_pairs": 26,
+            "status": "completed"
+          }
+        }
+      ],
+      "cleanup": {
+        "active_keys": 0,
+        "available_worker_slots": 0,
+        "active_tenants": 0
+      },
+      "production_qualified": false,
+      "browser": {
+        "actual_api": true,
+        "recipes": {
+          "qlora_adapter": {
+            "status": "approved",
+            "requirements": {
+              "runtime": "modelanvil.smollm2-mlx-qlora.v1",
+              "recipe": "qlora_adapter",
+              "config": {
+                "architectures": [
+                  "LlamaForCausalLM"
+                ],
+                "attention_bias": false,
+                "attention_dropout": 0,
+                "bos_token_id": 0,
+                "eos_token_id": 0,
+                "hidden_act": "silu",
+                "hidden_size": 576,
+                "initializer_range": 0.041666666666666664,
+                "intermediate_size": 1536,
+                "is_llama_config": true,
+                "max_position_embeddings": 8192,
+                "model_type": "llama",
+                "num_attention_heads": 9,
+                "num_hidden_layers": 30,
+                "num_key_value_heads": 3,
+                "pretraining_tp": 1,
+                "rms_norm_eps": 1e-05,
+                "rope_interleaved": false,
+                "rope_scaling": null,
+                "rope_theta": 100000,
+                "tie_word_embeddings": true,
+                "torch_dtype": "bfloat16",
+                "transformers_version": "4.40.1",
+                "use_cache": true,
+                "vocab_size": 49152,
+                "runtime": "modelanvil.smollm2-mlx-qlora.v1"
+              },
+              "optimizer": {
+                "algorithm": "adamw",
+                "learning_rate": 2e-05,
+                "beta1": 0.9,
+                "beta2": 0.999,
+                "epsilon": 1e-08,
+                "weight_decay": 0
+              },
+              "cpu_slots": 1,
+              "memory_bytes": 8589934592,
+              "storage_bytes": 1378193640,
+              "checkpoint_count": 3,
+              "storage_assumption": "Frozen four-bit base plus FP32 adapters and Adam moments per checkpoint; shared local host.",
+              "device_memory": {
+                "recommended_bytes": 40200896512,
+                "active_bytes": 0,
+                "headroom_bytes": 40200896512,
+                "observed_at": "2026-10-23T21:19:50.272569+00:00",
+                "scope": "MLX process working-set allowance; not globally free memory."
+              },
+              "gpu_count": 1,
+              "accelerator": {
+                "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+                "device": {
+                  "id": "mlx:0",
+                  "backend": "mlx",
+                  "name": "Apple M5 Pro",
+                  "runtime_recommended_memory_bytes": 40200896512,
+                  "memory_scope": "shared_unified"
+                },
+                "framework": {
+                  "name": "mlx",
+                  "version": "0.32.3"
+                },
+                "packages": {
+                  "torch": "2.13.0",
+                  "transformers": "5.14.0",
+                  "safetensors": "0.8.0",
+                  "tokenizers": "0.22.2",
+                  "mlx": "0.32.3",
+                  "mlx-metal": "0.32.3",
+                  "mlx-lm": "0.29.1"
+                },
+                "capacity_source": "MLX recommended process working set, not system-wide free memory"
+              },
+              "precision": "fp32",
+              "adapter": {
+                "rank": 8,
+                "scale": 2,
+                "dropout": 0,
+                "keys": [
+                  "self_attn.q_proj",
+                  "self_attn.v_proj"
+                ]
+              },
+              "trainable_parameters": 460800,
+              "quantization": {
+                "group_size": 32,
+                "bits": 4,
+                "mode": "affine"
+              }
+            },
+            "sample_count": 13,
+            "samples": [
+              {
+                "sample_id": "3b1ad0b2-cb4f-5474-a300-bc8cf916109b",
+                "text_preview": "Trees absorb sunlight through their leaves.",
+                "token_ids": [
+                  46059,
+                  6024,
+                  8118,
+                  738,
+                  480,
+                  3711,
+                  30
+                ],
+                "token_count": 7
+              },
+              {
+                "sample_id": "6c7c1c43-9078-5197-a3d8-a7a36beb51e4",
+                "text_preview": "Rainwater flows into rivers and the sea.",
+                "token_ids": [
+                  36951,
+                  3510,
+                  8634,
+                  618,
+                  7626,
+                  284,
+                  260,
+                  3426,
+                  30
+                ],
+                "token_count": 9
+              },
+              {
+                "sample_id": "9164d6b8-63b0-55bd-ae83-33993c1c8daa",
+                "text_preview": "Bicycles use two wheels, pedals and a chain.",
+                "token_ids": [
+                  50,
+                  8744,
+                  3042,
+                  722,
+                  827,
+                  14296,
+                  28,
+                  7622,
+                  781,
+                  284,
+                  253,
+                  5891,
+                  30
+                ],
+                "token_count": 13
+              },
+              {
+                "sample_id": "4b529b7c-72db-5a60-8fa1-b83ea52d6153",
+                "text_preview": "An orchestra combines strings and wind instruments.",
+                "token_ids": [
+                  2089,
+                  30172,
+                  11473,
+                  12345,
+                  284,
+                  2251,
+                  6907,
+                  30
+                ],
+                "token_count": 8
+              },
+              {
+                "sample_id": "16c9639d-4b45-5b88-a7d6-814e948e0dfc",
+                "text_preview": "Libraries organize books for readers.",
+                "token_ids": [
+                  60,
+                  2054,
+                  2372,
+                  11242,
+                  2905,
+                  327,
+                  4419,
+                  30
+                ],
+                "token_count": 8
+              }
+            ],
+            "blocking_checks": [],
+            "viewports": [
+              1440,
+              390
+            ],
+            "horizontal_overflow": false,
+            "launch_performed": false
+          }
+        },
+        "page_errors": [],
+        "scope": "Actual browser recipe selection and real tokenizer preflight; existing numerical worker execution is recorded separately. Authored mechanics fixture, no customer quality claim."
+      }
+    }
+  },
+  "raw_private_receipt_sha256": {
+    "full_sft": {
+      "task13-gpu-pilot.json": "86fb2deeaabeb114b4925773c0757e32d79f83e250774574ce0a6ee37abc8ede",
+      "task13-gpu-recovery.json": "9d20da6587fec12fcaaed5771b9b388015cc383c5a07efd567287dbfc5481014",
+      "quality-verification.json": "5b1fcfacf0ce585ebf8f7a427545e49201a8196d20239fb0c58e1c3693dc9c2c",
+      "task13-gpu-independent-inference.json": "9c99480e70d2d52251166166dcd6dc452a7e6559d706f05c0886fed77720d24b",
+      "gpu-independent-inference.json": "cee6349a49811c2036b3cedd0391bdbacad5a26e9a65619775f2f92813e4a1ca",
+      "current-candidate-api.json": "fa501dfb9ca2c1cf9801a91ff74e16cbd7c8290907b4b89c7cdd6ef1e4240c13",
+      "final-cleanup-report.json": "11a26f5662bef4edb9de5c0d8ba0f37c328aa6430868be9902fc3a80c627fff4"
+    },
+    "lora_adapter": {
+      "task13-gpu-pilot.json": "3cc306e0050bdb9d654e47cc6f01519868ab26582f408f507e3bc2f007cee967",
+      "task13-gpu-recovery.json": "8e88770969e0a41392f689b5252e20d7758712f9e766e89dfc0c75e314455348",
+      "quality-verification.json": "0c1138a1d680c748c13945e55a3208137c46481e58a80ec526efc48bfb3682a7",
+      "task13-gpu-independent-inference.json": "311743bd86399197d5b6d7ff13beb4decdfce2b596b72a989e2ede4c9257eeda",
+      "gpu-independent-inference.json": "0a669d7b01c5bcee85c5e09548e7a97701fa583689990cde2839aa1a640e1310",
+      "current-candidate-api.json": "cc0c41434ba7bb41fc6c8975b7322a5d47fb496429bb84df2508f384775eb2c4",
+      "final-cleanup-report.json": "11a26f5662bef4edb9de5c0d8ba0f37c328aa6430868be9902fc3a80c627fff4"
+    },
+    "qlora_adapter": {
+      "task13-gpu-pilot.json": "6b60835577520c8574c6a97087d90ecea02f8ccb8d1bf5b13c2d14d80dc1c68b",
+      "task13-gpu-recovery.json": "613b1a0f6ac33ab03c7f5c415ba906651d25a36a158986708f6237f294503229",
+      "quality-verification.json": "3d50efc77065a2264732857bffa26d3033e4caecf9ef6396796a0f8f46b6771c",
+      "task13-gpu-independent-inference.json": "cc070040f4705e07cceee22cc187b628008646cb7c6ce2a14bf33a8c71d7b175",
+      "gpu-independent-inference.json": "e3c0c9758bf491e7a144984401d657d3dcda6ac56f347141c1a6fce11a474a3b",
+      "current-candidate-api.json": "bded5bd3aeda7e9719052dd9dcacee24196ba892b9b43a5e2de854a187fc3f9d",
+      "final-cleanup-report.json": "11a26f5662bef4edb9de5c0d8ba0f37c328aa6430868be9902fc3a80c627fff4"
+    }
+  },
+  "native_mlx_model_test": {
+    "passed": true,
+    "tests": 1,
+    "seconds": 2.653,
+    "frozen_base_unchanged": true,
+    "trainable_parameters": 460800,
+    "optimizer_resume_exact": true,
+    "log_sha256": "ef3f467e4f91404cf7edc68d43d12b7f507ab28fc4db9e60f9e059eb31a315af"
+  },
+  "failed_qualification_attempts": [
+    {
+      "recipe": "qlora_adapter",
+      "worker_training_steps_completed": 3,
+      "failure": "Qualification harness omitted LICENSE.txt from the expected native ZIP entries; corrected to validate the license and all original tensor hashes. The failed run is not counted as passing qualification."
+    }
+  ]
+}

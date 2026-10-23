@@ -197,16 +197,22 @@ def snapshot(version, tenant, project):
     copy_verified(ref, tenant, project, target)
     try:
         value = json.loads(target.getvalue())
-        if isinstance(value, dict) and set(value) == {'source', 'files'} and (version.metadata.get('managed_local') or version.architecture_ref == cpu_hf_runtime.RUNTIME_ID):
-            from modelanvil.runners.training import hf_runtime
+        from modelanvil.runners.training import hf_runtime, mlx_runtime
+        profiles = {module.RUNTIME_ID: module for module in (cpu_hf_runtime, hf_runtime, mlx_runtime)}
+        if isinstance(value, dict) and set(value) == {'source', 'files'} and version.architecture_ref in profiles:
             source = value['source']
-            expected = cpu_hf_runtime.FILE_HASHES if version.architecture_ref == cpu_hf_runtime.RUNTIME_ID and source == cpu_hf_runtime.SOURCE else hf_runtime.LARGE_GUIDED_FILE_HASHES if source == hf_runtime.LARGE_GUIDED_SOURCE else hf_runtime.GUIDED_FILE_HASHES if source == hf_runtime.GUIDED_SOURCE else None
+            profile = profiles[version.architecture_ref]
+            if profile is hf_runtime and source != profile.SOURCE and not version.metadata.get('managed_local'):
+                raise ValueError()
+            expected = (profile.FILE_HASHES if source == profile.SOURCE else
+                hf_runtime.LARGE_GUIDED_FILE_HASHES if profile is hf_runtime and source == hf_runtime.LARGE_GUIDED_SOURCE else
+                hf_runtime.GUIDED_FILE_HASHES if profile is hf_runtime and source == hf_runtime.GUIDED_SOURCE else None)
             files = value['files']
-            if (version.architecture_ref not in (hf_runtime.RUNTIME_ID, cpu_hf_runtime.RUNTIME_ID) or source != version.metadata.get('source') or expected is None
+            if (source != version.metadata.get('source') or expected is None
                     or not isinstance(files, dict) or set(files) != set(expected)
                     or any(not isinstance(files[name], dict) or files[name].get('sha256') != sha for name, sha in expected.items())):
                 raise ValueError()
-            return {**value, 'format': 'safetensors', 'guided_large': source == hf_runtime.LARGE_GUIDED_SOURCE}
+            return {**value, 'format': 'mlx' if profile is mlx_runtime else 'safetensors', 'guided_large': source == hf_runtime.LARGE_GUIDED_SOURCE}
         if not isinstance(value, dict) or value['format'] not in {'safetensors', 'gguf', 'mlx'}:
             raise ValueError()
         return value

@@ -58,7 +58,7 @@ def load_candidate(directory):
             config = json.loads((directory / 'adapter_config.json').read_text())
             if config.get('r') != 8 or config.get('lora_alpha') != 16 or set(config.get('target_modules', [])) != {'q_proj', 'v_proj'} or config.get('lora_dropout') != 0:
                 raise ValueError('Candidate adapter does not match the declared rank-8 q/v profile.')
-            model = PeftModel.from_pretrained(model, str(directory), local_files_only=True)
+            model = PeftModel.from_pretrained(model, str(directory), local_files_only=True, torch_device='cpu')
             from safetensors.torch import load_file
             saved = load_file(str(directory / 'adapter_model.safetensors'))
             expected = get_peft_model_state_dict(model, save_embedding_layers=False)
@@ -68,6 +68,8 @@ def load_candidate(directory):
         raise ValueError('Candidate tensors do not completely match the transformer.')
     if any(p.is_meta or not torch.isfinite(p).all().item() for p in model.parameters()):
         raise ValueError('Candidate did not load complete finite weights.')
+    if any(p.device.type != 'cpu' for p in model.parameters()):
+        raise ValueError('Independent candidate staging must stay on CPU before explicit device placement.')
     return model
 
 
