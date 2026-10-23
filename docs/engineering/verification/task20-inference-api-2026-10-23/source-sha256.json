@@ -1,0 +1,10 @@
+{
+  "modelanvil/api/views/model_workspace.py": "891eeac511d288fb58a57af6547e3a02d83b80266fb8de4301120a9b89e522b3",
+  "modelanvil/runners/inference.py": "651bd64e2b2ed75a6e87b763c6d72cd9793d95548f0a196783dda44c0bac6527",
+  "modelanvil/runners/inference_replay.py": "1a33faf3797ef3ae4ce5ca1651084aa5ede18e8970dc1ad35d34178f374838b8",
+  "modelanvil/runners/gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+  "modelanvil/core/management/commands/purge_expired_inference_replays.py": "c64fae6cee1410b55042673762037d60899a7bd87b33584a16c1fd7743ae142e",
+  "modelanvil/api/test_inference_replay.py": "628d52ca81a8745f71fff63e3b265da875028c2c69372c930d844b884b205102",
+  "scripts/inference_protocol_client.py": "71b65daa16b0d30e56ac089d92365e78cf498ff6750713f3a3a67811a82bc153",
+  "scripts/production_integration.py": "73727291efd36bf0ff3d6db6e80a26412f03d8b08b413ecab9749ccfb6aa81a9"
+}

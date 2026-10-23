@@ -4,9 +4,14 @@ from contextlib import contextmanager
 import hashlib
 import io
 import json
+import os
+from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import threading
 from unittest.mock import patch
+from unittest import skipUnless
 
 from django.conf import settings
 from django.db import connections
@@ -186,3 +191,22 @@ class InferenceReplayTests(TransactionTestCase):
         self.assertFalse(IdempotencyKey.all_objects.filter(pk=record.pk).exists())
         self.assertTrue(IdempotencyKey.all_objects.filter(pk=pending.pk).exists())
         self.assertEqual(InferenceRequest.all_objects.count(), 1)
+
+    @skipUnless(os.name == 'posix', 'Qualified local POSIX admission')
+    def test_another_process_holding_cpu_admission_blocks_actual_api_allocation(self):
+        root = str(Path(self.root.name) / 'device-locks')
+        code = "from modelanvil.device_admission import device_lease\nwith device_lease('cpu'):\n print('held',flush=True)\n input()\n"
+        with override_settings(MODELANVIL_DEVICE_LOCK_ROOT=root):
+            child = subprocess.Popen([sys.executable, '-c', code], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE, text=True, env={**os.environ, 'DJANGO_SETTINGS_MODULE': 'modelanvil.settings', 'MODELANVIL_DEVICE_LOCK_ROOT': root})
+            try:
+                self.assertEqual(child.stdout.readline().strip(), 'held')
+                blocked = self.post(key='busy-device')
+                self.assertEqual(blocked.status_code, 400, blocked.content)
+                self.assertIn('busy', blocked.content.decode())
+                self.assertIsNone(InferenceRequest.all_objects.get().usage)
+            finally:
+                child.terminate(); child.communicate(timeout=5)
+            self.assertEqual(self.post(key='busy-device').status_code, 409)
+            self.assertEqual(self.post(key='released-device').status_code, 200)
+            self.assertEqual(InferenceRequest.all_objects.filter(status='completed').count(), 1)

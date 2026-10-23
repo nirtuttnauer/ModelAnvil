@@ -4147,6 +4147,21 @@
                   "description": "OpenAI-compatible delta chunks, optional actual usage and [DONE]."
                 }
               }
+            },
+            "headers": {
+              "Idempotency-Replayed": {
+                "schema": {
+                  "type": "boolean"
+                },
+                "description": "Present for keyed requests. True means saved output and original usage were returned without new inference."
+              },
+              "Idempotency-Retention": {
+                "schema": {
+                  "type": "integer",
+                  "const": 604800
+                },
+                "description": "Logical replay window in seconds. Expired stored bodies can be purged explicitly."
+              }
             }
           },
           "400": {
@@ -4160,6 +4175,9 @@
           },
           "404": {
             "description": "Resource unavailable in this project"
+          },
+          "409": {
+            "description": "Idempotency key conflicts with changed inputs/pins, or the original request is still pending/interrupted/failed. Never silently re-executed; use a new key to authorize another generation."
           }
         },
         "requestBody": {
@@ -4171,7 +4189,20 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "description": "Optional scoped replay key. Completed JSON/SSE retries reuse the original request identity and measured usage for seven days without generation. Changed input/model pins, pending/interrupted or failed keys return409. No key creates a new request."
+          }
+        ]
       }
     },
     "/chat-conversations/": {
