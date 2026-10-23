@@ -69,6 +69,17 @@ class IndexInputSerializer(serializers.Serializer):
         return data
 
 
+class GenerationInput(serializers.Serializer):
+    query=serializers.CharField(max_length=8192,trim_whitespace=False)
+    model_version=serializers.UUIDField()
+    condition=serializers.ChoiceField(choices=['none','retrieved','human'],default='retrieved')
+    retrieval_mode=serializers.ChoiceField(choices=['lexical','dense','hybrid'],default='lexical')
+    human_chunk_ids=serializers.ListField(child=serializers.UUIDField(),min_length=1,max_length=5,required=False)
+    top_k=serializers.IntegerField(min_value=1,max_value=5,default=3)
+    max_tokens=serializers.IntegerField(min_value=1,max_value=128,default=64)
+    overflow_policy=serializers.ChoiceField(choices=['fail','omit_optional_evidence'],default='fail')
+
+
 class RetrievalQuerySerializer(serializers.Serializer):
     query = serializers.CharField(max_length=10000, required=False, default="", allow_blank=True)
     top_k = serializers.IntegerField(default=5, min_value=1, max_value=100)
@@ -206,6 +217,27 @@ class IndexVersionViewSet(TenantScopedViewSet):
         return Response({'results':rows,'mode':mode,'retrieval_config':trace.retrieval_config,'index_id':str(index_version.index_id),
             'manifest_digest':index_version.manifest_digest,'trace_id':str(trace.trace_id),
             'reranker':'none','generation':'not_executed','context_chunk_ids':[row['chunk_id'] for row in rows]})
+
+    @action(detail=True,methods=['get','post'])
+    def generations(self,request,index_id=None):
+        from modelanvil.rag.models import RAGGeneration
+        from modelanvil.rag.generation import generate,visible
+        from modelanvil.runners.models import ModelVersion
+        from modelanvil.api.views.specialists import project_scope
+        from modelanvil.identity.models import get_accessible_queryset
+        index=self.get_object()
+        if request.method=='GET':
+            rows=get_accessible_queryset(RAGGeneration).filter(index=index).select_related('model_version','index').order_by('-created_at')[:20]
+            results=[payload for run in rows if (payload:=visible(run)) is not None]
+            return Response({'results':results,'limit':20})
+        incoming=GenerationInput(data=request.data);incoming.is_valid(raise_exception=True);v=dict(incoming.validated_data)
+        model=get_accessible_queryset(ModelVersion).filter(model_version_id=v.pop('model_version')).first()
+        if model is None:raise serializers.ValidationError('Select a model available in this project.')
+        try:run=generate(index,model,project_scope(),**v)
+        except ValueError as exc:raise serializers.ValidationError(str(exc)) from exc
+        payload=visible(run)
+        if payload is None:raise serializers.ValidationError('Source or model authorization changed; output was withheld.')
+        return Response(payload,status=201)
 
     @action(detail=True,methods=['get'],url_path='judgment-pool')
     def judgment_pool(self,request,index_id=None):

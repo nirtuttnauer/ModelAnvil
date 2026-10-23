@@ -1,4 +1,4 @@
-"""Authorized retrieval evidence and trace logging; generation is not connected."""
+"""Legacy retrieval-only traces; explicit model generation is implemented in generation.py."""
 from __future__ import annotations
 
 import time

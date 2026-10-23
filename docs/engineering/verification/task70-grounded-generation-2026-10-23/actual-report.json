@@ -1,0 +1,712 @@
+{
+  "runs": [
+    {
+      "run_id": "01a167be-62a0-7027-8241-4a709af45abc",
+      "model_version_id": "01a167be-5fa6-7c72-acf4-1e019adab99f",
+      "condition": "none",
+      "query": "What is the access code for the island beacon?",
+      "status": "validation_refusal",
+      "answer": "",
+      "raw_output": "The access code for the island beacon is [1].",
+      "citations": [],
+      "receipt": {
+        "settings": {
+          "prompt_version": "rag-cited-answer-v1",
+          "max_tokens": 64,
+          "temperature": 0.0,
+          "seed": 42,
+          "prompt_format": "model",
+          "device": "cpu"
+        },
+        "model_pins": {
+          "model_version_id": "01a167be-5fa6-7c72-acf4-1e019adab99f",
+          "tokenizer_id": "01a167be-5f9c-71ef-a9f7-8d5b9296784d",
+          "snapshot_digest": "d7ba14117dabed01cbb4e19e6df88104792b0bec1c19556a29875084bc63fe55",
+          "source": {
+            "license": "apache-2.0",
+            "license_evidence": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/blob/12fd25f77366fa6b3b4b768ec3050bf629380bac/README.md",
+            "rag_decoder_profile": "78a7555433ac9baa663f6b06b12b8139c7382289e9bb69e8491dbf53cc732365",
+            "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+            "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+          },
+          "files": {
+            "config.json": {
+              "artifact_id": "01a167be-5de5-76f7-9a6b-cfcff4a29b6b",
+              "byte_size": 861,
+              "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a"
+            },
+            "generation_config.json": {
+              "artifact_id": "01a167be-5deb-7546-addc-48896c6f2cb7",
+              "byte_size": 132,
+              "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013"
+            },
+            "model.safetensors": {
+              "artifact_id": "01a167be-5e4f-77b4-bca2-c4196eeb9a43",
+              "byte_size": 269060552,
+              "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+            },
+            "special_tokens_map.json": {
+              "artifact_id": "01a167be-5ec7-7b2f-9c7e-87567fb7a3ea",
+              "byte_size": 655,
+              "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52"
+            },
+            "tokenizer.json": {
+              "artifact_id": "01a167be-5ecd-7835-9258-7df06431c5ac",
+              "byte_size": 2104556,
+              "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+            },
+            "tokenizer_config.json": {
+              "artifact_id": "01a167be-5ed4-7f85-b07e-30989d94ec71",
+              "byte_size": 3764,
+              "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df"
+            }
+          }
+        },
+        "sources": [],
+        "retrieved_chunk_ids": [],
+        "generation_executed": true,
+        "citation_validation": "source_membership_only",
+        "answer_correctness_verified": false,
+        "retrieval_mode": "none",
+        "index_pins": {
+          "index_id": "01a167be-5fef-79b4-accc-f9143ddc309a",
+          "manifest_digest": "4f72937225c2be750f4200a9922ef55867d973184bc7063ce166be1906e2b712",
+          "configuration_digest": "ee716957d6a5d46f1436d2dbb47f29578b1f7b150d0e6c69918c0ab1dc1d9d98",
+          "embedding_space_id": "26"
+        },
+        "retrieval_config": null,
+        "budget": {
+          "input_tokens": 105,
+          "output_reserve_tokens": 64,
+          "total_reserved_tokens": 169,
+          "runtime_limit_tokens": 2048,
+          "remaining_tokens": 1879,
+          "overflow_policy": "fail",
+          "omitted_chunk_ids": [],
+          "supplied_chunk_ids": [],
+          "prompt_sha256": "90ac805416e41bb2f413ac71f7f1c6418fac2d5427cb0d5280f7694a446d5467",
+          "required_question_preserved": true,
+          "chat_template_sha256": "872be49dbb638044ad01b60388f48d469ff2980e5f0dccdc22ec907db54d0788"
+        },
+        "environment": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "tokenizers": "0.22.2",
+          "safetensors": "0.8.0"
+        },
+        "usage": {
+          "prompt_tokens": 105,
+          "completion_tokens": 12,
+          "total_tokens": 117
+        },
+        "finish_reason": "stop",
+        "reason": "unknown_citation",
+        "elapsed_ms": 592.434
+      },
+      "created_at": "2026-10-23T07:51:32.768890+00:00"
+    },
+    {
+      "run_id": "01a167be-66bd-7b08-a98f-3f7e9656b686",
+      "model_version_id": "01a167be-5fa6-7c72-acf4-1e019adab99f",
+      "condition": "retrieved",
+      "query": "What is the access code for the island beacon?",
+      "status": "answered",
+      "answer": "[1] The access code for the island beacon is WILLOW.\n\nI used the facts and cited supporting source numbers from the island beacon's access code to answer the question. I did not invent any sources, and I said \"I do not know\" to avoid providing incorrect information.",
+      "raw_output": "[1] The access code for the island beacon is WILLOW.\n\nI used the facts and cited supporting source numbers from the island beacon's access code to answer the question. I did not invent any sources, and I said \"I do not know\" to avoid providing incorrect information.",
+      "citations": [
+        {
+          "label": 1,
+          "chunk_id": "01a167be-5fc0-7a3c-b08f-542af6164da5",
+          "title": "Island beacon",
+          "source_uri": "fixture:island-beacon",
+          "content_hash": "0e97f844961aa98f18be0221bef60eee85e636b447238db2d1bc9f835bc4aa59",
+          "span_start": 0,
+          "span_end": 48
+        }
+      ],
+      "receipt": {
+        "settings": {
+          "prompt_version": "rag-cited-answer-v1",
+          "max_tokens": 64,
+          "temperature": 0.0,
+          "seed": 42,
+          "prompt_format": "model",
+          "device": "cpu"
+        },
+        "model_pins": {
+          "model_version_id": "01a167be-5fa6-7c72-acf4-1e019adab99f",
+          "tokenizer_id": "01a167be-5f9c-71ef-a9f7-8d5b9296784d",
+          "snapshot_digest": "d7ba14117dabed01cbb4e19e6df88104792b0bec1c19556a29875084bc63fe55",
+          "source": {
+            "license": "apache-2.0",
+            "license_evidence": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/blob/12fd25f77366fa6b3b4b768ec3050bf629380bac/README.md",
+            "rag_decoder_profile": "78a7555433ac9baa663f6b06b12b8139c7382289e9bb69e8491dbf53cc732365",
+            "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+            "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+          },
+          "files": {
+            "config.json": {
+              "artifact_id": "01a167be-5de5-76f7-9a6b-cfcff4a29b6b",
+              "byte_size": 861,
+              "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a"
+            },
+            "generation_config.json": {
+              "artifact_id": "01a167be-5deb-7546-addc-48896c6f2cb7",
+              "byte_size": 132,
+              "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013"
+            },
+            "model.safetensors": {
+              "artifact_id": "01a167be-5e4f-77b4-bca2-c4196eeb9a43",
+              "byte_size": 269060552,
+              "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+            },
+            "special_tokens_map.json": {
+              "artifact_id": "01a167be-5ec7-7b2f-9c7e-87567fb7a3ea",
+              "byte_size": 655,
+              "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52"
+            },
+            "tokenizer.json": {
+              "artifact_id": "01a167be-5ecd-7835-9258-7df06431c5ac",
+              "byte_size": 2104556,
+              "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+            },
+            "tokenizer_config.json": {
+              "artifact_id": "01a167be-5ed4-7f85-b07e-30989d94ec71",
+              "byte_size": 3764,
+              "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df"
+            }
+          }
+        },
+        "sources": [
+          {
+            "chunk_id": "01a167be-5fc0-7a3c-b08f-542af6164da5",
+            "content_hash": "0e97f844961aa98f18be0221bef60eee85e636b447238db2d1bc9f835bc4aa59",
+            "document_id": "01a167be-5fba-767f-b876-732b5035aa3f",
+            "document_revision": 1,
+            "document_hash": "0e97f844961aa98f18be0221bef60eee85e636b447238db2d1bc9f835bc4aa59"
+          },
+          {
+            "chunk_id": "01a167be-5fbe-7e2e-94f4-b9aeec91c70d",
+            "content_hash": "38c15ba224ee990856ba5ce1be68e8da42c7811882b9b2705f26cd0e2309f832",
+            "document_id": "01a167be-5fbc-77ab-9f55-7a001eabe86b",
+            "document_revision": 1,
+            "document_hash": "38c15ba224ee990856ba5ce1be68e8da42c7811882b9b2705f26cd0e2309f832"
+          }
+        ],
+        "retrieved_chunk_ids": [
+          "01a167be-5fc0-7a3c-b08f-542af6164da5",
+          "01a167be-5fbe-7e2e-94f4-b9aeec91c70d"
+        ],
+        "generation_executed": true,
+        "citation_validation": "source_membership_only",
+        "answer_correctness_verified": false,
+        "retrieval_mode": "dense",
+        "index_pins": {
+          "index_id": "01a167be-5fef-79b4-accc-f9143ddc309a",
+          "manifest_digest": "4f72937225c2be750f4200a9922ef55867d973184bc7063ce166be1906e2b712",
+          "configuration_digest": "ee716957d6a5d46f1436d2dbb47f29578b1f7b150d0e6c69918c0ab1dc1d9d98",
+          "embedding_space_id": "26"
+        },
+        "retrieval_config": {
+          "backend": "postgresql",
+          "lexical": "postgresql-ts-rank-cd-simple-v1",
+          "dense_search": "hnsw",
+          "operator": "cosine",
+          "hnsw": {
+            "m": 16,
+            "ef_construction": 64,
+            "ef_search": 100,
+            "iterative_scan": "strict_order",
+            "max_scan_tuples": 20000
+          },
+          "execution": {
+            "exact_fallback_enabled": true,
+            "exact_fallback_used": false,
+            "pgvector_version": "0.8.7"
+          },
+          "underfill_policy": "exact_fallback",
+          "rrf_k": 60,
+          "candidate_count": 4,
+          "candidate_count_per_channel": true
+        },
+        "budget": {
+          "input_tokens": 133,
+          "output_reserve_tokens": 64,
+          "total_reserved_tokens": 197,
+          "runtime_limit_tokens": 2048,
+          "remaining_tokens": 1851,
+          "overflow_policy": "fail",
+          "omitted_chunk_ids": [],
+          "supplied_chunk_ids": [
+            "01a167be-5fc0-7a3c-b08f-542af6164da5",
+            "01a167be-5fbe-7e2e-94f4-b9aeec91c70d"
+          ],
+          "prompt_sha256": "5a6178dc3ef5a8601cc6357b9536e8a6395cf75df7b9aecba56a12da7acd7f0a",
+          "required_question_preserved": true,
+          "chat_template_sha256": "872be49dbb638044ad01b60388f48d469ff2980e5f0dccdc22ec907db54d0788"
+        },
+        "environment": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "tokenizers": "0.22.2",
+          "safetensors": "0.8.0"
+        },
+        "usage": {
+          "prompt_tokens": 133,
+          "completion_tokens": 61,
+          "total_tokens": 194
+        },
+        "finish_reason": "stop",
+        "reason": "source_membership_validated",
+        "elapsed_ms": 1037.688
+      },
+      "created_at": "2026-10-23T07:51:33.821793+00:00"
+    },
+    {
+      "run_id": "01a167be-6903-70cb-a799-0a408b084885",
+      "model_version_id": "01a167be-5fa6-7c72-acf4-1e019adab99f",
+      "condition": "human",
+      "query": "What is the access code for the island beacon?",
+      "status": "validation_refusal",
+      "answer": "",
+      "raw_output": "The access code for the island beacon is WILLOW.",
+      "citations": [],
+      "receipt": {
+        "settings": {
+          "prompt_version": "rag-cited-answer-v1",
+          "max_tokens": 64,
+          "temperature": 0.0,
+          "seed": 42,
+          "prompt_format": "model",
+          "device": "cpu"
+        },
+        "model_pins": {
+          "model_version_id": "01a167be-5fa6-7c72-acf4-1e019adab99f",
+          "tokenizer_id": "01a167be-5f9c-71ef-a9f7-8d5b9296784d",
+          "snapshot_digest": "d7ba14117dabed01cbb4e19e6df88104792b0bec1c19556a29875084bc63fe55",
+          "source": {
+            "license": "apache-2.0",
+            "license_evidence": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/blob/12fd25f77366fa6b3b4b768ec3050bf629380bac/README.md",
+            "rag_decoder_profile": "78a7555433ac9baa663f6b06b12b8139c7382289e9bb69e8491dbf53cc732365",
+            "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+            "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+          },
+          "files": {
+            "config.json": {
+              "artifact_id": "01a167be-5de5-76f7-9a6b-cfcff4a29b6b",
+              "byte_size": 861,
+              "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a"
+            },
+            "generation_config.json": {
+              "artifact_id": "01a167be-5deb-7546-addc-48896c6f2cb7",
+              "byte_size": 132,
+              "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013"
+            },
+            "model.safetensors": {
+              "artifact_id": "01a167be-5e4f-77b4-bca2-c4196eeb9a43",
+              "byte_size": 269060552,
+              "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+            },
+            "special_tokens_map.json": {
+              "artifact_id": "01a167be-5ec7-7b2f-9c7e-87567fb7a3ea",
+              "byte_size": 655,
+              "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52"
+            },
+            "tokenizer.json": {
+              "artifact_id": "01a167be-5ecd-7835-9258-7df06431c5ac",
+              "byte_size": 2104556,
+              "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+            },
+            "tokenizer_config.json": {
+              "artifact_id": "01a167be-5ed4-7f85-b07e-30989d94ec71",
+              "byte_size": 3764,
+              "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df"
+            }
+          }
+        },
+        "sources": [
+          {
+            "chunk_id": "01a167be-5fc0-7a3c-b08f-542af6164da5",
+            "content_hash": "0e97f844961aa98f18be0221bef60eee85e636b447238db2d1bc9f835bc4aa59",
+            "document_id": "01a167be-5fba-767f-b876-732b5035aa3f",
+            "document_revision": 1,
+            "document_hash": "0e97f844961aa98f18be0221bef60eee85e636b447238db2d1bc9f835bc4aa59"
+          }
+        ],
+        "retrieved_chunk_ids": [
+          "01a167be-5fc0-7a3c-b08f-542af6164da5"
+        ],
+        "generation_executed": true,
+        "citation_validation": "source_membership_only",
+        "answer_correctness_verified": false,
+        "retrieval_mode": "human",
+        "index_pins": {
+          "index_id": "01a167be-5fef-79b4-accc-f9143ddc309a",
+          "manifest_digest": "4f72937225c2be750f4200a9922ef55867d973184bc7063ce166be1906e2b712",
+          "configuration_digest": "ee716957d6a5d46f1436d2dbb47f29578b1f7b150d0e6c69918c0ab1dc1d9d98",
+          "embedding_space_id": "26"
+        },
+        "retrieval_config": null,
+        "budget": {
+          "input_tokens": 117,
+          "output_reserve_tokens": 64,
+          "total_reserved_tokens": 181,
+          "runtime_limit_tokens": 2048,
+          "remaining_tokens": 1867,
+          "overflow_policy": "fail",
+          "omitted_chunk_ids": [],
+          "supplied_chunk_ids": [
+            "01a167be-5fc0-7a3c-b08f-542af6164da5"
+          ],
+          "prompt_sha256": "468f3958a369a88700488f057e2ade8cfec1f1d3d638e0b1fd9b586a5ea25275",
+          "required_question_preserved": true,
+          "chat_template_sha256": "872be49dbb638044ad01b60388f48d469ff2980e5f0dccdc22ec907db54d0788"
+        },
+        "environment": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "tokenizers": "0.22.2",
+          "safetensors": "0.8.0"
+        },
+        "usage": {
+          "prompt_tokens": 117,
+          "completion_tokens": 13,
+          "total_tokens": 130
+        },
+        "finish_reason": "stop",
+        "reason": "missing_citation",
+        "elapsed_ms": 560.826
+      },
+      "created_at": "2026-10-23T07:51:34.403948+00:00"
+    },
+    {
+      "run_id": "01a167be-6924-75db-99ed-44038da3e8dc",
+      "model_version_id": "01a167be-5fa6-7c72-acf4-1e019adab99f",
+      "condition": "retrieved",
+      "query": "unlisted winter observatory access code",
+      "status": "policy_abstain",
+      "answer": "",
+      "raw_output": "",
+      "citations": [],
+      "receipt": {
+        "settings": {
+          "prompt_version": "rag-cited-answer-v1",
+          "max_tokens": 64,
+          "temperature": 0.0,
+          "seed": 42,
+          "prompt_format": "model",
+          "device": "cpu"
+        },
+        "model_pins": {
+          "model_version_id": "01a167be-5fa6-7c72-acf4-1e019adab99f",
+          "tokenizer_id": "01a167be-5f9c-71ef-a9f7-8d5b9296784d",
+          "snapshot_digest": "d7ba14117dabed01cbb4e19e6df88104792b0bec1c19556a29875084bc63fe55",
+          "source": {
+            "license": "apache-2.0",
+            "license_evidence": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/blob/12fd25f77366fa6b3b4b768ec3050bf629380bac/README.md",
+            "rag_decoder_profile": "78a7555433ac9baa663f6b06b12b8139c7382289e9bb69e8491dbf53cc732365",
+            "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+            "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+          },
+          "files": {
+            "config.json": {
+              "artifact_id": "01a167be-5de5-76f7-9a6b-cfcff4a29b6b",
+              "byte_size": 861,
+              "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a"
+            },
+            "generation_config.json": {
+              "artifact_id": "01a167be-5deb-7546-addc-48896c6f2cb7",
+              "byte_size": 132,
+              "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013"
+            },
+            "model.safetensors": {
+              "artifact_id": "01a167be-5e4f-77b4-bca2-c4196eeb9a43",
+              "byte_size": 269060552,
+              "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+            },
+            "special_tokens_map.json": {
+              "artifact_id": "01a167be-5ec7-7b2f-9c7e-87567fb7a3ea",
+              "byte_size": 655,
+              "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52"
+            },
+            "tokenizer.json": {
+              "artifact_id": "01a167be-5ecd-7835-9258-7df06431c5ac",
+              "byte_size": 2104556,
+              "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+            },
+            "tokenizer_config.json": {
+              "artifact_id": "01a167be-5ed4-7f85-b07e-30989d94ec71",
+              "byte_size": 3764,
+              "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df"
+            }
+          }
+        },
+        "sources": [],
+        "retrieved_chunk_ids": [],
+        "generation_executed": false,
+        "citation_validation": "source_membership_only",
+        "answer_correctness_verified": false,
+        "retrieval_mode": "lexical",
+        "index_pins": {
+          "index_id": "01a167be-5fef-79b4-accc-f9143ddc309a",
+          "manifest_digest": "4f72937225c2be750f4200a9922ef55867d973184bc7063ce166be1906e2b712",
+          "configuration_digest": "ee716957d6a5d46f1436d2dbb47f29578b1f7b150d0e6c69918c0ab1dc1d9d98",
+          "embedding_space_id": "26"
+        },
+        "retrieval_config": {
+          "backend": "postgresql",
+          "lexical": "postgresql-ts-rank-cd-simple-v1",
+          "dense_search": "hnsw",
+          "operator": "cosine",
+          "hnsw": {
+            "m": 16,
+            "ef_construction": 64,
+            "ef_search": 100,
+            "iterative_scan": "strict_order",
+            "max_scan_tuples": 20000
+          },
+          "execution": {},
+          "underfill_policy": "exact_fallback",
+          "rrf_k": 60,
+          "candidate_count": 6,
+          "candidate_count_per_channel": true
+        },
+        "reason": "no_authorized_evidence",
+        "budget": null,
+        "usage": null,
+        "elapsed_ms": 15.244
+      },
+      "created_at": "2026-10-23T07:51:34.436392+00:00"
+    },
+    {
+      "run_id": "01a167be-6b98-77bc-b263-4361f00230bc",
+      "model_version_id": "01a167be-5fa6-7c72-acf4-1e019adab99f",
+      "condition": "retrieved",
+      "query": "What is the access code for the unlisted winter observatory?",
+      "status": "validation_refusal",
+      "answer": "",
+      "raw_output": "The access code for the unlisted winter observatory is WILLOW.",
+      "citations": [],
+      "receipt": {
+        "settings": {
+          "prompt_version": "rag-cited-answer-v1",
+          "max_tokens": 64,
+          "temperature": 0.0,
+          "seed": 42,
+          "prompt_format": "model",
+          "device": "cpu"
+        },
+        "model_pins": {
+          "model_version_id": "01a167be-5fa6-7c72-acf4-1e019adab99f",
+          "tokenizer_id": "01a167be-5f9c-71ef-a9f7-8d5b9296784d",
+          "snapshot_digest": "d7ba14117dabed01cbb4e19e6df88104792b0bec1c19556a29875084bc63fe55",
+          "source": {
+            "license": "apache-2.0",
+            "license_evidence": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/blob/12fd25f77366fa6b3b4b768ec3050bf629380bac/README.md",
+            "rag_decoder_profile": "78a7555433ac9baa663f6b06b12b8139c7382289e9bb69e8491dbf53cc732365",
+            "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+            "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+          },
+          "files": {
+            "config.json": {
+              "artifact_id": "01a167be-5de5-76f7-9a6b-cfcff4a29b6b",
+              "byte_size": 861,
+              "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a"
+            },
+            "generation_config.json": {
+              "artifact_id": "01a167be-5deb-7546-addc-48896c6f2cb7",
+              "byte_size": 132,
+              "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013"
+            },
+            "model.safetensors": {
+              "artifact_id": "01a167be-5e4f-77b4-bca2-c4196eeb9a43",
+              "byte_size": 269060552,
+              "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+            },
+            "special_tokens_map.json": {
+              "artifact_id": "01a167be-5ec7-7b2f-9c7e-87567fb7a3ea",
+              "byte_size": 655,
+              "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52"
+            },
+            "tokenizer.json": {
+              "artifact_id": "01a167be-5ecd-7835-9258-7df06431c5ac",
+              "byte_size": 2104556,
+              "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+            },
+            "tokenizer_config.json": {
+              "artifact_id": "01a167be-5ed4-7f85-b07e-30989d94ec71",
+              "byte_size": 3764,
+              "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df"
+            }
+          }
+        },
+        "sources": [
+          {
+            "chunk_id": "01a167be-5fc1-79bc-a1d6-14f4218794e7",
+            "content_hash": "94466e7fc5a1032b5e177bbf37c7bacd7da046dac0d50f13095dae0f49a6f735",
+            "document_id": "01a167be-5fbb-78cb-928e-197d2409278b",
+            "document_revision": 1,
+            "document_hash": "94466e7fc5a1032b5e177bbf37c7bacd7da046dac0d50f13095dae0f49a6f735"
+          },
+          {
+            "chunk_id": "01a167be-5fc0-7a3c-b08f-542af6164da5",
+            "content_hash": "0e97f844961aa98f18be0221bef60eee85e636b447238db2d1bc9f835bc4aa59",
+            "document_id": "01a167be-5fba-767f-b876-732b5035aa3f",
+            "document_revision": 1,
+            "document_hash": "0e97f844961aa98f18be0221bef60eee85e636b447238db2d1bc9f835bc4aa59"
+          }
+        ],
+        "retrieved_chunk_ids": [
+          "01a167be-5fc1-79bc-a1d6-14f4218794e7",
+          "01a167be-5fc0-7a3c-b08f-542af6164da5"
+        ],
+        "generation_executed": true,
+        "citation_validation": "source_membership_only",
+        "answer_correctness_verified": false,
+        "retrieval_mode": "dense",
+        "index_pins": {
+          "index_id": "01a167be-5fef-79b4-accc-f9143ddc309a",
+          "manifest_digest": "4f72937225c2be750f4200a9922ef55867d973184bc7063ce166be1906e2b712",
+          "configuration_digest": "ee716957d6a5d46f1436d2dbb47f29578b1f7b150d0e6c69918c0ab1dc1d9d98",
+          "embedding_space_id": "26"
+        },
+        "retrieval_config": {
+          "backend": "postgresql",
+          "lexical": "postgresql-ts-rank-cd-simple-v1",
+          "dense_search": "hnsw",
+          "operator": "cosine",
+          "hnsw": {
+            "m": 16,
+            "ef_construction": 64,
+            "ef_search": 100,
+            "iterative_scan": "strict_order",
+            "max_scan_tuples": 20000
+          },
+          "execution": {
+            "exact_fallback_enabled": true,
+            "exact_fallback_used": false,
+            "pgvector_version": "0.8.7"
+          },
+          "underfill_policy": "exact_fallback",
+          "rrf_k": 60,
+          "candidate_count": 4,
+          "candidate_count_per_channel": true
+        },
+        "budget": {
+          "input_tokens": 136,
+          "output_reserve_tokens": 64,
+          "total_reserved_tokens": 200,
+          "runtime_limit_tokens": 2048,
+          "remaining_tokens": 1848,
+          "overflow_policy": "fail",
+          "omitted_chunk_ids": [],
+          "supplied_chunk_ids": [
+            "01a167be-5fc1-79bc-a1d6-14f4218794e7",
+            "01a167be-5fc0-7a3c-b08f-542af6164da5"
+          ],
+          "prompt_sha256": "150964cbee0cef2cdf3a2ad4546fbb2e3816be050c80fbde35abfa53add4fcf7",
+          "required_question_preserved": true,
+          "chat_template_sha256": "872be49dbb638044ad01b60388f48d469ff2980e5f0dccdc22ec907db54d0788"
+        },
+        "environment": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "tokenizers": "0.22.2",
+          "safetensors": "0.8.0"
+        },
+        "usage": {
+          "prompt_tokens": 136,
+          "completion_tokens": 15,
+          "total_tokens": 151
+        },
+        "finish_reason": "stop",
+        "reason": "missing_citation",
+        "elapsed_ms": 613.619
+      },
+      "created_at": "2026-10-23T07:51:35.064424+00:00"
+    }
+  ],
+  "labels": [
+    {
+      "run_id": "01a167be-62a0-7027-8241-4a709af45abc",
+      "answerable": true,
+      "reference": "WILLOW"
+    },
+    {
+      "run_id": "01a167be-66bd-7b08-a98f-3f7e9656b686",
+      "answerable": true,
+      "reference": "WILLOW"
+    },
+    {
+      "run_id": "01a167be-6903-70cb-a799-0a408b084885",
+      "answerable": true,
+      "reference": "WILLOW"
+    },
+    {
+      "run_id": "01a167be-6924-75db-99ed-44038da3e8dc",
+      "answerable": false,
+      "reference": null
+    },
+    {
+      "run_id": "01a167be-6b98-77bc-b263-4361f00230bc",
+      "answerable": false,
+      "reference": null
+    }
+  ],
+  "abstention": {
+    "known_unanswerable": 2,
+    "model_executed": 1,
+    "model_declared_abstentions": 0,
+    "policy_abstentions": 1,
+    "validation_refusals": 1,
+    "delivered_false_answers": 0
+  },
+  "retrieval_relevance": {
+    "answerable_queries": 1,
+    "hit_at_2": 1
+  },
+  "model": {
+    "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+    "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+    "license": "apache-2.0",
+    "license_evidence": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/blob/12fd25f77366fa6b3b4b768ec3050bf629380bac/README.md",
+    "context_limit": 2048,
+    "default_decoding": {
+      "max_tokens": 64,
+      "temperature": 0.0,
+      "seed": 42,
+      "prompt_format": "model"
+    },
+    "files": {
+      "config.json": {
+        "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+        "byte_size": 861
+      },
+      "generation_config.json": {
+        "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+        "byte_size": 132
+      },
+      "model.safetensors": {
+        "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+        "byte_size": 269060552
+      },
+      "special_tokens_map.json": {
+        "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+        "byte_size": 655
+      },
+      "tokenizer.json": {
+        "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "byte_size": 2104556
+      },
+      "tokenizer_config.json": {
+        "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+        "byte_size": 3764
+      },
+      "README.md": {
+        "sha256": "4f97533ad95b1b2fea15fbc075c01b94578ebdd7c8138888fa43fa3abd530dc4",
+        "byte_size": 6772
+      }
+    }
+  },
+  "fixture_license": "CC0-1.0 authored software qualification"
+}

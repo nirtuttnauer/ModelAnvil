@@ -14,3 +14,8 @@
 .data-workspace label.data-license-consent { display: flex; align-items: flex-start; }
 .data-workspace label.data-license-consent input[type="checkbox"] { width: auto; flex: none; }
 @media (max-width: 768px) { .rag-workspace .record-table > caption { display: block; width: 100%; text-align: left; padding: var(--space-12) 0; } }
+.generation-evidence { min-width: 0; }
+.generation-evidence > label { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .75rem; align-items: start; margin-block: .75rem; }
+.generation-evidence input[type="checkbox"] { width: auto; margin-top: .25rem; }
+.generation-source-excerpt { display: block; margin-top: .25rem; font-weight: 400; overflow-wrap: anywhere; }
+.generation-answer, .generation-citations { min-width: 0; overflow-wrap: anywhere; }
