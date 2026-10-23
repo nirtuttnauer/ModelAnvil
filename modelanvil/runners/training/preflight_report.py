@@ -164,6 +164,10 @@ def build_preflight_report(*, recipe_type, tokenizer_version, base_model_version
                     'Wait for the current device user to finish, then preview again.')
             except (ValueError, OSError) as exc:
                 check('device-admission', 'capacity', False, str(exc), 'Configure the same private device admission directory for local API and workers.')
+            try:
+                requirements['device_memory']=module.memory_observation(inputs['pins']['accelerator']['device']['id'])
+            except (ValueError,OSError) as exc:
+                check('device-current-memory','capacity',False,str(exc),'Release GPU allocations or repair the runtime, then preview again.')
             requirements.update(gpu_count=1, accelerator=inputs['pins']['accelerator'], precision=module.CONTRACT['precision'],
                 storage_assumption='FP32 weights and Adam moments for the planned checkpoint cadence, plus staging/candidate headroom; shared local host.')
             if recipe_type in {'lora_adapter', 'qlora_adapter'}:
@@ -191,7 +195,7 @@ def build_preflight_report(*, recipe_type, tokenizer_version, base_model_version
             'estimate': estimate_from_pilot(inputs, tenant=tenant, pool=pool, project=project), 'fingerprint': fingerprint,
             'checked_at': timezone.now().isoformat(), 'expires_in_seconds': TOKEN_MAX_AGE,
             'runtime_scope': {'targets': [], 'available': [module.RUNTIME_ID] if inputs else [], 'unavailable': []},
-            'capacity_note': 'Capacity is observed, not reserved. Launch rechecks; worker claim enforces slots and budget reservation is atomic.'}
+            'capacity_note': 'Capacity is observed during preview. Launch rechecks; GPU claim revalidates placement/runtime/headroom/budget and reserves the physical local device for its fenced attempt. Process admission remains held until allocation cleanup; budget reservation is atomic.'}
 
 
 def issue_token(report, principal):

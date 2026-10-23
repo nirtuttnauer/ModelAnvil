@@ -59,7 +59,7 @@ def admit_training(serializer, request):
         requirements = {'training_runtime': pins['contract_digest'], 'slots': 1}
         if gpu:
             requirements.update(gpu_backend=gpu['backend'], gpu_device=gpu['id'])
-        job = Job.objects.create(tenant_id=tenant, pool=run.pool, name=f'{run.recipe_type}: {run.run_id}',
+        job = Job.objects.create(tenant_id=tenant, project_id=project, pool=run.pool, name=f'{run.recipe_type}: {run.run_id}',
             payload={'type': 'qualified_training', 'run_id': str(run.run_id)},
             requirements=requirements, max_attempts=3)
         try:

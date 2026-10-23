@@ -3102,7 +3102,40 @@
         "operationId": "previewTrainingPreflight",
         "responses": {
           "200": {
-            "description": "Itemized compatibility, capacity and budget checks with encoded samples, estimate and runtime scope"
+            "description": "Current compatibility/capacity/budget checks. Unknown GPU identity/headroom blocks; launch and claim revalidate. Device reservation begins at fenced claim.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "preflight_token": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "requirements": {
+                      "type": "object",
+                      "properties": {
+                        "accelerator": {
+                          "type": "object",
+                          "description": "Stable observed device UUID/backend, host/account/lock-root identity, framework and runtime pins."
+                        },
+                        "device_memory": {
+                          "$ref": "#/components/schemas/TrainingDeviceMemoryObservation"
+                        }
+                      }
+                    },
+                    "capacity_note": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -12987,6 +13020,23 @@
           }
         },
         "description": "Server-reinspected immutable source metadata and current bounded runtime eligibility. Import verifies source/container bytes and supported text tensor shapes; no production or successful model-load qualification is inferred."
+      },
+      "TrainingDeviceMemoryObservation": {
+        "type": "object",
+        "properties": {
+          "headroom_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scope": {
+            "type": "string"
+          }
+        },
+        "description": "Fresh framework free-memory or explicit process-allowance observation. Not an immutable placement pin, reservation or guarantee against unrelated applications."
       }
     }
   }

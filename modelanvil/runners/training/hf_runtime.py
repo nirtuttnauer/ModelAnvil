@@ -60,7 +60,7 @@ CONTRACT = {'runtime': RUNTIME_ID, 'source': SOURCE, 'file_hashes': FILE_HASHES,
             'dropout': 'disabled', 'placement': 'one_trusted_local_worker',
             'recipes': ['full_sft', 'lora_adapter', 'continued_pretraining'], 'lora': LORA, 'adapter_package': {'peft': '0.21.2'},
             'lora_gradient_checkpointing': 'non_reentrant', 'deterministic_algorithms': True,
-            'device_admission': 'exclusive_posix_user_host_v1',
+            'device_admission': 'attempt_db_and_posix_user_host_v2',
             'chat_sft': 'native_template_assistant_labels_eos_v2',
             'guided_source': GUIDED_SOURCE, 'guided_file_hashes': GUIDED_FILE_HASHES,
             'large_guided_source': LARGE_GUIDED_SOURCE, 'large_guided_file_hashes': LARGE_GUIDED_FILE_HASHES,
@@ -111,14 +111,14 @@ def runner_manifest():
             'permissions': {'network_hosts': [], 'artifact_access': ['read_job_inputs', 'write_attempt_staging'], 'secret_kinds': []},
             'dependencies': [],
             'limitations': ['One pinned SmolLM2-135M model, text or assistant-only conversation SFT, rank-8 q/v LoRA or continued pretraining, FP32, deterministic manifest-order samples.',
-                           'One trusted local GPU worker per pool; cross-worker device reservations require TASK-42.',
+                           'One trusted local GPU worker per pool; attempt-bound database reservations coordinate the same physical local device across pools and tenants.',
                            'No QLoRA, quantization, distributed or remote worker support; each device needs qualification.']}
 
 
 def build_digest():
     root = Path(__file__).parent
-    paths = [root / name for name in ['hf_runtime.py', 'runtime.py', 'executor.py', 'registry.py']]
-    paths.extend(root.parents[1] / name for name in ('accelerators.py', 'device_admission.py', 'data/training_import.py'))
+    paths = [root / name for name in ['hf_runtime.py', 'runtime.py', 'executor.py', 'registry.py', 'admission.py']]
+    paths.extend(root.parents[1] / name for name in ('accelerators.py', 'device_admission.py', 'data/training_import.py', 'jobs/models.py', 'api/training_admission.py', 'runners/training/preflight_report.py'))
     return hashlib.sha256(b''.join(p.read_bytes() for p in paths)).hexdigest()
 
 
@@ -156,8 +156,37 @@ def observed_device(selector):
         raise ValueError('GPU memory capacity is unknown or insufficient for the bounded FP32 recipe.')
     if device['backend'] == 'mps' and mps_memory()['process_headroom_bytes'] < LIMITS['gpu_memory_bytes']:
         raise ValueError('MPS process headroom is below 4 GiB; release this process\'s GPU allocations before launch.')
-    return {'device': device, 'framework': report['framework'], 'packages': PACKAGES,
+    if device['backend']!='mps' and not device.get('uuid'):
+        raise ValueError('GPU hardware identity is unknown; re-register a runtime exposing its device UUID.')
+    memory=memory_observation(selector)
+    if device['backend']!='mps' and memory['total_bytes']!=capacity:
+        raise ValueError('GPU memory capacity changed during observation; preview again.')
+    from modelanvil.device_admission import host_key
+    return {'host_key':host_key(),'host':report.get('host',{}),'device': device, 'framework': report['framework'], 'packages': PACKAGES,
             'capacity_source': 'MPS recommended shared-memory budget' if device['backend'] == 'mps' else 'framework device capacity'}
+
+
+def memory_observation(selector):
+    """Live headroom, separate from immutable placement identity and preflight tokens."""
+    from django.utils import timezone
+    if selector=='mps:0':
+        value=mps_memory()
+        headroom=value['process_headroom_bytes']
+    else:
+        import torch
+        backend,index=selector.split(':')
+        api=getattr(torch,'cuda' if backend=='rocm' else backend)
+        getter=getattr(api,'mem_get_info',None)
+        if getter is None:raise ValueError('GPU free memory is unknown; this runtime cannot admit the selected device.')
+        try:free,total=getter(int(index))
+        except Exception:raise ValueError('GPU free-memory observation failed; repair the selected runtime.') from None
+        if type(free) is not int or type(total) is not int or not 0<=free<=total:
+            raise ValueError('GPU free memory is unknown; the selected runtime cannot authorize capacity.')
+        headroom=free
+        value={'free_bytes':free,'total_bytes':total,'scope':'Framework-observed free device memory; unrelated processes can change it.'}
+    if headroom<LIMITS['gpu_memory_bytes']:
+        raise ValueError('Current GPU headroom is below the required 4 GiB; release allocations and preview again.')
+    return {**value,'headroom_bytes':headroom,'observed_at':timezone.now().isoformat()}
 
 
 def file_ref(artifact):
@@ -527,6 +556,10 @@ def execute_training(run, context):
     if device.type == 'mps':
         torch.mps.set_per_process_memory_fraction(MPS_MEMORY_FRACTION)
     with device_lease(pins['accelerator']['device']['id']), deterministic_updates():
+        if not context.heartbeat():
+            return
+        if observed_device(pins['accelerator']['device']['id'])!=pins['accelerator']:
+            raise ValueError('GPU placement changed immediately before allocation.')
         try:
             _execute_updates(run, context, inputs, device, recovery, files, latest)
         finally:

@@ -162,3 +162,27 @@ class PreflightReportTests(TestCase):
                 response = self.client.post('/api/v1/training-runs/preflight/', body, format='json')
                 self.assertEqual(response.status_code, 400, response.content)
         self.assert_no_allocation()
+
+    def test_live_gpu_headroom_is_visible_but_not_a_frozen_identity_or_approval_digest(self):
+        from types import SimpleNamespace
+        from modelanvil.runners.training import runtime
+        values=resolve_inputs(dataset=self.dataset,base=self.base,tokenizer=self.tok,runner=self.runner,
+            pool=self.pool,steps=4,tenant=self.tenant.pk,project=None)
+        values['pins']['accelerator']={'host_key':'controlled','device':{'id':'mps:0','backend':'mps'},'capacity_source':'controlled fixture'}
+        current={'headroom_bytes':8*1024**3,'scope':'controlled process allowance','observed_at':'2026-10-23T00:00:00Z'}
+        module=SimpleNamespace(CONTRACT={**runtime.CONTRACT,'precision':'fp32'},CONTRACT_DIGEST=runtime.CONTRACT_DIGEST,
+            LIMITS=runtime.LIMITS,RUNTIME_ID=runtime.RUNTIME_ID,runner_manifest=runtime.runner_manifest,
+            memory_observation=lambda selector:dict(current))
+        with patch('modelanvil.runners.training.preflight_report.runtime_for_architecture',return_value=module),patch('modelanvil.runners.training.preflight_report.resolve_inputs',return_value=values):
+            first=self.preview()
+            current['headroom_bytes']=7*1024**3
+            second=self.preview()
+            self.assertEqual(first['status'],'approved')
+            self.assertEqual(first['fingerprint'],second['fingerprint'])
+            self.assertNotEqual(first['requirements']['device_memory'],second['requirements']['device_memory'])
+            module.memory_observation=lambda selector:(_ for _ in ()).throw(ValueError('current GPU headroom unknown'))
+            blocked=self.preview()
+            self.assertEqual(blocked['status'],'blocked')
+            self.assertIn('device-current-memory',blocked['blocking_checks'])
+            self.assertIsNone(blocked['preflight_token'])
+        self.assert_no_allocation()

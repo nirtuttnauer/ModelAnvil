@@ -10,7 +10,11 @@ import { InspectorPanel } from '../components/InspectorPanel';
 import { ContextBlockEditor, ContextBlockInputs } from '../components/ContextBlockEditor';
 import { RetrievalEvidenceCard } from '../components/RetrievalEvidenceCard';
 import { objectInput } from '../components/form-data';
+import '../design-system/tokens.css';
 import '../style.css';
+import '../premium.css';
+import '../workspace-ui.css';
+import '../design-system/components.css';
 import './workbench-stories.css';
 
 const meta = {
@@ -107,6 +111,21 @@ export const PreflightReady: Story = { render: () => <PreflightChecklist report=
 } };
 export const PreflightBlocked: Story = { render: () => <PreflightChecklist report={blocked} onLaunch={() => {}} />, play: async ({ canvasElement }) => {
   const canvas = within(canvasElement); await expect(canvas.getByRole('button', { name: 'Launch fine-tuning' })).toBeDisabled(); await expect(canvas.getByText('Choose a policy with sufficient remaining steps.', { exact: false })).toBeVisible(); verified(canvasElement);
+} };
+export const PreflightDeviceHeadroom: Story = { render: () => <PreflightChecklist report={{ ...blocked,
+  recipe_type: 'full_sft', pins: null, blocking_checks: ['controlled-device-fixture'],
+  checks: [{ check: 'controlled-device-fixture', category: 'capacity', status: 'fail', blocking: true,
+    reason: 'Controlled display fixture; no accelerator is connected or qualified.', corrective_action: 'Use current host observations before a real launch.' }],
+  requirements: { ...approved.requirements, runtime: 'Controlled GPU display profile · synthetic', memory_bytes: 8 * 1073741824, gpu_count: 1, precision: 'fp32',
+    accelerator: { host_key: 'synthetic-only', device: { id: 'cuda:0', backend: 'cuda' } },
+    device_memory: { headroom_bytes: 6 * 1073741824, observed_at: '2026-10-23T00:00:00Z', scope: 'Synthetic device-memory display; not hardware evidence.' } },
+}} onLaunch={() => {}} />, play: async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  await expect(canvas.getByText('cuda:0 · cuda', { exact: true })).toBeVisible();
+  await expect(canvas.getByText('6.00 GiB', { exact: true })).toBeVisible();
+  await expect(canvas.getByText(/Synthetic device-memory display/)).toBeVisible();
+  await expect(canvas.getByRole('button', { name: 'Launch fine-tuning' })).toBeDisabled();
+  verified(canvasElement);
 } };
 export const PreflightExpired: Story = { render: () => <PreflightChecklist report={{ ...approved, expires_in_seconds: 0 }} onLaunch={() => {}} onRefresh={() => {}} />, play: async ({ canvasElement }) => {
   const canvas = within(canvasElement); await expect(canvas.getByRole('status')).toHaveTextContent('Preview expired'); await expect(canvas.getByRole('button', { name: 'Launch fine-tuning' })).toBeDisabled(); verified(canvasElement);
