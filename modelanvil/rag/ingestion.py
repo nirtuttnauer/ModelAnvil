@@ -61,5 +61,9 @@ def index_documents(knowledge_base: KnowledgeBase, documents: list[dict], chunk_
         adapter_type=IndexVersion.AdapterType.LEXICAL, status=IndexVersion.Status.READY,
         chunks_count=len(chunk_ids), manifest_digest=manifest_digest,
         configuration={"chunk_ids": chunk_ids, "chunk_size": chunk_size, "chunk_overlap": chunk_overlap,
-                       "retrieval": "lexical-token-overlap-v1", "embeddings_generated": False},
+                       "retrieval": "lexical-token-overlap-v1", "embeddings_generated": False,
+                       "source_scope": {"tenant_id":str(base.tenant_id), "project_id":str(base.project_id) if base.project_id else None,
+                                        "knowledge_base_id":str(base.kb_id), "current_permissions_required":True},
+                       "source_revisions":[{"document_id":str(d.doc_id),"revision":d.revision_no,"content_hash":d.content_hash} for d in latest.values() if d.pk in document_ids],
+                       "chunk_recipe":"character-slices-v1"},
     )

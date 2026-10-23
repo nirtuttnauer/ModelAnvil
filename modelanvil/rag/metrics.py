@@ -25,11 +25,13 @@ def precision_at_k(
     retrieved_ids: Sequence[str],
     relevant_ids: set[str],
     k: int,
-) -> float:
+) -> Optional[float]:
     """Precision@K: fraction of top K retrieved results that are relevant.
 
     Denominator is strictly K even if fewer results are returned.
     """
+    if not relevant_ids:
+        return None
     if k <= 0:
         return 0.0
     top_k = retrieved_ids[:k]
@@ -41,9 +43,11 @@ def hit_at_k(
     retrieved_ids: Sequence[str],
     relevant_ids: set[str],
     k: int,
-) -> float:
+) -> Optional[float]:
     """Hit@K: 1.0 if at least one relevant document is found in top K, else 0.0."""
-    if not relevant_ids or k <= 0:
+    if not relevant_ids:
+        return None
+    if k <= 0:
         return 0.0
     top_k = retrieved_ids[:k]
     return 1.0 if any(doc_id in relevant_ids for doc_id in top_k) else 0.0
@@ -53,9 +57,11 @@ def mrr_at_k(
     retrieved_ids: Sequence[str],
     relevant_ids: set[str],
     k: int,
-) -> float:
+) -> Optional[float]:
     """MRR@K (Reciprocal Rank): 1 / rank of first relevant result in top K (1-indexed), or 0.0."""
-    if not relevant_ids or k <= 0:
+    if not relevant_ids:
+        return None
+    if k <= 0:
         return 0.0
     top_k = retrieved_ids[:k]
     for rank, doc_id in enumerate(top_k, start=1):

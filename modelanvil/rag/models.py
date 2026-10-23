@@ -157,6 +157,9 @@ class RetrievalRun(TenantContextModel):
     top_k = models.PositiveIntegerField(default=5)
     reranker = models.CharField(max_length=64, blank=True)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.COMPLETED)
+    qrels_version = models.CharField(max_length=128, blank=True)
+    qrels_digest = models.CharField(max_length=64, blank=True)
+    protocol_ref = models.JSONField(default=dict, blank=True)
     metrics_summary = models.JSONField(default=dict, blank=True)
 
     def __str__(self) -> str:
@@ -185,7 +188,7 @@ class ProjectionArtifact(TenantContextModel):
 
     artifact_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     index_version = models.ForeignKey(IndexVersion, on_delete=models.CASCADE, related_name="projections")
-    method = models.CharField(max_length=16, default="umap")  # umap, pca
+    method = models.CharField(max_length=16, default="pca")  # Other methods require separate qualified implementations.
     coordinates = models.JSONField(default=list)  # [{"chunk_id": ..., "x": ..., "y": ..., "cluster_id": ...}]
     clusters = models.JSONField(default=dict, blank=True)  # cluster metadata / summary
     settings = models.JSONField(default=dict, blank=True)
