@@ -1,0 +1,18 @@
+{
+  "feedback_id": "01a16706-1739-72a1-9931-41ab9fb29eb3",
+  "campaign_id": "01a16706-173a-7a08-bec4-70ca04089848",
+  "dataset_revision": "01a16706-18ac-7f5a-81a6-54339b5edcb0",
+  "actual_inference_generated_token_ids": [
+    2
+  ],
+  "actual_inference_completion_length": 0,
+  "original_prediction_preserved": true,
+  "correction": "a",
+  "viewports": [
+    1440,
+    390
+  ],
+  "overflow": false,
+  "reload": true,
+  "browser_errors": 0
+}

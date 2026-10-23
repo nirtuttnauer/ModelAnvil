@@ -15,6 +15,12 @@ from modelanvil.identity.models import Tenant
 from modelanvil.jobs.models import Job, JobAttempt, Worker, WorkerCredential, WorkerPool
 
 
+def require_feedback_artifact(artifact):
+    from modelanvil.annotation.feedback import artifact_live
+    try:artifact_live(artifact)
+    except ValueError as exc:raise PermissionDenied('Feedback artifact is unavailable.') from exc
+
+
 _SNAPSHOT_FIELDS = ("storage_location_id", "object_key", "object_version", "sha256", "byte_size", "media_type")
 
 
@@ -67,6 +73,7 @@ def issue_download_grant(*, tenant_id, attempt_id, worker_id, artifact_id, ttl_s
     if (artifact.state != Artifact.State.COMMITTED or artifact.object_version
             or artifact.storage_location_id != "local"):
         raise PermissionDenied("Only committed unversioned local artifacts can be granted.")
+    require_feedback_artifact(artifact)
     return WorkerArtifactGrant.all_objects.create(
         tenant_id=tenant_id, attempt=attempt, worker_id=worker_id, artifact=artifact,
         fencing_token=attempt.fencing_token, artifact_snapshot=artifact_snapshot(artifact),
@@ -101,6 +108,7 @@ def authorized_download(*, tenant_id, grant_id, worker_id, credential_id):
                 or artifact_snapshot(artifact) != grant.artifact_snapshot
                 or storage_fingerprint() != grant.storage_fingerprint):
             raise PermissionDenied("Artifact grant is no longer valid.")
+        require_feedback_artifact(artifact)
         yield grant, artifact
 
 

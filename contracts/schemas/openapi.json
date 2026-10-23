@@ -8122,6 +8122,307 @@
           }
         ]
       }
+    },
+    "/application-feedback/": {
+      "get": {
+        "tags": [
+          "Annotation"
+        ],
+        "operationId": "listApplicationFeedback",
+        "summary": "List project feedback without raw prompt/prediction content",
+        "responses": {
+          "200": {
+            "description": "Current scoped feedback receipt or policy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Page"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "results": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ApplicationFeedbackReceipt"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid consent, source, pins, conflict, protected group or bounds"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in selected project"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Annotation"
+        ],
+        "operationId": "ingestApplicationFeedback",
+        "summary": "Import an authorized stable application event; open consenting failures for human correction",
+        "responses": {
+          "201": {
+            "description": "Current scoped feedback receipt or policy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationFeedbackReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid consent, source, pins, conflict, protected group or bounds"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in selected project"
+          },
+          "200": {
+            "description": "Identical event retry; returns the existing receipt"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationFeedbackInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/application-feedback/{feedback_id}/": {
+      "get": {
+        "tags": [
+          "Annotation"
+        ],
+        "operationId": "getApplicationFeedback",
+        "summary": "Read a scoped feedback receipt; expired/deleted identifying fields are redacted",
+        "responses": {
+          "200": {
+            "description": "Current scoped feedback receipt or policy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationFeedbackReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid consent, source, pins, conflict, protected group or bounds"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in selected project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "feedback_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Annotation"
+        ],
+        "operationId": "eraseApplicationFeedback",
+        "summary": "Erase owned review/source content, tombstone published source artifacts, retain minimal leakage/idempotency fingerprints",
+        "responses": {
+          "200": {
+            "description": "Current scoped feedback receipt or policy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "feedback_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "cleanup_pending": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid consent, source, pins, conflict, protected group or bounds"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in selected project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "feedback_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/application-feedback/policy/": {
+      "get": {
+        "tags": [
+          "Annotation"
+        ],
+        "operationId": "getApplicationFeedbackPolicy",
+        "summary": "Inspect default-disabled metadata-only collection and the project privacy retention cap",
+        "responses": {
+          "200": {
+            "description": "Current scoped feedback receipt or policy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationFeedbackPolicy"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid consent, source, pins, conflict, protected group or bounds"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in selected project"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Annotation"
+        ],
+        "operationId": "setApplicationFeedbackPolicy",
+        "summary": "Administrator opt-in; shorter retention applies to existing receipts and cannot exceed Privacy",
+        "responses": {
+          "200": {
+            "description": "Current scoped feedback receipt or policy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationFeedbackPolicy"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid consent, source, pins, conflict, protected group or bounds"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in selected project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationFeedbackPolicyInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/application-feedback/purge/": {
+      "post": {
+        "tags": [
+          "Annotation"
+        ],
+        "operationId": "purgeApplicationFeedback",
+        "summary": "Administrator erasure of expired feedback; also retry pending physical storage cleanup",
+        "responses": {
+          "200": {
+            "description": "Current scoped feedback receipt or policy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "deleted_feedback": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid consent, source, pins, conflict, protected group or bounds"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in selected project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "confirm": {
+                    "const": "delete_expired_feedback"
+                  }
+                },
+                "required": [
+                  "confirm"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -13644,6 +13945,226 @@
           },
           "device": {
             "const": "cpu"
+          }
+        }
+      },
+      "ApplicationFeedbackContent": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "maxLength": 16000
+          },
+          "prediction": {
+            "type": "string",
+            "maxLength": 16000
+          }
+        },
+        "required": [
+          "prompt",
+          "prediction"
+        ],
+        "additionalProperties": false
+      },
+      "ApplicationFeedbackInput": {
+        "type": "object",
+        "properties": {
+          "application": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "application_version": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "event_id": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "source_id": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "source_group_id": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "model_version": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rubric": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "verdict": {
+            "enum": [
+              "success",
+              "failure"
+            ]
+          },
+          "evaluation_role": {
+            "enum": [
+              "development",
+              "final_test"
+            ]
+          },
+          "evaluation_suite": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "evaluation_case_id": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "authorized": {
+            "const": true
+          },
+          "content_consent": {
+            "type": "boolean"
+          },
+          "content": {
+            "$ref": "#/components/schemas/ApplicationFeedbackContent"
+          }
+        },
+        "required": [
+          "application",
+          "application_version",
+          "event_id",
+          "model_version",
+          "source_id",
+          "source_group_id",
+          "rubric",
+          "verdict",
+          "evaluation_role",
+          "authorized"
+        ],
+        "additionalProperties": false,
+        "description": "Opt-in project feedback. Defaults to metadata only. Consented content requires project collection opt-in and a development failure. Up to 32 KiB combined prompt/prediction, including an empty observed model response. Same application/event ID deduplicates immutable retries; conflicting content is refused. An optional linked evaluation case must retain its original source group and prompt. Protected final-test groups cannot enter training."
+      },
+      "ApplicationFeedbackPolicyInput": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "collect_content": {
+            "type": "boolean"
+          },
+          "retention_days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 365
+          }
+        },
+        "required": [
+          "enabled",
+          "collect_content",
+          "retention_days"
+        ],
+        "additionalProperties": false
+      },
+      "ApplicationFeedbackPolicy": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "collect_content": {
+            "type": "boolean"
+          },
+          "retention_days": {
+            "type": "integer"
+          },
+          "privacy_maximum_days": {
+            "type": "integer"
+          },
+          "can_administer": {
+            "type": "boolean"
+          },
+          "default_collection": {
+            "const": "metadata_only"
+          },
+          "external_collection": {
+            "const": false
+          }
+        }
+      },
+      "ApplicationFeedbackReceipt": {
+        "type": "object",
+        "properties": {
+          "feedback_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "model_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "campaign_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "evaluation_suite_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "application": {
+            "type": "string"
+          },
+          "application_version": {
+            "type": "string"
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "source_group_id": {
+            "type": "string"
+          },
+          "rubric": {
+            "type": "string"
+          },
+          "verdict": {
+            "type": "string"
+          },
+          "origin_role": {
+            "type": "string"
+          },
+          "evaluation_role": {
+            "type": "string"
+          },
+          "evaluation_case_id": {
+            "type": "string"
+          },
+          "review_state": {
+            "type": "string"
+          },
+          "content_collected": {
+            "type": "boolean"
+          },
+          "cleanup_pending": {
+            "type": "boolean"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       }
