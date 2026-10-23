@@ -12,4 +12,5 @@ test('model snapshots fail early on missing assets, duplicate names and oversize
  assert.throws(()=>validateModelFiles([{name:'model.safetensors',size:8}],{}),/requires/);
  assert.throws(()=>validateModelFiles([{name:'model.gguf',size:8}],{'model.gguf':ref}),/already verified/);
  assert.throws(()=>validateModelFiles([{name:'model.gguf',size:9*1024**3}],{}),/GiB/);
+ assert.throws(()=>validateModelFiles([{name:'model.safetensors',size:4*1024**3}],{'other.safetensors':{...ref,byte_size:5*1024**3}}),/8 GiB total/);
 });
