@@ -36,6 +36,7 @@ class ContextRecipeVersion(TenantContextModel):
     class BudgetPolicy(models.TextChoices):
         FAIL_ON_OVERFLOW = "fail_on_overflow", "Fail on Overflow"
         TRIM_LOWEST_PRIORITY = "trim_lowest_priority", "Trim Lowest Priority Blocks"
+        TRIM_OPTIONAL_EVIDENCE = "trim_optional_evidence", "Omit Optional Evidence"
         SUMMARIZE = "summarize", "Summarize History"
 
     class Status(models.TextChoices):

@@ -103,6 +103,7 @@ class MeasuredContextTests(TestCase):
         old=self.version('Estimate',model_version=None,model_limit_tokens=4096,output_reserve_tokens=512)
         response=self.client.post(f"/api/v1/context-recipe-versions/{old['recipe_version_id']}/compile/",{'variables':{}},format='json')
         self.assertEqual(response.data['token_count_method'],'deterministic_estimate')
+        self.assertFalse(response.data['budget']['runtime_validated']);self.assertIsNone(response.data['budget']['runtime_limit_tokens'])
         a=self.version('A')
         from modelanvil.artifacts.models import Artifact
         from modelanvil.artifacts.storage import artifact_storage_backend
@@ -131,3 +132,29 @@ class MeasuredContextTests(TestCase):
         current.chat_template='modified';current.save(update_fields=['chat_template'])
         failed=self.client.post(f"/api/v1/context-recipe-versions/{a['recipe_version_id']}/compile/",{'variables':{}},format='json')
         self.assertEqual(failed.status_code,400,failed.content)
+
+    def test_runtime_budget_receipt_and_named_evidence_omissions(self):
+        blocks=[{'block_key':'question','block_type':'user_query','priority':1,'role':'user','order':0,'content_template':'a'},
+                {'block_key':'history','block_type':'history','priority':10,'role':'user','order':1,'content_template':'h'},
+                {'block_key':'evidence','block_type':'evidence','priority':2,'role':'user','order':2,'content_template':'e'*100}]
+        version=self.version('Named evidence',blocks=blocks,budget_policy='trim_optional_evidence')
+        response=self.client.post(f"/api/v1/context-recipe-versions/{version['recipe_version_id']}/compile/",{'variables':{}},format='json')
+        self.assertEqual(response.status_code,200,response.content)
+        budget=response.data['budget'];self.assertTrue(budget['runtime_validated']);self.assertEqual(budget['runtime_limit_tokens'],64)
+        self.assertEqual(budget['input_tokens'],len(response.data['serialized_prompt'])+2)
+        self.assertEqual(budget['total_reserved_tokens'],budget['input_tokens']+4)
+        self.assertGreaterEqual(budget['remaining_tokens'],0)
+        self.assertEqual(response.data['dropped_blocks'],['evidence']);self.assertIn('h',response.data['serialized_prompt'])
+        from modelanvil.context_lab.compiler import ContextCompiler
+        with self.assertRaisesMessage(ValueError,'verified runtime tokenizer'):
+            ContextCompiler(ContextRecipeVersion.all_objects.get(recipe_version_id=version['recipe_version_id']))
+
+    def test_required_caps_and_impossible_template_budget_are_refused(self):
+        version=self.version('Required cap',blocks=[{'block_key':'question','block_type':'user_query','priority':1,
+            'role':'user','order':0,'content_template':'required text','max_tokens':3}])
+        response=self.client.post(f"/api/v1/context-recipe-versions/{version['recipe_version_id']}/compile/",{'variables':{}},format='json')
+        self.assertEqual(response.status_code,400,response.content);self.assertIn('never truncated',response.data['error'])
+        response=self.client.post('/api/v1/context-recipes/',{'name':'Impossible template','initial_version':{
+            'model_version':self.model.pk,'model_limit_tokens':8,'output_reserve_tokens':1,'blocks':[{
+                'block_key':'evidence','block_type':'evidence','priority':2,'content_template':'a'}]}},format='json')
+        self.assertEqual(response.status_code,400,response.content)

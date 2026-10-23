@@ -3505,7 +3505,8 @@
                     "type": "string",
                     "enum": [
                       "fail_on_overflow",
-                      "trim_lowest_priority"
+                      "trim_lowest_priority",
+                      "trim_optional_evidence"
                     ],
                     "default": "trim_lowest_priority"
                   },
@@ -11054,7 +11055,8 @@
             "type": "string",
             "enum": [
               "fail_on_overflow",
-              "trim_lowest_priority"
+              "trim_lowest_priority",
+              "trim_optional_evidence"
             ],
             "default": "trim_lowest_priority"
           },
@@ -13572,8 +13574,12 @@
             "items": {
               "type": "object"
             }
+          },
+          "budget": {
+            "$ref": "#/components/schemas/ContextTokenBudget"
           }
-        }
+        },
+        "description": "The complete serialized prompt includes the selected template and tokenizer overhead. Qualified pinned CPU recipes validate input plus output reserve against the current runtime limit. Unbound recipes remain explicit estimates. Priority-1 nonempty content is never truncated/omitted by overflow handling; optional caps and omissions are reported. Truncation receipts mark included_in_final=false if a capped block was subsequently omitted. The optional-evidence policy omits only evidence with priority greater than one. Unsupported summarization fails explicitly."
       },
       "ContextPairInput": {
         "type": "object",
@@ -14217,6 +14223,54 @@
           },
           "underfill_policy": {
             "const": "exact_fallback"
+          }
+        }
+      },
+      "ContextTokenBudget": {
+        "type": "object",
+        "properties": {
+          "input_tokens": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "output_reserve_tokens": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "total_reserved_tokens": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "configured_limit_tokens": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "remaining_tokens": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "runtime_limit_tokens": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1
+          },
+          "runtime_validated": {
+            "type": "boolean"
+          },
+          "overflow_policy": {
+            "enum": [
+              "fail_on_overflow",
+              "trim_lowest_priority",
+              "trim_optional_evidence"
+            ]
+          },
+          "per_block_counts": {
+            "const": "marginal_serialized_prefix_tokens"
+          },
+          "required_priority": {
+            "const": 1
           }
         }
       }
