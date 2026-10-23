@@ -250,3 +250,28 @@ class EmbeddingBuild(TenantContextModel):
     input_digest = models.CharField(max_length=64)
     completed_chunks = models.PositiveIntegerField(default=0)
     error = models.CharField(max_length=300,blank=True)
+
+
+class EmbeddingCandidate(TenantContextModel):
+    """Published CPU fine-tuning result; weights and protocol are artifact-pinned."""
+    candidate_id = models.UUIDField(default=uuid7,unique=True,editable=False)
+    project = models.ForeignKey('identity.Project',on_delete=models.PROTECT)
+    source = models.ForeignKey('artifacts.Artifact',on_delete=models.PROTECT,related_name='embedding_training_inputs')
+    export = models.ForeignKey('artifacts.Artifact',on_delete=models.PROTECT,related_name='embedding_candidate_exports')
+    space = models.OneToOneField(EmbeddingSpace,on_delete=models.PROTECT,related_name='candidate')
+    source_digest = models.CharField(max_length=64)
+    export_digest = models.CharField(max_length=64)
+    files = models.JSONField(default=dict)
+    protocol = models.JSONField(default=dict)
+    report = models.JSONField(default=dict)
+
+
+class EmbeddingTrainingExposure(TenantContextModel):
+    """Minimal persistent group/text receipts prevent later clean-split relabeling."""
+    project = models.ForeignKey('identity.Project',on_delete=models.PROTECT)
+    source_group_digest = models.CharField(max_length=64,db_index=True)
+    prompt_digest = models.CharField(max_length=64,db_index=True)
+    role = models.CharField(max_length=16,choices=[('training','Training inspected'),('held_out','Protected held out')])
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=('project','source_group_digest','prompt_digest','role'),name='embedding_exposure_uniq')]

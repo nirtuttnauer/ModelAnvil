@@ -104,18 +104,31 @@ def encode(texts):
     signature = file_signature(path)
     with _LOCK:
         model = _model(str(path),signature)
-        # The Sentence Transformers encode path truncates by default. Refuse
-        # overlong input before calling it, including actual model special tokens.
-        ids = model.tokenizer(texts,add_special_tokens=True,truncation=False,padding=False)['input_ids']
-        if any(len(row)>PINS['max_tokens'] for row in ids):
-            raise ValueError('Text exceeds the pinned 256-token embedding context; rechunk without truncation.')
-        try:
-            result = model.encode(texts,batch_size=BATCH_SIZE,device='cpu',show_progress_bar=False,
-                convert_to_numpy=True,normalize_embeddings=True,precision='float32')
-        except Exception:
-            raise ValueError('Local embedding inference failed; no vectors were published.') from None
-    return validate_vectors(result,len(texts))
+        return encode_with_model(texts,model)
 
+
+def encode_with_model(texts,model):
+    if (not isinstance(texts,list) or not 1<=len(texts)<=BATCH_SIZE
+            or any(not isinstance(t,str) or not t.strip() or len(t.encode())>32768 for t in texts)):
+        raise ValueError('Encode 1–16 nonempty texts, each at most 32 KiB.')
+    # The Sentence Transformers encode path truncates by default. Refuse
+    # overlong input before calling it, including actual model special tokens.
+    ids = model.tokenizer(texts,add_special_tokens=True,truncation=False,padding=False)['input_ids']
+    if any(len(row)>PINS['max_tokens'] for row in ids):
+        raise ValueError('Text exceeds the pinned 256-token embedding context; rechunk without truncation.')
+    try:
+        result = model.encode(texts,batch_size=BATCH_SIZE,device='cpu',show_progress_bar=False,
+            convert_to_numpy=True,normalize_embeddings=True,precision='float32')
+    except Exception:
+        raise ValueError('Local embedding inference failed; no vectors were published.') from None
+    return validate_vectors(result,len(texts))
 
 def vector_digest(vector):
     return hashlib.sha256(np.asarray(vector,dtype='<f4').tobytes()).hexdigest()
+
+
+def encode_space(texts,space,project_id=None):
+    if space.metadata.get('candidate_artifact'):
+        from modelanvil.rag.embedding_candidates import encode as encode_candidate
+        return encode_candidate(texts,space,project_id)
+    return encode(texts)

@@ -93,6 +93,7 @@ router.register("training-runs", training_views.TrainingRunViewSet, basename="tr
 router.register("alignment-runs", training_views.AlignmentRunViewSet, basename="alignment-run")
 
 # RAG & Context Lab
+router.register("embedding-candidates", embeddings.EmbeddingCandidateViewSet, basename="embedding-candidate")
 router.register("embedding-spaces", embeddings.EmbeddingSpaceViewSet, basename="embedding-space")
 router.register("embedding-builds", embeddings.EmbeddingBuildViewSet, basename="embedding-build")
 router.register("knowledge-bases", rag_views.KnowledgeBaseViewSet, basename="knowledge-base")

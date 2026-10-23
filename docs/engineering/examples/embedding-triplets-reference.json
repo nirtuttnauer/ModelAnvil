@@ -1,0 +1,66 @@
+{
+  "schema": "modelanvil.embedding-triplets.v1",
+  "license": "CC0-1.0; authored software fixture",
+  "source_uri": "fixture:modelanvil-embedding-triplets-v1",
+  "documents": [
+    {
+      "id": "reset",
+      "text": "Recover your account with the reset password link.",
+      "source_group": "accounts",
+      "split": "train"
+    },
+    {
+      "id": "router",
+      "text": "Restart the router to restore wireless connectivity.",
+      "source_group": "networking",
+      "split": "train"
+    },
+    {
+      "id": "refund",
+      "text": "A purchase can be refunded within thirty days.",
+      "source_group": "billing",
+      "split": "dev"
+    },
+    {
+      "id": "deliver",
+      "text": "Track the delivery package with your shipping number.",
+      "source_group": "shipping",
+      "split": "held_out"
+    }
+  ],
+  "triplets": [
+    {
+      "id": "train-1",
+      "query": "How do I reset a password?",
+      "source_group": "accounts",
+      "positive": "reset",
+      "negative": "router",
+      "negative_provenance": {
+        "kind": "manual_reviewed",
+        "model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "pool_split": "train",
+        "document_id": "router"
+      }
+    }
+  ],
+  "qrels": [
+    {
+      "id": "dev-1",
+      "query": "How long do refunds take?",
+      "source_group": "billing",
+      "split": "dev",
+      "grades": {
+        "refund": 1
+      }
+    },
+    {
+      "id": "test-1",
+      "query": "Where is my shipped parcel?",
+      "source_group": "shipping",
+      "split": "held_out",
+      "grades": {
+        "deliver": 1
+      }
+    }
+  ]
+}
