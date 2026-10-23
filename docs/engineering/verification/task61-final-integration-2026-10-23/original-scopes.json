@@ -1,0 +1,226 @@
+{
+  "observed_at_utc": "2026-10-23T11:11:57.759564+00:00",
+  "main": "2bf35ec61fa163c98706b9f5b2452d2385b98739",
+  "original_head": "c39a2e9554efdd6c5c644fb012580298f4bc78ca",
+  "private_inventory_sha256": "814c780c768e8e5c3da201a0ace66dae1502cb79040e7b667a9f55b1df6bfa10",
+  "total_original_dirty_paths": 974,
+  "counts": {
+    "same_bytes_main": 253,
+    "retained_differs_main": 150,
+    "retained_absent_main": 571
+  },
+  "runtime_paths_missing_main": [],
+  "scopes": [
+    {
+      "scope": "Annotation and feedback source",
+      "ticket_ids": [
+        "TASK-10",
+        "TASK-53"
+      ],
+      "untracked_scope": false,
+      "path_count": 7,
+      "states": {
+        "same_bytes_main": 4,
+        "retained_differs_main": 3
+      },
+      "retained": true
+    },
+    {
+      "scope": "Context source",
+      "ticket_ids": [
+        "TASK-12",
+        "TASK-63",
+        "TASK-71",
+        "TASK-72"
+      ],
+      "untracked_scope": false,
+      "path_count": 4,
+      "states": {
+        "retained_differs_main": 3,
+        "same_bytes_main": 1
+      },
+      "retained": true
+    },
+    {
+      "scope": "Dataset acquisition source",
+      "ticket_ids": [
+        "TASK-9"
+      ],
+      "untracked_scope": false,
+      "path_count": 8,
+      "states": {
+        "same_bytes_main": 7,
+        "retained_differs_main": 1
+      },
+      "retained": true
+    },
+    {
+      "scope": "Documentation and shared packaging",
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "untracked_scope": false,
+      "path_count": 24,
+      "states": {
+        "same_bytes_main": 7,
+        "retained_differs_main": 17
+      },
+      "retained": true
+    },
+    {
+      "scope": "Identity/privacy/access source",
+      "ticket_ids": [
+        "TASK-3",
+        "TASK-48",
+        "TASK-49"
+      ],
+      "untracked_scope": false,
+      "path_count": 19,
+      "states": {
+        "retained_differs_main": 4,
+        "same_bytes_main": 15
+      },
+      "retained": true
+    },
+    {
+      "scope": "Import/document/recipe source",
+      "ticket_ids": [
+        "TASK-9",
+        "TASK-62"
+      ],
+      "untracked_scope": false,
+      "path_count": 16,
+      "states": {
+        "retained_differs_main": 5,
+        "same_bytes_main": 11
+      },
+      "retained": true
+    },
+    {
+      "scope": "Job/device/budget/artifact source",
+      "ticket_ids": [
+        "TASK-8",
+        "TASK-42",
+        "TASK-61"
+      ],
+      "untracked_scope": false,
+      "path_count": 19,
+      "states": {
+        "same_bytes_main": 12,
+        "retained_differs_main": 7
+      },
+      "retained": true
+    },
+    {
+      "scope": "RAG/index/chunking/embedding source",
+      "ticket_ids": [
+        "TASK-11",
+        "TASK-30",
+        "TASK-64",
+        "TASK-66",
+        "TASK-67",
+        "TASK-68",
+        "TASK-70"
+      ],
+      "untracked_scope": false,
+      "path_count": 10,
+      "states": {
+        "retained_differs_main": 6,
+        "same_bytes_main": 4
+      },
+      "retained": true
+    },
+    {
+      "scope": "Retained design sources",
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "path_count": 138,
+      "states": {
+        "retained_absent_main": 137,
+        "same_bytes_main": 1
+      },
+      "retained": true
+    },
+    {
+      "scope": "Retained historical evidence",
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "path_count": 418,
+      "states": {
+        "retained_absent_main": 412,
+        "same_bytes_main": 6
+      },
+      "retained": true
+    },
+    {
+      "scope": "Retained historical evidence",
+      "ticket_ids": [
+        "TASK-44"
+      ],
+      "untracked_scope": false,
+      "path_count": 11,
+      "states": {
+        "retained_absent_main": 10,
+        "same_bytes_main": 1
+      },
+      "retained": true
+    },
+    {
+      "scope": "Retained historical evidence",
+      "ticket_ids": [
+        "TASK-48"
+      ],
+      "untracked_scope": false,
+      "path_count": 12,
+      "states": {
+        "retained_absent_main": 12
+      },
+      "retained": true
+    },
+    {
+      "scope": "Shared UI/API/schema/CI integration",
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "untracked_scope": false,
+      "path_count": 189,
+      "states": {
+        "retained_differs_main": 78,
+        "same_bytes_main": 111
+      },
+      "retained": true
+    },
+    {
+      "scope": "Training/inference/export source",
+      "ticket_ids": [
+        "TASK-5",
+        "TASK-6",
+        "TASK-7",
+        "TASK-14",
+        "TASK-15",
+        "TASK-18",
+        "TASK-26",
+        "TASK-30"
+      ],
+      "untracked_scope": false,
+      "path_count": 41,
+      "states": {
+        "same_bytes_main": 25,
+        "retained_differs_main": 16
+      },
+      "retained": true
+    },
+    {
+      "scope": "Untracked retained original scope",
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "path_count": 58,
+      "states": {
+        "retained_differs_main": 10,
+        "same_bytes_main": 48
+      },
+      "retained": true
+    }
+  ],
+  "limits": "Same path with different bytes is retained as an older snapshot, not asserted byte-identical or discarded. Full per-path SHA256/status/owner map remains private with TASK61. Design/historical scopes are explicitly flagged rather than claimed as current runtime evidence."
+}

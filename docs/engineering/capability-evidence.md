@@ -2,7 +2,21 @@
 
 Current delivery addendum (23 October 2026): see the [integration inventory](integration-inventory.md), [operation-specific capability baseline](supported-capabilities.md), and dated verification reports. The original review below is historical; current dependency pins still require fresh GPU qualification. Customer discovery remains blocked on customer input.
 
-For current operation-specific support, artifact references and remaining qualification, see the [21 October capability baseline](supported-capabilities.md). This audit retains its original scenario-by-scenario review scope.
+For current operation-specific support, artifact references and remaining qualification, see the [updated capability baseline](supported-capabilities.md). This audit retains its original scenario-by-scenario review scope.
+
+## Current merged CPU and control-plane evidence — 23 October 2026
+
+The [final inventory](integration-inventory.md) covers the merged implementations through PR46. Levels below mean actual bounded software execution with the named source/model/runtime; existing `hardware_qualified` and `production_qualified` flags are not raised by a successful fixture.
+
+| Capability | Current evidence | Qualification boundary / report |
+| --- | --- | --- |
+| Run history, source acquisition, privacy and teams | Actual API/browser receipts, current grants/revocation and private invitation/removal flows | [Run detail](verification/task8-run-detail-2026-10-23/report.md), [acquisition](verification/task9-acquisition-2026-10-23/report.md), [teams](verification/task49-team-access-2026-10-23/report.md); no live customer/provider claim. |
+| Reviewed-label loop and private corrections | Actual fenced CPU training/protected evaluation and explicit advancement; project-scoped source-safe feedback | [Label cycle](verification/task10-labeling-2026-10-23/report.md), [private feedback](verification/task53-private-feedback-2026-10-23/report.md); drafts imported, no general quality gain. |
+| Token-aware chunks and semantic indexes | Actual pinned token spans, MiniLM vectors, RabbitMQ builds, per-space pgvector storage and current-source eligibility | [Chunks](verification/task66-token-chunks-2026-10-23/report.md), [embedding foundation](verification/task30-embedding-foundation-2026-10-23/report.md). |
+| Embedding candidate training/export | Actual pretrained CPU tensor updates, protected triplet/qrels protocol and independently reloaded export | [Fine-tuning](verification/task30-embedding-finetuning-2026-10-23/report.md); tiny-fixture ties do not establish improvement. |
+| SQL retrieval and public controls | Actual PostgreSQL full-text/exact/HNSW/RRF and real/random/full-text comparisons | [SQL](sql-retrieval.md), [controls](verification/task69-retrieval-controls-2026-10-23/report.md); 200-document SciFact subset, weak untuned full-text control; ANN overlap separate from relevance. |
+| Token-budgeted generation and context | Actual pinned CPU model forwards, exact serialization counts, citation-membership refusals, separate abstention categories and 18 repeated evidence-position forwards | [Budgets](verification/task72-token-budget-2026-10-23/report.md), [generation](verification/task70-grounded-generation-2026-10-23/report.md), [positions](verification/task71-real-position-sweep-2026-10-23/report.md); no entailment/general-model/long-context claim. |
+| Reproducible end-to-end reference | Same-source combined report, frozen comparison tolerances, report-generated README and required Linux CI rerun | [Complete report](verification/task73-end-to-end-2026-10-23/report.md); exact main `2bf35ec`, green CI run `39925859135` and matching attached artifact independently verified. CPU software CV evidence only. |
 
 ## Current document capability evidence — 23 October 2026 (TASK-62)
 
@@ -19,6 +33,8 @@ Evidence is operation-specific. A working parser or worker does not qualify OCR 
 | Durable specialist job admission, resume, cancel, retry and publication fencing | Integrated control-plane execution with simulated model outputs | `modelanvil/api/test_specialist_jobs.py`, `modelanvil/runners/specialist_jobs.py` | Three reserved attempt units/max claims, matching runtime/worker required; 120s child supervision. Retry/accounting tests do not qualify recognition or actual hardware cancellation |
 
 TASK-62's end-to-end mixed PDF/DOCX/CSV publication **including recognized scanned-page content remains blocked** on the current specialist runtime/device path. The user directed the factory to skip this blocker and continue independent work. TASK-21 and TASK-33 retain their approved scopes; overlap notes are recorded in Aftur. See [source import](source-import.md), [specialist bounds](local-specialists.md) and the dated report.
+
+## Historical scenario audit
 
 TASK-1 · 11 October 2026 · Local source and automated-test audit
 

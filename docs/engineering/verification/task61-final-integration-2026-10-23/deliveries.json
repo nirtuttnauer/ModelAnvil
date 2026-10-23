@@ -1,0 +1,1385 @@
+{
+  "main_at_inventory": "2bf35ec61fa163c98706b9f5b2452d2385b98739",
+  "deliveries": [
+    {
+      "number": 9,
+      "title": "Add Runpod GPU provisioning and custom compute/task plugins",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/9",
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "36c8be7b0cad42f5606d90eaea5a2979405ea74e",
+      "merge_sha": "5b8abae889b64814f6f35d438ed769cf9c2fc5b3",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 14,
+      "title": "Close the fine-tune decision loop",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/14",
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "1a359b06964217b75fd11cecc21e19e004ba93d1",
+      "merge_sha": "e29325b1d7d71a2beaadd48f730c06c808a45229",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 15,
+      "title": "Give each workspace screen one title and one job",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/15",
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "a4f451852c784aaf353833ad12362baa67d9890b",
+      "merge_sha": "25ba779857236ef9d2a9cdaac5400a0c0b69d923",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 17,
+      "title": "Report Context Lab recall as not run instead of fabricated scores",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/17",
+      "ticket_ids": [
+        "TASK-63"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "c8d078a83d49cc1dc72719837d304d932150cc34",
+      "merge_sha": "782bef90a667c3a3d3fd343d68f40f46baade9d1",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 18,
+      "title": "Retain publisher license notices without scraped contact metadata",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/18",
+      "ticket_ids": [
+        "TASK-65"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "c5b4cdd6507e992fd543c1cce43060889367c0fb",
+      "merge_sha": "26215d1f95a76a878b5971ed2a10c13ce9b1eb8d",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 19,
+      "title": "Upgrade vulnerable Python runtimes; retain upstream inference blocker",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/19",
+      "ticket_ids": [
+        "TASK-74"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "549e9fd0c88eb7092d611d3827015b6728969c1d",
+      "merge_sha": "3899e9e7f302074394997a57d233995f090e8062",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": false
+    },
+    {
+      "number": 20,
+      "title": "Document commit-history rewrite plan and canonical noreply identity",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/20",
+      "ticket_ids": [
+        "TASK-75"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "62ee11b3215789734a9de148e99e318d64efe2b6",
+      "merge_sha": "99139568e427b8c935727268e447ae3bdf2cb1db",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": false
+    },
+    {
+      "number": 21,
+      "title": "Keep onboarding project selection stable and record fresh CPU setup evidence",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/21",
+      "ticket_ids": [
+        "TASK-3"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "f20e798df6336852d9d762064b21f398c2bdf9b1",
+      "merge_sha": "916e77b21711cf8ffa4f96f3b058fef25c7e3498",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 22,
+      "title": "Restore capability evidence and record fresh activation baseline",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/22",
+      "ticket_ids": [
+        "TASK-44"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "731855415ca4ac330540d1a5833ffdcc787f1c4b",
+      "merge_sha": "2969117cdcfd5037d0f93e0083373d5172661bb5",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 23,
+      "title": "Enforce project privacy policy, safe diagnostics and current access checks",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/23",
+      "ticket_ids": [
+        "TASK-48"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "79a92da5ad8029af63af052c7782616d5ec9dcca",
+      "merge_sha": "8484667ff9a0eacf81c6484db928b96e95608694",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 24,
+      "title": "Record current preflight admission and cost-estimate verification",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/24",
+      "ticket_ids": [
+        "TASK-5"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "2beb3e8bcc2f157e9b0edd47c9b0f1c84d27e5a6",
+      "merge_sha": "451a5d6b289c4f3186c6d5fac4b8e519f4376eaf",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 25,
+      "title": "Preserve evaluation source identities, scorer version and worker environment",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/25",
+      "ticket_ids": [
+        "TASK-6"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "fa88d421ef27587792097e508740817c788d5796",
+      "merge_sha": "677c8a54a333c4a73e3a1d87cac91ba94d541fa0",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 26,
+      "title": "Require PostgreSQL pgvector infrastructure checks (TASK-64)",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/26",
+      "ticket_ids": [
+        "TASK-64"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "8671a9b1b2b4160536492dffd01bd44e4435d78b",
+      "merge_sha": "b04b23ffcd4d62ff7848650375e766c0b1867dd5",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 27,
+      "title": "Keep durable run attempt history accessible (TASK-8)",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/27",
+      "ticket_ids": [
+        "TASK-8"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "b87e8e5092191010c02fce96cb89c1b0f85e37dc",
+      "merge_sha": "4f436d7b220b19492d8c82a96f6ae217f7f8a0a7",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 28,
+      "title": "Qualify resumable Dataset Bank acquisition (TASK-9)",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/28",
+      "ticket_ids": [
+        "TASK-9"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "6e0dd7a3138b0b92de5801a4062bae743e7264c8",
+      "merge_sha": "e739b28500bca321b3d2e92369656c3b471a9b13",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 29,
+      "title": "Run bounded reviewed-label training and qualification (TASK-10)",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/29",
+      "ticket_ids": [
+        "TASK-10"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "1979146a2ce79fc15abd8ce1fb3523a2eb43aef9",
+      "merge_sha": "285eba5d32a2427482c7bfd1395450bf84c10718",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 30,
+      "title": "Add versioned retrieval comparisons and measured source-safe PCA",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/30",
+      "ticket_ids": [
+        "TASK-11"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "d0ae13155f3c5d857e91a2c304e3ed877034b063",
+      "merge_sha": "107df02581bf80d013407621318aeabc4579babb",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 31,
+      "title": "Run measured paired Context Lab inference with pinned recipe revisions",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/31",
+      "ticket_ids": [
+        "TASK-12"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "235e645c7db4dff5c1f0642ac344f45d882bcf51",
+      "merge_sha": "151fec0104780063590cfe4258f842275e7e24ca",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 32,
+      "title": "Verify complete model snapshots and current pinned Hub transfers",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/32",
+      "ticket_ids": [
+        "TASK-14"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "b0eaabd63242c8e77b0cc0b53c09c9e1efbd7b4e",
+      "merge_sha": "6f2f84e5d182cec1a244331f9a36f9ba798e6398",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 33,
+      "title": "Reserve GPUs per fenced attempt and revalidate current device admission",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/33",
+      "ticket_ids": [
+        "TASK-42"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "8d5f3a376fb85515b958ee5e97e7e9d00e1722cf",
+      "merge_sha": "b6a372d7c481e4a922cbd3815da3e32187df4eb5",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 34,
+      "title": "Finish private-team reviewer invitations and immediate access revocation",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/34",
+      "ticket_ids": [
+        "TASK-49"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "87ae3b0a813dd931b2ffb62bc23138b346cc42dc",
+      "merge_sha": "1a4b083345a99763f47ebcab3df371100d0b7ef1",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 35,
+      "title": "Separate current document import evidence from pending OCR qualification",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/35",
+      "ticket_ids": [
+        "TASK-62"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "d1bae8d7e153c4b4b332d3fd5c8e173954a28d0b",
+      "merge_sha": "0c2d621c4284b8a7cc9ff200a4cdead991f3a5fa",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": false
+    },
+    {
+      "number": 36,
+      "title": "Replace RAG character slices with pinned offline token chunks",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/36",
+      "ticket_ids": [
+        "TASK-66"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "20bc75553ca6a9d5c2f31323b004012cba789de4",
+      "merge_sha": "abb13c0495caa03eda3de7b36015aeeb34ab5cae",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 37,
+      "title": "Freeze verified candidate archives and block stale release evidence",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/37",
+      "ticket_ids": [
+        "TASK-7"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "1eb9168f8a26ad74366ea8d843ce81e89608c8dc",
+      "merge_sha": "937dae0874adc99954bbf83599e42253a8971e8c",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 38,
+      "title": "Add pinned local embeddings and resumable vector builds",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/38",
+      "ticket_ids": [
+        "TASK-30",
+        "TASK-67"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "0aad102d45f1baed0ea5c4e82fcb836b2d9d74bc",
+      "merge_sha": "6f2f2dd733099515eb6ab78209ad6c9aba5c0cf3",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 39,
+      "title": "Import private application feedback into reviewed training data",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/39",
+      "ticket_ids": [
+        "TASK-53"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "7545d42518c7c4aefecdbff908c10cb547cc24a6",
+      "merge_sha": "786cab4f79c81bfdca18f76edaf1a29fd454dd1e",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 40,
+      "title": "Validate context token budgets against the pinned runtime",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/40",
+      "ticket_ids": [
+        "TASK-72"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "b45141226547d78a9a5ee747e65e32b0d18e386e",
+      "merge_sha": "01f6c035e49b5bc27a8f5eef9832819cbbda1068",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 41,
+      "title": "Run authorized exact, HNSW and full-text retrieval in PostgreSQL",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/41",
+      "ticket_ids": [
+        "TASK-68"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "3eae2b55ceeb74a79de400d1dba061de792c6e82",
+      "merge_sha": "8f0b7b1499ea172fa5d0c93034d0a97a702077d2",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 42,
+      "title": "Fine-tune and export real private CPU embedding candidates",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/42",
+      "ticket_ids": [
+        "TASK-30"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "b76ce1088b83248cfadbc76648468cff32b54794",
+      "merge_sha": "6faf417637e5bc3112886b995c66b54608fb83d3",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 43,
+      "title": "Qualify retrieval with frozen public relevance and ANN controls",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/43",
+      "ticket_ids": [
+        "TASK-69"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "8cec0b2feaf182def4430390cb448779ea518e8a",
+      "merge_sha": "fef0b7a146d9ce9a5c631ea5a148c63441b4eae2",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 44,
+      "title": "Run pinned local RAG answers with verified citation membership",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/44",
+      "ticket_ids": [
+        "TASK-70"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "e221320ee1c01fa4af66ebb19ebf347da28993a6",
+      "merge_sha": "68dbd2bcb1c520b1a82ca10532ae054bcb516f2a",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 45,
+      "title": "Measure evidence-position effects with actual repeated local model runs",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/45",
+      "ticket_ids": [
+        "TASK-71"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "9661380605acf9de830467ed36f9360ecd58dedd",
+      "merge_sha": "d373c38d1b937d9062ca489d7eb7d9172bf4ecbc",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    },
+    {
+      "number": 46,
+      "title": "Publish source-bound reproducible RAG evidence and generated results",
+      "url": "https://github.com/nirtuttnauer/ModelAnvil/pull/46",
+      "ticket_ids": [
+        "TASK-73"
+      ],
+      "state": "MERGED",
+      "base": "main",
+      "head_sha": "06bbe1db8eae205f1df26a3984f7a86822d595c8",
+      "merge_sha": "2bf35ec61fa163c98706b9f5b2452d2385b98739",
+      "checks": [
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "backend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "frontend",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        },
+        {
+          "name": "pgvector",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "all_final_head_checks_successful": true,
+      "scope_complete": true
+    }
+  ],
+  "limits": "PR19/20/35 are merged partial scopes; TASK74/75/62 remain unfinished on their recorded decisions/runtime qualification. PR16 is customer-discovery preparation and remains open. CI on a delivery does not establish customer, hardware or production qualification."
+}
