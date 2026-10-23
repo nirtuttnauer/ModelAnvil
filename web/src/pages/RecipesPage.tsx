@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { apiRequest, errorMessage } from '../api/client';
 import { allResources } from '../api/resources';
 import { resourceHash } from '../api/resource-routes';
+import type { LocalModel } from '../api/inference';
 import { graphErrors, importRecipe, newStep, starterRecipe, uploadRecipeSource, type RecipeDefinition, type RecipeKind, type RecipeRun, type RecipeStep } from '../api/recipes';
 import './ml-pages.css';
 import './recipes.css';
@@ -12,7 +13,7 @@ export function RecipesPage({token,refreshKey}: {token:string;refreshKey?:number
   const [recipe,setRecipe] = useState<RecipeDefinition>(() => starterRecipe());
   const [version,setVersion] = useState(''); const [versions,setVersions] = useState<{artifact_id:string;name:string;sha256:string}[]>([]);
   const [files,setFiles] = useState<Record<string,File>>({}); const [sources,setSources] = useState<Record<string,string>>({});
-  const [models,setModels] = useState<{id:string;name:string}[]>([]); const [model,setModel] = useState(''); const [device,setDevice] = useState('mps:0');
+  const [models,setModels] = useState<LocalModel[]>([]); const [model,setModel] = useState(''); const [device,setDevice] = useState('cpu');
   const [pools,setPools] = useState<{id:number;name:string}[]>([]); const [pool,setPool] = useState('');
   const [policies,setPolicies] = useState<{policy_id:string;name:string}[]>([]); const [policy,setPolicy] = useState('');
   const [datasets,setDatasets] = useState<{dataset_id:string;name:string}[]>([]); const [dataset,setDataset] = useState('');
@@ -22,6 +23,7 @@ export function RecipesPage({token,refreshKey}: {token:string;refreshKey?:number
   const [preview,setPreview] = useState(''); const [reviewed,setReviewed] = useState(false); const [addType,setAddType] = useState<RecipeKind>('validate');
   const [busy,setBusy] = useState(false); const [error,setError] = useState(''); const [notice,setNotice] = useState('');
   const lock = useRef(false); const delivery = useRef(''); const ordinal = useRef(1);
+  const generator = models.find(m => m.id === model);
   const needsModel = recipe.steps.some(s => s.type === 'generate'); const errors = graphErrors(recipe);
 
   useEffect(() => {
@@ -35,7 +37,7 @@ export function RecipesPage({token,refreshKey}: {token:string;refreshKey?:number
       allResources<{dataset_id:string;name:string}>('/api/v1/datasets/',token,c.signal),
       allResources<{artifact_id:string;object_key:string;sha256:string;media_type:string;metadata:{kind?:string}}>('/api/v1/artifacts/',token,c.signal),
     ]).then(([v,m,p,b,d,a]) => {if (!c.signal.aborted) {
-      setVersions(v);setModels(m.data);setPools(p.filter(x => x.status === 'active'));
+      setVersions(v);setModels(m.data.filter(x => x.format !== 'external'));setPools(p.filter(x => x.status === 'active'));
       setPolicies(b.filter(x => x.enabled && x.unit === 'recipe_attempts' && !x.currency));setDatasets(d);
       setProtectedOptions(a.filter(x => x.media_type==='application/x-ndjson' || x.metadata.kind==='prepared_dataset'));
     }}).catch(e => {if (!c.signal.aborted) setError(errorMessage(e));});
@@ -158,7 +160,7 @@ export function RecipesPage({token,refreshKey}: {token:string;refreshKey?:number
           <Button disabled={Boolean(errors.length)} onClick={() => void operation(async () => {await save();setNotice('Saved immutable recipe version.');})}>Save version</Button>
         </fieldset>
         <fieldset disabled={busy} className="form-grid recipe-execution">
-          {needsModel && <><label>Local generator<select value={model} onChange={e => {setModel(e.target.value);setPreview('');setReviewed(false);}}><option value="">Select a local model</option>{models.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}</select></label><label>Generation device<select value={device} onChange={e => {setDevice(e.target.value);setPreview('');setReviewed(false);}}><option value="mps:0">Apple GPU</option><option value="cpu">CPU</option><option value="mlx:0">MLX Metal</option></select></label></>}
+          {needsModel && <><label>Local generator<select value={model} onChange={e => {setModel(e.target.value);setDevice('cpu');setPreview('');setReviewed(false);}}><option value="">Select a local model</option>{models.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}</select></label><label>Generation device<select value={device} onChange={e => {setDevice(e.target.value);setPreview('');setReviewed(false);}}>{(generator?.devices || ['cpu','mps:0','mlx:0']).filter(d => ['cpu','mps:0','mlx:0'].includes(d)).map(d => <option key={d} value={d}>{d === 'cpu' ? 'CPU' : d === 'mlx:0' ? 'MLX Metal' : 'Apple GPU'}</option>)}</select></label>{generator && <p className="full-width muted">Generator limits: {generator.max_tokens ?? 256} new tokens{generator.context_limit ? ` within ${generator.context_limit} context tokens` : ''}. Each generation step must fit these limits; overflow fails the run. Generated rows require review before training use.</p>}</>}
           <label>Recipe worker pool<select value={pool} onChange={e => setPool(e.target.value)}><option value="">Select a pool</option>{pools.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
           <label>Recipe attempt quota<select value={policy} onChange={e => setPolicy(e.target.value)}><option value="">Select a recipe_attempts quota</option>{policies.map(p => <option key={p.policy_id} value={p.policy_id}>{p.name}</option>)}</select></label>
           <p className="full-width muted">Three attempts are reserved per run. Previews generate at most three rows per step; full generation uses at most 32. Completed step and row checkpoints survive worker interruption. Privacy, deduplication and protected-source checks run before generation and publication.</p>

@@ -143,7 +143,7 @@ def _is_repetitive(text: str) -> bool:
     if len(set(stripped)) == 1:
         return True
     for period in range(1, 9):
-        if len(stripped) % period == 0:
+        if len(stripped) % period == 0 and len(stripped) // period >= 3:
             unit = stripped[:period]
             if unit * (len(stripped) // period) == stripped:
                 return True
