@@ -53,3 +53,5 @@ The Mac pilot imported the pinned SmolLM2-135M snapshot through the worker after
 ```
 
 The output directory must be new; the command creates its own database and artifacts. GGUF conversion must use an architecture-compatible llama.cpp converter and retains source provenance in the separate conversion record. Automated API tests additionally exercise real tiny transformer weights, corrupt bytes, scoped access, upload references, lease fencing, exact streamed/framework output and immediate arena handoff. NVIDIA, AMD and Intel qualification remain pending; this pilot covers only this Mac and this bounded model.
+
+TASK-42 extends local training admission with database device reservations bound to fenced attempts across pools/tenants, plus fresh claim-time hardware/runtime/budget checks. [Current coordination contract and verification](verification/task42-device-admission-2026-10-23/report.md) describe the shared database/private-lock-root envelope and registration refresh. Historical GPU execution evidence does not qualify the new admission contract.

@@ -270,6 +270,20 @@ class JobAttempt(TenantContextModel):
         return self.lease_expires_at is not None and timezone.now() > self.lease_expires_at
 
 
+class DeviceClaim(models.Model):
+    """Internal physical-device coordination across tenants on one cooperating host/account.
+
+    Tenant ownership is carried by the attempt. There is deliberately no public API:
+    physical exclusion must not be split into independent tenant namespaces.
+    """
+    host_key = models.CharField(max_length=64)
+    device_key = models.CharField(max_length=32)
+    attempt = models.OneToOneField(JobAttempt, on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['host_key','device_key'],name='job_host_device_claim_uniq')]
+
+
 # ---------------------------------------------------------------------------
 # Outbox
 # ---------------------------------------------------------------------------
@@ -426,6 +440,20 @@ def claim_job(worker: Worker, job: Optional[Job] = None) -> Optional[dict[str, A
     if not _worker_matches(current_worker.capabilities, job.requirements):
         return None
 
+    from modelanvil.runners.training.admission import gpu_claim_plan
+    try:
+        placement=gpu_claim_plan(job,current_worker)
+    except (ValueError,KeyError,TypeError,OSError):
+        return None
+    device_claim=None
+    if placement:
+        DeviceClaim.objects.get_or_create(**placement)
+        device_claim=DeviceClaim.objects.select_for_update().get(**placement)
+        if device_claim.attempt_id:
+            occupied=JobAttempt.all_objects.filter(pk=device_claim.attempt_id,status='running',lease_expires_at__gt=timezone.now()).exists()
+            if occupied:
+                return None
+
     fencing_token = secrets.token_hex(16)
     lease_until = timezone.now() + _lease_delta()
 
@@ -451,6 +479,9 @@ def claim_job(worker: Worker, job: Optional[Job] = None) -> Optional[dict[str, A
         lease_expires_at=lease_until,
         slots_reserved=slots_needed,
     )
+    if device_claim:
+        device_claim.attempt=attempt
+        device_claim.save(update_fields=['attempt'])
     job.attempt_count += 1
     job.save(update_fields=["attempt_count"])
     current_worker.slots -= slots_needed
@@ -599,6 +630,7 @@ def commit_result(
             job_status = Job.Status.CANCELLED
         from modelanvil.data.recipe_jobs import finalize_job as finalize_recipe
         finalize_recipe(job, job_status)
+    DeviceClaim.objects.filter(attempt_id=current.pk).update(attempt=None)
     job.status = job_status
     job.lease_expires_at = None
     job.claimed_by = None
@@ -678,5 +710,6 @@ def reconcile_expired_leases() -> int:
         if current_job_attempt and job.status in (Job.Status.FAILED, Job.Status.INTERRUPTED) and job.payload.get('type') == 'recipe_execution':
             from modelanvil.data.recipe_jobs import finalize_job as finalize_recipe
             finalize_recipe(job, job.status)
+        DeviceClaim.objects.filter(attempt_id=attempt.pk).update(attempt=None)
         count += 1
     return count

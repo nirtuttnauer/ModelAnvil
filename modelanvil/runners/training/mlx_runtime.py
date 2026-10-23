@@ -21,7 +21,7 @@ PACKAGES = {**hf.PACKAGES, 'mlx': '0.32.3', 'mlx-metal': '0.32.3', 'mlx-lm': '0.
 CONTRACT = {'runtime': RUNTIME_ID, 'source': SOURCE, 'file_hashes': FILE_HASHES,
     'packages': PACKAGES, 'recipe': 'qlora_adapter', 'recipes': ['qlora_adapter'],
     'precision': 'fp32', 'quantization': QUANTIZATION, 'quantization_targets': 'linear_layers_only_full_precision_tied_embeddings', 'lora': LORA, 'optimizer': OPTIMIZER,
-    'limits': LIMITS, 'placement': 'one_trusted_local_metal_worker', 'device_admission': 'exclusive_posix_user_host_v1'}
+    'limits': LIMITS, 'placement': 'one_trusted_local_metal_worker', 'device_admission': 'attempt_db_and_posix_user_host_v2'}
 CONTRACT_DIGEST = digest(CONTRACT)
 file_ref, staged_files, _tokenizer = hf.file_ref, hf.staged_files, hf._tokenizer
 is_worker_run = hf.is_worker_run
@@ -66,10 +66,21 @@ def observed_device(selector):
     active = mx.get_active_memory()
     if type(recommended) is not int or recommended - active < LIMITS['gpu_memory_bytes']:
         raise ValueError('MLX recommended process headroom is unknown or below 4 GiB.')
-    return {'device': {'id': 'mlx:0', 'backend': 'mlx', 'name': mx.device_info().get('device_name'),
-        'runtime_recommended_memory_bytes': recommended, 'process_headroom_bytes': recommended - active,
+    from modelanvil.device_admission import host_key
+    return {'host_key':host_key(),'device': {'id': 'mlx:0', 'backend': 'mlx', 'name': mx.device_info().get('device_name'),
+        'runtime_recommended_memory_bytes': recommended,
         'memory_scope': 'shared_unified'}, 'framework': {'name': 'mlx', 'version': PACKAGES['mlx']},
         'packages': PACKAGES, 'capacity_source': 'MLX recommended process working set, not system-wide free memory'}
+
+
+def memory_observation(selector):
+    observed_device(selector)
+    import mlx.core as mx
+    from django.utils import timezone
+    recommended=mx.device_info()['max_recommended_working_set_size']
+    active=mx.get_active_memory()
+    return {'recommended_bytes':recommended,'active_bytes':active,'headroom_bytes':recommended-active,
+        'observed_at':timezone.now().isoformat(),'scope':'MLX process working-set allowance; not globally free memory.'}
 
 
 def capable_worker(worker):
@@ -136,6 +147,10 @@ def execute_training(run, context):
     recovery = {**files, **({'optimizer.safetensors': latest.weights_manifest['adam']} if latest else {})}
     import mlx.core as mx
     with device_lease('mlx:0'):
+        if not context.heartbeat():
+            return
+        if observed_device('mlx:0')!=pins['accelerator']:
+            raise ValueError('MLX placement changed immediately before allocation.')
         try:
             _execute_updates(run, context, inputs, files, recovery, latest)
         finally:

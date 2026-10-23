@@ -1,0 +1,18 @@
+{
+  "observed_at": "2026-10-23T01:41:09.592Z",
+  "scope": "Controlled Storybook display fixture only. No GPU connected, allocated, measured or qualified by this browser check.",
+  "fields": [
+    "explicit device/backend",
+    "headroom and unit",
+    "memory scope and observation time",
+    "blocked launch"
+  ],
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_overflow": false,
+  "launch_disabled": true,
+  "story_interaction_passed": true,
+  "page_errors": []
+}

@@ -31,6 +31,8 @@ export function PreflightChecklist({ report, busy, form, onLaunch, onRefresh, ti
   const ready = report.status === 'approved' && !!report.preflight_token && !expired && !expiryUnknown && !report.blocking_checks.length;
   const groups = [...new Set(report.checks.map(check => check.category))];
   const duration = report.estimate.estimated_duration_seconds;
+  const accelerator = report.requirements.accelerator as { device?: { id?: string; backend?: string } } | undefined;
+  const deviceMemory = report.requirements.device_memory as { headroom_bytes?: number; observed_at?: string; scope?: string } | undefined;
   const finite = (value: unknown, transform?: (value: number) => ReactNode) => typeof value === 'number' && Number.isFinite(value) ? transform ? transform(value) : value.toLocaleString() : 'Unknown';
   return <section ref={panel} tabIndex={-1} className="preflight-checklist detail-box" aria-label={title}>
     <div className="wb-row"><h3>{title}</h3><span className={`wb-status ${ready ? 'wb-success' : 'wb-warning'}`} role="status">{expiryUnknown ? 'Expiry not reported' : expired ? 'Preview expired' : ready ? 'Ready to launch' : report.status === 'approved' && !report.preflight_token ? 'Launch token unavailable' : 'Blocked'}</span></div>
@@ -53,8 +55,9 @@ export function PreflightChecklist({ report, busy, form, onLaunch, onRefresh, ti
       <div><dt>Worker slots</dt><dd>{finite(report.requirements.cpu_slots)}</dd></div>
       <div><dt>Host memory</dt><dd>{finite(report.requirements.memory_bytes, value => `${value / 1048576} MiB`)}</dd></div>
       <div><dt>Projected storage</dt><dd>{finite(report.requirements.storage_bytes, value => `${(value / 1048576).toFixed(2)} MiB`)}</dd></div>
-      {report.requirements.accelerator != null && <><div><dt>GPU devices</dt><dd>{finite(report.requirements.gpu_count)}</dd></div><div><dt>Precision</dt><dd>{String(report.requirements.precision ?? 'Unknown')}</dd></div></>}
+      {report.requirements.accelerator != null && <><div><dt>GPU devices</dt><dd>{finite(report.requirements.gpu_count)}</dd></div><div><dt>Selected device</dt><dd>{accelerator?.device?.id || 'Unknown'} · {accelerator?.device?.backend || 'Unknown backend'}</dd></div><div><dt>Observed headroom</dt><dd>{finite(deviceMemory?.headroom_bytes, value => `${(value / 1073741824).toFixed(2)} GiB`)}</dd></div><div><dt>Precision</dt><dd>{String(report.requirements.precision ?? 'Unknown')}</dd></div></>}
     </dl>{report.requirements.storage_assumption != null && <p className="wb-muted">{String(report.requirements.storage_assumption)}</p>}
+    {deviceMemory && <p className="wb-muted">{deviceMemory.scope || 'Memory scope not reported'}{deviceMemory.observed_at && <> Observed: {deviceMemory.observed_at}.</>}</p>}
     {report.requirements.accelerator != null && <details><summary>Resolved GPU device and capacity source</summary><DataInspector value={report.requirements.accelerator} /></details>}
     <details><summary>Resolved recipe parameters</summary><DataInspector value={{ config: report.requirements.config, optimizer: report.requirements.optimizer }} /></details></section>
     <section><h4>Estimate and budget</h4><dl className="wb-facts"><div><dt>Engine time</dt><dd>{report.estimate.known && typeof duration === 'number' && Number.isFinite(duration) ? `${Number(duration.toPrecision(3))} ${report.estimate.units.duration || 'seconds'}` : 'Unknown — no matching measured pilot'}</dd></div>
