@@ -390,6 +390,7 @@ class BatchViewSet(ReadWorkflowViewSet):
 
 
 class TaskViewSet(ReadWorkflowViewSet):
+    action_write_roles = {"review": Role.REVIEWER, "escalate": Role.REVIEWER}
     queryset = AnnotationTask.objects.select_related("campaign", "campaign__label_schema", "batch")
     serializer_class = TaskSerializer
     lookup_field = "task_id"
@@ -473,7 +474,7 @@ class TaskViewSet(ReadWorkflowViewSet):
         if not role_at_least(request.modelanvil_role, Role.MANAGER):
             raise PermissionDenied('Reviewer assignment requires a manager.')
         keys = ApiKey.objects.filter(tenant_id=get_active_tenant(), is_active=True)
-        eligible = [key for key in keys if not key.is_expired() and role_at_least(key.role, Role.ENGINEER) and (not key.project_id or key.project_id == task.campaign.project_id)]
+        eligible = [key for key in keys if not key.is_expired() and role_at_least(key.role, Role.REVIEWER) and (not key.project_id or key.project_id == task.campaign.project_id)]
         if request.method == 'GET':
             return Response({'reviewers': [{'principal_id': f'api_key:{key.pk}', 'name': key.name} for key in eligible]})
         if task.batch.status == 'closed' or task.campaign.status != 'active':

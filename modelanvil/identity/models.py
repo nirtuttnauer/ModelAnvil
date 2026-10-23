@@ -33,6 +33,7 @@ class Role(models.TextChoices):
     ADMIN = "admin", "Admin"
     MANAGER = "manager", "Manager"
     ENGINEER = "engineer", "Engineer"
+    REVIEWER = "reviewer", "Reviewer"
     VIEWER = "viewer", "Viewer"
     WORKER = "worker", "Worker"
 
@@ -44,6 +45,7 @@ ROLE_RANK: dict[str, int] = {
     Role.ADMIN: 80,
     Role.MANAGER: 60,
     Role.ENGINEER: 40,
+    Role.REVIEWER: 30,
     Role.VIEWER: 20,
     Role.WORKER: 10,
 }
@@ -559,6 +561,7 @@ class AccountAction(models.Model):
     role = models.CharField(max_length=16, choices=Role.choices, default=Role.ENGINEER)
     expires_at = models.DateTimeField()
     used_at = models.DateTimeField(null=True, blank=True)
+    revoked_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:

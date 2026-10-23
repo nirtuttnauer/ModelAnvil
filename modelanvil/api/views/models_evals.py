@@ -1,5 +1,6 @@
 """Tenant-scoped REST APIs for Model, ModelVersion, TokenizerVersion, and Evaluation registries."""
 from __future__ import annotations
+from modelanvil.identity.models import Role
 
 from modelanvil.runners.evidence import evidence, training_evidence, model_evidence, evaluation_evidence, release_evidence
 
@@ -362,6 +363,7 @@ class EvaluationRunSerializer(serializers.ModelSerializer):
 
 
 class EvaluationRunViewSet(TenantScopedViewSet):
+    action_write_roles = {"record_decision": Role.REVIEWER}
     queryset = EvaluationRun.objects.prefetch_related("metrics")
     serializer_class = EvaluationRunSerializer
     lookup_field = "run_id"

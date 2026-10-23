@@ -1,0 +1,23 @@
+{
+  "observed_at": "2026-10-23T02:06:12.515Z",
+  "onboarding_ui": true,
+  "revoked_and_reissued": true,
+  "wrong_account_rejected": true,
+  "joined_ui": true,
+  "campaign_source_forms": true,
+  "keyboard_label_review_persisted": true,
+  "launch_controls_unavailable": true,
+  "restricted_statuses": {
+    "training-runs": 403,
+    "memberships": 403,
+    "serving-endpoints": 403
+  },
+  "membership_removal_immediate": true,
+  "post_removal_projects_status": 401,
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_overflow": false,
+  "page_errors": []
+}

@@ -23,7 +23,7 @@ class TenantScopedViewSet(viewsets.ModelViewSet):
     write_role = Role.ENGINEER
 
     def initial(self, request, *args, **kwargs):
-        self.required_role = Role.VIEWER if request.method in ("GET", "HEAD", "OPTIONS") else self.write_role
+        self.required_role = Role.VIEWER if request.method in ("GET", "HEAD", "OPTIONS") else getattr(self, "action_write_roles", {}).get(self.action, self.write_role)
         return super().initial(request, *args, **kwargs)
 
     def get_queryset(self):

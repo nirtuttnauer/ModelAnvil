@@ -3,7 +3,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { authHeaders, apiRequest, errorMessage, setActiveProjectId } from '../api/client';
 import './guided-training.css';
 
-export function Welcome({ onConnected }: { onConnected: (token: string) => void }) {
+export function Welcome({ onConnected }: { onConnected: (token: string, role?: string) => void }) {
   const [mode, setMode] = useState<'signup' | 'signin' | 'reset' | 'invite'>('signup');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -23,7 +23,7 @@ export function Welcome({ onConnected }: { onConnected: (token: string) => void 
       const result = await response.json();
       if (controller.signal.aborted) return;
       setSignup(result.signup_enabled); setMode(current => current === 'reset' || current === 'invite' ? current : result.signup_enabled ? 'signup' : 'signin'); setReady(true);
-      if (result.authenticated) onConnected('session');
+      if (result.authenticated) onConnected('session', result.role);
     }).catch(e => { if (!controller.signal.aborted) { setError(errorMessage(e)); setReady(true); } });
     return () => controller.abort();
   }, [retry]);
@@ -47,7 +47,7 @@ export function Welcome({ onConnected }: { onConnected: (token: string) => void 
         if (typeof result.reset_code === 'string') setCode(result.reset_code);
         return;
       }
-      setPassword(''); setCode(''); onConnected(result.token);
+      setPassword(''); setCode(''); onConnected(result.token, result.role);
     } catch (e) { setError(errorMessage(e)); }
     finally { setBusy(false); }
   }

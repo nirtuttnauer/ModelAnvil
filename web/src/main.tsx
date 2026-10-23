@@ -1,3 +1,4 @@
+import { ReviewAccess } from './components/Access';
 import { Button, Field, NavigationItem, Notice, WorkspaceHeader, WorkspaceTabs } from './components/ui';
 import { Welcome } from './components/Welcome';
 import { parseResourceRoute } from './api/resource-routes';
@@ -234,6 +235,17 @@ export function App() {
   );
   const [projectLoading, setProjectLoading] = React.useState(true);
   const [showCreateProjectModal, setShowCreateProjectModal] = React.useState(false);
+  const [accessError, setAccessError] = React.useState('');
+  const [access, setAccess] = React.useState<{ token: string; role: string } | null>(null);
+  const reviewOnly = access?.token === token && ['reviewer', 'viewer'].includes(access.role);
+  React.useEffect(() => { const c = new AbortController();
+    setAccessError('');
+    if (token) apiRequest<{ role: string }>('/api/v1/accounts/access/', token, { signal: c.signal })
+      .then(result => { if (!c.signal.aborted) setAccess({ token, role: result.role }); })
+      .catch(() => { if (!c.signal.aborted) { setAccess(null); setAccessError('Could not check workspace permissions.'); } });
+    return () => c.abort();
+  }, [token, refreshKey]);
+
 
   const currentOrganization =
     organizationConnection?.token === token ? organizationConnection.organization : null;
@@ -458,13 +470,13 @@ export function App() {
     refresh();
   }
 
-  function welcomeConnected(value: string) {
+  function welcomeConnected(value: string, role?: string) {
     setActiveProjectId(null);
     setActiveProjectIdState(null);
     localStorage.removeItem('modelanvil_active_project');
     localStorage.setItem('modelanvil_token', value);
     setTokenState(value); setDraftToken(value);
-    load('Training'); refresh();
+    load(role === 'reviewer' || role === 'viewer' ? 'Overview' : 'Training'); refresh();
   }
 
   async function signOut() {
@@ -509,7 +521,7 @@ export function App() {
           </div>
         </div>
         <nav aria-label="Main navigation">
-          {primaryNavigation.map((group) => (
+          {(reviewOnly ? [{ label: 'Workspace', names: ['Overview', 'Annotation', 'Evaluation'] as Page[] }] : primaryNavigation).map((group) => (
             <div className="nav-group" key={group.label}>
               <p className="nav-label">{group.label}</p>
               {pages
@@ -529,7 +541,7 @@ export function App() {
                 ))}
             </div>
           ))}
-          <details className="nav-advanced" open={advancedOpen} onToggle={event => setAdvancedOpen(event.currentTarget.open)}>
+          {!reviewOnly && <details className="nav-advanced" open={advancedOpen} onToggle={event => setAdvancedOpen(event.currentTarget.open)}>
             <summary>Advanced</summary>
             {advancedNavigation.map((group) => (
               <div className="nav-group" key={group.label}>
@@ -542,7 +554,7 @@ export function App() {
                 ))}
               </div>
             ))}
-          </details>
+          </details>}
         </nav>
         <div className="sidebar-bottom">
           <span
@@ -611,7 +623,7 @@ export function App() {
                     {p.name}
                   </option>
                 ))}
-                <option value="create-project">+ New project…</option>
+                {!reviewOnly && <option value="create-project">+ New project…</option>}
               </select>
             </label>
             <ChevronRight className="breadcrumb-divider" size={14} aria-hidden="true" />
@@ -711,7 +723,7 @@ export function App() {
               <h1>{headingFor(active)}</h1>
               <p>{descriptions[active]}</p>
             </div>
-            {active === 'Overview' && (
+            {!reviewOnly && active === 'Overview' && (
               <Button onClick={() => load('Training')}>
                 Start fine-tuning
                 <ArrowUpRight size={16} aria-hidden="true" />
@@ -720,8 +732,8 @@ export function App() {
           </div>}
 
           <DraftScope.Provider value={currentOrganization ? { organization: currentOrganization.tenant_id, project: activeProjectId } : null}>
-          <ScreenBoundary key={`${token}-${activeProjectId}-${active}`}>
-          {projectLoading || organizationLoading ? (<p role="status">Loading project scope…</p>) : active === 'Resource Detail' ? (resourceRoute ? <ResourceDetailPage key={`${token}-${activeProjectId}-${resourceRoute.kind}-${resourceRoute.id}`} token={token} kind={resourceRoute.kind} id={resourceRoute.id} refreshKey={refreshKey} /> : <p role="alert">This resource address is invalid. Open an exact revision from Models or Datasets.</p>) : active === 'Run Detail' ? (
+          <ReviewAccess.Provider value={access?.token === token ? access.role : 'viewer'}><ScreenBoundary key={`${token}-${activeProjectId}-${active}`}>
+          {accessError ? <Notice role="alert">{accessError}<Button onClick={() => refresh()}>Retry permissions</Button></Notice> : !access || access.token !== token ? <p role="status">Checking workspace access…</p> : reviewOnly && !['Overview', 'Annotation', 'Evaluation', 'Run Detail', 'Resource Detail'].includes(active) ? <Notice><p>This workflow requires an engineer or owner. Your access is for evidence and reviews.</p><Button onClick={() => load('Annotation')}>Review labels</Button><Button onClick={() => load('Evaluation')}>Review evaluations</Button></Notice> : projectLoading || organizationLoading ? (<p role="status">Loading project scope…</p>) : active === 'Resource Detail' ? (resourceRoute ? <ResourceDetailPage key={`${token}-${activeProjectId}-${resourceRoute.kind}-${resourceRoute.id}`} token={token} kind={resourceRoute.kind} id={resourceRoute.id} refreshKey={refreshKey} /> : <p role="alert">This resource address is invalid. Open an exact revision from Models or Datasets.</p>) : active === 'Run Detail' ? (
             runRoute ? (
               <RunDetailPage
                 key={`${token}-${activeProjectId}-${runRoute.kind}-${runRoute.id}`}
@@ -841,7 +853,7 @@ export function App() {
             />
           )}
 
-          </ScreenBoundary>
+          </ScreenBoundary></ReviewAccess.Provider>
           </DraftScope.Provider>
           <footer>
             <BuildIdentity token={token} refreshKey={refreshKey} />
