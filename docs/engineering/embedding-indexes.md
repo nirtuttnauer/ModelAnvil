@@ -1,6 +1,6 @@
 # Pinned local embedding indexes
 
-Retrieval can now turn an existing frozen MiniLM token index into a separate, worker-built pgvector revision. The source index and old chunk memberships remain available. This bounded CPU profile is inference and indexing; embedding fine-tuning, candidate export and customer quality qualification remain separate work in TASK-30.
+Retrieval can now turn an existing frozen MiniLM token index into a separate, worker-built pgvector revision. The source index and old chunk memberships remain available. The fixed baseline supports inference and indexing; [bounded operator CPU fine-tuning](embedding-fine-tuning.md) produces separately pinned candidate spaces and independently loadable exports. Customer quality qualification remains separate.
 
 ## Operator setup
 

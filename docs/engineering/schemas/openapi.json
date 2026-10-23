@@ -8434,6 +8434,86 @@
           }
         }
       }
+    },
+    "/embedding-candidates/": {
+      "get": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "listEmbeddingCandidates",
+        "summary": "List private published CPU embedding candidates",
+        "responses": {
+          "200": {
+            "description": "Current project-scoped candidate evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Page"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "results": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/EmbeddingCandidate"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Unavailable in current project"
+          }
+        }
+      }
+    },
+    "/embedding-candidates/{candidate_id}/": {
+      "get": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "getEmbeddingCandidate",
+        "summary": "Inspect a private published CPU embedding candidate",
+        "responses": {
+          "200": {
+            "description": "Current project-scoped candidate evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmbeddingCandidate"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Unavailable in current project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "candidate_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -14271,6 +14351,40 @@
           },
           "required_priority": {
             "const": 1
+          }
+        }
+      },
+      "EmbeddingCandidate": {
+        "type": "object",
+        "description": "Private read-only operator-produced CPU embedding candidate, with artifact-pinned weights and source-split/qrels protocol. HTTP cannot create candidates.",
+        "properties": {
+          "candidate_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "space_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "source_artifact_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "export_artifact_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "source_digest": {
+            "type": "string"
+          },
+          "export_digest": {
+            "type": "string"
+          },
+          "protocol": {
+            "type": "object"
+          },
+          "report": {
+            "type": "object"
           }
         }
       }

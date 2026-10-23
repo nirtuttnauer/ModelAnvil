@@ -55,6 +55,10 @@ def assert_uninspected_cases(tenant,cases):
     exposed=get_accessible_queryset(ApplicationFeedback,tenant_id=tenant)
     groups={fingerprint(tenant,c['source_group_id']) for c in cases if isinstance(c.get('source_group_id'),str) and c['source_group_id']}
     prompts={prompt_fingerprint(tenant,c.get('input_prompt','')) for c in cases if isinstance(c.get('input_prompt'),str) and c['input_prompt']}
+    from modelanvil.rag.models import EmbeddingTrainingExposure
+    embedding_exposure=get_accessible_queryset(EmbeddingTrainingExposure,tenant_id=tenant).filter(role='training')
+    if embedding_exposure.filter(Q(source_group_digest__in=groups)|Q(prompt_digest__in=prompts)).exists():
+        raise ValueError('Inspected embedding training text and source groups cannot be declared clean protected evaluation.')
     if exposed.filter(Q(source_group_digest__in=groups)|Q(prompt_digest__in=prompts)).exists():
         raise ValueError('Inspected application feedback and related source groups cannot be declared clean protected evaluation.')
 

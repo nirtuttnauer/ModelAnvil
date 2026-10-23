@@ -23,14 +23,17 @@ MAX_ATTEMPTS = 3
 MEMORY_BYTES = adapter.MEMORY_BYTES
 # Captured once in each process: an old worker cannot advertise newly edited code.
 BUILD_DIGEST = digest([hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in [__file__,adapter.__file__,
-    Path(adapter.__file__).with_name('embedding-pins.json'),Path(__file__).parents[2]/'requirements.embeddings.txt']])
+    Path(adapter.__file__).with_name('embedding-pins.json'),Path(adapter.__file__).with_name('embedding_candidates.py'),Path(__file__).parents[2]/'requirements.embeddings.txt']])
 
 
 def runtime_digest():
     return digest({'code':BUILD_DIGEST,'environment':adapter.environment(),'profile':adapter.PINS})
 
 
-def space_pins(space):
+def space_pins(space,project_id=None):
+    if space.metadata.get('candidate_artifact'):
+        from modelanvil.rag.embedding_candidates import pins
+        return pins(space,project_id)
     if (space.model_name != adapter.PINS['model'] or space.model_revision != adapter.PINS['revision']
             or space.license_expression != adapter.PINS['license'] or space.dimension != adapter.PINS['dimension']
             or not space.normalized or space.distance_metric != 'cosine'
@@ -62,7 +65,7 @@ def queue(*, source, space, project, principal, pool, policy_id, key):
         raise ValueError('Real vector index builds require PostgreSQL with pgvector.')
     if not check_resource_access(space,project.pk,source.tenant_id):
         raise ValueError('Embedding space is unavailable in the selected project.')
-    pins = space_pins(space); chunks=source_chunks(source,project.pk)
+    pins = space_pins(space,project.pk); chunks=source_chunks(source,project.pk)
     if source.configuration.get('chunk_size',0)>254:
         raise ValueError('Rechunk with at most 254 content tokens before this 256-token model build.')
     runtime=runtime_digest()
@@ -119,7 +122,7 @@ def live_build(context):
 def checked_chunks(build):
     if not check_resource_access(build.index.embedding_space,build.project_id,build.tenant_id):
         raise ValueError('Embedding space access is no longer available.')
-    if runtime_digest()!=build.frozen['runtime'] or space_pins(build.index.embedding_space)!=build.frozen['space']:
+    if runtime_digest()!=build.frozen['runtime'] or space_pins(build.index.embedding_space,build.project_id)!=build.frozen['space']:
         raise ValueError('Embedding runtime or model-space pins changed.')
     if build.source_index.manifest_digest!=build.frozen['source_manifest']:
         raise ValueError('Source index manifest changed.')
@@ -154,7 +157,7 @@ def embedding_executor(descriptor,context):
     for start in range(0,len(pending),adapter.BATCH_SIZE):
         if not context.heartbeat(progress=len(cached)/len(chunks)):return None
         batch=pending[start:start+adapter.BATCH_SIZE]
-        vectors=adapter.encode([c.text for c in batch])
+        vectors=adapter.encode_space([c.text for c in batch],build.index.embedding_space,build.project_id)
         if not context.heartbeat():return None
         with transaction.atomic():
             current=live_build(context);checked_chunks(current)

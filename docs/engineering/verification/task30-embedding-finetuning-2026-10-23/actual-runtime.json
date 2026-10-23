@@ -1,0 +1,162 @@
+{
+  "candidate_weight_sha256": "e65210a9369593262fb40cc1074744ae6daadc6b2c649585a203896652345dbb",
+  "export_sha256": "cf4720050fb359d9465aee1cb2bc7593406cc0c8087cc098cec5e61b29c74f8b",
+  "report": {
+    "baseline": {
+      "dev": {
+        "queries_total": 1,
+        "queries_with_positive_qrels": 1,
+        "cutoff": 3,
+        "metrics": {
+          "recall@3": 1.0,
+          "precision@3": 0.3333,
+          "hit@3": 1.0,
+          "mrr@3": 1.0,
+          "ndcg@3": 1.0
+        },
+        "queries": [
+          {
+            "query_id": "dev-1",
+            "retrieved_ids": [
+              "refund",
+              "deliver",
+              "reset"
+            ],
+            "metrics": {
+              "recall@3": 1.0,
+              "precision@3": 0.3333,
+              "hit@3": 1.0,
+              "mrr@3": 1.0,
+              "ndcg@3": 1.0
+            },
+            "positive_qrels": 1
+          }
+        ],
+        "na_semantics": "No positive qrels means N/A; excluded from metric means."
+      },
+      "held_out": {
+        "queries_total": 1,
+        "queries_with_positive_qrels": 1,
+        "cutoff": 3,
+        "metrics": {
+          "recall@3": 1.0,
+          "precision@3": 0.3333,
+          "hit@3": 1.0,
+          "mrr@3": 1.0,
+          "ndcg@3": 1.0
+        },
+        "queries": [
+          {
+            "query_id": "test-1",
+            "retrieved_ids": [
+              "deliver",
+              "refund",
+              "reset"
+            ],
+            "metrics": {
+              "recall@3": 1.0,
+              "precision@3": 0.3333,
+              "hit@3": 1.0,
+              "mrr@3": 1.0,
+              "ndcg@3": 1.0
+            },
+            "positive_qrels": 1
+          }
+        ],
+        "na_semantics": "No positive qrels means N/A; excluded from metric means."
+      }
+    },
+    "candidate": {
+      "dev": {
+        "queries_total": 1,
+        "queries_with_positive_qrels": 1,
+        "cutoff": 3,
+        "metrics": {
+          "recall@3": 1.0,
+          "precision@3": 0.3333,
+          "hit@3": 1.0,
+          "mrr@3": 1.0,
+          "ndcg@3": 1.0
+        },
+        "queries": [
+          {
+            "query_id": "dev-1",
+            "retrieved_ids": [
+              "refund",
+              "deliver",
+              "reset"
+            ],
+            "metrics": {
+              "recall@3": 1.0,
+              "precision@3": 0.3333,
+              "hit@3": 1.0,
+              "mrr@3": 1.0,
+              "ndcg@3": 1.0
+            },
+            "positive_qrels": 1
+          }
+        ],
+        "na_semantics": "No positive qrels means N/A; excluded from metric means."
+      },
+      "held_out": {
+        "queries_total": 1,
+        "queries_with_positive_qrels": 1,
+        "cutoff": 3,
+        "metrics": {
+          "recall@3": 1.0,
+          "precision@3": 0.3333,
+          "hit@3": 1.0,
+          "mrr@3": 1.0,
+          "ndcg@3": 1.0
+        },
+        "queries": [
+          {
+            "query_id": "test-1",
+            "retrieved_ids": [
+              "deliver",
+              "refund",
+              "reset"
+            ],
+            "metrics": {
+              "recall@3": 1.0,
+              "precision@3": 0.3333,
+              "hit@3": 1.0,
+              "mrr@3": 1.0,
+              "ndcg@3": 1.0
+            },
+            "positive_qrels": 1
+          }
+        ],
+        "na_semantics": "No positive qrels means N/A; excluded from metric means."
+      }
+    },
+    "negative_provenance": [
+      {
+        "triplet_id": "train-1",
+        "negative_id": "router",
+        "declared_kind": "manual_reviewed",
+        "measured_training_only_rank": 1,
+        "pool_size": 2,
+        "baseline_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "pool_digest": "35a6540ecdfffc7efd9d4dfbcf79c162b3bbbee518e3b51d63978e257d5a2d96",
+        "human_review_independently_verified": false
+      }
+    ],
+    "loss": [
+      0.6177453994750977,
+      0.5672796964645386
+    ],
+    "initial_parameter_digest": "352d34a4ad725bb742f36fc3f2a2dcfa7f07317926128d47c362198125003892",
+    "final_parameter_digest": "c432bdd5961890317a8cdaf97dc2da7b0fab7ffca6e08741b33268f27a5614f2",
+    "held_out_role": "inspected_after_frozen_configuration",
+    "quality_improvement_claimed": false
+  },
+  "independent": {
+    "export_sha256": "cf4720050fb359d9465aee1cb2bc7593406cc0c8087cc098cec5e61b29c74f8b",
+    "dimension": 384,
+    "normalized": true,
+    "device": "cpu",
+    "probe_vector_sha256": "c8f2f0aff50fbc8fa254acafdf196fc8417104a38f13a865aa2f035f1384c0b4",
+    "registry_used": false
+  }
+}
