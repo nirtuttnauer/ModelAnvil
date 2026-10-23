@@ -168,6 +168,8 @@ def snapshot_guard(version, tenant, project):
         for ref in refs:
             verified_artifact(ref, tenant, project)
     check()
+    check.identity = hashlib.sha256(json.dumps({'model': model_pin, 'tokenizer': tokenizer_pin, 'artifacts': refs},
+        sort_keys=True, default=str, allow_nan=False).encode()).hexdigest()
     return check
 
 
@@ -347,6 +349,10 @@ def generate(session, messages, *, max_tokens=128, temperature=0.0, seed=42, pro
     if prompt_format not in {'model', 'plain', 'chatml'}:
         raise ValueError('Choose the imported model template, plain text or ChatML.')
     started, count, finish = time.monotonic(), 0, 'length'
+    measured = session.setdefault('measurement', {})
+    def observe(prompt_count, generated_count):
+        measured.update(usage={'prompt_tokens': prompt_count, 'completion_tokens': generated_count,
+            'total_tokens': prompt_count + generated_count}, elapsed_seconds=time.monotonic() - started)
     if session['format'] == 'cpu-reference':
         from modelanvil.runners.training import runtime, general_runtime, registry
         if temperature != 0 or max_tokens > 32:
@@ -359,11 +365,13 @@ def generate(session, messages, *, max_tokens=128, temperature=0.0, seed=42, pro
         prompt_count = len(module.encode(prompt, bundle['tokenizer_config.json']))
         if prompt_count + max_tokens > bundle['config.json'].get('context_window', 64):
             raise ValueError('Prompt and output exceed the CPU reference context limit.')
+        observe(prompt_count, 0)
         if cancelled():
             finish = 'cancelled'
         else:
             output = registry.generate_completion(bundle, prompt, max_new_tokens=max_tokens)
             count = len(output['generated_token_ids'])
+            observe(prompt_count, count)
             finish = 'stop' if output['generated_token_ids'][-1:] == [2] else 'length'
             yield {'text': output['completion']}
         yield {'finish_reason': finish, 'elapsed_seconds': time.monotonic()-started,
@@ -371,7 +379,7 @@ def generate(session, messages, *, max_tokens=128, temperature=0.0, seed=42, pro
         return
     if session['format'] == 'gguf':
         yield from session['model'].generate(messages, max_tokens=max_tokens, temperature=temperature,
-            seed=seed, prompt_format=prompt_format, cancelled=cancelled, started=started)
+            seed=seed, prompt_format=prompt_format, cancelled=cancelled, started=started, measurement=measured)
         return
     if session['format'] == 'mlx':
         import mlx.core as mx
@@ -382,14 +390,16 @@ def generate(session, messages, *, max_tokens=128, temperature=0.0, seed=42, pro
             add_special_tokens=prompt_format == 'plain' or (prompt_format == 'model' and not bool(tokenizer.chat_template)))
         if not ids or len(ids) + max_tokens > min(2048, session['config'].get('max_position_embeddings', 2048)):
             raise ValueError('MLX prompt and output must fit within 2,048 tokens and the model context.')
+        observe(len(ids), 0)
         mx.random.seed(seed)
         iterator = stream_generate(session['model'], tokenizer, ids, max_tokens=max_tokens,
                                    sampler=make_sampler(temp=temperature), prefill_step_size=128)
         try:
             for part in iterator:
+                count = part.generation_tokens
+                observe(len(ids), count)
                 if cancelled():
                     finish = 'cancelled'; break
-                count = part.generation_tokens
                 if part.text:
                     yield {'text': part.text}
                 finish = part.finish_reason or finish
@@ -405,6 +415,7 @@ def generate(session, messages, *, max_tokens=128, temperature=0.0, seed=42, pro
     context_limit = min(2048, getattr(session['config'], 'max_position_embeddings', 2048))
     if not ids or len(ids) + max_tokens > context_limit:
         raise ValueError(f'Prompt and output must fit within {context_limit} tokens; shorten the conversation.')
+    observe(len(ids), 0)
     current = torch.tensor([ids], dtype=torch.long, device=session['device'])
     # Sampling on CPU keeps the seeded generator independent of global RNG/device support.
     rng = torch.Generator(device='cpu').manual_seed(seed)
@@ -421,6 +432,7 @@ def generate(session, messages, *, max_tokens=128, temperature=0.0, seed=42, pro
             next_id = int(torch.argmax(logits).item()) if temperature == 0 else int(torch.multinomial(
                 torch.softmax(logits / temperature, dim=-1), 1, generator=rng).item())
             count += 1
+            observe(len(ids), count)
             if next_id == eos:
                 finish = 'stop'; break
             generated.append(next_id)

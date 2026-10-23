@@ -110,7 +110,7 @@ class GGUFSession:
             time.sleep(0.01)
         raise ValueError('GGUF generation did not stop within its cancellation limit.')
 
-    def generate(self, messages, *, max_tokens, temperature, seed, prompt_format, cancelled, started):
+    def generate(self, messages, *, max_tokens, temperature, seed, prompt_format, cancelled, started, measurement=None):
         from modelanvil.runners.inference import rendered_prompt
         chat = prompt_format == 'model' and self.has_chat_template
         prompt = (self._json('/apply-template', {'messages': messages})['prompt'] if chat
@@ -119,7 +119,15 @@ class GGUFSession:
         if not tokens or len(tokens) + max_tokens > self.context_limit:
             raise ValueError(f'GGUF prompt and output must fit within {self.context_limit} tokens; shorten the conversation.')
         before = self._generated_tokens()
-        finish = 'length'
+        def observe():
+            count = self._generated_tokens() - before
+            if count < 0 or count > max_tokens:
+                raise ValueError('GGUF runtime returned inconsistent measured usage.')
+            if measurement is not None:
+                measurement.update(usage={'prompt_tokens': len(tokens), 'completion_tokens': count,
+                    'total_tokens': len(tokens) + count}, elapsed_seconds=time.monotonic() - started)
+            return count
+        finish, count = 'length', None
         if cancelled():
             finish = 'cancelled'
         else:
@@ -146,9 +154,10 @@ class GGUFSession:
             finally:
                 # Closing the HTTP stream cancels native work; account for tokens already computed.
                 self._wait_idle()
-        count = self._generated_tokens() - before
-        if count < 0 or count > max_tokens:
-            raise ValueError('GGUF runtime returned inconsistent measured usage.')
+                if measurement is not None:
+                    count = observe()
+        if count is None:
+            count = observe()
         yield {'finish_reason': finish, 'elapsed_seconds': time.monotonic() - started,
                'usage': {'prompt_tokens': len(tokens), 'completion_tokens': count,
                          'total_tokens': len(tokens) + count}}

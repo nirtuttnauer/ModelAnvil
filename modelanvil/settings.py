@@ -188,6 +188,9 @@ REST_FRAMEWORK = {
 # CORS
 # ---------------------------------------------------------------------------
 CORS_ALLOW_ALL_ORIGINS = DEBUG
+from corsheaders.defaults import default_headers
+CORS_ALLOW_HEADERS = (*default_headers, 'x-project-id', 'idempotency-key')
+CORS_EXPOSE_HEADERS = ['X-Request-Id', 'Idempotency-Retention', 'Idempotency-Replayed']
 CORS_ALLOWED_ORIGINS = [
     o.strip()
     for o in os.environ.get(
