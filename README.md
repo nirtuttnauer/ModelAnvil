@@ -14,7 +14,7 @@ ModelAnvil is a work in progress. Several local execution paths run real computa
 
 See the [supported capability baseline](docs/engineering/supported-capabilities.md) for current operation-specific evidence and limits. Overview exposes local workflow measurements; Evaluation records explicit accept/reject decisions after verified candidate/baseline comparisons. These measurements stay in the installation and exclude prompts and credentials.
 
-The [main integration inventory](docs/engineering/integration-inventory.md) maps retained branches and remaining scopes. Current dependency pins require fresh GPU qualification; historical GPU reports do not qualify the upgraded stack.
+The [main integration inventory](docs/engineering/integration-inventory.md) maps all local/remote refs, retained checkouts, original uncommitted scopes and their merged deliveries or remaining holds. Current dependency pins require fresh GPU qualification; historical GPU reports do not qualify the upgraded stack.
 
 [Start locally](#local-development) · [Current capabilities](#current-capabilities) · [Architecture](#architecture) · [Checks](#checks) · [Limits and work in progress](#limits-and-work-in-progress) · [Contributing](CONTRIBUTING.md)
 
@@ -40,13 +40,14 @@ Source measurement: `04916ee723f894ab0b3cec50b2ccc43596bceae0`. [Complete report
 | Area | Implemented scope | Guide |
 | --- | --- | --- |
 | Dataset preparation | Source snapshots, canonical sample validation, verified artifacts, protected source groups, and versioned dataset publication | [Source import](docs/engineering/source-import.md), [Dataset Bank](docs/open-dataset-bank.md) |
-| Team labeling | Manual or imported-draft campaigns, review and correction, pause/resume, batch closure, and cumulative approved snapshot export | [Labeling workflow and planned loop](docs/iterative-labeling.md) |
+| Team labeling | Reviewed snapshots plus an opt-in bounded CPU retraining/evaluation cycle, explicit advance/rollback and protected-suite gates; draft predictions remain imported | [Labeling workflow](docs/iterative-labeling.md), [actual cycle evidence](docs/engineering/verification/task10-labeling-2026-10-23/report.md) |
 | Post-training | Bounded CPU reference runtimes and pinned SmolLM2 GPU training profiles; committed checkpoints and candidate weight exports | [CPU runtime](docs/engineering/qualification-reports/text-finetuning-runtime.md), [GPU setup](docs/engineering/smollm2-gpu-training.md), [Apple adapters](docs/engineering/native-apple-adapter-training.md) |
 | Evaluation and alignment | Versioned suites, actual bounded CPU character-model evaluation, and bounded character-model DPO, reward training, PPO and verifier-RL paths | [Backend/frontend support](docs/engineering/backend-frontend-support.md), [CPU alignment](docs/engineering/cpu-character-alignment.md) |
-| Document and recipe jobs | Pinned local OCR/layout runtimes, resumable page work, typed decisions, and bounded versioned data recipes | [Specialists](docs/engineering/local-specialists.md), [Recipes and recovery](docs/engineering/resumable-pages-and-data-recipes.md) |
-| Control plane | Tenant identity and roles, project access checks, worker leases and fencing, artifact integrity, budget reservations and usage accounting | [Worker and artifact operations](docs/engineering/worker-operations.md) |
+| Document and recipe jobs | Actual text/PDF/DOCX/CSV parsers and durable recipe/specialist control-plane jobs; current OCR/layout model qualification remains open | [Specialists](docs/engineering/local-specialists.md), [Recipes and recovery](docs/engineering/resumable-pages-and-data-recipes.md) |
+| RAG, embeddings and context | Token-aware source chunks, actual pinned CPU embedding serving/builds/fine-tuning, SQL retrieval, local cited generation and measured context protocols | [Embedding indexes](docs/engineering/embedding-indexes.md), [SQL retrieval](docs/engineering/sql-retrieval.md), [grounded generation](docs/engineering/grounded-generation.md), [reproducible report](docs/engineering/verification/task73-end-to-end-2026-10-23/report.md) |
+| Control plane | Tenant identity/roles, private-team invitations, current project access, worker leases/fencing, artifact integrity and budget accounting | [Worker and artifact operations](docs/engineering/worker-operations.md) |
 
-A labeling campaign currently produces reviewed snapshots. The automatic sequence of retraining a labeling model, qualifying it and drafting the next batch remains planned. The [iterative-labeling specification](docs/iterative-labeling.md) describes that intended loop and its acceptance criteria.
+A labeling campaign can use the opt-in bounded reviewed-label CPU training/evaluation cycle. Closing a reviewed batch queues training; **Check cycle and advance** explicitly evaluates and records promotion/rejection before the next batch. Draft predictions remain imported. The broader [iterative-labeling specification](docs/iterative-labeling.md) retains its separate general-model goals and acceptance criteria.
 
 The [developer and execution reference](docs/engineering/development-and-evidence.md) retains the detailed control-plane contracts, runtime evidence, Storybook coverage and integration-test procedures.
 

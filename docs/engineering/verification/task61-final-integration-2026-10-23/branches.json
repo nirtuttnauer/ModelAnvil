@@ -1,0 +1,1165 @@
+{
+  "observed_at_utc": "2026-10-23T11:11:57.759564+00:00",
+  "main_at_inventory": "2bf35ec61fa163c98706b9f5b2452d2385b98739",
+  "active_inventory_branch_note": "The active docs branch is observed before this inventory commit; its eventual PR/head is preserved separately in Aftur.",
+  "branches": [
+    {
+      "branch": "codex/expand-open-dataset-bank",
+      "ref": "refs/heads/codex/expand-open-dataset-bank",
+      "head": "3a643b2b59304c9ff856fe05176f22deb9cefc39",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task10-labeling",
+      "ref": "refs/heads/codex/factory-task10-labeling",
+      "head": "1979146a2ce79fc15abd8ce1fb3523a2eb43aef9",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-10"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task11-rag",
+      "ref": "refs/heads/codex/factory-task11-rag",
+      "head": "d0ae13155f3c5d857e91a2c304e3ed877034b063",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-11"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task12-context",
+      "ref": "refs/heads/codex/factory-task12-context",
+      "head": "235e645c7db4dff5c1f0642ac344f45d882bcf51",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-12"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task14-model-import",
+      "ref": "refs/heads/codex/factory-task14-model-import",
+      "head": "b0eaabd63242c8e77b0cc0b53c09c9e1efbd7b4e",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-14"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task30-embedding-finetuning",
+      "ref": "refs/heads/codex/factory-task30-embedding-finetuning",
+      "head": "b76ce1088b83248cfadbc76648468cff32b54794",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-30"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task30-embedding-foundation",
+      "ref": "refs/heads/codex/factory-task30-embedding-foundation",
+      "head": "cc49913e62f3ab4df34a8ecc14bc9a44845b11b4",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-30"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task42-device-admission",
+      "ref": "refs/heads/codex/factory-task42-device-admission",
+      "head": "8d5f3a376fb85515b958ee5e97e7e9d00e1722cf",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-42"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task43-discovery",
+      "ref": "refs/heads/codex/factory-task43-discovery",
+      "head": "99b229a2bbd2cbe49a7c52b68de5c5febb3bf2b4",
+      "head_in_main": false,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-43"
+      ],
+      "untracked_scope": false,
+      "scope": "TASK-43 customer-discovery preparation only; PR16/customer-input hold remains unfinished",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task49-private-team",
+      "ref": "refs/heads/codex/factory-task49-private-team",
+      "head": "87ae3b0a813dd931b2ffb62bc23138b346cc42dc",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-49"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task53-private-feedback",
+      "ref": "refs/heads/codex/factory-task53-private-feedback",
+      "head": "7545d42518c7c4aefecdbff908c10cb547cc24a6",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-53"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task61-final-inventory",
+      "ref": "refs/heads/codex/factory-task61-final-inventory",
+      "head": "2bf35ec61fa163c98706b9f5b2452d2385b98739",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task62-document-evidence",
+      "ref": "refs/heads/codex/factory-task62-document-evidence",
+      "head": "d1bae8d7e153c4b4b332d3fd5c8e173954a28d0b",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-62"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task63-context-scores",
+      "ref": "refs/heads/codex/factory-task63-context-scores",
+      "head": "c8d078a83d49cc1dc72719837d304d932150cc34",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-63"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task64-pgvector",
+      "ref": "refs/heads/codex/factory-task64-pgvector",
+      "head": "8671a9b1b2b4160536492dffd01bd44e4435d78b",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-64"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task65-publisher-notices",
+      "ref": "refs/heads/codex/factory-task65-publisher-notices",
+      "head": "c5b4cdd6507e992fd543c1cce43060889367c0fb",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-65"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task66-token-chunks",
+      "ref": "refs/heads/codex/factory-task66-token-chunks",
+      "head": "20bc75553ca6a9d5c2f31323b004012cba789de4",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-66"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task68-sql-retrieval",
+      "ref": "refs/heads/codex/factory-task68-sql-retrieval",
+      "head": "3eae2b55ceeb74a79de400d1dba061de792c6e82",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-68"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task69-retrieval-controls",
+      "ref": "refs/heads/codex/factory-task69-retrieval-controls",
+      "head": "8cec0b2feaf182def4430390cb448779ea518e8a",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-69"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task7-verified-export",
+      "ref": "refs/heads/codex/factory-task7-verified-export",
+      "head": "1eb9168f8a26ad74366ea8d843ce81e89608c8dc",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-7"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task70-grounded-generation",
+      "ref": "refs/heads/codex/factory-task70-grounded-generation",
+      "head": "e221320ee1c01fa4af66ebb19ebf347da28993a6",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-70"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task71-real-position-sweep",
+      "ref": "refs/heads/codex/factory-task71-real-position-sweep",
+      "head": "9661380605acf9de830467ed36f9360ecd58dedd",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-71"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task72-runtime-token-budget",
+      "ref": "refs/heads/codex/factory-task72-runtime-token-budget",
+      "head": "b45141226547d78a9a5ee747e65e32b0d18e386e",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-72"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task73-reproducible-rag-report",
+      "ref": "refs/heads/codex/factory-task73-reproducible-rag-report",
+      "head": "06bbe1db8eae205f1df26a3984f7a86822d595c8",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-73"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task74-dependency-security",
+      "ref": "refs/heads/codex/factory-task74-dependency-security",
+      "head": "549e9fd0c88eb7092d611d3827015b6728969c1d",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-74"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task75-commit-privacy",
+      "ref": "refs/heads/codex/factory-task75-commit-privacy",
+      "head": "62ee11b3215789734a9de148e99e318d64efe2b6",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-75"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task8-run-detail",
+      "ref": "refs/heads/codex/factory-task8-run-detail",
+      "head": "b87e8e5092191010c02fce96cb89c1b0f85e37dc",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-8"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/factory-task9-acquisition",
+      "ref": "refs/heads/codex/factory-task9-acquisition",
+      "head": "6e0dd7a3138b0b92de5801a4062bae743e7264c8",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-9"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/logo-primary-color",
+      "ref": "refs/heads/codex/logo-primary-color",
+      "head": "6c51f4aff8c45feb8a1d77c79e8767858831ff4b",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/modelanvil-feature-parity",
+      "ref": "refs/heads/codex/modelanvil-feature-parity",
+      "head": "c39a2e9554efdd6c5c644fb012580298f4bc78ca",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/modelanvil-public-project-guide",
+      "ref": "refs/heads/codex/modelanvil-public-project-guide",
+      "head": "51d22ce7b242c74b2407280aea74bdb77ef61e54",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/production-packaging",
+      "ref": "refs/heads/codex/production-packaging",
+      "head": "cbe4c24aaa7a06e7a49ea7d0c25a055a33b8f6e5",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/qualified-dataset-catalog",
+      "ref": "refs/heads/codex/qualified-dataset-catalog",
+      "head": "8d0586f1aed9a9a3143447f32900cf7c9c25bf3e",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/qualify-expanded-datasets",
+      "ref": "refs/heads/codex/qualify-expanded-datasets",
+      "head": "7b915b34eb1e98e936c77fc59f4231f4cbac0d69",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/qualify-full-dataset-downloads",
+      "ref": "refs/heads/codex/qualify-full-dataset-downloads",
+      "head": "d96aaf7f18547724f10b9e2e328f35580b8be073",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/readme-logo",
+      "ref": "refs/heads/codex/readme-logo",
+      "head": "426012a3c8b483d14a351601e6a67a992354d424",
+      "head_in_main": false,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Theme-aware README picture block already present in main; original commit retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/reviewed-training-platform",
+      "ref": "refs/heads/codex/reviewed-training-platform",
+      "head": "16c039a11bf83efbcd02ce3b8ebccbfb77729591",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/runpod-custom-plugins",
+      "ref": "refs/heads/codex/runpod-custom-plugins",
+      "head": "91e341e285e3bc43045688503194d18d23e8f49a",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/takeover-fine-tune-decision",
+      "ref": "refs/heads/codex/takeover-fine-tune-decision",
+      "head": "1a359b06964217b75fd11cecc21e19e004ba93d1",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/takeover-runpod-plugins",
+      "ref": "refs/heads/codex/takeover-runpod-plugins",
+      "head": "36c8be7b0cad42f5606d90eaea5a2979405ea74e",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/takeover-screen-coherence",
+      "ref": "refs/heads/codex/takeover-screen-coherence",
+      "head": "a4f451852c784aaf353833ad12362baa67d9890b",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/takeover-task3-onboarding-proof",
+      "ref": "refs/heads/codex/takeover-task3-onboarding-proof",
+      "head": "f20e798df6336852d9d762064b21f398c2bdf9b1",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/takeover-task44-activation",
+      "ref": "refs/heads/codex/takeover-task44-activation",
+      "head": "731855415ca4ac330540d1a5833ffdcc787f1c4b",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/takeover-task48-private-policy",
+      "ref": "refs/heads/codex/takeover-task48-private-policy",
+      "head": "79a92da5ad8029af63af052c7782616d5ec9dcca",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/takeover-task5-preflight-proof",
+      "ref": "refs/heads/codex/takeover-task5-preflight-proof",
+      "head": "2beb3e8bcc2f157e9b0edd47c9b0f1c84d27e5a6",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "codex/takeover-task6-evaluation-proof",
+      "ref": "refs/heads/codex/takeover-task6-evaluation-proof",
+      "head": "fa88d421ef27587792097e508740817c788d5796",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "main",
+      "ref": "refs/heads/main",
+      "head": "3ec32061448b4e66803af32b16863f8eedab645c",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/HEAD",
+      "ref": "refs/remotes/origin/HEAD",
+      "head": "2bf35ec61fa163c98706b9f5b2452d2385b98739",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/expand-open-dataset-bank",
+      "ref": "refs/remotes/origin/codex/expand-open-dataset-bank",
+      "head": "04444e1b794e664cf189d4719bd5f0ebb551bd5c",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task10-labeling",
+      "ref": "refs/remotes/origin/codex/factory-task10-labeling",
+      "head": "1979146a2ce79fc15abd8ce1fb3523a2eb43aef9",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-10"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task11-rag",
+      "ref": "refs/remotes/origin/codex/factory-task11-rag",
+      "head": "d0ae13155f3c5d857e91a2c304e3ed877034b063",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-11"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task12-context",
+      "ref": "refs/remotes/origin/codex/factory-task12-context",
+      "head": "235e645c7db4dff5c1f0642ac344f45d882bcf51",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-12"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task14-model-import",
+      "ref": "refs/remotes/origin/codex/factory-task14-model-import",
+      "head": "b0eaabd63242c8e77b0cc0b53c09c9e1efbd7b4e",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-14"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task30-embedding-finetuning",
+      "ref": "refs/remotes/origin/codex/factory-task30-embedding-finetuning",
+      "head": "b76ce1088b83248cfadbc76648468cff32b54794",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-30"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task30-embedding-foundation",
+      "ref": "refs/remotes/origin/codex/factory-task30-embedding-foundation",
+      "head": "0aad102d45f1baed0ea5c4e82fcb836b2d9d74bc",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-30"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task42-device-admission",
+      "ref": "refs/remotes/origin/codex/factory-task42-device-admission",
+      "head": "8d5f3a376fb85515b958ee5e97e7e9d00e1722cf",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-42"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task43-discovery",
+      "ref": "refs/remotes/origin/codex/factory-task43-discovery",
+      "head": "99b229a2bbd2cbe49a7c52b68de5c5febb3bf2b4",
+      "head_in_main": false,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-43"
+      ],
+      "untracked_scope": false,
+      "scope": "TASK-43 customer-discovery preparation only; PR16/customer-input hold remains unfinished",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task49-private-team",
+      "ref": "refs/remotes/origin/codex/factory-task49-private-team",
+      "head": "87ae3b0a813dd931b2ffb62bc23138b346cc42dc",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-49"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task53-private-feedback",
+      "ref": "refs/remotes/origin/codex/factory-task53-private-feedback",
+      "head": "7545d42518c7c4aefecdbff908c10cb547cc24a6",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-53"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task62-document-evidence",
+      "ref": "refs/remotes/origin/codex/factory-task62-document-evidence",
+      "head": "d1bae8d7e153c4b4b332d3fd5c8e173954a28d0b",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-62"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task63-context-scores",
+      "ref": "refs/remotes/origin/codex/factory-task63-context-scores",
+      "head": "c8d078a83d49cc1dc72719837d304d932150cc34",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-63"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task64-pgvector",
+      "ref": "refs/remotes/origin/codex/factory-task64-pgvector",
+      "head": "8671a9b1b2b4160536492dffd01bd44e4435d78b",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-64"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task65-publisher-notices",
+      "ref": "refs/remotes/origin/codex/factory-task65-publisher-notices",
+      "head": "c5b4cdd6507e992fd543c1cce43060889367c0fb",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-65"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task66-token-chunks",
+      "ref": "refs/remotes/origin/codex/factory-task66-token-chunks",
+      "head": "20bc75553ca6a9d5c2f31323b004012cba789de4",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-66"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task68-sql-retrieval",
+      "ref": "refs/remotes/origin/codex/factory-task68-sql-retrieval",
+      "head": "3eae2b55ceeb74a79de400d1dba061de792c6e82",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-68"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task69-retrieval-controls",
+      "ref": "refs/remotes/origin/codex/factory-task69-retrieval-controls",
+      "head": "8cec0b2feaf182def4430390cb448779ea518e8a",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-69"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task7-verified-export",
+      "ref": "refs/remotes/origin/codex/factory-task7-verified-export",
+      "head": "1eb9168f8a26ad74366ea8d843ce81e89608c8dc",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-7"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task70-grounded-generation",
+      "ref": "refs/remotes/origin/codex/factory-task70-grounded-generation",
+      "head": "e221320ee1c01fa4af66ebb19ebf347da28993a6",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-70"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task71-real-position-sweep",
+      "ref": "refs/remotes/origin/codex/factory-task71-real-position-sweep",
+      "head": "9661380605acf9de830467ed36f9360ecd58dedd",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-71"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task72-runtime-token-budget",
+      "ref": "refs/remotes/origin/codex/factory-task72-runtime-token-budget",
+      "head": "b45141226547d78a9a5ee747e65e32b0d18e386e",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-72"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task73-reproducible-rag-report",
+      "ref": "refs/remotes/origin/codex/factory-task73-reproducible-rag-report",
+      "head": "06bbe1db8eae205f1df26a3984f7a86822d595c8",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-73"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task74-dependency-security",
+      "ref": "refs/remotes/origin/codex/factory-task74-dependency-security",
+      "head": "549e9fd0c88eb7092d611d3827015b6728969c1d",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-74"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task75-commit-privacy",
+      "ref": "refs/remotes/origin/codex/factory-task75-commit-privacy",
+      "head": "62ee11b3215789734a9de148e99e318d64efe2b6",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-75"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task8-run-detail",
+      "ref": "refs/remotes/origin/codex/factory-task8-run-detail",
+      "head": "b87e8e5092191010c02fce96cb89c1b0f85e37dc",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-8"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/factory-task9-acquisition",
+      "ref": "refs/remotes/origin/codex/factory-task9-acquisition",
+      "head": "6e0dd7a3138b0b92de5801a4062bae743e7264c8",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-9"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/logo-primary-color",
+      "ref": "refs/remotes/origin/codex/logo-primary-color",
+      "head": "6c51f4aff8c45feb8a1d77c79e8767858831ff4b",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/modelanvil-brand-integration",
+      "ref": "refs/remotes/origin/codex/modelanvil-brand-integration",
+      "head": "07fba9403e32ecf30cfaefb5d9750ddfb59bbcfa",
+      "head_in_main": false,
+      "remote_only": true,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Legacy branding content overlaps main (8/11 files identical; 3 app/style files have newer main versions); ref retained, not overlaid",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/modelanvil-feature-parity",
+      "ref": "refs/remotes/origin/codex/modelanvil-feature-parity",
+      "head": "c39a2e9554efdd6c5c644fb012580298f4bc78ca",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/modelanvil-public-project-guide",
+      "ref": "refs/remotes/origin/codex/modelanvil-public-project-guide",
+      "head": "51d22ce7b242c74b2407280aea74bdb77ef61e54",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/production-packaging",
+      "ref": "refs/remotes/origin/codex/production-packaging",
+      "head": "cbe4c24aaa7a06e7a49ea7d0c25a055a33b8f6e5",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/qualified-dataset-catalog",
+      "ref": "refs/remotes/origin/codex/qualified-dataset-catalog",
+      "head": "8d0586f1aed9a9a3143447f32900cf7c9c25bf3e",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/qualify-expanded-datasets",
+      "ref": "refs/remotes/origin/codex/qualify-expanded-datasets",
+      "head": "57de3108337d4e9a6679cf310fa321d30a7c64a2",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/qualify-full-dataset-downloads",
+      "ref": "refs/remotes/origin/codex/qualify-full-dataset-downloads",
+      "head": "d96aaf7f18547724f10b9e2e328f35580b8be073",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/readme-logo",
+      "ref": "refs/remotes/origin/codex/readme-logo",
+      "head": "426012a3c8b483d14a351601e6a67a992354d424",
+      "head_in_main": false,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Theme-aware README picture block already present in main; original commit retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/reviewed-training-platform",
+      "ref": "refs/remotes/origin/codex/reviewed-training-platform",
+      "head": "16c039a11bf83efbcd02ce3b8ebccbfb77729591",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/runpod-custom-plugins",
+      "ref": "refs/remotes/origin/codex/runpod-custom-plugins",
+      "head": "36c8be7b0cad42f5606d90eaea5a2979405ea74e",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "untracked_scope": false,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/takeover-task3-onboarding-proof",
+      "ref": "refs/remotes/origin/codex/takeover-task3-onboarding-proof",
+      "head": "f20e798df6336852d9d762064b21f398c2bdf9b1",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/takeover-task44-activation",
+      "ref": "refs/remotes/origin/codex/takeover-task44-activation",
+      "head": "731855415ca4ac330540d1a5833ffdcc787f1c4b",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/takeover-task48-private-policy",
+      "ref": "refs/remotes/origin/codex/takeover-task48-private-policy",
+      "head": "79a92da5ad8029af63af052c7782616d5ec9dcca",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/takeover-task5-preflight-proof",
+      "ref": "refs/remotes/origin/codex/takeover-task5-preflight-proof",
+      "head": "2beb3e8bcc2f157e9b0edd47c9b0f1c84d27e5a6",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/codex/takeover-task6-evaluation-proof",
+      "ref": "refs/remotes/origin/codex/takeover-task6-evaluation-proof",
+      "head": "fa88d421ef27587792097e508740817c788d5796",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/cursor/fine-tune-decision-loop-fb59",
+      "ref": "refs/remotes/origin/cursor/fine-tune-decision-loop-fb59",
+      "head": "1a359b06964217b75fd11cecc21e19e004ba93d1",
+      "head_in_main": true,
+      "remote_only": true,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/cursor/screen-coherence-ba86",
+      "ref": "refs/remotes/origin/cursor/screen-coherence-ba86",
+      "head": "a4f451852c784aaf353833ad12362baa67d9890b",
+      "head_in_main": true,
+      "remote_only": true,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    },
+    {
+      "branch": "origin/main",
+      "ref": "refs/remotes/origin/main",
+      "head": "2bf35ec61fa163c98706b9f5b2452d2385b98739",
+      "head_in_main": true,
+      "remote_only": false,
+      "ticket_ids": [],
+      "untracked_scope": true,
+      "scope": "Committed head is contained in main; original ref retained",
+      "retained": true
+    }
+  ]
+}

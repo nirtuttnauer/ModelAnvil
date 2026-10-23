@@ -4,7 +4,7 @@
 
 ModelAnvil executes real local data preparation, bounded training, inference, evaluation, export and CPU serving. Support is specific to each operation, recipe and tested environment. The archived guided Apple GPU journey and the current CPU evaluation/release journey have different support envelopes. The GPU reports predate the current dependency upgrade and require fresh hardware qualification. Complete R1 and production model qualification remain open.
 
-The [machine-readable evidence index](supported-capabilities.json) records each operation's recipe, runtime, hardware, artifact identities, dated evidence, report checksums and remaining qualification. The [11 October audit](capability-evidence.md) and [historical status ledger](status.md) retain their original review history; this baseline incorporates the later implementations and verification below.
+The [machine-readable evidence index](supported-capabilities.json) retains its baseline operation snapshots, artifact identities and archived report checksums. Current merged additions are recorded in the operation-specific addendum below. The [11 October audit](capability-evidence.md) and [historical status ledger](status.md) retain their original review history; this baseline incorporates the later implementations and verification below.
 
 | Operation | Current execution evidence | Limits and next qualification |
 | --- | --- | --- |
@@ -16,6 +16,12 @@ The [machine-readable evidence index](supported-capabilities.json) records each 
 | Recovery | Fenced local checkpoints and an [actual local restore](verification/p0-local/restore-drill.json) verifying 49 artifacts and refusing 12 duplicate commits. | One local SQLite/filesystem topology. No distributed, broker-cluster, managed object-store or production RTO/RPO claim. |
 
 Known identifiers and hashes are recorded as such in the JSON index. Missing candidate hashes remain null. A checksum of an archived report establishes which report was used, not independent verification of every weight file named in it. All entries retain `production_qualified: false` and `hardware_qualified: false` under the existing evidence contract.
+
+## Current merged additions — 23 October 2026
+
+The [integration inventory](integration-inventory.md) and [current evidence audit](capability-evidence.md) map deliveries through PR46. Real pinned CPU embedding serving/builds/fine-tuning, SQL retrieval, cited local generation and repeated position sweeps now have a [source-bound reproducible report](verification/task73-end-to-end-2026-10-23/report.md). Its exact merged-main SHA passed required CI and its corresponding artifact was independently verified. This is bounded CPU reference evidence, with explicit closed-corpus, weak-control and format-scoring limits.
+
+Annotation supports an opt-in [actual reviewed-label CPU train/evaluate cycle](verification/task10-labeling-2026-10-23/report.md) with explicit advance/rollback and protected suites; drafts remain imported. [Private corrections](verification/task53-private-feedback-2026-10-23/report.md), [private-team access](verification/task49-team-access-2026-10-23/report.md), [independent export](verification/task7-export-2026-10-23/report.md) and [token budgets](verification/task72-token-budget-2026-10-23/report.md) have separate scoped checks. Current OCR/layout model qualification, GPU recipes and customer/production outcomes remain open where documented. The baseline JSON's archived entries do not silently expand to these newer operations.
 
 ## Local activation and improvement measurements
 

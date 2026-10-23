@@ -1,0 +1,84 @@
+{
+  "observed_at_utc": "2026-10-23T11:11:57.759564+00:00",
+  "main": "2bf35ec61fa163c98706b9f5b2452d2385b98739",
+  "worktrees": [
+    {
+      "label": "Original feature-parity checkout",
+      "branch": "refs/heads/codex/modelanvil-feature-parity",
+      "head": "c39a2e9554efdd6c5c644fb012580298f4bc78ca",
+      "checkout_exists": true,
+      "dirty_paths_at_observation": 974,
+      "head_in_main": true,
+      "retained": true,
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "prunable": null
+    },
+    {
+      "label": "Stale recipes-verification registration",
+      "branch": "detached",
+      "head": "c39a2e9554efdd6c5c644fb012580298f4bc78ca",
+      "checkout_exists": false,
+      "dirty_paths_at_observation": null,
+      "head_in_main": true,
+      "retained": true,
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "prunable": "gitdir file points to non-existent location"
+    },
+    {
+      "label": "Managed integration checkout",
+      "branch": "refs/heads/codex/factory-task61-final-inventory",
+      "head": "2bf35ec61fa163c98706b9f5b2452d2385b98739",
+      "checkout_exists": true,
+      "dirty_paths_at_observation": 0,
+      "head_in_main": true,
+      "retained": true,
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "prunable": null
+    },
+    {
+      "label": "Runpod/plugin checkout",
+      "branch": "refs/heads/codex/runpod-custom-plugins",
+      "head": "91e341e285e3bc43045688503194d18d23e8f49a",
+      "checkout_exists": true,
+      "dirty_paths_at_observation": 0,
+      "head_in_main": true,
+      "retained": true,
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "prunable": null
+    },
+    {
+      "label": "Public-guide checkout",
+      "branch": "refs/heads/codex/modelanvil-public-project-guide",
+      "head": "51d22ce7b242c74b2407280aea74bdb77ef61e54",
+      "checkout_exists": true,
+      "dirty_paths_at_observation": 0,
+      "head_in_main": true,
+      "retained": true,
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "prunable": null
+    },
+    {
+      "label": "Production-packaging checkout",
+      "branch": "refs/heads/codex/production-packaging",
+      "head": "cbe4c24aaa7a06e7a49ea7d0c25a055a33b8f6e5",
+      "checkout_exists": true,
+      "dirty_paths_at_observation": 0,
+      "head_in_main": true,
+      "retained": true,
+      "ticket_ids": [
+        "TASK-61"
+      ],
+      "prunable": null
+    }
+  ]
+}

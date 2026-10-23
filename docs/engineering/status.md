@@ -1,28 +1,27 @@
 # ModelAnvil implementation status
 
-Current delivery addendum (23 October 2026): see the [integration inventory](integration-inventory.md), [operation-specific capability baseline](supported-capabilities.md), and dated verification reports. The original review below is historical; current dependency pins still require fresh GPU qualification. Customer discovery remains blocked on customer input.
+23 October 2026 · Current merged-code baseline `2bf35ec61fa163c98706b9f5b2452d2385b98739`. The [final integration inventory](integration-inventory.md) maps scoped deliveries, every retained local/remote ref and original uncommitted scope. Saved workflow state, executed software, model quality, hardware qualification and production readiness remain separate.
 
-Current operation-specific support and the later local evidence are indexed in the [21 October capability baseline](supported-capabilities.md). The entries below preserve the 11 October review history and are not a current cross-operation support matrix.
-
-11 October 2026 · TASK-1 evidence audit
-
-The former ledger used DONE for domain fixtures and described all 17 scenarios as delivered. Those completion/qualification claims are withdrawn. The [capability evidence audit](capability-evidence.md) is the current capability matrix, including evidence environment, artifacts and gaps for each scenario. Passing a fixture is not hardware, external-loader, operational or product-journey qualification.
-
-| Path | Current evidence | Remaining work |
+| Path | Current merged execution evidence | Remaining boundary |
 | --- | --- | --- |
-| Identity, project boundaries, registries | Local HTTP/SQLite integration checks; TASK-2 under review | Human acceptance and broader operational qualification |
-| Jobs, budgets, artifacts, datasets | Control-plane implementations and local tests | Real training integration, storage/provider and distributed recovery evidence |
-| Fine-tuning | TASK-4 CPU character SFT: pinned text/base/tokenizer, durable budgeted job, fenced recovery and independent reference consumer; ready for review | Developer acceptance; GPU/distributed/general LLM runtimes remain unsupported |
-| Scratch/other recipes | Explicit synthetic numerical fixtures | Real scratch and other training runtimes |
-| Candidate export | TASK-4 actual CPU weights and character decoding; standalone reference consumer verified | Production inference and third-party runtime qualification |
-| Evaluation | Configuration, expected-answer fallback simulation or caller-supplied callback integration | Real independent held-out model execution; TASK-6 |
-| Alignment/RLHF | Fixture metrics and registry candidates | Real policy/reward weights, rollout and independent evaluation |
-| Release/quantization/serving | Metadata export, fixed simulated quantization values, fixture pointer/rollback tests | Weight conversion, real serving readiness, reviewed qualification; TASK-7 |
-| Annotation/campaign | Manual review and snapshot helpers; metadata candidate/fixed score fixtures | Actual retraining and qualification loop; TASK-10 |
-| RAG/cluster/context | Actual pinned MiniLM CPU serving/builds/fine-tuning, SQL pgvector retrieval, public controls, local cited generation and repeated evidence-position runs | Closed-subset/toy-fixture software evidence; current hardware/customer/production qualification remains separate. [Combined reproducible report](verification/task73-end-to-end-2026-10-23/report.md) |
-| SDK/deployment/ops | Local helpers/configuration and fixture checks | Process isolation, real installs, restore drills and platform qualification |
+| Identity, privacy and teams | Actual browser/API onboarding, recovery, revocation, project grants and private-team invitation/removal checks | External identity/providers and representative customer operation remain separate. |
+| Jobs, budgets, artifacts and data | Fenced durable jobs, quantity-budget admission, immutable source imports/publication, current artifact/access checks, actual PostgreSQL contention | Live paid provider, distributed recovery and production storage qualification remain separate. |
+| Training | Actual CPU character/general reference training; actual bounded MiniLM contrastive fine-tuning and independent export/reload | GPU SFT/LoRA/QLoRA/continued-pretraining code is present; archived GPU pilots do not qualify current dependency pins. Large scratch/distributed/new model families remain open. |
+| Evaluation and alignment | Protected versioned suites, actual candidate/baseline inference; bounded character-model DPO/reward/PPO/verifier-RL | General LLM policy/reward workflows and customer quality gains are not established by reference fixtures. |
+| Export and serving | Actual bounded CPU/Safetensors/embedding export bytes and independent consumers, authenticated CPU serving/probes | Generic quantization/GGUF/MLX, GPU placement and production-serving qualification remain held on their own evidence. |
+| Annotation | Actual opt-in reviewed-label CPU train/evaluate/advance/rollback cycle with independent protected evaluation | Drafts remain imported; no general automatic labeling-quality claim. |
+| Documents and recipes | Actual bounded CSV/JSON/DOCX/embedded-text PDF publication and rasterization; durable recipe/specialist control-plane checks | Mixed scanned-page OCR publication and current MLX specialist/model/language/layout qualification remain unfinished in TASK-62. |
+| RAG and embeddings | Actual pinned MiniLM serving/builds/fine-tuning, authorized SQL full-text/exact/HNSW/RRF, source-safe saved traces and qrels comparisons | Closed-subset relevance and reference fixtures do not establish customer or full-benchmark quality. |
+| Context and generation | Exact pinned CPU recipe budgets, actual paired reference inference, cited SmolLM2 generation/refusals and repeated real start/middle/end runs | Position EM includes formatting; no measured middle dip or arbitrary saved-recipe/long-context qualification. |
+| Deployment and operations | Software CI, production HTTPS/container checks, scoped Runpod/plugin integration and retained local restore evidence | Live customer/provider/worker/hardware and broader operational envelopes remain separate. |
 
-API `execution_evidence` is read-only and separate from saved workflow state. Legacy qualified labels do not authorize production. Production model/release qualification and serving promotion fail closed while the trusted runtime evidence path is unavailable. See [frontend coverage](frontend-workspace.md) for browser interactions.
+The [combined CPU RAG report](verification/task73-end-to-end-2026-10-23/report.md) records source/model/tokenizer/corpus/qrels/index/hardware pins. Its exact merged-main SHA passed all required CI jobs in [run 39925859135](https://github.com/nirtuttnauer/ModelAnvil/actions/runs/39925859135), with the [corresponding artifact](https://github.com/nirtuttnauer/ModelAnvil/actions/runs/39925859135/artifacts/12489890930) independently downloaded, checksum-verified and durably attached to TASK-73. CV evidence is scoped to those bounded CPU software/reference operations. Production release qualification and serving promotion remain gated.
+
+Latest integrated code verification: local backend **1,041 tests, five optional skips**; actual PostgreSQL/model/broker suite **23 passed**; frontend **226 passed**, production and Storybook builds passed. These are the scoped source report's observations; the final documentation PR reruns its required CI rather than treating old counts as new tests. No test fixture or old qualified label certifies an unsupported operation.
+
+## Historical reviews
+
+The dated entries below preserve their original observations, counts and acceptance state. They are not current support claims; use the matrix above and operation-specific reports for the merged baseline.
 
 ## Historical verification snapshot (11 October 2026)
 
