@@ -199,7 +199,8 @@ class ModelVersion(TenantContextModel):
 class InferenceRequest(TenantContextModel):
     request_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, related_name='inference_requests')
-    model_version = models.ForeignKey(ModelVersion, on_delete=models.PROTECT, related_name='inference_requests')
+    model_version = models.ForeignKey(ModelVersion, on_delete=models.PROTECT, related_name='inference_requests', null=True)
+    provider_snapshot = models.JSONField(default=dict)
     principal_id = models.CharField(max_length=128)
     input_digest = models.CharField(max_length=64)
     configuration = models.JSONField(default=dict)

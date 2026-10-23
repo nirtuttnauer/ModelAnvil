@@ -40,11 +40,15 @@ def project_policy(tenant, project):
     from modelanvil.core.models import ProjectPrivacyPolicy
     policy = ProjectPrivacyPolicy.all_objects.filter(tenant_id=tenant, project_id=project).first() if tenant and project else None
     installed = list(settings.MODELANVIL_ACQUISITION_ORIGINS)
+    from modelanvil.runners.external_inference import installed_targets
+    providers = installed_targets(tenant, project)
+    allowed = [value for value in (policy.external_generation_targets if policy else []) if value in {p['id'] for p in providers}]
     return {'offline': settings.MODELANVIL_OFFLINE or bool(policy and policy.offline),
         'acquisition_origins': [v for v in (policy.acquisition_origins if policy else installed) if v in installed],
         'installation_origins': installed,
         'measurement_retention_days': policy.measurement_retention_days if policy else 30,
-        'external_judges': False, 'external_generation': False, 'external_analytics': False,
+        'external_judges': False, 'external_generation': bool(allowed) and not (settings.MODELANVIL_OFFLINE or bool(policy and policy.offline)),
+        'external_generation_targets': allowed, 'installed_generation_targets': providers, 'external_analytics': False,
         'support_upload': False, 'diagnostic_content_collection': False,
         'product_history_retention': 'Retained until explicitly deleted through the authorized product APIs.'}
 

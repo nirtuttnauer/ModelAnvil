@@ -178,6 +178,7 @@ class ProjectPrivacyPolicy(TenantContextModel):
     project = models.OneToOneField('identity.Project', on_delete=models.CASCADE)
     offline = models.BooleanField(default=False)
     acquisition_origins = models.JSONField(default=list)
+    external_generation_targets = models.JSONField(default=list)
     measurement_retention_days = models.PositiveSmallIntegerField(default=30)
 
 
