@@ -1,10 +1,10 @@
 import { apiRequest } from './client';
 
-export interface PreferencePair { prompt: string; chosen: string; rejected: string }
+export interface PreferencePair { prompt: string; chosen: string; rejected: string; source_group_id?: string }
 export interface PreferenceArtifact { artifact_id: string; name: string; sha256: string; byte_size: number; row_count: number; state: string }
 export interface AlignmentRun {
   run_id: string; algorithm: string; status: string; current_step: number; total_steps: number;
-  execution_capabilities?: { can_execute: boolean; reason: string; runtime?: string; supported_algorithms?: string[] };
+  execution_capabilities?: { can_execute: boolean; can_resume?: boolean; reason: string; runtime?: string; supported_algorithms?: string[] };
   execution_evidence?: { level: string; source: string };
   policy_model_version: number; reference_model_version: number | null; reward_model_version: number | null;
   train_dataset_artifact?: string | null; held_out_dataset_artifact?: string | null;
@@ -32,7 +32,8 @@ export function preferencePairs(raw: string): PreferencePair[] {
     const identity = JSON.stringify([pair.prompt, pair.chosen, pair.rejected]);
     if (seen.has(identity)) throw new Error('Preference pairs must be unique.');
     seen.add(identity);
-    return { prompt: pair.prompt, chosen: pair.chosen, rejected: pair.rejected };
+    if (pair.source_group_id !== undefined && (typeof pair.source_group_id !== 'string' || !pair.source_group_id.trim() || pair.source_group_id.length > 128)) throw new Error('Source group IDs must contain 1–128 characters.');
+    return { prompt: pair.prompt, chosen: pair.chosen, rejected: pair.rejected, ...(pair.source_group_id !== undefined ? { source_group_id: pair.source_group_id } : {}) };
   });
 }
 
@@ -46,7 +47,8 @@ export function createAlignmentPlan(token: string, plan: AlignmentPlan, signal?:
   return apiRequest<AlignmentRun>('/api/v1/alignment-runs/', token,
     { method: 'POST', body: JSON.stringify(plan), signal });
 }
-export function alignmentAction(token: string, runId: string, action: 'execute' | 'cancel', signal?: AbortSignal) {
+export function alignmentAction(token: string, runId: string, action: 'execute' | 'cancel' | 'resume', signal?: AbortSignal) {
+  if (!['execute', 'cancel', 'resume'].includes(action)) throw new Error('Unsupported alignment action.');
   if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(runId)) throw new Error('Invalid alignment run identifier.');
   return apiRequest<AlignmentRun>(`/api/v1/alignment-runs/${runId}/${action}/`, token,
     { method: 'POST', body: '{}', signal });

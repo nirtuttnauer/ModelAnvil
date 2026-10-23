@@ -1,0 +1,16 @@
+{
+  "actual_api": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "registered_group_ids": true,
+  "created_run": "01a16939-0015-7c6f-830e-b9a51732074b",
+  "completed_status": "completed",
+  "completed_steps": 3,
+  "resumed_run": "01a16939-011a-7f89-aa29-45269364fd91",
+  "resumed_steps": 3,
+  "process_death_exit_code": 93,
+  "page_errors": [],
+  "horizontal_overflow": false
+}
