@@ -1,0 +1,165 @@
+{
+  "clients": [
+    {
+      "status": "passed",
+      "scope": "Actual HTTPS CPU character inference from an independent client; no physical second-host or production capacity qualification.",
+      "tls_versions": [
+        "TLSv1.3"
+      ],
+      "ca_verified": true,
+      "hostname_verification_enabled": true,
+      "untrusted_ca_refused": true,
+      "client_imported_application": false,
+      "json_completion": {
+        "id": "chatcmpl-01a1697dd319760282fcf0cdaf82b516",
+        "created": 1792771216,
+        "model": "01a1697d-a866-78ec-b183-9879121ac034",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "b"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 3,
+          "completion_tokens": 2,
+          "total_tokens": 5
+        },
+        "modelanvil": {
+          "device": "cpu",
+          "elapsed_seconds": 0.015961042000071757
+        }
+      },
+      "stream_completion": {
+        "id": "chatcmpl-01a1697dd3cd7a52a36ab96966c37333",
+        "text": "b",
+        "usage": {
+          "prompt_tokens": 3,
+          "completion_tokens": 2,
+          "total_tokens": 5
+        }
+      },
+      "replay_after_restart": false,
+      "structured_refusals": [
+        "validation_failed",
+        "validation_failed",
+        "validation_failed"
+      ],
+      "project_scope_refused": true,
+      "actual_load_observed": true
+    },
+    {
+      "status": "passed",
+      "scope": "Actual HTTPS CPU character inference from an independent client; no physical second-host or production capacity qualification.",
+      "tls_versions": [
+        "TLSv1.3"
+      ],
+      "ca_verified": true,
+      "hostname_verification_enabled": true,
+      "untrusted_ca_refused": true,
+      "client_imported_application": false,
+      "json_completion": {
+        "id": "chatcmpl-01a1697dd8bf71bc8a4c620d59243d5f",
+        "created": 1792771217,
+        "model": "01a1697d-a866-78ec-b183-9879121ac034",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "b"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 3,
+          "completion_tokens": 2,
+          "total_tokens": 5
+        },
+        "modelanvil": {
+          "device": "cpu",
+          "elapsed_seconds": 0.017159125000034692
+        }
+      },
+      "stream_completion": {
+        "id": "chatcmpl-01a1697dd9fb7ffdaf254c85ffac1fea",
+        "text": "b",
+        "usage": {
+          "prompt_tokens": 3,
+          "completion_tokens": 2,
+          "total_tokens": 5
+        }
+      },
+      "replay_after_restart": false,
+      "structured_refusals": [
+        "validation_failed",
+        "validation_failed",
+        "validation_failed"
+      ],
+      "project_scope_refused": true,
+      "actual_load_observed": true
+    },
+    {
+      "status": "passed",
+      "scope": "Actual HTTPS CPU character inference from an independent client; no physical second-host or production capacity qualification.",
+      "tls_versions": [
+        "TLSv1.3"
+      ],
+      "ca_verified": true,
+      "hostname_verification_enabled": true,
+      "untrusted_ca_refused": true,
+      "client_imported_application": false,
+      "json_completion": {
+        "id": "chatcmpl-01a1697dd8bf71bc8a4c620d59243d5f",
+        "model": "01a1697d-a866-78ec-b183-9879121ac034",
+        "usage": {
+          "total_tokens": 5,
+          "prompt_tokens": 3,
+          "completion_tokens": 2
+        },
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "b"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "created": 1792771217,
+        "modelanvil": {
+          "device": "cpu",
+          "elapsed_seconds": 0.017159125000034692
+        }
+      },
+      "stream_completion": {
+        "id": "chatcmpl-01a1697dd9fb7ffdaf254c85ffac1fea",
+        "text": "b",
+        "usage": {
+          "total_tokens": 5,
+          "prompt_tokens": 3,
+          "completion_tokens": 2
+        }
+      },
+      "replay_after_restart": true,
+      "structured_refusals": [
+        "validation_failed",
+        "validation_failed",
+        "validation_failed"
+      ],
+      "project_scope_refused": true,
+      "actual_load_observed": true
+    }
+  ],
+  "ledger_assertion": "Four completed inference records and four completed replay records; host and namespace retries plus API restart added no inference records.",
+  "environment": "One Mac Docker host plus a separate container network namespace, not a physical second machine."
+}
