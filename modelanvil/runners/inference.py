@@ -166,6 +166,19 @@ def snapshot(version, tenant, project):
         raise ValueError('Model or tokenizer is outside this project.')
     import io
     ref = version.metadata.get('snapshot_manifest')
+    from modelanvil.runners.alignment import mps_dpo
+    if version.architecture_ref == mps_dpo.RUNTIME_ID:
+        from modelanvil.runners.training.runtime import digest
+        from modelanvil.runners.training.hf_runtime import file_ref
+        bundle = mps_dpo.candidate_bundle(version, tenant, project)
+        artifact = Artifact.all_objects.filter(artifact_id=version.artifact_manifest_id, tenant_id=tenant).first()
+        if artifact is None or artifact.byte_size > 1024**2:
+            raise ValueError('DPO candidate manifest is unavailable or exceeds its size bound.')
+        target = io.BytesIO(); copy_verified(file_ref(artifact), tenant, project, target)
+        if digest(json.loads(target.getvalue())) != digest(bundle):
+            raise ValueError('DPO candidate manifest differs from its committed checkpoint.')
+        return {'format': 'safetensors', 'files': bundle['files'], 'recipe': 'lora_adapter', 'trained': True,
+                'source': bundle['source'], 'adapter': bundle['adapter']}
     if not ref:
         from modelanvil.runners.models import TrainingRun
         from modelanvil.runners.training import hf_runtime, mlx_runtime, cpu_hf_runtime

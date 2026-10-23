@@ -441,7 +441,9 @@ class InferenceViewSet(TenantScopedViewSet):
         for run in trained_runs:
             if run.output_model_version_id:
                 lineage.setdefault(run.output_model_version_id, run)
-        rows = self.get_queryset().filter(Q(metadata__imported=True) | Q(metadata__managed_local=True) | Q(pk__in=lineage) | Q(architecture_ref__in=[runtime.RUNTIME_ID, general_runtime.RUNTIME_ID, cpu_hf_runtime.RUNTIME_ID, hf_runtime.RUNTIME_ID, mlx_runtime.RUNTIME_ID])).exclude(architecture_ref__in=['modelanvil.ocr.v1', 'modelanvil.laya.v1'])
+        from modelanvil.runners.models import AlignmentRun
+        aligned = get_accessible_queryset(AlignmentRun).filter(status='completed', job__status='succeeded').values('output_model_version_id')
+        rows = self.get_queryset().filter(Q(metadata__imported=True) | Q(metadata__managed_local=True) | Q(pk__in=lineage) | Q(pk__in=aligned) | Q(architecture_ref__in=[runtime.RUNTIME_ID, general_runtime.RUNTIME_ID, cpu_hf_runtime.RUNTIME_ID, hf_runtime.RUNTIME_ID, mlx_runtime.RUNTIME_ID])).exclude(architecture_ref__in=['modelanvil.ocr.v1', 'modelanvil.laya.v1'])
         from modelanvil.runners.capabilities import model_capabilities
         from modelanvil.runners.inference import model_chat_template
         eligible = [(v, model_capabilities(v)['chat']) for v in rows]

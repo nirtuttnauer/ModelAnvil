@@ -8,6 +8,7 @@ export interface AlignmentRun {
   execution_evidence?: { level: string; source: string };
   policy_model_version: number; reference_model_version: number | null; reward_model_version: number | null;
   train_dataset_artifact?: string | null; held_out_dataset_artifact?: string | null;
+  regression_dataset_artifact?: string | null; worker_pool?: number | null; job_id?: string | null; job_status?: string | null;
   dataset_manifest_digest: string; held_out_validation_digest: string;
   hyperparameters: Record<string, unknown>; verifier_spec: Record<string, unknown>; latest_metrics: unknown;
   metrics_history?: Array<Record<string, unknown>>; output_model_version?: number | null;
@@ -16,6 +17,7 @@ export interface AlignmentRun {
 export interface AlignmentPlan {
   algorithm: string; policy_model_version: number; reference_model_version: number | null; reward_model_version: number | null;
   train_dataset_artifact: string; held_out_dataset_artifact: string; total_steps: number;
+  regression_dataset_artifact?: string | null; worker_pool?: number | null;
   hyperparameters: Record<string, unknown>; verifier_spec: Record<string, unknown>;
 }
 
@@ -37,12 +39,15 @@ export function preferencePairs(raw: string): PreferencePair[] {
   });
 }
 
-export function registerPreferences(token: string, name: string, samples: PreferencePair[], signal?: AbortSignal) {
+export function registerPreferences(token: string, name: string, samples: PreferencePair[], signal?: AbortSignal, labelsReviewed = false) {
   return apiRequest<PreferenceArtifact>('/api/v1/alignment-runs/register-preferences/', token,
-    { method: 'POST', body: JSON.stringify({ name, samples }), signal });
+    { method: 'POST', body: JSON.stringify({ name, samples, ...(labelsReviewed ? { labels_reviewed: true } : {}) }), signal });
 }
 export function createAlignmentPlan(token: string, plan: AlignmentPlan, signal?: AbortSignal) {
-  if (!Number.isInteger(plan.total_steps) || plan.total_steps < 1 || plan.total_steps > 100) throw new Error('Choose between 1 and 100 CPU steps.');
+  const limit = plan.worker_pool ? 20 : 100;
+  if (!Number.isInteger(plan.total_steps) || plan.total_steps < 1 || plan.total_steps > limit) throw new Error(`Choose between 1 and ${limit} ${plan.worker_pool ? 'Apple GPU' : 'CPU'} steps.`);
+  if (plan.worker_pool && (plan.algorithm !== 'dpo' || !plan.regression_dataset_artifact ||
+      [plan.train_dataset_artifact, plan.held_out_dataset_artifact].includes(plan.regression_dataset_artifact))) throw new Error('Apple GPU DPO requires a separate regression artifact.');
   if (!plan.train_dataset_artifact || !plan.held_out_dataset_artifact || plan.train_dataset_artifact === plan.held_out_dataset_artifact) throw new Error('Pin separate training and held-out preference artifacts.');
   return apiRequest<AlignmentRun>('/api/v1/alignment-runs/', token,
     { method: 'POST', body: JSON.stringify(plan), signal });

@@ -8,7 +8,7 @@ from django.db.models.functions import Cast, Replace
 
 
 def accessible_jobs():
-    from modelanvil.runners.models import EvaluationRun, TrainingRun
+    from modelanvil.runners.models import AlignmentRun, EvaluationRun, TrainingRun
     from modelanvil.data.models import SourceSnapshot
 
     tenant = get_active_tenant()
@@ -23,6 +23,8 @@ def accessible_jobs():
     )
     hidden_evals = EvaluationRun.all_objects.filter(tenant_id=tenant, job__isnull=False).exclude(
         pk__in=get_accessible_queryset(EvaluationRun).values('pk'))
+    hidden_alignments = AlignmentRun.all_objects.filter(tenant_id=tenant, job__isnull=False).exclude(
+        pk__in=get_accessible_queryset(AlignmentRun).values('pk'))
     from modelanvil.runners.models import InferenceRequest
     from modelanvil.runners.models import ModelImport
     hidden_imports = ModelImport.all_objects.filter(tenant_id=tenant, job__isnull=False).exclude(
@@ -33,7 +35,7 @@ def accessible_jobs():
     snapshots = get_accessible_queryset(SourceSnapshot).annotate(
         normalized_id=Replace(Cast("snapshot_id", CharField()), Value("-"), Value(""))
     ).values("normalized_id")
-    return get_accessible_queryset(Job).filter(tenant_id=tenant).exclude(pk__in=hidden_imports.values('job_id')).exclude(pk__in=hidden_runs.values("job_id")).exclude(pk__in=hidden_evals.values("job_id")).annotate(
+    return get_accessible_queryset(Job).filter(tenant_id=tenant).exclude(pk__in=hidden_alignments.values('job_id')).exclude(pk__in=hidden_imports.values('job_id')).exclude(pk__in=hidden_runs.values("job_id")).exclude(pk__in=hidden_evals.values("job_id")).annotate(
         accessible_snapshot_id=Replace(KeyTextTransform("snapshot_id", "payload"), Value("-"), Value(""), output_field=CharField())
     ).filter(Q(payload__type__isnull=True) | ~Q(payload__type="dataset_acquisition") | Q(accessible_snapshot_id__in=snapshots)).annotate(
         accessible_request_id=Replace(KeyTextTransform('request_id', 'payload'), Value('-'), Value(''), output_field=CharField())
@@ -41,6 +43,8 @@ def accessible_jobs():
 
 
 def cancellation_endpoint(job):
+    if hasattr(job, 'alignment_run'):
+        return f'/api/v1/alignment-runs/{job.alignment_run.run_id}/cancel/'
     if isinstance(job.payload, dict) and job.payload.get('type') == 'embedding_build':
         return f"/api/v1/embedding-builds/{job.embedding_build.build_id}/cancel/"
     if isinstance(job.payload, dict) and job.payload.get('type') == 'model_import':
