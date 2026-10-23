@@ -296,3 +296,18 @@
 .annotation-page .annotation-queue-row > .queue-item { flex: 1; min-width: 0; }
 .annotation-page .identifier-label { display: flex; align-items: center; gap: 4px; }
 @media (max-width: 1179px) { .annotation-page .annotation-queue-list > .annotation-queue-row { flex: 0 0 200px; } }
+
+.annotation-page label.data-license-consent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+}
+.annotation-page label.data-license-consent input[type="checkbox"] {
+  width: auto;
+  flex: none;
+  margin: 0;
+}
+.annotation-page .snapshot-row > div:first-child > span {
+  display: block;
+  margin-top: var(--space-6);
+}

@@ -58,10 +58,12 @@ class RubricSerializer(serializers.ModelSerializer):
 
 
 class SnapshotSerializer(serializers.ModelSerializer):
+    training_run_id = serializers.UUIDField(source='training_run.run_id', read_only=True, allow_null=True)
+    evaluation_run_id = serializers.UUIDField(source='evaluation_run.run_id', read_only=True, allow_null=True)
     dataset_revision_id = serializers.UUIDField(source='dataset_revision.revision_id', read_only=True, allow_null=True)
     class Meta:
         model = CumulativeSnapshot
-        fields = ("snapshot_id", "cycle_no", "item_count", "manifest_digest", "created_at", "dataset_revision_id")
+        fields = ("snapshot_id", "cycle_no", "item_count", "manifest_digest", "created_at", "dataset_revision_id", "training_run_id", "evaluation_run_id", "qualification")
 
 
 class BatchSerializer(serializers.ModelSerializer):
@@ -74,7 +76,7 @@ class BatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = CampaignBatch
         fields = ("batch_id", "cycle_no", "status", "sample_count", "reviewed_count", "approved_count",
-                  "snapshot_manifest_digest", "drafting_model_id", "created_at")
+                  "snapshot_manifest_digest", "drafting_model_id", "draft_configuration", "created_at")
 
 
 class CampaignSerializer(serializers.ModelSerializer):
@@ -100,6 +102,8 @@ class CampaignSetupSerializer(serializers.Serializer):
     drafting_model_id = serializers.UUIDField(required=False, allow_null=True)
     max_cycles = serializers.IntegerField(min_value=1, max_value=100, default=3)
     budget_limit_dollars = serializers.FloatField(min_value=0, max_value=1000000, default=100)
+    cycle = serializers.DictField(required=False)
+    draft_prompt = serializers.CharField(max_length=4000, default="{text}\n", trim_whitespace=False)
     source_revision = serializers.UUIDField(required=False, allow_null=True)
     audit_sample_refs = serializers.ListField(child=serializers.CharField(max_length=128), default=list, max_length=10000)
 
@@ -125,6 +129,11 @@ class CampaignSetupSerializer(serializers.Serializer):
             from modelanvil.annotation.publication import source_configuration
             try: data['source_configuration'] = source_configuration(data['source_revision'], data['audit_sample_refs'])
             except ValueError as exc: raise ValidationError({'source_revision': str(exc)}) from exc
+        if data.get('cycle') is not None:
+            from modelanvil.annotation.cycles import prepare_configuration
+            data['cycle'] = prepare_configuration(data['cycle'], data['source_configuration'], data['budget_limit_dollars'], data['kind'])
+            if model is not None and str(model.model_version_id) != data['cycle']['base_model_version']:
+                raise ValidationError('The initial drafting model and cycle baseline must be the same pinned version.')
         data["active_drafting_model"] = model
         return data
 
@@ -148,7 +157,7 @@ class CampaignViewSet(ReadWorkflowViewSet):
             seed_mode=data["seed_mode"], active_drafting_model=data["active_drafting_model"],
             max_cycles=data["max_cycles"], budget_limit_dollars=data["budget_limit_dollars"],
             audit_samples=[{"id": ref} for ref in data["audit_sample_refs"]],
-            configuration={"audit_sample_refs": data["audit_sample_refs"], "draft_source": "imported", **data["source_configuration"]},
+            configuration={"audit_sample_refs": data["audit_sample_refs"], "draft_source": "imported", "draft_prompt": data["draft_prompt"], **data["source_configuration"], **({"cycle": data["cycle"]} if "cycle" in data else {})},
         )
         audit(request, "create", "labeling_campaign", campaign.campaign_id)
         return Response(self.get_serializer(campaign).data, status=status.HTTP_201_CREATED)
@@ -158,12 +167,54 @@ class CampaignViewSet(ReadWorkflowViewSet):
     def lifecycle(self, request, campaign_id=None):
         campaign = self.get_queryset().select_for_update(of=("self",)).get(pk=self.get_object().pk)
         transition = request.data.get("transition")
-        target = {("active", "pause"): "paused", ("paused", "resume"): "active"}.get((campaign.status, transition))
+        target = {("active", "pause"): "paused", ("paused", "resume"): "active", ("active", "cancel"): "cancelled", ("paused", "cancel"): "cancelled"}.get((campaign.status, transition))
         if target is None:
             raise Conflict("This campaign cannot make that transition.")
         campaign.status = target
         campaign.save(update_fields=["status", "updated_at"])
+        if transition in ('pause', 'cancel') and campaign.configuration.get('cycle'):
+            from modelanvil.annotation.cycles import stop_jobs
+            stop_jobs(campaign)
         audit(request, "update", "labeling_campaign", campaign.campaign_id, transition=transition)
+        return Response(self.get_serializer(campaign).data)
+
+    @action(detail=True, methods=['post'])
+    @transaction.atomic
+    def advance(self, request, campaign_id=None):
+        if request.data:
+            raise ValidationError("Cycle advancement uses the campaign's pinned configuration; submit an empty object.")
+        campaign = self.get_queryset().select_for_update(of=('self',)).get(pk=self.get_object().pk)
+        from modelanvil.annotation.cycles import advance
+        advance(campaign)
+        campaign.refresh_from_db()
+        audit(request, 'update', 'labeling_cycle', campaign.campaign_id)
+        return Response(self.get_serializer(campaign).data)
+
+    @action(detail=True, methods=['post'])
+    @transaction.atomic
+    def rollback(self, request, campaign_id=None):
+        if set(request.data) != {'model_version_id'}:
+            raise ValidationError('Submit only the prior qualified model version.')
+        campaign = self.get_queryset().select_for_update(of=('self',)).get(pk=self.get_object().pk)
+        config = campaign.configuration.get('cycle')
+        if not config or campaign.status not in ('active', 'paused', 'completed'):
+            raise Conflict('Rollback requires an active, paused or completed real cycle.')
+        target = str(serializers.UUIDField().run_validation(request.data['model_version_id']))
+        allowed = {config['base_model_version']}
+        allowed.update(s.qualification.get('candidate_model') for s in campaign.snapshots.all() if s.qualification.get('decision') == 'promoted')
+        model = get_accessible_queryset(ModelVersion).filter(model_version_id=target).first()
+        if target not in allowed or model is None:
+            raise ValidationError('Select the original baseline or a previously promoted model in this campaign.')
+        from modelanvil.annotation.cycles import stop_jobs
+        stop_jobs(campaign)
+        for snapshot in campaign.snapshots.filter(training_run__isnull=False):
+            if not snapshot.qualification:
+                snapshot.qualification = {'decision': 'rejected', 'reason': 'Superseded by explicit rollback; labels and run history retained.'}
+                snapshot.save(update_fields=['qualification', 'updated_at'])
+        campaign.active_drafting_model = model
+        campaign.save(update_fields=['active_drafting_model', 'updated_at'])
+        audit(request, 'update', 'labeling_rollback', campaign.campaign_id, model_version_id=target)
+        campaign.refresh_from_db()
         return Response(self.get_serializer(campaign).data)
 
     @action(detail=True, methods=["post"])
@@ -172,6 +223,8 @@ class CampaignViewSet(ReadWorkflowViewSet):
         campaign = self.get_queryset().select_for_update(of=("self",)).get(pk=self.get_object().pk)
         if campaign.status != "active" or campaign.current_cycle >= campaign.max_cycles:
             raise Conflict("The campaign must be active and have a remaining cycle.")
+        if campaign.configuration.get('cycle') and any(not snap.qualification for snap in campaign.snapshots.filter(training_run__isnull=False)):
+            raise Conflict('Finish or explicitly roll back the preceding training/qualification cycle first.')
         if campaign.batches.exclude(status="closed").exists():
             raise Conflict("Close the current batch before starting another cycle.")
         if campaign.configuration.get('source_revision'):
@@ -325,7 +378,11 @@ class BatchViewSet(ReadWorkflowViewSet):
         from modelanvil.annotation.publication import publish_snapshot
         try: publish_snapshot(snapshot)
         except ValueError as exc: raise ValidationError({'publication': str(exc)}) from exc
-        if campaign.current_cycle + 1 >= campaign.max_cycles:
+        if campaign.configuration.get('cycle'):
+            from modelanvil.annotation.cycles import dispatch_training
+            dispatch_training(campaign, snapshot, request)
+        campaign.refresh_from_db()
+        if campaign.current_cycle >= campaign.max_cycles and not campaign.configuration.get('cycle'):
             campaign.status = "completed"
             campaign.save(update_fields=["status", "updated_at"])
         audit(request, "create", "annotation_snapshot", snapshot.snapshot_id, digest=snapshot.manifest_digest)

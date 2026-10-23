@@ -113,6 +113,7 @@ class CampaignBatch(TenantContextModel):
     assigned_drafting_model = models.ForeignKey(
         ModelVersion, null=True, blank=True, on_delete=models.SET_NULL, related_name="assigned_batches"
     )
+    draft_configuration = models.JSONField(default=dict, blank=True)
     sample_count = models.PositiveIntegerField(default=0)
     approved_count = models.PositiveIntegerField(default=0)
     snapshot_manifest_digest = models.CharField(max_length=64, blank=True)
@@ -196,6 +197,10 @@ class CumulativeSnapshot(TenantContextModel):
     items = models.JSONField(default=list)
     dataset_revision = models.OneToOneField('artifacts.DatasetRevision', on_delete=models.PROTECT, null=True,
         blank=True, related_name='annotation_snapshot')
+
+    training_run = models.OneToOneField('runners.TrainingRun', on_delete=models.PROTECT, null=True, blank=True)
+    evaluation_run = models.OneToOneField('runners.EvaluationRun', on_delete=models.PROTECT, null=True, blank=True)
+    qualification = models.JSONField(default=dict, blank=True)
 
     class Meta:
         constraints = [

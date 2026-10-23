@@ -1,0 +1,35 @@
+{
+  "evidence": "actual project-scoped API, database, artifacts and fenced local CPU execution; synthetic negative-control task, no customer quality claim",
+  "cycles": [
+    {
+      "cycle": 1,
+      "approved_cumulative_labels": 1,
+      "training_run": "01a16619-a6b6-7b58-ac19-963f82420f4e",
+      "training_steps": 2,
+      "evaluation_run": "01a16619-a6eb-7e2a-8b4c-a8c438ba4386",
+      "case_results": 1,
+      "decision": "rejected",
+      "accuracy": 0.0,
+      "baseline_accuracy": 0.0,
+      "previous_model_retained": true
+    },
+    {
+      "cycle": 2,
+      "approved_cumulative_labels": 2,
+      "training_run": "01a16619-a769-7a3c-8658-fe99b6c8eafa",
+      "training_steps": 2,
+      "evaluation_run": "01a16619-a7a4-7f8c-a42d-53d81af1cfb3",
+      "case_results": 1,
+      "decision": "rejected",
+      "accuracy": 0.0,
+      "baseline_accuracy": 0.0,
+      "previous_model_retained": true
+    }
+  ],
+  "status": "completed",
+  "settled_evaluation_cases": "2.000000",
+  "protected_group_excluded": true,
+  "repeated_close_same_run": true,
+  "network_requests_required": 0,
+  "settled_training_steps": "4.000000"
+}
