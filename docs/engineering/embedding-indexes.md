@@ -24,6 +24,8 @@ python manage.py flush_outbox --loop
 
 These are two long-running processes. The broker consumer verifies its worker credential at startup, before deliveries, and every 15 seconds while idle. Per-attempt heartbeats also enforce credential validity and cancellation. Registration alone cannot admit a build: a matching process must have a recent observation. The polling `run_worker --profile cpu-embeddings` remains available for operator diagnostics; the qualified dispatch evidence uses RabbitMQ/outbox delivery.
 
+SQL full-text, exact/HNSW strategies, iterative filtering and execution receipts are described in [SQL retrieval](sql-retrieval.md).
+
 ## Retrieval workflow
 
 1. Import documents and build a lexical index with at most 254 MiniLM content tokens per chunk. The encoder adds two special tokens; it refuses overflow instead of truncating. Up to 1,000 frozen accessible chunks are supported.
