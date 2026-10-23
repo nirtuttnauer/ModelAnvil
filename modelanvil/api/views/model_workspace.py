@@ -381,9 +381,9 @@ class InferenceViewSet(TenantScopedViewSet):
         selected_project()
         from django.db.models import Q
         from modelanvil.runners.models import TrainingRun
-        from modelanvil.runners.training import hf_runtime, mlx_runtime, runtime, general_runtime
+        from modelanvil.runners.training import hf_runtime, mlx_runtime, cpu_hf_runtime, runtime, general_runtime
         trained_runs = get_accessible_queryset(TrainingRun).filter(status='completed', job__status='succeeded',
-            base_model_version__architecture_ref__in=[hf_runtime.RUNTIME_ID, mlx_runtime.RUNTIME_ID, runtime.RUNTIME_ID, general_runtime.RUNTIME_ID]).select_related('base_model_version').order_by('-created_at', '-pk')
+            base_model_version__architecture_ref__in=[cpu_hf_runtime.RUNTIME_ID, hf_runtime.RUNTIME_ID, mlx_runtime.RUNTIME_ID, runtime.RUNTIME_ID, general_runtime.RUNTIME_ID]).select_related('base_model_version').order_by('-created_at', '-pk')
         lineage = {}
         for run in trained_runs:
             if run.output_model_version_id:

@@ -110,3 +110,6 @@ Private-team onboarding: integrated local two-browser account/invitation/reviewe
 
 23 October 2026 — TASK-7 adds byte-identical v2 CPU archives with a frozen standalone consumer and current evidence/access checks. [Fresh external loading and stale-review evidence](verification/task7-export-2026-10-23/report.md) verifies actual weights in an empty Python environment, negative quality controls and invalidated export/serving gates. No quality or production qualification is inferred.
 23 October 2026 — TASK-66 replaces new lexical-index character slices with an offline, checksum-pinned MiniLM WordPiece tokenizer, exact Unicode spans, measured maximum overlap and immutable per-recipe chunk sets. [Fresh token-window and reimport evidence](verification/task66-token-chunks-2026-10-23/report.md) covers source reconstruction and retained historical indexes; embeddings remain separate TASK-67 work.
+
+
+23 October 2026 — TASK-15 adds a separate bounded pretrained CPU full-SFT/LoRA profile, retaining GPU/QLoRA requirements in TASK-77. [Actual CPU training, independent held-out scoring and recovery evidence](verification/task15-cpu-pretrained-2026-10-23/report.md) covers the exact 135M base, three measured updates per recipe and immutable export; no customer quality or production qualification is inferred.

@@ -15,12 +15,12 @@ from modelanvil.data.publication import publish_prepared_dataset
 from modelanvil.identity.models import Project
 from modelanvil.jobs.models import Worker, WorkerPool
 from modelanvil.runners.models import Model, ModelVersion, RunnerManifest, TokenizerVersion
-from modelanvil.runners.training import hf_runtime, mlx_runtime
+from modelanvil.runners.training import hf_runtime, mlx_runtime, cpu_hf_runtime
 from modelanvil.runners.training.hardware import total_memory_bytes
 
 
 class Command(BaseCommand):
-    help = 'Import verified local SmolLM2 files, publish canonical text JSONL and register one dedicated GPU worker. Does not launch training or download models.'
+    help = 'Import verified local SmolLM2 files, publish canonical text JSONL and register one dedicated local worker. Does not launch training or download models.'
 
     def add_arguments(self, parser):
         parser.add_argument('--tenant-id', type=uuid.UUID, required=True)
@@ -28,13 +28,15 @@ class Command(BaseCommand):
         parser.add_argument('--name', required=True)
         parser.add_argument('--model-dir', type=Path, required=True)
         parser.add_argument('--samples', type=Path, required=True, help='Canonical text sample-envelope JSONL')
-        parser.add_argument('--device', required=True, help='Explicit cuda:N, rocm:N, xpu:N, mps:0 or native mlx:0')
+        parser.add_argument('--device', required=True, help='Explicit cpu, cuda:N, rocm:N, xpu:N, mps:0 or native mlx:0')
         parser.add_argument('--recipe', choices=['full_sft', 'lora_adapter', 'qlora_adapter', 'continued_pretraining'], default='full_sft')
         parser.add_argument('--steps', type=int, default=3)
 
     @transaction.atomic
     def handle(self, *args, **options):
-        runtime = mlx_runtime if options['recipe'] == 'qlora_adapter' else hf_runtime
+        runtime = cpu_hf_runtime if options['device'] == 'cpu' else mlx_runtime if options['recipe'] == 'qlora_adapter' else hf_runtime
+        if options['recipe'] not in runtime.CONTRACT['recipes']:
+            raise CommandError('Selected recipe is unavailable on this runtime/device.')
         tenant, project, name = options['tenant_id'], options['project_id'], options['name'].strip()
         if not name or len(name) > 80 or not 1 <= options['steps'] <= runtime.LIMITS['steps']:
             raise CommandError('Use a unique 1–80 character name and 1–1000 steps.')

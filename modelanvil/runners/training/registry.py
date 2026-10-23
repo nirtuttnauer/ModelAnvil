@@ -10,12 +10,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from modelanvil.runners.training import general_runtime, hf_runtime, mlx_runtime
+from modelanvil.runners.training import general_runtime, hf_runtime, mlx_runtime, cpu_hf_runtime
 from modelanvil.runners.training import runtime as character_runtime
 
 CHARACTER_RUNTIME_ID = character_runtime.RUNTIME_ID
 
-_MODULES = (character_runtime, general_runtime, hf_runtime, mlx_runtime)
+_MODULES = (character_runtime, general_runtime, hf_runtime, mlx_runtime, cpu_hf_runtime)
 _BY_ID = {module.RUNTIME_ID: module for module in _MODULES}
 
 
@@ -45,9 +45,9 @@ def resolve_inputs(**kwargs):
     module = runtime_for_architecture(getattr(base, 'architecture_ref', None) or base)
     if module is None:
         raise ValueError('The selected base model architecture is not a supported training runtime.')
-    if module in (hf_runtime, mlx_runtime) and kwargs.pop('hyperparameters', None):
-        raise ValueError('This pinned GPU profile does not expose custom optimizer or validation settings.')
-    if module not in (hf_runtime, mlx_runtime):
+    if module in (hf_runtime, mlx_runtime, cpu_hf_runtime) and kwargs.pop('hyperparameters', None):
+        raise ValueError('This pinned pretrained profile does not expose custom optimizer or validation settings.')
+    if module not in (hf_runtime, mlx_runtime, cpu_hf_runtime):
         if kwargs.pop('recipe_type', 'full_sft') != 'full_sft':
             raise ValueError('This reference runtime supports full_sft only.')
         kwargs.pop('initialization_seed', None)
@@ -86,7 +86,7 @@ def _bundle_is_general(bundle: dict[str, Any]) -> bool:
 def verify_bundle(bundle):
     if (bundle or {}).get('config.json', {}).get('runtime') == mlx_runtime.RUNTIME_ID:
         return mlx_runtime.verify_external_loadable(bundle)
-    if (bundle or {}).get('config.json', {}).get('runtime') == hf_runtime.RUNTIME_ID:
+    if (bundle or {}).get('config.json', {}).get('runtime') in (hf_runtime.RUNTIME_ID, cpu_hf_runtime.RUNTIME_ID):
         return hf_runtime.verify_external_loadable(bundle)
     if _bundle_is_general(bundle):
         return general_runtime.verify_external_loadable(bundle)
@@ -97,7 +97,7 @@ def verify_bundle(bundle):
 def generate_completion(bundle, prompt, max_new_tokens=8):
     if (bundle or {}).get('config.json', {}).get('runtime') == mlx_runtime.RUNTIME_ID:
         return mlx_runtime.generate_candidate_completion(bundle, prompt=prompt, max_new_tokens=max_new_tokens)
-    if (bundle or {}).get('config.json', {}).get('runtime') == hf_runtime.RUNTIME_ID:
+    if (bundle or {}).get('config.json', {}).get('runtime') in (hf_runtime.RUNTIME_ID, cpu_hf_runtime.RUNTIME_ID):
         return hf_runtime.generate_candidate_completion(bundle, prompt=prompt, max_new_tokens=max_new_tokens)
     if _bundle_is_general(bundle):
         return general_runtime.generate_candidate_completion(bundle, prompt=prompt, max_new_tokens=max_new_tokens)
