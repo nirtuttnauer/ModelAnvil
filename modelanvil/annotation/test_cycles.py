@@ -1,7 +1,9 @@
 """Real reviewed-label CPU cycles; format fixtures test orchestration, not task quality."""
-import io
 import json
-from django.test import TestCase, override_settings
+from concurrent.futures import ThreadPoolExecutor
+from django.db import close_old_connections, connection
+from rest_framework.test import APIClient
+from django.test import TestCase, TransactionTestCase, override_settings, tag
 from modelanvil.annotation.models import CampaignBatch, CumulativeSnapshot, LabelingCampaign
 from modelanvil.artifacts.models import Dataset
 from modelanvil.budgets.models import BudgetPolicy, BudgetReservation
@@ -81,6 +83,9 @@ class RealCampaignCycleTests(TestCase):
         self.execute(self.worker, training_worker_executor)
         response = self.advance(campaign); self.assertEqual(response.status_code, 200, response.data)
         snapshot.refresh_from_db(); self.assertIsNotNone(snapshot.evaluation_run_id)
+        evaluation_id = snapshot.evaluation_run_id
+        self.assertEqual(self.advance(campaign).status_code, 200)
+        snapshot.refresh_from_db(); self.assertEqual(snapshot.evaluation_run_id, evaluation_id)
         self.execute(self.evaluator, evaluation_worker_executor)
         response = self.advance(campaign); self.assertEqual(response.status_code, 200, response.data)
         snapshot.refresh_from_db()
@@ -112,6 +117,11 @@ class RealCampaignCycleTests(TestCase):
         self.assertEqual(sum(BudgetReservation.objects.filter(policy=self.policy).values_list('settled_amount', flat=True)), 4)
         self.assertEqual(snapshot.training_run.status, 'completed')
         self.assertEqual(snapshot.evaluation_run.case_results.count(), 1)
+        rolled_back = self.client.post(f'/api/v1/labeling-campaigns/{campaign["campaign_id"]}/rollback/',
+            {'model_version_id': str(self.base.model_version_id)}, format='json')
+        self.assertEqual(rolled_back.status_code, 200, rolled_back.content)
+        self.assertEqual(rolled_back.data['status'], 'completed')
+        self.assertEqual(rolled_back.data['active_model_id'], str(self.base.model_version_id))
 
     def test_budget_failure_rolls_back_closure_and_keeps_approved_reviews(self):
         campaign = self.create(); batch = self.open_and_review(campaign)
@@ -189,3 +199,81 @@ class RealCampaignCycleTests(TestCase):
         self.assertEqual(CumulativeSnapshot.objects.count(), 1)
         ApiKey.objects.filter(tenant=self.tenant).update(role=Role.VIEWER)
         self.assertEqual(self.advance(campaign).status_code, 403)
+
+    def test_evaluation_case_cap_stops_next_stage_without_changing_prior_model(self):
+        self.config['max_evaluation_cases'] = 1
+        campaign = self.create(); first = self.open_and_review(campaign)
+        self.assertEqual(self.close(first).status_code, 200)
+        campaign = self.train_and_evaluate(campaign, CumulativeSnapshot.objects.get())
+        prior = campaign['active_model_id']
+        second = self.open_and_review(campaign); self.assertEqual(self.close(second).status_code, 200)
+        self.execute(self.worker, training_worker_executor)
+        response = self.advance(campaign); self.assertEqual(response.status_code, 400)
+        self.assertEqual(CumulativeSnapshot.objects.filter(evaluation_run__isnull=False).count(), 1)
+        self.assertEqual(LabelingCampaign.objects.get().active_drafting_model.model_version_id.hex, prior.replace('-', ''))
+        self.assertEqual(CumulativeSnapshot.objects.order_by('-cycle_no').first().item_count, 2)
+
+    def test_running_cancellation_stays_requested_until_worker_acknowledges(self):
+        campaign = self.create(); batch = self.open_and_review(campaign)
+        self.assertEqual(self.close(batch).status_code, 200)
+        descriptor = claim_job(self.worker); self.assertIsNotNone(descriptor)
+        response = self.client.post(f'/api/v1/labeling-campaigns/{campaign["campaign_id"]}/lifecycle/', {'transition': 'cancel'}, format='json')
+        self.assertEqual(response.status_code, 200)
+        job = Job.objects.get(pk=descriptor['job_id']) if isinstance(descriptor['job_id'], int) else Job.objects.get(job_id=descriptor['job_id'])
+        self.assertEqual(job.status, 'running'); self.assertEqual(job.desired_action, 'cancel')
+        outcome = execute_claim(self.worker, descriptor, training_worker_executor)
+        self.assertEqual(outcome['status'], 'interrupted', outcome)
+        job.refresh_from_db(); self.assertEqual(job.status, 'cancelled')
+        snapshot = CumulativeSnapshot.objects.get(); self.assertEqual(snapshot.training_run.status, 'cancelled')
+        self.assertEqual(CumulativeSnapshot.objects.get().item_count, 1)
+        self.assertEqual(self.advance(campaign).status_code, 400)
+
+    def test_declared_draft_prompt_keeps_its_exact_whitespace(self):
+        prompt = 'Classify this text:\n{text}\n'
+        campaign = self.create(draft_prompt=prompt)
+        batch = self.open_and_review(campaign)
+        self.assertEqual(batch['draft_configuration']['prompt'], prompt)
+
+
+    def test_rollback_of_pending_training_returns_current_rejection_without_losing_labels(self):
+        campaign = self.create(); batch = self.open_and_review(campaign)
+        self.assertEqual(self.close(batch).status_code, 200)
+        response = self.client.post(f'/api/v1/labeling-campaigns/{campaign["campaign_id"]}/rollback/',
+            {'model_version_id': str(self.base.model_version_id)}, format='json')
+        self.assertEqual(response.status_code, 200, response.content)
+        self.assertEqual(response.data['snapshots'][0]['qualification']['decision'], 'rejected')
+        snapshot = CumulativeSnapshot.objects.get()
+        self.assertEqual(snapshot.item_count, 1)
+        self.assertEqual(snapshot.training_run.status, 'cancelled')
+
+
+
+@tag('pg')
+@override_settings(ALLOWED_HOSTS=['testserver'])
+class ConcurrentCampaignClosureTests(TransactionTestCase):
+    setUp = RealCampaignCycleTests.setUp
+    artifact = RealCampaignCycleTests.artifact
+    envelope = RealCampaignCycleTests.envelope
+    create = RealCampaignCycleTests.create
+    open_and_review = RealCampaignCycleTests.open_and_review
+
+    def test_concurrent_closure_dispatches_one_snapshot_run_and_reservation(self):
+        self.assertEqual(connection.vendor, 'postgresql')
+        campaign = self.create(); batch = self.open_and_review(campaign)
+        credentials = dict(self.client._credentials)
+        def close(_):
+            close_old_connections()
+            try:
+                client = APIClient(); client.credentials(**credentials)
+                response = client.post(f'/api/v1/labeling-batches/{batch["batch_id"]}/close/', {}, format='json')
+                return response.status_code, response.json()
+            finally:
+                close_old_connections()
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            replies = list(executor.map(close, range(2)))
+        self.assertEqual([status for status, _ in replies], [200, 200], replies)
+        self.assertEqual(len({body['snapshot_id'] for _, body in replies}), 1)
+        self.assertEqual(len({body['training_run_id'] for _, body in replies}), 1)
+        self.assertEqual(CumulativeSnapshot.objects.count(), 1)
+        self.assertEqual(TrainingRun.objects.count(), 1)
+        self.assertEqual(BudgetReservation.objects.count(), 1)

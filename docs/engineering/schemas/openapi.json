@@ -1825,7 +1825,8 @@
               }
             }
           }
-        }
+        },
+        "description": "Pause, resume or cancel future campaign stages. Pause/cancel persist cancellation intent for active cycle jobs; running work remains unacknowledged until the worker stops."
       }
     },
     "/memberships/": {
@@ -6582,6 +6583,122 @@
           }
         }
       }
+    },
+    "/labeling-campaigns/{campaign_id}/advance/": {
+      "post": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "Advance a bounded real labeling cycle",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabelingCampaign"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid inputs"
+          },
+          "409": {
+            "description": "Workflow state or revision conflict"
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "parameters": [
+          {
+            "name": "campaign_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {}
+              }
+            }
+          }
+        },
+        "operationId": "labelingCampaignAdvance",
+        "description": "Requires current engineer permission and project scope. Configuration and gates are revalidated; previous labels, runs and decisions are retained."
+      }
+    },
+    "/labeling-campaigns/{campaign_id}/rollback/": {
+      "post": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "Restore an original or previously promoted campaign model",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabelingCampaign"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid inputs"
+          },
+          "409": {
+            "description": "Workflow state or revision conflict"
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "parameters": [
+          {
+            "name": "campaign_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "model_version_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "model_version_id"
+                ]
+              }
+            }
+          }
+        },
+        "operationId": "labelingCampaignRollback",
+        "description": "Requires current engineer permission and project scope. Configuration and gates are revalidated; previous labels, runs and decisions are retained."
+      }
     }
   },
   "components": {
@@ -8301,6 +8418,11 @@
           "created_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "draft_configuration": {
+            "type": "object",
+            "readOnly": true,
+            "description": "Prompt and rubric pinned when the batch opens."
           }
         }
       },
@@ -8323,6 +8445,35 @@
           "created_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "training_run_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "readOnly": true
+          },
+          "evaluation_run_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "readOnly": true
+          },
+          "dataset_revision_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "readOnly": true
+          },
+          "qualification": {
+            "type": "object",
+            "readOnly": true,
+            "description": "Recorded independent evaluation decision, threshold/baseline comparison and preserved prior model."
           }
         }
       },
@@ -8448,6 +8599,21 @@
             "items": {
               "type": "string"
             }
+          },
+          "cycle": {
+            "$ref": "#/components/schemas/LabelingCycleConfiguration"
+          },
+          "draft_prompt": {
+            "type": "string",
+            "maxLength": 4000,
+            "default": "{text}\n"
+          },
+          "source_revision": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
           }
         },
         "required": [
@@ -11215,6 +11381,78 @@
           "can_manage",
           "can_submit"
         ]
+      },
+      "LabelingCycleConfiguration": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "base_model_version": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "training_budget": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "evaluation_suite": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "evaluation_budget": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "runner_manifest": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "training_pool": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "evaluation_pool": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "steps_per_cycle": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "max_training_steps": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000
+          },
+          "max_evaluation_cases": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000
+          },
+          "max_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 32
+          },
+          "min_accuracy": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "base_model_version",
+          "training_budget",
+          "evaluation_suite",
+          "evaluation_budget",
+          "runner_manifest",
+          "training_pool",
+          "evaluation_pool",
+          "steps_per_cycle",
+          "max_training_steps",
+          "max_evaluation_cases"
+        ],
+        "description": "Opt-in real CPU character training and protected evaluation; quantity budgets and campaign caps required. Currency costs are unmeasured; budget_limit_dollars must be0. Suite digest is pinned by the server."
       }
     }
   }

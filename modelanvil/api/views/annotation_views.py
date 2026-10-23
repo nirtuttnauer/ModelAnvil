@@ -103,7 +103,7 @@ class CampaignSetupSerializer(serializers.Serializer):
     max_cycles = serializers.IntegerField(min_value=1, max_value=100, default=3)
     budget_limit_dollars = serializers.FloatField(min_value=0, max_value=1000000, default=100)
     cycle = serializers.DictField(required=False)
-    draft_prompt = serializers.CharField(max_length=4000, default="{text}\n")
+    draft_prompt = serializers.CharField(max_length=4000, default="{text}\n", trim_whitespace=False)
     source_revision = serializers.UUIDField(required=False, allow_null=True)
     audit_sample_refs = serializers.ListField(child=serializers.CharField(max_length=128), default=list, max_length=10000)
 
@@ -132,6 +132,8 @@ class CampaignSetupSerializer(serializers.Serializer):
         if data.get('cycle') is not None:
             from modelanvil.annotation.cycles import prepare_configuration
             data['cycle'] = prepare_configuration(data['cycle'], data['source_configuration'], data['budget_limit_dollars'], data['kind'])
+            if model is not None and str(model.model_version_id) != data['cycle']['base_model_version']:
+                raise ValidationError('The initial drafting model and cycle baseline must be the same pinned version.')
         data["active_drafting_model"] = model
         return data
 
@@ -195,8 +197,8 @@ class CampaignViewSet(ReadWorkflowViewSet):
             raise ValidationError('Submit only the prior qualified model version.')
         campaign = self.get_queryset().select_for_update(of=('self',)).get(pk=self.get_object().pk)
         config = campaign.configuration.get('cycle')
-        if not config or campaign.status not in ('active', 'paused'):
-            raise Conflict('Rollback requires an active or paused real cycle.')
+        if not config or campaign.status not in ('active', 'paused', 'completed'):
+            raise Conflict('Rollback requires an active, paused or completed real cycle.')
         target = str(serializers.UUIDField().run_validation(request.data['model_version_id']))
         allowed = {config['base_model_version']}
         allowed.update(s.qualification.get('candidate_model') for s in campaign.snapshots.all() if s.qualification.get('decision') == 'promoted')
@@ -212,6 +214,7 @@ class CampaignViewSet(ReadWorkflowViewSet):
         campaign.active_drafting_model = model
         campaign.save(update_fields=['active_drafting_model', 'updated_at'])
         audit(request, 'update', 'labeling_rollback', campaign.campaign_id, model_version_id=target)
+        campaign.refresh_from_db()
         return Response(self.get_serializer(campaign).data)
 
     @action(detail=True, methods=["post"])

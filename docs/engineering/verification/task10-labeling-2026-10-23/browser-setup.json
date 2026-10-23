@@ -1,0 +1,17 @@
+{
+  "observed_at": "2026-10-23T00:11:11.970Z",
+  "campaign_id": "01a16618-ecd6-75ce-95d5-7de613362e39",
+  "evidence": "actual app/API; disposable local CPU fixtures; no worker job launched by setup",
+  "configured_training_steps": 4,
+  "configured_evaluation_cases": 2,
+  "minimum_accuracy": 1,
+  "protected_group_reserved": true,
+  "source_pinned": true,
+  "currency_unpriced": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_overflow": false,
+  "page_errors": []
+}

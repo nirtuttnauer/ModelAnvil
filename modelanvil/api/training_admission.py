@@ -3,6 +3,7 @@ from rest_framework import serializers
 from modelanvil.core.models import record_audit
 from modelanvil.core.tenancy import get_active_tenant, get_active_project
 
+
 def training_preflight(attrs, *, lock_budget=False):
     from modelanvil.runners.training.preflight_report import build_preflight_report
     from modelanvil.budgets.models import BudgetPolicy
@@ -17,6 +18,7 @@ def training_preflight(attrs, *, lock_budget=False):
         execution_mode=attrs.get('execution_mode', 'worker'), tenant=tenant, project=project,
         initialization_seed=attrs.get('initialization_seed', 42), hyperparameters=attrs.get('hyperparameters', {}))
     return report, policy
+
 
 def admit_training(serializer, request):
     from modelanvil.budgets.models import BudgetReservation
