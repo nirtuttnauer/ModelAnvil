@@ -35,7 +35,23 @@ def runtime_digest():
         ROOT/'modelanvil/data/source_import.py',ROOT/'modelanvil/data/preparation.py',
         ROOT/'modelanvil/data/publication.py',ROOT/'modelanvil/data/detection.py',
         ROOT/'modelanvil/runners/training/hf_runtime.py']
+    files += [ROOT/'modelanvil/runners'/name for name in ('local_execution.py','gguf_runtime.py',
+        'training/engine.py','training/general_transformer.py','training/runtime.py',
+        'training/general_runtime.py','training/cpu_hf_runtime.py','training/mlx_runtime.py')]
     return digest([hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in files])
+
+
+def model_snapshot(version, tenant, project):
+    from modelanvil.runners.training import runtime, general_runtime
+    if version.architecture_ref in (runtime.RUNTIME_ID, general_runtime.RUNTIME_ID):
+        from modelanvil.runners.local_execution import load_reference_bundle
+        _, artifact, _ = load_reference_bundle(version, tenant=tenant, project=project)
+        plan = {'format': 'cpu-reference', 'files': {'bundle.json': file_ref(artifact)}}
+    else:
+        plan = inference.snapshot(version, tenant, project)
+    identity = [{f.attname: getattr(obj, f.attname) for f in obj._meta.concrete_fields}
+        for obj in (version, version.tokenizer)]
+    return {**plan, 'registered_identity': hashlib.sha256(json.dumps(identity, sort_keys=True, default=str).encode()).hexdigest()}
 
 
 def read_json(ref, tenant, project, limit=16*1024**2):
@@ -97,7 +113,7 @@ def queue(*, tenant, project, principal, recipe, sources, model, device, pool, p
     needs_model=any(s['type']=='generate' for s in definition['steps'])
     if needs_model != bool(model) or device not in ({'cpu','mps:0','mlx:0'} if needs_model else {'cpu'}):
         raise ValueError('Generation requires an accessible model and supported explicit device; deterministic recipes use CPU.')
-    model_plan=inference.snapshot(model,tenant,project.pk) if model else None
+    model_plan=model_snapshot(model,tenant,project.pk) if model else None
     for artifact in protected:
         if not check_resource_access(artifact,project.pk,tenant) or not (artifact.media_type=='application/x-ndjson'
                 or artifact.media_type=='application/json' and artifact.metadata.get('kind')=='prepared_dataset'):
@@ -174,6 +190,7 @@ def local_generate(session, cell, step, context):
         return not context.heartbeat()
     for part in inference.generate(session,[{'role':'user','content':cell['value']}],max_tokens=step['max_tokens'],
             temperature=0,seed=step['seed'],prompt_format=step.get('prompt_format','model'),cancelled=cancelled):
+        session['recipe_guard']()
         text+=part.get('text','')
         if 'usage' in part:last=part
     if last is None or last['finish_reason']=='cancelled':raise ValueError('Recipe generation cancelled or incomplete.')
@@ -192,8 +209,9 @@ def recipe_executor(descriptor,context):
         UsageEvent.record(tenant_id=run.tenant_id,provider_event_key=f'recipe:{context.attempt.attempt_id}',quantity=1,unit=UNIT,
             reservation=reservation,detail={'run_id':str(run.run_id),'attempt_id':str(context.attempt.attempt_id)})
     definition=read_json(run.frozen['recipe'],run.tenant_id,run.project_id,64000);recipes.validate_recipe(definition)
-    if run.model_version and inference.snapshot(run.model_version,run.tenant_id,run.project_id)!=run.frozen['model_snapshot']:
+    if run.model_version and model_snapshot(run.model_version,run.tenant_id,run.project_id)!=run.frozen['model_snapshot']:
         raise ValueError('Recipe model snapshot changed.')
+    guard=inference.snapshot_guard(run.model_version,run.tenant_id,run.project_id) if run.model_version else lambda: None
     protected=protected_rows(run);states={};session=None;calls=0
     with ExitStack() as stack:
         for index, step in enumerate(definition['steps']):
@@ -230,11 +248,14 @@ def recipe_executor(descriptor,context):
                             result=None
                             if step['type']=='generate' and session is None:
                                 session=stack.enter_context(inference.local_session(run.model_version,tenant=run.tenant_id,project=run.project_id,device=run.frozen['device']))
+                                session['recipe_guard']=guard
+                            if step['type']=='generate':
+                                calls+=1
+                                if calls>64:raise ValueError('Recipe generation exceeds 64 calls per attempt.')
+                                result=local_generate(session,cell,step,context)
+                            guard()
                             try:
                                 if step['type']=='generate':
-                                    calls+=1
-                                    if calls>64:raise ValueError('Recipe generation exceeds 64 calls per attempt.')
-                                    result=local_generate(session,cell,step,context)
                                     transformed=recipes.generated_cell(cell,step,result)
                                 else:transformed=recipes.transform(cell,step)
                                 saved={'cell':transformed,'rejection':None}
@@ -259,6 +280,7 @@ def recipe_executor(descriptor,context):
         calls.update({k:v for rejection in final['rejected'] for k,v in rejection.get('generation_calls',{}).items()})
         usage={key:sum(call['usage'][key] for call in calls.values()) for key in ('prompt_tokens','completion_tokens','total_tokens')}
         usage['completed_generation_calls']=len(calls)
+        guard()
         checkpoint(context,'$result',{'rows':prepared['rows'],'rejected':[*final['rejected'],*prepared['dropped']],
             'preview':run.frozen['preview'],'usage':usage})
     return None
@@ -268,6 +290,11 @@ def finalize_job(job,status):
     run=RecipeRun.all_objects.select_for_update().select_related('dataset').get(job=job,tenant_id=job.tenant_id)
     if status=='succeeded':
         if job.pool.result_egress!='envelope':raise ValueError('Recipe publication is forbidden by egress policy.')
+        if run.model_version:
+            run.model_version.refresh_from_db()
+            if model_snapshot(run.model_version,run.tenant_id,run.project_id)!=run.frozen['model_snapshot']:
+                raise ValueError('Recipe model snapshot changed before publication.')
+            inference.snapshot_guard(run.model_version,run.tenant_id,run.project_id)()
         output=restored(run,'$result')
         report=_store(io.BytesIO(json.dumps(output,allow_nan=False).encode()),tenant=run.tenant_id,project=run.project_id,
             name='recipe-report.json',media_type='application/json',metadata={'kind':'recipe_result','run_id':str(run.run_id)})
