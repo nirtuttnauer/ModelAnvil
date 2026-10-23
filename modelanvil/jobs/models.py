@@ -630,6 +630,14 @@ def commit_result(
             job_status = Job.Status.CANCELLED
         from modelanvil.data.recipe_jobs import finalize_job as finalize_recipe
         finalize_recipe(job, job_status)
+    if job.payload.get('type') == 'embedding_build':
+        from modelanvil.rag.embedding_jobs import finalize_job as finalize_embedding
+        if job.desired_action == Job.DesiredAction.CANCEL:
+            job_status = Job.Status.CANCELLED
+        job_status = finalize_embedding(job, job_status)
+        if job_status == Job.Status.FAILED and current.status == JobAttempt.Status.SUCCEEDED:
+            current.status = JobAttempt.Status.FAILED
+            current.save(update_fields=['status','updated_at'])
     DeviceClaim.objects.filter(attempt_id=current.pk).update(attempt=None)
     job.status = job_status
     job.lease_expires_at = None
@@ -710,6 +718,9 @@ def reconcile_expired_leases() -> int:
         if current_job_attempt and job.status in (Job.Status.FAILED, Job.Status.INTERRUPTED) and job.payload.get('type') == 'recipe_execution':
             from modelanvil.data.recipe_jobs import finalize_job as finalize_recipe
             finalize_recipe(job, job.status)
+        if current_job_attempt and job.status in (Job.Status.FAILED, Job.Status.INTERRUPTED, Job.Status.CANCELLED) and job.payload.get('type') == 'embedding_build':
+            from modelanvil.rag.embedding_jobs import finalize_job as finalize_embedding
+            finalize_embedding(job, job.status)
         DeviceClaim.objects.filter(attempt_id=attempt.pk).update(attempt=None)
         count += 1
     return count

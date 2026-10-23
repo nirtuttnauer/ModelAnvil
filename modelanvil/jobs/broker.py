@@ -35,6 +35,7 @@ class WorkerBrokerConsumer:
         *,
         concurrency: int = 1,
         retry_delay_ms: int = 5000,
+        observer=None,
     ):
         if concurrency < 1:
             raise ValueError("concurrency must be positive")
@@ -43,6 +44,7 @@ class WorkerBrokerConsumer:
         expected_queue = dispatch_topic(worker.tenant_id, worker.pool.queue_name, worker.pool.name)
         if queue_name != expected_queue:
             raise ValueError("queue_name does not match the worker's tenant and pool")
+        self.observer = observer
         self.worker = worker
         self.queue_name = queue_name
         self.executor = executor
@@ -74,6 +76,8 @@ class WorkerBrokerConsumer:
 
     def on_message(self, channel, method, properties, body: bytes) -> None:
         """Validate a notification, claim its job, ack, then execute async."""
+        if self.observer:
+            self.observer()
         message = self._parse_message(body)
         if message is None:
             self._quarantine_and_ack(channel, method.delivery_tag, body, "invalid_json")
@@ -220,6 +224,8 @@ class WorkerBrokerConsumer:
         url = rabbitmq_url or os.environ.get("RABBITMQ_URL")
         if not url:
             raise ValueError("RABBITMQ_URL is required for broker consumption")
+        if self.observer:
+            self.observer()
         connection = pika.BlockingConnection(pika.URLParameters(url))
         channel = connection.channel()
         self._connection = connection
@@ -232,6 +238,11 @@ class WorkerBrokerConsumer:
                 on_message_callback=self.on_message,
                 auto_ack=False,
             )
+            if self.observer:
+                def observe():
+                    self.observer()
+                    connection.call_later(15, observe)
+                connection.call_later(15, observe)
             self._ready.set()
             channel.start_consuming()
         except KeyboardInterrupt:

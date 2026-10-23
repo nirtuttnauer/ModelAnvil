@@ -96,10 +96,12 @@ def setup(request):
     if Worker.all_objects.filter(tenant_id=tenant, name=data["worker_name"]).exists():
         return _error(ErrorCode.CONFLICT, "This worker name is already registered. Inspect its connection or use a new name; credentials are shown only once.", 409)
     if not profile_details(data['profile'])['available']:
-        return _error(ErrorCode.VALIDATION_FAILED, 'Install requirements.inference.txt in the service environment before registering model acquisition.', 400)
+        return _error(ErrorCode.VALIDATION_FAILED, 'Install and cache the required runtime for the selected worker profile first.', 400)
     runner = None
     caps = {"setup_profile": data["profile"], "accelerator": "cpu", "memory_bytes": 0}
-    if data['profile'] == 'dataset-bank':
+    if data['profile'] == 'cpu-embeddings':
+        caps['embedding_runtime'] = profile_runtime(data['profile']).runtime_digest()
+    elif data['profile'] == 'dataset-bank':
         caps['dataset_acquisition'] = True
     elif data['profile'] == 'cpu-recipes':
         runtime = profile_runtime(data['profile'])
@@ -123,7 +125,7 @@ def setup(request):
     pool, _ = WorkerPool.all_objects.get_or_create(tenant_id=tenant, name=data["pool"])
     if pool.status != "active":
         return _error(ErrorCode.CONFLICT, "Select an active pool.", 409)
-    if data['profile'] in ('dataset-bank', 'cpu-recipes') and pool.result_egress != 'envelope':
+    if data['profile'] in ('dataset-bank', 'cpu-recipes', 'cpu-embeddings') and pool.result_egress != 'envelope':
         return _error(ErrorCode.CONFLICT, 'Choose a pool that allows verified dataset output.', 409)
     try:
         with transaction.atomic():
@@ -137,7 +139,7 @@ def setup(request):
     record_audit("create", "worker", worker.pk, input_snapshot={"pool_id": pool.pk, "profile": data["profile"]})
     response = Response({"worker_id": worker.pk, "pool_id": pool.pk, "runner_id": runner.pk if runner else None,
         "worker_token": secret, "worker_token_expires_at": credential.expires_at.isoformat(),
-        "startup_command": f"python manage.py run_worker --worker-id {worker.pk} --profile {data['profile']}",
+        "startup_command": f"python manage.py {'consume_worker' if data['profile'] == 'cpu-embeddings' else 'run_worker'} --worker-id {worker.pk} --profile {data['profile']}",
         "connection_state": "not_connected"}, status=201)
     response["Cache-Control"] = "no-store"
     return response

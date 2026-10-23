@@ -7,7 +7,7 @@ import threading
 import uuid
 from types import SimpleNamespace
 from unittest import skipUnless
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 from django.core.management import call_command
 from django.test import TransactionTestCase
@@ -136,6 +136,21 @@ class BrokerConsumerTests(TransactionTestCase):
             )
 
         run.assert_called_once_with()
+
+
+    def test_revoked_profile_observer_refuses_before_claim_and_ack(self):
+        from modelanvil.jobs.broker import WorkerBrokerConsumer
+        observer = Mock(side_effect=ValueError('revoked credential'))
+        consumer = WorkerBrokerConsumer(self.worker,self.queue,noop_executor,observer=observer)
+        channel = FakeChannel()
+        try:
+            with self.assertRaisesMessage(ValueError,'revoked credential'):
+                consumer.on_message(channel,SimpleNamespace(delivery_tag=1),None,b'{}')
+            self.job.refresh_from_db()
+            self.assertEqual(self.job.status,'queued');self.assertEqual(channel.acks,[])
+            self.assertEqual(JobAttempt.all_objects.count(),0)
+        finally:
+            consumer._pool.shutdown()
 
 
 @skipUnless(os.environ.get("RABBITMQ_URL"), "requires a live RabbitMQ service")

@@ -5,6 +5,7 @@ from typing import Any
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from pgvector.django import VectorField
 
 from modelanvil.core.ids import uuid7
 from modelanvil.core.models import TenantContextModel
@@ -79,6 +80,9 @@ class EmbeddingSpace(TenantContextModel):
     """Declared embedding space with model, dimension, and distance function (TECH-022)."""
 
     space_id = models.UUIDField(default=uuid7, unique=True, editable=False)
+    project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, null=True, blank=True)
+    model_revision = models.CharField(max_length=128, default='', blank=True)
+    license_expression = models.CharField(max_length=64, default='', blank=True)
     name = models.CharField(max_length=200)
     model_name = models.CharField(max_length=200)
     dimension = models.PositiveIntegerField(default=384)
@@ -95,6 +99,19 @@ class EmbeddingSpace(TenantContextModel):
         return f"{self.name} [{self.model_name}:{self.dimension}d]"
 
 
+class ChunkEmbedding(TenantContextModel):
+    """Actual vectors scoped by immutable chunk and declared embedding space."""
+    chunk = models.ForeignKey(DocumentChunk,on_delete=models.CASCADE,related_name='space_embeddings')
+    space = models.ForeignKey(EmbeddingSpace,on_delete=models.PROTECT,related_name='chunk_vectors')
+    vector = VectorField()
+    content_hash = models.CharField(max_length=64)
+    vector_digest = models.CharField(max_length=64)
+    runtime_digest = models.CharField(max_length=64)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=('chunk','space'),name='embedding_chunk_space_uniq')]
+
+
 class IndexVersion(TenantContextModel):
     """Pinned, immutable knowledge index version over chunk manifests and embedding space."""
 
@@ -109,6 +126,7 @@ class IndexVersion(TenantContextModel):
         DENSE = "dense", "Dense (pgvector / Cosine)"
         HYBRID = "hybrid", "Hybrid (RRF Fusion)"
 
+    project = models.ForeignKey('identity.Project',on_delete=models.PROTECT,null=True,blank=True)
     index_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     knowledge_base = models.ForeignKey(KnowledgeBase, on_delete=models.CASCADE, related_name="indexes")
     embedding_space = models.ForeignKey(EmbeddingSpace, on_delete=models.PROTECT, related_name="indexes")
@@ -218,3 +236,16 @@ class QueryTrace(TenantContextModel):
 
     def __str__(self) -> str:
         return f"Trace {self.trace_id} [{self.mode}] - Abstained={self.abstained}"
+
+
+class EmbeddingBuild(TenantContextModel):
+    build_id = models.UUIDField(default=uuid7,unique=True,editable=False)
+    project = models.ForeignKey('identity.Project',on_delete=models.PROTECT)
+    job = models.OneToOneField('jobs.Job',on_delete=models.PROTECT,related_name='embedding_build')
+    source_index = models.ForeignKey(IndexVersion,on_delete=models.PROTECT,related_name='embedding_builds')
+    index = models.OneToOneField(IndexVersion,on_delete=models.PROTECT,related_name='build_request')
+    principal = models.CharField(max_length=128)
+    frozen = models.JSONField(default=dict)
+    input_digest = models.CharField(max_length=64)
+    completed_chunks = models.PositiveIntegerField(default=0)
+    error = models.CharField(max_length=300,blank=True)

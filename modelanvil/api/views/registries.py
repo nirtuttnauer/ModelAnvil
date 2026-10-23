@@ -180,7 +180,7 @@ class BudgetPolicySerializer(serializers.ModelSerializer):
         value = lambda field, default=None: attrs.get(field, getattr(self.instance, field, default))
         if value('limit_amount', Decimal('0')) <= 0:
             raise serializers.ValidationError({'limit_amount': 'Use a positive budget limit.'})
-        if value('unit') in ('training_steps', 'bank_acquisition_records', 'evaluation_cases') and value('currency', ''):
+        if value('unit') in ('training_steps', 'bank_acquisition_records', 'evaluation_cases', 'embedding_attempts') and value('currency', ''):
             raise serializers.ValidationError({'currency': 'This policy limits resource quantities; leave currency empty.'})
         if self.instance:
             if self.instance.reservations.exists() and any(value(field) != getattr(self.instance, field)

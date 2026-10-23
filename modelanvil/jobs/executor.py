@@ -96,6 +96,9 @@ def execute_claim(
         result_envelope=result_envelope,
         error=error,
     )
+    if committed:
+        attempt.refresh_from_db(fields=["status"])
+        attempt_status = attempt.status
     return {
         "claimed": True,
         "committed": committed,

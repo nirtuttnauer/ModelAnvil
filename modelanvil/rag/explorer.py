@@ -18,7 +18,21 @@ class ClusterExplorer:
         self.tenant_id = index_version.tenant_id
 
     def _chunks(self):
-        return RetrievalEngine(self.index_version).get_eligible_chunks()
+        chunks = RetrievalEngine(self.index_version).get_eligible_chunks()
+        if self.index_version.configuration.get('embeddings_generated'):
+            from modelanvil.rag.models import ChunkEmbedding
+            from modelanvil.rag.embedding_adapter import validate_vectors, vector_digest
+            rows = {row.chunk_id:row for row in ChunkEmbedding.all_objects.filter(tenant_id=self.tenant_id,
+                space=self.index_version.embedding_space,chunk_id__in=[c.pk for c in chunks])}
+            for chunk in chunks:
+                row = rows.get(chunk.pk)
+                if (row is None or row.content_hash != chunk.content_hash
+                        or row.runtime_digest != self.index_version.configuration['embedding_build_runtime']
+                        or vector_digest(row.vector) != row.vector_digest):
+                    raise ValueError('Stored vector provenance changed. Rebuild this index.')
+                validate_vectors([row.vector],1)
+                chunk.embedding = [float(value) for value in row.vector]
+        return chunks
 
     def _checked_points(self, artifact):
         if (artifact.tenant_id != self.tenant_id or artifact.index_version_id != self.index_version.pk
