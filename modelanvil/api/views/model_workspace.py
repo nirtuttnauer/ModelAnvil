@@ -213,6 +213,13 @@ class ConversationViewSet(TenantScopedViewSet):
     lookup_field = 'conversation_id'
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
 
+    def get_queryset(self):
+        from modelanvil.identity.models import role_at_least, Role
+        queryset = super().get_queryset()
+        if not role_at_least(self.request.modelanvil_role, Role.MANAGER):
+            queryset = queryset.exclude(comparisons__review_campaign__configuration__origin='formal_preference')
+        return queryset
+
     def perform_create(self, serializer):
         serializer.save(tenant_id=get_active_tenant(), project=selected_project(), revision_no=1)
 
@@ -284,9 +291,14 @@ class ComparisonViewSet(TenantScopedViewSet):
         from django.db.models import Q
         versions = get_accessible_queryset(ModelVersion).values('pk')
         targets = [value['id'] for value in external_inference.catalog(get_active_tenant(), get_active_project())]
-        return super().get_queryset().filter(
+        queryset = super().get_queryset().filter(
             Q(first_request__model_version_id__in=versions) | Q(first_request__model_version__isnull=True, first_request__provider_snapshot__id__in=targets),
             Q(second_request__model_version_id__in=versions) | Q(second_request__model_version__isnull=True, second_request__provider_snapshot__id__in=targets))
+        from modelanvil.identity.models import role_at_least, Role
+        if not role_at_least(self.request.modelanvil_role, Role.MANAGER):
+            queryset = queryset.exclude(Q(review_campaign__configuration__origin='formal_preference') |
+                Q(conversation__comparisons__review_campaign__configuration__origin='formal_preference'))
+        return queryset
 
     def create(self, request):
         import hashlib
