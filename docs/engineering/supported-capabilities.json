@@ -178,6 +178,45 @@
       ],
       "production_qualified": false,
       "hardware_qualified": false
+    },
+    {
+      "operation": "training",
+      "recipe": "Apple MPS FP32 rank-eight q/v DPO on plain SmolLM2-135M",
+      "runtime": "modelanvil.smollm2-mps-dpo.v1",
+      "hardware": "Observed Apple M5 Pro, 48 GiB unified memory; same-host MPS single worker slot",
+      "evidence_date": "2026-10-23",
+      "level": "integrated_execution",
+      "artifact_identity": {
+        "base_revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "run_id": "01a16af5-5868-7e7e-9957-34a1a8ba1047",
+        "runtime_build_digest": "30d8564c49a6a50492963112dafdbc1970f2e00610b0747eb60683a3cefe1c9d",
+        "candidate_weight_sha256": "d35468c2141077e2c6096e3c7ed7d8642deeae39977ca1f7349328744b3be23f"
+      },
+      "evidence": [
+        {
+          "path": "verification/task23-apple-dpo-2026-10-23/numerical-report.json",
+          "sha256": "170d17497ec6d27d7a3e414de225096e62e636b0dca583c1857b9b3fb98a959a"
+        },
+        {
+          "path": "verification/task23-apple-dpo-2026-10-23/browser-report.json",
+          "sha256": "263bf2e3c5a5cffed8e62a221749ec79621486205fd77c3aa6e19fd3fef38742"
+        },
+        {
+          "path": "verification/task23-apple-dpo-2026-10-23/independent-zip-and-api-report.json",
+          "sha256": "7357f42a8ccf692ebda2ca243043c3e77627874ae647b90345c02ba5503ef242"
+        },
+        {
+          "path": "verification/task23-apple-dpo-2026-10-23/corruption-and-scope-report.json",
+          "sha256": "7e250bb7da4f7654a15124a5b7bbf22fe2f88637c7f8d319dc98834228f4c7da"
+        }
+      ],
+      "remaining": [
+        "Authored correctness fixtures and test-owner attestations do not establish independent human or customer quality.",
+        "Other devices/models/templates, ORPO/KTO and production model qualification remain unavailable.",
+        "MPS current allocation/headroom measured; true peak and reserved GPU memory are unavailable."
+      ],
+      "production_qualified": false,
+      "hardware_qualified": false
     }
   ]
 }

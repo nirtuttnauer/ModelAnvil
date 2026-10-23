@@ -1,0 +1,10 @@
+{
+  "source_build_digest": "30d8564c49a6a50492963112dafdbc1970f2e00610b0747eb60683a3cefe1c9d",
+  "wrong_worker_contract_refused_without_attempt": true,
+  "corrupt_base_refused_before_update": true,
+  "committed_steps": 0,
+  "settled_steps": 0,
+  "candidate_published": false,
+  "other_project_run_job_download_denied": true,
+  "scope": "Owned isolated artifacts only; one byte was restored in finally."
+}

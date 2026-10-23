@@ -113,6 +113,17 @@ class ActualAlignmentExecutionTests(TestCase):
             self.assertIn('source groups', response.content.decode())
         self.assertEqual(BudgetReservation.all_objects.count(), 0)
 
+    def test_registered_top_level_source_groups_are_also_protected(self):
+        train = self.preference_artifact([{'prompt': 'a', 'chosen': 'ab', 'rejected': 'cd',
+            'source_group_id': 'registered-source'}])
+        held = self.preference_artifact([{'prompt': 'f', 'chosen': 'ab', 'rejected': 'cd',
+            'source_group_id': 'registered-source'}])
+        response = self.client.post('/api/v1/alignment-runs/', self.body(
+            train_dataset_artifact=str(train.artifact_id), held_out_dataset_artifact=str(held.artifact_id)), format='json')
+        self.assertEqual(response.status_code, 400, response.content)
+        self.assertIn('source groups', response.content.decode())
+        self.assertEqual(BudgetReservation.all_objects.count(), 0)
+
     def create(self, algorithm='dpo', **changes):
         response = self.client.post('/api/v1/alignment-runs/', self.body(algorithm, **changes), format='json')
         self.assertEqual(response.status_code, 201, response.content)

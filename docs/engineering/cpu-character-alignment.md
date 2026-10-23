@@ -2,6 +2,8 @@
 
 The alignment workspace executes real numerical updates for five recipes on pinned, committed local character-model weights. This is a synchronous CPU implementation with small inputs; it does not qualify arbitrary language models, GPUs or production deployment. Apply migrations through `0018_add_grpo_algorithm` before using the new artifact pins.
 
+The separate [Apple GPU DPO profile](apple-dpo.md) uses the plain pinned SmolLM2-135M base, durable worker jobs and independent preference/regression gates. Its worker pool and third protected artifact are not required for these CPU character recipes.
+
 | Recipe | Actual optimization and output |
 | --- | --- |
 | GRPO | Fresh same-prompt completion groups, mean/population-standard-deviation advantages, token-level clipped policy updates and exact reference KL, without a value head. Fixed isolated exact/numeric verifier. |

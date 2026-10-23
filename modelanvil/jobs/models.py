@@ -638,6 +638,12 @@ def commit_result(
         if job_status == Job.Status.FAILED and current.status == JobAttempt.Status.SUCCEEDED:
             current.status = JobAttempt.Status.FAILED
             current.save(update_fields=['status','updated_at'])
+    if job.payload.get('type') == 'qualified_dpo' or hasattr(job, 'alignment_run'):
+        from modelanvil.runners.alignment.mps_dpo import finalize_job as finalize_dpo
+        job_status = finalize_dpo(job, job_status)
+        if job_status == Job.Status.FAILED and current.status == JobAttempt.Status.SUCCEEDED:
+            current.status = JobAttempt.Status.FAILED
+            current.save(update_fields=['status', 'updated_at'])
     DeviceClaim.objects.filter(attempt_id=current.pk).update(attempt=None)
     job.status = job_status
     job.lease_expires_at = None
@@ -648,7 +654,7 @@ def commit_result(
 
 
 @transaction.atomic
-def reconcile_expired_leases() -> int:
+def reconcile_expired_leases(*, job_ids=None) -> int:
     """Reconcile attempts whose leases have expired.
 
     Marks the attempt expired, releases the worker slot, and re-queues the
@@ -659,6 +665,8 @@ def reconcile_expired_leases() -> int:
     expired = JobAttempt.objects.select_for_update().filter(
         status=JobAttempt.Status.RUNNING, lease_expires_at__lt=now
     ).order_by("lease_expires_at", "pk")
+    if job_ids is not None:
+        expired = expired.filter(job__job_id__in=job_ids)
 
     count = 0
     for attempt in expired:
@@ -722,5 +730,11 @@ def reconcile_expired_leases() -> int:
             from modelanvil.rag.embedding_jobs import finalize_job as finalize_embedding
             finalize_embedding(job, job.status)
         DeviceClaim.objects.filter(attempt_id=attempt.pk).update(attempt=None)
+        if current_job_attempt and (job.payload.get('type') == 'qualified_dpo' or hasattr(job, 'alignment_run')):
+            from modelanvil.runners.alignment.mps_dpo import finalize_job as finalize_dpo
+            resolved = finalize_dpo(job, job.status)
+            if resolved != job.status:
+                job.status = resolved
+                job.save(update_fields=['status', 'updated_at'])
         count += 1
     return count

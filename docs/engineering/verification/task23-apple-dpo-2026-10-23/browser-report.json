@@ -1,0 +1,16 @@
+{
+  "actual_api": true,
+  "run_id": "01a16afc-6945-71d9-a0e4-aba4ca068be9",
+  "queued_job_id": "01a16afc-6bf3-7c55-8f34-7f0a1fc06e65",
+  "worker_executed": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_overflow": false,
+  "page_errors": [],
+  "adapter_downloaded": true,
+  "disk_picker_emulated_unavailable": true,
+  "failed_quality_gate_visible": true,
+  "production_qualified": false
+}

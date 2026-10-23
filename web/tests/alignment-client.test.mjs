@@ -67,3 +67,20 @@ test('explicit checkpoint takeover uses the bounded resume action and rejects ar
     assert.equal(calls.length, 1);
   } finally { globalThis.fetch = original; }
 });
+
+test('Apple GPU DPO requires a separate regression set and at most twenty steps', async () => {
+  const original = globalThis.fetch; const calls = [];
+  globalThis.fetch = async (path, init) => { calls.push({ path, body: JSON.parse(init.body) }); return new Response('{}'); };
+  try {
+    const plan = { algorithm: 'dpo', worker_pool: 7, policy_model_version: 1, reference_model_version: 1,
+      reward_model_version: null, train_dataset_artifact: artifact, held_out_dataset_artifact: held,
+      regression_dataset_artifact: '80000000-0000-4000-8000-000000000003', total_steps: 3, hyperparameters: {}, verifier_spec: {} };
+    for (const changes of [{ total_steps: 21 }, { algorithm: 'orpo' }, { regression_dataset_artifact: null },
+        { regression_dataset_artifact: held }]) assert.throws(() => client.createAlignmentPlan('test-key', { ...plan, ...changes }));
+    await client.createAlignmentPlan('test-key', plan);
+    await client.registerPreferences('test-key', 'Reviewed labels', [pair], undefined, true);
+    assert.deepEqual(calls[0].body, plan);
+    assert.equal(calls[1].body.labels_reviewed, true);
+    assert.equal(calls.length, 2);
+  } finally { globalThis.fetch = original; }
+});

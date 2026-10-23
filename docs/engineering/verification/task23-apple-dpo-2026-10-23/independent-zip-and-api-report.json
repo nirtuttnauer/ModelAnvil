@@ -1,0 +1,58 @@
+{
+  "independent_cpu_zip_consumer": {
+    "weights_sha256": "d35468c2141077e2c6096e3c7ed7d8642deeae39977ca1f7349328744b3be23f",
+    "prompt": "Once upon a time",
+    "file_hashes": {
+      "adapter_model.safetensors": "d35468c2141077e2c6096e3c7ed7d8642deeae39977ca1f7349328744b3be23f",
+      "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+      "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+      "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+      "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+      "model.safetensors": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+      "adapter_config.json": "b8a79cd82e332a7ee43c339316daf1f2bc7a57078b5e71fad745cc663dda2af2"
+    },
+    "generated_token_ids": [
+      28,
+      665,
+      436,
+      253,
+      1838,
+      8180,
+      3365,
+      14176
+    ],
+    "completion": ", there was a little girl named Lily",
+    "parameter_count": 134975808,
+    "execution": {
+      "backend": "cpu",
+      "device": "cpu",
+      "precision": "fp32",
+      "device_residency_checked": true,
+      "wall_seconds": 0.2577568339984282,
+      "allocated_bytes": null
+    },
+    "consumer_imported_modelanvil_or_django": false,
+    "scope": "Independent process, cpu FP32 inference from actual GPU-produced candidate; no quality or production claim."
+  },
+  "cpu": {
+    "completion": ", there was a little girl named Lily",
+    "usage": {
+      "prompt_tokens": 4,
+      "completion_tokens": 8,
+      "total_tokens": 12
+    },
+    "matched_independent_cpu_zip": true
+  },
+  "mps:0": {
+    "completion": ", there was a little girl named Lily",
+    "usage": {
+      "prompt_tokens": 4,
+      "completion_tokens": 8,
+      "total_tokens": 12
+    },
+    "matched_independent_cpu_zip": true
+  },
+  "archive_sha256": "0e28a60aac881f259505797aacd463c24f8a29794d47f0cc24f5d8d44b3d3671",
+  "model_version_id": "01a16afc-d0ab-7bf4-927b-c9a406016267",
+  "production_qualified": false
+}

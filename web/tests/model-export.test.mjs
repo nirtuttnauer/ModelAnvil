@@ -84,6 +84,15 @@ test('byte labels keep actual binary units visible', () => {
   assert.equal(exportBytes(0), '0 B'); assert.equal(exportBytes(1024), '1.0 KiB'); assert.equal(exportBytes(1024**2), '1.0 MiB'); assert.equal(exportBytes(1024**3), '1.00 GiB');
 });
 
+test('DPO adapter downloads use the scoped alignment endpoint and reject unsupported formats', async () => {
+  await fixture(response(), {}, async f => {
+    await assert.rejects(downloadModelExport('dpo-id', native, 'token', f.controller.signal, () => {}, 'alignment-runs'), /Unsupported/);
+    await downloadModelExport('dpo-id', { ...native, format: 'adapter' }, 'token', f.controller.signal, () => {}, 'alignment-runs');
+    assert.equal(f.calls.find(call => call.path).path, '/api/v1/alignment-runs/dpo-id/download/?export_format=adapter');
+    assert.equal(f.saved.length, 2);
+  });
+});
+
 test('prepared merged and Q8 exports retain the scoped disk download path', async () => {
   for (const format of ['merged', 'gguf-q8']) {
     await fixture(response(), {}, async f => {

@@ -545,6 +545,18 @@ class AlignmentRun(TenantContextModel):
         "artifacts.Artifact", on_delete=models.PROTECT, null=True, blank=True,
         related_name="alignment_validation_runs",
     )
+    regression_dataset_artifact = models.ForeignKey(
+        "artifacts.Artifact", on_delete=models.PROTECT, null=True, blank=True,
+        related_name="alignment_regression_runs",
+    )
+    worker_pool = models.ForeignKey(
+        "jobs.WorkerPool", on_delete=models.PROTECT, null=True, blank=True,
+        related_name="alignment_runs",
+    )
+    job = models.OneToOneField(
+        "jobs.Job", on_delete=models.PROTECT, null=True, blank=True,
+        related_name="alignment_run", editable=False,
+    )
     execution_pins = models.JSONField(default=dict, blank=True)
     execution_token = models.UUIDField(null=True, blank=True, editable=False)
     resource_reservation_id = models.UUIDField(null=True, blank=True, editable=False)

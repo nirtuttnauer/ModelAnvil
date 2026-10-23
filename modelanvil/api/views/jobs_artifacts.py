@@ -83,6 +83,8 @@ class JobSerializer(serializers.ModelSerializer):
         read_only_fields = ("job_id", "project", "status", "desired_action", "attempt_count", "created_at", "updated_at")
 
     def validate(self, attrs):
+        if attrs.get('payload', {}).get('type') == 'qualified_dpo' or (self.instance and hasattr(self.instance, 'alignment_run')):
+            raise serializers.ValidationError('Manage DPO jobs through their alignment run.')
         if attrs.get('payload', {}).get('type') in {'specialist_inference','recipe_execution','embedding_build'} or (self.instance and self.instance.payload.get('type') in {'specialist_inference','recipe_execution','embedding_build'}):
             raise serializers.ValidationError('Manage this job through its specialist, recipe or embedding-build API.')
         if attrs.get('payload', {}).get('type') == 'qualified_evaluation' or (self.instance and self.instance.evaluation_runs.exists()):
@@ -242,6 +244,8 @@ class JobViewSet(ScopedViewSet):
         serializer.save()
 
     def perform_destroy(self, instance):
+        if hasattr(instance, 'alignment_run'):
+            raise serializers.ValidationError('Alignment jobs retain durable execution and accounting history.')
         if instance.payload.get('type') == 'model_import':
             raise serializers.ValidationError('Model import jobs retain their acquisition history.')
         if instance.payload.get('type') in {'specialist_inference','recipe_execution','embedding_build'}:
@@ -251,6 +255,8 @@ class JobViewSet(ScopedViewSet):
     @action(detail=True, methods=("post",))
     def cancel(self, request, job_id=None):
         job = self.get_object()
+        if hasattr(job, 'alignment_run'):
+            raise serializers.ValidationError('Cancel this job through its alignment run.')
         if job.payload.get('type') == 'model_import':
             raise serializers.ValidationError('Cancel this job through its model import.')
         if job.payload.get('type') in {'specialist_inference','recipe_execution','embedding_build'}:
