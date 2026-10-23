@@ -45,8 +45,14 @@ class ActualPublicRetrievalControls(TransactionTestCase):
         canary=Tenant.objects.create(slug='retain-unrelated-tenant',name='Retained unrelated data')
         base=KnowledgeBase.all_objects.create(tenant_id=canary.pk,name='Retained unrelated knowledge')
         from modelanvil.rag.benchmark import benchmark
+        from modelanvil.rag.benchmark_corpus import load,select,PINS
+        corpus,claims=load();docs,queries=select(corpus,claims)
+        plan=json.loads((Path(__file__).resolve().parents[2]/'docs/engineering/verification/task69-retrieval-controls-2026-10-23/frozen-plan.json').read_text())
+        self.assertEqual(plan['document_ids'],[str(d['doc_id']) for d in docs])
+        self.assertEqual(plan['queries'],[{k:v for k,v in row.items() if k!='query'} for row in queries])
+        self.assertEqual(plan['corpus_sha256'],PINS['sha256'])
+        self.assertEqual(plan['protocol'],PROTOCOL)
         result=benchmark()
-        self.assertTrue(result['passed'],json.dumps({k:result[k] for k in ['held_out','frozen_thresholds']}))
         self.assertTrue(KnowledgeBase.all_objects.filter(pk=base.pk,tenant_id=canary.pk).exists())
         self.assertEqual(Tenant.objects.count(),1)
         self.assertFalse(result['ann_neighbor_recall']['exact_fallback_enabled'])
@@ -54,6 +60,7 @@ class ActualPublicRetrievalControls(TransactionTestCase):
         path=os.environ.get('MODELANVIL_RETRIEVAL_REPORT')
         if path:
             with Path(path).open('x') as stream:json.dump(result,stream,indent=2);stream.write('\n')
+        self.assertTrue(result['passed'],json.dumps({k:result[k] for k in ['held_out','frozen_thresholds']}))
         print('TASK69_CONTROLS '+json.dumps({'passed':result['passed'],'documents':result['documents'],'chunks':result['chunks'],
             'development_ndcg':{m:r['metrics']['ndcg@5'] for m,r in result['development'].items()},
             'held_out_ndcg':{m:r['metrics']['ndcg@5'] for m,r in result['held_out'].items()},

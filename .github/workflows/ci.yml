@@ -89,9 +89,19 @@ jobs:
           HF_HOME: ${{ runner.temp }}/embedding-model
           HF_HUB_DISABLE_TELEMETRY: "1"
         run: python -c "from modelanvil.rag.embedding_model import cache_pinned_model; cache_pinned_model()"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5.1.0
+        with:
+          path: ${{ runner.temp }}/retrieval-benchmark
+          key: retrieval-corpus-${{ hashFiles('modelanvil/rag/benchmark-corpus-pins.json') }}
+      - name: Cache licensed public retrieval corpus
+        env:
+          MODELANVIL_BENCHMARK_CACHE: ${{ runner.temp }}/retrieval-benchmark
+        run: python -c "from modelanvil.rag.benchmark_corpus import cache_corpus; cache_corpus()"
       - run: python manage.py test --noinput --tag=pg
         env:
           HF_HOME: ${{ runner.temp }}/embedding-model
+          MODELANVIL_BENCHMARK_CACHE: ${{ runner.temp }}/retrieval-benchmark
+          MODELANVIL_RETRIEVAL_REPORT: ${{ runner.temp }}/retrieval-controls-report.json
           HF_HUB_OFFLINE: "1"
           TRANSFORMERS_OFFLINE: "1"
           RABBITMQ_URL: amqp://guest:guest@localhost:5672/%2F
@@ -101,3 +111,11 @@ jobs:
           DATABASE_PASSWORD: modelanvil
           DATABASE_HOST: localhost
           DATABASE_PORT: "5432"
+      - name: Preserve actual retrieval control report
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: retrieval-controls-${{ github.sha }}
+          path: ${{ runner.temp }}/retrieval-controls-report.json
+          if-no-files-found: ignore
+          retention-days: 14
