@@ -14,7 +14,11 @@ def cache_directory():
 
 
 def cache_corpus():
-    import requests
+    from urllib.request import build_opener,HTTPRedirectHandler,Request
+    class NoRedirect(HTTPRedirectHandler):
+        def redirect_request(self,*args,**kwargs):
+            return None
+    opener=build_opener(NoRedirect())
     root=cache_directory();root.mkdir(parents=True,exist_ok=True)
     for name,url,expected,size in [('scifact.tar.gz',PINS['url'],PINS['sha256'],PINS['byte_size']),
             ('LICENSE-upstream.md',PINS['license_url'],PINS['license_sha256'],542)]:
@@ -28,9 +32,8 @@ def cache_corpus():
         try:
             with tempfile.NamedTemporaryFile(dir=root,prefix='.download-',delete=False) as out:
                 staged=Path(out.name);observed=hashlib.sha256();total=0
-                with requests.get(url,stream=True,timeout=(10,30),allow_redirects=False) as response:
-                    response.raise_for_status()
-                    for block in response.iter_content(65536):
+                with opener.open(Request(url,headers={'User-Agent':'ModelAnvil-public-qualification/1'}),timeout=30) as response:
+                    for block in iter(lambda:response.read(65536),b''):
                         total+=len(block)
                         if total>size:raise ValueError('Public corpus download exceeds its pinned size.')
                         observed.update(block);out.write(block)
