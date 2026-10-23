@@ -78,6 +78,13 @@ def validate_alignment_inputs(run):
     heldout, heldout_digest = read_preferences(run.held_out_dataset_artifact, tenant=run.tenant_id, project=run.project_id)
     if {p['prompt'].strip() for p in train} & {p['prompt'].strip() for p in heldout}:
         raise ValueError('Training and held-out prompts must be disjoint.')
+    source_groups = []
+    for rows in (train, heldout):
+        source_groups.append({row['metadata']['source_group_id'].strip() for row in rows
+            if isinstance(row.get('metadata'), dict) and isinstance(row['metadata'].get('source_group_id'), str)
+            and row['metadata']['source_group_id'].strip()})
+    if source_groups[0] & source_groups[1]:
+        raise ValueError('Training and held-out source groups must be disjoint.')
     policy, policy_artifact, _ = load_character_bundle(run.policy_model_version, tenant=run.tenant_id, project=run.project_id)
     if policy['config.json'].get('runtime') != runtime.RUNTIME_ID:
         raise ValueError('Policy bundle must declare the CPU character runtime.')

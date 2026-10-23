@@ -1,0 +1,28 @@
+{
+  "scope": "Read-only final-source API restart check after the role-change and legacy JSON-query hardening; no labels or training were repeated.",
+  "checks": [
+    {
+      "role": "reviewer_one",
+      "blind_flag_zero_still_redacted": true,
+      "peer_history_redacted": true,
+      "related_identity_paths_refused": true,
+      "export_refused": true
+    },
+    {
+      "role": "reviewer_two",
+      "blind_flag_zero_still_redacted": true,
+      "peer_history_redacted": true,
+      "related_identity_paths_refused": true,
+      "export_refused": true
+    }
+  ],
+  "original_export_unchanged": true,
+  "original_reviewed_artifact_still_in_alignment": true,
+  "source_sha256": {
+    "modelanvil/annotation/preferences.py": "470acb3e2ebd84266d8c4dd684fc58181340885ad2960605e69e633c126aa4c7",
+    "modelanvil/api/views/annotation_views.py": "ad72670ac5b61b01280954158e2db45b6730b84f7d4600b250907d9258a9d2f1",
+    "modelanvil/api/views/model_workspace.py": "bc03d8ac0cdb60c726a2309f3da580504ef8815ef93d52e3e8d2d5e085a4234f",
+    "web/src/pages/AnnotationPage.tsx": "7058f780bb3764d15e538dc58b2b3a72cd0f724e5e12df1babd386c83c1db740",
+    "web/src/api/annotation.ts": "172898f56412a405c707c954ed0f07165924849e1a62b81ab8ef79b891557c30"
+  }
+}

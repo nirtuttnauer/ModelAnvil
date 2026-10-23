@@ -1,0 +1,339 @@
+{
+  "scope": "Real bounded CPU generation and automated distinct-credential review mechanics; no independent human/domain quality or production claim.",
+  "tenant_id": "01a169b8-cdbf-798b-91aa-2cc9b212f046",
+  "project_id": "01a169b8-cdc0-7de3-88d8-ced506449c12",
+  "models": [
+    {
+      "uuid": "01a169b8-cdc7-7eaf-83ac-686a6d918051",
+      "pk": 1,
+      "weights_sha256": "9af1ec9dcb0c198d605f6d8de032f76201fd9e21873375ffa2008dd55dd1b129",
+      "initial_loss": 2.4849066497880004,
+      "final_loss": 2.482515616235273
+    },
+    {
+      "uuid": "01a169b8-cdca-75f1-8fc0-60de39b2955c",
+      "pk": 2,
+      "weights_sha256": "4fcb35c199f368578e44588053d9e52bf285f9974e78343788d69e2ab9ffb6a0",
+      "initial_loss": 2.4849066497880004,
+      "final_loss": 2.4830824184423244
+    }
+  ],
+  "source_revision": "01a169b8-cdec-70a6-8e7e-7b4bc04eb2dd",
+  "source_manifest_digest": "24f627a4eff4f2014f4de35dc1afac5524d9dfed7d76ba9d1cb8f993a491f630",
+  "source_rows": [
+    {
+      "schema_version": "1.0",
+      "sample_id": "446db8f7-c7d9-4407-986a-7a9baac32754",
+      "source_group_id": "authored-preference-0",
+      "blocks": [
+        {
+          "block_id": "text",
+          "type": "text",
+          "text": "abcdef a"
+        }
+      ],
+      "provenance": {
+        "source_snapshot_ref": "authored-review-inputs",
+        "source_record_key": "0",
+        "content_sha256": "ca4a88d82298f6cde9a97b19261be6660f73b1b045c0a8598d3ffc6c5c3b31f3"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "sample_id": "dd4a6b72-bdcf-4814-b010-d299f1a4f540",
+      "source_group_id": "authored-preference-1",
+      "blocks": [
+        {
+          "block_id": "text",
+          "type": "text",
+          "text": "fedcba a"
+        }
+      ],
+      "provenance": {
+        "source_snapshot_ref": "authored-review-inputs",
+        "source_record_key": "1",
+        "content_sha256": "e5de2fa83809056fc21fcce053369841272fd2457b345e3a7d2fa05dea450355"
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "sample_id": "a85919ea-f88f-49f1-b17e-65a1c54f5372",
+      "source_group_id": "authored-preference-2",
+      "blocks": [
+        {
+          "block_id": "text",
+          "type": "text",
+          "text": "badcfe a"
+        }
+      ],
+      "provenance": {
+        "source_snapshot_ref": "authored-review-inputs",
+        "source_record_key": "2",
+        "content_sha256": "5ad7c621bb6d895728ef7995acac1670f151446278eb6d0ca8599d472d9486d1"
+      }
+    }
+  ],
+  "pairs": [
+    {
+      "comparison_id": "01a169b8-ce86-76a9-891f-4cf826c3463f",
+      "conversation_id": "01a169b8-ce82-7362-bb20-10c3966ce1d5",
+      "messages": [
+        {
+          "role": "user",
+          "content": "abcdef a"
+        }
+      ],
+      "sides": [
+        {
+          "label": "A",
+          "text": "b"
+        },
+        {
+          "label": "B",
+          "text": "c"
+        }
+      ],
+      "vote": "",
+      "created_at": "2026-10-23T17:04:41.606822Z",
+      "voted_at": null,
+      "review_campaign_id": null,
+      "review_eligible": true
+    },
+    {
+      "comparison_id": "01a169b8-ce9d-78fd-b723-a67f92083c1f",
+      "conversation_id": "01a169b8-ce9a-7a58-9352-f2836c703993",
+      "messages": [
+        {
+          "role": "user",
+          "content": "fedcba a"
+        }
+      ],
+      "sides": [
+        {
+          "label": "A",
+          "text": "c"
+        },
+        {
+          "label": "B",
+          "text": "b"
+        }
+      ],
+      "vote": "",
+      "created_at": "2026-10-23T17:04:41.629539Z",
+      "voted_at": null,
+      "review_campaign_id": null,
+      "review_eligible": true
+    },
+    {
+      "comparison_id": "01a169b8-ceb4-718f-9c92-46adc1809a15",
+      "conversation_id": "01a169b8-ceb1-72a9-ae50-2a81a05219d2",
+      "messages": [
+        {
+          "role": "user",
+          "content": "badcfe a"
+        }
+      ],
+      "sides": [
+        {
+          "label": "A",
+          "text": "c"
+        },
+        {
+          "label": "B",
+          "text": "b"
+        }
+      ],
+      "vote": "",
+      "created_at": "2026-10-23T17:04:41.652743Z",
+      "voted_at": null,
+      "review_campaign_id": null,
+      "review_eligible": true
+    }
+  ],
+  "actual_inferences": [
+    {
+      "id": "chatcmpl-01a169b8ce6e79f4a545ae6feb3d9ccd",
+      "created": 1792775081,
+      "model": "01a169b8-cdc7-7eaf-83ac-686a6d918051",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "b"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 10,
+        "completion_tokens": 2,
+        "total_tokens": 12
+      },
+      "modelanvil": {
+        "device": "cpu",
+        "elapsed_seconds": 0.0023224590004247148
+      }
+    },
+    {
+      "id": "chatcmpl-01a169b8ce777952b0317e5ef9ceae6d",
+      "created": 1792775081,
+      "model": "01a169b8-cdca-75f1-8fc0-60de39b2955c",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "c"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 10,
+        "completion_tokens": 2,
+        "total_tokens": 12
+      },
+      "modelanvil": {
+        "device": "cpu",
+        "elapsed_seconds": 0.0023174580001068534
+      }
+    },
+    {
+      "id": "chatcmpl-01a169b8ce8a76d8a0cd58ea8544d1c5",
+      "created": 1792775081,
+      "model": "01a169b8-cdc7-7eaf-83ac-686a6d918051",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "b"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 10,
+        "completion_tokens": 2,
+        "total_tokens": 12
+      },
+      "modelanvil": {
+        "device": "cpu",
+        "elapsed_seconds": 0.0021523329996853136
+      }
+    },
+    {
+      "id": "chatcmpl-01a169b8ce9375b784b245cc3bdb13c8",
+      "created": 1792775081,
+      "model": "01a169b8-cdca-75f1-8fc0-60de39b2955c",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "c"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 10,
+        "completion_tokens": 2,
+        "total_tokens": 12
+      },
+      "modelanvil": {
+        "device": "cpu",
+        "elapsed_seconds": 0.002141791999747511
+      }
+    },
+    {
+      "id": "chatcmpl-01a169b8cea177009ad40da85e0f7b5e",
+      "created": 1792775081,
+      "model": "01a169b8-cdc7-7eaf-83ac-686a6d918051",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "b"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 10,
+        "completion_tokens": 2,
+        "total_tokens": 12
+      },
+      "modelanvil": {
+        "device": "cpu",
+        "elapsed_seconds": 0.0024904999991122168
+      }
+    },
+    {
+      "id": "chatcmpl-01a169b8ceaa730a92dcf54d5d5cd9ed",
+      "created": 1792775081,
+      "model": "01a169b8-cdca-75f1-8fc0-60de39b2955c",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "c"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 10,
+        "completion_tokens": 2,
+        "total_tokens": 12
+      },
+      "modelanvil": {
+        "device": "cpu",
+        "elapsed_seconds": 0.0022475840014521964
+      }
+    }
+  ],
+  "campaign": {
+    "campaign_id": "01a169b8-ceb7-71b3-abf6-c2c27acf0149",
+    "name": "Authored formal preference mechanics",
+    "status": "active",
+    "seed_mode": "manual",
+    "current_cycle": 0,
+    "max_cycles": 1,
+    "budget_limit_dollars": 0.0,
+    "accumulated_cost_dollars": 0.0,
+    "held_out_audit_digest": "",
+    "active_model_id": null,
+    "label_schema": {
+      "schema_id": "01a169b8-ceb6-7335-991e-aca9426d303d",
+      "name": "Authored formal preference mechanics \u00b7 labels bbc75595",
+      "kind": "preference_ranking",
+      "classes": [],
+      "specification": {}
+    },
+    "rubric": {
+      "rubric_id": "01a169b8-ceb7-7ece-8d6f-008c26ced437",
+      "name": "Authored formal preference mechanics \u00b7 rubric bbc75595",
+      "revision_no": 1,
+      "guidelines_text": "Compare the exact responses against the prompt. Give a rubric reason. Use tie or abstain when appropriate. This authored exercise tests review mechanics, not domain quality.",
+      "criteria": []
+    },
+    "configuration": {
+      "audit_sample_refs": [],
+      "draft_source": "imported",
+      "draft_prompt": "{text}\n"
+    },
+    "batches": [],
+    "snapshots": [],
+    "created_at": "2026-10-23T17:04:41.655313Z"
+  }
+}

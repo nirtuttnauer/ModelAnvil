@@ -74,7 +74,8 @@ def require_pairs_live(task):
 @transaction.atomic
 def start_batch(campaign, identifiers, assigned, creator, source_revision=None):
     from modelanvil.annotation.campaign_engine import CampaignEngine
-    if campaign.label_schema.kind != 'preference_ranking' or campaign.batches.exists() or campaign.seed_mode != 'manual':
+    if (campaign.status != 'active' or campaign.label_schema.kind != 'preference_ranking'
+            or campaign.batches.exists() or campaign.seed_mode != 'manual'):
         raise ValueError('Start formal review in a new manual preference campaign.')
     if (not isinstance(identifiers, list) or not 1 <= len(identifiers) <= 32
             or len(set(identifiers)) != len(identifiers)):
@@ -254,7 +255,8 @@ def export(snapshot):
             'kind': 'reviewed_preferences' if reason else 'alignment_preferences',
             'name': snapshot.campaign.name, 'row_count': len(pairs), 'snapshot_id': str(snapshot.snapshot_id)})
     snapshot.qualification = {'formal_preference': {'artifact': ref, 'alignment_eligible': not bool(reason),
-        'reason': reason, 'excluded': excluded, 'coverage': coverage(snapshot.campaign.batches.get(cycle_no=snapshot.cycle_no))}}
+        'reason': reason, 'binary_pairs': len(pairs), 'excluded': excluded,
+        'coverage': coverage(snapshot.campaign.batches.get(cycle_no=snapshot.cycle_no))}}
     snapshot.save(update_fields=['qualification', 'updated_at'])
     return ref
 

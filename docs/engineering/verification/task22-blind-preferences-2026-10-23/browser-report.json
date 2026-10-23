@@ -1,0 +1,315 @@
+{
+  "scope": "Real bounded CPU generation and automated distinct-credential review mechanics; no independent human/domain quality or production claim.",
+  "viewports": [
+    1440,
+    390
+  ],
+  "batch": {
+    "batch_id": "01a169bc-f1b8-7e03-8d0f-79358297d2b0",
+    "cycle_no": 1,
+    "status": "reviewing",
+    "sample_count": 3,
+    "reviewed_count": 0,
+    "approved_count": 0,
+    "snapshot_manifest_digest": "",
+    "drafting_model_id": null,
+    "draft_configuration": {
+      "prompt": "{text}\n",
+      "rubric_id": "01a169b8-ceb7-7ece-8d6f-008c26ced437"
+    },
+    "created_at": "2026-10-23T17:09:12.760737Z",
+    "preference_coverage": {
+      "required_reviews": 6,
+      "submitted_reviews": 0,
+      "missing_reviews": 6,
+      "unanimous_pairs": 0,
+      "resolved_pairs": 0,
+      "disagreements": 0,
+      "agreement_denominator": 3,
+      "agreement_rate": 0
+    }
+  },
+  "snapshot": {
+    "snapshot_id": "01a169bd-30cc-7498-9fa4-74ad0b8f25ac",
+    "cycle_no": 1,
+    "item_count": 3,
+    "manifest_digest": "66c3f45b1b39bf7669e49503493ee9df38761cfaea00d9bc0af32d968b0b1399",
+    "created_at": "2026-10-23T17:09:28.908306Z",
+    "dataset_revision_id": null,
+    "training_run_id": null,
+    "evaluation_run_id": null,
+    "qualification": {
+      "formal_preference": {
+        "artifact": {
+          "artifact_id": "01a169bd-3128-7b76-80fd-bc11a4264fd4",
+          "sha256": "0fa8a7e4c51740a98a7ea245bada90b54349eda8ce4549432ae99a9b147e5932",
+          "byte_size": 3293
+        },
+        "alignment_eligible": true,
+        "reason": "",
+        "binary_pairs": 1,
+        "excluded": {
+          "tie": 1,
+          "abstain": 1
+        },
+        "coverage": {
+          "required_reviews": 6,
+          "submitted_reviews": 6,
+          "missing_reviews": 0,
+          "unanimous_pairs": 2,
+          "resolved_pairs": 3,
+          "disagreements": 0,
+          "agreement_denominator": 3,
+          "agreement_rate": 0.6666666666666666
+        }
+      }
+    }
+  },
+  "records": [
+    {
+      "task_id": "01a169bc-f1ba-7ae6-8fdf-c1e2e741abd1",
+      "record_id": "01a169bd-2ed5-7a90-9ac1-d3914b5b96aa",
+      "revision_no": 3,
+      "reviewer_id": "api_key:01a169b8-cdc1-7969-ac8b-620e57a2899a",
+      "original_prediction": {},
+      "human_label": {
+        "label": "candidate_a",
+        "reason": "Authored manager fixture inspected both conflicting reviews; explicit adjudication tests mechanics, not domain quality."
+      },
+      "decision": "corrected",
+      "preference_choice": "candidate_a",
+      "is_blind_review": true,
+      "is_adjudication": true,
+      "created_at": "2026-10-23T17:09:28.405583Z"
+    },
+    {
+      "task_id": "01a169bc-f1ba-7ae6-8fdf-c1e2e741abd1",
+      "record_id": "01a169bd-19a4-782b-bd56-86c637d32f2a",
+      "revision_no": 2,
+      "reviewer_id": "api_key:01a169b8-cdc2-7cbf-b118-ba564628cb12",
+      "original_prediction": {},
+      "human_label": {
+        "label": "candidate_b",
+        "reason": "Authored reviewer_two fixture: candidate_b under the pinned guidelines; mechanics only."
+      },
+      "decision": "corrected",
+      "preference_choice": "candidate_b",
+      "is_blind_review": true,
+      "is_adjudication": false,
+      "created_at": "2026-10-23T17:09:22.980785Z"
+    },
+    {
+      "task_id": "01a169bc-f1ba-7ae6-8fdf-c1e2e741abd1",
+      "record_id": "01a169bc-ff6c-7583-9c1c-8cc40ff4c560",
+      "revision_no": 1,
+      "reviewer_id": "api_key:01a169b8-cdc1-79c4-8b2e-7ff73183ad14",
+      "original_prediction": {},
+      "human_label": {
+        "label": "candidate_a",
+        "reason": "Authored reviewer_one fixture: candidate_a under the pinned guidelines; mechanics only."
+      },
+      "decision": "corrected",
+      "preference_choice": "candidate_a",
+      "is_blind_review": true,
+      "is_adjudication": false,
+      "created_at": "2026-10-23T17:09:16.268759Z"
+    },
+    {
+      "task_id": "01a169bc-f1ba-776e-b992-404f07b967f4",
+      "record_id": "01a169bd-1d06-7437-b004-420783269f5d",
+      "revision_no": 2,
+      "reviewer_id": "api_key:01a169b8-cdc2-7cbf-b118-ba564628cb12",
+      "original_prediction": {},
+      "human_label": {
+        "label": "tie",
+        "reason": "Authored reviewer_two fixture: tie under the pinned guidelines; mechanics only."
+      },
+      "decision": "corrected",
+      "preference_choice": "tie",
+      "is_blind_review": true,
+      "is_adjudication": false,
+      "created_at": "2026-10-23T17:09:23.846017Z"
+    },
+    {
+      "task_id": "01a169bc-f1ba-776e-b992-404f07b967f4",
+      "record_id": "01a169bd-021e-7b2f-94df-b8e62edf9629",
+      "revision_no": 1,
+      "reviewer_id": "api_key:01a169b8-cdc1-79c4-8b2e-7ff73183ad14",
+      "original_prediction": {},
+      "human_label": {
+        "label": "tie",
+        "reason": "Authored reviewer_one fixture: tie under the pinned guidelines; mechanics only."
+      },
+      "decision": "corrected",
+      "preference_choice": "tie",
+      "is_blind_review": true,
+      "is_adjudication": false,
+      "created_at": "2026-10-23T17:09:16.958694Z"
+    },
+    {
+      "task_id": "01a169bc-f1b9-72b5-b7b2-cb0f3c9f3db1",
+      "record_id": "01a169bd-21eb-7e5b-8d02-ad9949fceb5a",
+      "revision_no": 2,
+      "reviewer_id": "api_key:01a169b8-cdc2-7cbf-b118-ba564628cb12",
+      "original_prediction": {},
+      "human_label": {
+        "label": "abstain",
+        "reason": "Authored reviewer_two fixture: abstain under the pinned guidelines; mechanics only."
+      },
+      "decision": "corrected",
+      "preference_choice": "abstain",
+      "is_blind_review": true,
+      "is_adjudication": false,
+      "created_at": "2026-10-23T17:09:25.099710Z"
+    },
+    {
+      "task_id": "01a169bc-f1b9-72b5-b7b2-cb0f3c9f3db1",
+      "record_id": "01a169bd-0731-7d14-bba8-ae509733324e",
+      "revision_no": 1,
+      "reviewer_id": "api_key:01a169b8-cdc1-79c4-8b2e-7ff73183ad14",
+      "original_prediction": {},
+      "human_label": {
+        "label": "abstain",
+        "reason": "Authored reviewer_one fixture: abstain under the pinned guidelines; mechanics only."
+      },
+      "decision": "corrected",
+      "preference_choice": "abstain",
+      "is_blind_review": true,
+      "is_adjudication": false,
+      "created_at": "2026-10-23T17:09:18.257932Z"
+    }
+  ],
+  "exported": {
+    "excluded": {
+      "abstain": 1,
+      "tie": 1
+    },
+    "pairs": [
+      {
+        "chosen": "b",
+        "metadata": {
+          "origin": {
+            "comparison": "01a169b8-ce86-76a9-891f-4cf826c3463f",
+            "messages": [
+              {
+                "content": "abcdef a",
+                "role": "user"
+              }
+            ],
+            "models": [
+              {
+                "identity": "038976f4c54a05b6b1cadbc60d10bfe873f1e6310395089c9b9b315158a8c663",
+                "manifest": {
+                  "artifact_id": "01a169b8-cdc4-78f5-9547-e8fe92c73801",
+                  "byte_size": 2340,
+                  "sha256": "686a199837df6d68a7d0cf4c9a918511941074984ac55391d85a501839b548ea"
+                },
+                "model_version": "01a169b8-cdc7-7eaf-83ac-686a6d918051",
+                "tokenizer": "01a169b8-cdc2-741c-b903-20f76ee50bcf"
+              },
+              {
+                "identity": "6325326c158d518f27ed09b21fa270e49f3dbb6538732073ae530387073d5a3d",
+                "manifest": {
+                  "artifact_id": "01a169b8-cdc8-780f-a306-fed8aad09cd6",
+                  "byte_size": 2340,
+                  "sha256": "7cf47b4a4b90e77751d7696b83057416f3ccc710934bea5dadd001a795c4d6b4"
+                },
+                "model_version": "01a169b8-cdca-75f1-8fc0-60de39b2955c",
+                "tokenizer": "01a169b8-cdc2-741c-b903-20f76ee50bcf"
+              }
+            ],
+            "raw_single_user_prompt": true,
+            "requests": [
+              "01a169b8-ce6e-79f4-a545-ae6feb3d9ccd",
+              "01a169b8-ce77-7952-b031-7e5ef9ceae6d"
+            ],
+            "rubric": {
+              "criteria": [],
+              "guidelines": "Compare the exact responses against the prompt. Give a rubric reason. Use tie or abstain when appropriate. This authored exercise tests review mechanics, not domain quality.",
+              "id": "01a169b8-ceb7-7ece-8d6f-008c26ced437",
+              "revision": 1
+            },
+            "settings": [
+              {
+                "max_tokens": 4,
+                "prompt_format": "model",
+                "seed": 42,
+                "temperature": 0
+              },
+              {
+                "max_tokens": 4,
+                "prompt_format": "model",
+                "seed": 42,
+                "temperature": 0
+              }
+            ],
+            "source": {
+              "manifest_digest": "24f627a4eff4f2014f4de35dc1afac5524d9dfed7d76ba9d1cb8f993a491f630",
+              "provenance": {
+                "content_sha256": "ca4a88d82298f6cde9a97b19261be6660f73b1b045c0a8598d3ffc6c5c3b31f3",
+                "source_record_key": "0",
+                "source_snapshot_ref": "authored-review-inputs"
+              },
+              "revision": "01a169b8-cdec-70a6-8e7e-7b4bc04eb2dd",
+              "sample_id": "446db8f7-c7d9-4407-986a-7a9baac32754"
+            },
+            "source_group": "authored-preference-0"
+          },
+          "reviews": [
+            {
+              "adjudication": false,
+              "choice": {
+                "label": "candidate_a",
+                "reason": "Authored reviewer_one fixture: candidate_a under the pinned guidelines; mechanics only."
+              },
+              "record": "01a169bc-ff6c-7583-9c1c-8cc40ff4c560",
+              "reviewer": "api_key:01a169b8-cdc1-79c4-8b2e-7ff73183ad14",
+              "revision": 1
+            },
+            {
+              "adjudication": false,
+              "choice": {
+                "label": "candidate_b",
+                "reason": "Authored reviewer_two fixture: candidate_b under the pinned guidelines; mechanics only."
+              },
+              "record": "01a169bd-19a4-782b-bd56-86c637d32f2a",
+              "reviewer": "api_key:01a169b8-cdc2-7cbf-b118-ba564628cb12",
+              "revision": 2
+            },
+            {
+              "adjudication": true,
+              "choice": {
+                "label": "candidate_a",
+                "reason": "Authored manager fixture inspected both conflicting reviews; explicit adjudication tests mechanics, not domain quality."
+              },
+              "record": "01a169bd-2ed5-7a90-9ac1-d3914b5b96aa",
+              "reviewer": "api_key:01a169b8-cdc1-7969-ac8b-620e57a2899a",
+              "revision": 3
+            }
+          ],
+          "snapshot": "01a169bd-30cc-7498-9fa4-74ad0b8f25ac",
+          "source_group_id": "authored-preference-0"
+        },
+        "prompt": "abcdef a",
+        "rejected": "c"
+      }
+    ],
+    "rubric": {
+      "criteria": [],
+      "guidelines": "Compare the exact responses against the prompt. Give a rubric reason. Use tie or abstain when appropriate. This authored exercise tests review mechanics, not domain quality.",
+      "id": "01a169b8-ceb7-7ece-8d6f-008c26ced437",
+      "revision": 1
+    },
+    "schema_version": "modelanvil.preference-pairs.v1"
+  },
+  "forced_blinding": true,
+  "personal_pending_queues": true,
+  "missing_reviews_blocked_closure": true,
+  "alignment_picker_selected": "01a169bd-3128-7b76-80fd-bc11a4264fd4",
+  "alignment_picker_options": [
+    "Select committed preference bytes",
+    "Authored formal preference mechanics · 1 pairs"
+  ],
+  "page_errors": [],
+  "continuation": "All assignment/review/adjudication/export assertions passed in preference-browser.cjs. This continuation opened the alignment form using its actual New alignment plan control and selected the exact committed artifact; no reviews were resubmitted."
+}

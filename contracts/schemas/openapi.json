@@ -8743,6 +8743,192 @@
           }
         }
       }
+    },
+    "/labeling-campaigns/{campaign_id}/generated-pairs/": {
+      "post": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "Assign one frozen formal blind batch from verified measured local pairs",
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabelingBatch"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid inputs"
+          },
+          "409": {
+            "description": "Workflow state or revision conflict"
+          },
+          "403": {
+            "description": "Insufficient role"
+          }
+        },
+        "parameters": [
+          {
+            "name": "campaign_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeneratedPreferenceBatchInput"
+              }
+            }
+          }
+        },
+        "description": "Manager only. Requires versioned guidelines and 2\u20138 distinct reviewer credentials. No response text or imported labels are accepted; the exact original generation digests and model/tokenizer pins are verified. Completed reviews and explicit adjudication are required before publication."
+      },
+      "get": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "Manager lists unused local measured pairs and eligible reviewer credentials",
+        "parameters": [
+          {
+            "name": "campaign_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project-scoped comparisons and reviewer options; no credential secrets.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "comparisons": {
+                      "type": "array",
+                      "maxItems": 32,
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "reviewers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "principal_id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Manager role required"
+          }
+        }
+      }
+    },
+    "/annotation-snapshots/{snapshot_id}/preference-pairs/": {
+      "get": {
+        "tags": [
+          "Annotation"
+        ],
+        "summary": "Download verified immutable formal preference pairs",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "schema_version",
+                    "pairs"
+                  ],
+                  "properties": {
+                    "schema_version": {
+                      "const": "modelanvil.preference-pairs.v1"
+                    },
+                    "pairs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "prompt",
+                          "chosen",
+                          "rejected",
+                          "metadata"
+                        ],
+                        "properties": {
+                          "prompt": {
+                            "type": "string"
+                          },
+                          "chosen": {
+                            "type": "string"
+                          },
+                          "rejected": {
+                            "type": "string"
+                          },
+                          "metadata": {
+                            "type": "object",
+                            "description": "Pinned model manifests, prompt messages/settings, rubric/source provenance and immutable review revisions."
+                          }
+                        }
+                      }
+                    },
+                    "excluded": {
+                      "type": "object"
+                    },
+                    "rubric": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "400": {
+            "description": "Changed, unavailable or oversized input/export bytes"
+          }
+        },
+        "parameters": [
+          {
+            "name": "snapshot_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "description": "Manager only. Revalidates current model/tokenizer/rubric/source pins and reads committed checksummed bytes. Ties, abstentions and missing reviews never become binary choices. Eligible bounded artifacts appear directly in alignment preferences; larger formatted conversations are exported with explicit compatibility limits."
+      }
     }
   },
   "components": {
@@ -10472,6 +10658,51 @@
             "type": "object",
             "readOnly": true,
             "description": "Prompt and rubric pinned when the batch opens."
+          },
+          "preference_coverage": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "readOnly": true,
+            "properties": {
+              "required_reviews": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "submitted_reviews": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "missing_reviews": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "unanimous_pairs": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "resolved_pairs": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "disagreements": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "agreement_denominator": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "agreement_rate": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 1
+              }
+            }
           }
         }
       },
@@ -10522,7 +10753,7 @@
           "qualification": {
             "type": "object",
             "readOnly": true,
-            "description": "Recorded independent evaluation decision, threshold/baseline comparison and preserved prior model."
+            "description": "Recorded qualification; formal_preference records committed artifact reference, binary pair count, excluded ties/abstentions, complete coverage and explicit CPU alignment compatibility limits."
           }
         }
       },
@@ -10712,7 +10943,8 @@
             "type": "string"
           },
           "content": {
-            "type": "object"
+            "type": "object",
+            "description": "Formal task responses always whitelist only prompt and randomized candidate_a/candidate_b. Client blind flags cannot reveal identity mapping or peer labels."
           },
           "status": {
             "type": "string"
@@ -10726,6 +10958,18 @@
                 "type": "null"
               }
             ]
+          },
+          "formal_preference": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "assigned_to_me": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "reviewed_by_me": {
+            "type": "boolean",
+            "readOnly": true
           }
         }
       },
@@ -10742,11 +10986,22 @@
             ]
           },
           "human_label": {
-            "type": "object"
+            "type": "object",
+            "description": "Formal corrected choices require label candidate_a/candidate_b/tie/abstain and a nonblank rubric reason of at most 2,000 characters. Reject/skip also require the reason."
           },
           "expected_revision": {
             "type": "integer",
             "minimum": 1
+          },
+          "blind_review": {
+            "type": "boolean",
+            "default": false,
+            "description": "Always enforced for formal preference reviews."
+          },
+          "adjudicate": {
+            "type": "boolean",
+            "default": false,
+            "description": "Manager-only explicit resolution after every assigned review or abstention."
           }
         },
         "required": [
@@ -14815,6 +15070,45 @@
               "format": "uuid"
             },
             "description": "Optional exact installed target UUIDs approved by a project administrator; omitted list preserves an existing policy. Disabled by default and overridden by offline mode."
+          }
+        }
+      },
+      "GeneratedPreferenceBatchInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "comparisons",
+          "reviewers"
+        ],
+        "properties": {
+          "comparisons": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "reviewers": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 8,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "maxLength": 128
+            },
+            "description": "Active project reviewer credentials, distinct from the generator and each other. Known user owners must be distinct."
+          },
+          "source_revision": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "description": "Optional immutable source. Raw prompts must match eligible training rows; protected groups are excluded."
           }
         }
       }

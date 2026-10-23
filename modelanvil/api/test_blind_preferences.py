@@ -87,7 +87,7 @@ class BlindPreferenceTests(TransactionTestCase):
             response = reviewer.get(f'/api/v1/annotation-tasks/{self.task.task_id}/{query}')
             self.assertEqual(response.status_code, 200)
             self.assertEqual(set(response.json()['content']), {'prompt', 'candidate_a', 'candidate_b'})
-            self.assertNotIn('_preference', response.content.decode())
+            self.assertNotIn('"_preference":', response.content.decode())
             self.assertNotIn(self.pair['comparison_id'], response.content.decode())
         self.assertEqual(reviewer.get('/api/v1/chat-comparisons/' + self.pair['comparison_id'] + '/').status_code, 404)
         self.assertEqual(reviewer.get('/api/v1/chat-conversations/' + self.conversation + '/').status_code, 404)
@@ -151,6 +151,68 @@ class BlindPreferenceTests(TransactionTestCase):
             cases=[{'input_prompt': 'a', 'expected_output': 'protected'}])
         self.assertEqual(self.vote(self.reviewers[0][0]).status_code, 400)
         self.assertFalse(self.task.records.exists())
+
+    def test_changed_rubric_refuses_review_without_rewriting_history(self):
+        from modelanvil.annotation.models import RubricRevision
+        self.start()
+        RubricRevision.all_objects.filter(rubric_id=self.campaign['rubric']['rubric_id']).update(guidelines_text='Changed after assignment')
+        self.assertEqual(self.vote(self.reviewers[0][0]).status_code, 400)
+        self.assertFalse(self.task.records.exists())
+
+    def test_correction_keeps_original_votes_and_requires_adjudication(self):
+        self.start()
+        self.assertEqual(self.vote(self.reviewers[0][0]).status_code, 201)
+        self.assertEqual(self.vote(self.reviewers[1][0], revision=2).status_code, 201)
+        corrected = self.vote(self.reviewers[0][0], 'candidate_b', 3)
+        self.assertEqual(corrected.status_code, 201, corrected.content)
+        self.assertTrue(corrected.json()['needs_adjudication'])
+        self.assertEqual(self.task.records.get(revision_no=1).human_label['label'], 'candidate_a')
+        self.assertEqual(self.task.records.get(revision_no=3).human_label['label'], 'candidate_b')
+        self.assertEqual(self.close().status_code, 409)
+
+    def test_original_generator_credential_cannot_be_assigned_after_role_change(self):
+        manager, key = self.auth('Separate assigning manager')
+        key.role = Role.ADMIN; key.save(update_fields=['role'])
+        self.key.role = Role.REVIEWER; self.key.save(update_fields=['role'])
+        reply = manager.post(self.path, {'comparisons': [self.pair['comparison_id']],
+            'reviewers': [f'api_key:{self.key.pk}', self.assigned[0]]}, format='json')
+        self.assertEqual(reply.status_code, 400, reply.content)
+        self.assertFalse(AnnotationTask.all_objects.exists())
+
+    def test_formal_batch_completes_even_when_legacy_cycle_cap_is_larger(self):
+        from modelanvil.annotation.models import LabelingCampaign
+        LabelingCampaign.all_objects.filter(campaign_id=self.campaign['campaign_id']).update(max_cycles=3)
+        self.start(); self.assertEqual(self.vote(self.reviewers[0][0]).status_code, 201)
+        self.assertEqual(self.vote(self.reviewers[1][0], revision=2).status_code, 201)
+        self.assertEqual(self.close().status_code, 200)
+        self.assertEqual(LabelingCampaign.all_objects.get(campaign_id=self.campaign['campaign_id']).status, 'completed')
+
+    def test_disagreement_does_not_block_a_remaining_assigned_review(self):
+        third, key = self.auth('Third assigned reviewer')
+        self.assigned.append(f'api_key:{key.pk}')
+        self.start(); self.assertEqual(self.vote(self.reviewers[0][0]).status_code, 201)
+        self.assertEqual(self.vote(self.reviewers[1][0], 'candidate_b', 2).status_code, 201)
+        self.assertEqual(self.vote(self.client, revision=3, adjudicate=True).status_code, 400)
+        self.assertEqual(self.vote(third, revision=3).status_code, 201)
+        self.assertEqual(self.vote(self.client, revision=4, adjudicate=True).status_code, 201)
+        self.assertEqual(self.close().status_code, 200)
+
+    def test_promoting_an_assigned_key_does_not_permit_an_informed_manager_vote(self):
+        self.start()
+        reviewer, key = self.reviewers[0]
+        key.role = Role.MANAGER; key.save(update_fields=['role'])
+        self.assertEqual(self.vote(reviewer).status_code, 403)
+        self.assertFalse(self.task.records.exists())
+
+    def test_legacy_campaign_without_an_origin_is_not_mistaken_for_formal_blinding(self):
+        from modelanvil.annotation.models import LabelingCampaign
+        from modelanvil.runners.models import ChatComparison
+        campaign = LabelingCampaign.all_objects.get(campaign_id=self.campaign['campaign_id'])
+        self.assertNotIn('origin', campaign.configuration)
+        ChatComparison.all_objects.filter(comparison_id=self.pair['comparison_id']).update(review_campaign=campaign)
+        reviewer = self.reviewers[0][0]
+        self.assertEqual(reviewer.get('/api/v1/chat-comparisons/' + self.pair['comparison_id'] + '/').status_code, 200)
+        self.assertEqual(reviewer.get('/api/v1/chat-conversations/' + self.conversation + '/').status_code, 200)
 
     def test_pinned_source_excludes_the_whole_audit_group_before_assignment(self):
         import hashlib

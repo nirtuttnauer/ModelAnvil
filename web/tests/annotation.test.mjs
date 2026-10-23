@@ -5,6 +5,15 @@ import { initialLabel, matchesQueue, nextPending, parseSamples, validLabel, vali
 const schema = { kind: 'classification', classes: ['positive', 'negative'] };
 const task = (id, review = null, flagged = false) => ({ task_id: id, sample_ref: `sample-${id}`, status: 'pending', needs_adjudication: flagged, assigned_reviewer: '', content: { text: `Source ${id}`, draft_prediction: { predicted_label: 'positive' } }, latest_review: review });
 
+test('another assigned reviewer record does not remove my formal task from pending', () => {
+  const formal={...task('pair',{decision:'corrected'}),formal_preference:true,assigned_to_me:true,reviewed_by_me:false};
+  assert.equal(matchesQueue(formal,'pending'),true);
+  assert.equal(matchesQueue(formal,'reviewed'),false);
+  assert.equal(nextPending([task('current'),formal],'current'),'pair');
+  assert.equal(matchesQueue({...formal,reviewed_by_me:true},'pending'),false);
+  assert.equal(matchesQueue({...formal,assigned_to_me:false},'pending'),false);
+});
+
 test('manual/model labels preserve exact text and schema membership', () => {
   assert.equal(initialLabel(task('one')), 'positive');
   assert.equal(initialLabel(task('one', { human_label: { label: 'negative' } })), 'negative');

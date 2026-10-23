@@ -217,7 +217,9 @@ class ConversationViewSet(TenantScopedViewSet):
         from modelanvil.identity.models import role_at_least, Role
         queryset = super().get_queryset()
         if not role_at_least(self.request.modelanvil_role, Role.MANAGER):
-            queryset = queryset.exclude(comparisons__review_campaign__configuration__origin='formal_preference')
+            from modelanvil.annotation.models import LabelingCampaign
+            formal = LabelingCampaign.all_objects.filter(tenant_id=get_active_tenant(), configuration__origin='formal_preference')
+            queryset = queryset.exclude(comparisons__review_campaign__in=formal)
         return queryset
 
     def perform_create(self, serializer):
@@ -296,8 +298,10 @@ class ComparisonViewSet(TenantScopedViewSet):
             Q(second_request__model_version_id__in=versions) | Q(second_request__model_version__isnull=True, second_request__provider_snapshot__id__in=targets))
         from modelanvil.identity.models import role_at_least, Role
         if not role_at_least(self.request.modelanvil_role, Role.MANAGER):
-            queryset = queryset.exclude(Q(review_campaign__configuration__origin='formal_preference') |
-                Q(conversation__comparisons__review_campaign__configuration__origin='formal_preference'))
+            from modelanvil.annotation.models import LabelingCampaign
+            formal = LabelingCampaign.all_objects.filter(tenant_id=get_active_tenant(), configuration__origin='formal_preference')
+            queryset = queryset.exclude(Q(review_campaign__in=formal) |
+                Q(conversation__comparisons__review_campaign__in=formal))
         return queryset
 
     def create(self, request):

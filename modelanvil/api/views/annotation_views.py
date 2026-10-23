@@ -172,6 +172,8 @@ class CampaignViewSet(ReadWorkflowViewSet):
                 'comparisons': [{'id': str(pair.comparison_id), 'prompt': pair.messages, 'created_at': pair.created_at}
                     for pair in get_accessible_queryset(ChatComparison).filter(review_campaign__isnull=True,
                         first_request__model_version__isnull=False, second_request__model_version__isnull=False).order_by('-created_at')[:32]]})
+        if set(request.data) - {'comparisons', 'reviewers', 'source_revision'}:
+            raise ValidationError('Formal assignment accepts only comparison IDs, reviewer IDs and an optional source revision.')
         identifiers = serializers.ListField(child=serializers.UUIDField(), min_length=1, max_length=32).run_validation(request.data.get('comparisons'))
         assigned = serializers.ListField(child=serializers.CharField(max_length=128), min_length=2, max_length=8).run_validation(request.data.get('reviewers'))
         source = serializers.UUIDField(required=False, allow_null=True).run_validation(request.data.get('source_revision'))
@@ -369,6 +371,10 @@ class TaskSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if preferences.formal(task.campaign):
             data['content'] = {key: task.content[key] for key in ('prompt', 'candidate_a', 'candidate_b')}
+            actor = preferences.principal(request) if request else ''
+            data['formal_preference'] = True
+            data['assigned_to_me'] = actor in task.campaign.configuration['reviewers']
+            data['reviewed_by_me'] = task.records.filter(reviewer_id=actor, is_adjudication=False).exists()
             if data['latest_review']:
                 data['latest_review'].update(human_label={}, original_prediction={}, preference_choice='')
         if self.context.get('blind') or (request and request.query_params.get('blind') == '1'):
@@ -438,7 +444,7 @@ class BatchViewSet(ReadWorkflowViewSet):
             from modelanvil.annotation.cycles import dispatch_training
             dispatch_training(campaign, snapshot, request)
         campaign.refresh_from_db()
-        if campaign.current_cycle >= campaign.max_cycles and not campaign.configuration.get('cycle'):
+        if (preferences.formal(campaign) or campaign.current_cycle >= campaign.max_cycles) and not campaign.configuration.get('cycle'):
             campaign.status = "completed"
             campaign.save(update_fields=["status", "updated_at"])
         audit(request, "create", "annotation_snapshot", snapshot.snapshot_id, digest=snapshot.manifest_digest)
@@ -486,6 +492,8 @@ class TaskViewSet(ReadWorkflowViewSet):
         blind = data.pop('blind_review') or request.query_params.get('blind') == '1' or formal
         if adjudicate and not role_at_least(request.modelanvil_role, Role.MANAGER):
             raise PermissionDenied('Adjudication requires a manager.')
+        if formal and not adjudicate and request.modelanvil_role != Role.REVIEWER:
+            raise PermissionDenied('Initial formal choices require an assigned reviewer credential; managers adjudicate.')
         if formal:
             try: preferences.validate_review(task, principal, data, adjudicate)
             except ValueError as exc: raise ValidationError(str(exc)) from exc
