@@ -124,12 +124,20 @@ def _inspect_model(identifier, revision, tenant, project, *, format='safetensors
         raise ValueError('Record model license evidence before importing this snapshot.')
     from modelanvil.runners.capabilities import training_memory_requirements
     training_supported = identifier == hf_runtime.SOURCE['repo_id'] and revision == hf_runtime.SOURCE['revision'] and format == 'safetensors'
+    architecture=(info.config or {}).get('model_type')
+    parameters=getattr(info.safetensors,'total',None)
+    weight_bytes=sum(v['byte_size'] for n,v in files.items() if n.endswith(('.safetensors','.gguf')))
+    chat_state=('requires_cpu_llama_cpp' if format=='gguf' else 'requires_native_mlx_runtime' if format=='mlx'
+        else 'load_validation_required' if architecture in {'llama','qwen2','mistral','gemma','gemma2','gpt2'}
+            and not (info.config or {}).get('quantization_config') and weight_bytes<=1024**3
+            and (parameters is None or parameters<=300000000) else 'unsupported_in_current_runtime')
     return {'repo_id': identifier, 'revision': revision, 'format': format, 'files': files,
             'byte_size': sum(v['byte_size'] for v in files.values()), 'license': license_expression,
             'gated': bool(info.gated), 'task': info.pipeline_tag,
             'architecture': (info.config or {}).get('model_type'),
             'parameters_count': getattr(info.safetensors, 'total', None),
             'training_supported': training_supported,
+            'runtime_actions':{'chat':chat_state,'training':'pinned_recipe_supported' if training_supported else 'unsupported_in_current_recipe'},
             'memory_requirements': {'weights_bytes': sum(v['byte_size'] for n, v in files.items() if n.endswith(('.safetensors', '.gguf'))),
                 'training': training_memory_requirements(hf_runtime.RUNTIME_ID) if training_supported else None}}
 
@@ -156,7 +164,7 @@ def launch_import(plan, *, name, tenant, project, pool, idempotency_key, accepte
     item = ModelImport.all_objects.create(tenant_id=tenant, project_id=project_id, name=name.strip(),
         repo_id=plan['repo_id'], revision=plan['revision'], format=plan['format'], license_expression=plan['license'],
         files=plan['files'], input_digest=fingerprint, idempotency_key=idempotency_key)
-    item.job = Job.all_objects.create(tenant_id=tenant, pool=pool, name=f'Import {name.strip()}',
+    item.job = Job.all_objects.create(tenant_id=tenant, project_id=project_id, pool=pool, name=f'Import {name.strip()}',
         payload={'type': 'model_import', 'import_id': str(item.import_id)},
         requirements={'slots': 1, 'model_import': True})
     item.save(update_fields=['job', 'updated_at'])
@@ -192,6 +200,36 @@ def _store(stream, *, tenant, project, name, expected=None, size=None, metadata=
     return hf_runtime.file_ref(artifact)
 
 
+def validate_transformer_shapes(directory, config, files):
+    """Refuse structurally valid but incomplete supported text checkpoints without allocating weights."""
+    if config.model_type not in {'llama','qwen2','mistral','gemma','gemma2','gpt2'} or getattr(config,'quantization_config',None) or 'adapter_config.json' in files:
+        return {'validation':'safe-container-only','architecture_load_verified':False}
+    bounds=[(config.num_hidden_layers,64),(config.hidden_size,8192),(config.vocab_size,256000),
+        (getattr(config,'intermediate_size',None) or config.hidden_size*4,65536)]
+    if any(type(n) is not int or not 1<=n<=maximum for n,maximum in bounds):
+        raise ValueError('Model dimensions exceed bounded text snapshot validation.')
+    import torch
+    from transformers import AutoModelForCausalLM
+    from safetensors import safe_open
+    with torch.device('meta'):
+        model=AutoModelForCausalLM.from_config(config,trust_remote_code=False)
+    expected={key:tuple(value.shape) for key,value in model.state_dict().items()}
+    aliases={}
+    for key,value in list(model.named_parameters(remove_duplicate=False))+list(model.named_buffers(remove_duplicate=False)):
+        if key in expected:aliases.setdefault(id(value),set()).add(key)
+    actual={}
+    for filename in files:
+        if filename.endswith('.safetensors'):
+            with safe_open(directory/filename,framework='pt',device='cpu') as weights:
+                for key in weights.keys():
+                    if key in actual:raise ValueError('Snapshot repeats tensor names across shards.')
+                    actual[key]=tuple(weights.get_slice(key).get_shape())
+    if (set(actual)-set(expected) or any(expected[key]!=shape for key,shape in actual.items())
+            or any(not group.intersection(actual) for group in aliases.values())):
+        raise ValueError('Snapshot weights are incomplete or do not match their architecture.')
+    return {'validation':'architecture-tensor-shapes','tensor_count':len(actual),'architecture_load_verified':False}
+
+
 def publish_files(files, *, tenant, project, name, source, format, license_expression):
     """Called under a transaction/fence; bytes were verified before entering the manifest."""
     if format in {'ocr', 'laya', 'layout'}:
@@ -199,7 +237,7 @@ def publish_files(files, *, tenant, project, name, source, format, license_expre
         return publish_specialist(files, tenant=tenant, project=project, name=name,
             kind=format, license_expression=license_expression)
     from modelanvil.runners.inference import staged_snapshot
-    vocab, template, config = 1, '', {}
+    vocab, template, config, format_validation = 1, '', {}, {}
     if format in {'safetensors', 'mlx'}:
         with staged_snapshot(files, tenant, project) as directory:
             from transformers import AutoConfig, AutoTokenizer
@@ -217,13 +255,16 @@ def publish_files(files, *, tenant, project, name, source, format, license_expre
             vocab, template, config = len(spec), spec.chat_template or '', parsed.to_dict()
             if getattr(parsed, 'auto_map', None):
                 raise ValueError('Remote-code model architectures are not supported.')
+            if format=='safetensors':
+                format_validation=validate_transformer_shapes(directory,parsed,files)
     elif format == 'gguf':
         with staged_snapshot(files, tenant, project) as directory:
             if len(files) != 1:
                 raise ValueError('Import one GGUF file.')
-            with (directory / next(iter(files))).open('rb') as stream:
-                if stream.read(4) != b'GGUF' or int.from_bytes(stream.read(4), 'little') not in (2, 3):
-                    raise ValueError('GGUF header is invalid or unsupported.')
+            from modelanvil.runners.gguf_validation import validate_gguf
+            format_validation=validate_gguf(directory / next(iter(files)))
+            vocab,template=format_validation['vocabulary_size'],format_validation['chat_template']
+            config={'model_type':format_validation['architecture']}
     else:
         raise ValueError('Unsupported model format.')
     if (source.get('repo_id') == hf_runtime.SOURCE['repo_id'] and source.get('revision') == hf_runtime.SOURCE['revision']
@@ -231,7 +272,7 @@ def publish_files(files, *, tenant, project, name, source, format, license_expre
         source = dict(hf_runtime.SOURCE)
     tok = TokenizerVersion.all_objects.create(tenant_id=tenant, project_id=project,
         name=f'{name} tokenizer {uuid.uuid4().hex[:8]}', vocabulary_size=vocab, chat_template=template,
-        configuration_digest=digest({n: v for n, v in files.items() if not n.endswith(('.safetensors', '.gguf'))}),
+        configuration_digest=digest(files if format=='gguf' else {n: v for n, v in files.items() if not n.endswith(('.safetensors', '.gguf'))}),
         compatibility={**({'hf_snapshot': source} if source == hf_runtime.SOURCE else {'model_snapshot': source}), 'immutable_import': True})
     logical = Model.all_objects.create(tenant_id=tenant, project_id=project, name=name, intended_tasks=['text_generation'])
     manifest = {'source': source, 'files': files, 'format': format}
@@ -240,7 +281,7 @@ def publish_files(files, *, tenant, project, name, source, format, license_expre
     return ModelVersion.all_objects.create(tenant_id=tenant, project_id=project, model=logical, tokenizer=tok,
         architecture_ref=architecture, artifact_manifest_id=ref['artifact_id'], license_evidence=license_expression[:64],
         metadata={'source': source, 'snapshot_manifest': ref, 'format': format, 'vocab_size': vocab, 'configuration': config,
-                  'license_expression': license_expression, 'imported': True, 'load_tested': False})
+                  'license_expression': license_expression, 'imported': True, 'load_tested': False, 'format_validation':format_validation})
 
 
 def download_file(item, name, pin, context):

@@ -1,0 +1,254 @@
+{
+  "observed_at": "2026-10-23T01:19:40.987Z",
+  "local_import": {
+    "import_id": "01a16655-1704-739a-b7c0-4baa008e3fe3",
+    "name": "TASK14 browser local tensor bundle",
+    "repo_id": "",
+    "revision": "",
+    "format": "safetensors",
+    "license_expression": "apache-2.0",
+    "files": {
+      "chat_template.jinja": {
+        "artifact_id": "01a16655-0e49-783d-b78c-25213c4beb7c",
+        "sha256": "9d1603d970fd8686e7fd555288c180c3581d070fe07e4925f3209fcad28137b7",
+        "byte_size": 95
+      },
+      "config.json": {
+        "artifact_id": "01a16655-0e56-794b-ae28-2ac18b92ba45",
+        "sha256": "ddf66ee59ff09bd877014ce02c987d0e631fea7ed78e246a75f1c60b2ee0d25f",
+        "byte_size": 712
+      },
+      "generation_config.json": {
+        "artifact_id": "01a16655-0e61-7cf6-ac32-8d26da425296",
+        "sha256": "537452c930e6d204d2a7ab68e7fb5d48c5908200fa52cfe1361efce75cfa5f87",
+        "byte_size": 195
+      },
+      "model.safetensors": {
+        "artifact_id": "01a16655-0e6a-7af8-8e1b-3a127ff9e0e1",
+        "sha256": "620a7386f85bd73fe98a98f021ea0c76f1f06e4a83b25648d5115993a3b0430e",
+        "byte_size": 12624
+      },
+      "tokenizer.json": {
+        "artifact_id": "01a16655-0e79-78c1-9758-b2b2f5cb800f",
+        "sha256": "2c236f32bc0e836a94457bd1b112e1e9109aea5c9d827b0928bdc6587000fad7",
+        "byte_size": 1338
+      },
+      "tokenizer_config.json": {
+        "artifact_id": "01a16655-0e81-7df4-9aaf-8b9ef7abfc9e",
+        "sha256": "6f9df026786c39bfda75becfa45ea655ccad3ee7bf4c4e186777e11aa930758b",
+        "byte_size": 199
+      }
+    },
+    "acquired_files": {
+      "chat_template.jinja": {
+        "artifact_id": "01a16655-0e49-783d-b78c-25213c4beb7c",
+        "sha256": "9d1603d970fd8686e7fd555288c180c3581d070fe07e4925f3209fcad28137b7",
+        "byte_size": 95
+      },
+      "config.json": {
+        "artifact_id": "01a16655-0e56-794b-ae28-2ac18b92ba45",
+        "sha256": "ddf66ee59ff09bd877014ce02c987d0e631fea7ed78e246a75f1c60b2ee0d25f",
+        "byte_size": 712
+      },
+      "generation_config.json": {
+        "artifact_id": "01a16655-0e61-7cf6-ac32-8d26da425296",
+        "sha256": "537452c930e6d204d2a7ab68e7fb5d48c5908200fa52cfe1361efce75cfa5f87",
+        "byte_size": 195
+      },
+      "model.safetensors": {
+        "artifact_id": "01a16655-0e6a-7af8-8e1b-3a127ff9e0e1",
+        "sha256": "620a7386f85bd73fe98a98f021ea0c76f1f06e4a83b25648d5115993a3b0430e",
+        "byte_size": 12624
+      },
+      "tokenizer.json": {
+        "artifact_id": "01a16655-0e79-78c1-9758-b2b2f5cb800f",
+        "sha256": "2c236f32bc0e836a94457bd1b112e1e9109aea5c9d827b0928bdc6587000fad7",
+        "byte_size": 1338
+      },
+      "tokenizer_config.json": {
+        "artifact_id": "01a16655-0e81-7df4-9aaf-8b9ef7abfc9e",
+        "sha256": "6f9df026786c39bfda75becfa45ea655ccad3ee7bf4c4e186777e11aa930758b",
+        "byte_size": 199
+      }
+    },
+    "job_id": null,
+    "job_status": null,
+    "candidate_id": "01a16655-1701-7ad8-a416-6ec5625e14b2",
+    "status": "completed",
+    "created_at": "2026-10-23T01:16:54.916263Z"
+  },
+  "public_import": {
+    "import_id": "01a16655-1a14-7961-9880-45c482b95363",
+    "name": "TASK14 browser public pinned SmolLM2",
+    "repo_id": "HuggingFaceTB/SmolLM2-135M",
+    "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+    "format": "safetensors",
+    "license_expression": "apache-2.0",
+    "files": {
+      "config.json": {
+        "byte_size": 704,
+        "sha256": null
+      },
+      "generation_config.json": {
+        "byte_size": 111,
+        "sha256": null
+      },
+      "merges.txt": {
+        "byte_size": 466391,
+        "sha256": null
+      },
+      "model.safetensors": {
+        "byte_size": 269060552,
+        "sha256": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1"
+      },
+      "special_tokens_map.json": {
+        "byte_size": 831,
+        "sha256": null
+      },
+      "tokenizer.json": {
+        "byte_size": 2104556,
+        "sha256": null
+      },
+      "tokenizer_config.json": {
+        "byte_size": 3658,
+        "sha256": null
+      },
+      "vocab.json": {
+        "byte_size": 800662,
+        "sha256": null
+      }
+    },
+    "acquired_files": {
+      "config.json": {
+        "artifact_id": "01a16655-2048-70ca-ad42-999d4454ca81",
+        "sha256": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+        "byte_size": 704
+      },
+      "generation_config.json": {
+        "artifact_id": "01a16655-210e-7208-bd7b-63776f5ea8c9",
+        "sha256": "2056c988e990b0d13670f63f2f3b87b3b6d07edaf7a3416998ba27dab2d8a059",
+        "byte_size": 111
+      },
+      "merges.txt": {
+        "artifact_id": "01a16655-21eb-7ba6-9221-81969f80bc49",
+        "sha256": "0b54e8aa4e53d5383e2e4bc635a56b43f9647f7b13832d5d9ecd8f82dac4f510",
+        "byte_size": 466391
+      },
+      "model.safetensors": {
+        "artifact_id": "01a16657-8dfd-7b0b-9417-113f21caed52",
+        "sha256": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+        "byte_size": 269060552
+      },
+      "special_tokens_map.json": {
+        "artifact_id": "01a16657-8f8c-737e-820e-6cc86444bcf3",
+        "sha256": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+        "byte_size": 831
+      },
+      "tokenizer.json": {
+        "artifact_id": "01a16657-9076-7c19-a5ef-ae7d6ae449ca",
+        "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "byte_size": 2104556
+      },
+      "tokenizer_config.json": {
+        "artifact_id": "01a16657-913a-77c4-847a-c4a260aa1c84",
+        "sha256": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+        "byte_size": 3658
+      },
+      "vocab.json": {
+        "artifact_id": "01a16657-9229-76e6-97ea-fafb8167ee3a",
+        "sha256": "82b84012e3add4d01d12ba14442026e49b8cbbaead1f79ecf3d919784f82dc79",
+        "byte_size": 800662
+      }
+    },
+    "job_id": "01a16655-1a15-7cfb-ab21-09e68945b8e5",
+    "job_status": "succeeded",
+    "candidate_id": "01a16657-9d93-76ad-9447-d4928e1f57ae",
+    "status": "completed",
+    "created_at": "2026-10-23T01:16:55.700608Z"
+  },
+  "resumed_after_current_cdn_policy_review": true,
+  "seeded_partial_weight_bytes": 1048576,
+  "completed_public_candidate_visible": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_overflow": false,
+  "page_errors": [],
+  "public_plan": {
+    "repo_id": "HuggingFaceTB/SmolLM2-135M",
+    "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+    "format": "safetensors",
+    "files": {
+      "config.json": {
+        "byte_size": 704,
+        "sha256": null
+      },
+      "generation_config.json": {
+        "byte_size": 111,
+        "sha256": null
+      },
+      "merges.txt": {
+        "byte_size": 466391,
+        "sha256": null
+      },
+      "model.safetensors": {
+        "byte_size": 269060552,
+        "sha256": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1"
+      },
+      "special_tokens_map.json": {
+        "byte_size": 831,
+        "sha256": null
+      },
+      "tokenizer.json": {
+        "byte_size": 2104556,
+        "sha256": null
+      },
+      "tokenizer_config.json": {
+        "byte_size": 3658,
+        "sha256": null
+      },
+      "vocab.json": {
+        "byte_size": 800662,
+        "sha256": null
+      }
+    },
+    "byte_size": 272437465,
+    "license": "apache-2.0",
+    "gated": false,
+    "task": "text-generation",
+    "architecture": "llama",
+    "parameters_count": 134515008,
+    "training_supported": true,
+    "runtime_actions": {
+      "chat": "load_validation_required",
+      "training": "pinned_recipe_supported"
+    },
+    "memory_requirements": {
+      "weights_bytes": 269060552,
+      "training": {
+        "host_memory_bytes": 8589934592,
+        "accelerator_memory_bytes": 4294967296,
+        "accelerator_backends": [
+          "cuda",
+          "rocm",
+          "xpu",
+          "mps"
+        ],
+        "runtime_contract": "45060183ccaaaab1a5568fa405071f7a83f869d11ef7d5c52ed4e18a9125c189",
+        "basis": "Pinned training profile minimum. Preflight checks live accelerator headroom, inputs and allocation."
+      }
+    }
+  },
+  "public_search_result": {
+    "repo_id": "HuggingFaceTB/SmolLM2-135M",
+    "revision": null,
+    "task": "text-generation",
+    "license": "apache-2.0",
+    "gated": false,
+    "downloads": 1808635,
+    "architecture": "llama"
+  },
+  "runtime_actions_visible": true,
+  "no_additional_import_launched": true
+}

@@ -206,7 +206,7 @@ TIME_ZONE = "UTC"
 MODELANVIL_OFFLINE = os.environ.get('MODELANVIL_OFFLINE', '0') == '1'
 MODELANVIL_PUBLIC_MODEL_DOWNLOADS = os.environ.get('MODELANVIL_PUBLIC_MODEL_DOWNLOADS', '0') == '1'
 MODELANVIL_ACQUISITION_ORIGINS = [v.strip() for v in os.environ.get('MODELANVIL_ACQUISITION_ORIGINS',
-    'https://huggingface.co,https://cdn-lfs.huggingface.co,https://cdn-lfs-us-1.hf.co,https://cas-bridge.xethub.hf.co,https://cdn-lfs.hf.co,https://api.github.com,https://raw.githubusercontent.com,https://github.com,https://archive.ics.uci.edu').split(',') if v.strip()]
+    'https://huggingface.co,https://us.aws.cdn.hf.co,https://us.gcp.cdn.hf.co,https://cdn-lfs.huggingface.co,https://cdn-lfs-us-1.hf.co,https://cas-bridge.xethub.hf.co,https://cdn-lfs.hf.co,https://api.github.com,https://raw.githubusercontent.com,https://github.com,https://archive.ics.uci.edu').split(',') if v.strip()]
 os.environ['HF_HUB_DISABLE_TELEMETRY'] = '1'
 os.environ['HF_HUB_DISABLE_XET'] = '1'
 os.environ['DO_NOT_TRACK'] = '1'

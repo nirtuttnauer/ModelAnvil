@@ -37,6 +37,11 @@ class ModelHardwareTests(SimpleTestCase):
             plan = inspect_model(hf_runtime.SOURCE['repo_id'], info.sha, 'tenant', 'project')
             self.assertEqual(plan['byte_size'], 1024**3 + 512)
             self.assertEqual(plan['memory_requirements']['weights_bytes'], 1024**3)
+            self.assertEqual(plan['runtime_actions']['chat'],'load_validation_required')
+            self.assertEqual(plan['runtime_actions']['training'],'pinned_recipe_supported')
             self.assertEqual(plan['memory_requirements']['training']['host_memory_bytes'], hf_runtime.LIMITS['memory_bytes'])
             other = inspect_model('other/model', info.sha, 'tenant', 'project')
             self.assertIsNone(other['memory_requirements']['training'])
+            info.safetensors.total=300000001
+            large=inspect_model('other/model',info.sha,'tenant','project')
+            self.assertEqual(large['runtime_actions']['chat'],'unsupported_in_current_runtime')
