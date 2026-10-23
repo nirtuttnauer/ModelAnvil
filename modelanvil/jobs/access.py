@@ -15,6 +15,8 @@ def accessible_jobs():
     if tenant is None:
         return Job.objects.none()
     from modelanvil.data.models import RecipeRun
+    from modelanvil.rag.models import EmbeddingBuild
+    embedding_jobs = get_accessible_queryset(EmbeddingBuild).values('job_id')
     hidden_recipes = RecipeRun.all_objects.filter(tenant_id=tenant).exclude(pk__in=get_accessible_queryset(RecipeRun).values('pk'))
     hidden_runs = TrainingRun.all_objects.filter(tenant_id=tenant, job__isnull=False).exclude(
         pk__in=get_accessible_queryset(TrainingRun).values("pk")
@@ -35,10 +37,12 @@ def accessible_jobs():
         accessible_snapshot_id=Replace(KeyTextTransform("snapshot_id", "payload"), Value("-"), Value(""), output_field=CharField())
     ).filter(Q(payload__type__isnull=True) | ~Q(payload__type="dataset_acquisition") | Q(accessible_snapshot_id__in=snapshots)).annotate(
         accessible_request_id=Replace(KeyTextTransform('request_id', 'payload'), Value('-'), Value(''), output_field=CharField())
-    ).filter(Q(payload__type__isnull=True) | ~Q(payload__type='specialist_inference') | Q(accessible_request_id__in=requests)).exclude(pk__in=hidden_recipes.values('job_id'))
+    ).filter(Q(payload__type__isnull=True) | ~Q(payload__type='specialist_inference') | Q(accessible_request_id__in=requests)).exclude(pk__in=hidden_recipes.values('job_id')).filter(Q(payload__type__isnull=True) | ~Q(payload__type='embedding_build') | Q(pk__in=embedding_jobs))
 
 
 def cancellation_endpoint(job):
+    if isinstance(job.payload, dict) and job.payload.get('type') == 'embedding_build':
+        return f"/api/v1/embedding-builds/{job.embedding_build.build_id}/cancel/"
     if isinstance(job.payload, dict) and job.payload.get('type') == 'model_import':
         return f"/api/v1/model-imports/{job.payload['import_id']}/cancel/"
     if isinstance(job.payload, dict) and job.payload.get('type') == 'recipe_execution':

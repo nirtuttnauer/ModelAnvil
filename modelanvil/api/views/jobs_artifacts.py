@@ -83,8 +83,8 @@ class JobSerializer(serializers.ModelSerializer):
         read_only_fields = ("job_id", "project", "status", "desired_action", "attempt_count", "created_at", "updated_at")
 
     def validate(self, attrs):
-        if attrs.get('payload', {}).get('type') in {'specialist_inference','recipe_execution'} or (self.instance and self.instance.payload.get('type') in {'specialist_inference','recipe_execution'}):
-            raise serializers.ValidationError('Manage this job through its specialist request or recipe run.')
+        if attrs.get('payload', {}).get('type') in {'specialist_inference','recipe_execution','embedding_build'} or (self.instance and self.instance.payload.get('type') in {'specialist_inference','recipe_execution','embedding_build'}):
+            raise serializers.ValidationError('Manage this job through its specialist, recipe or embedding-build API.')
         if attrs.get('payload', {}).get('type') == 'qualified_evaluation' or (self.instance and self.instance.evaluation_runs.exists()):
             raise serializers.ValidationError('Manage evaluation jobs through their evaluation run.')
         requirements = attrs.get("requirements", self.instance.requirements if self.instance else {})
@@ -244,7 +244,7 @@ class JobViewSet(ScopedViewSet):
     def perform_destroy(self, instance):
         if instance.payload.get('type') == 'model_import':
             raise serializers.ValidationError('Model import jobs retain their acquisition history.')
-        if instance.payload.get('type') in {'specialist_inference','recipe_execution'}:
+        if instance.payload.get('type') in {'specialist_inference','recipe_execution','embedding_build'}:
             raise serializers.ValidationError('Execution jobs retain durable request and accounting history.')
         super().perform_destroy(instance)
 
@@ -253,8 +253,8 @@ class JobViewSet(ScopedViewSet):
         job = self.get_object()
         if job.payload.get('type') == 'model_import':
             raise serializers.ValidationError('Cancel this job through its model import.')
-        if job.payload.get('type') in {'specialist_inference','recipe_execution'}:
-            raise serializers.ValidationError('Cancel this job through its specialist request or recipe run.')
+        if job.payload.get('type') in {'specialist_inference','recipe_execution','embedding_build'}:
+            raise serializers.ValidationError('Cancel this job through its specialist, recipe or embedding-build API.')
         if job.evaluation_runs.exists():
             raise serializers.ValidationError('Manage this job through its evaluation run.')
         if isinstance(job.payload, dict) and job.payload.get('type') == 'dataset_acquisition':

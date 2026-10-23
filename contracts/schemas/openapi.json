@@ -7711,6 +7711,417 @@
           }
         }
       }
+    },
+    "/embedding-spaces/": {
+      "get": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "listEmbeddingSpaces",
+        "summary": "List pinned model spaces",
+        "responses": {
+          "200": {
+            "description": "Current project-scoped embedding evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Page"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "results": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/PinnedEmbeddingSpace"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid pins, bounds, quota, runtime, worker or policy"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current project"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "registerEmbeddingSpace",
+        "summary": "Register immutable local MiniLM pins after Apache 2.0 consent",
+        "responses": {
+          "201": {
+            "description": "Current project-scoped embedding evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PinnedEmbeddingSpace"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid pins, bounds, quota, runtime, worker or policy"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmbeddingSpaceCreate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/embedding-spaces/profile/": {
+      "get": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "embeddingProfile",
+        "summary": "Inspect installed fixed CPU model profile and availability",
+        "responses": {
+          "200": {
+            "description": "Current project-scoped embedding evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid pins, bounds, quota, runtime, worker or policy"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current project"
+          }
+        }
+      }
+    },
+    "/embedding-spaces/{space_id}/": {
+      "get": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "getEmbeddingSpace",
+        "summary": "Read an accessible pinned model space",
+        "responses": {
+          "200": {
+            "description": "Current project-scoped embedding evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PinnedEmbeddingSpace"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid pins, bounds, quota, runtime, worker or policy"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "space_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/embedding-spaces/{space_id}/encode/": {
+      "post": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "encodePinnedTexts",
+        "summary": "Encode 1\u201316 texts locally; refuse context overflow before inference",
+        "responses": {
+          "200": {
+            "description": "Current project-scoped embedding evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmbeddingEncodeResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid pins, bounds, quota, runtime, worker or policy"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmbeddingEncodeInput"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "space_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/embedding-builds/": {
+      "get": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "listEmbeddingBuilds",
+        "summary": "List durable vector build progress",
+        "responses": {
+          "200": {
+            "description": "Current project-scoped embedding evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Page"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "results": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/EmbeddingBuild"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid pins, bounds, quota, runtime, worker or policy"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current project"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "queueEmbeddingBuild",
+        "summary": "Reserve three attempt units and queue an asynchronous worker build; PostgreSQL required",
+        "responses": {
+          "202": {
+            "description": "Current project-scoped embedding evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmbeddingBuild"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid pins, bounds, quota, runtime, worker or policy"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current project"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmbeddingBuildCreate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/embedding-builds/{build_id}/": {
+      "get": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "getEmbeddingBuild",
+        "summary": "Read durable vector build progress",
+        "responses": {
+          "200": {
+            "description": "Current project-scoped embedding evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmbeddingBuild"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid pins, bounds, quota, runtime, worker or policy"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "build_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/embedding-builds/{build_id}/cancel/": {
+      "post": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "cancelEmbeddingBuild",
+        "summary": "Cancel a bounded build retaining verified vector checkpoints",
+        "responses": {
+          "200": {
+            "description": "Current project-scoped embedding evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmbeddingBuild"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid pins, bounds, quota, runtime, worker or policy"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "build_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/embedding-builds/{build_id}/retry/": {
+      "post": {
+        "tags": [
+          "RAG"
+        ],
+        "operationId": "retryEmbeddingBuild",
+        "summary": "Retry a bounded build retaining verified vector checkpoints",
+        "responses": {
+          "202": {
+            "description": "Current project-scoped embedding evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmbeddingBuild"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid pins, bounds, quota, runtime, worker or policy"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Resource unavailable in current project"
+          }
+        },
+        "parameters": [
+          {
+            "name": "build_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -11047,7 +11458,8 @@
               "model-import",
               "cpu-evaluation",
               "dataset-bank",
-              "cpu-recipes"
+              "cpu-recipes",
+              "cpu-embeddings"
             ]
           }
         },
@@ -12675,7 +13087,7 @@
             }
           }
         },
-        "description": "Bounded synchronous retrieval comparison on frozen indexes. Optional baseline must share the knowledge base and all judged chunks. Dense/hybrid require actual caller vectors and a compatible index; semantic model qualification is not inferred."
+        "description": "Bounded retrieval comparison on frozen indexes with versioned qrels and coverage. Pinned embedding indexes encode queries locally; caller vectors are refused. Legacy indexes require compatible caller vectors for dense/hybrid. A lexical baseline is evaluated in lexical mode against the same qrels."
       },
       "RetrievalComparisonReport": {
         "type": "object",
@@ -13058,6 +13470,182 @@
           }
         },
         "description": "Fresh framework free-memory or explicit process-allowance observation. Not an immutable placement pin, reservation or guarantee against unrelated applications."
+      },
+      "PinnedEmbeddingSpace": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "model_name": {
+            "type": "string"
+          },
+          "model_revision": {
+            "type": "string"
+          },
+          "license_expression": {
+            "type": "string"
+          },
+          "distance_metric": {
+            "type": "string"
+          },
+          "space_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dimension": {
+            "type": "integer"
+          },
+          "normalized": {
+            "const": true
+          },
+          "metadata": {
+            "type": "object"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "EmbeddingSpaceCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "accepted_license": {
+            "const": "apache-2.0"
+          }
+        },
+        "required": [
+          "name",
+          "accepted_license"
+        ],
+        "additionalProperties": false
+      },
+      "EmbeddingBuildCreate": {
+        "type": "object",
+        "properties": {
+          "source_index": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "space": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pool": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "budget_policy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "source_index",
+          "space",
+          "pool",
+          "budget_policy",
+          "idempotency_key"
+        ],
+        "additionalProperties": false
+      },
+      "EmbeddingBuild": {
+        "type": "object",
+        "properties": {
+          "build_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "job_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "index_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "source_index_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "job_status": {
+            "type": "string"
+          },
+          "index_status": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "completed_chunks": {
+            "type": "integer"
+          },
+          "total_chunks": {
+            "type": "integer"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "EmbeddingEncodeInput": {
+        "type": "object",
+        "properties": {
+          "texts": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 16,
+            "items": {
+              "type": "string",
+              "maxLength": 32768
+            }
+          }
+        },
+        "required": [
+          "texts"
+        ],
+        "additionalProperties": false
+      },
+      "EmbeddingEncodeResult": {
+        "type": "object",
+        "properties": {
+          "space": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pins": {
+            "type": "object"
+          },
+          "vectors": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "minItems": 384,
+              "maxItems": 384,
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "runtime": {
+            "type": "string"
+          },
+          "device": {
+            "const": "cpu"
+          }
+        }
       }
     }
   }

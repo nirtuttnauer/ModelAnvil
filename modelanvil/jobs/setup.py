@@ -8,6 +8,7 @@ from modelanvil.identity.models import Tenant, hash_api_key
 from modelanvil.jobs.models import Worker, WorkerCredential
 
 PROFILES = {
+    "cpu-embeddings": ("Local CPU embeddings", "modelanvil.rag.embedding_jobs"),
     "cpu-character": ("CPU character SFT", "modelanvil.runners.training.runtime"),
     "cpu-transformer": ("Small CPU transformer SFT", "modelanvil.runners.training.general_runtime"),
     "model-import": ("Model snapshot acquisition", "modelanvil.runners.model_catalog"),
@@ -20,6 +21,15 @@ EXECUTOR = "modelanvil.runners.training.executor.training_worker_executor"
 
 
 def profile_details(profile):
+    if profile == 'cpu-embeddings':
+        from modelanvil.rag import embedding_adapter as adapter
+        available = True; reason = ''
+        try: adapter.environment(); adapter.verified_directory()
+        except ValueError as exc: available = False; reason = str(exc)
+        return {'id':profile,'name':PROFILES[profile][0],'memory_bytes':adapter.MEMORY_BYTES,'available':available,
+            'limitations':['Pinned MiniLM, CPU only, normalized 384-d vectors; source index must be frozen.',
+                'Up to 1000 chunks and 16 texts per batch; no silent truncation or network inference.', reason]}
+
     if profile in ('dataset-bank', 'cpu-recipes'):
         return {'id': profile, 'name': PROFILES[profile][0], 'memory_bytes': 512 * 1024**2,
                 'available': True, 'limitations': (
@@ -49,6 +59,8 @@ def profile_details(profile):
 
 
 def profile_executor(profile):
+    if profile == 'cpu-embeddings':
+        return 'modelanvil.rag.embedding_jobs.embedding_executor'
     if profile == 'dataset-bank':
         return 'modelanvil.data.bank.acquisition.bank_acquisition_executor'
     if profile == 'cpu-recipes':
@@ -121,7 +133,10 @@ def observe_local_worker(worker, profile, secret):
     if memory < info['memory_bytes']:
         raise ValueError("Host memory is below the installed runtime requirement.")
     capabilities = {**worker.capabilities, "memory_bytes": memory, "accelerator": "cpu"}
-    if profile == 'dataset-bank':
+    if profile == 'cpu-embeddings':
+        runtime = profile_runtime(profile)
+        capabilities['embedding_runtime'] = runtime.runtime_digest()
+    elif profile == 'dataset-bank':
         capabilities['dataset_acquisition'] = True
     elif profile == 'cpu-recipes':
         from importlib.metadata import PackageNotFoundError, version
