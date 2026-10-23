@@ -49,6 +49,14 @@ class GateResultSerializer(serializers.ModelSerializer):
 
 
 class ReleaseVersionSerializer(serializers.ModelSerializer):
+    review_freshness = serializers.SerializerMethodField()
+
+    def get_review_freshness(self, obj):
+        if not obj.bundle_manifest.get('local_review'):
+            return None
+        from modelanvil.releases.review import review_freshness
+        return review_freshness(obj)
+
     local_review = serializers.JSONField(source='bundle_manifest.local_review', read_only=True, default=None)
 
     def validate(self, attrs):
@@ -63,6 +71,15 @@ class ReleaseVersionSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data["recorded_status"] = data["status"]
+        freshness = data.get('review_freshness')
+        if freshness and not freshness['valid']:
+            frozen = instance.bundle_manifest.get('local_review', {})
+            redacted = {'scope': frozen.get('scope'), 'state': 'stale', 'production_qualified': False,
+                'reviewed_at': frozen.get('reviewed_at'), 'evaluation_run': frozen.get('evaluation_run'),
+                'criteria': [{'key': c.get('key'), 'required': c.get('required'), 'actual': None, 'passed': False} for c in frozen.get('criteria', [])]}
+            data['local_review'] = redacted
+            data['bundle_manifest'] = {'local_review': redacted}
+
         if data["status"] in ("qualified", "promoted") and not release_evidence(instance)["production_qualified"]:
             data["status"] = ReleaseVersion.Status.DRAFT
         return data
@@ -80,7 +97,7 @@ class ReleaseVersionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReleaseVersion
         fields = (
-            "execution_evidence", "local_review",
+            "execution_evidence", "local_review", "review_freshness",
             "release_version_id", "project", "release", "revision_no", "candidate_type",
             "candidate_ref", "model_version", "status", "manifest_digest",
             "model_card", "bundle_manifest", "quantization_spec", "gate_results", "created_at"
@@ -162,6 +179,7 @@ class ReleaseVersionViewSet(TenantScopedViewSet):
         response = HttpResponse(raw, content_type='application/zip')
         response['Content-Disposition'] = f'attachment; filename="candidate-{version.release_version_id}.zip"'
         response['Cache-Control'] = 'no-store'
+        response['ETag'] = '"' + hashlib.sha256(raw).hexdigest() + '"'
         return response
 
     def perform_create(self, serializer):
@@ -342,6 +360,9 @@ class ReleaseVersionViewSet(TenantScopedViewSet):
         """Export recorded metadata and available verified model bytes."""
         version = self.get_object()
         try:
+            if version.bundle_manifest.get('local_review'):
+                from modelanvil.releases.review import assert_current_review
+                assert_current_review(version)
             return Response(export_release_bundle(version))
         except (ValueError, PermissionError, TombstoneAccessDeniedError) as exc:
             return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)

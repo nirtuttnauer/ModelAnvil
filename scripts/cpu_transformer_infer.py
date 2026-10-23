@@ -13,7 +13,7 @@ from pathlib import Path
 
 def load(directory):
     manifest = json.loads((directory / 'manifest.json').read_text())
-    if manifest['schema_version'] != 'modelanvil.local-export.v1' or manifest['runtime'] != 'modelanvil.general-transformer-sft.v1':
+    if manifest['schema_version'] not in ('modelanvil.local-export.v1', 'modelanvil.local-export.v2') or manifest['runtime'] != 'modelanvil.general-transformer-sft.v1':
         raise ValueError('Unsupported export runtime')
     files = {}
     if len(manifest['files']) > 24:

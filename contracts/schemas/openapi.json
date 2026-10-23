@@ -11576,6 +11576,26 @@
           },
           "status": {
             "type": "string"
+          },
+          "review_freshness": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "readOnly": true,
+            "description": "Current evidence, access, frozen consumer and model-byte checks for local reviews. Invalid reviews redact case content and disable reviewed exports and local serving. Quality criteria remain independent.",
+            "properties": {
+              "valid": {
+                "type": "boolean"
+              },
+              "checked_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
           }
         }
       },

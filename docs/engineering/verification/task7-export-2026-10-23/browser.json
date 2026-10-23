@@ -1,0 +1,29 @@
+{
+  "observed_at": "2026-10-23T02:53:57.908Z",
+  "evidence": "actual browser/API authored reference fixture; separate empty Python environment; controlled stale status restored",
+  "release_version": "01a166ad-ea2b-7b5f-b5cf-63116eb86b79",
+  "archive_sha256": "5b39aa9d83c517b674c6be0f6f3f86155f5d33d407b9b31baa3b083d4762f0c5",
+  "archive_bytes": 25413,
+  "repeated_download_identical": true,
+  "quality_gate": "failed negative control; no improvement claim",
+  "current_freshness_checked": true,
+  "stale_export_blocked_and_redacted": true,
+  "fixture_status_restored": true,
+  "external_application_packages": {
+    "modelanvil": false,
+    "django": false,
+    "torch": false,
+    "numpy": false
+  },
+  "generated_token_ids": [
+    2
+  ],
+  "weights_sha256": "8e25b4c98bf252c8fb7f77108cf12a201d8d25aa7df25ab927132203d31178cf",
+  "checksum_tamper_rejected": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_overflow": false,
+  "page_errors": []
+}

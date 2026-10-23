@@ -76,7 +76,7 @@ def read_export(path):
             raise ValueError('Bundle exceeds supported limits')
         return json.loads(path.read_text())
     manifest = json.loads((path / 'manifest.json').read_text())
-    if manifest['schema_version'] != 'modelanvil.local-export.v1' or len(manifest['files']) > 24:
+    if manifest['schema_version'] not in ('modelanvil.local-export.v1', 'modelanvil.local-export.v2') or len(manifest['files']) > 24:
         raise ValueError('Invalid export manifest')
     files = {}
     for name, pin in manifest['files'].items():

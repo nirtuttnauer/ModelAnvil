@@ -2,9 +2,10 @@
 import io
 import json
 import subprocess
-import sys
 import tempfile
 import zipfile
+import venv
+import os
 from pathlib import Path
 
 from django.test import TestCase
@@ -65,14 +66,19 @@ class CandidateReviewTests(TestCase):
         with tempfile.TemporaryDirectory() as directory:
             with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
                 archive.extractall(directory)
-            completed = subprocess.run([sys.executable, '-I', str(Path(directory)/'infer.py'), directory,
+            environment = Path(directory)/'consumer-environment'
+            venv.EnvBuilder(with_pip=False).create(environment)
+            python = environment / ('Scripts/python.exe' if os.name == 'nt' else 'bin/python')
+            isolated = subprocess.run([str(python), '-I', '-c', "import importlib.util; assert all(importlib.util.find_spec(name) is None for name in ['modelanvil', 'django', 'torch', 'numpy'])"], capture_output=True, text=True, timeout=30)
+            self.assertEqual(isolated.returncode, 0, isolated.stderr)
+            completed = subprocess.run([str(python), '-I', str(Path(directory)/'infer.py'), directory,
                 '--prompt', 'x', '--max-tokens', '2'], cwd=directory, capture_output=True, text=True, timeout=30)
             self.assertEqual(completed.returncode, 0, completed.stderr)
             actual = json.loads(completed.stdout)
             self.assertEqual(actual['generated_token_ids'], expected['generated_token_ids'])
             self.assertEqual(actual['weights_sha256'], expected['weights_sha256'])
             weights = Path(directory)/'model.safetensors'; weights.write_bytes(weights.read_bytes()+b'bad')
-            corrupted = subprocess.run([sys.executable, '-I', str(Path(directory)/'infer.py'), directory],
+            corrupted = subprocess.run([str(python), '-I', str(Path(directory)/'infer.py'), directory],
                 capture_output=True, text=True, timeout=30)
             self.assertNotEqual(corrupted.returncode, 0)
 
@@ -98,3 +104,51 @@ class CandidateReviewTests(TestCase):
         self.assertEqual(response.status_code, 200, response.content)
         self.assertGreater(response.data['usage']['completion_tokens'], 0)
         self.assertLessEqual(response.data['usage']['completion_tokens'], 2)
+
+    def test_repeated_downloads_have_identical_bytes_and_frozen_consumer(self):
+        from unittest.mock import patch
+        data = self.review(); path=f'/api/v1/release-versions/{data["release_version_id"]}/download/'
+        first=self.client.get(path)
+        with patch('modelanvil.releases.review._consumer', side_effect=AssertionError('Current source must not replace frozen consumer')):
+            second=self.client.get(path)
+        self.assertEqual(first.status_code,200,first.content[:100]); self.assertEqual(second.status_code,200,second.content[:100])
+        self.assertEqual(first.content,second.content);self.assertEqual(first['ETag'],second['ETag'])
+        with zipfile.ZipFile(io.BytesIO(first.content)) as archive:
+            self.assertTrue(all(info.date_time==(1980,1,1,0,0,0) for info in archive.infolist()))
+            import hashlib
+            self.assertEqual(hashlib.sha256(archive.read('infer.py')).hexdigest(),data['local_review']['export_consumer']['sha256'])
+            self.assertIn('model.safetensors',archive.namelist());self.assertIn('tokenizer_config.json',archive.namelist())
+
+    def test_incomplete_current_evaluation_blocks_every_export_and_redacts_old_case_content(self):
+        data=self.review(); ident=data['release_version_id']
+        self.evaluation.status='failed';self.evaluation.save()
+        for path in [f'/api/v1/release-versions/{ident}/download/', f'/api/v1/release-versions/{ident}/export-bundle/']:
+            self.assertEqual(self.client.get(path).status_code,400)
+        response=self.client.get(f'/api/v1/release-versions/{ident}/')
+        self.assertEqual(response.status_code,200,response.content)
+        self.assertFalse(response.data['review_freshness']['valid']);self.assertEqual(response.data['local_review']['state'],'stale')
+        self.assertNotIn('cases',response.data['local_review']);self.assertNotIn('cases',response.data['bundle_manifest']['local_review'])
+        self.assertNotIn('export_consumer',response.data['bundle_manifest'])
+
+    def test_changed_results_and_frozen_consumer_fail_current_evidence_checks(self):
+        data=self.review(); ident=data['release_version_id']; path=f'/api/v1/release-versions/{ident}/download/'
+        case=self.evaluation.case_results.first();old=case.candidate_output;case.candidate_output='Changed after review';case.save()
+        self.assertEqual(self.client.get(path).status_code,400)
+        case.candidate_output=old;case.save();self.assertEqual(self.client.get(path).status_code,200)
+        version=ReleaseVersion.all_objects.get(release_version_id=ident)
+        version.bundle_manifest={**version.bundle_manifest,'export_consumer':'Y2hhbmdlZA=='};version.save()
+        self.assertEqual(self.client.get(path).status_code,400)
+
+    def test_configuration_or_simulation_status_cannot_claim_actual_worker_export(self):
+        from modelanvil.runners.models import TrainingRun
+        run=TrainingRun.all_objects.get(output_model_version=self.candidate)
+        run.hardware_config={**run.hardware_config,'pins':{**run.hardware_config['pins'],'contract_digest':'unverified'}};run.save()
+        response=self.client.post('/api/v1/release-versions/create-candidate/',self.body,format='json')
+        self.assertEqual(response.status_code,400,response.content);self.assertFalse(ReleaseVersion.all_objects.exists())
+
+    def test_incomplete_legacy_review_refuses_actionably(self):
+        from modelanvil.runners.training.runtime import digest
+        data=self.review();version=ReleaseVersion.all_objects.get(release_version_id=data['release_version_id'])
+        review=version.bundle_manifest['local_review'];review.pop('evidence_digest');version.manifest_digest=digest(review);version.save()
+        response=self.client.get(f'/api/v1/release-versions/{version.release_version_id}/download/')
+        self.assertEqual(response.status_code,400,response.content)
