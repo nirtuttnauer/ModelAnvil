@@ -81,3 +81,8 @@ Label Studio's prediction import and ML backend interfaces are candidates for re
 ## Acceptance evidence
 
 Both entry modes must complete a reviewed seed and two train-and-next-batch cycles on one named text task. Show that training uses the approved cumulative snapshots, preserves original model predictions and human revisions, excludes held-out groups, pins the model per batch, handles invalid drafts and insufficient data, rejects a failing candidate, and supports pause/resume and rollback. Inject duplicate completion and worker interruption fixtures. Enforce cycle/budget limits and tenant isolation. Record task metrics, review effort, hardware/backend versions, and known limitations.
+
+
+## Current bounded CPU cycle — 23 October 2026
+
+TASK-10 now connects approved text-label snapshots to actual CPU training and independent protected evaluation. Enable the optional cycle in campaign setup, select its source and quantity budgets, close reviewed batches, then use **Check cycle and advance** after each worker stage. Draft predictions remain imported with pinned provenance. Quantity caps do not establish a dollar-cost ceiling. See the [current implementation and negative-control execution evidence](engineering/verification/task10-labeling-2026-10-23/report.md) for scope, cancellation/rollback behavior and limits. Earlier roadmap sections describe the broader target workflow.

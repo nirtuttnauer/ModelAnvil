@@ -97,6 +97,8 @@ class CampaignEngine:
             status=CampaignBatch.Status.OPEN,
             assigned_drafting_model=assigned_model,
             sample_count=len(candidate_samples),
+            draft_configuration={"prompt": campaign.configuration.get("draft_prompt", "{text}\n"),
+                                 "rubric_id": str(campaign.rubric.rubric_id) if campaign.rubric else None},
         )
 
         # Create annotation tasks for eligible samples
