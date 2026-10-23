@@ -140,6 +140,36 @@ def snapshot(version, tenant, project):
         raise ValueError('Snapshot manifest is invalid.') from None
 
 
+def snapshot_guard(version, tenant, project):
+    """Recheck current access and immutable input identity before publishing output."""
+    from copy import deepcopy
+    from modelanvil.runners.training import runtime, general_runtime
+    from modelanvil.runners.training.hf_runtime import file_ref
+    def fields(obj):
+        return {f.attname: deepcopy(getattr(obj, f.attname)) for f in obj._meta.concrete_fields}
+    model_pin, tokenizer_pin = fields(version), fields(version.tokenizer)
+    refs = []
+    if version.architecture_ref not in (runtime.RUNTIME_ID, general_runtime.RUNTIME_ID):
+        refs.extend(snapshot(version, tenant, project)['files'].values())
+    if version.artifact_manifest_id:
+        manifest = Artifact.all_objects.filter(artifact_id=version.artifact_manifest_id, tenant_id=tenant).first()
+        if manifest is None:
+            raise ValueError('Model manifest is unavailable.')
+        refs.append(file_ref(manifest))
+
+    def check():
+        current = type(version).all_objects.select_related('tokenizer').filter(pk=version.pk, tenant_id=tenant).first()
+        if (current is None or current.state in ('archived', 'rejected') or fields(current) != model_pin
+                or fields(current.tokenizer) != tokenizer_pin
+                or not check_resource_access(current, project, tenant)
+                or not check_resource_access(current.tokenizer, project, tenant)):
+            raise ValueError('Model inputs or current project access changed; generation stopped.')
+        for ref in refs:
+            verified_artifact(ref, tenant, project)
+    check()
+    return check
+
+
 def validate_messages(messages):
     if not isinstance(messages, list) or not 1 <= len(messages) <= 64:
         raise ValueError('Supply 1–64 text messages.')
@@ -171,6 +201,8 @@ def rendered_prompt(tokenizer, messages, prompt_format='model'):
 def local_session(version, *, tenant, project, device='cpu'):
     """One model per process and exclusive local device use; close always unloads."""
     from modelanvil.runners.training import runtime, general_runtime
+    if version.state in ('archived', 'rejected'):
+        raise ValueError('This model version is archived or rejected.')
     if version.architecture_ref in (runtime.RUNTIME_ID, general_runtime.RUNTIME_ID):
         if device != 'cpu':
             raise ValueError('CPU reference candidates require the CPU device.')

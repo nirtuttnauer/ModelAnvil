@@ -1,5 +1,6 @@
 """Model discovery, immutable acquisition and local chat completion APIs."""
 from contextlib import ExitStack
+from contextvars import copy_context
 import json
 import time
 import uuid
@@ -347,10 +348,16 @@ class CompletionStream:
     def __init__(self, iterator, stack, on_close):
         self.iterator, self.stack, self.on_close = iterator, stack, on_close
         self.closed = False
+        self.context = copy_context()
 
     def __iter__(self):
         try:
-            yield from self.iterator
+            while True:
+                try:
+                    value = self.context.run(next, self.iterator)
+                except StopIteration:
+                    return
+                yield value
         finally:
             self.close()
 
@@ -358,10 +365,10 @@ class CompletionStream:
         if not self.closed:
             self.closed = True
             try:
-                self.iterator.close()
+                self.context.run(self.iterator.close)
             finally:
-                self.stack.close()
-                self.on_close()
+                self.context.run(self.stack.close)
+                self.context.run(self.on_close)
 
 
 class InferenceViewSet(TenantScopedViewSet):
@@ -417,6 +424,16 @@ class InferenceViewSet(TenantScopedViewSet):
             principal_id=str(request.user.pk), input_digest=digest(options['messages']),
             configuration={k: v for k, v in options.items() if k not in {'messages', 'model'}})
         output = ''
+        tenant = get_active_tenant()
+
+        def assert_current():
+            from modelanvil.identity.auth import ApiKeyAuthentication, TenantRBAC
+            principal = ApiKeyAuthentication().authenticate(request)
+            if (principal is None or principal[0].pk != request.user.pk
+                    or get_active_tenant() != tenant or get_active_project() != project.pk
+                    or not TenantRBAC().has_permission(request, self)):
+                raise ValueError('Current inference access is unavailable.')
+            guard()
 
         def record_finish(status, final=None):
             from django.utils import timezone
@@ -427,10 +444,13 @@ class InferenceViewSet(TenantScopedViewSet):
                 output_digest=hashlib.sha256(output.encode()).hexdigest() if output else '')
 
         try:
+            from modelanvil.runners.inference import snapshot_guard
+            guard = snapshot_guard(version, tenant, project.pk)
             session = stack.enter_context(local_session(version, tenant=get_active_tenant(), project=project.pk, device=options['device']))
             parts = generate(session, options['messages'], max_tokens=options['max_tokens'],
                              temperature=options['temperature'], seed=options['seed'], prompt_format=options['prompt_format'])
             first = next(parts)
+            assert_current()
         except Exception as exc:
             stack.close()
             record_finish('failed')
@@ -443,9 +463,11 @@ class InferenceViewSet(TenantScopedViewSet):
             nonlocal output
             from itertools import chain
             try:
+                assert_current()
                 yield 'data: ' + json.dumps({**base, 'object': 'chat.completion.chunk',
                     'choices': [{'index': 0, 'delta': {'role': 'assistant'}, 'finish_reason': None}]}) + '\n\n'
                 for part in chain([first], parts):
+                    assert_current()
                     output += part.get('text', '')
                     done = part.get('finish_reason')
                     chunk = {**base, 'object': 'chat.completion.chunk', 'choices': [{'index': 0,
@@ -455,6 +477,7 @@ class InferenceViewSet(TenantScopedViewSet):
                         record_finish('completed', part)
                     yield 'data: ' + json.dumps(chunk) + '\n\n'
                     if done and options.get('stream_options', {}).get('include_usage'):
+                        assert_current()
                         yield 'data: ' + json.dumps({**base, 'object': 'chat.completion.chunk', 'choices': [], 'usage': part['usage']}) + '\n\n'
             except Exception:
                 record_finish('failed')
@@ -478,6 +501,7 @@ class InferenceViewSet(TenantScopedViewSet):
             from itertools import chain
             text, final = '', {}
             for part in chain([first], parts):
+                assert_current()
                 text += part.get('text', '')
                 if 'finish_reason' in part:
                     final = part
@@ -486,6 +510,8 @@ class InferenceViewSet(TenantScopedViewSet):
             return Response({**base, 'object': 'chat.completion', 'choices': [{'index': 0,
                 'message': {'role': 'assistant', 'content': text}, 'finish_reason': final['finish_reason']}],
                 'usage': final['usage'], 'modelanvil': {'device': options['device'], 'elapsed_seconds': final['elapsed_seconds']}})
+        except ValueError as exc:
+            raise serializers.ValidationError('Model inputs or current access changed; output withheld.') from exc
         finally:
             parts.close()
             stack.close()

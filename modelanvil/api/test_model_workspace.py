@@ -68,6 +68,87 @@ class ModelWorkspaceTests(TransactionTestCase):
         inputs = {'files': self.files, 'name': 'Tiny real Llama', 'accepted_license': 'apache-2.0', 'idempotency_key': 'local-1', **overrides}
         return self.client.post('/api/v1/model-imports/', inputs, format='json')
 
+    def test_stream_withholds_prefetched_output_after_authority_or_input_changes(self):
+        from django.utils import timezone
+        from datetime import timedelta
+        cases = ['key', 'expired', 'role', 'model', 'tokenizer', 'artifact']
+        for case in cases:
+            with self.subTest(case=case):
+                imported = self.import_model(idempotency_key='authority-' + case, name='Authority ' + case)
+                self.assertEqual(imported.status_code, 201, imported.content)
+                version = ModelVersion.all_objects.get(model_version_id=imported.data['candidate_id'])
+                body = {'model': str(version.model_version_id), 'messages': [{'role': 'user', 'content': 'hello'}],
+                        'max_tokens': 4, 'stream': True}
+                response = self.client.post('/api/v1/inference/chat/completions', body, format='json')
+                self.assertEqual(response.status_code, 200)
+                iterator = iter(response.streaming_content)
+                self.assertIn('assistant', next(iterator).decode())
+                if case == 'key': ApiKey.objects.filter(pk=self.key.pk).update(is_active=False)
+                elif case == 'expired': ApiKey.objects.filter(pk=self.key.pk).update(expires_at=timezone.now() - timedelta(seconds=1))
+                elif case == 'role': ApiKey.objects.filter(pk=self.key.pk).update(role=Role.VIEWER)
+                elif case == 'model': ModelVersion.all_objects.filter(pk=version.pk).update(state='archived')
+                elif case == 'tokenizer': type(version.tokenizer).all_objects.filter(pk=version.tokenizer_id).update(compatibility={'changed': True})
+                else: Artifact.all_objects.filter(artifact_id=self.files['model.safetensors']['artifact_id']).update(state='staging')
+                events = b''.join(iterator).decode(); response.close()
+                self.assertIn('inference_error', events)
+                self.assertNotIn('"content":', events)
+                self.assertEqual(InferenceRequest.all_objects.latest('created_at').status, 'failed')
+                ApiKey.objects.filter(pk=self.key.pk).update(is_active=True, expires_at=None, role=Role.ENGINEER)
+                Artifact.all_objects.filter(artifact_id=self.files['model.safetensors']['artifact_id']).update(state='committed')
+
+    def test_buffered_completion_withholds_all_text_when_key_is_revoked_during_generation(self):
+        from modelanvil.api.views import model_workspace
+        original = model_workspace.generate
+        imported = self.import_model()
+        def revoked(session, *args, **kwargs):
+            for index, part in enumerate(original(session, *args, **kwargs)):
+                if index == 1:
+                    ApiKey.objects.filter(pk=self.key.pk).update(is_active=False)
+                yield part
+        body = {'model': imported.data['candidate_id'], 'messages': [{'role': 'user', 'content': 'hello'}], 'max_tokens': 4}
+        with patch.object(model_workspace, 'generate', side_effect=revoked):
+            response = self.client.post('/api/v1/inference/chat/completions', body, format='json')
+        self.assertEqual(response.status_code, 401)
+        self.assertNotIn('choices', response.json())
+        self.assertEqual(InferenceRequest.all_objects.latest('created_at').status, 'failed')
+
+    def test_stream_context_does_not_overwrite_a_later_request_project(self):
+        from modelanvil.core.tenancy import get_active_project
+        imported = self.import_model()
+        body = {'model': imported.data['candidate_id'], 'messages': [{'role': 'user', 'content': 'hello'}], 'max_tokens': 4, 'stream': True}
+        response = self.client.post('/api/v1/inference/chat/completions', body, format='json')
+        self.assertEqual(response.status_code, 200)
+        other = Project.all_objects.create(tenant_id=self.tenant.pk, team=self.project.team, name='Later', slug='later')
+        secret, hashed = generate_api_key()
+        ApiKey.objects.create(tenant=self.tenant, project=other, name='later', role=Role.ENGINEER, secret_hash=hashed)
+        later = APIClient(); later.credentials(HTTP_AUTHORIZATION='Bearer ' + secret)
+        self.assertEqual(later.get('/api/v1/inference/models/').status_code, 200)
+        set_active_tenant(self.tenant.pk); set_active_project(other.pk)
+        iterator = iter(response.streaming_content)
+        events = next(iterator).decode()
+        self.assertEqual(get_active_project(), other.pk)
+        events += next(iterator).decode()
+        self.assertEqual(get_active_project(), other.pk)
+        events += b''.join(iterator).decode(); response.close()
+        self.assertNotIn('inference_error', events)
+        self.assertIn('[DONE]', events)
+
+    def test_grant_revocation_stops_an_already_loaded_stream(self):
+        from modelanvil.identity.models import ProjectGrant
+        imported = self.import_model()
+        other = Project.all_objects.create(tenant_id=self.tenant.pk, team=self.project.team, name='Receiver', slug='receiver')
+        grant = ProjectGrant.objects.create(tenant_id=self.tenant.pk, project=self.project,
+            granted_to_project=other, resource_type='all')
+        ApiKey.objects.filter(pk=self.key.pk).update(project=None)
+        body = {'model': imported.data['candidate_id'], 'messages': [{'role': 'user', 'content': 'hello'}], 'max_tokens': 4, 'stream': True}
+        response = self.client.post('/api/v1/inference/chat/completions', body, format='json', HTTP_X_PROJECT_ID=str(other.pk))
+        self.assertEqual(response.status_code, 200)
+        iterator = iter(response.streaming_content); next(iterator)
+        grant.delete()
+        events = b''.join(iterator).decode(); response.close()
+        self.assertIn('inference_error', events)
+        self.assertNotIn('"content":', events)
+
     def test_managed_instruction_bases_are_chat_snapshots_only_with_exact_allowlisted_files(self):
         from modelanvil.runners.inference import snapshot, local_session
         from modelanvil.runners.training import hf_runtime
