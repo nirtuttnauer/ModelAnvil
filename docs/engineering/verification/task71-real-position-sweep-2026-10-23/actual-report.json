@@ -1,0 +1,548 @@
+{
+  "protocol": {
+    "id": "authored-code-position-v1",
+    "license": "CC0-1.0",
+    "positions": [
+      "start",
+      "middle",
+      "end"
+    ],
+    "repeats": 2,
+    "distractor_count": 12,
+    "decoding": {
+      "temperature": 0.0,
+      "seed": 42,
+      "max_tokens": 24,
+      "prompt_format": "model",
+      "device": "cpu"
+    },
+    "context_limit": 2048,
+    "system": "Read the supplied evidence and answer with only the requested access code. Do not include an explanation or citation. If the evidence does not give the code, answer UNKNOWN.",
+    "cases": [
+      {
+        "case_id": "island",
+        "question": "What is the access code for the island beacon?",
+        "fact": "The access code for the island beacon is WILLOW.",
+        "expected": "WILLOW"
+      },
+      {
+        "case_id": "valley",
+        "question": "What is the access code for the valley station?",
+        "fact": "The access code for the valley station is CEDAR.",
+        "expected": "CEDAR"
+      },
+      {
+        "case_id": "harbor",
+        "question": "What is the access code for the harbor tower?",
+        "fact": "The access code for the harbor tower is MAPLE.",
+        "expected": "MAPLE"
+      }
+    ],
+    "distractor": "Maintenance record {number}: The weather was partly cloudy. The walkway was inspected in the morning. The water tank was full and the door was closed. This record contains no access code.",
+    "scoring": {
+      "metric": "normalized_exact_match",
+      "normalization": "Unicode NFKC, casefold, collapse whitespace, remove terminal period; no extraction of answer words from explanations",
+      "unit": "fraction",
+      "denominator": "all scheduled actual forwards; runtime failures abort the report",
+      "variation": "per-repeat accuracy, population standard deviation, per-case unique raw outputs",
+      "middle_dip": "middle accuracy < arithmetic mean of start and end; descriptive only, no significance claim"
+    },
+    "reproduction_tolerance": {
+      "accuracy_absolute": 0.3333333333333333,
+      "basis": "At most one of three authored cases per position; fixed before model measurements. Structure/pins/counts must match exactly. No model quality threshold."
+    }
+  },
+  "protocol_digest": "2114d6385c6c4efa10303b16e7a45a15b5e00483a152784dc5481769555c5db9",
+  "fixture_digest": "908b1e6ff90d3087d39a7ef3a11788106cba602b3c169a249002c61e39e24d90",
+  "source_commit": "45a9ff39c571a59ad9514ceb3d665c30262a6510",
+  "model_pins": {
+    "files": {
+      "config.json": {
+        "artifact_id": "01a167ca-8e1a-7806-aec7-6d59dcc3da18",
+        "byte_size": 861,
+        "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a"
+      },
+      "generation_config.json": {
+        "artifact_id": "01a167ca-8e1f-7e2d-913f-8d7e4e0ff292",
+        "byte_size": 132,
+        "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013"
+      },
+      "model.safetensors": {
+        "artifact_id": "01a167ca-8e83-7a51-9dab-3e8ec4134b30",
+        "byte_size": 269060552,
+        "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+      },
+      "special_tokens_map.json": {
+        "artifact_id": "01a167ca-8efd-785b-bd33-7803f1be50c7",
+        "byte_size": 655,
+        "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52"
+      },
+      "tokenizer.json": {
+        "artifact_id": "01a167ca-8f03-7608-bb02-79d72c5e35d4",
+        "byte_size": 2104556,
+        "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+      },
+      "tokenizer_config.json": {
+        "artifact_id": "01a167ca-8f09-7b50-bf59-47a02bf33193",
+        "byte_size": 3764,
+        "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df"
+      }
+    },
+    "format": "safetensors",
+    "source": {
+      "license": "apache-2.0",
+      "license_evidence": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/blob/12fd25f77366fa6b3b4b768ec3050bf629380bac/README.md",
+      "rag_decoder_profile": "78a7555433ac9baa663f6b06b12b8139c7382289e9bb69e8491dbf53cc732365",
+      "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+      "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+    }
+  },
+  "model_snapshot_digest": "24b86904c66c9cd6f1cead4469aa86f55cace5b60ef312a0e1195552d2a455f8",
+  "environment": {
+    "python": "3.12.15",
+    "system": "Darwin",
+    "release": "27.0.0",
+    "architecture": "arm64",
+    "device": "cpu",
+    "threads": 1,
+    "packages": {
+      "torch": "2.13.0",
+      "transformers": "5.14.0",
+      "tokenizers": "0.22.2",
+      "safetensors": "0.8.0"
+    }
+  },
+  "runs": [
+    {
+      "case_id": "island",
+      "repeat": 0,
+      "position": "start",
+      "expected": "WILLOW",
+      "output": "The access code for the island beacon is WILLOW.",
+      "correct": false,
+      "prompt_sha256": "76cf478a66039b92e0d7249bdafe9cbab4a812597d3f43fa25356912f87fc6de",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 230,
+      "input_tokens": 576,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 576,
+        "completion_tokens": 13,
+        "total_tokens": 589
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.3994144999887794
+    },
+    {
+      "case_id": "island",
+      "repeat": 0,
+      "position": "middle",
+      "expected": "WILLOW",
+      "output": "The access code for the island beacon is WILLOW.",
+      "correct": false,
+      "prompt_sha256": "58268fea2773c5b07c86a3b28462f63eab0e04387a11fe37091bc6f9d7814ca6",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 1322,
+      "input_tokens": 576,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 576,
+        "completion_tokens": 13,
+        "total_tokens": 589
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.3886435420718044
+    },
+    {
+      "case_id": "island",
+      "repeat": 0,
+      "position": "end",
+      "expected": "WILLOW",
+      "output": "The access code for the island beacon is WILLOW.",
+      "correct": false,
+      "prompt_sha256": "877b0327b2c69d26d88ce15443651a218d6fb0d4b3285980fd584a3c952e69b7",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 2417,
+      "input_tokens": 576,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 576,
+        "completion_tokens": 13,
+        "total_tokens": 589
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.3888576249592006
+    },
+    {
+      "case_id": "valley",
+      "repeat": 0,
+      "position": "middle",
+      "expected": "CEDAR",
+      "output": "The access code for the valley station is CEDAR.",
+      "correct": false,
+      "prompt_sha256": "d572f9b8db4eaaa1d6411b1eaca1b5b858ee2fea883b92861fe2e4b932bc9fb5",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 1322,
+      "input_tokens": 576,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 576,
+        "completion_tokens": 13,
+        "total_tokens": 589
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.3836525420192629
+    },
+    {
+      "case_id": "valley",
+      "repeat": 0,
+      "position": "end",
+      "expected": "CEDAR",
+      "output": "The access code for the valley station is CEDAR.",
+      "correct": false,
+      "prompt_sha256": "0c802cd34e8e32f407ea4b4cd29ea70c0cf15251c4858c17abe7f12c16b15472",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 2417,
+      "input_tokens": 576,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 576,
+        "completion_tokens": 13,
+        "total_tokens": 589
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.37711562495678663
+    },
+    {
+      "case_id": "valley",
+      "repeat": 0,
+      "position": "start",
+      "expected": "CEDAR",
+      "output": "The access code for the valley station is CEDAR.",
+      "correct": false,
+      "prompt_sha256": "656a0ebc7254747fe2d807068361da294989954a83faabdcf75f1f91018c0ddc",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 230,
+      "input_tokens": 576,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 576,
+        "completion_tokens": 13,
+        "total_tokens": 589
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.3982690409757197
+    },
+    {
+      "case_id": "harbor",
+      "repeat": 0,
+      "position": "end",
+      "expected": "MAPLE",
+      "output": "The access code for the harbor tower is MAPLE.",
+      "correct": false,
+      "prompt_sha256": "f6b977fecd098ad32caee47b57ad1bf866b0b97b9e15e28f7247eb2c2b44af70",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 2417,
+      "input_tokens": 575,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 575,
+        "completion_tokens": 12,
+        "total_tokens": 587
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.38192491605877876
+    },
+    {
+      "case_id": "harbor",
+      "repeat": 0,
+      "position": "start",
+      "expected": "MAPLE",
+      "output": "The access code for the harbor tower is MAPLE.",
+      "correct": false,
+      "prompt_sha256": "614214e787f68db6670fdcbc549455967b70bac47c685df3926644866fc1cbc9",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 230,
+      "input_tokens": 575,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 575,
+        "completion_tokens": 12,
+        "total_tokens": 587
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.37732979212887585
+    },
+    {
+      "case_id": "harbor",
+      "repeat": 0,
+      "position": "middle",
+      "expected": "MAPLE",
+      "output": "The access code for the harbor tower is MAPLE.",
+      "correct": false,
+      "prompt_sha256": "35af1976b2dbf3c755011b3e527fa09200d48ab861a1b10a3ea9c205e8a3d525",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 1322,
+      "input_tokens": 575,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 575,
+        "completion_tokens": 12,
+        "total_tokens": 587
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.3704751250334084
+    },
+    {
+      "case_id": "island",
+      "repeat": 1,
+      "position": "end",
+      "expected": "WILLOW",
+      "output": "The access code for the island beacon is WILLOW.",
+      "correct": false,
+      "prompt_sha256": "877b0327b2c69d26d88ce15443651a218d6fb0d4b3285980fd584a3c952e69b7",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 2417,
+      "input_tokens": 576,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 576,
+        "completion_tokens": 13,
+        "total_tokens": 589
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.37550512491725385
+    },
+    {
+      "case_id": "island",
+      "repeat": 1,
+      "position": "middle",
+      "expected": "WILLOW",
+      "output": "The access code for the island beacon is WILLOW.",
+      "correct": false,
+      "prompt_sha256": "58268fea2773c5b07c86a3b28462f63eab0e04387a11fe37091bc6f9d7814ca6",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 1322,
+      "input_tokens": 576,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 576,
+        "completion_tokens": 13,
+        "total_tokens": 589
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.38392983307130635
+    },
+    {
+      "case_id": "island",
+      "repeat": 1,
+      "position": "start",
+      "expected": "WILLOW",
+      "output": "The access code for the island beacon is WILLOW.",
+      "correct": false,
+      "prompt_sha256": "76cf478a66039b92e0d7249bdafe9cbab4a812597d3f43fa25356912f87fc6de",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 230,
+      "input_tokens": 576,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 576,
+        "completion_tokens": 13,
+        "total_tokens": 589
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.37596166715957224
+    },
+    {
+      "case_id": "valley",
+      "repeat": 1,
+      "position": "start",
+      "expected": "CEDAR",
+      "output": "The access code for the valley station is CEDAR.",
+      "correct": false,
+      "prompt_sha256": "656a0ebc7254747fe2d807068361da294989954a83faabdcf75f1f91018c0ddc",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 230,
+      "input_tokens": 576,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 576,
+        "completion_tokens": 13,
+        "total_tokens": 589
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.3828489580191672
+    },
+    {
+      "case_id": "valley",
+      "repeat": 1,
+      "position": "end",
+      "expected": "CEDAR",
+      "output": "The access code for the valley station is CEDAR.",
+      "correct": false,
+      "prompt_sha256": "0c802cd34e8e32f407ea4b4cd29ea70c0cf15251c4858c17abe7f12c16b15472",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 2417,
+      "input_tokens": 576,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 576,
+        "completion_tokens": 13,
+        "total_tokens": 589
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.378510250011459
+    },
+    {
+      "case_id": "valley",
+      "repeat": 1,
+      "position": "middle",
+      "expected": "CEDAR",
+      "output": "The access code for the valley station is CEDAR.",
+      "correct": false,
+      "prompt_sha256": "d572f9b8db4eaaa1d6411b1eaca1b5b858ee2fea883b92861fe2e4b932bc9fb5",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 1322,
+      "input_tokens": 576,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 576,
+        "completion_tokens": 13,
+        "total_tokens": 589
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.37514237500727177
+    },
+    {
+      "case_id": "harbor",
+      "repeat": 1,
+      "position": "middle",
+      "expected": "MAPLE",
+      "output": "The access code for the harbor tower is MAPLE.",
+      "correct": false,
+      "prompt_sha256": "35af1976b2dbf3c755011b3e527fa09200d48ab861a1b10a3ea9c205e8a3d525",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 1322,
+      "input_tokens": 575,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 575,
+        "completion_tokens": 12,
+        "total_tokens": 587
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.37261495809070766
+    },
+    {
+      "case_id": "harbor",
+      "repeat": 1,
+      "position": "start",
+      "expected": "MAPLE",
+      "output": "The access code for the harbor tower is MAPLE.",
+      "correct": false,
+      "prompt_sha256": "614214e787f68db6670fdcbc549455967b70bac47c685df3926644866fc1cbc9",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 230,
+      "input_tokens": 575,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 575,
+        "completion_tokens": 12,
+        "total_tokens": 587
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.3728442918509245
+    },
+    {
+      "case_id": "harbor",
+      "repeat": 1,
+      "position": "end",
+      "expected": "MAPLE",
+      "output": "The access code for the harbor tower is MAPLE.",
+      "correct": false,
+      "prompt_sha256": "f6b977fecd098ad32caee47b57ad1bf866b0b97b9e15e28f7247eb2c2b44af70",
+      "evidence_fact_retained": true,
+      "fact_character_offset": 2417,
+      "input_tokens": 575,
+      "output_reserve_tokens": 24,
+      "runtime_limit_tokens": 2048,
+      "usage": {
+        "prompt_tokens": 575,
+        "completion_tokens": 12,
+        "total_tokens": 587
+      },
+      "finish_reason": "stop",
+      "elapsed_seconds": 0.37532550003379583
+    }
+  ],
+  "summary": {
+    "positions": {
+      "start": {
+        "correct": 0,
+        "total": 6,
+        "accuracy": 0.0,
+        "repeat_accuracies": [
+          0.0,
+          0.0
+        ],
+        "repeat_accuracy_stddev": 0.0,
+        "unique_outputs_by_case": {
+          "island": 1,
+          "valley": 1,
+          "harbor": 1
+        }
+      },
+      "middle": {
+        "correct": 0,
+        "total": 6,
+        "accuracy": 0.0,
+        "repeat_accuracies": [
+          0.0,
+          0.0
+        ],
+        "repeat_accuracy_stddev": 0.0,
+        "unique_outputs_by_case": {
+          "island": 1,
+          "valley": 1,
+          "harbor": 1
+        }
+      },
+      "end": {
+        "correct": 0,
+        "total": 6,
+        "accuracy": 0.0,
+        "repeat_accuracies": [
+          0.0,
+          0.0
+        ],
+        "repeat_accuracy_stddev": 0.0,
+        "unique_outputs_by_case": {
+          "island": 1,
+          "valley": 1,
+          "harbor": 1
+        }
+      }
+    },
+    "edge_mean_minus_middle": 0.0,
+    "middle_dip_observed": false,
+    "interpretation": "Descriptive three-case authored fixture only; no significance or general context-window claim."
+  },
+  "limits": "Actual CPU runs on a small authored CC0 fixture. Equal fixed decoding is repeated, not resampled. Unique outputs and repeat accuracy variation are measured, including zero variation. This does not qualify arbitrary saved context recipes."
+}

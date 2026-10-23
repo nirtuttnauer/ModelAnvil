@@ -111,6 +111,7 @@ jobs:
           MODELANVIL_BENCHMARK_CACHE: ${{ runner.temp }}/retrieval-benchmark
           MODELANVIL_RAG_DECODER_CACHE: ${{ runner.temp }}/rag-decoder
           MODELANVIL_RAG_GENERATION_REPORT: ${{ runner.temp }}/rag-generation-report.json
+          MODELANVIL_POSITION_REPORT: ${{ runner.temp }}/evidence-position-report.json
           MODELANVIL_RETRIEVAL_REPORT: ${{ runner.temp }}/retrieval-controls-report.json
           HF_HUB_OFFLINE: "1"
           TRANSFORMERS_OFFLINE: "1"
@@ -135,5 +136,13 @@ jobs:
         with:
           name: rag-generation-${{ github.sha }}
           path: ${{ runner.temp }}/rag-generation-report.json
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Preserve actual evidence-position report
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: evidence-position-${{ github.sha }}
+          path: ${{ runner.temp }}/evidence-position-report.json
           if-no-files-found: ignore
           retention-days: 14
