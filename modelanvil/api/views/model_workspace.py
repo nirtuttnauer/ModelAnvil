@@ -2,6 +2,7 @@
 from contextlib import ExitStack
 from contextvars import copy_context
 import json
+import math
 import time
 import uuid
 
@@ -10,6 +11,7 @@ from django.http import StreamingHttpResponse
 from rest_framework import serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
 
 from modelanvil.api.views.registries import TenantScopedViewSet
 from modelanvil.core.tenancy import get_active_project, get_active_tenant
@@ -152,6 +154,8 @@ class CompletionInput(serializers.Serializer):
             raise serializers.ValidationError(str(exc)) from exc
 
     def validate(self, attrs):
+        if not math.isfinite(attrs['temperature']):
+            raise serializers.ValidationError('Temperature must be finite.')
         unknown = set(self.initial_data) - set(self.fields)
         if unknown:
             raise serializers.ValidationError('Unsupported completion options: ' + ', '.join(sorted(unknown)))
@@ -384,10 +388,20 @@ class CompletionStream:
                 self.context.run(self.on_close)
 
 
+class CompletionEventRenderer(JSONRenderer):
+    media_type = 'text/event-stream'
+    format = 'sse'
+
+
 class InferenceViewSet(TenantScopedViewSet):
     queryset = ModelVersion.objects.select_related('model', 'tokenizer')
     serializer_class = None
     http_method_names = ['get', 'post', 'head', 'options']
+
+    def get_renderers(self):
+        if getattr(self, 'action', None) == 'completions':
+            return [JSONRenderer(), CompletionEventRenderer()]
+        return super().get_renderers()
 
     def create(self, request):
         from rest_framework.exceptions import MethodNotAllowed
@@ -427,6 +441,8 @@ class InferenceViewSet(TenantScopedViewSet):
         project = selected_project()
         form = CompletionInput(data=request.data); form.is_valid(raise_exception=True)
         options = form.validated_data
+        if request.accepted_renderer.format == 'sse' and not options['stream']:
+            raise serializers.ValidationError('Accept: text/event-stream requires stream: true.')
         version = self.get_queryset().filter(model_version_id=options['model']).first()
         provider = None
         if version is None:
@@ -437,12 +453,30 @@ class InferenceViewSet(TenantScopedViewSet):
                 raise NotFound('Model or provider is unavailable in this project.') from None
         stack = ExitStack()
         from modelanvil.runners.training.runtime import digest
-        record = InferenceRequest.all_objects.create(tenant_id=get_active_tenant(), project=project, model_version=version,
-            provider_snapshot=external_inference.public_target(str(options['model']), provider) if provider else {},
-            principal_id=str(request.user.pk), input_digest=digest(options['messages']),
-            configuration={k: v for k, v in options.items() if k not in {'messages', 'model'}})
-        output = ''
+        from modelanvil.runners import inference_replay
+        from modelanvil.runners.inference import snapshot_guard
         tenant = get_active_tenant()
+        try:
+            if provider is not None:
+                def guard():
+                    if external_inference.resolve(options['model'], tenant, project.pk) != provider:
+                        raise ValueError('External provider configuration changed.')
+                guard()
+                guard.identity = digest(provider)
+            else:
+                guard = snapshot_guard(version, tenant, project.pk)
+        except ValueError as exc:
+            raise serializers.ValidationError(str(exc)) from exc
+        replay, replayed = inference_replay.reserve(request, options, guard.identity)
+        tenant = get_active_tenant()
+        record = None
+        if not replayed:
+            record = InferenceRequest.all_objects.create(tenant_id=tenant, project=project, model_version=version,
+                provider_snapshot=external_inference.public_target(str(options['model']), provider) if provider else {},
+                principal_id=str(request.user.pk), input_digest=digest(options['messages']),
+                configuration={k: v for k, v in options.items() if k not in {'messages', 'model'}})
+        output = ''
+        measurement = {}
 
         def assert_current():
             from modelanvil.identity.auth import ApiKeyAuthentication, TenantRBAC
@@ -453,27 +487,46 @@ class InferenceViewSet(TenantScopedViewSet):
                 raise ValueError('Current inference access is unavailable.')
             guard()
 
+        if replayed:
+            try:
+                assert_current()
+            except ValueError as exc:
+                raise serializers.ValidationError('Current inference inputs changed; cached output withheld.') from exc
+            body = replay.response_body
+            if options['stream']:
+                iterator = inference_replay.events(body, assert_current, include_usage=options.get('stream_options', {}).get('include_usage', False))
+                response = StreamingHttpResponse(CompletionStream(iterator, stack, lambda: None), content_type='text/event-stream')
+                response['Cache-Control'] = 'no-cache'
+                response['X-Accel-Buffering'] = 'no'
+            else:
+                response = Response(body)
+            return inference_replay.headers(response, replay, True)
+
+        def completion_body(final):
+            return {**base, 'object': 'chat.completion', 'choices': [{'index': 0,
+                'message': {'role': 'assistant', 'content': output}, 'finish_reason': final['finish_reason']}],
+                'usage': final['usage'], 'modelanvil': {'device': options['device'], 'elapsed_seconds': final['elapsed_seconds']}}
+
         def record_finish(status, final=None):
             from django.utils import timezone
             import hashlib
-            final = final or {}
+            final = final or measurement
             provider_evidence = {'provider_snapshot': {**record.provider_snapshot, 'reported_model': final.get('provider_model')}} if provider is not None and status == 'completed' else {}
-            InferenceRequest.all_objects.filter(pk=record.pk, status='running').update(status=status,
-                completed_at=timezone.now(), usage=final.get('usage'), elapsed_seconds=final.get('elapsed_seconds'),
-                output_digest=hashlib.sha256(output.encode()).hexdigest() if output else '', **provider_evidence)
+            from django.db import transaction
+            with transaction.atomic():
+                changed = InferenceRequest.all_objects.filter(pk=record.pk, status='running').update(status=status,
+                    completed_at=timezone.now(), usage=final.get('usage'), elapsed_seconds=final.get('elapsed_seconds'),
+                    output_digest=hashlib.sha256(output.encode()).hexdigest() if output else '', **provider_evidence)
+                if changed:
+                    inference_replay.finish(replay, completion_body(final) if status == 'completed' else None)
 
         try:
-            from modelanvil.runners.inference import snapshot_guard
             if provider is not None:
-                def guard():
-                    if external_inference.resolve(options['model'], tenant, project.pk) != provider:
-                        raise ValueError('External provider configuration changed.')
-                guard()
                 parts = stack.enter_context(external_inference.session(provider, options['messages'], max_tokens=options['max_tokens'],
                     temperature=options['temperature'], seed=options['seed'], prompt_format=options['prompt_format'], device=options['device']))
             else:
-                guard = snapshot_guard(version, tenant, project.pk)
-                session = stack.enter_context(local_session(version, tenant=get_active_tenant(), project=project.pk, device=options['device']))
+                session = stack.enter_context(local_session(version, tenant=tenant, project=project.pk, device=options['device']))
+                measurement = session.setdefault('measurement', {})
                 parts = generate(session, options['messages'], max_tokens=options['max_tokens'],
                                  temperature=options['temperature'], seed=options['seed'], prompt_format=options['prompt_format'])
             first = next(parts)
@@ -523,7 +576,7 @@ class InferenceViewSet(TenantScopedViewSet):
             response = StreamingHttpResponse(CompletionStream(events(), stack, closed), content_type='text/event-stream')
             response['Cache-Control'] = 'no-cache'
             response['X-Accel-Buffering'] = 'no'
-            return response
+            return inference_replay.headers(response, replay)
         try:
             from itertools import chain
             text, final = '', {}
@@ -534,9 +587,7 @@ class InferenceViewSet(TenantScopedViewSet):
                     final = part
             output = text
             record_finish('completed', final)
-            return Response({**base, 'object': 'chat.completion', 'choices': [{'index': 0,
-                'message': {'role': 'assistant', 'content': text}, 'finish_reason': final['finish_reason']}],
-                'usage': final['usage'], 'modelanvil': {'device': options['device'], 'elapsed_seconds': final['elapsed_seconds']}})
+            return inference_replay.headers(Response(completion_body(final)), replay)
         except ValueError as exc:
             raise serializers.ValidationError('Model inputs or current access changed; output withheld.') from exc
         finally:

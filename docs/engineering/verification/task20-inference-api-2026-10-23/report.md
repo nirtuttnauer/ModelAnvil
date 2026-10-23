@@ -1,0 +1,31 @@
+# TASK-20 — bounded compatible inference API
+
+23 October 2026. The existing project-scoped model catalog, actual local inference, structured errors, native cancellation and serving probes now include optional durable HTTP replay, standard SSE content negotiation and measured partial local usage. CPU implementation is qualified separately from GPU and production capacity.
+
+## Actual independent HTTPS clients
+
+`scripts/production_integration.py` built the production images and started a fresh PostgreSQL-backed deployment behind its private CA and TLS proxy. Its authored twelve-token character model contains real Safetensors weights after four numerical training updates. The independent `scripts/inference_protocol_client.py` imports only Python's standard library, not Django or ModelAnvil. It made actual authenticated model-list, JSON and SSE completion requests from the Mac host and a separate container network namespace. Both verified the CA and hostname with TLS 1.3, and actually refused the untrusted CA. The namespace client kept hostname verification enabled while connecting to the proxy's private network address.
+
+Each client obtained actual generated text `b`, with three input and two computed output tokens, and retried both JSON and SSE under scoped idempotency keys. Replies retained their original completion IDs, text and usage. Changed options under the same key returned 409. Unknown options, context/output overflow and another project were refused. Successful inference changed the model catalog's `load_tested` evidence. After restarting the API, the separate namespace client received exactly its original results. The PostgreSQL assertion found four completed inference records and four completed replay records: retries and restart generated no duplicate usage. The [three client receipts](https-client-receipts.json) preserve the actual IDs, outputs and metrics.
+
+This verifies the explicitly configured one-host network deployment. It does not qualify a physical second machine, public internet exposure, GPU inference, load capacity or model quality. The fixture's isolated containers, networks and volumes were removed after the run. No customer data or paid provider was used.
+
+## Replay, scope and retention
+
+The optional `Idempotency-Key` uses the existing durable table, scoped by tenant, authenticated actor, project, method and path, with normalized options and current model/provider identity in its request hash. Completed output and measured inference completion commit atomically. Replayed SSE splits saved text into bounded frames, rechecks live authority before publishing and never loads or generates another model response. Provider credentials remain server-only; their raw values are not stored in replay records. Changed inputs/pins, in-flight/interrupted work and failed/cancelled work are conflicts. Ambiguous work is never silently executed again; a new key explicitly authorizes a new inference.
+
+Keyed requests opt into storing generated output. Unkeyed requests retain the existing digest/count ledger without this output cache. The seven-day logical replay window does not promise automatic physical deletion: expired completed records are replaced on reuse or removed by `purge_expired_inference_replays --apply`, with a dry-run default. Pending keys, conversations and inference history are preserved. Tests exercise cleanup boundaries, exact replay identity, threaded duplicate admission, principal/project separation, current model/artifact pins and revocation during cached streaming.
+
+An actual separate OS process acquired the shared CPU device lease. The completion API refused a competing inference without invented usage. After release, a new key generated successfully; the failed original key remained a conflict. Existing context and output limits remain enforced before generation. API keys and model grants are rechecked during new and replayed output.
+
+## Actual native cancellation
+
+The pinned CPU engine `xllamacpp 2026.10.11549` loaded public SmolLM2-135M revision `93efa2f097d58c2a74874c7e644dbc9b0cee75a2`, converted by llama.cpp commit `f5027fb21307eb264aed483242603d68c87b0fe3` to F16 GGUF SHA-256 `9b041a726f64659de76d5f1b3efa1909477b00094b16845a6288c9cd4e2fefc1` (270,885,376 bytes). Two actual eight-token generations matched exactly. Closing a subsequent stream after its first delivered text stopped native work with three computed tokens out of 256 requested, three input tokens, and the native session idle. The measured count survives generator close; prefetched native tokens can exceed delivered text. The [native receipt](native-gguf-receipt.json) preserves exact output, counters, source identities and observed timing. The opt-in native integration test passed separately.
+
+Local PyTorch and character runtimes count actual generated IDs; MLX preserves its supplied counter. Unknown partial external-provider usage remains unavailable. No token count is inferred from text chunks. Closing a cancelled or failed request never creates a completed replay.
+
+## Validation and boundaries
+
+The focused file-backed SQLite suite passed 34 tests with one opt-in native skip, covering replay, compatible providers, local serving, cross-process admission and GGUF guards. The actual native test separately passed with the verified model. The complete backend suite passed 1,089 tests in 180 seconds with 11 optional environment skips. All 228 frontend tests and the production frontend build passed. Django system/migration checks and diff whitespace checks passed. Required remote backend, frontend and PostgreSQL checks must pass on the exact PR head before merge.
+
+`Accept: text/event-stream` works with `stream: true`; a non-streaming request with this Accept header gets a structured 400. Unsupported tools, `top_p`, logprobs and multiple completions remain documented refusals. CORS permits project/replay headers only within the configured origin policy. Reproduce the TLS exercise with `python scripts/production_integration.py`; run the focused suite with `python manage.py test modelanvil.api.test_inference_replay modelanvil.api.test_external_chat modelanvil.api.test_local_serving modelanvil.test_device_admission modelanvil.runners.test_gguf_runtime`. [Source hashes](source-sha256.json) identify the verified implementation and harness.

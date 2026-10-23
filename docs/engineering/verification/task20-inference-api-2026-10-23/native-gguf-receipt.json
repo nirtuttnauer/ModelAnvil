@@ -1,0 +1,96 @@
+{
+  "scope": "Bounded actual CPU GGUF native computed-token accounting, including generator close; no model quality or production claim.",
+  "weights_sha256": "9b041a726f64659de76d5f1b3efa1909477b00094b16845a6288c9cd4e2fefc1",
+  "weight_bytes": 270885376,
+  "converter_commit": "f5027fb21307eb264aed483242603d68c87b0fe3",
+  "source_revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+  "runtime": "2026.10.11549",
+  "device": "cpu",
+  "first": [
+    {
+      "text": " light"
+    },
+    {
+      "text": " from"
+    },
+    {
+      "text": " a"
+    },
+    {
+      "text": " star"
+    },
+    {
+      "text": " and"
+    },
+    {
+      "text": " records"
+    },
+    {
+      "text": " the"
+    },
+    {
+      "text": " colors"
+    },
+    {
+      "finish_reason": "length",
+      "elapsed_seconds": 0.04147741599990695,
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 8,
+        "total_tokens": 11
+      }
+    }
+  ],
+  "repeated": [
+    {
+      "text": " light"
+    },
+    {
+      "text": " from"
+    },
+    {
+      "text": " a"
+    },
+    {
+      "text": " star"
+    },
+    {
+      "text": " and"
+    },
+    {
+      "text": " records"
+    },
+    {
+      "text": " the"
+    },
+    {
+      "text": " colors"
+    },
+    {
+      "finish_reason": "length",
+      "elapsed_seconds": 0.0403184169999804,
+      "usage": {
+        "prompt_tokens": 3,
+        "completion_tokens": 8,
+        "total_tokens": 11
+      }
+    }
+  ],
+  "delivered_before_close": {
+    "text": " a"
+  },
+  "computed_at_close": {
+    "usage": {
+      "prompt_tokens": 3,
+      "completion_tokens": 3,
+      "total_tokens": 6
+    },
+    "elapsed_seconds": 0.022997332999693754
+  },
+  "stopped_before_requested_limit": true,
+  "native_idle_after_close": true,
+  "source_sha256": {
+    "modelanvil/runners/gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+    "modelanvil/runners/inference.py": "651bd64e2b2ed75a6e87b763c6d72cd9793d95548f0a196783dda44c0bac6527"
+  }
+}

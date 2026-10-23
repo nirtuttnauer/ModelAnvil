@@ -85,6 +85,19 @@ class GGUFGuards(TestCase):
         response.__exit__.assert_called_once()
         session._wait_idle.assert_called_once()
 
+    def test_disconnect_retains_native_computed_usage_for_the_request_ledger(self):
+        session = self.session()
+        session._json = Mock(return_value={'tokens': [1, 2]})
+        session._generated_tokens = Mock(side_effect=[10, 13])
+        response = Mock()
+        response.__enter__ = Mock(return_value=response); response.__exit__ = Mock(return_value=False)
+        response.iter_lines.return_value = iter([b'data: {"choices":[{"text":"first"}]}'])
+        session._request = Mock(return_value=response); session._wait_idle = Mock()
+        measured = {}
+        iterator = self.generate(session, cancelled=lambda: False, measurement=measured)
+        next(iterator); iterator.close()
+        self.assertEqual(measured['usage'], {'prompt_tokens': 2, 'completion_tokens': 3, 'total_tokens': 5})
+
     def test_unknown_or_invalid_native_usage_is_refused(self):
         for value in ('-1', 'nan', '1.5', 'inf', None):
             with self.subTest(value=value):
