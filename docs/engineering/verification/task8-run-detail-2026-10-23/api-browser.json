@@ -1,0 +1,14 @@
+{
+  "observed_at": "2026-10-22T23:46:47.507Z",
+  "evidence": "actual API and database-backed job/attempt projection; disposable failed records; no execution",
+  "attempts_loaded": 60,
+  "draft_survives_reload": true,
+  "deep_link_survives_reload": true,
+  "back_forward_and_source_filter": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_overflow": false,
+  "page_errors": []
+}

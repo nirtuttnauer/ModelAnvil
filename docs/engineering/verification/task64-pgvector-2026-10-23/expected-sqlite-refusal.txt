@@ -1,0 +1,20 @@
+Creating test database for alias 'default'...
+F
+======================================================================
+FAIL: test_vector_extension_round_trip (modelanvil.rag.test_pgvector.VectorExtensionTests.test_vector_extension_round_trip)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/nirtuttnauer/.codex/worktrees/modelanvil-factory/modelanvil/modelanvil/rag/test_pgvector.py", line 9, in test_vector_extension_round_trip
+    self.assertEqual(connection.vendor, "postgresql")
+AssertionError: 'sqlite' != 'postgresql'
+- sqlite
++ postgresql
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)
+Destroying test database for alias 'default'...
+Found 1 test(s).
+System check identified no issues (0 silenced).
