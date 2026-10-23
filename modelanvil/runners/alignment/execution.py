@@ -101,7 +101,7 @@ def validate_alignment_inputs(run):
             'policy_artifact_digest': policy_artifact.sha256, 'tokenizer_digest': runtime.digest(spec),
             'hyperparameters': hp, 'verifier_spec': run.verifier_spec,
             'build_digest': hashlib.sha256(b''.join((Path(__file__).parent / name).read_bytes()
-                for name in ('execution.py', 'numerical.py'))).hexdigest()}
+                for name in ('execution.py', 'numerical.py', 'rlhf_stages.py'))).hexdigest()}
     bundles = {'policy_bundle': policy, 'reference_bundle': None, 'reward_bundle': None}
     if run.algorithm in ('dpo', 'ppo_rlhf') and not run.reference_model_version_id:
         raise ValueError('DPO and PPO require a pinned reference model.')
@@ -135,7 +135,7 @@ def validate_alignment_inputs(run):
         pins['verifier_spec'] = grpo.verifier_spec(run.verifier_spec)
         pins['verifier_runtime'] = verifier_runtime.contract()
         pins['seed'] = 42
-        paths = [Path(__file__).parent / name for name in ('execution.py', 'numerical.py', 'grpo.py', 'verifier_runtime.py')]
+        paths = [Path(__file__).parent / name for name in ('execution.py', 'numerical.py', 'rlhf_stages.py', 'grpo.py', 'verifier_runtime.py')]
         paths.append(verifier_runtime.SCRIPT)
         pins['build_digest'] = hashlib.sha256(b''.join(path.read_bytes() for path in paths)).hexdigest()
     return {'pins': pins, **bundles, 'train_preferences': train, 'heldout_preferences': heldout,
