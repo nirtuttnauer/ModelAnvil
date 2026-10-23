@@ -1,0 +1,81 @@
+{
+  "first": [
+    {
+      "text": "2"
+    },
+    {
+      "text": " +"
+    },
+    {
+      "text": " "
+    },
+    {
+      "text": "2"
+    },
+    {
+      "text": " is"
+    },
+    {
+      "text": " a"
+    },
+    {
+      "text": " classic"
+    },
+    {
+      "text": " arithmetic"
+    },
+    {
+      "finish_reason": "length",
+      "elapsed_seconds": 0.0762624170165509,
+      "usage": {
+        "prompt_tokens": 38,
+        "completion_tokens": 8,
+        "total_tokens": 46
+      }
+    }
+  ],
+  "cancelled": [
+    {
+      "text": "2"
+    },
+    {
+      "finish_reason": "cancelled",
+      "elapsed_seconds": 0.05234545888379216,
+      "usage": {
+        "prompt_tokens": 38,
+        "completion_tokens": 3,
+        "total_tokens": 41
+      }
+    }
+  ],
+  "repeat_outputs_match": true,
+  "oversize_refused": true,
+  "generator_close_stops_native_work": true,
+  "unauthorized_native_access_refused": true,
+  "unloaded_listener_closed": true,
+  "model_source": "HuggingFaceTB/SmolLM2-135M-Instruct",
+  "model_revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+  "license": "Apache-2.0",
+  "decoder_file_manifest": "modelanvil/rag/decoder-pins.json",
+  "gguf_sha256": "102c45efa42705741d39f8c837dd3cb0511a239f659565fdce0cc9731d8b5447",
+  "gguf_byte_size": 270886304,
+  "converter_source": "https://github.com/ggml-org/llama.cpp",
+  "converter_commit": "f5027fb21307eb264aed483242603d68c87b0fe3",
+  "runtime": "xllamacpp==2026.10.11549",
+  "backend": "cpu",
+  "generation_threads": 1,
+  "gpu_layers": 0,
+  "op_offload": false,
+  "kv_offload": false,
+  "disk_and_prompt_cache": false,
+  "hardware": {
+    "system": "macOS-27.0.1-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  "qualification": "Bounded software/reference CPU execution on this Mac; not a new GPU, customer, model-quality or production qualification.",
+  "source_files_sha256": {
+    "modelanvil/runners/gguf_runtime.py": "6bd6e819b6e5ca876ccf3180f466e1b0c6283c478c3730798a5995e69f6f26f8",
+    "modelanvil/runners/inference.py": "0e0efba24ba1677a77ef4e6f202c0a41579f23e4495906f57318104d143b4629",
+    "requirements.inference.txt": "b12c02fb272dbaeb67b593ce856527248d004f0810a39d650ff36140a733bd37"
+  }
+}

@@ -73,7 +73,10 @@ def model_capabilities(version):
                 raise ValueError('Model configuration must be an object.')
         format = plan['format']
         if format == 'gguf':
-            if not find_spec('llama_cpp'):
+            from modelanvil.runners.gguf_runtime import MAX_WEIGHT_BYTES
+            if not 0 < weight_bytes <= MAX_WEIGHT_BYTES:
+                raise ValueError('CPU GGUF weights must fit within the verified 1 GiB limit.')
+            if not find_spec('xllamacpp'):
                 raise ValueError('Install the optional llama.cpp runtime for CPU GGUF inference.')
             devices = ['cpu']
         elif format == 'mlx':
