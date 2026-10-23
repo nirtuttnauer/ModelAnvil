@@ -1,0 +1,110 @@
+{
+  "observed_at": "2026-10-23T01:04:09.703Z",
+  "origin": "actual_cpu_reference",
+  "versions": [
+    "01a16649-63f5-7543-8e86-57393e4bedfc",
+    "01a16649-6500-77e7-91fc-cbd85035b4d2"
+  ],
+  "compiled_prompt": "system: a\nuser: fact\nuser: b\nassistant: ",
+  "compiled_tokens": 42,
+  "token_count_method": "exact_runtime_tokenizer",
+  "pins": {
+    "model_version_id": "01a16619-a78e-7c9e-b72f-73791977e9fa",
+    "model_artifact_id": "01a16619-a78b-7d91-8a7a-a9a72617681c",
+    "model_sha256": "d3633630eba23151d28361919f197e28c25dfbe41663e9236648bd80a6a33199",
+    "model_bytes": 12510,
+    "tokenizer_id": "01a165b3-1156-7987-9de0-5cadd566dc20",
+    "tokenizer_digest": "fe9051930c3083b72a5c0d5ac68d937d455cda79a5b9508b271b4d6ab85f7a18",
+    "runtime": "modelanvil.cpu-character-sft.v1",
+    "runtime_contract": "6590e79bf229fa31750d7493e84526aca4964ad6eface014874ebfe24696642d",
+    "template": "context-role-lines-v1",
+    "template_digest": "9cc5e42be8ec9eab4c67ad3ff4695f83587890d950a6501b4b4b4d616521d6eb"
+  },
+  "cases_digest": "430e2dc721954c6b0127beea7ec5bdeffacfc19539d8e44d8f197f730d03f6de",
+  "decoding": {
+    "temperature": 0,
+    "seed": 42,
+    "seed_rule": "seed + case index",
+    "max_new_tokens": 4,
+    "prompt_format": "plain"
+  },
+  "environment": {
+    "python": "3.12.15",
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "device": "cpu"
+  },
+  "metrics": {
+    "baseline": {
+      "total_cases": 1,
+      "completed_cases": 1,
+      "failed_cases": 0,
+      "exact_match_fraction": 0,
+      "prompt_tokens": 42,
+      "completion_tokens": 4,
+      "elapsed_seconds": 0.0019260412082076073
+    },
+    "candidate": {
+      "total_cases": 1,
+      "completed_cases": 1,
+      "failed_cases": 0,
+      "exact_match_fraction": 0,
+      "prompt_tokens": 42,
+      "completion_tokens": 4,
+      "elapsed_seconds": 0.0005781250074505806
+    }
+  },
+  "cases": [
+    {
+      "case_id": "case-1",
+      "session_key": "session-1",
+      "expected": "impossible-reference-control",
+      "baseline": {
+        "version_id": "01a16649-63f5-7543-8e86-57393e4bedfc",
+        "status": "completed",
+        "prompt": "system: a\nuser: fact\nuser: b\nassistant: ",
+        "output": "cd\na",
+        "exact_match": false,
+        "evidence_retained": {
+          "target": true
+        },
+        "usage": {
+          "prompt_tokens": 42,
+          "completion_tokens": 4,
+          "total_tokens": 46
+        },
+        "elapsed_seconds": 0.0019260412082076073,
+        "finish_reason": "length",
+        "omitted_blocks": [],
+        "truncated_blocks": []
+      },
+      "candidate": {
+        "version_id": "01a16649-6500-77e7-91fc-cbd85035b4d2",
+        "status": "completed",
+        "prompt": "system: a\nuser: b\nuser: fact\nassistant: ",
+        "output": "cd\na",
+        "exact_match": false,
+        "evidence_retained": {
+          "target": true
+        },
+        "usage": {
+          "prompt_tokens": 42,
+          "completion_tokens": 4,
+          "total_tokens": 46
+        },
+        "elapsed_seconds": 0.0005781250074505806,
+        "finish_reason": "length",
+        "omitted_blocks": [],
+        "truncated_blocks": []
+      },
+      "output_changed": false
+    }
+  ],
+  "reordered_immutable_revision": true,
+  "saved_report_survives_reload": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "horizontal_overflow": false,
+  "page_errors": []
+}

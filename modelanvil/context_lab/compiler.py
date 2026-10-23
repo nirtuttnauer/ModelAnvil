@@ -49,8 +49,10 @@ def estimate_tokens(text: str) -> int:
 class ContextCompiler:
     """Compiles typed context blocks into exact serialized model input with token limits and omission records."""
 
-    def __init__(self, recipe_version: ContextRecipeVersion) -> None:
+    def __init__(self, recipe_version: ContextRecipeVersion, *, token_counter=estimate_tokens, serializer=None) -> None:
         self.recipe_version = recipe_version
+        self.count = token_counter
+        self.serialize = serializer or (lambda blocks: "\n".join(f"<|im_start|>{b.role}\n{b.rendered_content}<|im_end|>" for b in blocks))
 
     def compile(
         self,
@@ -87,20 +89,20 @@ class ContextCompiler:
                 continue
 
             rendered = str(raw)
-            original_tokens = estimate_tokens(rendered)
+            original_tokens = self.count(rendered)
             was_truncated = False
             if b.max_tokens is not None and original_tokens > b.max_tokens:
                 low, high = 0, len(rendered)
                 while low < high:
                     middle = (low + high + 1) // 2
-                    if estimate_tokens(rendered[:middle]) <= b.max_tokens:
+                    if self.count(rendered[:middle]) <= b.max_tokens:
                         low = middle
                     else:
                         high = middle - 1
                 rendered = rendered[:low]
                 was_truncated = True
-                truncated.append({"block_key": b.block_key, "reason": "block_token_limit", "original_tokens": original_tokens, "tokens_retained": estimate_tokens(rendered)})
-            tok_count = estimate_tokens(f"<|im_start|>{b.role}\n{rendered}<|im_end|>")
+                truncated.append({"block_key": b.block_key, "reason": "block_token_limit", "original_tokens": original_tokens, "tokens_retained": self.count(rendered)})
+            tok_count = self.count(rendered)
 
             candidate_blocks.append(
                 CompiledBlock(
@@ -117,9 +119,9 @@ class ContextCompiler:
             )
 
         def serialized(blocks):
-            return "\n".join(f"<|im_start|>{block.role}\n{block.rendered_content}<|im_end|>" for block in blocks)
+            return self.serialize(blocks)
 
-        total_tokens = estimate_tokens(serialized(candidate_blocks))
+        total_tokens = self.count(serialized(candidate_blocks))
         included: list[CompiledBlock] = []
         omitted: list[dict[str, Any]] = []
 
@@ -133,7 +135,7 @@ class ContextCompiler:
             # Sort by priority descending (priority 10 is trimmed first; priority 1 is kept)
             # Retain order when trimming
             active_list = list(candidate_blocks)
-            while estimate_tokens(serialized(active_list)) > max_budget and active_list:
+            while self.count(serialized(active_list)) > max_budget and active_list:
                 # Find lowest priority (max priority number)
                 lowest = max(active_list, key=lambda x: x.priority)
                 if lowest.priority == 1:
@@ -142,12 +144,13 @@ class ContextCompiler:
                         "Cannot trim further: Essential priority-1 instructions exceed token budget!"
                     )
 
+                tokens_before = self.count(serialized(active_list))
                 active_list.remove(lowest)
                 omitted.append({
                     "block_key": lowest.block_key,
                     "reason": "token_budget_overflow",
                     "priority": lowest.priority,
-                    "tokens_omitted": lowest.token_count,
+                    "tokens_omitted": tokens_before - self.count(serialized(active_list)),
                 })
 
             included = active_list
@@ -157,17 +160,12 @@ class ContextCompiler:
         # Step 3: Serialize prompt in strict block order
         included.sort(key=lambda x: block_order[x.block_key])
 
-        prompt_lines = []
-        for ib in included:
-            prompt_lines.append(f"<|im_start|>{ib.role}\n{ib.rendered_content}<|im_end|>")
-
-        serialized = "\n".join(prompt_lines)
-        final_input_tokens = estimate_tokens(serialized)
-        # Attribute separator and wrapper estimates so the chart allocations sum to the prompt estimate.
+        serialized = self.serialize(included)
+        final_input_tokens = self.count(serialized)
+        # Prefix differences attribute wrappers and special tokens without inventing per-block counts.
         prior = 0
         for position, block in enumerate(included):
-            prefix = "\n".join(prompt_lines[:position + 1])
-            prefix_tokens = estimate_tokens(prefix)
+            prefix_tokens = self.count(self.serialize(included[:position + 1]))
             block.token_count = prefix_tokens - prior
             prior = prefix_tokens
 

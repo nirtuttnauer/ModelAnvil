@@ -10,8 +10,8 @@ export interface ContextBlock {
   status?: 'Included' | 'Omitted' | 'Saved template'; tokenCount?: number;
   override?: boolean;
 }
-export function ContextBlockEditor({ blocks, onChange, onOverride, disabled, title = 'Context blocks' }: {
-  blocks: ContextBlock[]; onChange?: (key: string, content: string) => void; disabled?: boolean; title?: string;
+export function ContextBlockEditor({ blocks, onChange, onOverride, disabled, exactTokens = false, title = 'Context blocks' }: {
+  exactTokens?: boolean; blocks: ContextBlock[]; onChange?: (key: string, content: string) => void; disabled?: boolean; title?: string;
   onOverride?: (key: string, enabled: boolean) => void;
 }) {
   const id = useId();
@@ -22,7 +22,7 @@ export function ContextBlockEditor({ blocks, onChange, onOverride, disabled, tit
       <p className="wb-muted">{block.role && <>Role: {block.role} · </>}{block.essential == null ? 'Retention priority not reported' : block.essential ? 'Essential · retained on overflow' : 'Optional · eligible for omission on overflow'}</p>
       {onOverride && <label className="checkbox-label"><input type="checkbox" checked={!!block.override} onChange={e => onOverride(block.key, e.target.checked)} />Override {block.label || dataLabel(block.key)}</label>}
       {onChange ? <><label htmlFor={`${id}-${index}`}>{block.label || dataLabel(block.key)}{onOverride ? ' override' : ''}</label><MultilineField id={`${id}-${index}`} aria-label={`${block.label || dataLabel(block.key)}${onOverride ? ' override' : ''}`} rows={4} disabled={onOverride && !block.override} required={!onOverride && block.essential} value={block.content} onChange={e => onChange(block.key, e.target.value)} /></> : <TextContent text={block.content} />}
-      {block.tokenCount != null && <p className="wb-muted wb-number">Estimated tokens: {block.tokenCount.toLocaleString()}</p>}
+      {block.tokenCount != null && <p className="wb-muted wb-number">{exactTokens ? 'Runtime' : 'Estimated'} tokens: {block.tokenCount.toLocaleString()}</p>}
       {block.status === 'Omitted' && <p className="wb-warning">This block was omitted by the compiler.</p>}
     </section>)}</div>
   </fieldset>;

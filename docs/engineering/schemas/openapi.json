@@ -804,7 +804,23 @@
         ],
         "responses": {
           "200": {
-            "description": "Compiled prompt"
+            "description": "Measured scoped evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContextCompilation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input, unavailable pins, runtime busy or unsupported model"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Unavailable current project/tenant resource"
           }
         },
         "requestBody": {
@@ -3467,8 +3483,16 @@
                     "type": "integer",
                     "minimum": 1,
                     "default": 1
+                  },
+                  "model_version": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Accessible committed CPU character/general-transformer model record. Server freezes weight/tokenizer/runtime/template pins; unsupported/corrupt bundles refuse. Omit for estimator-only compilation."
                   }
-                }
+                },
+                "description": "Pinned CPU recipes enforce the actual model context (at most 64 tokens) and 1\u201332 output tokens; other recipes use labeled estimated counts. Source blocks remain immutable."
               }
             }
           }
@@ -7264,6 +7288,136 @@
           }
         }
       }
+    },
+    "/context-recipe-versions/{recipe_version_id}/paired-experiment/": {
+      "post": {
+        "tags": [
+          "Context Lab"
+        ],
+        "operationId": "runMeasuredContextPair",
+        "summary": "Run bounded actual CPU inference on paired immutable recipes",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recipe_version_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContextPairInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Measured scoped evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContextExperimentEvidence"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input, unavailable pins, runtime busy or unsupported model"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Unavailable current project/tenant resource"
+          }
+        }
+      }
+    },
+    "/context-experiments/": {
+      "get": {
+        "tags": [
+          "Context Lab"
+        ],
+        "operationId": "listContextExperimentEvidence",
+        "summary": "Read accessible experiment history; writes go through measured action",
+        "responses": {
+          "200": {
+            "description": "Measured scoped evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ContextExperimentEvidence"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input, unavailable pins, runtime busy or unsupported model"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Unavailable current project/tenant resource"
+          }
+        }
+      }
+    },
+    "/context-experiments/{experiment_id}/": {
+      "get": {
+        "tags": [
+          "Context Lab"
+        ],
+        "operationId": "getContextExperimentEvidence",
+        "summary": "Read pinned experiment evidence with current input/access checks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "experiment_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Measured scoped evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContextExperimentEvidence"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input, unavailable pins, runtime busy or unsupported model"
+          },
+          "403": {
+            "description": "Insufficient role"
+          },
+          "404": {
+            "description": "Unavailable current project/tenant resource"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -9892,8 +10046,16 @@
               "$ref": "#/components/schemas/ContextBlockInput"
             },
             "description": "Unique block keys; up to 500,000 total content characters."
+          },
+          "model_version": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Accessible committed CPU character/general-transformer model record. Server freezes weight/tokenizer/runtime/template pins; unsupported/corrupt bundles refuse. Omit for estimator-only compilation."
           }
-        }
+        },
+        "description": "Pinned CPU recipes enforce the actual model context (at most 64 tokens) and 1\u201332 output tokens; other recipes use labeled estimated counts. Source blocks remain immutable."
       },
       "KnowledgeIndexInput": {
         "type": "object",
@@ -12299,6 +12461,182 @@
           }
         },
         "description": "Real centered SVD PCA and bounded k-means on provided vectors. Unsupported UMAP and legacy hash coordinates refuse; changed/revoked/tombstoned inputs invalidate the projection."
+      },
+      "ContextCompilation": {
+        "type": "object",
+        "properties": {
+          "serialized_prompt": {
+            "type": "string"
+          },
+          "token_count": {
+            "type": "integer"
+          },
+          "token_count_method": {
+            "enum": [
+              "exact_runtime_tokenizer",
+              "deterministic_estimate"
+            ]
+          },
+          "runtime_pins": {
+            "type": "object"
+          },
+          "output_reserve_tokens": {
+            "type": "integer"
+          },
+          "model_limit_tokens": {
+            "type": "integer"
+          },
+          "included_blocks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "dropped_blocks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "omitted_blocks": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "truncated_blocks": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "block_token_counts": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "ContextPairInput": {
+        "type": "object",
+        "required": [
+          "name",
+          "baseline_version_id",
+          "cases"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "baseline_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "seed": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483639,
+            "default": 42
+          },
+          "cases": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 8,
+            "items": {
+              "type": "object",
+              "required": [
+                "case_id",
+                "session_key",
+                "expected",
+                "variables"
+              ],
+              "properties": {
+                "case_id": {
+                  "type": "string",
+                  "maxLength": 128
+                },
+                "session_key": {
+                  "type": "string",
+                  "maxLength": 128
+                },
+                "expected": {
+                  "type": "string",
+                  "maxLength": 512
+                },
+                "variables": {
+                  "type": "object",
+                  "maxProperties": 100,
+                  "additionalProperties": {
+                    "type": "string",
+                    "maxLength": 4096
+                  }
+                },
+                "evidence": {
+                  "type": "object",
+                  "maxProperties": 20,
+                  "additionalProperties": {
+                    "type": "string",
+                    "maxLength": 512
+                  }
+                },
+                "memory": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "session_key",
+                      "content"
+                    ],
+                    "properties": {
+                      "session_key": {
+                        "type": "string",
+                        "maxLength": 128
+                      },
+                      "content": {
+                        "type": "string",
+                        "maxLength": 2048
+                      },
+                      "expired": {
+                        "type": "boolean",
+                        "default": false
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "At most 16000 variable characters/case. Distinct case IDs; identical frozen cases/decoding for both variants. Memory fixtures include only matching-session nonexpired entries and cannot accompany raw memory. No live tools, GPU or paid provider."
+      },
+      "ContextExperimentEvidence": {
+        "type": "object",
+        "properties": {
+          "experiment_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "metrics": {
+            "type": "object"
+          },
+          "details": {
+            "type": "object",
+            "description": "Actual CPU origin; frozen cases and digest, recipe digests, weight/tokenizer/template/runtime pins, decoding/seeds/environment and each variant prompt/output/usage/latency/retention/omissions/failure. Reports with changed or inaccessible inputs withhold results."
+          }
+        },
+        "description": "Exact-match fraction includes failures in the denominator and declares completion coverage. This bounded reference experiment does not establish general model quality or injection safety."
       }
     }
   }

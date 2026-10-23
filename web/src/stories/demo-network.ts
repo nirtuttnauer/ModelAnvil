@@ -58,6 +58,7 @@ export function demoHandlers(state: DemoState = 'populated') {
         ? { available: false, reason: 'Synthetic preview: no measured embedding projection has been supplied.' }
         : { results: [], total: 0, next_offset: null, limit: 50 });
     }
+    if (request.method === 'GET' && path === '/api/v1/context-experiments/') return respond({ results: [], next: null, count: 0 });
     let value = request.method === 'GET' ? responses[path] : undefined;
     if (value === undefined) {
       console.error(`Unmocked demo request: ${request.method} ${path}`);

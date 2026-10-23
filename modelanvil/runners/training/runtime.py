@@ -72,10 +72,10 @@ def tokenizer_spec(tokenizer):
     return {'kind': 'character-v1', 'tokens': tokens, 'bos_id': 1, 'eos_id': 2, 'unk_id': 3}
 
 
-def encode(text, spec):
+def encode(text, spec, *, enforce_limit=True):
     table = {t: i for i, t in enumerate(spec['tokens'])}
     ids = [1] + [table.get(char, 3) for char in text] + [2]
-    if len(ids) > LIMITS['sequence_tokens']:
+    if enforce_limit and len(ids) > LIMITS['sequence_tokens']:
         raise ValueError('A training sample exceeds 64 encoded tokens; prepare shorter text samples.')
     return ids
 

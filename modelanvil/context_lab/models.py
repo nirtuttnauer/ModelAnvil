@@ -13,6 +13,8 @@ from modelanvil.core.models import TenantContextModel
 class ContextRecipe(TenantContextModel):
     """Logical context composition recipe."""
 
+    project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, null=True, blank=True)
+
     recipe_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
@@ -29,6 +31,8 @@ class ContextRecipe(TenantContextModel):
 class ContextRecipeVersion(TenantContextModel):
     """Pinned, immutable context recipe revision with token budget and output reserve (TECH-026)."""
 
+    project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, null=True, blank=True)
+
     class BudgetPolicy(models.TextChoices):
         FAIL_ON_OVERFLOW = "fail_on_overflow", "Fail on Overflow"
         TRIM_LOWEST_PRIORITY = "trim_lowest_priority", "Trim Lowest Priority Blocks"
@@ -41,6 +45,8 @@ class ContextRecipeVersion(TenantContextModel):
 
     recipe_version_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     recipe = models.ForeignKey(ContextRecipe, on_delete=models.CASCADE, related_name="versions")
+    model_version = models.ForeignKey('runners.ModelVersion', on_delete=models.PROTECT, null=True, blank=True)
+    runtime_pins = models.JSONField(default=dict, blank=True)
     revision_no = models.PositiveIntegerField(default=1)
     model_limit_tokens = models.PositiveIntegerField(default=4096)
     output_reserve_tokens = models.PositiveIntegerField(default=512)
@@ -135,6 +141,8 @@ class ToolFixtureVersion(TenantContextModel):
 
 class ContextExperiment(TenantContextModel):
     """Paired stress suite or ablation experiment execution (TECH-027 / PRD Scenario 16)."""
+
+    project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, null=True, blank=True)
 
     experiment_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     name = models.CharField(max_length=200)
