@@ -170,3 +170,41 @@ class RecipeApiTests(TestCase):
             from contracts import validate_envelope
             validate_envelope(report['rows'][0])
             self.assertEqual(len(report['rejected']),2)
+
+    def test_runtime_failure_fails_attempt_instead_of_rejecting_source_rows(self):
+        self.generation_recipe()
+        with patch.object(recipe_jobs.inference,'snapshot',return_value={'format':'fixture','files':{}}), \
+             patch.object(recipe_jobs.inference,'local_session'), \
+             patch.object(recipe_jobs,'local_generate',side_effect=ValueError('Context admission refused')):
+            run=self.submit()
+            self.assertEqual(execute_one(self.worker,recipe_jobs.recipe_executor)['status'],'failed')
+        run.refresh_from_db()
+        self.assertEqual(run.result,{})
+        self.assertFalse(any(k.startswith('generate/') for k in run.checkpoints))
+        self.assertEqual(BudgetReservation.all_objects.get(job_id=run.job.job_id).settled_amount,1)
+
+    def test_changed_model_withholds_generated_row_before_checkpoint(self):
+        self.generation_recipe()
+        def changed(*args):
+            type(self.laya).all_objects.filter(pk=self.laya.pk).update(metadata={'changed':True})
+            return {'text':'must not publish','usage':{'prompt_tokens':2,'completion_tokens':3,'total_tokens':5},'finish_reason':'stop'}
+        with patch.object(recipe_jobs.inference,'snapshot',return_value={'format':'fixture','files':{}}), \
+             patch.object(recipe_jobs.inference,'local_session'),patch.object(recipe_jobs,'local_generate',side_effect=changed):
+            run=self.submit()
+            self.assertEqual(execute_one(self.worker,recipe_jobs.recipe_executor)['status'],'failed')
+        run.refresh_from_db()
+        self.assertFalse(any(k.startswith('generate/') for k in run.checkpoints))
+        self.assertFalse(DatasetRevision.all_objects.exists())
+
+    def test_actual_cpu_reference_model_generates_measured_preview(self):
+        from modelanvil.runners.local_execution import initialize_character_base
+        _,_,version=initialize_character_base(tenant=self.tenant.pk,project=self.project.pk,name='Actual recipe CPU',seed=42)
+        graph=definition()
+        graph['steps'].insert(3,{'id':'generate','type':'generate','input':'clean','output':'text','max_tokens':4,'seed':42})
+        graph['steps'][-1]['input']='generate'
+        self.body.update(recipe=self.client.post('/api/v1/recipes/',graph,format='json').data['artifact_id'],model=str(version.model_version_id))
+        run=self.submit();self.complete();run.refresh_from_db()
+        self.assertEqual(run.result['usage']['completed_generation_calls'],3)
+        self.assertGreater(run.result['usage']['completion_tokens'],0)
+        self.assertEqual(run.frozen['model_snapshot']['format'],'cpu-reference')
+        self.assertTrue(run.frozen['model_snapshot']['registered_identity'])

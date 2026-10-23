@@ -1,0 +1,8 @@
+{
+  "modelanvil/data/recipe_jobs.py": "5fedb43725008d9ad782ae57e969f00ee71c5d3058549cb3d41b775f056f468b",
+  "modelanvil/data/recipes.py": "b2a8debf90fd23fcbad26c6acdc405265cca29e2a2c58eac48de52bec0c15d09",
+  "modelanvil/data/detection.py": "a4964ed5e5f0fe806f1477d7250e6f7afe006ec319e179af8c5ea3db614a085e",
+  "modelanvil/data/source_import.py": "0ea5fb2dfdb0af1423761a4ead2a26384c63ba87bd04f8457208c41fc0ad9ede",
+  "modelanvil/runners/inference.py": "651bd64e2b2ed75a6e87b763c6d72cd9793d95548f0a196783dda44c0bac6527",
+  "web/src/pages/RecipesPage.tsx": "7821e79b6908258edc407cdf9b48b64f7ae13207457a63c0bacf266f1e3bc399"
+}

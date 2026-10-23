@@ -1,0 +1,505 @@
+{
+  "scope": "Real bounded CPU recipe execution and process recovery, not representative quality or production qualification. No external provider or customer data.",
+  "four_formats": {
+    "run_id": "01a16997-5f56-725d-b824-ec0e22e441a7",
+    "actual": {
+      "rows": [
+        {
+          "schema_version": "1.0",
+          "sample_id": "80b21ea3-511e-5d72-ab8a-1e0d7fdae6c2",
+          "source_group_id": "source-sha256:946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+          "blocks": [
+            {
+              "block_id": "generated",
+              "type": "text",
+              "text": "A telescope collects",
+              "location": {
+                "source_path": "/0"
+              }
+            }
+          ],
+          "provenance": {
+            "source_snapshot_ref": "sha256:946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+            "source_record_key": "/0",
+            "content_sha256": "a0a8a25df699b59d8f0efa3374d7b49225281e8df2282bae62b46236b6405025",
+            "transformation_revision_ref": "modelanvil.recipe.v1",
+            "parent_sample_refs": [
+              "991745ad-5ab0-5f95-8737-375d1bd97165"
+            ]
+          },
+          "metadata": {
+            "recipe_sha256": "c5efd9301052d120e31a871133638e7247c0d7e79b9488b26c3186c4064aff5f",
+            "model_snapshot_sha256": null,
+            "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+            "steps": [
+              "json",
+              "clean"
+            ],
+            "source_sample_id": "991745ad-5ab0-5f95-8737-375d1bd97165",
+            "generation_calls": {},
+            "review_required": true,
+            "source_locations": [
+              {
+                "source_path": "/0"
+              }
+            ]
+          }
+        },
+        {
+          "schema_version": "1.0",
+          "sample_id": "a5d94de1-4ec4-530d-83e3-56ddc70ff120",
+          "source_group_id": "source-sha256:946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+          "blocks": [
+            {
+              "block_id": "generated",
+              "type": "text",
+              "text": "Ocean tides follow",
+              "location": {
+                "source_path": "/1"
+              }
+            }
+          ],
+          "provenance": {
+            "source_snapshot_ref": "sha256:946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+            "source_record_key": "/1",
+            "content_sha256": "9bf9f11a138cb9cc415755431dc500d188a73cd9eb56e2a1b9e0b80b14b9c757",
+            "transformation_revision_ref": "modelanvil.recipe.v1",
+            "parent_sample_refs": [
+              "d29ecf24-9a92-57e0-9188-dbdb3f8c206c"
+            ]
+          },
+          "metadata": {
+            "recipe_sha256": "c5efd9301052d120e31a871133638e7247c0d7e79b9488b26c3186c4064aff5f",
+            "model_snapshot_sha256": null,
+            "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+            "steps": [
+              "json",
+              "clean"
+            ],
+            "source_sample_id": "d29ecf24-9a92-57e0-9188-dbdb3f8c206c",
+            "generation_calls": {},
+            "review_required": true,
+            "source_locations": [
+              {
+                "source_path": "/1"
+              }
+            ]
+          }
+        },
+        {
+          "schema_version": "1.0",
+          "sample_id": "0f34886a-fcb1-5d4e-ba96-3b11d268be00",
+          "source_group_id": "source-sha256:47542fda821e0d2192effbfc2c6635b6c76361db789f21824548693f7dd46622",
+          "blocks": [
+            {
+              "block_id": "generated",
+              "type": "text",
+              "text": "Maintenance starts at 14:30 UTC.",
+              "location": {
+                "source_path": "record/1"
+              }
+            }
+          ],
+          "provenance": {
+            "source_snapshot_ref": "sha256:47542fda821e0d2192effbfc2c6635b6c76361db789f21824548693f7dd46622",
+            "source_record_key": "record/1",
+            "content_sha256": "73ffbe090b613377f5978c7a11ad01ac9a705b6079d10a28bdc7bf0b42e0c512",
+            "transformation_revision_ref": "modelanvil.recipe.v1",
+            "parent_sample_refs": [
+              "3f195a21-cd4a-5dc7-9121-0eef432f075a"
+            ]
+          },
+          "metadata": {
+            "recipe_sha256": "c5efd9301052d120e31a871133638e7247c0d7e79b9488b26c3186c4064aff5f",
+            "model_snapshot_sha256": null,
+            "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+            "steps": [
+              "csv",
+              "clean"
+            ],
+            "source_sample_id": "3f195a21-cd4a-5dc7-9121-0eef432f075a",
+            "generation_calls": {},
+            "review_required": true,
+            "source_locations": [
+              {
+                "source_path": "record/1"
+              }
+            ]
+          }
+        }
+      ],
+      "rejected": [],
+      "preview": true,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0,
+        "completed_generation_calls": 0
+      }
+    }
+  },
+  "typed": {
+    "text": {
+      "run_id": "01a16997-60c2-7ec7-9927-392c0616ebe8",
+      "report": {
+        "rows": [
+          {
+            "schema_version": "1.0",
+            "sample_id": "8e4dc0c7-8f74-5fb5-bc43-55ddf3124ecd",
+            "source_group_id": "source-sha256:456056213d488044e73ef6b0fff9cc5823fac5901780ef07d6af4e6e3fc9c2d5",
+            "blocks": [
+              {
+                "block_id": "generated",
+                "type": "text",
+                "text": "DOCUMENT",
+                "location": {
+                  "source_path": "/0"
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:456056213d488044e73ef6b0fff9cc5823fac5901780ef07d6af4e6e3fc9c2d5",
+              "source_record_key": "/0",
+              "content_sha256": "e52e1d57122da276f479fa74ab692ccdefb04ca8c9ce88a42ea9626e5589cfd1",
+              "transformation_revision_ref": "modelanvil.recipe.v1",
+              "parent_sample_refs": [
+                "f4141e24-4d19-5efc-949d-8434548a35bf"
+              ]
+            },
+            "metadata": {
+              "recipe_sha256": "26ac4fc63462fc88da36af605ad1bcc888752f9967317c881dd17dc959fb51cf",
+              "model_snapshot_sha256": "0bf052574b21c5f7739d8f9de03dcd262a140a71308b79cae756e891c4b77664",
+              "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+              "steps": [
+                "source",
+                "generate"
+              ],
+              "source_sample_id": "f4141e24-4d19-5efc-949d-8434548a35bf",
+              "generation_calls": {
+                "7d3296cd307888bfea0047dc605b03e7528736886c4193bc50de6e1122492901": {
+                  "usage": {
+                    "prompt_tokens": 16,
+                    "completion_tokens": 9,
+                    "total_tokens": 25
+                  },
+                  "finish_reason": "stop"
+                }
+              },
+              "review_required": true,
+              "source_locations": [
+                {
+                  "source_path": "/0"
+                }
+              ]
+            }
+          }
+        ],
+        "rejected": [],
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 16,
+          "completion_tokens": 9,
+          "total_tokens": 25,
+          "completed_generation_calls": 1
+        }
+      },
+      "settled_attempts": 1
+    },
+    "json": {
+      "run_id": "01a16997-61d3-7d18-a758-ddeca2957cd8",
+      "report": {
+        "rows": [
+          {
+            "schema_version": "1.0",
+            "sample_id": "ed8b98bd-ce2a-58dd-a535-4e3bf83f1b9a",
+            "source_group_id": "source-sha256:505feb3e2029fd29f0f671333b92b3ac1f06ba2144bcb9e0725f6fd31d1ca8fb",
+            "blocks": [
+              {
+                "block_id": "generated",
+                "type": "json",
+                "value": [
+                  0,
+                  1234
+                ],
+                "location": {
+                  "source_path": "/0"
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:505feb3e2029fd29f0f671333b92b3ac1f06ba2144bcb9e0725f6fd31d1ca8fb",
+              "source_record_key": "/0",
+              "content_sha256": "91a110ee7649dda60e2ca65c322c79f25fa760dce2b1db923272013f59b5d2e4",
+              "transformation_revision_ref": "modelanvil.recipe.v1",
+              "parent_sample_refs": [
+                "716a1674-ce62-53d4-a2c6-2d143a6dd2b2"
+              ]
+            },
+            "metadata": {
+              "recipe_sha256": "8c4081791b023f9238c476765680d5ea732e970da258ddd45c66d5d4ad6ab215",
+              "model_snapshot_sha256": "0bf052574b21c5f7739d8f9de03dcd262a140a71308b79cae756e891c4b77664",
+              "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+              "steps": [
+                "source",
+                "generate"
+              ],
+              "source_sample_id": "716a1674-ce62-53d4-a2c6-2d143a6dd2b2",
+              "generation_calls": {
+                "9df886ba7b1489c1972d1a63ad7cd8f35ae3ccc535ec85280508260bfcd70300": {
+                  "usage": {
+                    "prompt_tokens": 16,
+                    "completion_tokens": 9,
+                    "total_tokens": 25
+                  },
+                  "finish_reason": "stop"
+                }
+              },
+              "review_required": true,
+              "source_locations": [
+                {
+                  "source_path": "/0"
+                }
+              ]
+            }
+          }
+        ],
+        "rejected": [],
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 16,
+          "completion_tokens": 9,
+          "total_tokens": 25,
+          "completed_generation_calls": 1
+        }
+      },
+      "settled_attempts": 1
+    },
+    "code": {
+      "run_id": "01a16997-62df-7677-96f0-8608f8b30909",
+      "report": {
+        "rows": [
+          {
+            "schema_version": "1.0",
+            "sample_id": "622eedae-d462-59a0-899e-59e00cdf4062",
+            "source_group_id": "source-sha256:5b7836a7730555b6d20e633d93f95adfcd8c4322ef89bf4c46518892b3f65dfc",
+            "blocks": [
+              {
+                "block_id": "generated",
+                "type": "code",
+                "text": "v=56789;",
+                "location": {
+                  "source_path": "/0"
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:5b7836a7730555b6d20e633d93f95adfcd8c4322ef89bf4c46518892b3f65dfc",
+              "source_record_key": "/0",
+              "content_sha256": "252b07570f0119ff26fe1e110df39bda293648672b543b823b41392e46738e74",
+              "transformation_revision_ref": "modelanvil.recipe.v1",
+              "parent_sample_refs": [
+                "2b0da02f-ad55-5e31-b43a-422e876cb6b0"
+              ]
+            },
+            "metadata": {
+              "recipe_sha256": "473a8237dc2bcf813ad1edb0584e871a65ab155728744b927a5e0a30b99091f8",
+              "model_snapshot_sha256": "0bf052574b21c5f7739d8f9de03dcd262a140a71308b79cae756e891c4b77664",
+              "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+              "steps": [
+                "source",
+                "generate"
+              ],
+              "source_sample_id": "2b0da02f-ad55-5e31-b43a-422e876cb6b0",
+              "generation_calls": {
+                "a75095bebf421e2af1a5814bc71a02fa6a2cf150450160d6e5cde69d89b8206b": {
+                  "usage": {
+                    "prompt_tokens": 16,
+                    "completion_tokens": 9,
+                    "total_tokens": 25
+                  },
+                  "finish_reason": "stop"
+                }
+              },
+              "review_required": true,
+              "source_locations": [
+                {
+                  "source_path": "/0"
+                }
+              ]
+            }
+          }
+        ],
+        "rejected": [],
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 16,
+          "completion_tokens": 9,
+          "total_tokens": 25,
+          "completed_generation_calls": 1
+        }
+      },
+      "settled_attempts": 1
+    }
+  },
+  "pretrained_recovery": {
+    "run_id": "01a16997-63e7-73fa-8c29-c1177914a54d",
+    "exit_code": 93,
+    "reused_completed_rows": 1,
+    "actual": {
+      "rows": [
+        {
+          "schema_version": "1.0",
+          "sample_id": "cf312fc3-e9c6-5b48-8759-6054c71eb6d4",
+          "source_group_id": "source-sha256:946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+          "blocks": [
+            {
+              "block_id": "generated",
+              "type": "text",
+              "text": " light from a star and records the colors",
+              "location": {
+                "source_path": "/0"
+              }
+            }
+          ],
+          "provenance": {
+            "source_snapshot_ref": "sha256:946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+            "source_record_key": "/0",
+            "content_sha256": "77ef5a8438b732ecd5a9914d46c3d4856ed6bfef952aa157db3407e5f915473b",
+            "transformation_revision_ref": "modelanvil.recipe.v1",
+            "parent_sample_refs": [
+              "991745ad-5ab0-5f95-8737-375d1bd97165"
+            ]
+          },
+          "metadata": {
+            "recipe_sha256": "901c1bf6e77fcba0c3d345f8e712c0a4bd4c0f4c669515d30d6bb1b00129846d",
+            "model_snapshot_sha256": "923e85b025272ba292e4676bdb9e9d39b14072eda7936826d0c2ab4519d58e66",
+            "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+            "steps": [
+              "source",
+              "generate"
+            ],
+            "source_sample_id": "991745ad-5ab0-5f95-8737-375d1bd97165",
+            "generation_calls": {
+              "e519b0547dbd57c1a3f3a41b137ff0b7af89c92f311a8e1c369e27b05a73b5b3": {
+                "usage": {
+                  "prompt_tokens": 3,
+                  "completion_tokens": 8,
+                  "total_tokens": 11
+                },
+                "finish_reason": "length"
+              }
+            },
+            "review_required": true,
+            "source_locations": [
+              {
+                "source_path": "/0"
+              }
+            ]
+          }
+        },
+        {
+          "schema_version": "1.0",
+          "sample_id": "017f3187-cbd6-57cd-8ab7-955257e4e643",
+          "source_group_id": "source-sha256:946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+          "blocks": [
+            {
+              "block_id": "generated",
+              "type": "text",
+              "text": " the same path as the moon, but",
+              "location": {
+                "source_path": "/1"
+              }
+            }
+          ],
+          "provenance": {
+            "source_snapshot_ref": "sha256:946de3bf793c015527a2840cde941cd300b27e93e377865a6146b12c1e46ae0d",
+            "source_record_key": "/1",
+            "content_sha256": "e91f1bd196cfb0e717ec15bfa1bf8f2c216459a05915892476ad0ed5a3fb47ce",
+            "transformation_revision_ref": "modelanvil.recipe.v1",
+            "parent_sample_refs": [
+              "d29ecf24-9a92-57e0-9188-dbdb3f8c206c"
+            ]
+          },
+          "metadata": {
+            "recipe_sha256": "901c1bf6e77fcba0c3d345f8e712c0a4bd4c0f4c669515d30d6bb1b00129846d",
+            "model_snapshot_sha256": "923e85b025272ba292e4676bdb9e9d39b14072eda7936826d0c2ab4519d58e66",
+            "runtime_sha256": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69",
+            "steps": [
+              "source",
+              "generate"
+            ],
+            "source_sample_id": "d29ecf24-9a92-57e0-9188-dbdb3f8c206c",
+            "generation_calls": {
+              "f4f490965515d34d0aee3b07f5e678092089949388cf51ac43cfa8b03e17b3e0": {
+                "usage": {
+                  "prompt_tokens": 3,
+                  "completion_tokens": 8,
+                  "total_tokens": 11
+                },
+                "finish_reason": "length"
+              }
+            },
+            "review_required": true,
+            "source_locations": [
+              {
+                "source_path": "/1"
+              }
+            ]
+          }
+        }
+      ],
+      "rejected": [],
+      "preview": true,
+      "usage": {
+        "prompt_tokens": 6,
+        "completion_tokens": 16,
+        "total_tokens": 22,
+        "completed_generation_calls": 2
+      }
+    },
+    "settled_attempts": 2,
+    "stale_commit_refused": true,
+    "duplicate_delivery_no_usage": true
+  },
+  "cancellation": {
+    "run_id": "01a16997-78c8-7614-b3ba-25cb2932efd8",
+    "status": "cancelled",
+    "settled_attempts": 1,
+    "published": false
+  },
+  "invalid_json": {
+    "rows": [],
+    "rejected": [
+      {
+        "source_sample_id": "b9c18a1a-6484-59e9-9e7c-b859588764cb",
+        "step": "generate",
+        "reason": "invalid_json_output",
+        "output": "DOCUMENT",
+        "usage": {
+          "prompt_tokens": 21,
+          "completion_tokens": 9,
+          "total_tokens": 30
+        },
+        "generation_calls": {
+          "bd87c2feaad00d94aba3a0865632eb427213e8cd6cab5b430c49cd2d40317cce": {
+            "usage": {
+              "prompt_tokens": 21,
+              "completion_tokens": 9,
+              "total_tokens": 30
+            },
+            "finish_reason": "stop"
+          }
+        }
+      }
+    ],
+    "preview": true,
+    "usage": {
+      "prompt_tokens": 21,
+      "completion_tokens": 9,
+      "total_tokens": 30,
+      "completed_generation_calls": 1
+    }
+  },
+  "revision_count_before_browser_publication": 1,
+  "runtime": "2ae17895e88d070e736f3fd6ebc314ea928ed4471fc8d30e8a2a17fa6eb7cd69"
+}
