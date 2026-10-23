@@ -19,12 +19,12 @@ The former ledger used DONE for domain fixtures and described all 17 scenarios a
 | Alignment/RLHF | Fixture metrics and registry candidates | Real policy/reward weights, rollout and independent evaluation |
 | Release/quantization/serving | Metadata export, fixed simulated quantization values, fixture pointer/rollback tests | Weight conversion, real serving readiness, reviewed qualification; TASK-7 |
 | Annotation/campaign | Manual review and snapshot helpers; metadata candidate/fixed score fixtures | Actual retraining and qualification loop; TASK-10 |
-| RAG/cluster/context | Local helpers, inline vectors and context prompt inspection; evidence-position recall is explicitly not run | End-to-end retrieval/model execution and browser pilots; TASK-11/12 |
+| RAG/cluster/context | Actual pinned MiniLM CPU serving/builds/fine-tuning, SQL pgvector retrieval, public controls, local cited generation and repeated evidence-position runs | Closed-subset/toy-fixture software evidence; current hardware/customer/production qualification remains separate. [Combined reproducible report](verification/task73-end-to-end-2026-10-23/report.md) |
 | SDK/deployment/ops | Local helpers/configuration and fixture checks | Process isolation, real installs, restore drills and platform qualification |
 
 API `execution_evidence` is read-only and separate from saved workflow state. Legacy qualified labels do not authorize production. Production model/release qualification and serving promotion fail closed while the trusted runtime evidence path is unavailable. See [frontend coverage](frontend-workspace.md) for browser interactions.
 
-## Current verification
+## Historical verification snapshot (11 October 2026)
 
 - Full Django regression suite: **464 tests, OK, 3 skipped**. Local HTTP fixtures required loopback server access; this is not external provider/hardware qualification.
 - Web suite: **91 tests passed**; TypeScript/Vite production build passed.
@@ -49,3 +49,6 @@ TASK-36 is accepted in Aftur. TASK-13 adds a real pinned SmolLM2-135M FP32 GPU w
 
 TASK-49 adds a bounded private-team flow with expiring/revocable reviewer invitations, current membership checks for browser/personal API keys, and owner removal controls. Actual fresh two-user UI, keyboard review, 1440/390 layouts and immediate revocation verified; see [dated evidence](verification/task49-team-access-2026-10-23/report.md).
 23 October 2026 — TASK-42 adds attempt-bound local physical-device claims, fresh GPU placement/runtime/budget admission and separately displayed live headroom. [Fresh software coordination evidence](verification/task42-device-admission-2026-10-23/report.md) includes actual PostgreSQL contention and POSIX exclusion; hardware qualification remains with the skipped named-device tickets.
+
+
+23 October 2026 — TASK-64/66–73 ship actual token-aware chunking, pinned CPU embedding/build/candidate workflows, SQL full-text/exact/HNSW/RRF retrieval, independent public controls, token-budgeted local generation and real repeated position sweeps. [The combined report](verification/task73-end-to-end-2026-10-23/report.md) records one exact implementation SHA, model/file/corpus/qrels pins, index parameters and actual CPU hardware. README results are generated only from its saved JSON. Required CI reruns the complete protocol within frozen tolerances. A report alone cannot certify CV evidence: that requires a merged main SHA, green CI on that same SHA and the corresponding attached artifact. Strict position EM is0 because correct-code sentences fail the frozen output format; no middle dip or general quality gain is inferred.
