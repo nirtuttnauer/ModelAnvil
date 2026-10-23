@@ -1,40 +1,40 @@
 {
-  "source_main": "d4c27ed7e9251118e978e4b515b132d84a94f141",
+  "source_main": "d772ea61f515ab0d8fe3e23bd00c2e7c315a635b",
   "scope": "Actual bounded local CPU model import/generation/streaming/access checks through API test client and real model runtimes. No browser/network transport, model quality or GPU/MLX qualification claim.",
   "formats": {
     "safetensors": {
-      "model_id": "01a168df-b097-7027-a5f3-14f4ba4b9b5e",
+      "model_id": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
       "files": {
         "model.safetensors": {
-          "artifact_id": "01a168df-a657-7a50-bbd3-224a9f877cea",
+          "artifact_id": "01a168ea-d8c6-78ba-8074-a506c92c9e51",
           "sha256": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
           "byte_size": 269060552
         },
         "config.json": {
-          "artifact_id": "01a168df-a6d1-7f9c-9949-b17b2e4e401c",
+          "artifact_id": "01a168ea-d945-7915-ad0a-bbce8c02815e",
           "sha256": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
           "byte_size": 704
         },
         "tokenizer.json": {
-          "artifact_id": "01a168df-a6d8-7dbf-8733-f4fe469ba6ee",
+          "artifact_id": "01a168ea-d94a-756a-86ed-65f65a3c5538",
           "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
           "byte_size": 2104556
         },
         "tokenizer_config.json": {
-          "artifact_id": "01a168df-a6dd-768f-a6b1-aab615f6290b",
+          "artifact_id": "01a168ea-d954-740d-bd54-22ac09cdf860",
           "sha256": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
           "byte_size": 3658
         },
         "special_tokens_map.json": {
-          "artifact_id": "01a168df-a6e1-753b-949e-7c0b85cb4df4",
+          "artifact_id": "01a168ea-d957-79f1-adc7-385cd479dfb7",
           "sha256": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
           "byte_size": 831
         }
       },
       "first": {
-        "id": "chatcmpl-01a168dfb0b37b9abf734bc1511e08a0",
-        "created": 1792760853,
-        "model": "01a168df-b097-7027-a5f3-14f4ba4b9b5e",
+        "id": "chatcmpl-01a168eae3637f9a82c2320ef32ff1fa",
+        "created": 1792761587,
+        "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
         "object": "chat.completion",
         "choices": [
           {
@@ -53,13 +53,13 @@
         },
         "modelanvil": {
           "device": "cpu",
-          "elapsed_seconds": 0.09907379187643528
+          "elapsed_seconds": 0.10609354102052748
         }
       },
       "repeated": {
-        "id": "chatcmpl-01a168dfb3d176b5a4e17848aa6fa295",
-        "created": 1792760853,
-        "model": "01a168df-b097-7027-a5f3-14f4ba4b9b5e",
+        "id": "chatcmpl-01a168eae6517a27b483d38af4db88a3",
+        "created": 1792761587,
+        "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
         "object": "chat.completion",
         "choices": [
           {
@@ -78,14 +78,14 @@
         },
         "modelanvil": {
           "device": "cpu",
-          "elapsed_seconds": 0.0986921249423176
+          "elapsed_seconds": 0.10266658291220665
         }
       },
       "stream_events": [
         {
-          "id": "chatcmpl-01a168dfb5d17defa575e33ea9fd9fc1",
-          "created": 1792760854,
-          "model": "01a168df-b097-7027-a5f3-14f4ba4b9b5e",
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -98,9 +98,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfb5d17defa575e33ea9fd9fc1",
-          "created": 1792760854,
-          "model": "01a168df-b097-7027-a5f3-14f4ba4b9b5e",
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -113,9 +113,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfb5d17defa575e33ea9fd9fc1",
-          "created": 1792760854,
-          "model": "01a168df-b097-7027-a5f3-14f4ba4b9b5e",
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -128,9 +128,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfb5d17defa575e33ea9fd9fc1",
-          "created": 1792760854,
-          "model": "01a168df-b097-7027-a5f3-14f4ba4b9b5e",
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -143,9 +143,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfb5d17defa575e33ea9fd9fc1",
-          "created": 1792760854,
-          "model": "01a168df-b097-7027-a5f3-14f4ba4b9b5e",
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -158,9 +158,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfb5d17defa575e33ea9fd9fc1",
-          "created": 1792760854,
-          "model": "01a168df-b097-7027-a5f3-14f4ba4b9b5e",
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -173,9 +173,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfb5d17defa575e33ea9fd9fc1",
-          "created": 1792760854,
-          "model": "01a168df-b097-7027-a5f3-14f4ba4b9b5e",
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -188,9 +188,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfb5d17defa575e33ea9fd9fc1",
-          "created": 1792760854,
-          "model": "01a168df-b097-7027-a5f3-14f4ba4b9b5e",
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -203,9 +203,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfb5d17defa575e33ea9fd9fc1",
-          "created": 1792760854,
-          "model": "01a168df-b097-7027-a5f3-14f4ba4b9b5e",
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -218,9 +218,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfb5d17defa575e33ea9fd9fc1",
-          "created": 1792760854,
-          "model": "01a168df-b097-7027-a5f3-14f4ba4b9b5e",
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -230,14 +230,14 @@
             }
           ],
           "modelanvil": {
-            "elapsed_seconds": 0.09505704091861844,
+            "elapsed_seconds": 0.10439875000156462,
             "device": "cpu"
           }
         },
         {
-          "id": "chatcmpl-01a168dfb5d17defa575e33ea9fd9fc1",
-          "created": 1792760854,
-          "model": "01a168df-b097-7027-a5f3-14f4ba4b9b5e",
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
           "object": "chat.completion.chunk",
           "choices": [],
           "usage": {
@@ -258,18 +258,18 @@
       "model_state": "draft"
     },
     "gguf": {
-      "model_id": "01a168df-c248-7212-9d09-7fabf562c230",
+      "model_id": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
       "files": {
         "modelanvil-cpu-first-smollm2-f16.gguf": {
-          "artifact_id": "01a168df-bdf6-7bd8-9741-b01017468f8c",
+          "artifact_id": "01a168ea-f265-7cba-8ea8-a220ae837cfe",
           "sha256": "102c45efa42705741d39f8c837dd3cb0511a239f659565fdce0cc9731d8b5447",
           "byte_size": 270886304
         }
       },
       "first": {
-        "id": "chatcmpl-01a168dfc25675619f3cb300eca47b14",
-        "created": 1792760858,
-        "model": "01a168df-c248-7212-9d09-7fabf562c230",
+        "id": "chatcmpl-01a168eaf7017f989f18d231189ab2da",
+        "created": 1792761592,
+        "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
         "object": "chat.completion",
         "choices": [
           {
@@ -288,13 +288,13 @@
         },
         "modelanvil": {
           "device": "cpu",
-          "elapsed_seconds": 0.07626775000244379
+          "elapsed_seconds": 0.10167341609485447
         }
       },
       "repeated": {
-        "id": "chatcmpl-01a168dfc7dc7db2b95eac9d6203c700",
-        "created": 1792760859,
-        "model": "01a168df-c248-7212-9d09-7fabf562c230",
+        "id": "chatcmpl-01a168eafd357e18b5a40781ae333282",
+        "created": 1792761594,
+        "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
         "object": "chat.completion",
         "choices": [
           {
@@ -313,14 +313,14 @@
         },
         "modelanvil": {
           "device": "cpu",
-          "elapsed_seconds": 0.07507800008170307
+          "elapsed_seconds": 0.07945520896464586
         }
       },
       "stream_events": [
         {
-          "id": "chatcmpl-01a168dfcccd77bb839854829d792c95",
-          "created": 1792760860,
-          "model": "01a168df-c248-7212-9d09-7fabf562c230",
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -333,9 +333,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfcccd77bb839854829d792c95",
-          "created": 1792760860,
-          "model": "01a168df-c248-7212-9d09-7fabf562c230",
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -348,9 +348,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfcccd77bb839854829d792c95",
-          "created": 1792760860,
-          "model": "01a168df-c248-7212-9d09-7fabf562c230",
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -363,9 +363,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfcccd77bb839854829d792c95",
-          "created": 1792760860,
-          "model": "01a168df-c248-7212-9d09-7fabf562c230",
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -378,9 +378,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfcccd77bb839854829d792c95",
-          "created": 1792760860,
-          "model": "01a168df-c248-7212-9d09-7fabf562c230",
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -393,9 +393,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfcccd77bb839854829d792c95",
-          "created": 1792760860,
-          "model": "01a168df-c248-7212-9d09-7fabf562c230",
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -408,9 +408,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfcccd77bb839854829d792c95",
-          "created": 1792760860,
-          "model": "01a168df-c248-7212-9d09-7fabf562c230",
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -423,9 +423,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfcccd77bb839854829d792c95",
-          "created": 1792760860,
-          "model": "01a168df-c248-7212-9d09-7fabf562c230",
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -438,9 +438,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfcccd77bb839854829d792c95",
-          "created": 1792760860,
-          "model": "01a168df-c248-7212-9d09-7fabf562c230",
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -453,9 +453,9 @@
           ]
         },
         {
-          "id": "chatcmpl-01a168dfcccd77bb839854829d792c95",
-          "created": 1792760860,
-          "model": "01a168df-c248-7212-9d09-7fabf562c230",
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
           "object": "chat.completion.chunk",
           "choices": [
             {
@@ -465,14 +465,14 @@
             }
           ],
           "modelanvil": {
-            "elapsed_seconds": 0.07382479216903448,
+            "elapsed_seconds": 0.07938004098832607,
             "device": "cpu"
           }
         },
         {
-          "id": "chatcmpl-01a168dfcccd77bb839854829d792c95",
-          "created": 1792760860,
-          "model": "01a168df-c248-7212-9d09-7fabf562c230",
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
           "object": "chat.completion.chunk",
           "choices": [],
           "usage": {
@@ -494,8 +494,8 @@
     }
   },
   "source_files": {
-    "modelanvil/runners/inference.py": "015d61841d18e441c4b5370f289eebc18e0966b75ae1fc292ffd8ffd95053b89",
-    "modelanvil/api/views/model_workspace.py": "6d93546114d252f77c60c1cf2939944687da0f0ca1c05d66b233e6e6e43db64e"
+    "modelanvil/runners/inference.py": "fe3b7f2121c03b779e81142b46d76de6329f9a2b93deabdab303466c75979d03",
+    "modelanvil/api/views/model_workspace.py": "f80648badad4845cb8387e3fe743556b964bd92bb7f28269a51976115fc703b2"
   },
   "safetensors_source": {
     "repo_id": "HuggingFaceTB/SmolLM2-135M",

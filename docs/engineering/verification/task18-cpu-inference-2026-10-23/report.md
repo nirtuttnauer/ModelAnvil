@@ -12,7 +12,7 @@ Each stream resumes and closes in its captured request context, so subsequent re
 
 ## Actual bounded execution
 
-The [structured receipt](actual-report.json) binds both changed runtime source files by SHA-256, against merged-main base `d4c27ed7e9251118e978e4b515b132d84a94f141`. It exercised real authenticated API views through Django's test client, actual model loaders and generation on this Mac. It is not browser/network transport evidence or a model-quality benchmark.
+The [structured receipt](actual-report.json) binds both changed runtime source files by SHA-256, against merged-main base `d772ea61f515ab0d8fe3e23bd00c2e7c315a635b`. It exercised real authenticated API views through Django's test client, actual model loaders and generation on this Mac. It is not browser/network transport evidence or a model-quality benchmark.
 
 The Safetensors reference is the exact public Apache-2.0 SmolLM2-135M base revision `93efa2f097d58c2a74874c7e644dbc9b0cee75a2`; all five fixed files were checksum-verified. The GGUF reference is the official llama.cpp conversion of the pinned SmolLM2-135M-Instruct snapshot documented in [TASK-74](../task74-cache-replacement-2026-10-23/report.md). Source model, converter and output hashes are retained there; this receipt verifies the actual imported GGUF bytes again. These two references have different weights/templates, so cross-format output equality is not asserted.
 
@@ -24,6 +24,8 @@ Runtime versions are recorded in the receipt: Torch 2.13.0, Transformers 5.14.0,
 
 ## Regression evidence
 
-Existing workspace/import/project/device-close checks plus new live revocation cases passed (53 tests, one opt-in native-model skip before the final buffered-completion regression was added). The added cases withdraw a key, expire it, lower its role, archive the model, change tokenizer compatibility, withdraw an artifact or remove a cross-project grant after actual loading; they verify that content is withheld and the request fails. Another case verifies that an interleaved request cannot overwrite stream context. The full backend run also includes a real-generation wrapper that revokes the key during a buffered completion and checks that no choices are returned.
+After integrating the merged CPU training implementation, 60 focused workspace/import/project/device/GGUF/CPU-profile tests passed (one opt-in native-model skip). Before that documentation/source integration, the complete backend passed 1,052 tests (seven optional skips), including the final buffered-completion regression. The added cases withdraw a key, expire it, lower its role, archive the model, change tokenizer compatibility, withdraw an artifact or remove a cross-project grant after actual loading; they verify that content is withheld and the request fails. Another case verifies that an interleaved request cannot overwrite stream context. The full backend run also includes a real-generation wrapper that revokes the key during a buffered completion and checks that no choices are returned.
 
 The focused regressions use a real tiny local Llama, with controlled withdrawal timing. The separate public 135M/GGUF receipt above supplies actual reference-model execution. Raw qualification scripts, logs and before-fix failure evidence are retained under private project evidence `takeover-2026-10-23/cpu-inference`. Model weights, databases and credentials remain outside Git.
+
+A separate [actual training/inference integration receipt](trained-integration.json) verifies that this guarded API loads the exact pretrained CPU full-SFT and LoRA base/candidate artifacts produced by TASK-15 and generates decoded output. It retains the existing adapter/base compatibility and immutable checkpoint checks.
