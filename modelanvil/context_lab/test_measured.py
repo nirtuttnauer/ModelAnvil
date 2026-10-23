@@ -103,6 +103,7 @@ class MeasuredContextTests(TestCase):
         old=self.version('Estimate',model_version=None,model_limit_tokens=4096,output_reserve_tokens=512)
         response=self.client.post(f"/api/v1/context-recipe-versions/{old['recipe_version_id']}/compile/",{'variables':{}},format='json')
         self.assertEqual(response.data['token_count_method'],'deterministic_estimate')
+        self.assertFalse(response.data['budget']['runtime_validated']);self.assertIsNone(response.data['budget']['runtime_limit_tokens'])
         a=self.version('A')
         from modelanvil.artifacts.models import Artifact
         from modelanvil.artifacts.storage import artifact_storage_backend
