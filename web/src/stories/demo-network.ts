@@ -52,6 +52,12 @@ export function demoHandlers(state: DemoState = 'populated') {
       const revision = revisions?.find(row => row.revision_id === inspectedRevision[1]);
       return revision ? respond({ rows: [], total: revision.row_count || 0, next_cursor: null, recipe: {} }) : respond({ detail: 'Synthetic revision unavailable.' }, 404);
     }
+    const retrievalEvidence = path.match(/^\/api\/v1\/index-versions\/[^/]+\/(judgment-pool|traces|comparisons|projection)\/$/);
+    if (request.method === 'GET' && retrievalEvidence) {
+      return respond(retrievalEvidence[1] === 'projection'
+        ? { available: false, reason: 'Synthetic preview: no measured embedding projection has been supplied.' }
+        : { results: [], total: 0, next_offset: null, limit: 50 });
+    }
     let value = request.method === 'GET' ? responses[path] : undefined;
     if (value === undefined) {
       console.error(`Unmocked demo request: ${request.method} ${path}`);

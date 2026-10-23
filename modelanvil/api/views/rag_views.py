@@ -107,8 +107,40 @@ class KnowledgeBaseViewSet(TenantScopedViewSet):
                      input_snapshot={"knowledge_base_id": str(base.kb_id), "manifest_digest": index.manifest_digest, "chunk_count": index.chunks_count})
         return Response(IndexVersionSerializer(index).data, status=status.HTTP_201_CREATED)
 
+    @action(detail=True,methods=['post'],url_path='revoke-document')
+    @transaction.atomic
+    def revoke_document(self,request,knowledge_base_id=None):
+        from modelanvil.core.tenancy import get_active_project
+        from modelanvil.identity.models import role_at_least,Role
+        from modelanvil.rag.models import SourceDocument
+        base=self.get_object()
+        if ((base.project_id and str(base.project_id)!=str(get_active_project()))
+                and not role_at_least(request.modelanvil_role,Role.ADMIN)):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Revoke documents from their owning project or use an organization administrator.')
+        if set(request.data)!={'document_id'}:
+            raise serializers.ValidationError('Submit only the source document ID to revoke.')
+        key=serializers.UUIDField().run_validation(request.data['document_id'])
+        document=SourceDocument.objects.select_for_update().filter(knowledge_base=base,doc_id=key).first()
+        if document is None:
+            from rest_framework.exceptions import NotFound
+            raise NotFound()
+        document.is_revoked=True;document.save(update_fields=['is_revoked','updated_at'])
+        record_audit('update','rag_source',document.doc_id,actor_id=request.modelanvil_actor_id,
+            actor_kind=request.modelanvil_actor_kind,input_snapshot={'revoked':True})
+        return Response({'document_id':str(document.doc_id),'revoked':True})
+
 
 class IndexVersionSerializer(serializers.ModelSerializer):
+    source_pins = serializers.SerializerMethodField()
+
+    def get_source_pins(self,index):
+        config=index.configuration
+        sources=config.get('source_revisions',[])
+        return {key:config.get(key) for key in ('source_scope','chunk_recipe','chunk_size','chunk_overlap','retrieval','embeddings_generated')} | {
+            'source_revisions':sources[:50],'source_revision_count':len(sources),'source_revisions_truncated':len(sources)>50,
+            'build_mode':'bounded_atomic_transaction'}
+
     chunk_count = serializers.IntegerField(source="chunks_count", read_only=True)
     revision_no = serializers.IntegerField(default=1, min_value=1)
 
@@ -127,8 +159,8 @@ class IndexVersionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IndexVersion
-        fields = ("index_id", "knowledge_base", "embedding_space", "revision_no", "status", "chunk_count", "adapter_type", "manifest_digest", "created_at")
-        read_only_fields = ("index_id", "status", "chunk_count", "adapter_type", "manifest_digest", "created_at")
+        fields = ("index_id", "knowledge_base", "embedding_space", "revision_no", "status", "chunk_count", "adapter_type", "manifest_digest", "source_pins", "created_at")
+        read_only_fields = ("index_id", "status", "chunk_count", "adapter_type", "manifest_digest", "source_pins", "created_at")
 
 
 class IndexVersionViewSet(TenantScopedViewSet):
@@ -166,28 +198,116 @@ class IndexVersionViewSet(TenantScopedViewSet):
         if not query_embedding:
             mode = "lexical"
 
-        engine = RetrievalEngine(index_version)
-        if mode == "hybrid" and query_embedding:
-            results = engine.retrieve_hybrid(query_text, query_embedding, top_k=top_k)
-        elif mode == "dense" and query_embedding:
-            results = engine.retrieve_dense(query_embedding, top_k=top_k)
-        else:
-            results = engine.retrieve_lexical(query_text, top_k=top_k)
+        from modelanvil.rag.workflow import trace_query
+        try:
+            trace, rows = trace_query(index_version,query_text,mode,top_k,query_embedding)
+        except ValueError as exc:
+            raise serializers.ValidationError(str(exc)) from exc
+        return Response({'results':rows,'mode':mode,'index_id':str(index_version.index_id),
+            'manifest_digest':index_version.manifest_digest,'trace_id':str(trace.trace_id),
+            'reranker':'none','generation':'not_executed','context_chunk_ids':[row['chunk_id'] for row in rows]})
 
-        data = [
-            {
-                "chunk_id": str(r.chunk_id),
-                "text": r.chunk.text,
-                "score": round(r.score, 4),
-                "metadata": {
-                    "document_title": r.chunk.document.title,
-                    "source_uri": r.chunk.document.source_uri,
-                    "document_revision": r.chunk.document.revision_no,
-                    "content_hash": r.chunk.content_hash,
-                    "span": f"{r.chunk.span_start}:{r.chunk.span_end}",
-                    **r.chunk.metadata,
-                },
-            }
-            for r in results
-        ]
-        return Response({"results": data, "mode": mode, "index_id": str(index_version.index_id), "manifest_digest": index_version.manifest_digest})
+    @action(detail=True,methods=['get'],url_path='judgment-pool')
+    def judgment_pool(self,request,index_id=None):
+        index=self.get_object()
+        offset=serializers.IntegerField(min_value=0,max_value=10000).run_validation(request.query_params.get('offset',0))
+        chunks=RetrievalEngine(index).get_eligible_chunks()
+        return Response({'results':[{'chunk_id':str(c.chunk_id),'title':c.document.title,
+            'span':f'{c.span_start}:{c.span_end}','text':c.text,'document_id':str(c.document.doc_id)} for c in chunks[offset:offset+50]],
+            'total':len(chunks),'next_offset':offset+50 if offset+50<len(chunks) else None})
+
+    @action(detail=True,methods=['get'])
+    def traces(self,request,index_id=None):
+        from modelanvil.rag.workflow import visible_traces
+        index=self.get_object()
+        return Response({'results':visible_traces(index),'limit':50,'generation':'not_executed'})
+
+    @action(detail=True,methods=['get','post'])
+    @transaction.atomic
+    def comparisons(self,request,index_id=None):
+        from modelanvil.rag.models import RetrievalRun
+        from modelanvil.rag.workflow import compare,report
+        index=self.get_object()
+        if request.method=='GET':
+            runs=list(RetrievalRun.objects.filter(index_version=index,tenant_id=index.tenant_id).exclude(qrels_digest='').order_by('-created_at')[:20])
+            seen={run.pk for run in runs}
+            for run in list(runs):
+                group=run.protocol_ref.get('comparison_id')
+                if group:
+                    for peer in RetrievalRun.objects.filter(tenant_id=index.tenant_id,index_version__knowledge_base=index.knowledge_base,
+                            protocol_ref__comparison_id=group).select_related('index_version'):
+                        if peer.pk not in seen:
+                            runs.append(peer);seen.add(peer.pk)
+            return Response({'results':[report(run) for run in runs],'limit':20})
+        form=RetrievalComparisonInput(data=request.data);form.is_valid(raise_exception=True)
+        data=dict(form.validated_data)
+        baseline_id=data.pop('baseline_index_id',None)
+        baseline=self.get_queryset().filter(index_id=baseline_id,knowledge_base=index.knowledge_base,status='ready').first() if baseline_id else None
+        if baseline_id and (baseline is None or baseline.pk==index.pk):
+            raise serializers.ValidationError('Select a different accessible frozen index from the same knowledge base.')
+        from modelanvil.core.ids import uuid7
+        group=str(uuid7())
+        try:
+            rows=compare(index,**data,comparison_id=group)
+            if baseline is not None:
+                rows+=compare(baseline,**data,comparison_id=group)
+        except ValueError as exc: raise serializers.ValidationError(str(exc)) from exc
+        return Response({'results':rows},status=201)
+
+    @action(detail=True,methods=['get','post'])
+    def projection(self,request,index_id=None):
+        from modelanvil.rag.explorer import ClusterExplorer
+        index=self.get_object();explorer=ClusterExplorer(index)
+        try:
+            if request.method=='POST':
+                if set(request.data)-{'num_clusters'}:
+                    raise serializers.ValidationError('Submit only an optional cluster count; only measured PCA is supported.')
+                count=serializers.IntegerField(min_value=1,max_value=20).run_validation(request.data['num_clusters']) if 'num_clusters' in request.data else None
+                artifact=explorer.build_and_save_projection(num_clusters=count)
+            else:
+                artifact=index.projections.order_by('-created_at').first()
+                if artifact is None:
+                    return Response({'available':False,'reason':'No measured projection exists. Lexical indexes have no generated embeddings.'})
+            table=explorer.export_accessible_table(artifact)
+            settings={key:value for key,value in artifact.settings.items() if key not in ('mean','components')}
+            return Response({'available':True,'artifact_id':str(artifact.artifact_id),'method':artifact.method,
+                'settings':settings,'points':artifact.coordinates,'table':table,
+                'total_points':artifact.total_points,'displayed_points':artifact.displayed_points})
+        except ValueError as exc:
+            return Response({'available':False,'reason':str(exc),'detail':str(exc)},status=409)
+
+
+class RetrievalComparisonCase(serializers.Serializer):
+    query_id = serializers.CharField(max_length=128)
+    query = serializers.CharField(max_length=2048)
+    qrels = serializers.DictField(child=serializers.FloatField(min_value=0,max_value=10),default=dict)
+    query_embedding = serializers.ListField(child=serializers.FloatField(),max_length=4096,allow_empty=False,required=False)
+
+    def validate_qrels(self,value):
+        if len(value)>1000:
+            raise serializers.ValidationError('Judge at most1000 chunks per query.')
+        result={}
+        for key,grade in value.items():
+            canonical=str(serializers.UUIDField().run_validation(key))
+            if canonical in result or not math.isfinite(grade):
+                raise serializers.ValidationError('Judgments require distinct chunk IDs and finite grades.')
+            result[canonical]=grade
+        return result
+
+    def validate_query_embedding(self,value):
+        if not all(math.isfinite(v) for v in value):
+            raise serializers.ValidationError('Embedding values must be finite.')
+        return value
+
+
+class RetrievalComparisonInput(serializers.Serializer):
+    qrels_version = serializers.CharField(max_length=128)
+    cases = RetrievalComparisonCase(many=True,allow_empty=False,max_length=64)
+    baseline_index_id = serializers.UUIDField(required=False)
+    modes = serializers.ListField(child=serializers.ChoiceField(choices=['lexical','dense','hybrid']),min_length=1,max_length=3,default=['lexical'])
+    top_k = serializers.IntegerField(min_value=1,max_value=100,default=5)
+
+    def validate(self,data):
+        if len({c['query_id'] for c in data['cases']})!=len(data['cases']) or len(set(data['modes']))!=len(data['modes']):
+            raise serializers.ValidationError('Query IDs and retrieval modes must be distinct.')
+        return data

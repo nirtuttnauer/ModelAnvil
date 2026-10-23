@@ -1,11 +1,11 @@
-"""End-to-end RAG query pipeline, citation generation, abstention policy, and trace logging (TECH-022, TECH-024)."""
+"""Authorized retrieval evidence and trace logging; generation is not connected."""
 from __future__ import annotations
 
 import time
-from typing import Any, Optional, Sequence
+from typing import Sequence
 
 from modelanvil.rag.models import IndexVersion, QueryTrace
-from modelanvil.rag.retrieval import RetrievalEngine, ScoredChunk
+from modelanvil.rag.retrieval import RetrievalEngine
 
 
 class RAGPipeline:
@@ -28,7 +28,7 @@ class RAGPipeline:
         caller_identity: str = "api-user",
         query_embedding: Sequence[float] | None = None,
     ) -> QueryTrace:
-        """Execute RAG pipeline: retrieval -> reranking -> context assembly -> generation/abstention -> trace."""
+        """Retrieve source evidence, apply abstention and record a trace without generating an answer."""
         start_time = time.monotonic()
 
         if mode == "lexical":
@@ -78,8 +78,9 @@ class RAGPipeline:
 
         supplied_context = "\n\n".join(context_blocks)
         answer = (
-            f"Based on the authorized sources ({', '.join(c['document_title'] for c in citations)}), "
-            f"here is the verified answer to '{query}': {candidates[0].chunk.text[:120]}... "
+            "Retrieved source evidence only; generation was not executed. "
+            f"Sources: {', '.join(c['document_title'] for c in citations)}. "
+            f"{candidates[0].chunk.text[:120]} "
             f"[Citation: {candidates[0].chunk_id} ({candidates[0].chunk.document.title})]"
         )
 
@@ -100,16 +101,15 @@ class RAGPipeline:
 
     def redact_trace(self, trace: QueryTrace) -> QueryTrace:
         """Redact sensitive context/evidence from traces when document access is revoked (TECH-024)."""
-        revoked_doc_ids = set(
-            self.index_version.knowledge_base.documents.filter(
-                is_revoked=True
-            ).values_list("doc_id", flat=True)
-        )
-        if not revoked_doc_ids:
+        eligible = {str(c.chunk_id) for c in self.engine.get_eligible_chunks()}
+        if all(key in eligible for key in trace.retrieved_chunk_ids):
             return trace
-
         trace.supplied_context = "[REDACTED: SENSITIVE EVIDENCE REVOKED]"
         trace.answer = "[REDACTED: ANSWER BASED ON REVOKED SOURCES]"
+        trace.query = "[REDACTED: SOURCE ACCESS CHANGED]"
+        trace.citations = []
+        trace.retrieved_chunk_ids = []
+        trace.reranked_chunk_ids = []
         trace.redacted = True
         trace.save()
         return trace

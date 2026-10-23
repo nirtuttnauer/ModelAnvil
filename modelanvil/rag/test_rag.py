@@ -69,6 +69,9 @@ class RetrievalMetricsAcceptanceTests(TestCase):
         """Unlabeled / unjudged queries must yield None (N/A) rather than a fabricated score."""
         r_na = recall_at_k(["A", "B"], relevant_ids=set(), k=3)
         self.assertIsNone(r_na)
+        self.assertIsNone(precision_at_k(["A"], set(), 3))
+        self.assertIsNone(hit_at_k(["A"], set(), 3))
+        self.assertIsNone(mrr_at_k(["A"], set(), 3))
 
         ndcg_na = ndcg_at_k(["A", "B"], graded_relevance={}, k=3)
         self.assertIsNone(ndcg_na)
@@ -315,7 +318,7 @@ class ClusterExplorerTests(TestCase):
     def test_saved_projection_reopens_without_recomputing(self):
         """TECH-025: Saved projection coordinates persist and reopen identically."""
         explorer = ClusterExplorer(self.index_a)
-        artifact = explorer.build_and_save_projection(method="umap", num_clusters=2)
+        artifact = explorer.build_and_save_projection(method="pca", num_clusters=2)
 
         self.assertEqual(artifact.total_points, 5)
         self.assertEqual(len(artifact.coordinates), 5)
@@ -323,7 +326,7 @@ class ClusterExplorerTests(TestCase):
         # Reopen from DB
         reopened = ProjectionArtifact.objects.get(artifact_id=artifact.artifact_id)
         self.assertEqual(reopened.coordinates, artifact.coordinates)
-        self.assertEqual(reopened.method, "umap")
+        self.assertEqual(reopened.method, "pca")
 
     def test_original_space_neighbors(self):
         """TECH-025: Nearest neighbors use declared original embedding space, not 2D plot distance."""

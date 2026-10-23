@@ -1,154 +1,126 @@
-"""Embedding Explorer: Saved 2D Projections (UMAP/PCA), original-space neighbors, and accessible table equivalent (TECH-025 / PRD Scenario 15)."""
+"""Saved, measured PCA of provided vectors with current-access checks."""
 from __future__ import annotations
-
 import hashlib
-import math
-from typing import Any, Sequence
+import json
+from typing import Sequence
+import numpy as np
+from modelanvil.rag.models import IndexVersion, ProjectionArtifact
+from modelanvil.rag.retrieval import RetrievalEngine, cosine_similarity
 
-from modelanvil.rag.models import DocumentChunk, IndexVersion, ProjectionArtifact
-from modelanvil.rag.retrieval import cosine_similarity
+MAX_POINTS = 512
+MAX_DIMENSION = 4096
+METHOD_VERSION = 'pca-svd-v1'
 
 
 class ClusterExplorer:
-    """Manages saved projections, original-space KNN search, query overlays, and table equivalents."""
-
-    def __init__(self, index_version: IndexVersion) -> None:
+    def __init__(self, index_version: IndexVersion):
         self.index_version = index_version
         self.tenant_id = index_version.tenant_id
 
-    def build_and_save_projection(
-        self,
-        method: str = "umap",
-        num_clusters: int = 3,
-    ) -> ProjectionArtifact:
-        """Compute deterministic 2D projection and cluster labels, saving as an immutable ProjectionArtifact."""
-        chunks = DocumentChunk.objects.filter(
-            tenant_id=self.tenant_id,
-            document__knowledge_base=self.index_version.knowledge_base,
-            document__is_revoked=False,
-            document__is_deleted=False,
-        ).order_by("chunk_index")
+    def _chunks(self):
+        return RetrievalEngine(self.index_version).get_eligible_chunks()
 
-        coordinates = []
-        clusters_meta: dict[str, Any] = {str(i): f"Cluster {i}" for i in range(num_clusters)}
+    def _checked_points(self, artifact):
+        if (artifact.tenant_id != self.tenant_id or artifact.index_version_id != self.index_version.pk
+                or artifact.settings.get('method_version') != METHOD_VERSION):
+            raise ValueError('This projection has no qualified PCA provenance for the selected index. Rebuild it.')
+        chunks = {str(c.chunk_id): c for c in self._chunks()}
+        if any(point['chunk_id'] not in chunks for point in artifact.coordinates):
+            raise ValueError('Projection inputs were revoked, deleted or removed from the index. Rebuild it before viewing or exporting.')
+        digest = hashlib.sha256(json.dumps([(point['chunk_id'], chunks[point['chunk_id']].content_hash,
+            chunks[point['chunk_id']].embedding) for point in artifact.coordinates], separators=(',', ':'), allow_nan=False).encode()).hexdigest()
+        if digest != artifact.settings.get('input_digest'):
+            raise ValueError('Projection inputs changed. Rebuild it before viewing or exporting.')
+        return chunks
 
-        for i, c in enumerate(chunks):
-            # Deterministic projection coordinates from embedding hash
-            h = int(hashlib.sha256(f"{c.chunk_id}-{method}".encode("utf-8")).hexdigest()[:8], 16)
-            cluster_id = i % num_clusters
-            # Cluster center offset
-            cx = (cluster_id * 3.0) - 3.0
-            cy = ((cluster_id % 2) * 3.0) - 1.5
+    def build_and_save_projection(self, method='pca', num_clusters=None):
+        if method != 'pca':
+            raise ValueError('Only measured PCA is supported; UMAP is not implemented.')
+        chunks = self._chunks()
+        dimension = self.index_version.embedding_space.dimension
+        if not chunks or len(chunks) > MAX_POINTS or not 1 <= dimension <= MAX_DIMENSION:
+            raise ValueError(f'PCA requires1–{MAX_POINTS} authorized chunks and1–{MAX_DIMENSION} dimensions.')
+        if any(len(c.embedding or []) != dimension for c in chunks):
+            raise ValueError('Every projection input needs a compatible real embedding; lexical chunks have none.')
+        num_clusters = min(3, len(chunks)) if num_clusters is None else num_clusters
+        if type(num_clusters) is not int or not 1 <= num_clusters <= min(20, len(chunks)):
+            raise ValueError('Choose1–20 clusters, no more than the input points.')
+        matrix = np.asarray([c.embedding for c in chunks], dtype=np.float64)
+        if not np.isfinite(matrix).all() or np.max(np.abs(matrix)) > 1e12:
+            raise ValueError('Embedding values must be finite.')
+        mean = matrix.mean(axis=0)
+        centered = matrix - mean
+        _, singular, vectors = np.linalg.svd(centered, full_matrices=False)
+        tolerance = np.finfo(float).eps * max(matrix.shape) * max(float(singular[0]), 1)
+        basis = np.zeros((2, dimension))
+        for i in range(min(2, len(vectors))):
+            if singular[i] > tolerance:
+                row = vectors[i]
+                basis[i] = row if row[np.argmax(np.abs(row))] >= 0 else -row
+        projected = centered @ basis.T
+        # Farthest-first initialization and bounded Lloyd iterations use actual original vectors.
+        centers = [matrix[0]]
+        while len(centers) < num_clusters:
+            distance = np.min(np.stack([np.sum((matrix-c)**2, axis=1) for c in centers]), axis=0)
+            if float(distance.max()) <= 1e-15:
+                break
+            centers.append(matrix[int(distance.argmax())])
+        centers = np.asarray(centers)
+        for _ in range(20):
+            distances = np.sum(matrix**2, axis=1)[:, None] + np.sum(centers**2, axis=1)[None, :] - 2*matrix @ centers.T
+            labels = distances.argmin(axis=1)
+            updated = np.asarray([matrix[labels == i].mean(axis=0) if np.any(labels == i) else centers[i] for i in range(len(centers))])
+            if np.allclose(updated, centers, rtol=0, atol=1e-9):
+                break
+            centers = updated
+        labels = (np.sum(matrix**2, axis=1)[:, None] + np.sum(centers**2, axis=1)[None, :] - 2*matrix @ centers.T).argmin(axis=1)
+        total_variance = float(np.sum(singular**2))
+        ratios = [(float(value**2) / total_variance if total_variance else 0) for value in singular[:2]]
+        digest = hashlib.sha256(json.dumps([(str(c.chunk_id), c.content_hash, c.embedding) for c in chunks], separators=(',', ':'), allow_nan=False).encode()).hexdigest()
+        return ProjectionArtifact.objects.create(tenant_id=self.tenant_id, index_version=self.index_version,
+            method='pca', coordinates=[{'chunk_id':str(c.chunk_id), 'title':c.document.title,
+                'x':round(float(xy[0]),6), 'y':round(float(xy[1]),6), 'cluster_id':int(label)}
+                for c,xy,label in zip(chunks,projected,labels)],
+            clusters={str(i):f'Vector cluster {i+1}' for i in range(len(centers))},
+            settings={'method_version':METHOD_VERSION, 'numpy_version':np.__version__, 'input_digest':digest,
+                'mean':mean.tolist(), 'components':basis.tolist(), 'explained_variance_ratio':ratios,
+                'clustering':'bounded-kmeans-original-vectors', 'num_clusters':len(centers),
+                'input_dimension':dimension, 'effective_rank':int(np.count_nonzero(singular > tolerance)),
+                'max_points':MAX_POINTS, 'max_dimension':MAX_DIMENSION,
+                'limits':'PCA preserves variance, not all neighbors or semantic meaning. Clusters describe provided vectors; no retrieval-quality qualification is inferred.'},
+            total_points=len(chunks), displayed_points=len(chunks))
 
-            x = cx + ((h % 1000) / 1000.0)
-            y = cy + (((h >> 8) % 1000) / 1000.0)
+    def get_original_space_neighbors(self, target_chunk_id, k=5):
+        chunks = self._chunks()
+        target = next((c for c in chunks if str(c.chunk_id) == target_chunk_id), None)
+        if target is None or not target.embedding:
+            raise ValueError('Target is outside the authorized frozen index or has no embedding.')
+        if type(k) is not int or not 1 <= k <= 100:
+            raise ValueError('Choose1–100 neighbors.')
+        rows = [{'chunk_id':str(c.chunk_id), 'title':c.document.title,
+            'similarity':round(cosine_similarity(target.embedding,c.embedding),4), 'text_snippet':c.text[:80]}
+            for c in chunks if c.pk != target.pk and c.embedding and len(c.embedding) == len(target.embedding)]
+        return sorted(rows,key=lambda row:(-row['similarity'],row['chunk_id']))[:k]
 
-            coordinates.append({
-                "chunk_id": str(c.chunk_id),
-                "title": c.document.title,
-                "x": round(x, 4),
-                "y": round(y, 4),
-                "cluster_id": cluster_id,
-            })
+    def overlay_query_and_relevance(self, artifact, query, retrieved_ids, relevant_ids, query_embedding: Sequence[float] | None=None):
+        self._checked_points(artifact)
+        known = {point['chunk_id'] for point in artifact.coordinates}
+        retrieved, relevant = set(retrieved_ids)&known, set(relevant_ids)&known
+        query_point = None
+        if query_embedding is not None:
+            vector = np.asarray(query_embedding,dtype=float)
+            mean = np.asarray(artifact.settings['mean'])
+            if vector.shape != mean.shape or not np.isfinite(vector).all():
+                raise ValueError('The query vector must match the saved embedding space.')
+            xy = (vector-mean) @ np.asarray(artifact.settings['components']).T
+            query_point = {'x':float(xy[0]), 'y':float(xy[1]), 'label':query}
+        return {'query_point':query_point, 'query_point_available':query_point is not None,
+            'points':[{**point,'is_retrieved':point['chunk_id'] in retrieved,'is_relevant':point['chunk_id'] in relevant} for point in artifact.coordinates],
+            'total_points':len(known), 'retrieved_count':len(retrieved), 'relevant_count':len(relevant)}
 
-        artifact = ProjectionArtifact.objects.create(
-            tenant_id=self.tenant_id,
-            index_version=self.index_version,
-            method=method,
-            coordinates=coordinates,
-            clusters=clusters_meta,
-            settings={"num_clusters": num_clusters, "seed": 42},
-            total_points=len(coordinates),
-            displayed_points=len(coordinates),
-        )
-        return artifact
-
-    def get_original_space_neighbors(
-        self,
-        target_chunk_id: str,
-        k: int = 5,
-    ) -> list[dict[str, Any]]:
-        """Compute nearest neighbors strictly in the ORIGINAL embedding space (NOT 2D plot distance).
-
-        TECH-025 invariant: Never silently treat 2D plot distance as the retrieval distance.
-        """
-        target = DocumentChunk.objects.filter(
-            tenant_id=self.tenant_id,
-            chunk_id=target_chunk_id,
-            document__is_revoked=False,
-            document__is_deleted=False,
-        ).first()
-        if not target or not target.embedding:
-            raise ValueError(f"Target chunk {target_chunk_id} not found or missing embedding.")
-
-        candidates = DocumentChunk.objects.filter(
-            tenant_id=self.tenant_id,
-            document__knowledge_base=self.index_version.knowledge_base,
-            document__is_revoked=False,
-            document__is_deleted=False,
-        ).exclude(chunk_id=target.chunk_id)
-
-        scored = []
-        for c in candidates:
-            if not c.embedding:
-                continue
-            sim = cosine_similarity(target.embedding, c.embedding)
-            scored.append({
-                "chunk_id": str(c.chunk_id),
-                "title": c.document.title,
-                "similarity": round(sim, 4),
-                "text_snippet": c.text[:80],
-            })
-
-        scored.sort(key=lambda x: x["similarity"], reverse=True)
-        return scored[:k]
-
-    def overlay_query_and_relevance(
-        self,
-        artifact: ProjectionArtifact,
-        query: str,
-        retrieved_ids: Sequence[str],
-        relevant_ids: Sequence[str],
-    ) -> dict[str, Any]:
-        """Overlay a user query and highlight retrieved and relevant chunks on the saved projection."""
-        # Query projection coordinate
-        qh = int(hashlib.sha256(f"query-{query}".encode("utf-8")).hexdigest()[:8], 16)
-        qx = round(((qh % 2000) / 1000.0) - 1.0, 4)
-        qy = round((((qh >> 8) % 2000) / 1000.0) - 1.0, 4)
-
-        retrieved_set = set(retrieved_ids)
-        relevant_set = set(relevant_ids)
-
-        active_coords = []
-        for pt in artifact.coordinates:
-            cid = pt["chunk_id"]
-            pt_copy = dict(pt)
-            pt_copy["is_retrieved"] = cid in retrieved_set
-            pt_copy["is_relevant"] = cid in relevant_set
-            active_coords.append(pt_copy)
-
-        return {
-            "query_point": {"x": qx, "y": qy, "label": query},
-            "points": active_coords,
-            "total_points": len(active_coords),
-            "retrieved_count": len(retrieved_set),
-            "relevant_count": len(relevant_set),
-        }
-
-    def export_accessible_table(self, artifact: ProjectionArtifact) -> list[dict[str, Any]]:
-        """Accessible tabular representation equivalent to the visual scatter plot."""
-        table = []
-        for pt in artifact.coordinates:
-            chunk = DocumentChunk.objects.filter(chunk_id=pt["chunk_id"]).first()
-            if not chunk or chunk.document.is_revoked or chunk.document.is_deleted:
-                continue
-            table.append({
-                "chunk_id": pt["chunk_id"],
-                "document_title": pt["title"],
-                "cluster_name": artifact.clusters.get(str(pt["cluster_id"]), f"Cluster {pt['cluster_id']}"),
-                "x": pt["x"],
-                "y": pt["y"],
-                "token_count": chunk.token_count,
-                "text_preview": chunk.text[:100],
-            })
-        return table
+    def export_accessible_table(self, artifact):
+        chunks = self._checked_points(artifact)
+        return [{'chunk_id':point['chunk_id'], 'document_title':chunks[point['chunk_id']].document.title,
+            'cluster_name':artifact.clusters[str(point['cluster_id'])], 'x':point['x'], 'y':point['y'],
+            'token_count':chunks[point['chunk_id']].token_count, 'text_preview':chunks[point['chunk_id']].text[:100]}
+            for point in artifact.coordinates]
