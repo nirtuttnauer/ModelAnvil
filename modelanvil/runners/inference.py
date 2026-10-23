@@ -194,20 +194,11 @@ def local_session(version, *, tenant, project, device='cpu'):
             if plan['format'] == 'gguf':
                 if device != 'cpu':
                     raise ValueError('GGUF GPU inference needs a separately qualified llama.cpp build.')
-                try:
-                    from llama_cpp import Llama
-                except ImportError:
-                    raise ValueError('Install the optional llama-cpp-python runtime to load GGUF.') from None
+                from modelanvil.runners.gguf_runtime import GGUFSession
                 weights = [n for n in plan['files'] if n.endswith('.gguf')]
                 if len(weights) != 1:
                     raise ValueError('Import exactly one GGUF file.')
-                class MeteredLlama(Llama):
-                    def generate(self, tokens, *args, **kwargs):
-                        self.prompt_tokens, self.generated_tokens = len(tokens), 0
-                        for token in super().generate(tokens, *args, **kwargs):
-                            self.generated_tokens += 1
-                            yield token
-                model = MeteredLlama(model_path=str(directory / weights[0]), n_ctx=2048, n_gpu_layers=0, verbose=False)
+                model = GGUFSession(directory / weights[0])
                 session.update(format='gguf', model=model, device=device)
                 yield session
             elif plan['format'] == 'mlx':
@@ -346,26 +337,8 @@ def generate(session, messages, *, max_tokens=128, temperature=0.0, seed=42, pro
                'usage': {'prompt_tokens': prompt_count, 'completion_tokens': count, 'total_tokens': prompt_count+count}}
         return
     if session['format'] == 'gguf':
-        model = session['model']
-        chat = prompt_format == 'model' and bool(model.metadata.get('tokenizer.chat_template'))
-        if chat:
-            iterator = model.create_chat_completion(messages=messages, max_tokens=max_tokens,
-                temperature=temperature, seed=seed, stream=True)
-        else:
-            prompt = rendered_prompt(None, messages, prompt_format if prompt_format != 'model' else 'plain')
-            iterator = model.create_completion(prompt=prompt, max_tokens=max_tokens,
-                temperature=temperature, seed=seed, stream=True)
-        for part in iterator:
-            if cancelled():
-                finish = 'cancelled'; break
-            choice = part['choices'][0]
-            text = choice.get('delta', {}).get('content', '') if chat else choice.get('text', '')
-            if text:
-                yield {'text': text}
-            finish = choice.get('finish_reason') or finish
-        count, prompt_count = session['model'].generated_tokens, session['model'].prompt_tokens
-        yield {'finish_reason': finish, 'elapsed_seconds': time.monotonic() - started,
-               'usage': {'prompt_tokens': prompt_count, 'completion_tokens': count, 'total_tokens': prompt_count + count}}
+        yield from session['model'].generate(messages, max_tokens=max_tokens, temperature=temperature,
+            seed=seed, prompt_format=prompt_format, cancelled=cancelled, started=started)
         return
     if session['format'] == 'mlx':
         import mlx.core as mx
