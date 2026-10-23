@@ -49,7 +49,7 @@ def pinned_compiler(version):
         raise ValueError('Pinned model, tokenizer or template changed. Save a new recipe revision.')
     if version.model_limit_tokens>limit or not 1<=version.output_reserve_tokens<=32:
         raise ValueError(f'This CPU runtime requires a model limit at most {limit} and 1–32 output tokens.')
-    return ContextCompiler(version,token_counter=count,serializer=serialize)
+    return ContextCompiler(version,token_counter=count,serializer=serialize,runtime_limit_tokens=limit)
 
 
 def recipe_pin(version):
