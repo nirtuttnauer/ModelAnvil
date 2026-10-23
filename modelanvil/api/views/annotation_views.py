@@ -34,10 +34,12 @@ class ReadWorkflowViewSet(TenantScopedViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        from modelanvil.annotation.feedback import hidden_campaigns
+        hidden=hidden_campaigns(get_active_tenant())
         if qs.model == LabelingCampaign:
-            return qs
+            return qs.exclude(pk__in=hidden)
         if hasattr(qs.model, 'campaign'):
-            return qs.filter(campaign__in=get_accessible_queryset(LabelingCampaign))
+            return qs.filter(campaign__in=get_accessible_queryset(LabelingCampaign).exclude(pk__in=hidden))
         return qs
 
     def create(self, request, *args, **kwargs):
@@ -418,6 +420,12 @@ class TaskViewSet(ReadWorkflowViewSet):
         latest = task.records.order_by("-revision_no").first()
         if data["expected_revision"] != (latest.revision_no if latest else 0) + 1:
             raise Conflict("Another reviewer changed this task. Refresh before submitting again.")
+        from modelanvil.annotation.feedback import require_campaign_live
+        try:feedback=require_campaign_live(campaign)
+        except ValueError as exc:raise ValidationError(str(exc)) from exc
+        if feedback and data['decision'] in ('corrected','accepted_without_edit'):
+            if data['decision']!='corrected' or data['human_label'].get('label')==task.content.get('draft_prediction',{}).get('predicted_label'):
+                raise ValidationError('Supply an independently reviewed correction to the failed prediction.')
         principal = f'{request.modelanvil_actor_kind}:{request.modelanvil_actor_id}'
         adjudicate = data.pop('adjudicate')
         blind = data.pop('blind_review') or request.query_params.get('blind') == '1'

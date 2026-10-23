@@ -203,11 +203,15 @@ class EvaluationSuiteViewSet(TenantScopedViewSet):
     lookup_field = "suite_id"
 
     @action(detail=False, methods=['post'], url_path='register-cpu')
+    @transaction.atomic
     def register_cpu(self, request):
         """Pin a bounded suite version, or the next version of a suite already in this project."""
         from modelanvil.core.tenancy import get_active_project
         from modelanvil.identity.models import check_resource_access
         from modelanvil.runners.eval_executor import validate_local_suite
+        from modelanvil.identity.models import Tenant
+        Tenant.objects.select_for_update().get(pk=get_active_tenant())
+        from modelanvil.annotation.feedback import assert_uninspected_cases
         if request.data.get('protected_role') != 'protected_eval':
             raise serializers.ValidationError({'protected_role': 'Declare this suite as protected evaluation before pinning it.'})
         cases = request.data.get('cases')
@@ -215,6 +219,7 @@ class EvaluationSuiteViewSet(TenantScopedViewSet):
         config = request.data.get('scorer_config', {})
         try:
             validate_local_suite(cases, scorer, config, require_source_groups=True)
+            assert_uninspected_cases(get_active_tenant(),cases)
         except ValueError as exc:
             raise serializers.ValidationError({'cases': str(exc)}) from exc
         tenant = get_active_tenant()
@@ -261,6 +266,10 @@ class EvaluationSuiteVersionSerializer(serializers.ModelSerializer):
             validate_local_suite(attrs.get('cases', []), attrs.get('scorer_type', 'exact_match'), attrs.get('scorer_config', {}))
         except ValueError as exc:
             raise serializers.ValidationError(str(exc)) from exc
+        from modelanvil.annotation.feedback import assert_uninspected_cases, DEVELOPMENT_ROLES
+        if attrs.get('protected_role','protected_eval') not in DEVELOPMENT_ROLES:
+            try:assert_uninspected_cases(get_active_tenant(),attrs.get('cases',[]))
+            except ValueError as exc:raise serializers.ValidationError(str(exc)) from exc
         return attrs
 
     suite_name = serializers.CharField(source="suite.name", read_only=True)
@@ -277,6 +286,11 @@ class EvaluationSuiteVersionSerializer(serializers.ModelSerializer):
 
 
 class EvaluationSuiteVersionViewSet(TenantScopedViewSet):
+    @transaction.atomic
+    def create(self,request,*args,**kwargs):
+        from modelanvil.identity.models import Tenant
+        Tenant.objects.select_for_update().get(pk=get_active_tenant())
+        return super().create(request,*args,**kwargs)
     queryset = EvaluationSuiteVersion.objects.select_related("suite")
     serializer_class = EvaluationSuiteVersionSerializer
     lookup_field = "suite_version_id"

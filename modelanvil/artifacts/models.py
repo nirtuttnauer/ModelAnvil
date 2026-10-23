@@ -66,6 +66,8 @@ class Artifact(TenantContextModel):
     def save(self, *args: Any, **kwargs: Any) -> None:
         if self.pk and type(self).all_objects.filter(pk=self.pk).exists():
             previous = type(self).all_objects.get(pk=self.pk)
+            if previous.metadata.get('application_feedback_id') and self.metadata.get('application_feedback_id')!=previous.metadata['application_feedback_id']:
+                raise ValueError('Feedback artifact provenance is immutable.')
             protected = ("tenant_id", "storage_location_id", "object_key", "object_version", "sha256", "byte_size", "media_type")
             if previous.state == self.State.COMMITTED and any(getattr(previous, field) != getattr(self, field) for field in protected):
                 raise ValueError("Committed artifact metadata is immutable.")

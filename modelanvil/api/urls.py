@@ -6,6 +6,7 @@ alignment, RAG, Context Lab, releases, and operational endpoints.
 """
 
 from __future__ import annotations
+from modelanvil.api.views import application_feedback
 
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
@@ -36,6 +37,7 @@ from modelanvil.api.views import workers as worker_views
 from modelanvil.data.bank import views as bank_views
 
 router = DefaultRouter()
+router.register("application-feedback", application_feedback.ApplicationFeedbackViewSet, basename="application-feedback")
 router.register("compute-plugins", compute_views.PluginViewSet, basename="compute-plugin")
 router.register("compute-allocations", compute_views.AllocationViewSet, basename="compute-allocation")
 # Identity & Tenancy

@@ -54,6 +54,8 @@ class ProjectPrivacy(APIView):
         project = selected_project()
         form = PolicyInput(data=request.data); form.is_valid(raise_exception=True)
         ProjectPrivacyPolicy.all_objects.update_or_create(tenant_id=project.tenant_id, project=project, defaults=form.validated_data)
+        from modelanvil.annotation.feedback import shorten_retention
+        shorten_retention(project,form.validated_data['measurement_retention_days'])
         record_audit('update', 'project_privacy', project.pk, input_snapshot={'offline': form.validated_data['offline'],
             'origin_count': len(form.validated_data['acquisition_origins']), 'measurement_retention_days': form.validated_data['measurement_retention_days']})
         return self.response(project)
