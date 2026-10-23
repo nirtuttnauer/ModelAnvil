@@ -47,3 +47,23 @@ test('backend refusal is surfaced without treating it as completion', async () =
   try { await assert.rejects(client.alignmentAction('test-key', run, 'execute'), error => error.status === 400 && /pending/.test(error.message)); }
   finally { globalThis.fetch = original; }
 });
+
+test('GRPO preference parsing preserves protected source groups and rejects malformed IDs', () => {
+  const grouped = { ...pair, source_group_id: 'public-source:one' };
+  assert.deepEqual(client.preferencePairs(JSON.stringify([grouped])), [grouped]);
+  for (const source_group_id of ['', ' ', 3, 'x'.repeat(129)]) {
+    assert.throws(() => client.preferencePairs(JSON.stringify([{ ...pair, source_group_id }])));
+  }
+});
+
+test('explicit checkpoint takeover uses the bounded resume action and rejects arbitrary actions', async () => {
+  const original = globalThis.fetch; const calls = [];
+  globalThis.fetch = async (path, init) => { calls.push({ path, init }); return new Response(JSON.stringify({ run_id: run, status: 'completed' }), { status: 200 }); };
+  try {
+    await client.alignmentAction('test-key', run, 'resume');
+    assert.equal(calls[0].path, `/api/v1/alignment-runs/${run}/resume/`);
+    assert.equal(calls[0].init.body, '{}');
+    assert.throws(() => client.alignmentAction('test-key', run, '../cancel'));
+    assert.equal(calls.length, 1);
+  } finally { globalThis.fetch = original; }
+});

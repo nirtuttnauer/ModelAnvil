@@ -1,0 +1,790 @@
+{
+  "scope": "Authored bounded CPU character GRPO correctness; no pretrained, GPU, FP8, customer-quality or production claim.",
+  "python": "3.12.15 (main, Oct  3 2026, 00:54:33) [Clang 22.1.3 ]",
+  "platform": "darwin",
+  "tenant_id": "01a16933-765a-72a4-8b28-39bc567d57d3",
+  "project_id": "01a16933-765b-7ea5-83a3-fb264b6d900a",
+  "base_model_version": "1",
+  "base_weights_sha256": "f4c1b9ed4ccc5dfb004fcd963b53de923bb4195885676f4efa200bdfaf225913",
+  "candidate_weights_sha256": "cf9a10811094dcc300fc78a727e9a6b30091000bf8f405887d730f3be91eb240",
+  "candidate_state": "draft",
+  "registered_inputs": [
+    {
+      "artifact_id": "01a16933-7978-7b44-ac32-1db038e4c51a",
+      "name": "Authored GRPO training",
+      "sha256": "e3398b6ed5db1f335742c683df9497414a28c88c2c75ef4e9ca3010c69211564",
+      "byte_size": 203,
+      "row_count": 2,
+      "state": "committed"
+    },
+    {
+      "artifact_id": "01a16933-797d-77de-8978-fe1dfe23825f",
+      "name": "Protected GRPO heldout",
+      "sha256": "4109304852fe543f490ecf7ac8f2cc962e2a0a7a8a0384d7f9fffb3d0822482b",
+      "byte_size": 207,
+      "row_count": 2,
+      "state": "committed"
+    }
+  ],
+  "training": [
+    {
+      "prompt": "a",
+      "chosen": "a",
+      "rejected": "b",
+      "source_group_id": "train-a"
+    },
+    {
+      "prompt": "b",
+      "chosen": "a",
+      "rejected": "b",
+      "source_group_id": "train-b"
+    }
+  ],
+  "heldout": [
+    {
+      "prompt": "c",
+      "chosen": "a",
+      "rejected": "b",
+      "source_group_id": "heldout-c"
+    },
+    {
+      "prompt": "d",
+      "chosen": "a",
+      "rejected": "b",
+      "source_group_id": "heldout-d"
+    }
+  ],
+  "regression": [
+    {
+      "prompt": "e",
+      "chosen": "a",
+      "rejected": "b",
+      "source_group_id": "regression-e"
+    },
+    {
+      "prompt": "f",
+      "chosen": "a",
+      "rejected": "b",
+      "source_group_id": "regression-f"
+    }
+  ],
+  "verifier": {
+    "version": "modelanvil.builtin-verifier.v1",
+    "script_sha256": "aad04ee99177da5cdefdd1f772f55da483e5413f091648caf8187f381e8c2299",
+    "rules": [
+      "exact_match",
+      "numeric_tolerance"
+    ],
+    "wall_seconds": 2,
+    "cpu_seconds": 1,
+    "address_space_bytes": null,
+    "memory_mode": "fixed_input_bounds_and_verified_peak_rss",
+    "max_peak_rss_bytes": 67108864,
+    "input_output_bytes": 16384,
+    "group_size": 8,
+    "network": "no_network_operations_or_user_code",
+    "interpreter": "3.12"
+  },
+  "baseline": {
+    "run_id": "01a16933-7988-715f-97be-0208018d6ff9",
+    "status": "completed",
+    "current_step": 3,
+    "checkpoint_steps": [
+      1,
+      2,
+      3
+    ],
+    "candidate": "2",
+    "reservation_state": "settled",
+    "settled_amount": "3.000000",
+    "usage": [
+      {
+        "quantity": "3.000000",
+        "unit": "training_steps"
+      }
+    ]
+  },
+  "metrics": [
+    {
+      "step": 1,
+      "policy_loss": 0.0,
+      "gradient_norm": 0.0,
+      "raw_reward_mean": 0.0,
+      "reward_std": 0.0,
+      "pass_rate": 0.0,
+      "clip_fraction": 0.0,
+      "sample_count": 8,
+      "completion_coverage": 0.75,
+      "distinct_completion_fraction": 0.625,
+      "kl_divergence": 0.0,
+      "verifier_cpu_seconds": 0.011093,
+      "verifier_wall_seconds": 0.01586858400003166,
+      "verifier_peak_rss_bytes": 17154048,
+      "zero_variance_group": 1,
+      "weights_changed": 0,
+      "cpu_seconds": 0.012340624999999772
+    },
+    {
+      "step": 2,
+      "policy_loss": -0.00011703366986136695,
+      "gradient_norm": 0.04866411834903313,
+      "raw_reward_mean": 0.25,
+      "reward_std": 0.4330127018922193,
+      "pass_rate": 0.25,
+      "clip_fraction": 0.0,
+      "sample_count": 8,
+      "completion_coverage": 0.75,
+      "distinct_completion_fraction": 0.625,
+      "kl_divergence": 1.334345071450152e-08,
+      "verifier_cpu_seconds": 0.010877,
+      "verifier_wall_seconds": 0.015811708999990515,
+      "verifier_peak_rss_bytes": 17006592,
+      "zero_variance_group": 0,
+      "weights_changed": 1,
+      "cpu_seconds": 0.008707291999999978
+    },
+    {
+      "step": 3,
+      "policy_loss": -8.694865820523495e-05,
+      "gradient_norm": 0.04114068635073286,
+      "raw_reward_mean": 0.25,
+      "reward_std": 0.4330127018922193,
+      "pass_rate": 0.25,
+      "clip_fraction": 0.0,
+      "sample_count": 8,
+      "completion_coverage": 0.875,
+      "distinct_completion_fraction": 0.75,
+      "kl_divergence": 2.221774640423141e-09,
+      "verifier_cpu_seconds": 0.011109,
+      "verifier_wall_seconds": 0.0159872079999559,
+      "verifier_peak_rss_bytes": 17170432,
+      "zero_variance_group": 0,
+      "weights_changed": 1,
+      "cpu_seconds": 0.009085916000000083
+    }
+  ],
+  "rollouts": [
+    {
+      "prompt": "a",
+      "response": "f",
+      "transitions": [
+        [
+          4,
+          9
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.196833683925255,
+      "step": 1,
+      "source_group_id": "train-a",
+      "reward": 0.0,
+      "advantage": 0.0,
+      "old_token_log_probabilities": [
+        -2.196833683925255
+      ]
+    },
+    {
+      "prompt": "a",
+      "response": "f",
+      "transitions": [
+        [
+          4,
+          9
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.196833683925255,
+      "step": 1,
+      "source_group_id": "train-a",
+      "reward": 0.0,
+      "advantage": 0.0,
+      "old_token_log_probabilities": [
+        -2.196833683925255
+      ]
+    },
+    {
+      "prompt": "a",
+      "response": "\n",
+      "transitions": [
+        [
+          4,
+          11
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.196833683925255,
+      "step": 1,
+      "source_group_id": "train-a",
+      "reward": 0.0,
+      "advantage": 0.0,
+      "old_token_log_probabilities": [
+        -2.196833683925255
+      ]
+    },
+    {
+      "prompt": "a",
+      "response": "",
+      "transitions": [
+        [
+          4,
+          2
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.2001002997904013,
+      "step": 1,
+      "source_group_id": "train-a",
+      "reward": 0.0,
+      "advantage": 0.0,
+      "old_token_log_probabilities": [
+        -2.2001002997904013
+      ]
+    },
+    {
+      "prompt": "b",
+      "response": "c",
+      "transitions": [
+        [
+          5,
+          6
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.1977517787872967,
+      "step": 2,
+      "source_group_id": "train-b",
+      "reward": 0.0,
+      "advantage": -0.5773502691896258,
+      "old_token_log_probabilities": [
+        -2.1977517787872967
+      ]
+    },
+    {
+      "prompt": "b",
+      "response": "",
+      "transitions": [
+        [
+          5,
+          2
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.193049147030643,
+      "step": 2,
+      "source_group_id": "train-b",
+      "reward": 0.0,
+      "advantage": -0.5773502691896258,
+      "old_token_log_probabilities": [
+        -2.193049147030643
+      ]
+    },
+    {
+      "prompt": "b",
+      "response": "a",
+      "transitions": [
+        [
+          5,
+          4
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.1945453232089056,
+      "step": 2,
+      "source_group_id": "train-b",
+      "reward": 1.0,
+      "advantage": 1.7320508075688774,
+      "old_token_log_probabilities": [
+        -2.1945453232089056
+      ]
+    },
+    {
+      "prompt": "b",
+      "response": "d",
+      "transitions": [
+        [
+          5,
+          7
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.1977517787872967,
+      "step": 2,
+      "source_group_id": "train-b",
+      "reward": 0.0,
+      "advantage": -0.5773502691896258,
+      "old_token_log_probabilities": [
+        -2.1977517787872967
+      ]
+    },
+    {
+      "prompt": "b",
+      "response": "",
+      "transitions": [
+        [
+          5,
+          2
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.193049147030643,
+      "step": 2,
+      "source_group_id": "train-b",
+      "reward": 0.0,
+      "advantage": -0.5773502691896258,
+      "old_token_log_probabilities": [
+        -2.193049147030643
+      ]
+    },
+    {
+      "prompt": "b",
+      "response": "a",
+      "transitions": [
+        [
+          5,
+          4
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.1945453232089056,
+      "step": 2,
+      "source_group_id": "train-b",
+      "reward": 1.0,
+      "advantage": 1.7320508075688774,
+      "old_token_log_probabilities": [
+        -2.1945453232089056
+      ]
+    },
+    {
+      "prompt": "b",
+      "response": "e",
+      "transitions": [
+        [
+          5,
+          8
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.1977517787872967,
+      "step": 2,
+      "source_group_id": "train-b",
+      "reward": 0.0,
+      "advantage": -0.5773502691896258,
+      "old_token_log_probabilities": [
+        -2.1977517787872967
+      ]
+    },
+    {
+      "prompt": "b",
+      "response": "d",
+      "transitions": [
+        [
+          5,
+          7
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.1977517787872967,
+      "step": 2,
+      "source_group_id": "train-b",
+      "reward": 0.0,
+      "advantage": -0.5773502691896258,
+      "old_token_log_probabilities": [
+        -2.1977517787872967
+      ]
+    },
+    {
+      "prompt": "a",
+      "response": "a",
+      "transitions": [
+        [
+          4,
+          4
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.200556923890549,
+      "step": 3,
+      "source_group_id": "train-a",
+      "reward": 1.0,
+      "advantage": 1.7320508075688774,
+      "old_token_log_probabilities": [
+        -2.200556923890549
+      ]
+    },
+    {
+      "prompt": "a",
+      "response": "e",
+      "transitions": [
+        [
+          4,
+          8
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.196790318932503,
+      "step": 3,
+      "source_group_id": "train-a",
+      "reward": 0.0,
+      "advantage": -0.5773502691896258,
+      "old_token_log_probabilities": [
+        -2.196790318932503
+      ]
+    },
+    {
+      "prompt": "a",
+      "response": " ",
+      "transitions": [
+        [
+          4,
+          10
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.1968337506333953,
+      "step": 3,
+      "source_group_id": "train-a",
+      "reward": 0.0,
+      "advantage": -0.5773502691896258,
+      "old_token_log_probabilities": [
+        -2.1968337506333953
+      ]
+    },
+    {
+      "prompt": "a",
+      "response": "",
+      "transitions": [
+        [
+          4,
+          2
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.2000135212520675,
+      "step": 3,
+      "source_group_id": "train-a",
+      "reward": 0.0,
+      "advantage": -0.5773502691896258,
+      "old_token_log_probabilities": [
+        -2.2000135212520675
+      ]
+    },
+    {
+      "prompt": "a",
+      "response": " ",
+      "transitions": [
+        [
+          4,
+          10
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.1968337506333953,
+      "step": 3,
+      "source_group_id": "train-a",
+      "reward": 0.0,
+      "advantage": -0.5773502691896258,
+      "old_token_log_probabilities": [
+        -2.1968337506333953
+      ]
+    },
+    {
+      "prompt": "a",
+      "response": "f",
+      "transitions": [
+        [
+          4,
+          9
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.1968337506333953,
+      "step": 3,
+      "source_group_id": "train-a",
+      "reward": 0.0,
+      "advantage": -0.5773502691896258,
+      "old_token_log_probabilities": [
+        -2.1968337506333953
+      ]
+    },
+    {
+      "prompt": "a",
+      "response": "c",
+      "transitions": [
+        [
+          4,
+          6
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.196790318932503,
+      "step": 3,
+      "source_group_id": "train-a",
+      "reward": 0.0,
+      "advantage": -0.5773502691896258,
+      "old_token_log_probabilities": [
+        -2.196790318932503
+      ]
+    },
+    {
+      "prompt": "a",
+      "response": "a",
+      "transitions": [
+        [
+          4,
+          4
+        ]
+      ],
+      "max_new_tokens": 1,
+      "old_log_probability": -2.200556923890549,
+      "step": 3,
+      "source_group_id": "train-a",
+      "reward": 1.0,
+      "advantage": 1.7320508075688774,
+      "old_token_log_probabilities": [
+        -2.200556923890549
+      ]
+    }
+  ],
+  "held_out_evaluation": {
+    "held_out_pass_rate": 0.0,
+    "held_out_sample_count": 2,
+    "held_out_kl_divergence": 4.064970889108889e-10,
+    "held_out_completion_coverage": 1.0,
+    "held_out_outputs": [
+      {
+        "prompt": "c",
+        "source_group_id": "heldout-c",
+        "response": "\n",
+        "reward": 0.0
+      },
+      {
+        "prompt": "d",
+        "source_group_id": "heldout-d",
+        "response": "f",
+        "reward": 0.0
+      }
+    ]
+  },
+  "independent": {
+    "consumer_imported_modelanvil_or_django": false,
+    "results": {
+      "base": {
+        "heldout": {
+          "accuracy": 0.5,
+          "rows": [
+            {
+              "prompt": "c",
+              "chosen": "a",
+              "rejected": "b",
+              "source_group_id": "heldout-c",
+              "completion": "",
+              "generated_token_ids": [
+                2
+              ],
+              "weights_sha256": "f4c1b9ed4ccc5dfb004fcd963b53de923bb4195885676f4efa200bdfaf225913",
+              "runtime": "independent_stdlib_character_consumer",
+              "passed": false
+            },
+            {
+              "prompt": "d",
+              "chosen": "a",
+              "rejected": "b",
+              "source_group_id": "heldout-d",
+              "completion": "a",
+              "generated_token_ids": [
+                4
+              ],
+              "weights_sha256": "f4c1b9ed4ccc5dfb004fcd963b53de923bb4195885676f4efa200bdfaf225913",
+              "runtime": "independent_stdlib_character_consumer",
+              "passed": true
+            }
+          ]
+        },
+        "regression": {
+          "accuracy": 1.0,
+          "rows": [
+            {
+              "prompt": "e",
+              "chosen": "a",
+              "rejected": "b",
+              "source_group_id": "regression-e",
+              "completion": "a",
+              "generated_token_ids": [
+                4
+              ],
+              "weights_sha256": "f4c1b9ed4ccc5dfb004fcd963b53de923bb4195885676f4efa200bdfaf225913",
+              "runtime": "independent_stdlib_character_consumer",
+              "passed": true
+            },
+            {
+              "prompt": "f",
+              "chosen": "a",
+              "rejected": "b",
+              "source_group_id": "regression-f",
+              "completion": "a",
+              "generated_token_ids": [
+                4
+              ],
+              "weights_sha256": "f4c1b9ed4ccc5dfb004fcd963b53de923bb4195885676f4efa200bdfaf225913",
+              "runtime": "independent_stdlib_character_consumer",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "candidate": {
+        "heldout": {
+          "accuracy": 0.5,
+          "rows": [
+            {
+              "prompt": "c",
+              "chosen": "a",
+              "rejected": "b",
+              "source_group_id": "heldout-c",
+              "completion": "",
+              "generated_token_ids": [
+                2
+              ],
+              "weights_sha256": "cf9a10811094dcc300fc78a727e9a6b30091000bf8f405887d730f3be91eb240",
+              "runtime": "independent_stdlib_character_consumer",
+              "passed": false
+            },
+            {
+              "prompt": "d",
+              "chosen": "a",
+              "rejected": "b",
+              "source_group_id": "heldout-d",
+              "completion": "a",
+              "generated_token_ids": [
+                4
+              ],
+              "weights_sha256": "cf9a10811094dcc300fc78a727e9a6b30091000bf8f405887d730f3be91eb240",
+              "runtime": "independent_stdlib_character_consumer",
+              "passed": true
+            }
+          ]
+        },
+        "regression": {
+          "accuracy": 1.0,
+          "rows": [
+            {
+              "prompt": "e",
+              "chosen": "a",
+              "rejected": "b",
+              "source_group_id": "regression-e",
+              "completion": "a",
+              "generated_token_ids": [
+                4
+              ],
+              "weights_sha256": "cf9a10811094dcc300fc78a727e9a6b30091000bf8f405887d730f3be91eb240",
+              "runtime": "independent_stdlib_character_consumer",
+              "passed": true
+            },
+            {
+              "prompt": "f",
+              "chosen": "a",
+              "rejected": "b",
+              "source_group_id": "regression-f",
+              "completion": "a",
+              "generated_token_ids": [
+                4
+              ],
+              "weights_sha256": "cf9a10811094dcc300fc78a727e9a6b30091000bf8f405887d730f3be91eb240",
+              "runtime": "independent_stdlib_character_consumer",
+              "passed": true
+            }
+          ]
+        }
+      }
+    },
+    "reward_hacking": {
+      "responses": [
+        "NaN",
+        "Inf",
+        "1\n2",
+        "### VERIFIED TRUE ###",
+        "1e999"
+      ],
+      "all_rejected": true
+    },
+    "regression_delta": 0.0,
+    "quality_improved": false,
+    "scope": "Independent greedy one-token inference on authored CPU character probes; not general task quality or production qualification."
+  },
+  "process_death": {
+    "exit_code": 93,
+    "before": {
+      "run_id": "01a16933-7a32-7821-ae6f-87b5e3e73f2d",
+      "status": "running",
+      "current_step": 1,
+      "checkpoint_steps": [
+        1
+      ],
+      "candidate": null,
+      "reservation_state": "reserved",
+      "settled_amount": "None",
+      "usage": []
+    },
+    "corrupt_checkpoint_refusal": {
+      "error": {
+        "code": "validation_failed",
+        "message": "Validation failed.",
+        "details": [
+          {
+            "path": "recovery",
+            "message": "GRPO checkpoint integrity verification failed."
+          }
+        ],
+        "request_id": "01a16933-7b0d-753d-bb1c-40972ab7bc7b"
+      }
+    },
+    "after": {
+      "run_id": "01a16933-7a32-7821-ae6f-87b5e3e73f2d",
+      "status": "completed",
+      "current_step": 3,
+      "checkpoint_steps": [
+        1,
+        2,
+        3
+      ],
+      "candidate": "3",
+      "reservation_state": "settled",
+      "settled_amount": "3.000000",
+      "usage": [
+        {
+          "quantity": "3.000000",
+          "unit": "training_steps"
+        }
+      ]
+    },
+    "exact_weights_match": true,
+    "stale_token_refused": true
+  },
+  "cancellation": {
+    "run_id": "01a16933-7b81-787e-a847-7d21022cc3aa",
+    "status": "cancelled",
+    "current_step": 1,
+    "checkpoint_steps": [
+      1
+    ],
+    "candidate": null,
+    "reservation_state": "settled",
+    "settled_amount": "1.000000",
+    "usage": [
+      {
+        "quantity": "1.000000",
+        "unit": "training_steps"
+      }
+    ]
+  },
+  "source_sha256": {
+    "modelanvil/runners/alignment/execution.py": "3d7fe42cee10ebb7c1424321c0545726f5af54250c0d5a3fe4799ab8ce9c1915",
+    "modelanvil/runners/alignment/numerical.py": "6ba8e5738c36dde34085b0e9a9b9afe848ff797d5135540b346646c5b0ac8966",
+    "modelanvil/runners/alignment/grpo.py": "1a005a1a3ee144a0401ce63b3bd42acaf601f8f63b5190f0b27d0fa80cd5e803",
+    "modelanvil/runners/alignment/verifier_runtime.py": "aec321d379cc8530a14e4bfa1a63c5d09b01814222d8df148c1efa12347f7821",
+    "scripts/alignment_verifier.py": "aad04ee99177da5cdefdd1f772f55da483e5413f091648caf8187f381e8c2299",
+    "scripts/qualify_grpo.py": "ef9917a1450ca6beff1a6a9af9d5180082cb52108fbdaeb8ecd6a0cef15fc7a8",
+    "scripts/qualify_grpo_consumer.py": "e55a53a21df18ec76fd054c9ffe48a47505124839cc667889c74848902df15f5",
+    "scripts/cpu_character_infer.py": "84eb7bacc14ec18ff5350766f36bcb01c1b62bf6d9fb6bd197bd2af23aa7491e"
+  }
+}

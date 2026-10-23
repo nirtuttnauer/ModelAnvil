@@ -3676,7 +3676,7 @@
         "tags": [
           "Alignment"
         ],
-        "summary": "Execute bounded CPU DPO, reward, PPO or verifier alignment",
+        "summary": "Execute bounded CPU DPO, reward, PPO, verifier or GRPO alignment",
         "operationId": "executeAlignmentRun",
         "parameters": [
           {
@@ -8609,6 +8609,47 @@
           }
         }
       }
+    },
+    "/alignment-runs/{run_id}/resume/": {
+      "post": {
+        "tags": [
+          "Alignment"
+        ],
+        "summary": "Take over a committed running/interrupted GRPO checkpoint",
+        "operationId": "resumeGRPOAlignmentRun",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rotates the worker fence, verifies pinned code/inputs/checkpoint/RNG state and continues the original step reservation. Completed replay verifies the same candidate; no new reservation or duplicate charge.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlignmentRun"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid inputs, changed/corrupt artifacts, unsupported model or workflow state, or budget refusal"
+          },
+          "403": {
+            "description": "Engineer role required"
+          },
+          "404": {
+            "description": "Run unavailable in tenant/project scope"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -10826,7 +10867,8 @@
               "dpo",
               "reward_model",
               "ppo_rlhf",
-              "verifier_rl"
+              "verifier_rl",
+              "grpo"
             ]
           },
           "policy_model_version": {
@@ -10886,7 +10928,7 @@
           "algorithm",
           "policy_model_version"
         ],
-        "description": "Pending alignment plan. Actual execution requires both committed preference artifact UUIDs. Digest-only legacy plans are readable but cannot execute. DPO and PPO require a reference; PPO additionally requires an actual serialized reward head.",
+        "description": "Pending alignment plan. Actual execution requires both committed preference artifact UUIDs. Digest-only legacy plans are readable but cannot execute. DPO and PPO require a reference; PPO additionally requires an actual serialized reward head. GRPO requires grouped disjoint preference artifacts, an enabled training_steps budget and exact_match or numeric_tolerance; the initial policy is frozen as reference when no explicit reference is supplied.",
         "anyOf": [
           {
             "required": [
@@ -11009,6 +11051,44 @@
                   "required": [
                     "type"
                   ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "algorithm"
+              ],
+              "properties": {
+                "algorithm": {
+                  "const": "grpo"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "train_dataset_artifact",
+                "held_out_dataset_artifact"
+              ],
+              "properties": {
+                "train_dataset_artifact": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "held_out_dataset_artifact": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "verifier_spec": {
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "exact_match",
+                        "numeric_tolerance"
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -11369,7 +11449,7 @@
       "AlignmentHyperparameters": {
         "type": "object",
         "additionalProperties": false,
-        "description": "Finite numeric values only; booleans are rejected. beta is DPO-only. KL/clip/rollout/value knobs are PPO/verifier-only. Unknown or recipe-incompatible knobs are rejected. budget_policy_id selects an enabled tenant training_steps policy.",
+        "description": "Finite numeric values only; booleans are rejected. beta is DPO-only. KL/clip/rollout/value knobs are PPO/verifier-only. Unknown or recipe-incompatible knobs are rejected. budget_policy_id selects an enabled tenant training_steps policy. GRPO accepts group_size, ppo_epochs, max_new_tokens, kl_coefficient and clip_range with learning_rate and max_gradient_norm; no value or rollout_batch_size knobs.",
         "properties": {
           "budget_policy_id": {
             "type": "string",
@@ -11429,6 +11509,13 @@
             "minimum": 1e-06,
             "maximum": 0.2,
             "default": 0.05
+          },
+          "group_size": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 8,
+            "default": 4,
+            "description": "GRPO only; actual completions sampled for one prompt per step."
           }
         }
       },
@@ -11451,7 +11538,7 @@
             "maximum": 1000000
           }
         },
-        "description": "Required for verifier_rl. Targets come from chosen responses; sampled completions receive actual rule rewards. Tolerance must be finite and within 0\u20131000000."
+        "description": "Required for verifier_rl. Targets come from chosen responses; sampled completions receive actual rule rewards. Tolerance must be finite and within 0\u20131000000. GRPO excludes substring; fixed data-only child with pinned code, bounded input/output, CPU and wall time, and platform-specific memory limits recorded in execution pins."
       },
       "PreferencePair": {
         "type": "object",
@@ -11470,6 +11557,12 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 32
+          },
+          "source_group_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "Required on every GRPO row. Trimmed training and protected group IDs must be disjoint."
           }
         },
         "required": [
@@ -11555,7 +11648,8 @@
               "dpo",
               "reward_model",
               "ppo_rlhf",
-              "verifier_rl"
+              "verifier_rl",
+              "grpo"
             ]
           },
           "status": {

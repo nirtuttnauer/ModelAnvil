@@ -335,3 +335,111 @@ class ActualAlignmentExecutionTests(TestCase):
         for pairs in [[], [{**pair, 'rejected': 'ab'}], [pair]*33, [{**pair, 'prompt': 'a'*63}]]:
             rejected = self.client.post(path, {'name': 'Bad', 'samples': pairs}, format='json')
             self.assertEqual(rejected.status_code, 400, rejected.content)
+
+    def grpo_plan(self):
+        self.train = self.preference_artifact([{'prompt': 'a', 'chosen': 'a', 'rejected': 'b', 'source_group_id': 'train-a'},
+            {'prompt': 'b', 'chosen': 'a', 'rejected': 'b', 'source_group_id': 'train-b'}])
+        self.held = self.preference_artifact([{'prompt': 'e', 'chosen': 'a', 'rejected': 'b', 'source_group_id': 'held-e'},
+            {'prompt': 'f', 'chosen': 'a', 'rejected': 'b', 'source_group_id': 'held-f'}])
+        return self.create('grpo', total_steps=3, verifier_spec={'type': 'exact_match'},
+            hyperparameters={'group_size': 8, 'max_new_tokens': 1, 'budget_policy_id': str(self.policy.policy_id)})
+
+    def test_grpo_actual_api_updates_export_and_replay_settles_once(self):
+        run = self.grpo_plan()
+        response = self.execute(run)
+        self.assertEqual(run.checkpoints.count(), 3)
+        self.assertTrue(any(m['weights_changed'] for m in run.metrics_history))
+        bundle, _ = self.output_bundle(run)
+        self.assertNotIn('value_head.json', bundle)
+        self.assertEqual(bundle['alignment_state.json']['optimizer'], 'stateless_sgd_global_norm_clip')
+        repeated = self.client.post(f'/api/v1/alignment-runs/{run.run_id}/execute/', {}, format='json')
+        self.assertEqual(repeated.status_code, 200, repeated.content)
+        self.assertEqual(UsageEvent.all_objects.filter(provider_event_key=f'alignment:{run.run_id}').count(), 1)
+        self.assertEqual(BudgetReservation.all_objects.get(reservation_id=run.resource_reservation_id).settled_amount, 3)
+
+    def test_grpo_interruption_resume_restores_exact_weights_and_fences_prior_token(self):
+        from . import numerical
+        from .execution import _live, ExecutionStopped
+        baseline = self.grpo_plan(); self.execute(baseline)
+        expected = self.output_bundle(baseline)[0]['weights_manifest.json']['weights_sha256']
+        run = self.grpo_plan()
+        original = numerical.train_alignment
+        def interrupted(*args, **kwargs):
+            callback = kwargs['on_step']
+            def stop(step, *values):
+                callback(step, *values)
+                if step == 1:
+                    raise SystemExit('controlled process interruption after committed step')
+            kwargs['on_step'] = stop
+            return original(*args, **kwargs)
+        with patch.object(numerical, 'train_alignment', side_effect=interrupted), self.assertRaises(SystemExit):
+            self.client.post(f'/api/v1/alignment-runs/{run.run_id}/execute/', {}, format='json')
+        run.refresh_from_db(); previous = run.execution_token
+        self.assertEqual((run.status, run.current_step), ('running', 1))
+        reservation = BudgetReservation.all_objects.get(reservation_id=run.resource_reservation_id)
+        self.assertEqual(reservation.state, 'reserved')
+        def resumed(*args, **kwargs):
+            with self.assertRaises(ExecutionStopped):
+                _live(run, previous)
+            return original(*args, **kwargs)
+        with patch.object(numerical, 'train_alignment', side_effect=resumed):
+            response = self.client.post(f'/api/v1/alignment-runs/{run.run_id}/resume/', {}, format='json')
+        self.assertEqual(response.status_code, 200, response.content)
+        run.refresh_from_db(); self.assertNotEqual(run.execution_token, previous)
+        self.assertEqual(self.output_bundle(run)[0]['weights_manifest.json']['weights_sha256'], expected)
+        self.assertEqual(list(run.checkpoints.order_by('step').values_list('step', flat=True)), [1, 2, 3])
+        with self.assertRaises(ExecutionStopped):
+            _live(run, previous)
+        reservation.refresh_from_db(); self.assertEqual(reservation.settled_amount, 3)
+        self.assertEqual(UsageEvent.all_objects.filter(provider_event_key=f'alignment:{run.run_id}').count(), 1)
+
+    def test_grpo_invalid_verifier_result_cannot_publish_or_charge_uncommitted_steps(self):
+        from . import verifier_runtime
+        run = self.grpo_plan()
+        with patch.object(verifier_runtime, 'score', side_effect=ValueError('Verifier timed out; no rewards accepted.')):
+            response = self.client.post(f'/api/v1/alignment-runs/{run.run_id}/execute/', {}, format='json')
+        self.assertEqual(response.status_code, 400)
+        run.refresh_from_db()
+        self.assertEqual((run.status, run.current_step, run.output_model_version_id), ('failed', 0, None))
+        self.assertEqual(BudgetReservation.all_objects.get(reservation_id=run.resource_reservation_id).settled_amount, 0)
+        self.assertEqual(self.client.post(f'/api/v1/alignment-runs/{run.run_id}/resume/', {}, format='json').status_code, 400)
+
+    def test_grpo_budget_revocation_prevents_the_next_step_and_preserves_committed_accounting(self):
+        from . import numerical
+        run = self.grpo_plan(); original = numerical.train_alignment
+        def revoked(*args, **kwargs):
+            callback = kwargs['on_step']
+            def stop(step, *values):
+                callback(step, *values)
+                if step == 1:
+                    BudgetPolicy.all_objects.filter(pk=self.policy.pk).update(enabled=False)
+            kwargs['on_step'] = stop
+            return original(*args, **kwargs)
+        with patch.object(numerical, 'train_alignment', side_effect=revoked):
+            response = self.client.post(f'/api/v1/alignment-runs/{run.run_id}/execute/', {}, format='json')
+        self.assertEqual(response.status_code, 400)
+        run.refresh_from_db()
+        self.assertEqual((run.status, run.current_step, run.output_model_version_id), ('failed', 1, None))
+        self.assertEqual(run.checkpoints.count(), 1)
+        self.assertEqual(BudgetReservation.all_objects.get(reservation_id=run.resource_reservation_id).settled_amount, 1)
+
+    def test_grpo_registration_preserves_groups_and_unsupported_options_refuse_before_allocation(self):
+        row = {'prompt': 'a', 'chosen': 'a', 'rejected': 'b', 'source_group_id': 'authored-group'}
+        response = self.client.post('/api/v1/alignment-runs/register-preferences/',
+            {'name': 'Grouped reference', 'samples': [row]}, format='json')
+        self.assertEqual(response.status_code, 201, response.content)
+        artifact = Artifact.all_objects.get(artifact_id=response.json()['artifact_id'])
+        with artifact_storage_backend().open(self.tenant.pk, artifact.object_key) as stream:
+            self.assertEqual(json.load(stream)['pairs'], [row])
+        run = self.grpo_plan(); count = AlignmentRun.all_objects.count()
+        body = self.body('grpo', verifier_spec={'type': 'exact_match'},
+            hyperparameters={'group_size': 8, 'max_new_tokens': 1, 'budget_policy_id': str(self.policy.policy_id)})
+        for changes in ({'precision': 'fp8'}, {'hyperparameters': {'group_size': 1}}, {'verifier_spec': {'type': 'substring'}}):
+            rejected = self.client.post('/api/v1/alignment-runs/', {**body, **changes}, format='json')
+            self.assertEqual(rejected.status_code, 400, rejected.content)
+        self.assertEqual(AlignmentRun.all_objects.count(), count)
+        self.assertEqual(BudgetReservation.all_objects.count(), 0)
+        self.authenticate(project=self.hidden)
+        self.assertEqual(self.client.post(f'/api/v1/alignment-runs/{run.run_id}/resume/', {}, format='json').status_code, 404)
+        self.authenticate(role=Role.VIEWER)
+        self.assertEqual(self.client.post(f'/api/v1/alignment-runs/{run.run_id}/resume/', {}, format='json').status_code, 403)
