@@ -73,6 +73,7 @@ class RetrievalQuerySerializer(serializers.Serializer):
     query = serializers.CharField(max_length=10000, required=False, default="", allow_blank=True)
     top_k = serializers.IntegerField(default=5, min_value=1, max_value=100)
     mode = serializers.ChoiceField(choices=("lexical", "dense", "hybrid"), default="hybrid")
+    dense_search = serializers.ChoiceField(choices=('exact','hnsw'),required=False)
     query_embedding = serializers.ListField(child=serializers.FloatField(), required=False, max_length=4096, allow_empty=False)
 
     def validate(self, data):
@@ -133,7 +134,7 @@ class IndexVersionSerializer(serializers.ModelSerializer):
     def get_source_pins(self,index):
         config=index.configuration
         sources=config.get('source_revisions',[])
-        return {key:config.get(key) for key in ('source_scope','chunk_recipe','chunk_size','chunk_overlap','chunk_units','tokenizer','chunk_recipe_digest','boundary_preference','overlap_semantics','retrieval','embeddings_generated','embedding_profile','embedding_build_runtime')} | {
+        return {key:config.get(key) for key in ('source_scope','chunk_recipe','chunk_size','chunk_overlap','chunk_units','tokenizer','chunk_recipe_digest','boundary_preference','overlap_semantics','retrieval','embeddings_generated','embedding_profile','embedding_build_runtime','retrieval_settings','hnsw_index')} | {
             'source_revisions':sources[:50],'source_revision_count':len(sources),'source_revisions_truncated':len(sources)>50,
             'build_mode':'durable_worker' if config.get('embedding_profile') else 'bounded_atomic_transaction'}
 
@@ -198,10 +199,10 @@ class IndexVersionViewSet(TenantScopedViewSet):
 
         from modelanvil.rag.workflow import trace_query
         try:
-            trace, rows = trace_query(index_version,query_text,mode,top_k,query_embedding)
+            trace, rows = trace_query(index_version,query_text,mode,top_k,query_embedding,dense_search=data.get('dense_search'))
         except ValueError as exc:
             raise serializers.ValidationError(str(exc)) from exc
-        return Response({'results':rows,'mode':mode,'index_id':str(index_version.index_id),
+        return Response({'results':rows,'mode':mode,'retrieval_config':trace.retrieval_config,'index_id':str(index_version.index_id),
             'manifest_digest':index_version.manifest_digest,'trace_id':str(trace.trace_id),
             'reranker':'none','generation':'not_executed','context_chunk_ids':[row['chunk_id'] for row in rows]})
 

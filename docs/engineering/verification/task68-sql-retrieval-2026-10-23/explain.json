@@ -1,0 +1,570 @@
+{
+  "exact": [
+    {
+      "Plan": {
+        "Node Type": "Limit",
+        "Parallel Aware": false,
+        "Async Capable": false,
+        "Startup Cost": 465.23,
+        "Total Cost": 465.25,
+        "Plan Rows": 5,
+        "Plan Width": 1758,
+        "Plans": [
+          {
+            "Node Type": "Seq Scan",
+            "Parent Relationship": "InitPlan",
+            "Subplan Name": "InitPlan 2 (returns $2)",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Relation Name": "rag_indexversion",
+            "Alias": "v0_1",
+            "Startup Cost": 0.0,
+            "Total Cost": 9.2,
+            "Plan Rows": 1,
+            "Plan Width": 0,
+            "Filter": "((tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid) AND (id = 1) AND ((status)::text = 'ready'::text) AND ((project_id = '01a16740-a12a-7676-84d6-995645ce41de'::uuid) OR (project_id IS NULL) OR (SubPlan 1)))",
+            "Plans": [
+              {
+                "Node Type": "Index Scan",
+                "Parent Relationship": "SubPlan",
+                "Subplan Name": "SubPlan 1",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Scan Direction": "Forward",
+                "Index Name": "identity_projectgrant_project_id_58068250",
+                "Relation Name": "identity_projectgrant",
+                "Alias": "u0_1",
+                "Startup Cost": 0.14,
+                "Total Cost": 8.18,
+                "Plan Rows": 1,
+                "Plan Width": 0,
+                "Index Cond": "(project_id = v0_1.project_id)",
+                "Filter": "((granted_to_project_id = '01a16740-a12a-7676-84d6-995645ce41de'::uuid) AND (tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid) AND (((resource_type)::text = 'all'::text) OR ((resource_id IS NULL) AND ((resource_type)::text = 'indexversion'::text)) OR ((resource_id = v0_1.index_id) AND ((resource_type)::text = 'indexversion'::text))))"
+              }
+            ]
+          },
+          {
+            "Node Type": "Seq Scan",
+            "Parent Relationship": "InitPlan",
+            "Subplan Name": "InitPlan 4 (returns $5)",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Relation Name": "rag_embeddingspace",
+            "Alias": "v0_2",
+            "Startup Cost": 0.0,
+            "Total Cost": 9.19,
+            "Plan Rows": 1,
+            "Plan Width": 0,
+            "Filter": "((tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid) AND (id = 1) AND ((project_id = '01a16740-a12a-7676-84d6-995645ce41de'::uuid) OR (project_id IS NULL) OR (SubPlan 3)))",
+            "Plans": [
+              {
+                "Node Type": "Index Scan",
+                "Parent Relationship": "SubPlan",
+                "Subplan Name": "SubPlan 3",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Scan Direction": "Forward",
+                "Index Name": "identity_projectgrant_project_id_58068250",
+                "Relation Name": "identity_projectgrant",
+                "Alias": "u0_2",
+                "Startup Cost": 0.14,
+                "Total Cost": 8.18,
+                "Plan Rows": 1,
+                "Plan Width": 0,
+                "Index Cond": "(project_id = v0_2.project_id)",
+                "Filter": "((granted_to_project_id = '01a16740-a12a-7676-84d6-995645ce41de'::uuid) AND (tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid) AND (((resource_type)::text = 'all'::text) OR ((resource_id IS NULL) AND ((resource_type)::text = 'embeddingspace'::text)) OR ((resource_id = v0_2.space_id) AND ((resource_type)::text = 'embeddingspace'::text))))"
+              }
+            ]
+          },
+          {
+            "Node Type": "Sort",
+            "Parent Relationship": "Outer",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 446.84,
+            "Total Cost": 448.4,
+            "Plan Rows": 624,
+            "Plan Width": 1758,
+            "Sort Key": [
+              "((((rag_chunkembedding.vector)::vector(384) <=> '[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]'::vector) + '0'::double precision))"
+            ],
+            "Plans": [
+              {
+                "Node Type": "Result",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 154.11,
+                "Total Cost": 436.48,
+                "Plan Rows": 624,
+                "Plan Width": 1758,
+                "One-Time Filter": "($2 AND $5)",
+                "Plans": [
+                  {
+                    "Node Type": "Hash Join",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Join Type": "Semi",
+                    "Startup Cost": 154.11,
+                    "Total Cost": 428.68,
+                    "Plan Rows": 624,
+                    "Plan Width": 1742,
+                    "Inner Unique": false,
+                    "Hash Cond": "(rag_chunkembedding.chunk_id = w0.id)",
+                    "Plans": [
+                      {
+                        "Node Type": "Seq Scan",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Relation Name": "rag_chunkembedding",
+                        "Alias": "rag_chunkembedding",
+                        "Startup Cost": 0.0,
+                        "Total Cost": 265.0,
+                        "Plan Rows": 1000,
+                        "Plan Width": 1742,
+                        "Filter": "((space_id = 1) AND (tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid))"
+                      },
+                      {
+                        "Node Type": "Hash",
+                        "Parent Relationship": "Inner",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Startup Cost": 146.31,
+                        "Total Cost": 146.31,
+                        "Plan Rows": 624,
+                        "Plan Width": 8,
+                        "Plans": [
+                          {
+                            "Node Type": "Nested Loop",
+                            "Parent Relationship": "Outer",
+                            "Parallel Aware": false,
+                            "Async Capable": false,
+                            "Join Type": "Inner",
+                            "Startup Cost": 57.15,
+                            "Total Cost": 146.31,
+                            "Plan Rows": 624,
+                            "Plan Width": 8,
+                            "Inner Unique": false,
+                            "Plans": [
+                              {
+                                "Node Type": "Seq Scan",
+                                "Parent Relationship": "Outer",
+                                "Parallel Aware": false,
+                                "Async Capable": false,
+                                "Relation Name": "rag_knowledgebase",
+                                "Alias": "v0",
+                                "Startup Cost": 0.0,
+                                "Total Cost": 9.19,
+                                "Plan Rows": 1,
+                                "Plan Width": 8,
+                                "Filter": "((id = 1) AND (tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid) AND ((project_id = '01a16740-a12a-7676-84d6-995645ce41de'::uuid) OR (project_id IS NULL) OR (SubPlan 5)))",
+                                "Plans": [
+                                  {
+                                    "Node Type": "Index Scan",
+                                    "Parent Relationship": "SubPlan",
+                                    "Subplan Name": "SubPlan 5",
+                                    "Parallel Aware": false,
+                                    "Async Capable": false,
+                                    "Scan Direction": "Forward",
+                                    "Index Name": "identity_projectgrant_project_id_58068250",
+                                    "Relation Name": "identity_projectgrant",
+                                    "Alias": "u0_3",
+                                    "Startup Cost": 0.14,
+                                    "Total Cost": 8.18,
+                                    "Plan Rows": 1,
+                                    "Plan Width": 0,
+                                    "Index Cond": "(project_id = v0.project_id)",
+                                    "Filter": "((granted_to_project_id = '01a16740-a12a-7676-84d6-995645ce41de'::uuid) AND (tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid) AND (((resource_type)::text = 'all'::text) OR ((resource_id IS NULL) AND ((resource_type)::text = 'knowledgebase'::text)) OR ((resource_id = v0.kb_id) AND ((resource_type)::text = 'knowledgebase'::text))))"
+                                  }
+                                ]
+                              },
+                              {
+                                "Node Type": "Nested Loop",
+                                "Parent Relationship": "Inner",
+                                "Parallel Aware": false,
+                                "Async Capable": false,
+                                "Join Type": "Anti",
+                                "Startup Cost": 57.15,
+                                "Total Cost": 130.88,
+                                "Plan Rows": 624,
+                                "Plan Width": 16,
+                                "Inner Unique": false,
+                                "Join Filter": "(((u0.resource_id)::text = ((w0.chunk_id)::character varying)::text) OR ((u0.resource_id)::text = ((w1.doc_id)::character varying)::text) OR ((u0.resource_id)::text = (w0.content_hash)::text) OR ((u0.resource_id)::text = (w1.content_hash)::text))",
+                                "Plans": [
+                                  {
+                                    "Node Type": "Hash Join",
+                                    "Parent Relationship": "Outer",
+                                    "Parallel Aware": false,
+                                    "Async Capable": false,
+                                    "Join Type": "Inner",
+                                    "Startup Cost": 57.0,
+                                    "Total Cost": 102.17,
+                                    "Plan Rows": 632,
+                                    "Plan Width": 178,
+                                    "Inner Unique": true,
+                                    "Hash Cond": "(w0.document_id = w1.id)",
+                                    "Plans": [
+                                      {
+                                        "Node Type": "Seq Scan",
+                                        "Parent Relationship": "Outer",
+                                        "Parallel Aware": false,
+                                        "Async Capable": false,
+                                        "Relation Name": "rag_documentchunk",
+                                        "Alias": "w0",
+                                        "Startup Cost": 2.5,
+                                        "Total Cost": 46.0,
+                                        "Plan Rows": 632,
+                                        "Plan Width": 97,
+                                        "Filter": "((tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid) AND (chunk_id = ANY ('{01a16740-a15b-7068-9fc9-ffeb062dc675,01a16740-a15b-725d-9f4d-646756414a82,01a16740-a15b-7737-b926-1684c0e82de3,01a16740-a15b-74c1-9bf0-6b4d2f6210e3,01a16740-a15b-7153-ac35-bce20ae5549f,01a16740-a15b-7b1b-9d0a-14b51c73e383,01a16740-a15b-76cb-a1d6-203d925d8a0b,01a16740-a15b-7185-91d0-26d4b5df9a80,01a16740-a15b-7be8-b075-98dd1de0dca8,01a16740-a15b-77e5-bd7a-a45b66eeb589,01a16740-a15b-73e5-8fea-4d9996bdf069,01a16740-a15b-7711-abd2-501419837cc7,01a16740-a15b-7f61-837b-a7c93dd90a63,01a16740-a15b-7b7f-94a1-c3c1d39a8977,01a16740-a15b-77c4-8805-de80c0321d16,01a16740-a15b-7e56-8d59-29e044b894bb,01a16740-a15b-7e6a-8131-e84bf815ab88,01a16740-a15b-733d-ae23-c666462d3e17,01a16740-a15b-75d3-9090-93751297d496,01a16740-a15b-7d4a-84c2-eb9a4e122a6f,01a16740-a15b-790a-a2c6-af4482829110,01a16740-a15b-76c4-9b9a-be21a675faf9,01a16740-a15b-7f62-bfc8-4233371605d1,01a16740-a15b-7923-b562-cde269f42b65,01a16740-a15b-72c5-ae65-a81eaa806a1f,01a16740-a15b-7ae1-9f11-181aca8b4d47,01a16740-a15b-74c6-8de0-0e466525879b,01a16740-a15b-7436-9d50-05da6ebc8fcc,01a16740-a15b-792c-84e7-9024a954de20,01a16740-a15b-7c74-8161-55544ea58f8e,01a16740-a15b-75ee-b297-1727590ffe3f,01a16740-a15b-7753-aad6-9f7831d8e85a,01a16740-a15b-7a72-995d-7b7a893daff1,01a16740-a15b-72fe-81d0-2eddf9d0a12b,01a16740-a15b-73ee-8a83-5665ff3274a3,01a16740-a15b-78c2-bac3-a85cb7945a4a,01a16740-a15b-70fd-a2d7-5a03f8fce31d,01a16740-a15b-73b3-af7f-f329094ef8fc,01a16740-a15b-7f45-9b80-54a841a809e8,01a16740-a15b-7ccd-a52e-6d464c5cd10d,01a16740-a15b-74d5-af78-5ceca50915f8,01a16740-a15b-78d6-82c2-c0ac1c28156e,01a16740-a15b-7253-a0db-4db014382498,01a16740-a15b-7455-8eb6-b447a34fc107,01a16740-a15b-7a7b-91fc-e5e1dd657e88,01a16740-a15b-7871-88e3-7cfb1dc6b06e,01a16740-a15b-7897-976d-1e7f17d81381,01a16740-a15b-7b0c-b94f-f4c2b858aa94,01a16740-a15b-744e-b966-5d487dd0df15,01a16740-a15b-7e06-b860-b6e257c958de,01a16740-a15b-7ff3-a46c-0b9a3f2da7c0,01a16740-a15b-70ae-b6ce-49f4f75bfa58,01a16740-a15b-7af7-a0a0-b1cefe04d863,01a16740-a15b-70ed-9169-a8775e7d179b,01a16740-a15b-7958-8e18-a119b3b86700,01a16740-a15b-7dfe-8967-72923bc86f90,01a16740-a15b-7576-9ff7-75e47f88a07a,01a16740-a15b-7d96-bdd2-2f34eb4e8e02,01a16740-a15b-72c2-b698-64efad3badfb,01a16740-a15b-711c-aded-89c6fabe443d,01a16740-a15b-7fb0-8759-9092f1fd5274,01a16740-a15b-7fd3-97b5-661b999f49ac,01a16740-a15b-7d94-b7db-27e464442f1d,01a16740-a15b-7404-b4b2-d64d3cab5d37,01a16740-a15b-705f-ba19-841bc6cc960c,01a16740-a15b-74ce-a750-0a2becdc18cc,01a16740-a15b-7501-a8b6-6d493cbf9b8e,01a16740-a15b-7df1-892f-df9510ad16b9,01a16740-a15b-7aa1-9214-63defb240aff,01a16740-a15b-7b83-b12c-8a44af3c8543,01a16740-a15b-7db4-94a7-d4d9cb53af2d,01a16740-a15b-7754-b758-77ff55b30e2f,01a16740-a15b-7d81-83e2-f46face3ffa7,01a16740-a15b-7b6f-8809-98e90061e6df,01a16740-a15b-7b74-9d1e-243d2af3f258,01a16740-a15b-75d7-bffe-29cb342289f4,01a16740-a15b-758a-818b-fb19068d88e3,01a16740-a15b-7015-92ca-fa71617c2cb9,01a16740-a15b-72ca-835e-48a08729e129,01a16740-a15b-7714-93f7-c227d2acf41f,01a16740-a15b-7971-aae1-8b151160c361,01a16740-a15b-7580-9fa1-f9f6d0b68de9,01a16740-a15b-7fe3-90c2-8f44a1442e74,01a16740-a15b-7451-b31b-7859598b8567,01a16740-a15b-71be-b022-39450768622d,01a16740-a15b-7280-807f-930c23ad73c0,01a16740-a15b-747f-95de-1c6677e6012a,01a16740-a15b-796f-b392-2a30fa71d3eb,01a16740-a15b-7f66-a6bd-c45675302532,01a16740-a15b-7695-a0fb-de0a8eb65d31,01a16740-a15b-7232-830c-4c89e9e04eea,01a16740-a15b-7687-bae4-5526570c176f,01a16740-a15b-7104-adb4-ebba3bdb2cfa,01a16740-a15b-714d-a284-980e1b78ed7d,01a16740-a15b-75df-9c44-01e1742f81af,01a16740-a15b-7db8-bd7f-52dce8c232a2,01a16740-a15b-7322-8519-fa0e5b6acc16,01a16740-a15b-73e1-af1e-36dc98bc9970,01a16740-a15b-7e34-99cd-57319b66c085,01a16740-a15b-7e90-85e4-b1c595c93fc0,01a16740-a15b-741d-8751-14aeaddd1204,01a16740-a15b-7eb6-b764-70c4dc387516,01a16740-a15b-7de2-9ab0-bdfcd51ca278,01a16740-a15b-7bc8-941c-e5b83676c21a,01a16740-a15b-7fb5-be57-4978ca278eed,01a16740-a15b-7604-8d67-1451a9c1136c,01a16740-a15b-73c2-84cb-4d0952f23d16,01a16740-a15b-7353-8abe-2785b42b8ba1,01a16740-a15b-7137-b6dc-4366a6b857ab,01a16740-a15b-7f1b-a9b1-7269647aa682,01a16740-a15b-7780-843f-1ca99648e18d,01a16740-a15b-70f3-9bd4-d9b4a309d8dd,01a16740-a15b-7fb5-9f7a-22ce22ccc514,01a16740-a15b-7238-8ae3-1024cd998fd1,01a16740-a15b-7bf0-9adb-22376934166e,01a16740-a15b-779b-a23e-6e8d79f3e382,01a16740-a15b-7ee7-be4d-313326dc4ae6,01a16740-a15b-70cd-b2ec-d01485c6cacd,01a16740-a15b-7515-bcb0-69791983208d,01a16740-a15b-797b-b5ff-38840b01b5d4,01a16740-a15b-7b6e-91f8-7b0c9dacb762,01a16740-a15b-7ca9-a2dc-a665d95591d0,01a16740-a15b-74a7-b983-ce51a7402926,01a16740-a15c-760f-a8d2-1a411d851ad2,01a16740-a15c-7cf1-bb9a-79f176b0eb82,01a16740-a15c-7bf7-b508-2a71f3f32cfe,01a16740-a15c-78e3-a317-2ff84ebc4138,01a16740-a15c-7356-ac24-0e9e1c9984aa,01a16740-a15c-714b-badd-c5c9cac23d0a,01a16740-a15c-7347-9e4b-10fcbd8d3107,01a16740-a15c-709d-ba2a-3350f445c8c6,01a16740-a15c-7412-bb7d-03eff6cf2e8f,01a16740-a15c-7444-a59b-2e1db1e723f8,01a16740-a15c-7f13-9024-b341b1818775,01a16740-a15c-7b72-a44c-83bab30cbafc,01a16740-a15c-7bc3-9659-40ab2df4bfce,01a16740-a15c-7f87-a5d3-381ac43ea49d,01a16740-a15c-7aa5-9107-9cf26b116516,01a16740-a15c-7235-baf2-37b35aac0f51,01a16740-a15c-7d1c-935d-ba2a3d7e7470,01a16740-a15c-700f-a522-d13031596b6d,01a16740-a15c-7645-800e-c95f49350c8f,01a16740-a15c-7e9c-a1cf-7f3f9a7fc7e6,01a16740-a15c-75be-8a69-ee26440e895d,01a16740-a15c-74ea-b69f-f3eecab7f34c,01a16740-a15c-79fd-95a5-f4850d435409,01a16740-a15c-7922-9150-111fdd476e4f,01a16740-a15c-7654-a196-f5f394fffbb7,01a16740-a15c-78e8-bd3e-532db245ab19,01a16740-a15c-7c36-bef1-8fa7106bef2d,01a16740-a15c-73f2-8a13-b69938a92fb0,01a16740-a15c-74f4-bc7b-f6d9401c518c,01a16740-a15c-7565-b495-4e5918c70960,01a16740-a15c-7c78-90ed-5b9a91471a50,01a16740-a15c-7102-91af-159f724ab545,01a16740-a15c-706b-9c3b-a1541f3d5dad,01a16740-a15c-767b-8547-d5808dbea499,01a16740-a15c-70ca-ba1a-b25b7824dd7f,01a16740-a15c-7dfc-a249-cfc50f366cab,01a16740-a15c-747e-b872-e594836f4f7a,01a16740-a15c-796c-bca8-7a8405ba25bf,01a16740-a15c-7837-ba6b-eb419566a9fd,01a16740-a15c-7e14-bedc-78d67a5b3821,01a16740-a15c-7bed-9a68-891c5ca999f0,01a16740-a15c-7f95-860e-db9fcaf611f3,01a16740-a15c-7424-bbae-a1df3c10b115,01a16740-a15c-74e3-89ce-d9448af90296,01a16740-a15c-7c87-aba2-fc85faff2b7e,01a16740-a15c-7760-ac7f-291e1972351f,01a16740-a15c-76ae-96cb-f0e10c36ccf0,01a16740-a15c-746a-977f-289581d70418,01a16740-a15c-763d-9945-c24cef293b0d,01a16740-a15c-7348-9bbf-72816730c04e,01a16740-a15c-771e-9ce7-ff4cf7afa87c,01a16740-a15c-7137-8672-408690dd5fcf,01a16740-a15c-7084-9010-69d5134bd2e6,01a16740-a15c-7658-84af-4c49b2c3e3b4,01a16740-a15c-7ddf-bc35-eb0de1086dfd,01a16740-a15c-7283-91f3-1789ff1e6a08,01a16740-a15c-70a6-9551-f375134a3ee3,01a16740-a15c-7958-9799-a7b3692d5016,01a16740-a15c-7c0e-b4ad-5fd60d1619c5,01a16740-a15c-70a9-9300-4bcd1cfc7fde,01a16740-a15c-7a2c-9b2b-b7e7bbc79f8f,01a16740-a15c-77ea-9f62-3b7598c3907d,01a16740-a15c-7a29-b9ec-bf98c0440fc6,01a16740-a15c-71c2-9f27-a80bfad55f42,01a16740-a15c-75d7-a373-64679f2ce4f6,01a16740-a15c-7d2d-a55d-264134483d91,01a16740-a15c-7a2b-850d-1234f2e8013c,01a16740-a15c-7392-8dda-c94582b8526e,01a16740-a15c-75c0-a174-56e4216653b3,01a16740-a15c-7636-a9e7-8ac345ae54e4,01a16740-a15c-70ff-bf7b-49d29c9e1f2d,01a16740-a15c-720b-a00f-1d7881b27d82,01a16740-a15c-7df2-9c0a-8d4cec820a2e,01a16740-a15c-7939-8e3b-27fb3f5cbc3c,01a16740-a15c-7e0f-87c3-50459633203f,01a16740-a15c-7bc6-8c2e-f049e5f8eadf,01a16740-a15c-7fe0-b342-ff4dec998e4b,01a16740-a15c-7704-a610-cc1ffd3a91ff,01a16740-a15c-7fc4-ab14-a7ce1a363ec6,01a16740-a15c-73e5-af03-a68c18f33b1c,01a16740-a15c-7864-a37d-355e4ade8786,01a16740-a15c-7900-b3da-f2d81511008b,01a16740-a15c-7e4b-b9fe-db4caa6ff16e,01a16740-a15c-7176-ae45-bf1937155048,01a16740-a15c-706b-b556-8f4a2deeb030,01a16740-a15c-7059-9a21-15db525acc45,01a16740-a15c-7b0c-a19b-f3221bdc5e2d,01a16740-a15c-77a1-b8be-2485ce579221,01a16740-a15c-77b1-9174-99d17ba37de0,01a16740-a15c-7a34-9173-12c538e3d05a,01a16740-a15c-7e3d-a27a-831b472bdf7f,01a16740-a15c-78cd-b072-dc039eceb390,01a16740-a15c-780e-a3cf-1803abea8aa2,01a16740-a15c-76ed-9f9c-09e686ee7cb3,01a16740-a15c-7f7b-a91e-504ea52c3543,01a16740-a15c-7453-a6bb-018a236a5a03,01a16740-a15c-7db1-9a3c-b66695c1fd7f,01a16740-a15c-760f-a16d-3552086ab897,01a16740-a15c-7e2a-ab4c-8ef7883f7e15,01a16740-a15c-7bdf-b218-e10fa8271f58,01a16740-a15c-7484-a50c-cec6d344b81a,01a16740-a15c-7f30-9907-13f19d67b9a7,01a16740-a15c-78e6-be87-90af881ea82d,01a16740-a15c-7e2b-879d-45ffcca0cd06,01a16740-a15c-719f-b44c-cac1e74de1bc,01a16740-a15c-7fb1-81df-2c2a5809c443,01a16740-a15c-72af-8d6e-89f312fee521,01a16740-a15c-75b6-9d7e-338283c6ed0c,01a16740-a15c-739d-8ebb-9c5dfba96e64,01a16740-a15c-7daf-a129-bbff91fe6130,01a16740-a15c-739f-85f0-a95e68c10491,01a16740-a15c-71d0-8660-92e34f462f08,01a16740-a15c-75e6-bca9-45280770b5dc,01a16740-a15c-7d80-86a3-a501cf873880,01a16740-a15c-73e6-b005-e0dd490b867d,01a16740-a15c-7e35-b87e-977b206b0739,01a16740-a15c-7c06-974c-1656886e2e89,01a16740-a15c-7026-8b55-23e5ed776cdf,01a16740-a15c-7ff6-a1fa-807d694793b7,01a16740-a15c-738b-9e6a-310aac7924da,01a16740-a15c-70a1-be91-6cc0e55404e4,01a16740-a15c-7df9-a7d3-30ed5ce30808,01a16740-a15c-70f3-a685-45c5358ec8b7,01a16740-a15c-7f98-9c66-8d6453ea4a5a,01a16740-a15c-75d8-adaf-98d0fa501f48,01a16740-a15c-7e85-a7a6-c23e08dbb833,01a16740-a15c-78bc-ac7c-6bb8b23d1fc7,01a16740-a15c-7d06-bb4d-f8edc4244489,01a16740-a15c-713c-a540-f265051076a9,01a16740-a15c-75ff-8ed5-16a6a258a25b,01a16740-a15c-7552-ab2f-a08abb5df645,01a16740-a15c-7559-871f-b0be9c5c4855,01a16740-a15c-7000-a770-4757b738f512,01a16740-a15c-7204-a981-184f595bf5f7,01a16740-a15c-7cfe-867c-39b6eae6561d,01a16740-a15c-76da-ad2c-e8b31f17b68d,01a16740-a15c-788c-b9c1-a7c97f563809,01a16740-a15c-7650-8637-299e419eb088,01a16740-a15c-7d13-8436-90f5ea06e382,01a16740-a15c-7a78-9d21-d7cd3e8441dc,01a16740-a15c-7bff-a902-6e120eb96ce9,01a16740-a15c-7301-8f83-e7d473d20ac1,01a16740-a15c-7635-bc32-c9ff2dd3dd82,01a16740-a15c-738c-88bb-0a42127b8bc9,01a16740-a15c-7eb9-892f-7d85559d7d40,01a16740-a15c-78c6-a591-8cddd9230b61,01a16740-a15c-77fe-856d-9d156550a4e0,01a16740-a15c-7a14-bfc2-c41c6d995d29,01a16740-a15c-713e-87a8-c3d404e579ea,01a16740-a15c-7594-9b07-714c48b41b64,01a16740-a15c-79b3-a364-978b878f0c34,01a16740-a15c-7cfe-8765-91cd40fa7643,01a16740-a15c-7a48-b907-14b2f4645498,01a16740-a15c-71e3-b236-6897df719e64,01a16740-a15c-7d91-ac08-83a1381ba9ed,01a16740-a15c-7029-935d-ace71f29cf2d,01a16740-a15c-76bf-8b50-85b5253e91e7,01a16740-a15c-771d-b34c-93c7ce5d9876,01a16740-a15c-7e10-a721-1f68776f182e,01a16740-a15c-7983-bae9-2f4cee3f357f,01a16740-a15c-7dc6-86f5-1a4e8f816194,01a16740-a15c-7387-a26f-845be061506e,01a16740-a15c-7fc3-89d0-104c87cfb44c,01a16740-a15c-7e92-8fde-e66ac55209b3,01a16740-a15c-7e9c-8efd-1af8a132cf13,01a16740-a15c-7731-80d4-3023f0873815,01a16740-a15c-7a1e-b3e9-06b1acb5aa82,01a16740-a15c-7a1a-93b8-96edb5022e04,01a16740-a15c-7b1e-9d87-7ee042f9e939,01a16740-a15d-7c5d-9a23-60fff86e59fd,01a16740-a15d-7c52-bb71-090f768c2c83,01a16740-a15d-7ba1-8e46-23d81e6a2d40,01a16740-a15d-776b-a680-5c6d30a42e1f,01a16740-a15d-7078-9ccd-08c372b3c259,01a16740-a15d-7491-a56d-71d6854cf923,01a16740-a15d-7f5e-8fc5-7ce1fb52893b,01a16740-a15d-77fb-95d2-80aa00d73e77,01a16740-a15d-7ba0-b3e4-0e3d8ae0a1ce,01a16740-a15d-7b2c-923a-c1d7c9a6a357,01a16740-a15d-7ba2-b895-f36c8918452e,01a16740-a15d-7224-bfab-8f1b9759ba65,01a16740-a15d-795a-9b00-573162e2e6ab,01a16740-a15d-702b-8336-1cfc92fdfb3a,01a16740-a15d-70d0-a42e-f56888448c84,01a16740-a15d-7e43-8e74-9de94e30c6e0,01a16740-a15d-75df-8492-4d44bcc9a8a1,01a16740-a15d-75d6-bf64-699d5e569d0a,01a16740-a15d-7d04-8bf5-4cc58f53ec26,01a16740-a15d-770a-b8fd-b28ff0f48133,01a16740-a15d-73ca-9a0a-2b16862cb847,01a16740-a15d-7d71-a374-80e495717b15,01a16740-a15d-7ad6-b667-a3e7f69dcb48,01a16740-a15d-70ab-937a-fec7299af2dc,01a16740-a15d-79d2-a1c5-5d22a3eff6ff,01a16740-a15d-78a6-bcfe-27c7d898672f,01a16740-a15d-76b6-a950-1d029682e0fa,01a16740-a15d-7560-ac80-5e2902c36c92,01a16740-a15d-7664-a380-33bf9c283f01,01a16740-a15d-70ed-babc-603915da6e39,01a16740-a15d-7d3c-8813-530320e59d45,01a16740-a15d-72e6-9300-cec30fecb014,01a16740-a15d-7ad6-920a-25d849ce8639,01a16740-a15d-77a9-8c11-877ad64101bf,01a16740-a15d-79e8-9148-75696475e18e,01a16740-a15d-7d65-b573-bde3f2df8f61,01a16740-a15d-70fa-9367-cd579e0b2f2a,01a16740-a15d-7695-9c09-e3cb722e898b,01a16740-a15d-73d9-8dfc-6e55fc04f932,01a16740-a15d-71a0-a1fe-15b08c012ec3,01a16740-a15d-7cba-8916-9261fdfbd4d4,01a16740-a15d-7f3a-add2-0d37ad1f2898,01a16740-a15d-723e-a9cf-de56b58d5d8a,01a16740-a15d-75bb-8415-03a600148f91,01a16740-a15d-7673-9413-01883a3a7df5,01a16740-a15d-7056-a878-78eac5163486,01a16740-a15d-7e7c-8e80-b822bb99a28c,01a16740-a15d-7349-b7f2-e514eb5d301d,01a16740-a15d-7336-b42e-142a8e6803ad,01a16740-a15d-7873-9d03-f1c732b26380,01a16740-a15d-7d91-aa47-8b2a1c3cd8d4,01a16740-a15d-7f78-865f-cacd44d61b55,01a16740-a15d-7536-8b0c-3377314a8c97,01a16740-a15d-723c-91fc-e89d2c2d073a,01a16740-a15d-7dbd-bf18-f77dc43f3e06,01a16740-a15d-7e40-98a6-e7a1e5a1c095,01a16740-a15d-7cce-a38b-4845eddbdc51,01a16740-a15d-7edb-b2de-37c29372477a,01a16740-a15d-7dfa-ab0d-d1d7d0d4097e,01a16740-a15d-7edb-b4d2-5e297a8cfab7,01a16740-a15d-70e7-8021-204a83b295f8,01a16740-a15d-7bb9-bae6-5ed102633e77,01a16740-a15d-7030-bfa5-a0ea35754c79,01a16740-a15d-75ee-874a-4db99290d951,01a16740-a15d-7e48-95be-6b321913d5e6,01a16740-a15d-7742-87bd-92ab13a882c0,01a16740-a15d-7f5a-9d39-71b016589e1b,01a16740-a15d-763c-a6a9-47db231cb957,01a16740-a15d-7f9a-8246-bbee56f06490,01a16740-a15d-7876-9861-19561085e0fb,01a16740-a15d-79bd-aa9b-7772ff5d09c5,01a16740-a15d-7568-bed1-03ab4fe1a132,01a16740-a15d-7da9-a7c6-0ed6200f4ea2,01a16740-a15d-75f8-bf09-1d9ba70aef7c,01a16740-a15d-7ab2-9912-e98419db152f,01a16740-a15d-7582-ac84-3c06c5c7f130,01a16740-a15d-71b3-ae14-67bad1cc6a62,01a16740-a15d-7f39-b1df-55fbd3c4b194,01a16740-a15d-7ee6-9e09-0efb11acfbee,01a16740-a15d-7cd3-a3e6-45eb6ea96724,01a16740-a15d-75d1-ace4-d2618346c661,01a16740-a15d-740b-932d-8887c1fb2da0,01a16740-a15d-771d-9a21-0a64966b5685,01a16740-a15d-7816-be48-b3fe0c849f6a,01a16740-a15d-76ec-9ff7-3ae6e9a93aba,01a16740-a15d-79cb-ba52-967e11b5d7d0,01a16740-a15d-75ee-b3f0-07d716635532,01a16740-a15d-721a-8b8d-93d96ab05961,01a16740-a15d-7551-8854-bd068c40010d,01a16740-a15d-7634-b818-c79c55c182ee,01a16740-a15d-7217-bed3-7957828ab035,01a16740-a15d-78b4-b2a0-7a63718dfa26,01a16740-a15d-7dd7-bca9-d5241f2647c3,01a16740-a15d-7735-8cbb-6ede1c2eb2a7,01a16740-a15d-7d03-b711-e7ccdcaa2cf9,01a16740-a15d-759a-a9b6-58692d7c0b4d,01a16740-a15d-7190-b08e-44ba7dfa2f84,01a16740-a15d-7fbd-bbd5-87a1f90ed477,01a16740-a15d-77aa-97bd-0c4f16d73733,01a16740-a15d-783d-af2e-ee1807c2729d,01a16740-a15d-7686-bdbc-516c48c0c014,01a16740-a15d-7dba-9f7a-4d65fa8eed25,01a16740-a15d-731b-91b3-b736f3014168,01a16740-a15d-74b9-ac11-b8b3b6ac3d29,01a16740-a15d-787f-ad38-90f4238a7776,01a16740-a15d-73cd-b0d2-193fef009fa6,01a16740-a15d-702a-82cb-5bc017195f1c,01a16740-a15d-79f4-b221-f01c979fd250,01a16740-a15d-757c-bd4c-15ac86c43888,01a16740-a15d-7ba0-82ba-85a112351699,01a16740-a15d-73fe-adaf-a018a5d37c97,01a16740-a15d-77c7-8dc3-65fed5a459aa,01a16740-a15d-7a72-93c8-baf41db5b0c2,01a16740-a15d-70f4-8458-447a00eb6794,01a16740-a15d-778e-95fe-2e924f74c781,01a16740-a15d-74d9-a354-7c8b500ac47f,01a16740-a15d-7940-a360-bd3b3b8c6bf3,01a16740-a15d-7ad1-ac10-f9d8f62513cc,01a16740-a15d-7aed-953b-78a92e6cecd2,01a16740-a15d-7657-8154-185ce58afcbf,01a16740-a15d-7380-ad6e-2cb3ddace2de,01a16740-a15d-791e-b4e0-46383b164fab,01a16740-a15d-79cb-9d6d-e90cea420a30,01a16740-a15d-777b-b0d9-684ce91d00b2,01a16740-a15d-78a0-b839-5ceed7d2c553,01a16740-a15d-71e6-ba56-3f3fd6896ba8,01a16740-a15d-74a4-9841-fbd500a75c0c,01a16740-a15d-7f63-a5f3-1dac15fec372,01a16740-a15d-7191-b8fb-7fed3fd0d9ab,01a16740-a15d-7073-8009-e8460ecd1cc2,01a16740-a15d-749a-82a9-f0d6af2082f1,01a16740-a15d-7050-8745-6c3e23362be0,01a16740-a15d-7e60-a9ac-3b5c88dca8c9,01a16740-a15d-7fe2-863a-f9fa27cfe310,01a16740-a15d-7462-aa1a-cea37fae7845,01a16740-a15d-7b4a-bcf4-403a774b196f,01a16740-a15d-7636-a5e8-832d515dbf48,01a16740-a15d-743a-99ef-0860e9526d98,01a16740-a15e-7eb0-b517-28ed9414eda0,01a16740-a15e-7747-b940-8b44e926f416,01a16740-a15e-78dc-beaa-bfff277950bf,01a16740-a15e-7ca5-9cd6-0c0ed4e9f9f6,01a16740-a15e-7845-b4b4-efefa466111c,01a16740-a15e-7926-8566-6aaeb77c90e6,01a16740-a15e-7931-b9fe-1f1f9c627cb2,01a16740-a15e-7395-aae1-f09e7d3a471c,01a16740-a15e-7364-80a6-aa25419483d0,01a16740-a15e-71c7-869d-efb1a96be4a1,01a16740-a15e-7db9-8bac-32740c25f0d2,01a16740-a15e-7706-954a-a91f933ef413,01a16740-a15e-7cd7-8f7c-bb164368ffdd,01a16740-a15e-7272-a338-2ddde0e8381c,01a16740-a15e-72a4-abac-cc8647b89b60,01a16740-a15e-70c0-a327-3ac8ce30aed1,01a16740-a15e-7ce8-9f88-f3fb6be0b765,01a16740-a15e-7882-a1a4-50f078b4871c,01a16740-a15e-76d2-96c1-7b74c4dd4000,01a16740-a15e-7896-ac7f-b41d6077a65d,01a16740-a15e-7296-895f-b9446254fe84,01a16740-a15e-737f-8b11-9ffe53884690,01a16740-a15e-70ed-9a9e-85210bf15947,01a16740-a15e-722b-89db-da110951ca5b,01a16740-a15e-7e36-9e87-a6d908620478,01a16740-a15e-765b-8d02-6c0243170f83,01a16740-a15e-7c0b-adae-3e3901a24220,01a16740-a15e-70c9-8723-21a715469b32,01a16740-a15e-7dfc-b6c5-3711d3c5f5ae,01a16740-a15e-76a1-848b-7e542727b393,01a16740-a15e-795e-a779-3688a7aa4f80,01a16740-a15e-7950-b992-8b5e36c164c0,01a16740-a15e-7527-b8bd-a7dbc9066e83,01a16740-a15e-74ff-92a4-5c557018f741,01a16740-a15e-7f77-8585-241a07fdcf15,01a16740-a15e-7a89-8e22-ce16eeda3e5a,01a16740-a15e-7265-8060-4fe76c2e9c81,01a16740-a15e-7140-9648-45198091f66b,01a16740-a15e-7b26-9531-abfdc61c3ac8,01a16740-a15e-7d76-a428-a89f8fb41340,01a16740-a15e-7b25-960e-ed9aa0ccd115,01a16740-a15e-7a5a-9cb0-b0c0a5936238,01a16740-a15e-7ca2-b240-8d75068d6e45,01a16740-a15e-78dd-a822-1692227e3114,01a16740-a15e-7b5f-884b-5cf4910c4e8b,01a16740-a15e-7222-9469-67cbfcbd7e00,01a16740-a15e-722c-bf17-8f4659d170e1,01a16740-a15e-7fe1-83fa-e6343c62250c,01a16740-a15e-74ea-a2e9-a334a9d87421,01a16740-a15e-7fe3-8ec4-b4c1f8a1dfdf,01a16740-a15e-72b4-a698-ee4246a04fdd,01a16740-a15e-7e50-a835-492126748af9,01a16740-a15e-74e0-b324-c0e751d3cc59,01a16740-a15e-7de8-b7dd-ff5a56f96b13,01a16740-a15e-7e30-8fec-778a70e495eb,01a16740-a15e-7312-b897-5955264214b3,01a16740-a15e-7509-b07f-dc7df3172d49,01a16740-a15e-75d1-ae1d-67e00ecbd324,01a16740-a15e-7337-a56f-79983ccc72e3,01a16740-a15e-7c92-9e87-a980b40bc622,01a16740-a15e-7081-a26f-7834e6274e1f,01a16740-a15e-738f-8590-3bcd825d0bd8,01a16740-a15e-7ee4-8ef3-f37214d65227,01a16740-a15e-7649-adf8-53a3d98b7f64,01a16740-a15e-751f-b8ed-fd9741519d7f,01a16740-a15e-7e8a-839e-7eb834a6c463,01a16740-a15e-7f32-90d9-c5be1432d47e,01a16740-a15e-773c-85ae-cf57a2876e89,01a16740-a15e-7071-9443-5f2a7b07ea28,01a16740-a15e-7638-8f5c-8b4beba7500d,01a16740-a15e-7fe0-8b6a-4403f5ddb08e,01a16740-a15e-793a-8acd-2ae43d054634,01a16740-a15e-7309-905d-c011d631b7ce,01a16740-a15e-7710-9040-b2feba8d67f8,01a16740-a15e-7188-836f-fca413f6eb52,01a16740-a15e-735b-a1a7-a963416ee7a5,01a16740-a15e-7880-9ec8-7a43a236697b,01a16740-a15e-76fa-8c8b-18b9656ce8d6,01a16740-a15e-7da3-b38d-fba980667621,01a16740-a15e-7cce-b6e7-edd47a6290cc,01a16740-a15e-72d0-94da-d5ddb8587c6f,01a16740-a15e-724f-ab01-e0c09c66fe4a,01a16740-a15e-784a-b639-ae0fe4f45cf3,01a16740-a15e-7c4e-ab82-60a18674f060,01a16740-a15e-7f8c-81c7-6712525e3b6b,01a16740-a15e-7a40-95b1-95a5048397a8,01a16740-a15e-721c-8666-2538b6bc6352,01a16740-a15e-7369-a096-2b952296fa12,01a16740-a15e-70a0-bbcf-71978a492c2f,01a16740-a15e-7613-900e-1ac913b248c7,01a16740-a15e-76ea-9dfb-3ca02aec61cf,01a16740-a15e-7239-bbb7-bb3c4a126355,01a16740-a15e-7040-b706-434420798f06,01a16740-a15e-76bb-ad99-f9e8e3992142,01a16740-a15e-7326-a9de-59fb9a898c23,01a16740-a15e-7243-b36b-2df7078acae9,01a16740-a15e-766c-aca0-101db583e270,01a16740-a15e-7c13-9d61-9782c05be6df,01a16740-a15e-7b21-92a2-ba69f61ba826,01a16740-a15e-7ae2-aed0-e73f9bb9f4c7,01a16740-a15e-7f97-916c-5ba2a1c6bd39,01a16740-a15e-7fdc-b841-83b3ce0538be,01a16740-a15e-7dbb-a5cd-b036df03ca47,01a16740-a15e-7482-8134-a70fa01dea12,01a16740-a15e-79b6-b454-b5054e6d9535,01a16740-a15e-78a9-b1e5-34e22e3b2e0d,01a16740-a15e-7377-b0b9-30716e8bb675,01a16740-a15e-7fd9-b6b0-0b71fca87ee8,01a16740-a15e-7823-b681-e676672fdab1,01a16740-a15e-7e98-ba74-789e23528ad9,01a16740-a15e-7948-8dfb-45609df26cca,01a16740-a15e-76ba-b832-d1aa18ece10e,01a16740-a15e-7773-a470-63465a24a84c,01a16740-a15e-7b34-8a95-cf3708e363c5,01a16740-a15e-775c-a284-5560163389da,01a16740-a15e-7e42-94f0-d379adc0a230,01a16740-a15e-791d-a1c8-5713d2dc2aeb,01a16740-a15e-7b55-8e94-b590f1afd388,01a16740-a15e-7474-b184-c2e43d40489e,01a16740-a15e-7598-844f-4fa051b67cdd,01a16740-a15e-7ae5-8d5a-f64197fe6549,01a16740-a15e-7aaa-b437-64635d3fc62b,01a16740-a15e-70a5-8c2a-c3c457da969a,01a16740-a15e-79bd-8dfd-b2a6694a9948,01a16740-a15e-7a05-a571-0df7ba9ee4ef,01a16740-a15e-7566-af8b-722d98a5dcc7,01a16740-a15e-750d-acf0-c11c22b4bc50,01a16740-a15e-75c2-95dd-9b7db53b545c,01a16740-a15e-760a-b5b3-ca99b826958e,01a16740-a15e-7695-919e-831914c65b70,01a16740-a15e-78e7-acfe-5af634dda3f0,01a16740-a15e-7732-b6e9-df8baecb8639,01a16740-a15e-7fc3-934c-bac3ca0329f5,01a16740-a15e-7d7b-bd58-c4af02f32555,01a16740-a15e-7e31-ac8d-be24fe11cb58,01a16740-a15e-76e1-837a-7bd3de1967b6,01a16740-a15e-76de-a9b1-b6f866266a35,01a16740-a15e-7fc1-9e22-25badc4baaa7,01a16740-a15e-7a22-bd9a-120d81a4a7ae,01a16740-a15e-7332-bff7-1930579a3dde,01a16740-a15e-7235-84ab-eb1fff1f8dd4,01a16740-a15e-7335-8c9d-13ed3a0b0a48,01a16740-a15e-7238-b470-050bcb3408fa,01a16740-a15e-7743-bf1d-6ef7bff62b4c,01a16740-a15e-7607-a661-f4428b8a2021,01a16740-a15e-741c-b9c3-6c04f944509c,01a16740-a15e-710b-b363-af25507b7536,01a16740-a15e-750a-840b-79fb45001f69,01a16740-a15e-7ca0-8bb8-cd8bec4ea19e,01a16740-a15e-747c-bc6e-8d173e365f22,01a16740-a15e-774a-8329-035e7b59411e,01a16740-a15e-7377-a7de-7aa11005892f,01a16740-a15e-7e7c-bc85-45d68c089b1c,01a16740-a15e-74a1-b22d-bb43e9e92fc0,01a16740-a15e-7a39-bd12-bea460bd0e9c,01a16740-a15e-7b2e-bc4d-756afac38b36,01a16740-a15e-7bbb-b5ec-ec169b4bdc59,01a16740-a15e-76e5-b551-45451e5a356c,01a16740-a15e-799f-b32d-29e0e531faa6,01a16740-a15e-7112-84d1-b57e83a3681f,01a16740-a15e-769d-8d27-2cb2793052b2,01a16740-a15e-7858-9a4f-2efd9efe0d04,01a16740-a15e-7a98-baee-e60bdc967dff,01a16740-a15e-775e-873b-4ad359604d5a,01a16740-a15e-7adf-b6b6-76b52a55e519,01a16740-a15e-78bc-b4bf-c7184de3e8e5,01a16740-a15e-73d6-9414-fb5e01618031,01a16740-a15e-747f-8e8c-2490dfed1c79,01a16740-a15e-7196-bc5c-9ade65003ce8,01a16740-a15f-7c66-af42-096cb46b40a7,01a16740-a15f-7e67-a740-8d754e8f22de,01a16740-a15f-7709-9f77-1a4bf2ba3d07,01a16740-a15f-733b-ae50-c6589972576c,01a16740-a15f-7d31-ab2c-1a224251fa06,01a16740-a15f-7e4b-8226-225097d4e757,01a16740-a15f-7fb4-8a4f-d88038022e19,01a16740-a15f-7f22-8328-821552ce7f49,01a16740-a15f-78a8-b40d-98da7023bad3,01a16740-a15f-782f-878c-4dde5894f846,01a16740-a15f-7c87-9651-590cd2e9cf6a,01a16740-a15f-74d2-b03a-963f7e84d32d,01a16740-a15f-77e6-a658-f8feb0d9054f,01a16740-a15f-7d6c-b027-6bbaf66e158d,01a16740-a15f-7c06-8792-7fa424644bdc,01a16740-a15f-7900-8763-b4427ba55139,01a16740-a15f-756d-93a5-ce34f1bfc039,01a16740-a15f-7693-9968-c3e94853065d,01a16740-a15f-7add-a4d2-a8fb9170454a,01a16740-a15f-7888-8a25-4529b52579d4,01a16740-a15f-7e7b-b097-ca24bf7028da,01a16740-a15f-7dd4-a4bf-d27c59e29ddb,01a16740-a15f-7b12-8b44-9b70a0535a05,01a16740-a15f-7c75-b797-449775c37857,01a16740-a15f-7564-8fe2-6680a498a3a5,01a16740-a15f-7f8d-8147-66c1ccf6cc2c,01a16740-a15f-7449-835f-30f891646fcd,01a16740-a15f-74ce-819e-39424135d4a4,01a16740-a15f-7cd2-91c5-ad7666836708,01a16740-a15f-75e4-9b6d-af6fc674ac13,01a16740-a15f-700b-92a6-ba991ebd5ae1,01a16740-a15f-7c9a-baa5-36f6e9a0ac69,01a16740-a15f-7b37-bd61-37c570dcaa44,01a16740-a15f-7ebc-920d-2f2316f185c7,01a16740-a15f-7dbc-895d-e039fb7eb436,01a16740-a15f-759d-ba33-dd617520c3e4,01a16740-a15f-7cfb-a56b-e9d530b8ba74,01a16740-a15f-77ea-b4e2-facd84afdf24,01a16740-a15f-74ff-b24c-93190194adcd,01a16740-a15f-77e8-ae67-faeb69c982b6,01a16740-a15f-74a5-918c-304dac8440de,01a16740-a15f-77eb-ac9d-f548c496cc39,01a16740-a15f-7130-a086-86418816026b,01a16740-a15f-7004-8ea1-a37fcfbd7d52,01a16740-a15f-7a8c-a3a6-4c403fa9b652,01a16740-a15f-705c-994e-142686638767,01a16740-a15f-74ce-a140-47eccfadd18b,01a16740-a15f-7e7b-a820-96aa7c2bae61,01a16740-a15f-70b8-9bfe-f3874e892f32,01a16740-a15f-7f5e-a40e-ea5a231165a3,01a16740-a15f-7a04-9159-53d464766153,01a16740-a15f-74fd-9774-3ad004fc7c74,01a16740-a15f-727a-97da-808ff79b7f3a,01a16740-a15f-75d4-8826-396d7ca496bb,01a16740-a15f-7044-8f5a-662f234d3a68,01a16740-a15f-7265-a019-99b887cb1ea0,01a16740-a15f-71ca-85ad-1480351956fe,01a16740-a15f-73d8-a771-6e6f1703af61,01a16740-a15f-709d-9992-7c4f7698b6c0,01a16740-a15f-72a9-970e-614b1d70d43c,01a16740-a15f-7ec3-9e39-b2f3d4460824,01a16740-a15f-7d72-bd68-38e693d39605,01a16740-a15f-7f01-910e-ec2c52ef0e54,01a16740-a15f-7630-a22d-ee300c2d990c,01a16740-a15f-7e1d-982e-8568cf9ebe8f,01a16740-a15f-7b4f-be96-9e8e8298dc34,01a16740-a15f-7502-8093-9881c62364be,01a16740-a15f-70c2-9f17-4d6a2a5c8429,01a16740-a15f-7d83-811c-601b04c6ecd0,01a16740-a15f-7941-a0ab-997f62a4028e,01a16740-a15f-7019-bc24-f295bb1d1d26,01a16740-a15f-7329-b75b-4e5b0aca3805,01a16740-a15f-7e2d-b838-38b9b2727b22,01a16740-a15f-7577-b7bf-74b64aed7e2c,01a16740-a15f-7f34-8056-cc9770ae9657,01a16740-a15f-7988-ad9c-7b70ac229ace,01a16740-a15f-7ac8-921c-44a1e95c83e3,01a16740-a15f-767c-8d4b-b948ec5d976a,01a16740-a15f-79bf-b526-1591267511d0,01a16740-a15f-7980-9a71-f38ba3708669,01a16740-a15f-7e04-959a-6f4e48150fca,01a16740-a15f-7190-ab91-8b8d7cdcc015,01a16740-a15f-7303-a4c0-3bbe0145f449,01a16740-a15f-7a28-95bb-ba78a3097236,01a16740-a15f-7ca5-a675-c9158ccc5fe8,01a16740-a15f-73a3-b38d-6d1759351fb8,01a16740-a15f-791b-9d7f-afe48a2c0ea6,01a16740-a15f-7c0e-a6d5-b319645c8a17,01a16740-a15f-7e37-8fec-0a2d2332cf82,01a16740-a15f-7e24-8a30-aa4f511882bd,01a16740-a15f-7246-86b5-6ae246c05ac9,01a16740-a15f-7920-b430-efa5576956c7,01a16740-a15f-7cc1-abad-96faba09f598,01a16740-a15f-73cd-a546-5d9391296cd7,01a16740-a15f-7db0-975b-0b6d28ec83b6,01a16740-a15f-7dfb-a52e-43f8f2ef7256,01a16740-a15f-709c-9acb-d3d0ad821a5a,01a16740-a15f-7e71-8b3f-97a2ff1d6d12,01a16740-a160-7510-af04-c211993d5631,01a16740-a160-7eb7-ab8f-dbeb7ac775a9,01a16740-a160-7922-878f-db767064b729,01a16740-a160-7e26-991b-6d53bd345cbe,01a16740-a160-7da9-9b8b-25789026e5fe,01a16740-a160-76ee-83d8-2e6b51f328e3,01a16740-a160-7042-918e-da6cc5c6cf92,01a16740-a160-73a3-a6ac-55713141a4b8,01a16740-a160-7343-92a2-8ac7605d4e2a,01a16740-a160-7fcc-b71f-1965cfa18d05,01a16740-a160-71a9-9880-0fa0623c32ec,01a16740-a160-7b78-8ff8-795ea1c2c9ff,01a16740-a160-7099-b9cf-d3f74f770b35,01a16740-a160-7c64-8c9f-70b2845b1a14,01a16740-a160-700d-beae-d9fc08e5668b,01a16740-a160-77ed-9ca9-08e4ab408eca,01a16740-a160-7cef-a12c-b453df6d8ee9,01a16740-a160-7012-989f-445c10cceb9c,01a16740-a160-7762-94e0-0bffd81eb300,01a16740-a160-71e5-8844-a5de25e51c15,01a16740-a160-7333-9a24-90ccc7d6dfb7,01a16740-a161-7843-97ff-66e16bf39dfa,01a16740-a161-7492-8677-fbebe1ce0bbe,01a16740-a161-7fef-af01-0b9b7c63f119,01a16740-a161-77c3-ae0f-5c4575c6bdde,01a16740-a161-72bd-8feb-def190cbe230,01a16740-a161-77c4-9527-53c106429360,01a16740-a161-75fe-8985-5118e92e1a94,01a16740-a161-760b-b835-a3714ec6c3df,01a16740-a161-7341-a055-71f17c0b3d9f,01a16740-a161-7da1-be30-15e46240c6e6,01a16740-a161-7099-8363-42398bfea4f5,01a16740-a161-7d3e-a914-9d506aa23db5,01a16740-a161-7337-bdd0-44cd55cf9be1,01a16740-a161-7b97-82b9-33e5387d218e,01a16740-a161-75cf-8599-fdd0b95079fb,01a16740-a161-776f-8539-7d7875147f86,01a16740-a161-7417-bdf3-7c8526a28b6f,01a16740-a161-7a79-af7e-d3252eefb969,01a16740-a161-767a-844e-bfd33caf4048,01a16740-a161-7dd7-ab3d-c0ebf64c6e9c,01a16740-a161-7724-8345-f5d6ca2f3a90,01a16740-a161-73c1-bc1c-866cef3969f8,01a16740-a161-7e29-a2c1-87e6647c2be7,01a16740-a161-737c-90ec-0923c7448f79,01a16740-a161-773b-aa25-eb2a2be173b2,01a16740-a161-7ecf-81fd-ce07b5aa7bdb,01a16740-a161-7553-8396-d9b6a5b21f23,01a16740-a162-7455-bbf0-0f5666690b08,01a16740-a162-7e70-b184-64c8a1bfde56,01a16740-a162-7f11-a84e-b67463d1cd6f,01a16740-a163-79ef-bd8f-9236b4a20f06,01a16740-a163-7f9e-af50-c7228ad51dbb,01a16740-a163-7970-b054-7ad0e3f98dcc,01a16740-a163-7722-8df0-595b9e44c6d1,01a16740-a163-7ad7-8f33-03970f7ff7f0,01a16740-a163-7881-88b0-08a223d94b21,01a16740-a163-7c30-ab04-e0b9e67720af,01a16740-a163-7658-b99e-be16ef804c4a,01a16740-a163-75e5-8eac-d0238859925e,01a16740-a163-7bff-8c50-099686e98004,01a16740-a163-7c08-ada7-7442bce5458a,01a16740-a163-733c-ba07-c274e0d1435a,01a16740-a163-7d13-b42f-b503f54389c7,01a16740-a163-7a2d-914a-554b2dcd4d2f,01a16740-a163-7830-96f4-5147c1de098b,01a16740-a163-7c38-8400-7ac23fa22940,01a16740-a163-7e19-bbcb-779852828eed,01a16740-a163-7aa0-97e6-ef8bf1f5da9b,01a16740-a163-7b72-8e1d-401285ef3869,01a16740-a163-7d8c-a93f-b79652cbaa3a,01a16740-a163-754b-83d2-3096d33fd4d3,01a16740-a163-7778-9699-0d2f2880a59e,01a16740-a163-7e82-812c-749fdab49f67,01a16740-a163-7e22-ac41-281996395d1a,01a16740-a163-742a-8bd4-eba2852b6289,01a16740-a163-7803-a2a2-84e8a6f11b5a,01a16740-a163-7b72-9a14-82e33bef4af0,01a16740-a163-71a1-9489-8e0b49656a54,01a16740-a163-74f3-9126-a294adacf79f,01a16740-a163-755e-b027-6ec9a524eab1,01a16740-a163-74a8-b99c-ab59436ad515,01a16740-a163-7f27-a5e0-58d5347b44ff,01a16740-a163-7a59-815e-30e27351294f,01a16740-a163-7638-bcec-52354ed9a0a7,01a16740-a163-70b0-85a0-e35c1e848601,01a16740-a163-74fa-a39e-9ba01a912a97,01a16740-a163-7f57-8a67-78a98ffd9ab2,01a16740-a163-74c3-91fb-8505ce790440,01a16740-a163-7800-84ca-b93fc1ca9199,01a16740-a163-7564-886d-31a92a88dc18,01a16740-a163-711f-b217-ffb61f5e7018,01a16740-a163-7ad7-8f58-2f379b3a02cc,01a16740-a163-7fe7-8150-459cde334c5a,01a16740-a163-73ce-b6d9-bc5dc8d1b153,01a16740-a163-7e39-bf20-202a7ef84f40,01a16740-a163-7f3a-9b96-7bc1ab03d154,01a16740-a163-75e6-b9ac-ff1aafbf2069,01a16740-a163-7d4b-89fc-6b3da0329013,01a16740-a163-717f-ba3b-5096a9981d47,01a16740-a163-7092-ab10-7cee85a62e1d,01a16740-a163-7de0-9211-107bd7a6aa1b,01a16740-a164-761b-8eb0-55c78f16eb4c,01a16740-a164-7faa-a4d4-30feedbd7f02,01a16740-a164-7279-a270-c5fe9e3b129c,01a16740-a164-75d8-aa99-006fc3cbb404,01a16740-a164-73cc-81ac-49a057adf1cf,01a16740-a164-7e0c-8bce-93ef5e2bcbaa,01a16740-a164-7521-bfa9-d312d9182c7b,01a16740-a164-78e3-806e-b8e8e06b9465,01a16740-a164-7cc0-8228-65bd5dd2d7b7,01a16740-a164-7a15-bb19-70907cdc1105,01a16740-a164-788b-925e-296a5777d8bb,01a16740-a164-714f-9c2b-8c3e2f7c07c8,01a16740-a164-7e14-a822-98a0b8ac1a13,01a16740-a164-7855-ae0d-e11dc4f0ebde,01a16740-a164-797c-ae53-668b55077ba1,01a16740-a164-75c0-af20-dbc8c97b9026,01a16740-a164-7530-93ff-9b3f303b74f4,01a16740-a164-79c4-ba1b-234fbf24d17b,01a16740-a164-743a-bf96-f5271effdcd9,01a16740-a164-7a2c-aaa9-3ec7688edce3,01a16740-a164-750b-bfba-6aeb39b67477,01a16740-a164-7afb-830b-0dcf0755f3d3,01a16740-a164-72eb-a102-4454622d5006,01a16740-a164-7351-bcc8-609856247095,01a16740-a164-7ab3-8b34-ed00af063293,01a16740-a164-71e4-ad72-1f9cb765fad9,01a16740-a164-7100-aefd-508a565dee16,01a16740-a164-7b06-9d55-abbe7f8acd86,01a16740-a164-7cd3-83ca-04912e6fcc71,01a16740-a164-78d5-905d-3b8615f1463b,01a16740-a164-7b7f-b333-1d8ae2c0c920,01a16740-a164-7aa0-a4a0-7969cb28fd52,01a16740-a164-7524-a664-692390264655,01a16740-a164-7150-bca3-c29d95a6b156,01a16740-a164-7196-b282-90b92fc8d8fc,01a16740-a164-7879-ad68-264fe19b115b,01a16740-a164-7960-9e31-b7f39be29fa2,01a16740-a164-70fe-a17e-5bea1c9ece83,01a16740-a164-7197-bf6b-71def3d3d03d,01a16740-a164-7a3d-a400-4627377941f7,01a16740-a164-7a22-a287-6be536579327,01a16740-a164-76fa-91b0-bed7e41814f2,01a16740-a164-7207-a4c8-25733bfb6abf,01a16740-a164-7719-b165-87f679ee4892,01a16740-a164-7bc1-bb96-b91cb6992549,01a16740-a164-7ded-a4dd-01d25705334c,01a16740-a164-7ce2-a837-0614f053c794,01a16740-a164-7abe-83ef-679d0d626f05,01a16740-a164-7450-bb8a-1c74857e8758,01a16740-a164-76ad-afbc-ee4c16786bb9,01a16740-a164-73f8-827c-061c8059d8b7,01a16740-a164-7b45-81d1-29236c7a6967,01a16740-a164-7f1b-bf0c-ed5b4636cd24,01a16740-a164-78f1-a62c-e5667d177a70,01a16740-a164-703a-88e6-06619db9dfca,01a16740-a164-77b4-9835-a5001d3f1f25,01a16740-a164-7994-a2d6-756bbcf4708a,01a16740-a164-714b-bb63-0272e00188ab,01a16740-a164-7f88-9f07-8d55dbf4dc4e,01a16740-a164-73d7-8111-141dcebb3ab4,01a16740-a164-7b0f-96cc-16e5640dc5c8,01a16740-a164-7d0e-b305-9087241b51b7,01a16740-a164-726e-b62e-a7692d603112,01a16740-a164-73d1-9793-b608620a3b24,01a16740-a164-71db-a40a-fee5a173a0dd,01a16740-a164-7b4a-83c6-131ca95cc583,01a16740-a164-7e91-8a9e-c89d14f5488b,01a16740-a164-7a6a-ad2e-e6786bc59389,01a16740-a164-7ad8-90e8-6ef94d41a8dc,01a16740-a164-7a75-8202-c99b9cca7dde,01a16740-a164-71d2-99d3-d10742cc9f6f,01a16740-a164-747e-8198-15a42a8c3fe1,01a16740-a164-7565-b592-ed136da75a0c,01a16740-a164-7028-a737-0a29dceabaa2,01a16740-a164-74d9-8b97-0ba12574e549,01a16740-a164-719b-89d2-a728974644f6,01a16740-a164-7485-8330-4f05c1f392a3,01a16740-a164-7b0e-b5d4-395d45846986,01a16740-a164-72c8-88b9-f9491896706b,01a16740-a164-7909-ae21-2dccd5b6d3fe,01a16740-a164-7ff3-b254-a4094c159944,01a16740-a164-75c8-976c-7c073c8fea5e,01a16740-a164-79da-b4e6-2da410c33756,01a16740-a164-7c1c-bc85-af416e1da453,01a16740-a164-7b74-af92-1af642accc54,01a16740-a164-74e2-85f3-f0286816ad63,01a16740-a164-7b29-80bc-705ccee43ab2,01a16740-a164-7cf1-81ac-904276b5d00b,01a16740-a164-7c94-a978-4f6be5e2460e,01a16740-a164-76f5-ade6-9afec075f2bb,01a16740-a164-7979-b49f-08e00412c7a0,01a16740-a164-7d0d-95d0-a9bc60d7f4dc,01a16740-a164-76f7-9bfa-4b86916b0ff7,01a16740-a164-71e7-a05e-4b219713f640,01a16740-a164-7a95-aca7-d77aa3da3c03,01a16740-a164-7d49-bc7f-d95425981c0f,01a16740-a164-73e3-8f49-aa248120767c,01a16740-a164-7f41-af34-5ca335d5ecbd,01a16740-a164-793b-848f-ae59f046561f,01a16740-a164-75a5-88cd-f014ed3c3d00,01a16740-a164-76e2-bb7c-32ebabba98c4,01a16740-a164-7f62-9692-335d5451da65,01a16740-a164-7906-aa2a-b4327c832276,01a16740-a164-7580-9595-efc2fa89336a,01a16740-a164-7a72-b284-f80cca5bbe5d,01a16740-a164-75fe-b2bb-df22773afd82,01a16740-a164-7677-860c-d12f4422ee70,01a16740-a164-7c4e-b562-a57339c792bd,01a16740-a164-7240-b50c-33b48e3c54f8,01a16740-a164-7076-a669-c3c00a939305,01a16740-a164-7f11-b29b-2c49efa15dcc,01a16740-a164-7ea1-b5e0-b58b363e3a75,01a16740-a164-7c4e-96f9-66a38e80767b,01a16740-a164-7024-9884-b70d8a98ea2a,01a16740-a164-7191-9b50-b8d3c5e6edc8,01a16740-a164-7a1f-8a1d-18a0a73a75cc,01a16740-a164-769a-8e50-fbb1e0993e31,01a16740-a164-7418-af18-945178c9c2e9,01a16740-a164-71b8-b328-6e0fbfb2af5b,01a16740-a164-705d-a227-d936a7848784,01a16740-a164-7579-b6b3-ec2ff79bec08,01a16740-a164-72e5-81fa-bdc279d511dd,01a16740-a164-7356-bfbe-83882dc03533,01a16740-a165-7adc-a56d-c75b3c95c147,01a16740-a165-7eee-a23a-6ba5799deebf,01a16740-a165-73cc-a66c-16bdf8d3774a,01a16740-a165-722b-99cf-051ba61ee98f,01a16740-a165-7e2e-840a-5b812c2883a4,01a16740-a165-759f-a925-532e0cd3955f,01a16740-a165-763b-9ba1-824cf5d0e22e,01a16740-a165-7c41-a7c7-51a8d385215a,01a16740-a165-79c8-862d-3608825fd165,01a16740-a165-7fee-b7f1-ff11445b7075,01a16740-a165-76d1-9a74-c26ad7a8ea66,01a16740-a165-791b-ab95-69b814d340f1,01a16740-a165-7c34-8f65-da1198ad5384,01a16740-a165-7a3e-bf4e-bf1d26a19745,01a16740-a165-7b32-bce1-04b144c0e728,01a16740-a165-7154-9bed-fc6cebd54bfd,01a16740-a165-7b05-9d25-fe6b5b149c89,01a16740-a165-7f0d-a5f9-2ee2ce65bf50,01a16740-a165-7d75-9c1a-57ef46e74c17,01a16740-a165-750d-b0a3-94dccd50221f,01a16740-a165-7292-b918-303153a5991e,01a16740-a165-72ef-9271-2a4c023a756a,01a16740-a165-710f-91f1-1260754bda14,01a16740-a165-7cc9-9fe5-82bde80af504,01a16740-a165-7def-bb8a-6925006f90be,01a16740-a165-7c21-a41f-c71b1744d36f,01a16740-a165-7dc7-a8b4-208d142a6c63,01a16740-a165-778f-bf41-e3dd3c672e17,01a16740-a165-7473-a231-d723698ae2e7,01a16740-a165-7525-aef8-d927b02aebb4,01a16740-a165-7a2c-82df-c2c2ef637656,01a16740-a165-7fc3-ac64-41ae286125dc,01a16740-a165-7ca4-a924-8b739b8d8ccc,01a16740-a165-7dcd-bfd5-e0a797a8dcf0,01a16740-a165-7087-b0cf-c33505ace507,01a16740-a165-7e38-9cc0-5ed65453cba8,01a16740-a165-7cd5-8fb2-1ddf2cd136df,01a16740-a165-7f0b-81cb-b5c7371579aa,01a16740-a165-7335-b8e2-1d9c2eabea3b,01a16740-a165-7d84-b543-52586a9f581d,01a16740-a165-7453-92aa-13fbddb793a5,01a16740-a165-7b63-84ae-821d19cc1ddc,01a16740-a165-7ca5-895c-0b6a81190087,01a16740-a165-7758-8169-5ab981cd164b,01a16740-a165-740f-81a4-af6bf635f10c,01a16740-a165-734e-8a06-aa28a97a68f3,01a16740-a165-78d8-aeb2-9f607eef0efd,01a16740-a165-780a-93d2-ae0351bd37da,01a16740-a165-716a-9cde-f332458b582a,01a16740-a165-7c34-b74f-89420c8f60bd,01a16740-a165-7d38-9104-bd126c90dad3,01a16740-a165-7a86-9c37-c4bbbde25084,01a16740-a165-70f1-8135-1f11bebf64a7,01a16740-a165-7803-9733-855d0c422041,01a16740-a165-7cb2-a20f-4efe2f4591e1,01a16740-a165-79c6-92ab-44f5d1aa3f1d,01a16740-a165-7a27-baf9-4df4079704e4,01a16740-a165-7ac0-8c3f-974f2ae3445a,01a16740-a165-7323-a377-89af87ccd8d3,01a16740-a165-72e0-b31c-c4ce0bc7c808,01a16740-a165-70b7-be00-0f1064281fe2,01a16740-a165-7eb1-a995-42ae7c42bce6,01a16740-a165-718d-8d72-e83ca8ea0145,01a16740-a165-7bd7-a671-ee441b10c499,01a16740-a165-7186-88bd-e8bed76b04f6,01a16740-a165-7279-9d9b-f7df621fbf80,01a16740-a165-78dc-9a1b-57f7de5dc507,01a16740-a165-7557-bca0-167d3535bea2,01a16740-a165-79a0-acc1-f2d0766ecd61,01a16740-a165-7374-a797-e5caa148ae50,01a16740-a165-71b2-a310-215d66f63274,01a16740-a165-7593-b1a2-b4a067892966,01a16740-a165-772c-8221-afdb6e11cb71,01a16740-a165-7605-9f60-91798f1bb990,01a16740-a165-7001-b629-db03254e12e2,01a16740-a165-79f0-9698-8a1695e8f702,01a16740-a165-773e-998f-5327e8d7ed39,01a16740-a165-7838-a2d0-b49c73ac6a61}'::uuid[])))"
+                                      },
+                                      {
+                                        "Node Type": "Hash",
+                                        "Parent Relationship": "Inner",
+                                        "Parallel Aware": false,
+                                        "Async Capable": false,
+                                        "Startup Cost": 42.0,
+                                        "Total Cost": 42.0,
+                                        "Plan Rows": 1000,
+                                        "Plan Width": 97,
+                                        "Plans": [
+                                          {
+                                            "Node Type": "Seq Scan",
+                                            "Parent Relationship": "Outer",
+                                            "Parallel Aware": false,
+                                            "Async Capable": false,
+                                            "Relation Name": "rag_sourcedocument",
+                                            "Alias": "w1",
+                                            "Startup Cost": 0.0,
+                                            "Total Cost": 42.0,
+                                            "Plan Rows": 1000,
+                                            "Plan Width": 97,
+                                            "Filter": "((NOT is_deleted) AND (NOT is_revoked) AND (knowledge_base_id = 1) AND (tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid))"
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "Node Type": "Materialize",
+                                    "Parent Relationship": "Inner",
+                                    "Parallel Aware": false,
+                                    "Async Capable": false,
+                                    "Startup Cost": 0.14,
+                                    "Total Cost": 8.17,
+                                    "Plan Rows": 1,
+                                    "Plan Width": 274,
+                                    "Plans": [
+                                      {
+                                        "Node Type": "Index Only Scan",
+                                        "Parent Relationship": "Outer",
+                                        "Parallel Aware": false,
+                                        "Async Capable": false,
+                                        "Scan Direction": "Forward",
+                                        "Index Name": "artifacts_d_tenant__234aca_idx",
+                                        "Relation Name": "artifacts_deletiontombstone",
+                                        "Alias": "u0",
+                                        "Startup Cost": 0.14,
+                                        "Total Cost": 8.16,
+                                        "Plan Rows": 1,
+                                        "Plan Width": 274,
+                                        "Index Cond": "(tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid)"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "hnsw": [
+    {
+      "Plan": {
+        "Node Type": "Limit",
+        "Parallel Aware": false,
+        "Async Capable": false,
+        "Startup Cost": 899.21,
+        "Total Cost": 984.58,
+        "Plan Rows": 5,
+        "Plan Width": 1750,
+        "Plans": [
+          {
+            "Node Type": "Seq Scan",
+            "Parent Relationship": "InitPlan",
+            "Subplan Name": "InitPlan 2 (returns $2)",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Relation Name": "rag_indexversion",
+            "Alias": "v0_1",
+            "Startup Cost": 0.0,
+            "Total Cost": 9.2,
+            "Plan Rows": 1,
+            "Plan Width": 0,
+            "Filter": "((tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid) AND (id = 1) AND ((status)::text = 'ready'::text) AND ((project_id = '01a16740-a12a-7676-84d6-995645ce41de'::uuid) OR (project_id IS NULL) OR (SubPlan 1)))",
+            "Plans": [
+              {
+                "Node Type": "Index Scan",
+                "Parent Relationship": "SubPlan",
+                "Subplan Name": "SubPlan 1",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Scan Direction": "Forward",
+                "Index Name": "identity_projectgrant_project_id_58068250",
+                "Relation Name": "identity_projectgrant",
+                "Alias": "u0_1",
+                "Startup Cost": 0.14,
+                "Total Cost": 8.18,
+                "Plan Rows": 1,
+                "Plan Width": 0,
+                "Index Cond": "(project_id = v0_1.project_id)",
+                "Filter": "((granted_to_project_id = '01a16740-a12a-7676-84d6-995645ce41de'::uuid) AND (tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid) AND (((resource_type)::text = 'all'::text) OR ((resource_id IS NULL) AND ((resource_type)::text = 'indexversion'::text)) OR ((resource_id = v0_1.index_id) AND ((resource_type)::text = 'indexversion'::text))))"
+              }
+            ]
+          },
+          {
+            "Node Type": "Seq Scan",
+            "Parent Relationship": "InitPlan",
+            "Subplan Name": "InitPlan 4 (returns $5)",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Relation Name": "rag_embeddingspace",
+            "Alias": "v0_2",
+            "Startup Cost": 0.0,
+            "Total Cost": 9.19,
+            "Plan Rows": 1,
+            "Plan Width": 0,
+            "Filter": "((tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid) AND (id = 1) AND ((project_id = '01a16740-a12a-7676-84d6-995645ce41de'::uuid) OR (project_id IS NULL) OR (SubPlan 3)))",
+            "Plans": [
+              {
+                "Node Type": "Index Scan",
+                "Parent Relationship": "SubPlan",
+                "Subplan Name": "SubPlan 3",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Scan Direction": "Forward",
+                "Index Name": "identity_projectgrant_project_id_58068250",
+                "Relation Name": "identity_projectgrant",
+                "Alias": "u0_2",
+                "Startup Cost": 0.14,
+                "Total Cost": 8.18,
+                "Plan Rows": 1,
+                "Plan Width": 0,
+                "Index Cond": "(project_id = v0_2.project_id)",
+                "Filter": "((granted_to_project_id = '01a16740-a12a-7676-84d6-995645ce41de'::uuid) AND (tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid) AND (((resource_type)::text = 'all'::text) OR ((resource_id IS NULL) AND ((resource_type)::text = 'embeddingspace'::text)) OR ((resource_id = v0_2.space_id) AND ((resource_type)::text = 'embeddingspace'::text))))"
+              }
+            ]
+          },
+          {
+            "Node Type": "Result",
+            "Parent Relationship": "Outer",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 880.81,
+            "Total Cost": 11534.99,
+            "Plan Rows": 624,
+            "Plan Width": 1750,
+            "One-Time Filter": "($2 AND $5)",
+            "Plans": [
+              {
+                "Node Type": "Nested Loop",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Join Type": "Semi",
+                "Startup Cost": 880.81,
+                "Total Cost": 11531.87,
+                "Plan Rows": 624,
+                "Plan Width": 1742,
+                "Inner Unique": false,
+                "Join Filter": "(w0.id = rag_chunkembedding.chunk_id)",
+                "Plans": [
+                  {
+                    "Node Type": "Index Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Scan Direction": "Forward",
+                    "Index Name": "embedding_space_1_hnsw",
+                    "Relation Name": "rag_chunkembedding",
+                    "Alias": "rag_chunkembedding",
+                    "Startup Cost": 823.67,
+                    "Total Cost": 2024.0,
+                    "Plan Rows": 1000,
+                    "Plan Width": 1742,
+                    "Order By": "((vector)::vector(384) <=> '[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]'::vector)",
+                    "Filter": "(tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid)"
+                  },
+                  {
+                    "Node Type": "Materialize",
+                    "Parent Relationship": "Inner",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Startup Cost": 57.15,
+                    "Total Cost": 149.43,
+                    "Plan Rows": 624,
+                    "Plan Width": 8,
+                    "Plans": [
+                      {
+                        "Node Type": "Nested Loop",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Join Type": "Inner",
+                        "Startup Cost": 57.15,
+                        "Total Cost": 146.31,
+                        "Plan Rows": 624,
+                        "Plan Width": 8,
+                        "Inner Unique": false,
+                        "Plans": [
+                          {
+                            "Node Type": "Seq Scan",
+                            "Parent Relationship": "Outer",
+                            "Parallel Aware": false,
+                            "Async Capable": false,
+                            "Relation Name": "rag_knowledgebase",
+                            "Alias": "v0",
+                            "Startup Cost": 0.0,
+                            "Total Cost": 9.19,
+                            "Plan Rows": 1,
+                            "Plan Width": 8,
+                            "Filter": "((id = 1) AND (tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid) AND ((project_id = '01a16740-a12a-7676-84d6-995645ce41de'::uuid) OR (project_id IS NULL) OR (SubPlan 5)))",
+                            "Plans": [
+                              {
+                                "Node Type": "Index Scan",
+                                "Parent Relationship": "SubPlan",
+                                "Subplan Name": "SubPlan 5",
+                                "Parallel Aware": false,
+                                "Async Capable": false,
+                                "Scan Direction": "Forward",
+                                "Index Name": "identity_projectgrant_project_id_58068250",
+                                "Relation Name": "identity_projectgrant",
+                                "Alias": "u0_3",
+                                "Startup Cost": 0.14,
+                                "Total Cost": 8.18,
+                                "Plan Rows": 1,
+                                "Plan Width": 0,
+                                "Index Cond": "(project_id = v0.project_id)",
+                                "Filter": "((granted_to_project_id = '01a16740-a12a-7676-84d6-995645ce41de'::uuid) AND (tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid) AND (((resource_type)::text = 'all'::text) OR ((resource_id IS NULL) AND ((resource_type)::text = 'knowledgebase'::text)) OR ((resource_id = v0.kb_id) AND ((resource_type)::text = 'knowledgebase'::text))))"
+                              }
+                            ]
+                          },
+                          {
+                            "Node Type": "Nested Loop",
+                            "Parent Relationship": "Inner",
+                            "Parallel Aware": false,
+                            "Async Capable": false,
+                            "Join Type": "Anti",
+                            "Startup Cost": 57.15,
+                            "Total Cost": 130.88,
+                            "Plan Rows": 624,
+                            "Plan Width": 16,
+                            "Inner Unique": false,
+                            "Join Filter": "(((u0.resource_id)::text = ((w0.chunk_id)::character varying)::text) OR ((u0.resource_id)::text = ((w1.doc_id)::character varying)::text) OR ((u0.resource_id)::text = (w0.content_hash)::text) OR ((u0.resource_id)::text = (w1.content_hash)::text))",
+                            "Plans": [
+                              {
+                                "Node Type": "Hash Join",
+                                "Parent Relationship": "Outer",
+                                "Parallel Aware": false,
+                                "Async Capable": false,
+                                "Join Type": "Inner",
+                                "Startup Cost": 57.0,
+                                "Total Cost": 102.17,
+                                "Plan Rows": 632,
+                                "Plan Width": 178,
+                                "Inner Unique": true,
+                                "Hash Cond": "(w0.document_id = w1.id)",
+                                "Plans": [
+                                  {
+                                    "Node Type": "Seq Scan",
+                                    "Parent Relationship": "Outer",
+                                    "Parallel Aware": false,
+                                    "Async Capable": false,
+                                    "Relation Name": "rag_documentchunk",
+                                    "Alias": "w0",
+                                    "Startup Cost": 2.5,
+                                    "Total Cost": 46.0,
+                                    "Plan Rows": 632,
+                                    "Plan Width": 97,
+                                    "Filter": "((tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid) AND (chunk_id = ANY ('{01a16740-a15b-7068-9fc9-ffeb062dc675,01a16740-a15b-725d-9f4d-646756414a82,01a16740-a15b-7737-b926-1684c0e82de3,01a16740-a15b-74c1-9bf0-6b4d2f6210e3,01a16740-a15b-7153-ac35-bce20ae5549f,01a16740-a15b-7b1b-9d0a-14b51c73e383,01a16740-a15b-76cb-a1d6-203d925d8a0b,01a16740-a15b-7185-91d0-26d4b5df9a80,01a16740-a15b-7be8-b075-98dd1de0dca8,01a16740-a15b-77e5-bd7a-a45b66eeb589,01a16740-a15b-73e5-8fea-4d9996bdf069,01a16740-a15b-7711-abd2-501419837cc7,01a16740-a15b-7f61-837b-a7c93dd90a63,01a16740-a15b-7b7f-94a1-c3c1d39a8977,01a16740-a15b-77c4-8805-de80c0321d16,01a16740-a15b-7e56-8d59-29e044b894bb,01a16740-a15b-7e6a-8131-e84bf815ab88,01a16740-a15b-733d-ae23-c666462d3e17,01a16740-a15b-75d3-9090-93751297d496,01a16740-a15b-7d4a-84c2-eb9a4e122a6f,01a16740-a15b-790a-a2c6-af4482829110,01a16740-a15b-76c4-9b9a-be21a675faf9,01a16740-a15b-7f62-bfc8-4233371605d1,01a16740-a15b-7923-b562-cde269f42b65,01a16740-a15b-72c5-ae65-a81eaa806a1f,01a16740-a15b-7ae1-9f11-181aca8b4d47,01a16740-a15b-74c6-8de0-0e466525879b,01a16740-a15b-7436-9d50-05da6ebc8fcc,01a16740-a15b-792c-84e7-9024a954de20,01a16740-a15b-7c74-8161-55544ea58f8e,01a16740-a15b-75ee-b297-1727590ffe3f,01a16740-a15b-7753-aad6-9f7831d8e85a,01a16740-a15b-7a72-995d-7b7a893daff1,01a16740-a15b-72fe-81d0-2eddf9d0a12b,01a16740-a15b-73ee-8a83-5665ff3274a3,01a16740-a15b-78c2-bac3-a85cb7945a4a,01a16740-a15b-70fd-a2d7-5a03f8fce31d,01a16740-a15b-73b3-af7f-f329094ef8fc,01a16740-a15b-7f45-9b80-54a841a809e8,01a16740-a15b-7ccd-a52e-6d464c5cd10d,01a16740-a15b-74d5-af78-5ceca50915f8,01a16740-a15b-78d6-82c2-c0ac1c28156e,01a16740-a15b-7253-a0db-4db014382498,01a16740-a15b-7455-8eb6-b447a34fc107,01a16740-a15b-7a7b-91fc-e5e1dd657e88,01a16740-a15b-7871-88e3-7cfb1dc6b06e,01a16740-a15b-7897-976d-1e7f17d81381,01a16740-a15b-7b0c-b94f-f4c2b858aa94,01a16740-a15b-744e-b966-5d487dd0df15,01a16740-a15b-7e06-b860-b6e257c958de,01a16740-a15b-7ff3-a46c-0b9a3f2da7c0,01a16740-a15b-70ae-b6ce-49f4f75bfa58,01a16740-a15b-7af7-a0a0-b1cefe04d863,01a16740-a15b-70ed-9169-a8775e7d179b,01a16740-a15b-7958-8e18-a119b3b86700,01a16740-a15b-7dfe-8967-72923bc86f90,01a16740-a15b-7576-9ff7-75e47f88a07a,01a16740-a15b-7d96-bdd2-2f34eb4e8e02,01a16740-a15b-72c2-b698-64efad3badfb,01a16740-a15b-711c-aded-89c6fabe443d,01a16740-a15b-7fb0-8759-9092f1fd5274,01a16740-a15b-7fd3-97b5-661b999f49ac,01a16740-a15b-7d94-b7db-27e464442f1d,01a16740-a15b-7404-b4b2-d64d3cab5d37,01a16740-a15b-705f-ba19-841bc6cc960c,01a16740-a15b-74ce-a750-0a2becdc18cc,01a16740-a15b-7501-a8b6-6d493cbf9b8e,01a16740-a15b-7df1-892f-df9510ad16b9,01a16740-a15b-7aa1-9214-63defb240aff,01a16740-a15b-7b83-b12c-8a44af3c8543,01a16740-a15b-7db4-94a7-d4d9cb53af2d,01a16740-a15b-7754-b758-77ff55b30e2f,01a16740-a15b-7d81-83e2-f46face3ffa7,01a16740-a15b-7b6f-8809-98e90061e6df,01a16740-a15b-7b74-9d1e-243d2af3f258,01a16740-a15b-75d7-bffe-29cb342289f4,01a16740-a15b-758a-818b-fb19068d88e3,01a16740-a15b-7015-92ca-fa71617c2cb9,01a16740-a15b-72ca-835e-48a08729e129,01a16740-a15b-7714-93f7-c227d2acf41f,01a16740-a15b-7971-aae1-8b151160c361,01a16740-a15b-7580-9fa1-f9f6d0b68de9,01a16740-a15b-7fe3-90c2-8f44a1442e74,01a16740-a15b-7451-b31b-7859598b8567,01a16740-a15b-71be-b022-39450768622d,01a16740-a15b-7280-807f-930c23ad73c0,01a16740-a15b-747f-95de-1c6677e6012a,01a16740-a15b-796f-b392-2a30fa71d3eb,01a16740-a15b-7f66-a6bd-c45675302532,01a16740-a15b-7695-a0fb-de0a8eb65d31,01a16740-a15b-7232-830c-4c89e9e04eea,01a16740-a15b-7687-bae4-5526570c176f,01a16740-a15b-7104-adb4-ebba3bdb2cfa,01a16740-a15b-714d-a284-980e1b78ed7d,01a16740-a15b-75df-9c44-01e1742f81af,01a16740-a15b-7db8-bd7f-52dce8c232a2,01a16740-a15b-7322-8519-fa0e5b6acc16,01a16740-a15b-73e1-af1e-36dc98bc9970,01a16740-a15b-7e34-99cd-57319b66c085,01a16740-a15b-7e90-85e4-b1c595c93fc0,01a16740-a15b-741d-8751-14aeaddd1204,01a16740-a15b-7eb6-b764-70c4dc387516,01a16740-a15b-7de2-9ab0-bdfcd51ca278,01a16740-a15b-7bc8-941c-e5b83676c21a,01a16740-a15b-7fb5-be57-4978ca278eed,01a16740-a15b-7604-8d67-1451a9c1136c,01a16740-a15b-73c2-84cb-4d0952f23d16,01a16740-a15b-7353-8abe-2785b42b8ba1,01a16740-a15b-7137-b6dc-4366a6b857ab,01a16740-a15b-7f1b-a9b1-7269647aa682,01a16740-a15b-7780-843f-1ca99648e18d,01a16740-a15b-70f3-9bd4-d9b4a309d8dd,01a16740-a15b-7fb5-9f7a-22ce22ccc514,01a16740-a15b-7238-8ae3-1024cd998fd1,01a16740-a15b-7bf0-9adb-22376934166e,01a16740-a15b-779b-a23e-6e8d79f3e382,01a16740-a15b-7ee7-be4d-313326dc4ae6,01a16740-a15b-70cd-b2ec-d01485c6cacd,01a16740-a15b-7515-bcb0-69791983208d,01a16740-a15b-797b-b5ff-38840b01b5d4,01a16740-a15b-7b6e-91f8-7b0c9dacb762,01a16740-a15b-7ca9-a2dc-a665d95591d0,01a16740-a15b-74a7-b983-ce51a7402926,01a16740-a15c-760f-a8d2-1a411d851ad2,01a16740-a15c-7cf1-bb9a-79f176b0eb82,01a16740-a15c-7bf7-b508-2a71f3f32cfe,01a16740-a15c-78e3-a317-2ff84ebc4138,01a16740-a15c-7356-ac24-0e9e1c9984aa,01a16740-a15c-714b-badd-c5c9cac23d0a,01a16740-a15c-7347-9e4b-10fcbd8d3107,01a16740-a15c-709d-ba2a-3350f445c8c6,01a16740-a15c-7412-bb7d-03eff6cf2e8f,01a16740-a15c-7444-a59b-2e1db1e723f8,01a16740-a15c-7f13-9024-b341b1818775,01a16740-a15c-7b72-a44c-83bab30cbafc,01a16740-a15c-7bc3-9659-40ab2df4bfce,01a16740-a15c-7f87-a5d3-381ac43ea49d,01a16740-a15c-7aa5-9107-9cf26b116516,01a16740-a15c-7235-baf2-37b35aac0f51,01a16740-a15c-7d1c-935d-ba2a3d7e7470,01a16740-a15c-700f-a522-d13031596b6d,01a16740-a15c-7645-800e-c95f49350c8f,01a16740-a15c-7e9c-a1cf-7f3f9a7fc7e6,01a16740-a15c-75be-8a69-ee26440e895d,01a16740-a15c-74ea-b69f-f3eecab7f34c,01a16740-a15c-79fd-95a5-f4850d435409,01a16740-a15c-7922-9150-111fdd476e4f,01a16740-a15c-7654-a196-f5f394fffbb7,01a16740-a15c-78e8-bd3e-532db245ab19,01a16740-a15c-7c36-bef1-8fa7106bef2d,01a16740-a15c-73f2-8a13-b69938a92fb0,01a16740-a15c-74f4-bc7b-f6d9401c518c,01a16740-a15c-7565-b495-4e5918c70960,01a16740-a15c-7c78-90ed-5b9a91471a50,01a16740-a15c-7102-91af-159f724ab545,01a16740-a15c-706b-9c3b-a1541f3d5dad,01a16740-a15c-767b-8547-d5808dbea499,01a16740-a15c-70ca-ba1a-b25b7824dd7f,01a16740-a15c-7dfc-a249-cfc50f366cab,01a16740-a15c-747e-b872-e594836f4f7a,01a16740-a15c-796c-bca8-7a8405ba25bf,01a16740-a15c-7837-ba6b-eb419566a9fd,01a16740-a15c-7e14-bedc-78d67a5b3821,01a16740-a15c-7bed-9a68-891c5ca999f0,01a16740-a15c-7f95-860e-db9fcaf611f3,01a16740-a15c-7424-bbae-a1df3c10b115,01a16740-a15c-74e3-89ce-d9448af90296,01a16740-a15c-7c87-aba2-fc85faff2b7e,01a16740-a15c-7760-ac7f-291e1972351f,01a16740-a15c-76ae-96cb-f0e10c36ccf0,01a16740-a15c-746a-977f-289581d70418,01a16740-a15c-763d-9945-c24cef293b0d,01a16740-a15c-7348-9bbf-72816730c04e,01a16740-a15c-771e-9ce7-ff4cf7afa87c,01a16740-a15c-7137-8672-408690dd5fcf,01a16740-a15c-7084-9010-69d5134bd2e6,01a16740-a15c-7658-84af-4c49b2c3e3b4,01a16740-a15c-7ddf-bc35-eb0de1086dfd,01a16740-a15c-7283-91f3-1789ff1e6a08,01a16740-a15c-70a6-9551-f375134a3ee3,01a16740-a15c-7958-9799-a7b3692d5016,01a16740-a15c-7c0e-b4ad-5fd60d1619c5,01a16740-a15c-70a9-9300-4bcd1cfc7fde,01a16740-a15c-7a2c-9b2b-b7e7bbc79f8f,01a16740-a15c-77ea-9f62-3b7598c3907d,01a16740-a15c-7a29-b9ec-bf98c0440fc6,01a16740-a15c-71c2-9f27-a80bfad55f42,01a16740-a15c-75d7-a373-64679f2ce4f6,01a16740-a15c-7d2d-a55d-264134483d91,01a16740-a15c-7a2b-850d-1234f2e8013c,01a16740-a15c-7392-8dda-c94582b8526e,01a16740-a15c-75c0-a174-56e4216653b3,01a16740-a15c-7636-a9e7-8ac345ae54e4,01a16740-a15c-70ff-bf7b-49d29c9e1f2d,01a16740-a15c-720b-a00f-1d7881b27d82,01a16740-a15c-7df2-9c0a-8d4cec820a2e,01a16740-a15c-7939-8e3b-27fb3f5cbc3c,01a16740-a15c-7e0f-87c3-50459633203f,01a16740-a15c-7bc6-8c2e-f049e5f8eadf,01a16740-a15c-7fe0-b342-ff4dec998e4b,01a16740-a15c-7704-a610-cc1ffd3a91ff,01a16740-a15c-7fc4-ab14-a7ce1a363ec6,01a16740-a15c-73e5-af03-a68c18f33b1c,01a16740-a15c-7864-a37d-355e4ade8786,01a16740-a15c-7900-b3da-f2d81511008b,01a16740-a15c-7e4b-b9fe-db4caa6ff16e,01a16740-a15c-7176-ae45-bf1937155048,01a16740-a15c-706b-b556-8f4a2deeb030,01a16740-a15c-7059-9a21-15db525acc45,01a16740-a15c-7b0c-a19b-f3221bdc5e2d,01a16740-a15c-77a1-b8be-2485ce579221,01a16740-a15c-77b1-9174-99d17ba37de0,01a16740-a15c-7a34-9173-12c538e3d05a,01a16740-a15c-7e3d-a27a-831b472bdf7f,01a16740-a15c-78cd-b072-dc039eceb390,01a16740-a15c-780e-a3cf-1803abea8aa2,01a16740-a15c-76ed-9f9c-09e686ee7cb3,01a16740-a15c-7f7b-a91e-504ea52c3543,01a16740-a15c-7453-a6bb-018a236a5a03,01a16740-a15c-7db1-9a3c-b66695c1fd7f,01a16740-a15c-760f-a16d-3552086ab897,01a16740-a15c-7e2a-ab4c-8ef7883f7e15,01a16740-a15c-7bdf-b218-e10fa8271f58,01a16740-a15c-7484-a50c-cec6d344b81a,01a16740-a15c-7f30-9907-13f19d67b9a7,01a16740-a15c-78e6-be87-90af881ea82d,01a16740-a15c-7e2b-879d-45ffcca0cd06,01a16740-a15c-719f-b44c-cac1e74de1bc,01a16740-a15c-7fb1-81df-2c2a5809c443,01a16740-a15c-72af-8d6e-89f312fee521,01a16740-a15c-75b6-9d7e-338283c6ed0c,01a16740-a15c-739d-8ebb-9c5dfba96e64,01a16740-a15c-7daf-a129-bbff91fe6130,01a16740-a15c-739f-85f0-a95e68c10491,01a16740-a15c-71d0-8660-92e34f462f08,01a16740-a15c-75e6-bca9-45280770b5dc,01a16740-a15c-7d80-86a3-a501cf873880,01a16740-a15c-73e6-b005-e0dd490b867d,01a16740-a15c-7e35-b87e-977b206b0739,01a16740-a15c-7c06-974c-1656886e2e89,01a16740-a15c-7026-8b55-23e5ed776cdf,01a16740-a15c-7ff6-a1fa-807d694793b7,01a16740-a15c-738b-9e6a-310aac7924da,01a16740-a15c-70a1-be91-6cc0e55404e4,01a16740-a15c-7df9-a7d3-30ed5ce30808,01a16740-a15c-70f3-a685-45c5358ec8b7,01a16740-a15c-7f98-9c66-8d6453ea4a5a,01a16740-a15c-75d8-adaf-98d0fa501f48,01a16740-a15c-7e85-a7a6-c23e08dbb833,01a16740-a15c-78bc-ac7c-6bb8b23d1fc7,01a16740-a15c-7d06-bb4d-f8edc4244489,01a16740-a15c-713c-a540-f265051076a9,01a16740-a15c-75ff-8ed5-16a6a258a25b,01a16740-a15c-7552-ab2f-a08abb5df645,01a16740-a15c-7559-871f-b0be9c5c4855,01a16740-a15c-7000-a770-4757b738f512,01a16740-a15c-7204-a981-184f595bf5f7,01a16740-a15c-7cfe-867c-39b6eae6561d,01a16740-a15c-76da-ad2c-e8b31f17b68d,01a16740-a15c-788c-b9c1-a7c97f563809,01a16740-a15c-7650-8637-299e419eb088,01a16740-a15c-7d13-8436-90f5ea06e382,01a16740-a15c-7a78-9d21-d7cd3e8441dc,01a16740-a15c-7bff-a902-6e120eb96ce9,01a16740-a15c-7301-8f83-e7d473d20ac1,01a16740-a15c-7635-bc32-c9ff2dd3dd82,01a16740-a15c-738c-88bb-0a42127b8bc9,01a16740-a15c-7eb9-892f-7d85559d7d40,01a16740-a15c-78c6-a591-8cddd9230b61,01a16740-a15c-77fe-856d-9d156550a4e0,01a16740-a15c-7a14-bfc2-c41c6d995d29,01a16740-a15c-713e-87a8-c3d404e579ea,01a16740-a15c-7594-9b07-714c48b41b64,01a16740-a15c-79b3-a364-978b878f0c34,01a16740-a15c-7cfe-8765-91cd40fa7643,01a16740-a15c-7a48-b907-14b2f4645498,01a16740-a15c-71e3-b236-6897df719e64,01a16740-a15c-7d91-ac08-83a1381ba9ed,01a16740-a15c-7029-935d-ace71f29cf2d,01a16740-a15c-76bf-8b50-85b5253e91e7,01a16740-a15c-771d-b34c-93c7ce5d9876,01a16740-a15c-7e10-a721-1f68776f182e,01a16740-a15c-7983-bae9-2f4cee3f357f,01a16740-a15c-7dc6-86f5-1a4e8f816194,01a16740-a15c-7387-a26f-845be061506e,01a16740-a15c-7fc3-89d0-104c87cfb44c,01a16740-a15c-7e92-8fde-e66ac55209b3,01a16740-a15c-7e9c-8efd-1af8a132cf13,01a16740-a15c-7731-80d4-3023f0873815,01a16740-a15c-7a1e-b3e9-06b1acb5aa82,01a16740-a15c-7a1a-93b8-96edb5022e04,01a16740-a15c-7b1e-9d87-7ee042f9e939,01a16740-a15d-7c5d-9a23-60fff86e59fd,01a16740-a15d-7c52-bb71-090f768c2c83,01a16740-a15d-7ba1-8e46-23d81e6a2d40,01a16740-a15d-776b-a680-5c6d30a42e1f,01a16740-a15d-7078-9ccd-08c372b3c259,01a16740-a15d-7491-a56d-71d6854cf923,01a16740-a15d-7f5e-8fc5-7ce1fb52893b,01a16740-a15d-77fb-95d2-80aa00d73e77,01a16740-a15d-7ba0-b3e4-0e3d8ae0a1ce,01a16740-a15d-7b2c-923a-c1d7c9a6a357,01a16740-a15d-7ba2-b895-f36c8918452e,01a16740-a15d-7224-bfab-8f1b9759ba65,01a16740-a15d-795a-9b00-573162e2e6ab,01a16740-a15d-702b-8336-1cfc92fdfb3a,01a16740-a15d-70d0-a42e-f56888448c84,01a16740-a15d-7e43-8e74-9de94e30c6e0,01a16740-a15d-75df-8492-4d44bcc9a8a1,01a16740-a15d-75d6-bf64-699d5e569d0a,01a16740-a15d-7d04-8bf5-4cc58f53ec26,01a16740-a15d-770a-b8fd-b28ff0f48133,01a16740-a15d-73ca-9a0a-2b16862cb847,01a16740-a15d-7d71-a374-80e495717b15,01a16740-a15d-7ad6-b667-a3e7f69dcb48,01a16740-a15d-70ab-937a-fec7299af2dc,01a16740-a15d-79d2-a1c5-5d22a3eff6ff,01a16740-a15d-78a6-bcfe-27c7d898672f,01a16740-a15d-76b6-a950-1d029682e0fa,01a16740-a15d-7560-ac80-5e2902c36c92,01a16740-a15d-7664-a380-33bf9c283f01,01a16740-a15d-70ed-babc-603915da6e39,01a16740-a15d-7d3c-8813-530320e59d45,01a16740-a15d-72e6-9300-cec30fecb014,01a16740-a15d-7ad6-920a-25d849ce8639,01a16740-a15d-77a9-8c11-877ad64101bf,01a16740-a15d-79e8-9148-75696475e18e,01a16740-a15d-7d65-b573-bde3f2df8f61,01a16740-a15d-70fa-9367-cd579e0b2f2a,01a16740-a15d-7695-9c09-e3cb722e898b,01a16740-a15d-73d9-8dfc-6e55fc04f932,01a16740-a15d-71a0-a1fe-15b08c012ec3,01a16740-a15d-7cba-8916-9261fdfbd4d4,01a16740-a15d-7f3a-add2-0d37ad1f2898,01a16740-a15d-723e-a9cf-de56b58d5d8a,01a16740-a15d-75bb-8415-03a600148f91,01a16740-a15d-7673-9413-01883a3a7df5,01a16740-a15d-7056-a878-78eac5163486,01a16740-a15d-7e7c-8e80-b822bb99a28c,01a16740-a15d-7349-b7f2-e514eb5d301d,01a16740-a15d-7336-b42e-142a8e6803ad,01a16740-a15d-7873-9d03-f1c732b26380,01a16740-a15d-7d91-aa47-8b2a1c3cd8d4,01a16740-a15d-7f78-865f-cacd44d61b55,01a16740-a15d-7536-8b0c-3377314a8c97,01a16740-a15d-723c-91fc-e89d2c2d073a,01a16740-a15d-7dbd-bf18-f77dc43f3e06,01a16740-a15d-7e40-98a6-e7a1e5a1c095,01a16740-a15d-7cce-a38b-4845eddbdc51,01a16740-a15d-7edb-b2de-37c29372477a,01a16740-a15d-7dfa-ab0d-d1d7d0d4097e,01a16740-a15d-7edb-b4d2-5e297a8cfab7,01a16740-a15d-70e7-8021-204a83b295f8,01a16740-a15d-7bb9-bae6-5ed102633e77,01a16740-a15d-7030-bfa5-a0ea35754c79,01a16740-a15d-75ee-874a-4db99290d951,01a16740-a15d-7e48-95be-6b321913d5e6,01a16740-a15d-7742-87bd-92ab13a882c0,01a16740-a15d-7f5a-9d39-71b016589e1b,01a16740-a15d-763c-a6a9-47db231cb957,01a16740-a15d-7f9a-8246-bbee56f06490,01a16740-a15d-7876-9861-19561085e0fb,01a16740-a15d-79bd-aa9b-7772ff5d09c5,01a16740-a15d-7568-bed1-03ab4fe1a132,01a16740-a15d-7da9-a7c6-0ed6200f4ea2,01a16740-a15d-75f8-bf09-1d9ba70aef7c,01a16740-a15d-7ab2-9912-e98419db152f,01a16740-a15d-7582-ac84-3c06c5c7f130,01a16740-a15d-71b3-ae14-67bad1cc6a62,01a16740-a15d-7f39-b1df-55fbd3c4b194,01a16740-a15d-7ee6-9e09-0efb11acfbee,01a16740-a15d-7cd3-a3e6-45eb6ea96724,01a16740-a15d-75d1-ace4-d2618346c661,01a16740-a15d-740b-932d-8887c1fb2da0,01a16740-a15d-771d-9a21-0a64966b5685,01a16740-a15d-7816-be48-b3fe0c849f6a,01a16740-a15d-76ec-9ff7-3ae6e9a93aba,01a16740-a15d-79cb-ba52-967e11b5d7d0,01a16740-a15d-75ee-b3f0-07d716635532,01a16740-a15d-721a-8b8d-93d96ab05961,01a16740-a15d-7551-8854-bd068c40010d,01a16740-a15d-7634-b818-c79c55c182ee,01a16740-a15d-7217-bed3-7957828ab035,01a16740-a15d-78b4-b2a0-7a63718dfa26,01a16740-a15d-7dd7-bca9-d5241f2647c3,01a16740-a15d-7735-8cbb-6ede1c2eb2a7,01a16740-a15d-7d03-b711-e7ccdcaa2cf9,01a16740-a15d-759a-a9b6-58692d7c0b4d,01a16740-a15d-7190-b08e-44ba7dfa2f84,01a16740-a15d-7fbd-bbd5-87a1f90ed477,01a16740-a15d-77aa-97bd-0c4f16d73733,01a16740-a15d-783d-af2e-ee1807c2729d,01a16740-a15d-7686-bdbc-516c48c0c014,01a16740-a15d-7dba-9f7a-4d65fa8eed25,01a16740-a15d-731b-91b3-b736f3014168,01a16740-a15d-74b9-ac11-b8b3b6ac3d29,01a16740-a15d-787f-ad38-90f4238a7776,01a16740-a15d-73cd-b0d2-193fef009fa6,01a16740-a15d-702a-82cb-5bc017195f1c,01a16740-a15d-79f4-b221-f01c979fd250,01a16740-a15d-757c-bd4c-15ac86c43888,01a16740-a15d-7ba0-82ba-85a112351699,01a16740-a15d-73fe-adaf-a018a5d37c97,01a16740-a15d-77c7-8dc3-65fed5a459aa,01a16740-a15d-7a72-93c8-baf41db5b0c2,01a16740-a15d-70f4-8458-447a00eb6794,01a16740-a15d-778e-95fe-2e924f74c781,01a16740-a15d-74d9-a354-7c8b500ac47f,01a16740-a15d-7940-a360-bd3b3b8c6bf3,01a16740-a15d-7ad1-ac10-f9d8f62513cc,01a16740-a15d-7aed-953b-78a92e6cecd2,01a16740-a15d-7657-8154-185ce58afcbf,01a16740-a15d-7380-ad6e-2cb3ddace2de,01a16740-a15d-791e-b4e0-46383b164fab,01a16740-a15d-79cb-9d6d-e90cea420a30,01a16740-a15d-777b-b0d9-684ce91d00b2,01a16740-a15d-78a0-b839-5ceed7d2c553,01a16740-a15d-71e6-ba56-3f3fd6896ba8,01a16740-a15d-74a4-9841-fbd500a75c0c,01a16740-a15d-7f63-a5f3-1dac15fec372,01a16740-a15d-7191-b8fb-7fed3fd0d9ab,01a16740-a15d-7073-8009-e8460ecd1cc2,01a16740-a15d-749a-82a9-f0d6af2082f1,01a16740-a15d-7050-8745-6c3e23362be0,01a16740-a15d-7e60-a9ac-3b5c88dca8c9,01a16740-a15d-7fe2-863a-f9fa27cfe310,01a16740-a15d-7462-aa1a-cea37fae7845,01a16740-a15d-7b4a-bcf4-403a774b196f,01a16740-a15d-7636-a5e8-832d515dbf48,01a16740-a15d-743a-99ef-0860e9526d98,01a16740-a15e-7eb0-b517-28ed9414eda0,01a16740-a15e-7747-b940-8b44e926f416,01a16740-a15e-78dc-beaa-bfff277950bf,01a16740-a15e-7ca5-9cd6-0c0ed4e9f9f6,01a16740-a15e-7845-b4b4-efefa466111c,01a16740-a15e-7926-8566-6aaeb77c90e6,01a16740-a15e-7931-b9fe-1f1f9c627cb2,01a16740-a15e-7395-aae1-f09e7d3a471c,01a16740-a15e-7364-80a6-aa25419483d0,01a16740-a15e-71c7-869d-efb1a96be4a1,01a16740-a15e-7db9-8bac-32740c25f0d2,01a16740-a15e-7706-954a-a91f933ef413,01a16740-a15e-7cd7-8f7c-bb164368ffdd,01a16740-a15e-7272-a338-2ddde0e8381c,01a16740-a15e-72a4-abac-cc8647b89b60,01a16740-a15e-70c0-a327-3ac8ce30aed1,01a16740-a15e-7ce8-9f88-f3fb6be0b765,01a16740-a15e-7882-a1a4-50f078b4871c,01a16740-a15e-76d2-96c1-7b74c4dd4000,01a16740-a15e-7896-ac7f-b41d6077a65d,01a16740-a15e-7296-895f-b9446254fe84,01a16740-a15e-737f-8b11-9ffe53884690,01a16740-a15e-70ed-9a9e-85210bf15947,01a16740-a15e-722b-89db-da110951ca5b,01a16740-a15e-7e36-9e87-a6d908620478,01a16740-a15e-765b-8d02-6c0243170f83,01a16740-a15e-7c0b-adae-3e3901a24220,01a16740-a15e-70c9-8723-21a715469b32,01a16740-a15e-7dfc-b6c5-3711d3c5f5ae,01a16740-a15e-76a1-848b-7e542727b393,01a16740-a15e-795e-a779-3688a7aa4f80,01a16740-a15e-7950-b992-8b5e36c164c0,01a16740-a15e-7527-b8bd-a7dbc9066e83,01a16740-a15e-74ff-92a4-5c557018f741,01a16740-a15e-7f77-8585-241a07fdcf15,01a16740-a15e-7a89-8e22-ce16eeda3e5a,01a16740-a15e-7265-8060-4fe76c2e9c81,01a16740-a15e-7140-9648-45198091f66b,01a16740-a15e-7b26-9531-abfdc61c3ac8,01a16740-a15e-7d76-a428-a89f8fb41340,01a16740-a15e-7b25-960e-ed9aa0ccd115,01a16740-a15e-7a5a-9cb0-b0c0a5936238,01a16740-a15e-7ca2-b240-8d75068d6e45,01a16740-a15e-78dd-a822-1692227e3114,01a16740-a15e-7b5f-884b-5cf4910c4e8b,01a16740-a15e-7222-9469-67cbfcbd7e00,01a16740-a15e-722c-bf17-8f4659d170e1,01a16740-a15e-7fe1-83fa-e6343c62250c,01a16740-a15e-74ea-a2e9-a334a9d87421,01a16740-a15e-7fe3-8ec4-b4c1f8a1dfdf,01a16740-a15e-72b4-a698-ee4246a04fdd,01a16740-a15e-7e50-a835-492126748af9,01a16740-a15e-74e0-b324-c0e751d3cc59,01a16740-a15e-7de8-b7dd-ff5a56f96b13,01a16740-a15e-7e30-8fec-778a70e495eb,01a16740-a15e-7312-b897-5955264214b3,01a16740-a15e-7509-b07f-dc7df3172d49,01a16740-a15e-75d1-ae1d-67e00ecbd324,01a16740-a15e-7337-a56f-79983ccc72e3,01a16740-a15e-7c92-9e87-a980b40bc622,01a16740-a15e-7081-a26f-7834e6274e1f,01a16740-a15e-738f-8590-3bcd825d0bd8,01a16740-a15e-7ee4-8ef3-f37214d65227,01a16740-a15e-7649-adf8-53a3d98b7f64,01a16740-a15e-751f-b8ed-fd9741519d7f,01a16740-a15e-7e8a-839e-7eb834a6c463,01a16740-a15e-7f32-90d9-c5be1432d47e,01a16740-a15e-773c-85ae-cf57a2876e89,01a16740-a15e-7071-9443-5f2a7b07ea28,01a16740-a15e-7638-8f5c-8b4beba7500d,01a16740-a15e-7fe0-8b6a-4403f5ddb08e,01a16740-a15e-793a-8acd-2ae43d054634,01a16740-a15e-7309-905d-c011d631b7ce,01a16740-a15e-7710-9040-b2feba8d67f8,01a16740-a15e-7188-836f-fca413f6eb52,01a16740-a15e-735b-a1a7-a963416ee7a5,01a16740-a15e-7880-9ec8-7a43a236697b,01a16740-a15e-76fa-8c8b-18b9656ce8d6,01a16740-a15e-7da3-b38d-fba980667621,01a16740-a15e-7cce-b6e7-edd47a6290cc,01a16740-a15e-72d0-94da-d5ddb8587c6f,01a16740-a15e-724f-ab01-e0c09c66fe4a,01a16740-a15e-784a-b639-ae0fe4f45cf3,01a16740-a15e-7c4e-ab82-60a18674f060,01a16740-a15e-7f8c-81c7-6712525e3b6b,01a16740-a15e-7a40-95b1-95a5048397a8,01a16740-a15e-721c-8666-2538b6bc6352,01a16740-a15e-7369-a096-2b952296fa12,01a16740-a15e-70a0-bbcf-71978a492c2f,01a16740-a15e-7613-900e-1ac913b248c7,01a16740-a15e-76ea-9dfb-3ca02aec61cf,01a16740-a15e-7239-bbb7-bb3c4a126355,01a16740-a15e-7040-b706-434420798f06,01a16740-a15e-76bb-ad99-f9e8e3992142,01a16740-a15e-7326-a9de-59fb9a898c23,01a16740-a15e-7243-b36b-2df7078acae9,01a16740-a15e-766c-aca0-101db583e270,01a16740-a15e-7c13-9d61-9782c05be6df,01a16740-a15e-7b21-92a2-ba69f61ba826,01a16740-a15e-7ae2-aed0-e73f9bb9f4c7,01a16740-a15e-7f97-916c-5ba2a1c6bd39,01a16740-a15e-7fdc-b841-83b3ce0538be,01a16740-a15e-7dbb-a5cd-b036df03ca47,01a16740-a15e-7482-8134-a70fa01dea12,01a16740-a15e-79b6-b454-b5054e6d9535,01a16740-a15e-78a9-b1e5-34e22e3b2e0d,01a16740-a15e-7377-b0b9-30716e8bb675,01a16740-a15e-7fd9-b6b0-0b71fca87ee8,01a16740-a15e-7823-b681-e676672fdab1,01a16740-a15e-7e98-ba74-789e23528ad9,01a16740-a15e-7948-8dfb-45609df26cca,01a16740-a15e-76ba-b832-d1aa18ece10e,01a16740-a15e-7773-a470-63465a24a84c,01a16740-a15e-7b34-8a95-cf3708e363c5,01a16740-a15e-775c-a284-5560163389da,01a16740-a15e-7e42-94f0-d379adc0a230,01a16740-a15e-791d-a1c8-5713d2dc2aeb,01a16740-a15e-7b55-8e94-b590f1afd388,01a16740-a15e-7474-b184-c2e43d40489e,01a16740-a15e-7598-844f-4fa051b67cdd,01a16740-a15e-7ae5-8d5a-f64197fe6549,01a16740-a15e-7aaa-b437-64635d3fc62b,01a16740-a15e-70a5-8c2a-c3c457da969a,01a16740-a15e-79bd-8dfd-b2a6694a9948,01a16740-a15e-7a05-a571-0df7ba9ee4ef,01a16740-a15e-7566-af8b-722d98a5dcc7,01a16740-a15e-750d-acf0-c11c22b4bc50,01a16740-a15e-75c2-95dd-9b7db53b545c,01a16740-a15e-760a-b5b3-ca99b826958e,01a16740-a15e-7695-919e-831914c65b70,01a16740-a15e-78e7-acfe-5af634dda3f0,01a16740-a15e-7732-b6e9-df8baecb8639,01a16740-a15e-7fc3-934c-bac3ca0329f5,01a16740-a15e-7d7b-bd58-c4af02f32555,01a16740-a15e-7e31-ac8d-be24fe11cb58,01a16740-a15e-76e1-837a-7bd3de1967b6,01a16740-a15e-76de-a9b1-b6f866266a35,01a16740-a15e-7fc1-9e22-25badc4baaa7,01a16740-a15e-7a22-bd9a-120d81a4a7ae,01a16740-a15e-7332-bff7-1930579a3dde,01a16740-a15e-7235-84ab-eb1fff1f8dd4,01a16740-a15e-7335-8c9d-13ed3a0b0a48,01a16740-a15e-7238-b470-050bcb3408fa,01a16740-a15e-7743-bf1d-6ef7bff62b4c,01a16740-a15e-7607-a661-f4428b8a2021,01a16740-a15e-741c-b9c3-6c04f944509c,01a16740-a15e-710b-b363-af25507b7536,01a16740-a15e-750a-840b-79fb45001f69,01a16740-a15e-7ca0-8bb8-cd8bec4ea19e,01a16740-a15e-747c-bc6e-8d173e365f22,01a16740-a15e-774a-8329-035e7b59411e,01a16740-a15e-7377-a7de-7aa11005892f,01a16740-a15e-7e7c-bc85-45d68c089b1c,01a16740-a15e-74a1-b22d-bb43e9e92fc0,01a16740-a15e-7a39-bd12-bea460bd0e9c,01a16740-a15e-7b2e-bc4d-756afac38b36,01a16740-a15e-7bbb-b5ec-ec169b4bdc59,01a16740-a15e-76e5-b551-45451e5a356c,01a16740-a15e-799f-b32d-29e0e531faa6,01a16740-a15e-7112-84d1-b57e83a3681f,01a16740-a15e-769d-8d27-2cb2793052b2,01a16740-a15e-7858-9a4f-2efd9efe0d04,01a16740-a15e-7a98-baee-e60bdc967dff,01a16740-a15e-775e-873b-4ad359604d5a,01a16740-a15e-7adf-b6b6-76b52a55e519,01a16740-a15e-78bc-b4bf-c7184de3e8e5,01a16740-a15e-73d6-9414-fb5e01618031,01a16740-a15e-747f-8e8c-2490dfed1c79,01a16740-a15e-7196-bc5c-9ade65003ce8,01a16740-a15f-7c66-af42-096cb46b40a7,01a16740-a15f-7e67-a740-8d754e8f22de,01a16740-a15f-7709-9f77-1a4bf2ba3d07,01a16740-a15f-733b-ae50-c6589972576c,01a16740-a15f-7d31-ab2c-1a224251fa06,01a16740-a15f-7e4b-8226-225097d4e757,01a16740-a15f-7fb4-8a4f-d88038022e19,01a16740-a15f-7f22-8328-821552ce7f49,01a16740-a15f-78a8-b40d-98da7023bad3,01a16740-a15f-782f-878c-4dde5894f846,01a16740-a15f-7c87-9651-590cd2e9cf6a,01a16740-a15f-74d2-b03a-963f7e84d32d,01a16740-a15f-77e6-a658-f8feb0d9054f,01a16740-a15f-7d6c-b027-6bbaf66e158d,01a16740-a15f-7c06-8792-7fa424644bdc,01a16740-a15f-7900-8763-b4427ba55139,01a16740-a15f-756d-93a5-ce34f1bfc039,01a16740-a15f-7693-9968-c3e94853065d,01a16740-a15f-7add-a4d2-a8fb9170454a,01a16740-a15f-7888-8a25-4529b52579d4,01a16740-a15f-7e7b-b097-ca24bf7028da,01a16740-a15f-7dd4-a4bf-d27c59e29ddb,01a16740-a15f-7b12-8b44-9b70a0535a05,01a16740-a15f-7c75-b797-449775c37857,01a16740-a15f-7564-8fe2-6680a498a3a5,01a16740-a15f-7f8d-8147-66c1ccf6cc2c,01a16740-a15f-7449-835f-30f891646fcd,01a16740-a15f-74ce-819e-39424135d4a4,01a16740-a15f-7cd2-91c5-ad7666836708,01a16740-a15f-75e4-9b6d-af6fc674ac13,01a16740-a15f-700b-92a6-ba991ebd5ae1,01a16740-a15f-7c9a-baa5-36f6e9a0ac69,01a16740-a15f-7b37-bd61-37c570dcaa44,01a16740-a15f-7ebc-920d-2f2316f185c7,01a16740-a15f-7dbc-895d-e039fb7eb436,01a16740-a15f-759d-ba33-dd617520c3e4,01a16740-a15f-7cfb-a56b-e9d530b8ba74,01a16740-a15f-77ea-b4e2-facd84afdf24,01a16740-a15f-74ff-b24c-93190194adcd,01a16740-a15f-77e8-ae67-faeb69c982b6,01a16740-a15f-74a5-918c-304dac8440de,01a16740-a15f-77eb-ac9d-f548c496cc39,01a16740-a15f-7130-a086-86418816026b,01a16740-a15f-7004-8ea1-a37fcfbd7d52,01a16740-a15f-7a8c-a3a6-4c403fa9b652,01a16740-a15f-705c-994e-142686638767,01a16740-a15f-74ce-a140-47eccfadd18b,01a16740-a15f-7e7b-a820-96aa7c2bae61,01a16740-a15f-70b8-9bfe-f3874e892f32,01a16740-a15f-7f5e-a40e-ea5a231165a3,01a16740-a15f-7a04-9159-53d464766153,01a16740-a15f-74fd-9774-3ad004fc7c74,01a16740-a15f-727a-97da-808ff79b7f3a,01a16740-a15f-75d4-8826-396d7ca496bb,01a16740-a15f-7044-8f5a-662f234d3a68,01a16740-a15f-7265-a019-99b887cb1ea0,01a16740-a15f-71ca-85ad-1480351956fe,01a16740-a15f-73d8-a771-6e6f1703af61,01a16740-a15f-709d-9992-7c4f7698b6c0,01a16740-a15f-72a9-970e-614b1d70d43c,01a16740-a15f-7ec3-9e39-b2f3d4460824,01a16740-a15f-7d72-bd68-38e693d39605,01a16740-a15f-7f01-910e-ec2c52ef0e54,01a16740-a15f-7630-a22d-ee300c2d990c,01a16740-a15f-7e1d-982e-8568cf9ebe8f,01a16740-a15f-7b4f-be96-9e8e8298dc34,01a16740-a15f-7502-8093-9881c62364be,01a16740-a15f-70c2-9f17-4d6a2a5c8429,01a16740-a15f-7d83-811c-601b04c6ecd0,01a16740-a15f-7941-a0ab-997f62a4028e,01a16740-a15f-7019-bc24-f295bb1d1d26,01a16740-a15f-7329-b75b-4e5b0aca3805,01a16740-a15f-7e2d-b838-38b9b2727b22,01a16740-a15f-7577-b7bf-74b64aed7e2c,01a16740-a15f-7f34-8056-cc9770ae9657,01a16740-a15f-7988-ad9c-7b70ac229ace,01a16740-a15f-7ac8-921c-44a1e95c83e3,01a16740-a15f-767c-8d4b-b948ec5d976a,01a16740-a15f-79bf-b526-1591267511d0,01a16740-a15f-7980-9a71-f38ba3708669,01a16740-a15f-7e04-959a-6f4e48150fca,01a16740-a15f-7190-ab91-8b8d7cdcc015,01a16740-a15f-7303-a4c0-3bbe0145f449,01a16740-a15f-7a28-95bb-ba78a3097236,01a16740-a15f-7ca5-a675-c9158ccc5fe8,01a16740-a15f-73a3-b38d-6d1759351fb8,01a16740-a15f-791b-9d7f-afe48a2c0ea6,01a16740-a15f-7c0e-a6d5-b319645c8a17,01a16740-a15f-7e37-8fec-0a2d2332cf82,01a16740-a15f-7e24-8a30-aa4f511882bd,01a16740-a15f-7246-86b5-6ae246c05ac9,01a16740-a15f-7920-b430-efa5576956c7,01a16740-a15f-7cc1-abad-96faba09f598,01a16740-a15f-73cd-a546-5d9391296cd7,01a16740-a15f-7db0-975b-0b6d28ec83b6,01a16740-a15f-7dfb-a52e-43f8f2ef7256,01a16740-a15f-709c-9acb-d3d0ad821a5a,01a16740-a15f-7e71-8b3f-97a2ff1d6d12,01a16740-a160-7510-af04-c211993d5631,01a16740-a160-7eb7-ab8f-dbeb7ac775a9,01a16740-a160-7922-878f-db767064b729,01a16740-a160-7e26-991b-6d53bd345cbe,01a16740-a160-7da9-9b8b-25789026e5fe,01a16740-a160-76ee-83d8-2e6b51f328e3,01a16740-a160-7042-918e-da6cc5c6cf92,01a16740-a160-73a3-a6ac-55713141a4b8,01a16740-a160-7343-92a2-8ac7605d4e2a,01a16740-a160-7fcc-b71f-1965cfa18d05,01a16740-a160-71a9-9880-0fa0623c32ec,01a16740-a160-7b78-8ff8-795ea1c2c9ff,01a16740-a160-7099-b9cf-d3f74f770b35,01a16740-a160-7c64-8c9f-70b2845b1a14,01a16740-a160-700d-beae-d9fc08e5668b,01a16740-a160-77ed-9ca9-08e4ab408eca,01a16740-a160-7cef-a12c-b453df6d8ee9,01a16740-a160-7012-989f-445c10cceb9c,01a16740-a160-7762-94e0-0bffd81eb300,01a16740-a160-71e5-8844-a5de25e51c15,01a16740-a160-7333-9a24-90ccc7d6dfb7,01a16740-a161-7843-97ff-66e16bf39dfa,01a16740-a161-7492-8677-fbebe1ce0bbe,01a16740-a161-7fef-af01-0b9b7c63f119,01a16740-a161-77c3-ae0f-5c4575c6bdde,01a16740-a161-72bd-8feb-def190cbe230,01a16740-a161-77c4-9527-53c106429360,01a16740-a161-75fe-8985-5118e92e1a94,01a16740-a161-760b-b835-a3714ec6c3df,01a16740-a161-7341-a055-71f17c0b3d9f,01a16740-a161-7da1-be30-15e46240c6e6,01a16740-a161-7099-8363-42398bfea4f5,01a16740-a161-7d3e-a914-9d506aa23db5,01a16740-a161-7337-bdd0-44cd55cf9be1,01a16740-a161-7b97-82b9-33e5387d218e,01a16740-a161-75cf-8599-fdd0b95079fb,01a16740-a161-776f-8539-7d7875147f86,01a16740-a161-7417-bdf3-7c8526a28b6f,01a16740-a161-7a79-af7e-d3252eefb969,01a16740-a161-767a-844e-bfd33caf4048,01a16740-a161-7dd7-ab3d-c0ebf64c6e9c,01a16740-a161-7724-8345-f5d6ca2f3a90,01a16740-a161-73c1-bc1c-866cef3969f8,01a16740-a161-7e29-a2c1-87e6647c2be7,01a16740-a161-737c-90ec-0923c7448f79,01a16740-a161-773b-aa25-eb2a2be173b2,01a16740-a161-7ecf-81fd-ce07b5aa7bdb,01a16740-a161-7553-8396-d9b6a5b21f23,01a16740-a162-7455-bbf0-0f5666690b08,01a16740-a162-7e70-b184-64c8a1bfde56,01a16740-a162-7f11-a84e-b67463d1cd6f,01a16740-a163-79ef-bd8f-9236b4a20f06,01a16740-a163-7f9e-af50-c7228ad51dbb,01a16740-a163-7970-b054-7ad0e3f98dcc,01a16740-a163-7722-8df0-595b9e44c6d1,01a16740-a163-7ad7-8f33-03970f7ff7f0,01a16740-a163-7881-88b0-08a223d94b21,01a16740-a163-7c30-ab04-e0b9e67720af,01a16740-a163-7658-b99e-be16ef804c4a,01a16740-a163-75e5-8eac-d0238859925e,01a16740-a163-7bff-8c50-099686e98004,01a16740-a163-7c08-ada7-7442bce5458a,01a16740-a163-733c-ba07-c274e0d1435a,01a16740-a163-7d13-b42f-b503f54389c7,01a16740-a163-7a2d-914a-554b2dcd4d2f,01a16740-a163-7830-96f4-5147c1de098b,01a16740-a163-7c38-8400-7ac23fa22940,01a16740-a163-7e19-bbcb-779852828eed,01a16740-a163-7aa0-97e6-ef8bf1f5da9b,01a16740-a163-7b72-8e1d-401285ef3869,01a16740-a163-7d8c-a93f-b79652cbaa3a,01a16740-a163-754b-83d2-3096d33fd4d3,01a16740-a163-7778-9699-0d2f2880a59e,01a16740-a163-7e82-812c-749fdab49f67,01a16740-a163-7e22-ac41-281996395d1a,01a16740-a163-742a-8bd4-eba2852b6289,01a16740-a163-7803-a2a2-84e8a6f11b5a,01a16740-a163-7b72-9a14-82e33bef4af0,01a16740-a163-71a1-9489-8e0b49656a54,01a16740-a163-74f3-9126-a294adacf79f,01a16740-a163-755e-b027-6ec9a524eab1,01a16740-a163-74a8-b99c-ab59436ad515,01a16740-a163-7f27-a5e0-58d5347b44ff,01a16740-a163-7a59-815e-30e27351294f,01a16740-a163-7638-bcec-52354ed9a0a7,01a16740-a163-70b0-85a0-e35c1e848601,01a16740-a163-74fa-a39e-9ba01a912a97,01a16740-a163-7f57-8a67-78a98ffd9ab2,01a16740-a163-74c3-91fb-8505ce790440,01a16740-a163-7800-84ca-b93fc1ca9199,01a16740-a163-7564-886d-31a92a88dc18,01a16740-a163-711f-b217-ffb61f5e7018,01a16740-a163-7ad7-8f58-2f379b3a02cc,01a16740-a163-7fe7-8150-459cde334c5a,01a16740-a163-73ce-b6d9-bc5dc8d1b153,01a16740-a163-7e39-bf20-202a7ef84f40,01a16740-a163-7f3a-9b96-7bc1ab03d154,01a16740-a163-75e6-b9ac-ff1aafbf2069,01a16740-a163-7d4b-89fc-6b3da0329013,01a16740-a163-717f-ba3b-5096a9981d47,01a16740-a163-7092-ab10-7cee85a62e1d,01a16740-a163-7de0-9211-107bd7a6aa1b,01a16740-a164-761b-8eb0-55c78f16eb4c,01a16740-a164-7faa-a4d4-30feedbd7f02,01a16740-a164-7279-a270-c5fe9e3b129c,01a16740-a164-75d8-aa99-006fc3cbb404,01a16740-a164-73cc-81ac-49a057adf1cf,01a16740-a164-7e0c-8bce-93ef5e2bcbaa,01a16740-a164-7521-bfa9-d312d9182c7b,01a16740-a164-78e3-806e-b8e8e06b9465,01a16740-a164-7cc0-8228-65bd5dd2d7b7,01a16740-a164-7a15-bb19-70907cdc1105,01a16740-a164-788b-925e-296a5777d8bb,01a16740-a164-714f-9c2b-8c3e2f7c07c8,01a16740-a164-7e14-a822-98a0b8ac1a13,01a16740-a164-7855-ae0d-e11dc4f0ebde,01a16740-a164-797c-ae53-668b55077ba1,01a16740-a164-75c0-af20-dbc8c97b9026,01a16740-a164-7530-93ff-9b3f303b74f4,01a16740-a164-79c4-ba1b-234fbf24d17b,01a16740-a164-743a-bf96-f5271effdcd9,01a16740-a164-7a2c-aaa9-3ec7688edce3,01a16740-a164-750b-bfba-6aeb39b67477,01a16740-a164-7afb-830b-0dcf0755f3d3,01a16740-a164-72eb-a102-4454622d5006,01a16740-a164-7351-bcc8-609856247095,01a16740-a164-7ab3-8b34-ed00af063293,01a16740-a164-71e4-ad72-1f9cb765fad9,01a16740-a164-7100-aefd-508a565dee16,01a16740-a164-7b06-9d55-abbe7f8acd86,01a16740-a164-7cd3-83ca-04912e6fcc71,01a16740-a164-78d5-905d-3b8615f1463b,01a16740-a164-7b7f-b333-1d8ae2c0c920,01a16740-a164-7aa0-a4a0-7969cb28fd52,01a16740-a164-7524-a664-692390264655,01a16740-a164-7150-bca3-c29d95a6b156,01a16740-a164-7196-b282-90b92fc8d8fc,01a16740-a164-7879-ad68-264fe19b115b,01a16740-a164-7960-9e31-b7f39be29fa2,01a16740-a164-70fe-a17e-5bea1c9ece83,01a16740-a164-7197-bf6b-71def3d3d03d,01a16740-a164-7a3d-a400-4627377941f7,01a16740-a164-7a22-a287-6be536579327,01a16740-a164-76fa-91b0-bed7e41814f2,01a16740-a164-7207-a4c8-25733bfb6abf,01a16740-a164-7719-b165-87f679ee4892,01a16740-a164-7bc1-bb96-b91cb6992549,01a16740-a164-7ded-a4dd-01d25705334c,01a16740-a164-7ce2-a837-0614f053c794,01a16740-a164-7abe-83ef-679d0d626f05,01a16740-a164-7450-bb8a-1c74857e8758,01a16740-a164-76ad-afbc-ee4c16786bb9,01a16740-a164-73f8-827c-061c8059d8b7,01a16740-a164-7b45-81d1-29236c7a6967,01a16740-a164-7f1b-bf0c-ed5b4636cd24,01a16740-a164-78f1-a62c-e5667d177a70,01a16740-a164-703a-88e6-06619db9dfca,01a16740-a164-77b4-9835-a5001d3f1f25,01a16740-a164-7994-a2d6-756bbcf4708a,01a16740-a164-714b-bb63-0272e00188ab,01a16740-a164-7f88-9f07-8d55dbf4dc4e,01a16740-a164-73d7-8111-141dcebb3ab4,01a16740-a164-7b0f-96cc-16e5640dc5c8,01a16740-a164-7d0e-b305-9087241b51b7,01a16740-a164-726e-b62e-a7692d603112,01a16740-a164-73d1-9793-b608620a3b24,01a16740-a164-71db-a40a-fee5a173a0dd,01a16740-a164-7b4a-83c6-131ca95cc583,01a16740-a164-7e91-8a9e-c89d14f5488b,01a16740-a164-7a6a-ad2e-e6786bc59389,01a16740-a164-7ad8-90e8-6ef94d41a8dc,01a16740-a164-7a75-8202-c99b9cca7dde,01a16740-a164-71d2-99d3-d10742cc9f6f,01a16740-a164-747e-8198-15a42a8c3fe1,01a16740-a164-7565-b592-ed136da75a0c,01a16740-a164-7028-a737-0a29dceabaa2,01a16740-a164-74d9-8b97-0ba12574e549,01a16740-a164-719b-89d2-a728974644f6,01a16740-a164-7485-8330-4f05c1f392a3,01a16740-a164-7b0e-b5d4-395d45846986,01a16740-a164-72c8-88b9-f9491896706b,01a16740-a164-7909-ae21-2dccd5b6d3fe,01a16740-a164-7ff3-b254-a4094c159944,01a16740-a164-75c8-976c-7c073c8fea5e,01a16740-a164-79da-b4e6-2da410c33756,01a16740-a164-7c1c-bc85-af416e1da453,01a16740-a164-7b74-af92-1af642accc54,01a16740-a164-74e2-85f3-f0286816ad63,01a16740-a164-7b29-80bc-705ccee43ab2,01a16740-a164-7cf1-81ac-904276b5d00b,01a16740-a164-7c94-a978-4f6be5e2460e,01a16740-a164-76f5-ade6-9afec075f2bb,01a16740-a164-7979-b49f-08e00412c7a0,01a16740-a164-7d0d-95d0-a9bc60d7f4dc,01a16740-a164-76f7-9bfa-4b86916b0ff7,01a16740-a164-71e7-a05e-4b219713f640,01a16740-a164-7a95-aca7-d77aa3da3c03,01a16740-a164-7d49-bc7f-d95425981c0f,01a16740-a164-73e3-8f49-aa248120767c,01a16740-a164-7f41-af34-5ca335d5ecbd,01a16740-a164-793b-848f-ae59f046561f,01a16740-a164-75a5-88cd-f014ed3c3d00,01a16740-a164-76e2-bb7c-32ebabba98c4,01a16740-a164-7f62-9692-335d5451da65,01a16740-a164-7906-aa2a-b4327c832276,01a16740-a164-7580-9595-efc2fa89336a,01a16740-a164-7a72-b284-f80cca5bbe5d,01a16740-a164-75fe-b2bb-df22773afd82,01a16740-a164-7677-860c-d12f4422ee70,01a16740-a164-7c4e-b562-a57339c792bd,01a16740-a164-7240-b50c-33b48e3c54f8,01a16740-a164-7076-a669-c3c00a939305,01a16740-a164-7f11-b29b-2c49efa15dcc,01a16740-a164-7ea1-b5e0-b58b363e3a75,01a16740-a164-7c4e-96f9-66a38e80767b,01a16740-a164-7024-9884-b70d8a98ea2a,01a16740-a164-7191-9b50-b8d3c5e6edc8,01a16740-a164-7a1f-8a1d-18a0a73a75cc,01a16740-a164-769a-8e50-fbb1e0993e31,01a16740-a164-7418-af18-945178c9c2e9,01a16740-a164-71b8-b328-6e0fbfb2af5b,01a16740-a164-705d-a227-d936a7848784,01a16740-a164-7579-b6b3-ec2ff79bec08,01a16740-a164-72e5-81fa-bdc279d511dd,01a16740-a164-7356-bfbe-83882dc03533,01a16740-a165-7adc-a56d-c75b3c95c147,01a16740-a165-7eee-a23a-6ba5799deebf,01a16740-a165-73cc-a66c-16bdf8d3774a,01a16740-a165-722b-99cf-051ba61ee98f,01a16740-a165-7e2e-840a-5b812c2883a4,01a16740-a165-759f-a925-532e0cd3955f,01a16740-a165-763b-9ba1-824cf5d0e22e,01a16740-a165-7c41-a7c7-51a8d385215a,01a16740-a165-79c8-862d-3608825fd165,01a16740-a165-7fee-b7f1-ff11445b7075,01a16740-a165-76d1-9a74-c26ad7a8ea66,01a16740-a165-791b-ab95-69b814d340f1,01a16740-a165-7c34-8f65-da1198ad5384,01a16740-a165-7a3e-bf4e-bf1d26a19745,01a16740-a165-7b32-bce1-04b144c0e728,01a16740-a165-7154-9bed-fc6cebd54bfd,01a16740-a165-7b05-9d25-fe6b5b149c89,01a16740-a165-7f0d-a5f9-2ee2ce65bf50,01a16740-a165-7d75-9c1a-57ef46e74c17,01a16740-a165-750d-b0a3-94dccd50221f,01a16740-a165-7292-b918-303153a5991e,01a16740-a165-72ef-9271-2a4c023a756a,01a16740-a165-710f-91f1-1260754bda14,01a16740-a165-7cc9-9fe5-82bde80af504,01a16740-a165-7def-bb8a-6925006f90be,01a16740-a165-7c21-a41f-c71b1744d36f,01a16740-a165-7dc7-a8b4-208d142a6c63,01a16740-a165-778f-bf41-e3dd3c672e17,01a16740-a165-7473-a231-d723698ae2e7,01a16740-a165-7525-aef8-d927b02aebb4,01a16740-a165-7a2c-82df-c2c2ef637656,01a16740-a165-7fc3-ac64-41ae286125dc,01a16740-a165-7ca4-a924-8b739b8d8ccc,01a16740-a165-7dcd-bfd5-e0a797a8dcf0,01a16740-a165-7087-b0cf-c33505ace507,01a16740-a165-7e38-9cc0-5ed65453cba8,01a16740-a165-7cd5-8fb2-1ddf2cd136df,01a16740-a165-7f0b-81cb-b5c7371579aa,01a16740-a165-7335-b8e2-1d9c2eabea3b,01a16740-a165-7d84-b543-52586a9f581d,01a16740-a165-7453-92aa-13fbddb793a5,01a16740-a165-7b63-84ae-821d19cc1ddc,01a16740-a165-7ca5-895c-0b6a81190087,01a16740-a165-7758-8169-5ab981cd164b,01a16740-a165-740f-81a4-af6bf635f10c,01a16740-a165-734e-8a06-aa28a97a68f3,01a16740-a165-78d8-aeb2-9f607eef0efd,01a16740-a165-780a-93d2-ae0351bd37da,01a16740-a165-716a-9cde-f332458b582a,01a16740-a165-7c34-b74f-89420c8f60bd,01a16740-a165-7d38-9104-bd126c90dad3,01a16740-a165-7a86-9c37-c4bbbde25084,01a16740-a165-70f1-8135-1f11bebf64a7,01a16740-a165-7803-9733-855d0c422041,01a16740-a165-7cb2-a20f-4efe2f4591e1,01a16740-a165-79c6-92ab-44f5d1aa3f1d,01a16740-a165-7a27-baf9-4df4079704e4,01a16740-a165-7ac0-8c3f-974f2ae3445a,01a16740-a165-7323-a377-89af87ccd8d3,01a16740-a165-72e0-b31c-c4ce0bc7c808,01a16740-a165-70b7-be00-0f1064281fe2,01a16740-a165-7eb1-a995-42ae7c42bce6,01a16740-a165-718d-8d72-e83ca8ea0145,01a16740-a165-7bd7-a671-ee441b10c499,01a16740-a165-7186-88bd-e8bed76b04f6,01a16740-a165-7279-9d9b-f7df621fbf80,01a16740-a165-78dc-9a1b-57f7de5dc507,01a16740-a165-7557-bca0-167d3535bea2,01a16740-a165-79a0-acc1-f2d0766ecd61,01a16740-a165-7374-a797-e5caa148ae50,01a16740-a165-71b2-a310-215d66f63274,01a16740-a165-7593-b1a2-b4a067892966,01a16740-a165-772c-8221-afdb6e11cb71,01a16740-a165-7605-9f60-91798f1bb990,01a16740-a165-7001-b629-db03254e12e2,01a16740-a165-79f0-9698-8a1695e8f702,01a16740-a165-773e-998f-5327e8d7ed39,01a16740-a165-7838-a2d0-b49c73ac6a61}'::uuid[])))"
+                                  },
+                                  {
+                                    "Node Type": "Hash",
+                                    "Parent Relationship": "Inner",
+                                    "Parallel Aware": false,
+                                    "Async Capable": false,
+                                    "Startup Cost": 42.0,
+                                    "Total Cost": 42.0,
+                                    "Plan Rows": 1000,
+                                    "Plan Width": 97,
+                                    "Plans": [
+                                      {
+                                        "Node Type": "Seq Scan",
+                                        "Parent Relationship": "Outer",
+                                        "Parallel Aware": false,
+                                        "Async Capable": false,
+                                        "Relation Name": "rag_sourcedocument",
+                                        "Alias": "w1",
+                                        "Startup Cost": 0.0,
+                                        "Total Cost": 42.0,
+                                        "Plan Rows": 1000,
+                                        "Plan Width": 97,
+                                        "Filter": "((NOT is_deleted) AND (NOT is_revoked) AND (knowledge_base_id = 1) AND (tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid))"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "Node Type": "Materialize",
+                                "Parent Relationship": "Inner",
+                                "Parallel Aware": false,
+                                "Async Capable": false,
+                                "Startup Cost": 0.14,
+                                "Total Cost": 8.17,
+                                "Plan Rows": 1,
+                                "Plan Width": 274,
+                                "Plans": [
+                                  {
+                                    "Node Type": "Index Only Scan",
+                                    "Parent Relationship": "Outer",
+                                    "Parallel Aware": false,
+                                    "Async Capable": false,
+                                    "Scan Direction": "Forward",
+                                    "Index Name": "artifacts_d_tenant__234aca_idx",
+                                    "Relation Name": "artifacts_deletiontombstone",
+                                    "Alias": "u0",
+                                    "Startup Cost": 0.14,
+                                    "Total Cost": 8.16,
+                                    "Plan Rows": 1,
+                                    "Plan Width": 274,
+                                    "Index Cond": "(tenant_id = '01a16740-a128-71ef-8827-8907a0b1c3bb'::uuid)"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
