@@ -1,7 +1,7 @@
 FROM python:3.12-slim AS backend
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
-COPY requirements.txt requirements.production.txt ./
+COPY requirements.txt requirements.production.txt requirements.embeddings.txt ./
 RUN pip install --no-cache-dir -r requirements.production.txt
 COPY manage.py ./
 COPY modelanvil ./modelanvil

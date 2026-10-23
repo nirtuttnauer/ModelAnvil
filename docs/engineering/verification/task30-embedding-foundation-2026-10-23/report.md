@@ -28,6 +28,7 @@ The owned build `01a166e8-2c05-7fa8-acef-8a957152c668` published index `01a166e8
 - Final clean base access/retrieval/OpenAPI/broker/executor regression checks: 32 tests, three optional skips, passed. They include the existing knowledge-base grant regression; lexical indexes retain inherited knowledge-base access.
 - Final required PostgreSQL suite: 12 tests, no skips, passed with real RabbitMQ and model inference. Its CI job installs CPU embeddings and the fixed public cache, then runs offline inference against Postgres plus RabbitMQ.
 - Frontend: 226 tests, production build and Storybook build passed. Actual UI evidence is separate from build success.
+- The production image now includes the optional embedding requirements manifest needed to fingerprint the runtime. Final isolated Docker HTTPS integration passed migration refusal, deployment settings, redirect, authenticated browser session and restart persistence checks; the base image still installs only base/production packages.
 - Migration drift/system checks passed. The native-vector migration applied successfully to fresh PostgreSQL; the full backend suite also applied it in SQLite without requiring optional inference packages in the base runtime.
 - Dependency audit resolved 39 packages from `requirements.embeddings.txt`; no known vulnerabilities. [Audit receipt](dependency-audit.json). This does not waive the separately tracked optional DiskCache issue in TASK-74.
 
