@@ -1,0 +1,5582 @@
+{
+  "schema": "modelanvil.retrieval-controls.v1",
+  "commit": "415abbfe29a04309c9e273589418be7c628b89d4",
+  "protocol": {
+    "version": "scifact-bounded-source-groups-v1",
+    "queries_per_split": 20,
+    "document_count": 200,
+    "split_rule": "Union claims' cited/positive document IDs; one component per source group. Even first SHA256 byte of group ID is development; odd is held_out. Select first20 queries per role by SHA256(query:id).",
+    "corpus_rule": "Include all positive documents for selected queries, then SHA256(document:id)-ordered distractors to200. No metric/model-based sampling.",
+    "cutoff_documents": 5,
+    "candidate_chunks": 20,
+    "chunk_size": 254,
+    "chunk_overlap": 16,
+    "max_chunks": 1000,
+    "random_seed": 69,
+    "random_vectors": "Independent seeded Gaussian unit vectors for each chunk and query; 384 dimensions; no text semantics.",
+    "lexical": "Production PostgreSQL simple tsvector / websearch_to_tsquery / ts_rank_cd, no held-out tuning. Conjunctive query semantics may underfill; report coverage.",
+    "primary_metric": "ndcg@5",
+    "development_rule": "Freeze minimum relevance as maximum development random/full-text nDCG@5. Choose smallest ef_search achieving development raw ANN recall>=0.95 across all declared filters; otherwise fail.",
+    "held_out_rule": "Real model must exceed each control's held-out nDCG@5 and the frozen development minimum. No retry or selection based on held-out scores.",
+    "ann_cutoff_chunks": 10,
+    "ef_search": [
+      10,
+      40,
+      100
+    ],
+    "ann_filter_percent": [
+      100,
+      25,
+      5
+    ],
+    "ann_queries_per_split": 5,
+    "ann_raw": "Disable exact underfill fallback only for ANN measurements; production default still uses exact fallback. Compare chunk neighbors against exact SQL, independently of relevance qrels.",
+    "limits": "Bounded source-group subset, not the complete SciFact benchmark or evidence of uncontaminated model pretraining. Query splits are operator-held-out public data, not the original benchmark test split."
+  },
+  "frozen_input_digest": "a599e5f1214aebcd89db2f69719b70c3771173a63e813dd8c10d657dcf663578",
+  "corpus_pins": {
+    "dataset": "SciFact original publisher release",
+    "url": "https://scifact.s3-us-west-2.amazonaws.com/release/latest/data.tar.gz",
+    "sha256": "11c621288d41ac144d29b13b0f8503b3820b7d6e8b1f6ff24dff335c196d76be",
+    "byte_size": 3115079,
+    "license_url": "https://raw.githubusercontent.com/allenai/scifact/a5254a1bf108726a1704d8e191b8a7f2225a029f/LICENSE.md",
+    "license_sha256": "56ee69bc639cbab8f0b2e4b67091ec5e9390aa99a1d65f0a35e4274686c9a806",
+    "claims_license": "CC-BY-4.0",
+    "corpus_license": "ODC-By-1.0",
+    "citation": "Wadden et al. (2020), Fact or Fiction: Verifying Scientific Claims, EMNLP 2020, doi:10.18653/v1/2020.emnlp-main.609",
+    "members": [
+      "data/corpus.jsonl",
+      "data/claims_train.jsonl",
+      "data/claims_dev.jsonl"
+    ]
+  },
+  "documents": 200,
+  "chunks": 412,
+  "model_pins": {
+    "model": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "license": "apache-2.0",
+    "dimension": 384,
+    "normalized": true,
+    "max_tokens": 256,
+    "files": {
+      "config.json": {
+        "sha256": "953f9c0d463486b10a6871cc2fd59f223b2c70184f49815e7efbcab5d8908b41",
+        "byte_size": 612
+      },
+      "model.safetensors": {
+        "sha256": "53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db",
+        "byte_size": 90868376
+      },
+      "tokenizer.json": {
+        "sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+        "byte_size": 466247
+      },
+      "tokenizer_config.json": {
+        "sha256": "acb92769e8195aabd29b7b2137a9e6d6e25c476a4f15aa4355c233426c61576b",
+        "byte_size": 350
+      },
+      "special_tokens_map.json": {
+        "sha256": "303df45a03609e4ead04bc3dc1536d0ab19b5358db685b6f3da123d05ec200e3",
+        "byte_size": 112
+      },
+      "modules.json": {
+        "sha256": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf",
+        "byte_size": 349
+      },
+      "sentence_bert_config.json": {
+        "sha256": "fc1993fde0a95c24ec6c022539d41cf6e2f7c9721e5415d6fb6897472a9cd4b7",
+        "byte_size": 53
+      },
+      "1_Pooling/config.json": {
+        "sha256": "4be450dde3b0273bb9787637cfbd28fe04a7ba6ab9d36ac48e92b11e350ffc23",
+        "byte_size": 190
+      },
+      "config_sentence_transformers.json": {
+        "sha256": "061ca9d39661d6c6d6de5ba27f79a1cd5770ea247f8d46412a68a498dc5ac9f3",
+        "byte_size": 116
+      }
+    }
+  },
+  "runtime": {
+    "sentence-transformers": "6.2.0",
+    "torch": "2.13.0",
+    "transformers": "5.14.0",
+    "tokenizers": "0.22.2",
+    "safetensors": "0.8.0",
+    "numpy": "2.3.3",
+    "huggingface-hub": "1.33.0",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1",
+    "joblib": "1.6.0",
+    "threadpoolctl": "3.7.0",
+    "cloudpickle": "3.1.2",
+    "narwhals": "2.27.1",
+    "architecture": "arm64",
+    "device": "cpu"
+  },
+  "hardware": {
+    "system": "Darwin",
+    "release": "27.0.0",
+    "architecture": "arm64",
+    "processor": "arm",
+    "cpu_threads": 1,
+    "gpu_used": false
+  },
+  "database": {
+    "postgresql": "16.15 (Debian 16.15-1.pgdg12+2)",
+    "pgvector": "0.8.7"
+  },
+  "index_parameters": {
+    "m": 16,
+    "ef_construction": 64,
+    "ef_search": 100,
+    "iterative_scan": "strict_order",
+    "max_scan_tuples": 20000
+  },
+  "qrels_digest": "71d340ae751b5eb80971479d71545d342467d5664c8208e8559adc8472495e11",
+  "development": {
+    "real": {
+      "queries_total": 20,
+      "queries_judged": 20,
+      "cutoff": 5,
+      "metrics": {
+        "recall@5": 1.0,
+        "precision@5": 0.24000000000000005,
+        "hit@5": 1.0,
+        "mrr@5": 0.975,
+        "ndcg@5": 0.982545
+      },
+      "queries": [
+        {
+          "query_id": "71",
+          "retrieved_documents": [
+            "1127562",
+            "14338915",
+            "7370282",
+            "10704438",
+            "23195302"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "1050",
+          "retrieved_documents": [
+            "19878070",
+            "4687948",
+            "3899896",
+            "9555784",
+            "33409100"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "1055",
+          "retrieved_documents": [
+            "13906581",
+            "8582337",
+            "4824840",
+            "12770738",
+            "3552753"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "1290",
+          "retrieved_documents": [
+            "4687948",
+            "19878070",
+            "9555784",
+            "3903084",
+            "12869200"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "68",
+          "retrieved_documents": [
+            "21295300",
+            "25251625",
+            "10704438",
+            "36831892",
+            "5395426"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "250",
+          "retrieved_documents": [
+            "1568684",
+            "6227220",
+            "12869200",
+            "18557974",
+            "56528795"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "860",
+          "retrieved_documents": [
+            "16066726",
+            "13322804",
+            "7717468",
+            "24834968",
+            "5395426"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "458",
+          "retrieved_documents": [
+            "597790",
+            "6227220",
+            "45154987",
+            "27123743",
+            "1568684"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "1334",
+          "retrieved_documents": [
+            "5567005",
+            "11899391",
+            "17695748",
+            "13940200",
+            "6176498"
+          ],
+          "positive_qrels": 2,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.4,
+            "hit@5": 1.0,
+            "mrr@5": 0.5,
+            "ndcg@5": 0.6509
+          }
+        },
+        {
+          "query_id": "12",
+          "retrieved_documents": [
+            "33409100",
+            "12810152",
+            "18557974",
+            "9555784",
+            "33740844"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "218",
+          "retrieved_documents": [
+            "21366394",
+            "3553087",
+            "1550937",
+            "6182947",
+            "19005293"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "592",
+          "retrieved_documents": [
+            "14682243",
+            "45457778",
+            "27076725",
+            "8524891",
+            "8582337"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "1173",
+          "retrieved_documents": [
+            "7370282",
+            "9272598",
+            "12885341",
+            "7717468",
+            "14938990"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "919",
+          "retrieved_documents": [
+            "16422880",
+            "11614737",
+            "4824840",
+            "21302115",
+            "16322674"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "1073",
+          "retrieved_documents": [
+            "4824840",
+            "13899137",
+            "8582337",
+            "25293616",
+            "27712433"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "256",
+          "retrieved_documents": [
+            "5850219",
+            "5735492",
+            "27873158",
+            "46695481",
+            "9764256"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "448",
+          "retrieved_documents": [
+            "2052720",
+            "8654183",
+            "18988265",
+            "18956141",
+            "16422880"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "972",
+          "retrieved_documents": [
+            "27873158",
+            "9764256",
+            "28617573",
+            "46695481",
+            "32177659"
+          ],
+          "positive_qrels": 4,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.8,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "1043",
+          "retrieved_documents": [
+            "17671145",
+            "14131683",
+            "24450344",
+            "14479433",
+            "26735905"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "564",
+          "retrieved_documents": [
+            "2867345",
+            "12770738",
+            "24237492",
+            "3903084",
+            "12810152"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      ],
+      "na_semantics": "No positive qrels means N/A and is excluded from means."
+    },
+    "random": {
+      "queries_total": 20,
+      "queries_judged": 20,
+      "cutoff": 5,
+      "metrics": {
+        "recall@5": 0.0,
+        "precision@5": 0.0,
+        "hit@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0
+      },
+      "queries": [
+        {
+          "query_id": "71",
+          "retrieved_documents": [
+            "8724666",
+            "35884026",
+            "16322674",
+            "12869200",
+            "7487927"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1050",
+          "retrieved_documents": [
+            "9555784",
+            "6404801",
+            "23557241",
+            "6422576",
+            "8724666"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1055",
+          "retrieved_documents": [
+            "36831892",
+            "16422880",
+            "18988265",
+            "1904291",
+            "18592108"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1290",
+          "retrieved_documents": [
+            "36606083",
+            "13940200",
+            "7568596",
+            "2617858",
+            "20130904"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "68",
+          "retrieved_documents": [
+            "27123743",
+            "2617858",
+            "13899137",
+            "17671145",
+            "25690564"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "250",
+          "retrieved_documents": [
+            "41403996",
+            "1550937",
+            "4824840",
+            "11614737",
+            "9555784"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "860",
+          "retrieved_documents": [
+            "35884026",
+            "15559582",
+            "12869200",
+            "14340571",
+            "11238951"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "458",
+          "retrieved_documents": [
+            "26612216",
+            "24834968",
+            "11624482",
+            "6176498",
+            "18557974"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1334",
+          "retrieved_documents": [
+            "7370282",
+            "3552753",
+            "35884026",
+            "19878070",
+            "1344498"
+          ],
+          "positive_qrels": 2,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "12",
+          "retrieved_documents": [
+            "24450344",
+            "7198295",
+            "10029891",
+            "9764256",
+            "10071552"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "218",
+          "retrieved_documents": [
+            "7487927",
+            "21295300",
+            "42330403",
+            "10071552",
+            "18348376"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "592",
+          "retrieved_documents": [
+            "13322804",
+            "28617573",
+            "4824840",
+            "2356950",
+            "7198295"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1173",
+          "retrieved_documents": [
+            "1495563",
+            "36202354",
+            "27247460",
+            "11614737",
+            "7198295"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "919",
+          "retrieved_documents": [
+            "7568596",
+            "4687948",
+            "24834968",
+            "11899391",
+            "8582337"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1073",
+          "retrieved_documents": [
+            "20188586",
+            "27873158",
+            "24237492",
+            "18078750",
+            "19878070"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "256",
+          "retrieved_documents": [
+            "4883040",
+            "24450344",
+            "24341590",
+            "25186412",
+            "12770738"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "448",
+          "retrieved_documents": [
+            "2417551",
+            "17695748",
+            "33409100",
+            "8582337",
+            "2356950"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "972",
+          "retrieved_documents": [
+            "8524891",
+            "597790",
+            "45457778",
+            "5735492",
+            "20130904"
+          ],
+          "positive_qrels": 4,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1043",
+          "retrieved_documents": [
+            "18348376",
+            "31363207",
+            "39728826",
+            "4346436",
+            "27076725"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "564",
+          "retrieved_documents": [
+            "40234452",
+            "6182947",
+            "4687948",
+            "8524891",
+            "9272598"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        }
+      ],
+      "na_semantics": "No positive qrels means N/A and is excluded from means."
+    },
+    "full_text": {
+      "queries_total": 20,
+      "queries_judged": 20,
+      "cutoff": 5,
+      "metrics": {
+        "recall@5": 0.0,
+        "precision@5": 0.0,
+        "hit@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0
+      },
+      "queries": [
+        {
+          "query_id": "71",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1050",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1055",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1290",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "68",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "250",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "860",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "458",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1334",
+          "retrieved_documents": [],
+          "positive_qrels": 2,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "12",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "218",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "592",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1173",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "919",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1073",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "256",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "448",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "972",
+          "retrieved_documents": [],
+          "positive_qrels": 4,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1043",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "564",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        }
+      ],
+      "na_semantics": "No positive qrels means N/A and is excluded from means."
+    }
+  },
+  "frozen_thresholds": {
+    "minimum_relevance": 0.0,
+    "chosen_ef_search": 10,
+    "source": "development controls and development ANN only"
+  },
+  "held_out": {
+    "real": {
+      "queries_total": 20,
+      "queries_judged": 20,
+      "cutoff": 5,
+      "metrics": {
+        "recall@5": 1.0,
+        "precision@5": 0.24000000000000005,
+        "hit@5": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@5": 1.0
+      },
+      "queries": [
+        {
+          "query_id": "1144",
+          "retrieved_documents": [
+            "10071552",
+            "1904291",
+            "12409683",
+            "42800527",
+            "5567005"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "274",
+          "retrieved_documents": [
+            "11614737",
+            "31363207",
+            "16422880",
+            "39281140",
+            "6477536"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "1171",
+          "retrieved_documents": [
+            "18956141",
+            "16066726",
+            "25251625",
+            "6182947",
+            "1550937"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "189",
+          "retrieved_documents": [
+            "4421578",
+            "5560962",
+            "12885341",
+            "9161988",
+            "15419873"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "1348",
+          "retrieved_documents": [
+            "19005293",
+            "6182947",
+            "21366394",
+            "2417551",
+            "10190778"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "1322",
+          "retrieved_documents": [
+            "16284655",
+            "5395426",
+            "22490293",
+            "11335860",
+            "3353748"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "1352",
+          "retrieved_documents": [
+            "12885341",
+            "13322804",
+            "7717468",
+            "45199834",
+            "25124117"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "1298",
+          "retrieved_documents": [
+            "11718220",
+            "29981186",
+            "33409100",
+            "6176498",
+            "8724666"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "1406",
+          "retrieved_documents": [
+            "2617858",
+            "7370282",
+            "4346436",
+            "7487927",
+            "1744752"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "149",
+          "retrieved_documents": [
+            "6227220",
+            "56528795",
+            "17695748",
+            "597790",
+            "25251625"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "105",
+          "retrieved_documents": [
+            "36606083",
+            "35531883",
+            "23195302",
+            "18078750",
+            "41403996"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "1259",
+          "retrieved_documents": [
+            "24341590",
+            "27123743",
+            "16322674",
+            "17450673",
+            "23557241"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "955",
+          "retrieved_documents": [
+            "2078658",
+            "30507607",
+            "25629722",
+            "23195302",
+            "28809022"
+          ],
+          "positive_qrels": 2,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.4,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "104",
+          "retrieved_documents": [
+            "40164383",
+            "16625620",
+            "20887554",
+            "11718220",
+            "4020950"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "885",
+          "retrieved_documents": [
+            "6477536",
+            "31363207",
+            "11614737",
+            "13906581",
+            "11718220"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "123",
+          "retrieved_documents": [
+            "4883040",
+            "31363207",
+            "13899137",
+            "4424888",
+            "5560962"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "178",
+          "retrieved_documents": [
+            "27123743",
+            "17450673",
+            "16322674",
+            "23557241",
+            "33740844"
+          ],
+          "positive_qrels": 4,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.8,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "1177",
+          "retrieved_documents": [
+            "13910150",
+            "11335860",
+            "3882374",
+            "4889228",
+            "2356950"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "356",
+          "retrieved_documents": [
+            "6144337",
+            "5560962",
+            "15419873",
+            "14938990",
+            "4421578"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        },
+        {
+          "query_id": "1087",
+          "retrieved_documents": [
+            "39281140",
+            "11614737",
+            "5850219",
+            "1495563",
+            "24770122"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0
+          }
+        }
+      ],
+      "na_semantics": "No positive qrels means N/A and is excluded from means."
+    },
+    "random": {
+      "queries_total": 20,
+      "queries_judged": 20,
+      "cutoff": 5,
+      "metrics": {
+        "recall@5": 0.05,
+        "precision@5": 0.01,
+        "hit@5": 0.05,
+        "mrr@5": 0.0125,
+        "ndcg@5": 0.021535000000000002
+      },
+      "queries": [
+        {
+          "query_id": "1144",
+          "retrieved_documents": [
+            "24237492",
+            "27078065",
+            "4687948",
+            "1904291",
+            "12885341"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "274",
+          "retrieved_documents": [
+            "17695748",
+            "2617858",
+            "36202354",
+            "21295300",
+            "18190552"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1171",
+          "retrieved_documents": [
+            "5850219",
+            "6477536",
+            "2417551",
+            "5735492",
+            "27712433"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "189",
+          "retrieved_documents": [
+            "4687948",
+            "12869200",
+            "17695748",
+            "4421578",
+            "21902910"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "hit@5": 1.0,
+            "mrr@5": 0.25,
+            "ndcg@5": 0.4307
+          }
+        },
+        {
+          "query_id": "1348",
+          "retrieved_documents": [
+            "24834968",
+            "27712433",
+            "13899137",
+            "12667988",
+            "25251625"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1322",
+          "retrieved_documents": [
+            "24541180",
+            "20887554",
+            "32852283",
+            "27873158",
+            "471735"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1352",
+          "retrieved_documents": [
+            "8654183",
+            "13906581",
+            "1744752",
+            "1904291",
+            "32852283"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1298",
+          "retrieved_documents": [
+            "42377686",
+            "25690564",
+            "18988265",
+            "26612216",
+            "40234452"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1406",
+          "retrieved_documents": [
+            "26099680",
+            "45820464",
+            "11335860",
+            "10071552",
+            "6477536"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "149",
+          "retrieved_documents": [
+            "5735492",
+            "3367829",
+            "5395426",
+            "3033830",
+            "18190552"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "105",
+          "retrieved_documents": [
+            "35531883",
+            "4505748",
+            "39174007",
+            "26612216",
+            "8654183"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1259",
+          "retrieved_documents": [
+            "3367829",
+            "16066726",
+            "25293616",
+            "4889228",
+            "9440748"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "955",
+          "retrieved_documents": [
+            "19878070",
+            "39281140",
+            "33409100",
+            "31851367",
+            "8654183"
+          ],
+          "positive_qrels": 2,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "104",
+          "retrieved_documents": [
+            "31363207",
+            "26612216",
+            "2867345",
+            "27247460",
+            "18988265"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "885",
+          "retrieved_documents": [
+            "40164383",
+            "24450344",
+            "4824840",
+            "3882374",
+            "7487927"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "123",
+          "retrieved_documents": [
+            "1344498",
+            "9555784",
+            "12770738",
+            "18988265",
+            "5850219"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "178",
+          "retrieved_documents": [
+            "3553087",
+            "3882374",
+            "21366394",
+            "57762078",
+            "4687948"
+          ],
+          "positive_qrels": 4,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1177",
+          "retrieved_documents": [
+            "21439640",
+            "31363207",
+            "17450673",
+            "12409683",
+            "32852283"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "356",
+          "retrieved_documents": [
+            "4687948",
+            "11624482",
+            "2617858",
+            "8524891",
+            "17695748"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1087",
+          "retrieved_documents": [
+            "4421787",
+            "22973574",
+            "14682243",
+            "13613916",
+            "6477536"
+          ],
+          "positive_qrels": 1,
+          "returned_documents": 5,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        }
+      ],
+      "na_semantics": "No positive qrels means N/A and is excluded from means."
+    },
+    "full_text": {
+      "queries_total": 20,
+      "queries_judged": 20,
+      "cutoff": 5,
+      "metrics": {
+        "recall@5": 0.0,
+        "precision@5": 0.0,
+        "hit@5": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@5": 0.0
+      },
+      "queries": [
+        {
+          "query_id": "1144",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "274",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1171",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "189",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1348",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1322",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1352",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1298",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1406",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "149",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "105",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1259",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "955",
+          "retrieved_documents": [],
+          "positive_qrels": 2,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "104",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "885",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "123",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "178",
+          "retrieved_documents": [],
+          "positive_qrels": 4,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1177",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "356",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        },
+        {
+          "query_id": "1087",
+          "retrieved_documents": [],
+          "positive_qrels": 1,
+          "returned_documents": 0,
+          "metrics": {
+            "recall@5": 0.0,
+            "precision@5": 0.0,
+            "hit@5": 0.0,
+            "mrr@5": 0.0,
+            "ndcg@5": 0.0
+          }
+        }
+      ],
+      "na_semantics": "No positive qrels means N/A and is excluded from means."
+    }
+  },
+  "ann_neighbor_recall": {
+    "development": [
+      {
+        "filter_percent": 100,
+        "eligible_chunks": 412,
+        "ef_search": 10,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "71",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "1127562:0",
+              "1127562:1",
+              "14338915:0",
+              "7370282:1",
+              "10704438:0",
+              "23195302:1",
+              "36831892:0",
+              "25251625:1",
+              "10704438:1",
+              "14338915:1"
+            ],
+            "ann_neighbor_ids": [
+              "1127562:0",
+              "1127562:1",
+              "14338915:0",
+              "7370282:1",
+              "10704438:0",
+              "23195302:1",
+              "36831892:0",
+              "25251625:1",
+              "10704438:1",
+              "14338915:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1050",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "19878070:0",
+              "19878070:2",
+              "19878070:1",
+              "4687948:0",
+              "3899896:1",
+              "4687948:1",
+              "9555784:1",
+              "4687948:2",
+              "9555784:2",
+              "9555784:0"
+            ],
+            "ann_neighbor_ids": [
+              "19878070:0",
+              "19878070:2",
+              "19878070:1",
+              "4687948:0",
+              "3899896:1",
+              "4687948:1",
+              "9555784:1",
+              "4687948:2",
+              "9555784:2",
+              "9555784:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1055",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "13906581:0",
+              "13906581:1",
+              "8582337:0",
+              "8582337:1",
+              "4824840:2",
+              "12770738:1",
+              "3552753:1",
+              "11624482:0",
+              "11624482:2",
+              "8582337:2"
+            ],
+            "ann_neighbor_ids": [
+              "13906581:0",
+              "13906581:1",
+              "8582337:0",
+              "8582337:1",
+              "4824840:2",
+              "12770738:1",
+              "3552753:1",
+              "11624482:0",
+              "11624482:2",
+              "8582337:2"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1290",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4687948:2",
+              "4687948:0",
+              "4687948:1",
+              "19878070:0",
+              "9555784:1",
+              "19878070:2",
+              "19878070:1",
+              "9555784:2",
+              "9555784:0",
+              "3903084:0"
+            ],
+            "ann_neighbor_ids": [
+              "4687948:2",
+              "4687948:0",
+              "4687948:1",
+              "19878070:0",
+              "9555784:1",
+              "19878070:2",
+              "19878070:1",
+              "9555784:2",
+              "9555784:0",
+              "3903084:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "68",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "21295300:1",
+              "21295300:0",
+              "25251625:0",
+              "10704438:0",
+              "10704438:1",
+              "36831892:0",
+              "5395426:0",
+              "25251625:1",
+              "1127562:0",
+              "5395426:1"
+            ],
+            "ann_neighbor_ids": [
+              "21295300:1",
+              "21295300:0",
+              "25251625:0",
+              "10704438:0",
+              "10704438:1",
+              "36831892:0",
+              "5395426:0",
+              "25251625:1",
+              "1127562:0",
+              "5395426:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      },
+      {
+        "filter_percent": 100,
+        "eligible_chunks": 412,
+        "ef_search": 40,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "71",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "1127562:0",
+              "1127562:1",
+              "14338915:0",
+              "7370282:1",
+              "10704438:0",
+              "23195302:1",
+              "36831892:0",
+              "25251625:1",
+              "10704438:1",
+              "14338915:1"
+            ],
+            "ann_neighbor_ids": [
+              "1127562:0",
+              "1127562:1",
+              "14338915:0",
+              "7370282:1",
+              "10704438:0",
+              "23195302:1",
+              "36831892:0",
+              "25251625:1",
+              "10704438:1",
+              "14338915:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1050",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "19878070:0",
+              "19878070:2",
+              "19878070:1",
+              "4687948:0",
+              "3899896:1",
+              "4687948:1",
+              "9555784:1",
+              "4687948:2",
+              "9555784:2",
+              "9555784:0"
+            ],
+            "ann_neighbor_ids": [
+              "19878070:0",
+              "19878070:2",
+              "19878070:1",
+              "4687948:0",
+              "3899896:1",
+              "4687948:1",
+              "9555784:1",
+              "4687948:2",
+              "9555784:2",
+              "9555784:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1055",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "13906581:0",
+              "13906581:1",
+              "8582337:0",
+              "8582337:1",
+              "4824840:2",
+              "12770738:1",
+              "3552753:1",
+              "11624482:0",
+              "11624482:2",
+              "8582337:2"
+            ],
+            "ann_neighbor_ids": [
+              "13906581:0",
+              "13906581:1",
+              "8582337:0",
+              "8582337:1",
+              "4824840:2",
+              "12770738:1",
+              "3552753:1",
+              "11624482:0",
+              "11624482:2",
+              "8582337:2"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1290",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4687948:2",
+              "4687948:0",
+              "4687948:1",
+              "19878070:0",
+              "9555784:1",
+              "19878070:2",
+              "19878070:1",
+              "9555784:2",
+              "9555784:0",
+              "3903084:0"
+            ],
+            "ann_neighbor_ids": [
+              "4687948:2",
+              "4687948:0",
+              "4687948:1",
+              "19878070:0",
+              "9555784:1",
+              "19878070:2",
+              "19878070:1",
+              "9555784:2",
+              "9555784:0",
+              "3903084:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "68",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "21295300:1",
+              "21295300:0",
+              "25251625:0",
+              "10704438:0",
+              "10704438:1",
+              "36831892:0",
+              "5395426:0",
+              "25251625:1",
+              "1127562:0",
+              "5395426:1"
+            ],
+            "ann_neighbor_ids": [
+              "21295300:1",
+              "21295300:0",
+              "25251625:0",
+              "10704438:0",
+              "10704438:1",
+              "36831892:0",
+              "5395426:0",
+              "25251625:1",
+              "1127562:0",
+              "5395426:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      },
+      {
+        "filter_percent": 100,
+        "eligible_chunks": 412,
+        "ef_search": 100,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "71",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "1127562:0",
+              "1127562:1",
+              "14338915:0",
+              "7370282:1",
+              "10704438:0",
+              "23195302:1",
+              "36831892:0",
+              "25251625:1",
+              "10704438:1",
+              "14338915:1"
+            ],
+            "ann_neighbor_ids": [
+              "1127562:0",
+              "1127562:1",
+              "14338915:0",
+              "7370282:1",
+              "10704438:0",
+              "23195302:1",
+              "36831892:0",
+              "25251625:1",
+              "10704438:1",
+              "14338915:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1050",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "19878070:0",
+              "19878070:2",
+              "19878070:1",
+              "4687948:0",
+              "3899896:1",
+              "4687948:1",
+              "9555784:1",
+              "4687948:2",
+              "9555784:2",
+              "9555784:0"
+            ],
+            "ann_neighbor_ids": [
+              "19878070:0",
+              "19878070:2",
+              "19878070:1",
+              "4687948:0",
+              "3899896:1",
+              "4687948:1",
+              "9555784:1",
+              "4687948:2",
+              "9555784:2",
+              "9555784:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1055",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "13906581:0",
+              "13906581:1",
+              "8582337:0",
+              "8582337:1",
+              "4824840:2",
+              "12770738:1",
+              "3552753:1",
+              "11624482:0",
+              "11624482:2",
+              "8582337:2"
+            ],
+            "ann_neighbor_ids": [
+              "13906581:0",
+              "13906581:1",
+              "8582337:0",
+              "8582337:1",
+              "4824840:2",
+              "12770738:1",
+              "3552753:1",
+              "11624482:0",
+              "11624482:2",
+              "8582337:2"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1290",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4687948:2",
+              "4687948:0",
+              "4687948:1",
+              "19878070:0",
+              "9555784:1",
+              "19878070:2",
+              "19878070:1",
+              "9555784:2",
+              "9555784:0",
+              "3903084:0"
+            ],
+            "ann_neighbor_ids": [
+              "4687948:2",
+              "4687948:0",
+              "4687948:1",
+              "19878070:0",
+              "9555784:1",
+              "19878070:2",
+              "19878070:1",
+              "9555784:2",
+              "9555784:0",
+              "3903084:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "68",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "21295300:1",
+              "21295300:0",
+              "25251625:0",
+              "10704438:0",
+              "10704438:1",
+              "36831892:0",
+              "5395426:0",
+              "25251625:1",
+              "1127562:0",
+              "5395426:1"
+            ],
+            "ann_neighbor_ids": [
+              "21295300:1",
+              "21295300:0",
+              "25251625:0",
+              "10704438:0",
+              "10704438:1",
+              "36831892:0",
+              "5395426:0",
+              "25251625:1",
+              "1127562:0",
+              "5395426:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      },
+      {
+        "filter_percent": 25,
+        "eligible_chunks": 111,
+        "ef_search": 10,
+        "mean_neighbor_recall": 0.9800000000000001,
+        "queries": [
+          {
+            "query_id": "71",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "1127562:0",
+              "14338915:0",
+              "25629722:1",
+              "7487927:0",
+              "17671145:1",
+              "13910150:1",
+              "7370282:0",
+              "32852283:3",
+              "40234452:1",
+              "2356950:1"
+            ],
+            "ann_neighbor_ids": [
+              "1127562:0",
+              "14338915:0",
+              "25629722:1",
+              "7487927:0",
+              "17671145:1",
+              "13910150:1",
+              "7370282:0",
+              "32852283:3",
+              "40234452:1",
+              "2356950:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1050",
+            "recall": 0.9,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "3899896:1",
+              "4687948:2",
+              "27123743:0",
+              "20887554:2",
+              "7568596:0",
+              "24450344:1",
+              "11718220:0",
+              "27076725:0",
+              "7487927:0",
+              "12810152:2"
+            ],
+            "ann_neighbor_ids": [
+              "3899896:1",
+              "4687948:2",
+              "27123743:0",
+              "20887554:2",
+              "24450344:1",
+              "11718220:0",
+              "27076725:0",
+              "7487927:0",
+              "12810152:2",
+              "33409100:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1055",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "13906581:1",
+              "11624482:0",
+              "11624482:1",
+              "27076725:0",
+              "8582337:3",
+              "3552753:2",
+              "20188586:1",
+              "3899896:1",
+              "20887554:2",
+              "4687948:2"
+            ],
+            "ann_neighbor_ids": [
+              "13906581:1",
+              "11624482:0",
+              "11624482:1",
+              "27076725:0",
+              "8582337:3",
+              "3552753:2",
+              "20188586:1",
+              "3899896:1",
+              "20887554:2",
+              "4687948:2"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1290",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4687948:2",
+              "33409100:1",
+              "20887554:2",
+              "12869200:1",
+              "8582337:3",
+              "597790:0",
+              "3899896:1",
+              "24450344:1",
+              "3552753:2",
+              "13899137:1"
+            ],
+            "ann_neighbor_ids": [
+              "4687948:2",
+              "33409100:1",
+              "20887554:2",
+              "12869200:1",
+              "8582337:3",
+              "597790:0",
+              "3899896:1",
+              "24450344:1",
+              "3552753:2",
+              "13899137:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "68",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "1127562:0",
+              "40234452:0",
+              "18078750:0",
+              "2356950:1",
+              "56528795:0",
+              "7370282:0",
+              "14338915:0",
+              "7487927:0",
+              "6182947:2",
+              "6422576:0"
+            ],
+            "ann_neighbor_ids": [
+              "1127562:0",
+              "40234452:0",
+              "18078750:0",
+              "2356950:1",
+              "56528795:0",
+              "7370282:0",
+              "14338915:0",
+              "7487927:0",
+              "6182947:2",
+              "6422576:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      },
+      {
+        "filter_percent": 25,
+        "eligible_chunks": 111,
+        "ef_search": 40,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "71",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "1127562:0",
+              "14338915:0",
+              "25629722:1",
+              "7487927:0",
+              "17671145:1",
+              "13910150:1",
+              "7370282:0",
+              "32852283:3",
+              "40234452:1",
+              "2356950:1"
+            ],
+            "ann_neighbor_ids": [
+              "1127562:0",
+              "14338915:0",
+              "25629722:1",
+              "7487927:0",
+              "17671145:1",
+              "13910150:1",
+              "7370282:0",
+              "32852283:3",
+              "40234452:1",
+              "2356950:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1050",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "3899896:1",
+              "4687948:2",
+              "27123743:0",
+              "20887554:2",
+              "7568596:0",
+              "24450344:1",
+              "11718220:0",
+              "27076725:0",
+              "7487927:0",
+              "12810152:2"
+            ],
+            "ann_neighbor_ids": [
+              "3899896:1",
+              "4687948:2",
+              "27123743:0",
+              "20887554:2",
+              "7568596:0",
+              "24450344:1",
+              "11718220:0",
+              "27076725:0",
+              "7487927:0",
+              "12810152:2"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1055",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "13906581:1",
+              "11624482:0",
+              "11624482:1",
+              "27076725:0",
+              "8582337:3",
+              "3552753:2",
+              "20188586:1",
+              "3899896:1",
+              "20887554:2",
+              "4687948:2"
+            ],
+            "ann_neighbor_ids": [
+              "13906581:1",
+              "11624482:0",
+              "11624482:1",
+              "27076725:0",
+              "8582337:3",
+              "3552753:2",
+              "20188586:1",
+              "3899896:1",
+              "20887554:2",
+              "4687948:2"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1290",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4687948:2",
+              "33409100:1",
+              "20887554:2",
+              "12869200:1",
+              "8582337:3",
+              "597790:0",
+              "3899896:1",
+              "24450344:1",
+              "3552753:2",
+              "13899137:1"
+            ],
+            "ann_neighbor_ids": [
+              "4687948:2",
+              "33409100:1",
+              "20887554:2",
+              "12869200:1",
+              "8582337:3",
+              "597790:0",
+              "3899896:1",
+              "24450344:1",
+              "3552753:2",
+              "13899137:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "68",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "1127562:0",
+              "40234452:0",
+              "18078750:0",
+              "2356950:1",
+              "56528795:0",
+              "7370282:0",
+              "14338915:0",
+              "7487927:0",
+              "6182947:2",
+              "6422576:0"
+            ],
+            "ann_neighbor_ids": [
+              "1127562:0",
+              "40234452:0",
+              "18078750:0",
+              "2356950:1",
+              "56528795:0",
+              "7370282:0",
+              "14338915:0",
+              "7487927:0",
+              "6182947:2",
+              "6422576:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      },
+      {
+        "filter_percent": 25,
+        "eligible_chunks": 111,
+        "ef_search": 100,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "71",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "1127562:0",
+              "14338915:0",
+              "25629722:1",
+              "7487927:0",
+              "17671145:1",
+              "13910150:1",
+              "7370282:0",
+              "32852283:3",
+              "40234452:1",
+              "2356950:1"
+            ],
+            "ann_neighbor_ids": [
+              "1127562:0",
+              "14338915:0",
+              "25629722:1",
+              "7487927:0",
+              "17671145:1",
+              "13910150:1",
+              "7370282:0",
+              "32852283:3",
+              "40234452:1",
+              "2356950:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1050",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "3899896:1",
+              "4687948:2",
+              "27123743:0",
+              "20887554:2",
+              "7568596:0",
+              "24450344:1",
+              "11718220:0",
+              "27076725:0",
+              "7487927:0",
+              "12810152:2"
+            ],
+            "ann_neighbor_ids": [
+              "3899896:1",
+              "4687948:2",
+              "27123743:0",
+              "20887554:2",
+              "7568596:0",
+              "24450344:1",
+              "11718220:0",
+              "27076725:0",
+              "7487927:0",
+              "12810152:2"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1055",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "13906581:1",
+              "11624482:0",
+              "11624482:1",
+              "27076725:0",
+              "8582337:3",
+              "3552753:2",
+              "20188586:1",
+              "3899896:1",
+              "20887554:2",
+              "4687948:2"
+            ],
+            "ann_neighbor_ids": [
+              "13906581:1",
+              "11624482:0",
+              "11624482:1",
+              "27076725:0",
+              "8582337:3",
+              "3552753:2",
+              "20188586:1",
+              "3899896:1",
+              "20887554:2",
+              "4687948:2"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1290",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4687948:2",
+              "33409100:1",
+              "20887554:2",
+              "12869200:1",
+              "8582337:3",
+              "597790:0",
+              "3899896:1",
+              "24450344:1",
+              "3552753:2",
+              "13899137:1"
+            ],
+            "ann_neighbor_ids": [
+              "4687948:2",
+              "33409100:1",
+              "20887554:2",
+              "12869200:1",
+              "8582337:3",
+              "597790:0",
+              "3899896:1",
+              "24450344:1",
+              "3552753:2",
+              "13899137:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "68",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "1127562:0",
+              "40234452:0",
+              "18078750:0",
+              "2356950:1",
+              "56528795:0",
+              "7370282:0",
+              "14338915:0",
+              "7487927:0",
+              "6182947:2",
+              "6422576:0"
+            ],
+            "ann_neighbor_ids": [
+              "1127562:0",
+              "40234452:0",
+              "18078750:0",
+              "2356950:1",
+              "56528795:0",
+              "7370282:0",
+              "14338915:0",
+              "7487927:0",
+              "6182947:2",
+              "6422576:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      },
+      {
+        "filter_percent": 5,
+        "eligible_chunks": 23,
+        "ef_search": 10,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "71",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "17671145:1",
+              "32852283:3",
+              "40234452:1",
+              "2078658:0",
+              "32852283:1",
+              "31851367:0",
+              "3367829:0",
+              "22490293:0",
+              "8724666:0",
+              "9440748:2"
+            ],
+            "ann_neighbor_ids": [
+              "17671145:1",
+              "32852283:3",
+              "40234452:1",
+              "2078658:0",
+              "32852283:1",
+              "31851367:0",
+              "3367829:0",
+              "22490293:0",
+              "8724666:0",
+              "9440748:2"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1050",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "20887554:2",
+              "27076725:0",
+              "8582337:3",
+              "16422880:0",
+              "15541119:1",
+              "16625620:0",
+              "28809022:1",
+              "8724666:0",
+              "24341590:0",
+              "32852283:3"
+            ],
+            "ann_neighbor_ids": [
+              "20887554:2",
+              "27076725:0",
+              "8582337:3",
+              "16422880:0",
+              "15541119:1",
+              "16625620:0",
+              "28809022:1",
+              "8724666:0",
+              "24341590:0",
+              "32852283:3"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1055",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "27076725:0",
+              "8582337:3",
+              "20887554:2",
+              "16422880:0",
+              "16625620:0",
+              "9764256:2",
+              "4883040:1",
+              "15541119:1",
+              "9440748:2",
+              "24237492:0"
+            ],
+            "ann_neighbor_ids": [
+              "27076725:0",
+              "8582337:3",
+              "20887554:2",
+              "16422880:0",
+              "16625620:0",
+              "9764256:2",
+              "4883040:1",
+              "15541119:1",
+              "9440748:2",
+              "24237492:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1290",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "20887554:2",
+              "8582337:3",
+              "24237492:0",
+              "27076725:0",
+              "4883040:1",
+              "24341590:0",
+              "16625620:0",
+              "31851367:1",
+              "31851367:0",
+              "8724666:0"
+            ],
+            "ann_neighbor_ids": [
+              "20887554:2",
+              "8582337:3",
+              "24237492:0",
+              "27076725:0",
+              "4883040:1",
+              "24341590:0",
+              "16625620:0",
+              "31851367:1",
+              "31851367:0",
+              "8724666:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "68",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "17671145:1",
+              "2078658:0",
+              "40234452:1",
+              "32852283:1",
+              "31851367:0",
+              "3367829:0",
+              "22490293:0",
+              "8724666:0",
+              "32852283:3",
+              "28809022:1"
+            ],
+            "ann_neighbor_ids": [
+              "17671145:1",
+              "2078658:0",
+              "40234452:1",
+              "32852283:1",
+              "31851367:0",
+              "3367829:0",
+              "22490293:0",
+              "8724666:0",
+              "32852283:3",
+              "28809022:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      },
+      {
+        "filter_percent": 5,
+        "eligible_chunks": 23,
+        "ef_search": 40,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "71",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "17671145:1",
+              "32852283:3",
+              "40234452:1",
+              "2078658:0",
+              "32852283:1",
+              "31851367:0",
+              "3367829:0",
+              "22490293:0",
+              "8724666:0",
+              "9440748:2"
+            ],
+            "ann_neighbor_ids": [
+              "17671145:1",
+              "32852283:3",
+              "40234452:1",
+              "2078658:0",
+              "32852283:1",
+              "31851367:0",
+              "3367829:0",
+              "22490293:0",
+              "8724666:0",
+              "9440748:2"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1050",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "20887554:2",
+              "27076725:0",
+              "8582337:3",
+              "16422880:0",
+              "15541119:1",
+              "16625620:0",
+              "28809022:1",
+              "8724666:0",
+              "24341590:0",
+              "32852283:3"
+            ],
+            "ann_neighbor_ids": [
+              "20887554:2",
+              "27076725:0",
+              "8582337:3",
+              "16422880:0",
+              "15541119:1",
+              "16625620:0",
+              "28809022:1",
+              "8724666:0",
+              "24341590:0",
+              "32852283:3"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1055",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "27076725:0",
+              "8582337:3",
+              "20887554:2",
+              "16422880:0",
+              "16625620:0",
+              "9764256:2",
+              "4883040:1",
+              "15541119:1",
+              "9440748:2",
+              "24237492:0"
+            ],
+            "ann_neighbor_ids": [
+              "27076725:0",
+              "8582337:3",
+              "20887554:2",
+              "16422880:0",
+              "16625620:0",
+              "9764256:2",
+              "4883040:1",
+              "15541119:1",
+              "9440748:2",
+              "24237492:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1290",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "20887554:2",
+              "8582337:3",
+              "24237492:0",
+              "27076725:0",
+              "4883040:1",
+              "24341590:0",
+              "16625620:0",
+              "31851367:1",
+              "31851367:0",
+              "8724666:0"
+            ],
+            "ann_neighbor_ids": [
+              "20887554:2",
+              "8582337:3",
+              "24237492:0",
+              "27076725:0",
+              "4883040:1",
+              "24341590:0",
+              "16625620:0",
+              "31851367:1",
+              "31851367:0",
+              "8724666:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "68",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "17671145:1",
+              "2078658:0",
+              "40234452:1",
+              "32852283:1",
+              "31851367:0",
+              "3367829:0",
+              "22490293:0",
+              "8724666:0",
+              "32852283:3",
+              "28809022:1"
+            ],
+            "ann_neighbor_ids": [
+              "17671145:1",
+              "2078658:0",
+              "40234452:1",
+              "32852283:1",
+              "31851367:0",
+              "3367829:0",
+              "22490293:0",
+              "8724666:0",
+              "32852283:3",
+              "28809022:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      },
+      {
+        "filter_percent": 5,
+        "eligible_chunks": 23,
+        "ef_search": 100,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "71",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "17671145:1",
+              "32852283:3",
+              "40234452:1",
+              "2078658:0",
+              "32852283:1",
+              "31851367:0",
+              "3367829:0",
+              "22490293:0",
+              "8724666:0",
+              "9440748:2"
+            ],
+            "ann_neighbor_ids": [
+              "17671145:1",
+              "32852283:3",
+              "40234452:1",
+              "2078658:0",
+              "32852283:1",
+              "31851367:0",
+              "3367829:0",
+              "22490293:0",
+              "8724666:0",
+              "9440748:2"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1050",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "20887554:2",
+              "27076725:0",
+              "8582337:3",
+              "16422880:0",
+              "15541119:1",
+              "16625620:0",
+              "28809022:1",
+              "8724666:0",
+              "24341590:0",
+              "32852283:3"
+            ],
+            "ann_neighbor_ids": [
+              "20887554:2",
+              "27076725:0",
+              "8582337:3",
+              "16422880:0",
+              "15541119:1",
+              "16625620:0",
+              "28809022:1",
+              "8724666:0",
+              "24341590:0",
+              "32852283:3"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1055",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "27076725:0",
+              "8582337:3",
+              "20887554:2",
+              "16422880:0",
+              "16625620:0",
+              "9764256:2",
+              "4883040:1",
+              "15541119:1",
+              "9440748:2",
+              "24237492:0"
+            ],
+            "ann_neighbor_ids": [
+              "27076725:0",
+              "8582337:3",
+              "20887554:2",
+              "16422880:0",
+              "16625620:0",
+              "9764256:2",
+              "4883040:1",
+              "15541119:1",
+              "9440748:2",
+              "24237492:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1290",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "20887554:2",
+              "8582337:3",
+              "24237492:0",
+              "27076725:0",
+              "4883040:1",
+              "24341590:0",
+              "16625620:0",
+              "31851367:1",
+              "31851367:0",
+              "8724666:0"
+            ],
+            "ann_neighbor_ids": [
+              "20887554:2",
+              "8582337:3",
+              "24237492:0",
+              "27076725:0",
+              "4883040:1",
+              "24341590:0",
+              "16625620:0",
+              "31851367:1",
+              "31851367:0",
+              "8724666:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "68",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "17671145:1",
+              "2078658:0",
+              "40234452:1",
+              "32852283:1",
+              "31851367:0",
+              "3367829:0",
+              "22490293:0",
+              "8724666:0",
+              "32852283:3",
+              "28809022:1"
+            ],
+            "ann_neighbor_ids": [
+              "17671145:1",
+              "2078658:0",
+              "40234452:1",
+              "32852283:1",
+              "31851367:0",
+              "3367829:0",
+              "22490293:0",
+              "8724666:0",
+              "32852283:3",
+              "28809022:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      }
+    ],
+    "held_out": [
+      {
+        "filter_percent": 100,
+        "eligible_chunks": 412,
+        "ef_search": 10,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "1144",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "10071552:0",
+              "10071552:1",
+              "10071552:2",
+              "1904291:0",
+              "12409683:1",
+              "42800527:1",
+              "5567005:0",
+              "12409683:0",
+              "6176498:1",
+              "6176498:0"
+            ],
+            "ann_neighbor_ids": [
+              "10071552:0",
+              "10071552:1",
+              "10071552:2",
+              "1904291:0",
+              "12409683:1",
+              "42800527:1",
+              "5567005:0",
+              "12409683:0",
+              "6176498:1",
+              "6176498:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "274",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "11614737:0",
+              "11614737:2",
+              "11614737:1",
+              "11614737:3",
+              "31363207:1",
+              "16422880:0",
+              "16422880:2",
+              "39281140:0",
+              "31363207:2",
+              "6477536:1"
+            ],
+            "ann_neighbor_ids": [
+              "11614737:0",
+              "11614737:2",
+              "11614737:1",
+              "11614737:3",
+              "31363207:1",
+              "16422880:0",
+              "16422880:2",
+              "39281140:0",
+              "31363207:2",
+              "6477536:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1171",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "18956141:0",
+              "18956141:1",
+              "16066726:0",
+              "25251625:0",
+              "6182947:2",
+              "1550937:1",
+              "21366394:1",
+              "1550937:0",
+              "21366394:0",
+              "21439640:2"
+            ],
+            "ann_neighbor_ids": [
+              "18956141:0",
+              "18956141:1",
+              "16066726:0",
+              "25251625:0",
+              "6182947:2",
+              "1550937:1",
+              "21366394:1",
+              "1550937:0",
+              "21366394:0",
+              "21439640:2"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "189",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4421578:0",
+              "5560962:0",
+              "4421578:1",
+              "12885341:1",
+              "12885341:0",
+              "9161988:0",
+              "15419873:0",
+              "6404801:1",
+              "45199834:0",
+              "7370282:0"
+            ],
+            "ann_neighbor_ids": [
+              "4421578:0",
+              "5560962:0",
+              "4421578:1",
+              "12885341:1",
+              "12885341:0",
+              "9161988:0",
+              "15419873:0",
+              "6404801:1",
+              "45199834:0",
+              "7370282:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1348",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "19005293:0",
+              "6182947:0",
+              "6182947:2",
+              "21366394:0",
+              "21366394:1",
+              "2417551:0",
+              "10190778:0",
+              "6404801:1",
+              "1550937:1",
+              "18348376:0"
+            ],
+            "ann_neighbor_ids": [
+              "19005293:0",
+              "6182947:0",
+              "6182947:2",
+              "21366394:0",
+              "21366394:1",
+              "2417551:0",
+              "10190778:0",
+              "6404801:1",
+              "1550937:1",
+              "18348376:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      },
+      {
+        "filter_percent": 100,
+        "eligible_chunks": 412,
+        "ef_search": 40,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "1144",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "10071552:0",
+              "10071552:1",
+              "10071552:2",
+              "1904291:0",
+              "12409683:1",
+              "42800527:1",
+              "5567005:0",
+              "12409683:0",
+              "6176498:1",
+              "6176498:0"
+            ],
+            "ann_neighbor_ids": [
+              "10071552:0",
+              "10071552:1",
+              "10071552:2",
+              "1904291:0",
+              "12409683:1",
+              "42800527:1",
+              "5567005:0",
+              "12409683:0",
+              "6176498:1",
+              "6176498:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "274",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "11614737:0",
+              "11614737:2",
+              "11614737:1",
+              "11614737:3",
+              "31363207:1",
+              "16422880:0",
+              "16422880:2",
+              "39281140:0",
+              "31363207:2",
+              "6477536:1"
+            ],
+            "ann_neighbor_ids": [
+              "11614737:0",
+              "11614737:2",
+              "11614737:1",
+              "11614737:3",
+              "31363207:1",
+              "16422880:0",
+              "16422880:2",
+              "39281140:0",
+              "31363207:2",
+              "6477536:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1171",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "18956141:0",
+              "18956141:1",
+              "16066726:0",
+              "25251625:0",
+              "6182947:2",
+              "1550937:1",
+              "21366394:1",
+              "1550937:0",
+              "21366394:0",
+              "21439640:2"
+            ],
+            "ann_neighbor_ids": [
+              "18956141:0",
+              "18956141:1",
+              "16066726:0",
+              "25251625:0",
+              "6182947:2",
+              "1550937:1",
+              "21366394:1",
+              "1550937:0",
+              "21366394:0",
+              "21439640:2"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "189",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4421578:0",
+              "5560962:0",
+              "4421578:1",
+              "12885341:1",
+              "12885341:0",
+              "9161988:0",
+              "15419873:0",
+              "6404801:1",
+              "45199834:0",
+              "7370282:0"
+            ],
+            "ann_neighbor_ids": [
+              "4421578:0",
+              "5560962:0",
+              "4421578:1",
+              "12885341:1",
+              "12885341:0",
+              "9161988:0",
+              "15419873:0",
+              "6404801:1",
+              "45199834:0",
+              "7370282:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1348",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "19005293:0",
+              "6182947:0",
+              "6182947:2",
+              "21366394:0",
+              "21366394:1",
+              "2417551:0",
+              "10190778:0",
+              "6404801:1",
+              "1550937:1",
+              "18348376:0"
+            ],
+            "ann_neighbor_ids": [
+              "19005293:0",
+              "6182947:0",
+              "6182947:2",
+              "21366394:0",
+              "21366394:1",
+              "2417551:0",
+              "10190778:0",
+              "6404801:1",
+              "1550937:1",
+              "18348376:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      },
+      {
+        "filter_percent": 100,
+        "eligible_chunks": 412,
+        "ef_search": 100,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "1144",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "10071552:0",
+              "10071552:1",
+              "10071552:2",
+              "1904291:0",
+              "12409683:1",
+              "42800527:1",
+              "5567005:0",
+              "12409683:0",
+              "6176498:1",
+              "6176498:0"
+            ],
+            "ann_neighbor_ids": [
+              "10071552:0",
+              "10071552:1",
+              "10071552:2",
+              "1904291:0",
+              "12409683:1",
+              "42800527:1",
+              "5567005:0",
+              "12409683:0",
+              "6176498:1",
+              "6176498:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "274",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "11614737:0",
+              "11614737:2",
+              "11614737:1",
+              "11614737:3",
+              "31363207:1",
+              "16422880:0",
+              "16422880:2",
+              "39281140:0",
+              "31363207:2",
+              "6477536:1"
+            ],
+            "ann_neighbor_ids": [
+              "11614737:0",
+              "11614737:2",
+              "11614737:1",
+              "11614737:3",
+              "31363207:1",
+              "16422880:0",
+              "16422880:2",
+              "39281140:0",
+              "31363207:2",
+              "6477536:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1171",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "18956141:0",
+              "18956141:1",
+              "16066726:0",
+              "25251625:0",
+              "6182947:2",
+              "1550937:1",
+              "21366394:1",
+              "1550937:0",
+              "21366394:0",
+              "21439640:2"
+            ],
+            "ann_neighbor_ids": [
+              "18956141:0",
+              "18956141:1",
+              "16066726:0",
+              "25251625:0",
+              "6182947:2",
+              "1550937:1",
+              "21366394:1",
+              "1550937:0",
+              "21366394:0",
+              "21439640:2"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "189",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4421578:0",
+              "5560962:0",
+              "4421578:1",
+              "12885341:1",
+              "12885341:0",
+              "9161988:0",
+              "15419873:0",
+              "6404801:1",
+              "45199834:0",
+              "7370282:0"
+            ],
+            "ann_neighbor_ids": [
+              "4421578:0",
+              "5560962:0",
+              "4421578:1",
+              "12885341:1",
+              "12885341:0",
+              "9161988:0",
+              "15419873:0",
+              "6404801:1",
+              "45199834:0",
+              "7370282:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1348",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "19005293:0",
+              "6182947:0",
+              "6182947:2",
+              "21366394:0",
+              "21366394:1",
+              "2417551:0",
+              "10190778:0",
+              "6404801:1",
+              "1550937:1",
+              "18348376:0"
+            ],
+            "ann_neighbor_ids": [
+              "19005293:0",
+              "6182947:0",
+              "6182947:2",
+              "21366394:0",
+              "21366394:1",
+              "2417551:0",
+              "10190778:0",
+              "6404801:1",
+              "1550937:1",
+              "18348376:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      },
+      {
+        "filter_percent": 25,
+        "eligible_chunks": 111,
+        "ef_search": 10,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "1144",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "12869200:1",
+              "6176498:2",
+              "12810152:2",
+              "8724666:0",
+              "597790:0",
+              "18557974:1",
+              "24211561:1",
+              "8582337:3",
+              "13906581:1",
+              "16422880:0"
+            ],
+            "ann_neighbor_ids": [
+              "12869200:1",
+              "6176498:2",
+              "12810152:2",
+              "8724666:0",
+              "597790:0",
+              "18557974:1",
+              "24211561:1",
+              "8582337:3",
+              "13906581:1",
+              "16422880:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "274",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "11614737:2",
+              "16422880:0",
+              "16422880:2",
+              "31363207:2",
+              "13899137:1",
+              "39281140:1",
+              "20188586:0",
+              "31363207:0",
+              "20188586:1",
+              "24450344:1"
+            ],
+            "ann_neighbor_ids": [
+              "11614737:2",
+              "16422880:0",
+              "16422880:2",
+              "31363207:2",
+              "13899137:1",
+              "39281140:1",
+              "20188586:0",
+              "31363207:0",
+              "20188586:1",
+              "24450344:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1171",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "6182947:2",
+              "21366394:0",
+              "21439640:2",
+              "16066726:1",
+              "17671145:1",
+              "1127562:0",
+              "56528795:0",
+              "6422576:0",
+              "31851367:0",
+              "18078750:0"
+            ],
+            "ann_neighbor_ids": [
+              "6182947:2",
+              "21366394:0",
+              "21439640:2",
+              "16066726:1",
+              "17671145:1",
+              "1127562:0",
+              "56528795:0",
+              "6422576:0",
+              "31851367:0",
+              "18078750:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "189",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4421578:0",
+              "5560962:0",
+              "7370282:0",
+              "4883040:1",
+              "6144337:0",
+              "18078750:0",
+              "5735492:0",
+              "13899137:1",
+              "11238951:0",
+              "4424888:0"
+            ],
+            "ann_neighbor_ids": [
+              "4421578:0",
+              "5560962:0",
+              "7370282:0",
+              "4883040:1",
+              "6144337:0",
+              "18078750:0",
+              "5735492:0",
+              "13899137:1",
+              "11238951:0",
+              "4424888:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1348",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "6182947:2",
+              "21366394:0",
+              "40234452:0",
+              "4883040:1",
+              "40234452:1",
+              "4424888:0",
+              "16066726:1",
+              "27247460:1",
+              "7370282:0",
+              "18988265:0"
+            ],
+            "ann_neighbor_ids": [
+              "6182947:2",
+              "21366394:0",
+              "40234452:0",
+              "4883040:1",
+              "40234452:1",
+              "4424888:0",
+              "16066726:1",
+              "27247460:1",
+              "7370282:0",
+              "18988265:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      },
+      {
+        "filter_percent": 25,
+        "eligible_chunks": 111,
+        "ef_search": 40,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "1144",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "12869200:1",
+              "6176498:2",
+              "12810152:2",
+              "8724666:0",
+              "597790:0",
+              "18557974:1",
+              "24211561:1",
+              "8582337:3",
+              "13906581:1",
+              "16422880:0"
+            ],
+            "ann_neighbor_ids": [
+              "12869200:1",
+              "6176498:2",
+              "12810152:2",
+              "8724666:0",
+              "597790:0",
+              "18557974:1",
+              "24211561:1",
+              "8582337:3",
+              "13906581:1",
+              "16422880:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "274",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "11614737:2",
+              "16422880:0",
+              "16422880:2",
+              "31363207:2",
+              "13899137:1",
+              "39281140:1",
+              "20188586:0",
+              "31363207:0",
+              "20188586:1",
+              "24450344:1"
+            ],
+            "ann_neighbor_ids": [
+              "11614737:2",
+              "16422880:0",
+              "16422880:2",
+              "31363207:2",
+              "13899137:1",
+              "39281140:1",
+              "20188586:0",
+              "31363207:0",
+              "20188586:1",
+              "24450344:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1171",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "6182947:2",
+              "21366394:0",
+              "21439640:2",
+              "16066726:1",
+              "17671145:1",
+              "1127562:0",
+              "56528795:0",
+              "6422576:0",
+              "31851367:0",
+              "18078750:0"
+            ],
+            "ann_neighbor_ids": [
+              "6182947:2",
+              "21366394:0",
+              "21439640:2",
+              "16066726:1",
+              "17671145:1",
+              "1127562:0",
+              "56528795:0",
+              "6422576:0",
+              "31851367:0",
+              "18078750:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "189",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4421578:0",
+              "5560962:0",
+              "7370282:0",
+              "4883040:1",
+              "6144337:0",
+              "18078750:0",
+              "5735492:0",
+              "13899137:1",
+              "11238951:0",
+              "4424888:0"
+            ],
+            "ann_neighbor_ids": [
+              "4421578:0",
+              "5560962:0",
+              "7370282:0",
+              "4883040:1",
+              "6144337:0",
+              "18078750:0",
+              "5735492:0",
+              "13899137:1",
+              "11238951:0",
+              "4424888:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1348",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "6182947:2",
+              "21366394:0",
+              "40234452:0",
+              "4883040:1",
+              "40234452:1",
+              "4424888:0",
+              "16066726:1",
+              "27247460:1",
+              "7370282:0",
+              "18988265:0"
+            ],
+            "ann_neighbor_ids": [
+              "6182947:2",
+              "21366394:0",
+              "40234452:0",
+              "4883040:1",
+              "40234452:1",
+              "4424888:0",
+              "16066726:1",
+              "27247460:1",
+              "7370282:0",
+              "18988265:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      },
+      {
+        "filter_percent": 25,
+        "eligible_chunks": 111,
+        "ef_search": 100,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "1144",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "12869200:1",
+              "6176498:2",
+              "12810152:2",
+              "8724666:0",
+              "597790:0",
+              "18557974:1",
+              "24211561:1",
+              "8582337:3",
+              "13906581:1",
+              "16422880:0"
+            ],
+            "ann_neighbor_ids": [
+              "12869200:1",
+              "6176498:2",
+              "12810152:2",
+              "8724666:0",
+              "597790:0",
+              "18557974:1",
+              "24211561:1",
+              "8582337:3",
+              "13906581:1",
+              "16422880:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "274",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "11614737:2",
+              "16422880:0",
+              "16422880:2",
+              "31363207:2",
+              "13899137:1",
+              "39281140:1",
+              "20188586:0",
+              "31363207:0",
+              "20188586:1",
+              "24450344:1"
+            ],
+            "ann_neighbor_ids": [
+              "11614737:2",
+              "16422880:0",
+              "16422880:2",
+              "31363207:2",
+              "13899137:1",
+              "39281140:1",
+              "20188586:0",
+              "31363207:0",
+              "20188586:1",
+              "24450344:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1171",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "6182947:2",
+              "21366394:0",
+              "21439640:2",
+              "16066726:1",
+              "17671145:1",
+              "1127562:0",
+              "56528795:0",
+              "6422576:0",
+              "31851367:0",
+              "18078750:0"
+            ],
+            "ann_neighbor_ids": [
+              "6182947:2",
+              "21366394:0",
+              "21439640:2",
+              "16066726:1",
+              "17671145:1",
+              "1127562:0",
+              "56528795:0",
+              "6422576:0",
+              "31851367:0",
+              "18078750:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "189",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4421578:0",
+              "5560962:0",
+              "7370282:0",
+              "4883040:1",
+              "6144337:0",
+              "18078750:0",
+              "5735492:0",
+              "13899137:1",
+              "11238951:0",
+              "4424888:0"
+            ],
+            "ann_neighbor_ids": [
+              "4421578:0",
+              "5560962:0",
+              "7370282:0",
+              "4883040:1",
+              "6144337:0",
+              "18078750:0",
+              "5735492:0",
+              "13899137:1",
+              "11238951:0",
+              "4424888:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1348",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "6182947:2",
+              "21366394:0",
+              "40234452:0",
+              "4883040:1",
+              "40234452:1",
+              "4424888:0",
+              "16066726:1",
+              "27247460:1",
+              "7370282:0",
+              "18988265:0"
+            ],
+            "ann_neighbor_ids": [
+              "6182947:2",
+              "21366394:0",
+              "40234452:0",
+              "4883040:1",
+              "40234452:1",
+              "4424888:0",
+              "16066726:1",
+              "27247460:1",
+              "7370282:0",
+              "18988265:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      },
+      {
+        "filter_percent": 5,
+        "eligible_chunks": 23,
+        "ef_search": 10,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "1144",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "8724666:0",
+              "8582337:3",
+              "16422880:0",
+              "4883040:1",
+              "15541119:1",
+              "24341590:0",
+              "9764256:2",
+              "27076725:0",
+              "17671145:1",
+              "31851367:0"
+            ],
+            "ann_neighbor_ids": [
+              "8724666:0",
+              "8582337:3",
+              "16422880:0",
+              "4883040:1",
+              "15541119:1",
+              "24341590:0",
+              "9764256:2",
+              "27076725:0",
+              "17671145:1",
+              "31851367:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "274",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "16422880:0",
+              "4883040:1",
+              "32852283:3",
+              "8582337:3",
+              "9764256:2",
+              "31851367:1",
+              "24341590:0",
+              "17671145:1",
+              "24237492:0",
+              "16625620:0"
+            ],
+            "ann_neighbor_ids": [
+              "16422880:0",
+              "4883040:1",
+              "32852283:3",
+              "8582337:3",
+              "9764256:2",
+              "31851367:1",
+              "24341590:0",
+              "17671145:1",
+              "24237492:0",
+              "16625620:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1171",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "17671145:1",
+              "31851367:0",
+              "3367829:0",
+              "32852283:1",
+              "31851367:1",
+              "32852283:3",
+              "40234452:1",
+              "9440748:2",
+              "2078658:0",
+              "8724666:0"
+            ],
+            "ann_neighbor_ids": [
+              "17671145:1",
+              "31851367:0",
+              "3367829:0",
+              "32852283:1",
+              "31851367:1",
+              "32852283:3",
+              "40234452:1",
+              "9440748:2",
+              "2078658:0",
+              "8724666:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "189",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4883040:1",
+              "11238951:0",
+              "28809022:1",
+              "32852283:3",
+              "31851367:0",
+              "40234452:1",
+              "32852283:1",
+              "31851367:1",
+              "9440748:2",
+              "17671145:1"
+            ],
+            "ann_neighbor_ids": [
+              "4883040:1",
+              "11238951:0",
+              "28809022:1",
+              "32852283:3",
+              "31851367:0",
+              "40234452:1",
+              "32852283:1",
+              "31851367:1",
+              "9440748:2",
+              "17671145:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1348",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4883040:1",
+              "40234452:1",
+              "32852283:3",
+              "9440748:2",
+              "17671145:1",
+              "16422880:0",
+              "32852283:1",
+              "2078658:0",
+              "11238951:0",
+              "8724666:0"
+            ],
+            "ann_neighbor_ids": [
+              "4883040:1",
+              "40234452:1",
+              "32852283:3",
+              "9440748:2",
+              "17671145:1",
+              "16422880:0",
+              "32852283:1",
+              "2078658:0",
+              "11238951:0",
+              "8724666:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      },
+      {
+        "filter_percent": 5,
+        "eligible_chunks": 23,
+        "ef_search": 40,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "1144",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "8724666:0",
+              "8582337:3",
+              "16422880:0",
+              "4883040:1",
+              "15541119:1",
+              "24341590:0",
+              "9764256:2",
+              "27076725:0",
+              "17671145:1",
+              "31851367:0"
+            ],
+            "ann_neighbor_ids": [
+              "8724666:0",
+              "8582337:3",
+              "16422880:0",
+              "4883040:1",
+              "15541119:1",
+              "24341590:0",
+              "9764256:2",
+              "27076725:0",
+              "17671145:1",
+              "31851367:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "274",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "16422880:0",
+              "4883040:1",
+              "32852283:3",
+              "8582337:3",
+              "9764256:2",
+              "31851367:1",
+              "24341590:0",
+              "17671145:1",
+              "24237492:0",
+              "16625620:0"
+            ],
+            "ann_neighbor_ids": [
+              "16422880:0",
+              "4883040:1",
+              "32852283:3",
+              "8582337:3",
+              "9764256:2",
+              "31851367:1",
+              "24341590:0",
+              "17671145:1",
+              "24237492:0",
+              "16625620:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1171",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "17671145:1",
+              "31851367:0",
+              "3367829:0",
+              "32852283:1",
+              "31851367:1",
+              "32852283:3",
+              "40234452:1",
+              "9440748:2",
+              "2078658:0",
+              "8724666:0"
+            ],
+            "ann_neighbor_ids": [
+              "17671145:1",
+              "31851367:0",
+              "3367829:0",
+              "32852283:1",
+              "31851367:1",
+              "32852283:3",
+              "40234452:1",
+              "9440748:2",
+              "2078658:0",
+              "8724666:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "189",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4883040:1",
+              "11238951:0",
+              "28809022:1",
+              "32852283:3",
+              "31851367:0",
+              "40234452:1",
+              "32852283:1",
+              "31851367:1",
+              "9440748:2",
+              "17671145:1"
+            ],
+            "ann_neighbor_ids": [
+              "4883040:1",
+              "11238951:0",
+              "28809022:1",
+              "32852283:3",
+              "31851367:0",
+              "40234452:1",
+              "32852283:1",
+              "31851367:1",
+              "9440748:2",
+              "17671145:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1348",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4883040:1",
+              "40234452:1",
+              "32852283:3",
+              "9440748:2",
+              "17671145:1",
+              "16422880:0",
+              "32852283:1",
+              "2078658:0",
+              "11238951:0",
+              "8724666:0"
+            ],
+            "ann_neighbor_ids": [
+              "4883040:1",
+              "40234452:1",
+              "32852283:3",
+              "9440748:2",
+              "17671145:1",
+              "16422880:0",
+              "32852283:1",
+              "2078658:0",
+              "11238951:0",
+              "8724666:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      },
+      {
+        "filter_percent": 5,
+        "eligible_chunks": 23,
+        "ef_search": 100,
+        "mean_neighbor_recall": 1.0,
+        "queries": [
+          {
+            "query_id": "1144",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "8724666:0",
+              "8582337:3",
+              "16422880:0",
+              "4883040:1",
+              "15541119:1",
+              "24341590:0",
+              "9764256:2",
+              "27076725:0",
+              "17671145:1",
+              "31851367:0"
+            ],
+            "ann_neighbor_ids": [
+              "8724666:0",
+              "8582337:3",
+              "16422880:0",
+              "4883040:1",
+              "15541119:1",
+              "24341590:0",
+              "9764256:2",
+              "27076725:0",
+              "17671145:1",
+              "31851367:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "274",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "16422880:0",
+              "4883040:1",
+              "32852283:3",
+              "8582337:3",
+              "9764256:2",
+              "31851367:1",
+              "24341590:0",
+              "17671145:1",
+              "24237492:0",
+              "16625620:0"
+            ],
+            "ann_neighbor_ids": [
+              "16422880:0",
+              "4883040:1",
+              "32852283:3",
+              "8582337:3",
+              "9764256:2",
+              "31851367:1",
+              "24341590:0",
+              "17671145:1",
+              "24237492:0",
+              "16625620:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1171",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "17671145:1",
+              "31851367:0",
+              "3367829:0",
+              "32852283:1",
+              "31851367:1",
+              "32852283:3",
+              "40234452:1",
+              "9440748:2",
+              "2078658:0",
+              "8724666:0"
+            ],
+            "ann_neighbor_ids": [
+              "17671145:1",
+              "31851367:0",
+              "3367829:0",
+              "32852283:1",
+              "31851367:1",
+              "32852283:3",
+              "40234452:1",
+              "9440748:2",
+              "2078658:0",
+              "8724666:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "189",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4883040:1",
+              "11238951:0",
+              "28809022:1",
+              "32852283:3",
+              "31851367:0",
+              "40234452:1",
+              "32852283:1",
+              "31851367:1",
+              "9440748:2",
+              "17671145:1"
+            ],
+            "ann_neighbor_ids": [
+              "4883040:1",
+              "11238951:0",
+              "28809022:1",
+              "32852283:3",
+              "31851367:0",
+              "40234452:1",
+              "32852283:1",
+              "31851367:1",
+              "9440748:2",
+              "17671145:1"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          },
+          {
+            "query_id": "1348",
+            "recall": 1.0,
+            "exact_count": 10,
+            "ann_count": 10,
+            "exact_neighbor_ids": [
+              "4883040:1",
+              "40234452:1",
+              "32852283:3",
+              "9440748:2",
+              "17671145:1",
+              "16422880:0",
+              "32852283:1",
+              "2078658:0",
+              "11238951:0",
+              "8724666:0"
+            ],
+            "ann_neighbor_ids": [
+              "4883040:1",
+              "40234452:1",
+              "32852283:3",
+              "9440748:2",
+              "17671145:1",
+              "16422880:0",
+              "32852283:1",
+              "2078658:0",
+              "11238951:0",
+              "8724666:0"
+            ],
+            "execution": {
+              "exact_fallback_enabled": false,
+              "exact_fallback_used": false,
+              "pgvector_version": "0.8.7"
+            }
+          }
+        ]
+      }
+    ],
+    "exact_fallback_enabled": false,
+    "unit": "chunk-neighbor overlap, separate from document relevance"
+  },
+  "elapsed_seconds": 20.138,
+  "passed": true,
+  "fixture_cleanup": "owned temporary tenant/corpus/indexes removed after evaluation"
+}
