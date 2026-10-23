@@ -1,0 +1,106 @@
+{
+  "full": {
+    "base": {
+      "id": "chatcmpl-01a168ebe9fa7ca59750f3ef944c8e2f",
+      "created": 1792761656,
+      "model": "01a168ca-e398-7b97-aead-e8f80da75170",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": ", there was a little girl named Lily"
+          },
+          "finish_reason": "length"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 4,
+        "completion_tokens": 8,
+        "total_tokens": 12
+      },
+      "modelanvil": {
+        "device": "cpu",
+        "elapsed_seconds": 0.09562741685658693
+      }
+    },
+    "candidate": {
+      "id": "chatcmpl-01a168ebf5067d0ebdc4e4b796b28cc3",
+      "created": 1792761659,
+      "model": "01a168cb-0f86-7648-b2c5-0ad150dddd0e",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": ", there was a little girl named Lily"
+          },
+          "finish_reason": "length"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 4,
+        "completion_tokens": 8,
+        "total_tokens": 12
+      },
+      "modelanvil": {
+        "device": "cpu",
+        "elapsed_seconds": 0.0973806669935584
+      }
+    }
+  },
+  "lora": {
+    "base": {
+      "id": "chatcmpl-01a168ec00517a28aecffebb5367b585",
+      "created": 1792761659,
+      "model": "01a168ca-546a-7b99-b9a2-b6e09cb4516b",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": ", there was a little girl named Lily"
+          },
+          "finish_reason": "length"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 4,
+        "completion_tokens": 8,
+        "total_tokens": 12
+      },
+      "modelanvil": {
+        "device": "cpu",
+        "elapsed_seconds": 0.10111595899797976
+      }
+    },
+    "candidate": {
+      "id": "chatcmpl-01a168ec02ab7e949adca6afdddba87c",
+      "created": 1792761661,
+      "model": "01a168ca-5eb4-71c0-b805-fb001638767c",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": ", there was a little girl named Lily"
+          },
+          "finish_reason": "length"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 4,
+        "completion_tokens": 8,
+        "total_tokens": 12
+      },
+      "modelanvil": {
+        "device": "cpu",
+        "elapsed_seconds": 0.10442770808003843
+      }
+    }
+  }
+}

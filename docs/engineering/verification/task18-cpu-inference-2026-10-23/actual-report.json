@@ -1,0 +1,513 @@
+{
+  "source_main": "d772ea61f515ab0d8fe3e23bd00c2e7c315a635b",
+  "scope": "Actual bounded local CPU model import/generation/streaming/access checks through API test client and real model runtimes. No browser/network transport, model quality or GPU/MLX qualification claim.",
+  "formats": {
+    "safetensors": {
+      "model_id": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
+      "files": {
+        "model.safetensors": {
+          "artifact_id": "01a168ea-d8c6-78ba-8074-a506c92c9e51",
+          "sha256": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+          "byte_size": 269060552
+        },
+        "config.json": {
+          "artifact_id": "01a168ea-d945-7915-ad0a-bbce8c02815e",
+          "sha256": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+          "byte_size": 704
+        },
+        "tokenizer.json": {
+          "artifact_id": "01a168ea-d94a-756a-86ed-65f65a3c5538",
+          "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+          "byte_size": 2104556
+        },
+        "tokenizer_config.json": {
+          "artifact_id": "01a168ea-d954-740d-bd54-22ac09cdf860",
+          "sha256": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+          "byte_size": 3658
+        },
+        "special_tokens_map.json": {
+          "artifact_id": "01a168ea-d957-79f1-adc7-385cd479dfb7",
+          "sha256": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+          "byte_size": 831
+        }
+      },
+      "first": {
+        "id": "chatcmpl-01a168eae3637f9a82c2320ef32ff1fa",
+        "created": 1792761587,
+        "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": ", there was a little girl named Lily"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 4,
+          "completion_tokens": 8,
+          "total_tokens": 12
+        },
+        "modelanvil": {
+          "device": "cpu",
+          "elapsed_seconds": 0.10609354102052748
+        }
+      },
+      "repeated": {
+        "id": "chatcmpl-01a168eae6517a27b483d38af4db88a3",
+        "created": 1792761587,
+        "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": ", there was a little girl named Lily"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 4,
+          "completion_tokens": 8,
+          "total_tokens": 12
+        },
+        "modelanvil": {
+          "device": "cpu",
+          "elapsed_seconds": 0.10266658291220665
+        }
+      },
+      "stream_events": [
+        {
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": ","
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": " there"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": " was"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": " a"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": " little"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": " girl"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": " named"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": " Lily"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "finish_reason": "length"
+            }
+          ],
+          "modelanvil": {
+            "elapsed_seconds": 0.10439875000156462,
+            "device": "cpu"
+          }
+        },
+        {
+          "id": "chatcmpl-01a168eae8ec7fa5b1221c25e28f361e",
+          "created": 1792761588,
+          "model": "01a168ea-e346-749a-8a07-0e21c4d3f4a0",
+          "object": "chat.completion.chunk",
+          "choices": [],
+          "usage": {
+            "prompt_tokens": 4,
+            "completion_tokens": 8,
+            "total_tokens": 12
+          }
+        }
+      ],
+      "repeatable": true,
+      "stream_matches_buffered": true,
+      "load_tested_only_after_actual_execution": true,
+      "disconnect_unloaded": true,
+      "overflow_refused": true,
+      "actual_corrupt_weight_bytes_refused": true,
+      "revocation_withholds_prefetched_content": true,
+      "device_admission_released": true,
+      "model_state": "draft"
+    },
+    "gguf": {
+      "model_id": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
+      "files": {
+        "modelanvil-cpu-first-smollm2-f16.gguf": {
+          "artifact_id": "01a168ea-f265-7cba-8ea8-a220ae837cfe",
+          "sha256": "102c45efa42705741d39f8c837dd3cb0511a239f659565fdce0cc9731d8b5447",
+          "byte_size": 270886304
+        }
+      },
+      "first": {
+        "id": "chatcmpl-01a168eaf7017f989f18d231189ab2da",
+        "created": 1792761592,
+        "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Here are three words about stars:\n\n"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 36,
+          "completion_tokens": 8,
+          "total_tokens": 44
+        },
+        "modelanvil": {
+          "device": "cpu",
+          "elapsed_seconds": 0.10167341609485447
+        }
+      },
+      "repeated": {
+        "id": "chatcmpl-01a168eafd357e18b5a40781ae333282",
+        "created": 1792761594,
+        "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
+        "object": "chat.completion",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Here are three words about stars:\n\n"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 36,
+          "completion_tokens": 8,
+          "total_tokens": 44
+        },
+        "modelanvil": {
+          "device": "cpu",
+          "elapsed_seconds": 0.07945520896464586
+        }
+      },
+      "stream_events": [
+        {
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "Here"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": " are"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": " three"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": " words"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": " about"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": " stars"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": ":"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "\n\n"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
+          "object": "chat.completion.chunk",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "finish_reason": "length"
+            }
+          ],
+          "modelanvil": {
+            "elapsed_seconds": 0.07938004098832607,
+            "device": "cpu"
+          }
+        },
+        {
+          "id": "chatcmpl-01a168eb02d179b79cf7c67e9714cc5b",
+          "created": 1792761595,
+          "model": "01a168ea-f6f1-77a2-b31d-e5ae8281ba44",
+          "object": "chat.completion.chunk",
+          "choices": [],
+          "usage": {
+            "prompt_tokens": 36,
+            "completion_tokens": 8,
+            "total_tokens": 44
+          }
+        }
+      ],
+      "repeatable": true,
+      "stream_matches_buffered": true,
+      "load_tested_only_after_actual_execution": true,
+      "disconnect_unloaded": true,
+      "overflow_refused": true,
+      "actual_corrupt_weight_bytes_refused": true,
+      "revocation_withholds_prefetched_content": true,
+      "device_admission_released": true,
+      "model_state": "draft"
+    }
+  },
+  "source_files": {
+    "modelanvil/runners/inference.py": "fe3b7f2121c03b779e81142b46d76de6329f9a2b93deabdab303466c75979d03",
+    "modelanvil/api/views/model_workspace.py": "f80648badad4845cb8387e3fe743556b964bd92bb7f28269a51976115fc703b2"
+  },
+  "safetensors_source": {
+    "repo_id": "HuggingFaceTB/SmolLM2-135M",
+    "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+    "license": "Apache-2.0"
+  },
+  "gguf_source_note": "Official llama.cpp f5027fb21307eb264aed483242603d68c87b0fe3 converted pinned public SmolLM2-135M-Instruct; exact source/converter/weight hashes remain in TASK74 receipt. The GGUF and Safetensors reference weights differ; no cross-format output equality is asserted.",
+  "runtime_versions": {
+    "torch": "2.13.0",
+    "transformers": "5.14.0",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.22.2",
+    "xllamacpp": "2026.10.11549"
+  }
+}
