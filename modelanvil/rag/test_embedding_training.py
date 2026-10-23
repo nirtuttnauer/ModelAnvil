@@ -36,6 +36,7 @@ class EmbeddingSplitTests(TestCase):
 
     def test_split_aliases_negative_provenance_and_strict_input(self):
         value=fixture();training.validate_manifest(value)
+        unlabeled=copy.deepcopy(value);unlabeled['qrels'][1]['grades']={};training.validate_manifest(unlabeled)
         for mutate in [lambda v:v['documents'][3].update(source_group='accounts'),
                        lambda v:v['documents'][3].update(text=v['documents'][0]['text'].upper()),
                        lambda v:v['triplets'][0].update(negative='deliver'),
@@ -122,6 +123,8 @@ class ActualEmbeddingCandidateTests(TransactionTestCase):
         client=APIClient();client.credentials(HTTP_AUTHORIZATION='Bearer '+secret,HTTP_X_PROJECT_ID=str(self.project.pk))
         response=client.get(f'/api/v1/embedding-candidates/{candidate.candidate_id}/')
         self.assertEqual(response.status_code,200,response.content)
+        self.assertEqual(response.json()['space_id'],str(candidate.space.space_id))
+        self.assertEqual(client.post('/api/v1/embedding-candidates/',{},format='json').status_code,405)
         response=client.post(f'/api/v1/embedding-spaces/{candidate.space.space_id}/encode/',{'texts':['A reset password link.']},format='json')
         self.assertEqual(response.status_code,200,response.content)
         self.assertEqual(response.json()['pins']['candidate_export_sha256'],candidate.export_digest)
@@ -168,5 +171,10 @@ class ActualEmbeddingCandidateTests(TransactionTestCase):
         original=candidate.space.dimension;candidate.space.dimension=768
         with self.assertRaises(ValueError):checked(candidate.space)
         candidate.space.dimension=original
+        original_path=backend._path(self.tenant.pk,candidate.export.object_key,create_parent=False)
+        original_bytes=original_path.read_bytes()
+        original_path.write_bytes(original_bytes[:-1]+bytes([original_bytes[-1]^1]))
+        with self.assertRaises(ValueError):encode(['A query'],candidate.space)
+        original_path.write_bytes(original_bytes)
         source.state='tombstoned';source.save()
         with self.assertRaises(ValueError):checked(candidate.space)

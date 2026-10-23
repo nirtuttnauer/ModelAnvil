@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('artifacts', '0007_uuid7_identifiers'),
         ('identity', '0007_reviewer_invitations'),
-        ('rag', '0007_real_embedding_spaces'),
+        ('rag', '0008_retrieval_execution_receipt'),
     ]
 
     operations = [

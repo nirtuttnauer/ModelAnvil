@@ -83,7 +83,7 @@ def validate_manifest(value):
         key=text(case['id'],128);group=text(case['source_group'],128);split=case['split'];grades=case['grades']
         if key in case_ids or split not in ('dev','held_out') or groups.get(group)!=split:
             raise ValueError('Qrels require distinct IDs and independent dev/held-out groups.')
-        if (not isinstance(grades,dict) or not grades or len(grades)>100
+        if (not isinstance(grades,dict) or len(grades)>100
                 or any(k not in by_id or type(v) is not int or not 0<=v<=3 for k,v in grades.items())
                 or any(by_id[k]['source_group']!=group for k,v in grades.items() if v>0)):
             raise ValueError('Declare bounded qrels grades for corpus IDs; positive references must share the query source group.')
@@ -164,6 +164,20 @@ def train_weights(value,target,*,steps,learning_rate,seed):
         if any(len(row)>256 for row in tokens):raise ValueError('A manifest text exceeds 256 actual model tokens; shorten it explicitly.')
     # Configuration is frozen before any evaluation. Held-out data never enters gradients or mining.
     before=evaluate(model,value);by_id={d['id']:d for d in value['documents']}
+    pool=[d for d in value['documents'] if d['split']=='train']
+    pool_vectors=adapter.validate_vectors(model.encode([d['text'] for d in pool],normalize_embeddings=True,
+        convert_to_numpy=True,show_progress_bar=False),len(pool))
+    mining=[]
+    for row in value['triplets']:
+        query=model.encode([row['query']],normalize_embeddings=True,convert_to_numpy=True,show_progress_bar=False)[0]
+        eligible=sorted([(d['id'],float(v@query)) for d,v in zip(pool,pool_vectors) if d['id']!=row['positive']],
+                        key=lambda item:(-item[1],item[0]))
+        rank=next(i for i,(key,_) in enumerate(eligible,1) if key==row['negative'])
+        if row['negative_provenance']['kind']=='baseline_mined' and rank!=1:
+            raise ValueError('A baseline-mined negative must be the highest-scoring eligible training-only nonpositive document.')
+        mining.append({'triplet_id':row['id'],'negative_id':row['negative'],'declared_kind':row['negative_provenance']['kind'],
+            'measured_training_only_rank':rank,'pool_size':len(pool),'baseline_revision':adapter.PINS['revision'],
+            'pool_digest':digest([d['id'] for d in pool]),'human_review_independently_verified':False})
     initial=hashlib.sha256(next(model.parameters()).detach().cpu().numpy().tobytes()).hexdigest()
     optimizer=torch.optim.SGD(model.parameters(),lr=learning_rate)
     order=list(value['triplets']);random.Random(seed).shuffle(order);losses=[]
@@ -188,7 +202,7 @@ def train_weights(value,target,*,steps,learning_rate,seed):
     if set(files)!=FILES:raise ValueError('The saved model layout differs from the qualified export format.')
     if files['model.safetensors']['sha256']==adapter.PINS['files']['model.safetensors']['sha256']:
         raise ValueError('The exported candidate still has unchanged baseline weights.')
-    return files,{'baseline':before,'candidate':after,'loss':losses,'initial_parameter_digest':initial,
+    return files,{'baseline':before,'candidate':after,'negative_provenance':mining,'loss':losses,'initial_parameter_digest':initial,
                   'final_parameter_digest':final,'held_out_role':'inspected_after_frozen_configuration','quality_improvement_claimed':False}
 
 
@@ -214,12 +228,14 @@ def publish(*,project,source,name,steps=4,learning_rate=.001,seed=7):
         payload=io.BytesIO()
         with zipfile.ZipFile(payload,'w',compression=zipfile.ZIP_STORED) as archive:
             for file in sorted(files):archive.writestr(zipfile.ZipInfo(file,date_time=(1980,1,1,0,0,0)),(target/file).read_bytes())
-            archive.writestr('LICENSE.txt',Path(__file__).with_name('assets').joinpath('LICENSE-2.0.txt').read_bytes())
-            archive.writestr('NOTICE.txt',f"Derived from {adapter.PINS['model']} revision {adapter.PINS['revision']}; Apache-2.0. ModelAnvil CPU triplet fine-tuning.\n")
+            archive.writestr(zipfile.ZipInfo('LICENSE.txt',date_time=(1980,1,1,0,0,0)),Path(__file__).with_name('assets').joinpath('LICENSE-2.0.txt').read_bytes())
+            archive.writestr(zipfile.ZipInfo('NOTICE.txt',date_time=(1980,1,1,0,0,0)),f"Derived from {adapter.PINS['model']} revision {adapter.PINS['revision']}; Apache-2.0. ModelAnvil CPU triplet fine-tuning.\n")
         raw=payload.getvalue()
     # Recheck input bytes, current grants and protected suites before making any candidate visible.
     with transaction.atomic():
         Tenant.objects.select_for_update().get(pk=project.tenant_id)
+        if EmbeddingSpace.all_objects.filter(tenant_id=project.tenant_id,name=name).exists():
+            raise ValueError('This embedding space name was published by another process; choose a new name.')
         current=Artifact.all_objects.select_for_update().get(pk=source.pk)
         if current.sha256!=source_hash or digest(read_manifest(current,project))!=protocol['manifest_digest']:
             raise ValueError('The training input changed before publication.')

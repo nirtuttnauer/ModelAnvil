@@ -127,9 +127,12 @@ class EmbeddingBuildViewSet(TenantScopedViewSet):
 
 
 class CandidateSerializer(serializers.ModelSerializer):
+    space_id=serializers.UUIDField(source='space.space_id',read_only=True)
+    source_artifact_id=serializers.UUIDField(source='source.artifact_id',read_only=True)
+    export_artifact_id=serializers.UUIDField(source='export.artifact_id',read_only=True)
     class Meta:
         model=EmbeddingCandidate
-        fields=('candidate_id','space','source','export','source_digest','export_digest','protocol','report','created_at')
+        fields=('candidate_id','space_id','source_artifact_id','export_artifact_id','source_digest','export_digest','protocol','report','created_at')
         read_only_fields=fields
 
 
