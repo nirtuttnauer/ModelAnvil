@@ -1,0 +1,89 @@
+{
+  "observed_at": "2026-10-23",
+  "inputs": "authored non-customer bounded fixtures",
+  "extraction": [
+    {
+      "format": "pdf",
+      "sha256": "c7df85c89b604f7261ebcfefc4d04d123fc030320724324d8a1b9c70451258b8",
+      "row_count": 2,
+      "source_locations": [
+        {
+          "source_path": "page/1",
+          "page": 1
+        },
+        {
+          "source_path": "page/2",
+          "page": 2
+        }
+      ],
+      "source_group_count": 1
+    },
+    {
+      "format": "docx",
+      "sha256": "d00a938fdabf0eaef1de25a01df1663e4461101b6c730c6ae975b8d16f98cb07",
+      "row_count": 2,
+      "source_locations": [
+        {
+          "source_path": "word/document.xml/paragraph/1"
+        },
+        {
+          "source_path": "word/document.xml/paragraph/2"
+        }
+      ],
+      "source_group_count": 1
+    },
+    {
+      "format": "csv",
+      "sha256": "f724442169c5d97c9d001ec722a0d4c896439ed30ba6129cde535ab0895db776",
+      "row_count": 2,
+      "source_locations": [
+        {
+          "source_path": "record/1"
+        },
+        {
+          "source_path": "record/2"
+        }
+      ],
+      "source_group_count": 1
+    }
+  ],
+  "mixed_pdf": {
+    "sha256": "522b8bb5efd74d7a542907a5dd1454947ff631b87b5333787b951fd52140d9a4",
+    "page_count": 2,
+    "page_2_has_embedded_text": false,
+    "direct_import": "refused whole document; OCR required; no partial publication",
+    "rasterization": {
+      "source_format": "pdf",
+      "renderer": "pypdfium2==5.14.0",
+      "max_scale": 2,
+      "normalization": "pdfium_rgb",
+      "page_count": 2
+    },
+    "pages": [
+      {
+        "page": 1,
+        "image_dimensions": [
+          1224,
+          600
+        ],
+        "raster_sha256": "de90bb182da4f3c36fa55bc877f3cc33d5a3d5c0d3e0cac42049ec309b39d63d"
+      },
+      {
+        "page": 2,
+        "image_dimensions": [
+          1224,
+          600
+        ],
+        "raster_sha256": "db497b65444593680df27df4a37e71614d79fe1f1d2fc03f3d7618b1064c5c99"
+      }
+    ],
+    "ocr_inference": "not_run",
+    "layout_inference": "not_run",
+    "current_specialist_runtime_configured": false
+  },
+  "versions": {
+    "pypdf": "6.21.2",
+    "Pillow": "13.0.0",
+    "pypdfium2": "5.14.0"
+  }
+}

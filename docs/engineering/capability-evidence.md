@@ -4,6 +4,22 @@ Current delivery addendum (23 October 2026): see the [integration inventory](int
 
 For current operation-specific support, artifact references and remaining qualification, see the [21 October capability baseline](supported-capabilities.md). This audit retains its original scenario-by-scenario review scope.
 
+## Current document capability evidence — 23 October 2026 (TASK-62)
+
+Evidence is operation-specific. A working parser or worker does not qualify OCR recognition. [Fresh software checks and remaining mixed-document gap](verification/task62-documents-2026-10-23/report.md) include 46 passing tests and authored source/raster receipts. No document model path currently has hardware-qualified evidence for the current dependency/build pins.
+
+| Capability | Current evidence level | Verification files | Bounds and pending work |
+| --- | --- | --- | --- |
+| CSV / JSON source extraction and immutable dataset publication | Integrated execution: actual standard-library parsing and frontend-client HTTP publication | `data/test_source_import.py`, `api/test_dataset_preparation_http.py`, `api/test_dataset_preparation.py` (all under `modelanvil/`) | 16 MiB source, 10,000 rows; explicit string text field and optional source-group mapping; not image/audio extraction |
+| DOCX main-body paragraphs and immutable publication | Integrated execution: actual ZIP/XML extraction and frontend-client HTTP publication | `modelanvil/data/test_source_import.py`, `modelanvil/api/test_dataset_preparation_http.py` | 16 MiB compressed input and expanded archive, 1,000 entries; no external relationships, headers/footers, visual reading-order or typed table/layout guarantee |
+| Embedded-text PDF page extraction and publication | Integrated execution: actual pinned isolated parser and frontend-client HTTP publication | `modelanvil/data/test_pdf_import.py`, `modelanvil/api/test_dataset_preparation_http.py` | `pypdf==6.21.2`; 100 pages, 1 MiB decoded/page, 8 MiB aggregate/output, 15s parent timeout; POSIX only; any blank/scanned page refuses the whole document |
+| Image / scanned-PDF page rasterization | Integrated execution: actual Pillow/PDFium pixels and page digests, without recognition | `modelanvil/runners/test_specialist_runtime.py`; [fresh mixed-page receipt](verification/task62-documents-2026-10-23/fixtures.json) | 8 MiB; PNG/JPEG or 1–5 PDF pages; bounded dimensions, <2M pixels/page and 6M/document; blank/encrypted sources refused |
+| OCR text recognition and page-aware dataset publication | Current model execution: configuration only. Controlled model output: simulation. Archived older Mac pilot: historical integrated execution | `modelanvil/api/test_specialists.py`, `scripts/specialist_runtime.py`; historical `verification/modelanvil-scanned-ocr-2026-10-12.json` | Matching isolated MLX runtime/device/model needed. Current recognition and language coverage unqualified; historical authored English smoke is not multilingual/document-quality evidence |
+| Layout detector order, geometry and region OCR | Current model execution: configuration only. Controlled model output: simulation. Archived older Mac pilot: historical integrated execution | `modelanvil/api/test_specialists.py`, `modelanvil/api/test_specialist_jobs.py`; historical `verification/modelanvil-layout-jobs-2026-10-12.json` | Pinned detector CPU + OCR MLX; threshold 0.5, 1–24 regions/document; raw table/formula text, no qualified typed reconstruction or arbitrary reading-order accuracy |
+| Durable specialist job admission, resume, cancel, retry and publication fencing | Integrated control-plane execution with simulated model outputs | `modelanvil/api/test_specialist_jobs.py`, `modelanvil/runners/specialist_jobs.py` | Three reserved attempt units/max claims, matching runtime/worker required; 120s child supervision. Retry/accounting tests do not qualify recognition or actual hardware cancellation |
+
+TASK-62's end-to-end mixed PDF/DOCX/CSV publication **including recognized scanned-page content remains blocked** on the current specialist runtime/device path. The user directed the factory to skip this blocker and continue independent work. TASK-21 and TASK-33 retain their approved scopes; overlap notes are recorded in Aftur. See [source import](source-import.md), [specialist bounds](local-specialists.md) and the dated report.
+
 TASK-1 · 11 October 2026 · Local source and automated-test audit
 
 Levels describe evidence, independently of a saved workflow status:

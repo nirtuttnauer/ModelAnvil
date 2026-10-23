@@ -1,5 +1,8 @@
 # Local OCR and typed decisions
 
+Current evidence note (23 October 2026): the 12 October OCR/layout pilots below are archived integrated execution against their original runtime. They do not qualify the updated pins in `scripts/specialist_runtime.py`. Current software/rasterization checks, model-output simulation boundaries and the pending mixed scanned-document publication are listed in the [TASK-62 report](verification/task62-documents-2026-10-23/report.md) and [capability matrix](capability-evidence.md#current-document-capability-evidence--23-october-2026-task-62). Current qualified OCR language coverage is none; the earlier authored English smoke does not establish representative multilingual, table or formula accuracy.
+
+
 The Specialists screen provides two independently bounded local inference contracts:
 
 - **GLM-OCR** text recognition from PNG/JPEG and scanned PDF on `mlx:0`, using the native `mlx-vlm` implementation with remote code disabled.
