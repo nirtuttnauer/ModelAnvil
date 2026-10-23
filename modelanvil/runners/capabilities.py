@@ -49,6 +49,8 @@ def model_capabilities(version):
                 'tokenizer_kind': 'byte-v1' if module == general_runtime else 'character-v1',
                 'context_limit': bundle['config.json'].get('context_window', 64),
                 'reason': 'Verified CPU reference weights; greedy plain text inference only.'}
+            from modelanvil.runners.inference import probed_devices
+            result['chat']['load_tested_devices'] = probed_devices(version, 'cpu-reference', ['cpu'], tenant, project)
             result['memory_requirements']['training'] = training_memory_requirements(version.architecture_ref)
         except (ValueError, TypeError, KeyError):
             result['train']['reason'] = 'Model weights or tokenizer are missing, corrupt or incompatible.'
@@ -80,8 +82,16 @@ def model_capabilities(version):
                 raise ValueError('Install the optional llama.cpp runtime for CPU GGUF inference.')
             devices = ['cpu']
         elif format == 'mlx':
-            if not find_spec('mlx'):
+            from modelanvil.runners.inference import validate_mlx_profile
+            validate_mlx_profile(config, weight_bytes, native_adapter=bool(plan.get('trained') and plan.get('recipe') == 'qlora_adapter'))
+            if not find_spec('mlx') or not find_spec('mlx_lm'):
                 raise ValueError('Install the Apple MLX runtime before inference.')
+            try:
+                import mlx.core as mx
+            except (ImportError, OSError):
+                raise ValueError('The installed MLX runtime cannot access Apple Metal on this platform.') from None
+            if not mx.metal.is_available() or mx.default_device() != mx.gpu:
+                raise ValueError('MLX inference requires an available explicitly selected Apple GPU; CPU fallback is disabled.')
             devices = ['mlx:0']
         else:
             limits = safetensors_limits(plan)
@@ -100,6 +110,8 @@ def model_capabilities(version):
         result['chat'] = {'eligible': True, 'devices': devices, 'format': format, 'max_tokens': 256,
                           'context_limit': min(2048, config.get('max_position_embeddings', 2048)),
                           'reason': 'Snapshot inputs verified; actual loading and memory admission are checked at generation.'}
+        from modelanvil.runners.inference import probed_devices
+        result['chat']['load_tested_devices'] = probed_devices(version, format, devices, tenant, project)
         if format == 'safetensors' and 'cpu' in devices:
             result['evaluate'] = {'eligible': True, 'reason': 'Verified bounded CPU snapshot; evaluation rechecks exact inputs and context.'}
         if module in (hf_runtime, mlx_runtime, cpu_hf_runtime):

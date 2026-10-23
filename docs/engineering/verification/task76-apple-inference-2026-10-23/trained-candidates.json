@@ -1,0 +1,348 @@
+{
+  "source": "PR58 actual completed three-step full/LoRA CPU runs; isolated SQLite backup; original artifact bytes read only",
+  "outputs": {
+    "full_sft": {
+      "checkpoint_digest": "8277a0218958b35ccb4d09ec510605df5c69a92a5b910748008a1f9e693ec2ab",
+      "files": {
+        "config.json": {
+          "sha256": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+          "byte_size": 704
+        },
+        "model.safetensors": {
+          "sha256": "19ba16d3b0c79827fd0bac3302631e9d9b74886a45abe5b0f1995f80febf130d",
+          "byte_size": 538090408
+        },
+        "special_tokens_map.json": {
+          "sha256": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+          "byte_size": 831
+        },
+        "tokenizer.json": {
+          "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+          "byte_size": 2104556
+        },
+        "tokenizer_config.json": {
+          "sha256": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+          "byte_size": 3658
+        }
+      },
+      "source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "devices": {
+        "cpu": {
+          "id": "chatcmpl-01a16a8c6feb7c70aeec1b68c812ad12",
+          "created": 1792788953,
+          "model": "01a169e9-0ad6-75bc-be38-4547cda0f5e5",
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": ", there was a little girl named Lily"
+              },
+              "finish_reason": "length"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 4,
+            "completion_tokens": 8,
+            "total_tokens": 12
+          },
+          "modelanvil": {
+            "device": "cpu",
+            "elapsed_seconds": 0.09499495799900615,
+            "runtime": {
+              "format": "safetensors",
+              "signature": "26ab525b6d2d2f8c344cd52d2c11ec58577d028336b04fc899046ce63496ee53",
+              "input_identity": "c06c3e1c45907259a23890535da199417b794145e2a3869fbc2dd34247866519",
+              "device": "cpu",
+              "provenance": {
+                "implementation": {
+                  "inference.py": "0153524eee12777f3b985b4e7e8b43da8eae137eb8f1f26cece7f322dce9ac72",
+                  "gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+                  "training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+                  "capabilities.py": "c10d57c5c4af23aca2c2478cf87eb1aa6bdc3eb4aab8985382b00cb99484414b",
+                  "../api/views/model_workspace.py": "3f4e865a5a5d7abb2aaa926eee37660f9b94662a859547a10306f59f2f3829c0",
+                  "../../scripts/mlx_candidate_infer.py": "2ad996a7a7e80bae14b439f389123c9ee47275214546391fd1dc1efb7ae61522"
+                },
+                "format": "safetensors",
+                "device": "cpu",
+                "host": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+                "cpu": "Apple M5 Pro",
+                "platform": "macOS-27.0.1-arm64-arm-64bit",
+                "python": "3.12.15",
+                "packages": {
+                  "torch": "2.13.0",
+                  "transformers": "5.14.0",
+                  "tokenizers": "0.22.2",
+                  "safetensors": "0.8.0"
+                }
+              },
+              "observation": {
+                "format": "safetensors",
+                "actual_device": "cpu",
+                "tensor_devices": [
+                  "cpu"
+                ],
+                "backend": "torch-cpu"
+              }
+            }
+          }
+        },
+        "mps:0": {
+          "id": "chatcmpl-01a16a8c7e8e7e5d8f035fac2d5dbee2",
+          "created": 1792788956,
+          "model": "01a169e9-0ad6-75bc-be38-4547cda0f5e5",
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": ", there was a little girl named Lily"
+              },
+              "finish_reason": "length"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 4,
+            "completion_tokens": 8,
+            "total_tokens": 12
+          },
+          "modelanvil": {
+            "device": "mps:0",
+            "elapsed_seconds": 0.245058374999644,
+            "runtime": {
+              "format": "safetensors",
+              "signature": "90f02c50a8a553bda11d47af397c5a07a11a0d2d0a28fdd92ff14a114f66318a",
+              "input_identity": "c06c3e1c45907259a23890535da199417b794145e2a3869fbc2dd34247866519",
+              "device": "mps:0",
+              "provenance": {
+                "implementation": {
+                  "inference.py": "0153524eee12777f3b985b4e7e8b43da8eae137eb8f1f26cece7f322dce9ac72",
+                  "gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+                  "training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+                  "capabilities.py": "c10d57c5c4af23aca2c2478cf87eb1aa6bdc3eb4aab8985382b00cb99484414b",
+                  "../api/views/model_workspace.py": "3f4e865a5a5d7abb2aaa926eee37660f9b94662a859547a10306f59f2f3829c0",
+                  "../../scripts/mlx_candidate_infer.py": "2ad996a7a7e80bae14b439f389123c9ee47275214546391fd1dc1efb7ae61522"
+                },
+                "format": "safetensors",
+                "device": "mps:0",
+                "host": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+                "cpu": "Apple M5 Pro",
+                "platform": "macOS-27.0.1-arm64-arm-64bit",
+                "python": "3.12.15",
+                "packages": {
+                  "torch": "2.13.0",
+                  "transformers": "5.14.0",
+                  "tokenizers": "0.22.2",
+                  "safetensors": "0.8.0"
+                }
+              },
+              "observation": {
+                "format": "safetensors",
+                "actual_device": "mps:0",
+                "tensor_devices": [
+                  "mps:0"
+                ],
+                "backend": "torch-mps",
+                "memory": {
+                  "recommended_bytes": 40200896512,
+                  "process_limit_bytes": 36180806860,
+                  "driver_allocated_bytes": 1116553216,
+                  "process_headroom_bytes": 35064253644,
+                  "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+                },
+                "peak_allocated_bytes": null,
+                "reserved_bytes": null,
+                "current_allocated_bytes": 538060544,
+                "memory_scope": "Observed PyTorch process allocations/headroom; no true peak/reserved counters."
+              }
+            }
+          }
+        }
+      },
+      "greedy_equal": true
+    },
+    "lora_adapter": {
+      "checkpoint_digest": "96c9e331456f74094557fde71d52e56f3c502c05a17bed92c38ca4d41ad6c943",
+      "files": {
+        "config.json": {
+          "sha256": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+          "byte_size": 704
+        },
+        "model.safetensors": {
+          "sha256": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+          "byte_size": 269060552
+        },
+        "special_tokens_map.json": {
+          "sha256": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+          "byte_size": 831
+        },
+        "tokenizer.json": {
+          "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+          "byte_size": 2104556
+        },
+        "tokenizer_config.json": {
+          "sha256": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+          "byte_size": 3658
+        },
+        "adapter_model.safetensors": {
+          "sha256": "d055d1cb3b1f57391a599610858552c1c5b71b6b49d68fec1776a495397f3594",
+          "byte_size": 1858776
+        },
+        "adapter_config.json": {
+          "sha256": "b8a79cd82e332a7ee43c339316daf1f2bc7a57078b5e71fad745cc663dda2af2",
+          "byte_size": 1141
+        }
+      },
+      "source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "devices": {
+        "cpu": {
+          "id": "chatcmpl-01a16a8c86d9758d90ad05a3aa80ebf1",
+          "created": 1792788957,
+          "model": "01a169e9-13ce-7d17-81f1-8461a4146175",
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": ", there was a little girl named Lily"
+              },
+              "finish_reason": "length"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 4,
+            "completion_tokens": 8,
+            "total_tokens": 12
+          },
+          "modelanvil": {
+            "device": "cpu",
+            "elapsed_seconds": 0.10410274999958347,
+            "runtime": {
+              "format": "safetensors",
+              "signature": "26ab525b6d2d2f8c344cd52d2c11ec58577d028336b04fc899046ce63496ee53",
+              "input_identity": "24d717433fc9d1c9c8a6fc25d77d2d8b6ddfe7fcfb7f52c532903055a73e6b76",
+              "device": "cpu",
+              "provenance": {
+                "implementation": {
+                  "inference.py": "0153524eee12777f3b985b4e7e8b43da8eae137eb8f1f26cece7f322dce9ac72",
+                  "gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+                  "training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+                  "capabilities.py": "c10d57c5c4af23aca2c2478cf87eb1aa6bdc3eb4aab8985382b00cb99484414b",
+                  "../api/views/model_workspace.py": "3f4e865a5a5d7abb2aaa926eee37660f9b94662a859547a10306f59f2f3829c0",
+                  "../../scripts/mlx_candidate_infer.py": "2ad996a7a7e80bae14b439f389123c9ee47275214546391fd1dc1efb7ae61522"
+                },
+                "format": "safetensors",
+                "device": "cpu",
+                "host": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+                "cpu": "Apple M5 Pro",
+                "platform": "macOS-27.0.1-arm64-arm-64bit",
+                "python": "3.12.15",
+                "packages": {
+                  "torch": "2.13.0",
+                  "transformers": "5.14.0",
+                  "tokenizers": "0.22.2",
+                  "safetensors": "0.8.0"
+                }
+              },
+              "observation": {
+                "format": "safetensors",
+                "actual_device": "cpu",
+                "tensor_devices": [
+                  "cpu"
+                ],
+                "backend": "torch-cpu"
+              }
+            }
+          }
+        },
+        "mps:0": {
+          "id": "chatcmpl-01a16a8c8aa172a4a08ea89b9b2daf39",
+          "created": 1792788958,
+          "model": "01a169e9-13ce-7d17-81f1-8461a4146175",
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": ", there was a little girl named Lily"
+              },
+              "finish_reason": "length"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 4,
+            "completion_tokens": 8,
+            "total_tokens": 12
+          },
+          "modelanvil": {
+            "device": "mps:0",
+            "elapsed_seconds": 0.2028371669985063,
+            "runtime": {
+              "format": "safetensors",
+              "signature": "90f02c50a8a553bda11d47af397c5a07a11a0d2d0a28fdd92ff14a114f66318a",
+              "input_identity": "24d717433fc9d1c9c8a6fc25d77d2d8b6ddfe7fcfb7f52c532903055a73e6b76",
+              "device": "mps:0",
+              "provenance": {
+                "implementation": {
+                  "inference.py": "0153524eee12777f3b985b4e7e8b43da8eae137eb8f1f26cece7f322dce9ac72",
+                  "gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+                  "training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+                  "capabilities.py": "c10d57c5c4af23aca2c2478cf87eb1aa6bdc3eb4aab8985382b00cb99484414b",
+                  "../api/views/model_workspace.py": "3f4e865a5a5d7abb2aaa926eee37660f9b94662a859547a10306f59f2f3829c0",
+                  "../../scripts/mlx_candidate_infer.py": "2ad996a7a7e80bae14b439f389123c9ee47275214546391fd1dc1efb7ae61522"
+                },
+                "format": "safetensors",
+                "device": "mps:0",
+                "host": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+                "cpu": "Apple M5 Pro",
+                "platform": "macOS-27.0.1-arm64-arm-64bit",
+                "python": "3.12.15",
+                "packages": {
+                  "torch": "2.13.0",
+                  "transformers": "5.14.0",
+                  "tokenizers": "0.22.2",
+                  "safetensors": "0.8.0"
+                }
+              },
+              "observation": {
+                "format": "safetensors",
+                "actual_device": "mps:0",
+                "tensor_devices": [
+                  "mps:0"
+                ],
+                "backend": "torch-mps",
+                "memory": {
+                  "recommended_bytes": 40200896512,
+                  "process_limit_bytes": 36180806860,
+                  "driver_allocated_bytes": 1116536832,
+                  "process_headroom_bytes": 35064270028,
+                  "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+                },
+                "peak_allocated_bytes": null,
+                "reserved_bytes": null,
+                "current_allocated_bytes": 539903744,
+                "memory_scope": "Observed PyTorch process allocations/headroom; no true peak/reserved counters."
+              }
+            }
+          }
+        }
+      },
+      "greedy_equal": true
+    }
+  },
+  "passed": true,
+  "mps_after_unload_allocated_bytes": 0,
+  "temporary_key_revoked": true
+}
