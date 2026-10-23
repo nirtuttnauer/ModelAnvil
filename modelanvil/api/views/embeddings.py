@@ -10,7 +10,7 @@ from modelanvil.api.views.specialists import project_scope, StrictInput
 from modelanvil.core.tenancy import get_active_tenant
 from modelanvil.identity.models import get_accessible_queryset
 from modelanvil.jobs.models import WorkerPool
-from modelanvil.rag.models import EmbeddingSpace, EmbeddingBuild, IndexVersion
+from modelanvil.rag.models import EmbeddingSpace, EmbeddingBuild, IndexVersion, EmbeddingCandidate
 from modelanvil.rag import embedding_adapter as adapter, embedding_jobs as builds
 from modelanvil.runners.training.runtime import digest
 
@@ -75,7 +75,7 @@ class EmbeddingSpaceViewSet(TenantScopedViewSet):
         space=self.get_object();incoming=EncodeInput(data=request.data);incoming.is_valid(raise_exception=True)
         try:
             pins=builds.space_pins(space)
-            matrix=adapter.encode(incoming.validated_data['texts'])
+            matrix=adapter.encode_space(incoming.validated_data['texts'],space)
         except ValueError as exc:raise serializers.ValidationError(str(exc)) from exc
         return Response({'space':str(space.space_id),'pins':pins,'vectors':matrix.tolist(),
             'runtime':builds.runtime_digest(),'unit':'normalized_float32_vector','device':'cpu'})
@@ -124,3 +124,17 @@ class EmbeddingBuildViewSet(TenantScopedViewSet):
         try:builds.retry(build)
         except ValueError as exc:raise serializers.ValidationError(str(exc)) from exc
         build.refresh_from_db();return Response(self.get_serializer(build).data,status=202)
+
+
+class CandidateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=EmbeddingCandidate
+        fields=('candidate_id','space','source','export','source_digest','export_digest','protocol','report','created_at')
+        read_only_fields=fields
+
+
+class EmbeddingCandidateViewSet(TenantScopedViewSet):
+    queryset=EmbeddingCandidate.objects.all()
+    serializer_class=CandidateSerializer
+    lookup_field='candidate_id'
+    http_method_names=['get','head','options']

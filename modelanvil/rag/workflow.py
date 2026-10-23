@@ -33,7 +33,7 @@ def retrieve(index, query, mode, top_k, embedding=None):
             raise ValueError('The embedding-space pins changed.')
         if embedding_jobs.runtime_digest() != index.configuration['embedding_build_runtime']:
             raise ValueError('This embedding index requires its pinned runtime; rebuild under the current profile.')
-        embedding = embedding_adapter.encode([query])[0].tolist()
+        embedding = embedding_adapter.encode_space([query],index.embedding_space)[0].tolist()
     if index.adapter_type == 'lexical' or embedding is None:
         raise ValueError('Dense/hybrid retrieval needs a compatible vector index and actual query embedding.')
     if len(embedding) != index.embedding_space.dimension or not all(math.isfinite(v) for v in embedding):
