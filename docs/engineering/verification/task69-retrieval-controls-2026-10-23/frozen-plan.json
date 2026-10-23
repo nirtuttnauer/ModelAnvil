@@ -1,0 +1,567 @@
+{
+  "corpus_sha256": "11c621288d41ac144d29b13b0f8503b3820b7d6e8b1f6ff24dff335c196d76be",
+  "protocol": {
+    "version": "scifact-bounded-source-groups-v1",
+    "queries_per_split": 20,
+    "document_count": 200,
+    "split_rule": "Union claims' cited/positive document IDs; one component per source group. Even first SHA256 byte of group ID is development; odd is held_out. Select first20 queries per role by SHA256(query:id).",
+    "corpus_rule": "Include all positive documents for selected queries, then SHA256(document:id)-ordered distractors to200. No metric/model-based sampling.",
+    "cutoff_documents": 5,
+    "candidate_chunks": 20,
+    "chunk_size": 254,
+    "chunk_overlap": 16,
+    "max_chunks": 1000,
+    "random_seed": 69,
+    "random_vectors": "Independent seeded Gaussian unit vectors for each chunk and query; 384 dimensions; no text semantics.",
+    "lexical": "Production PostgreSQL simple tsvector / websearch_to_tsquery / ts_rank_cd, no held-out tuning. Conjunctive query semantics may underfill; report coverage.",
+    "primary_metric": "ndcg@5",
+    "development_rule": "Freeze minimum relevance as maximum development random/full-text nDCG@5. Choose smallest ef_search achieving development raw ANN recall>=0.95 across all declared filters; otherwise fail.",
+    "held_out_rule": "Real model must exceed each control's held-out nDCG@5 and the frozen development minimum. No retry or selection based on held-out scores.",
+    "ann_cutoff_chunks": 10,
+    "ef_search": [
+      10,
+      40,
+      100
+    ],
+    "ann_filter_percent": [
+      100,
+      25,
+      5
+    ],
+    "ann_queries_per_split": 5,
+    "ann_raw": "Disable exact underfill fallback only for ANN measurements; production default still uses exact fallback. Compare chunk neighbors against exact SQL, independently of relevance qrels.",
+    "limits": "Bounded source-group subset, not the complete SciFact benchmark or evidence of uncontaminated model pretraining. Query splits are operator-held-out public data, not the original benchmark test split."
+  },
+  "document_ids": [
+    "10071552",
+    "1127562",
+    "11614737",
+    "11718220",
+    "11899391",
+    "12885341",
+    "13906581",
+    "13910150",
+    "13940200",
+    "14682243",
+    "1568684",
+    "16066726",
+    "16284655",
+    "16322674",
+    "16422880",
+    "17450673",
+    "17671145",
+    "18956141",
+    "19005293",
+    "19878070",
+    "2052720",
+    "2078658",
+    "21295300",
+    "21366394",
+    "23557241",
+    "24341590",
+    "2617858",
+    "27123743",
+    "27873158",
+    "28617573",
+    "2867345",
+    "30507607",
+    "33409100",
+    "36606083",
+    "39281140",
+    "40164383",
+    "4421578",
+    "46695481",
+    "4687948",
+    "4824840",
+    "4883040",
+    "5850219",
+    "597790",
+    "6144337",
+    "6227220",
+    "6477536",
+    "7370282",
+    "9764256",
+    "10704438",
+    "26047921",
+    "22490293",
+    "15559582",
+    "6422576",
+    "16625620",
+    "18557974",
+    "26612216",
+    "45199834",
+    "21902910",
+    "7568596",
+    "13235609",
+    "14131683",
+    "57762078",
+    "4421787",
+    "2356950",
+    "1344498",
+    "24541180",
+    "14626540",
+    "3553087",
+    "11238951",
+    "13613916",
+    "4020950",
+    "20887554",
+    "7198295",
+    "7766808",
+    "18592108",
+    "6910577",
+    "10190778",
+    "6182947",
+    "45457778",
+    "3903084",
+    "38180456",
+    "4424888",
+    "3831884",
+    "8724666",
+    "18988265",
+    "1848452",
+    "9555784",
+    "14338915",
+    "471735",
+    "11335860",
+    "24237492",
+    "26112624",
+    "12770738",
+    "4505748",
+    "12810152",
+    "1964163",
+    "21439640",
+    "40234452",
+    "17695748",
+    "1744752",
+    "15419873",
+    "21302115",
+    "28419824",
+    "10029891",
+    "28809022",
+    "31851367",
+    "3882374",
+    "39728826",
+    "24211561",
+    "1904291",
+    "2829179",
+    "9272598",
+    "5395426",
+    "27247460",
+    "45820464",
+    "35684881",
+    "32177659",
+    "39174007",
+    "12409683",
+    "11935250",
+    "5567005",
+    "12869200",
+    "27076725",
+    "12667988",
+    "18568804",
+    "3899896",
+    "1495563",
+    "26474812",
+    "25251625",
+    "11624482",
+    "9440748",
+    "23195302",
+    "8654183",
+    "20132778",
+    "2417551",
+    "29981186",
+    "8582337",
+    "42330403",
+    "10509344",
+    "14938990",
+    "10342807",
+    "6404801",
+    "56528795",
+    "4346436",
+    "13322804",
+    "27712433",
+    "2582169",
+    "6176498",
+    "42800527",
+    "14340571",
+    "24450344",
+    "25293616",
+    "42377686",
+    "27078065",
+    "3353748",
+    "3033830",
+    "18348376",
+    "5735492",
+    "22973574",
+    "24834968",
+    "20188586",
+    "15541119",
+    "25124117",
+    "25629722",
+    "18078750",
+    "33740844",
+    "31363207",
+    "9161988",
+    "8524891",
+    "41781905",
+    "23698769",
+    "3552753",
+    "4889228",
+    "18190552",
+    "45154987",
+    "26735905",
+    "36831892",
+    "7717468",
+    "20130904",
+    "5560962",
+    "36202354",
+    "24770122",
+    "25186412",
+    "14479433",
+    "41403996",
+    "84379954",
+    "26099680",
+    "25690564",
+    "2479538",
+    "3367829",
+    "6517763",
+    "11336632",
+    "6296189",
+    "7487927",
+    "3346812",
+    "13899137",
+    "35531883",
+    "1550937",
+    "35884026",
+    "32852283"
+  ],
+  "queries": [
+    {
+      "id": "71",
+      "relevant": [
+        "1127562"
+      ],
+      "source_group": "1127562",
+      "role": "development"
+    },
+    {
+      "id": "1050",
+      "relevant": [
+        "19878070"
+      ],
+      "source_group": "19878070",
+      "role": "development"
+    },
+    {
+      "id": "1055",
+      "relevant": [
+        "13906581"
+      ],
+      "source_group": "13906581",
+      "role": "development"
+    },
+    {
+      "id": "1290",
+      "relevant": [
+        "4687948"
+      ],
+      "source_group": "4687948",
+      "role": "development"
+    },
+    {
+      "id": "68",
+      "relevant": [
+        "21295300"
+      ],
+      "source_group": "21295300",
+      "role": "development"
+    },
+    {
+      "id": "250",
+      "relevant": [
+        "1568684"
+      ],
+      "source_group": "1568684",
+      "role": "development"
+    },
+    {
+      "id": "860",
+      "relevant": [
+        "16066726"
+      ],
+      "source_group": "16066726",
+      "role": "development"
+    },
+    {
+      "id": "458",
+      "relevant": [
+        "597790"
+      ],
+      "source_group": "597790",
+      "role": "development"
+    },
+    {
+      "id": "1334",
+      "relevant": [
+        "11899391",
+        "13940200"
+      ],
+      "source_group": "11899391",
+      "role": "development"
+    },
+    {
+      "id": "12",
+      "relevant": [
+        "33409100"
+      ],
+      "source_group": "33409100",
+      "role": "development"
+    },
+    {
+      "id": "218",
+      "relevant": [
+        "21366394"
+      ],
+      "source_group": "21366394",
+      "role": "development"
+    },
+    {
+      "id": "592",
+      "relevant": [
+        "14682243"
+      ],
+      "source_group": "14682243",
+      "role": "development"
+    },
+    {
+      "id": "1173",
+      "relevant": [
+        "7370282"
+      ],
+      "source_group": "7370282",
+      "role": "development"
+    },
+    {
+      "id": "919",
+      "relevant": [
+        "16422880"
+      ],
+      "source_group": "16422880",
+      "role": "development"
+    },
+    {
+      "id": "1073",
+      "relevant": [
+        "4824840"
+      ],
+      "source_group": "4824840",
+      "role": "development"
+    },
+    {
+      "id": "256",
+      "relevant": [
+        "5850219"
+      ],
+      "source_group": "5850219",
+      "role": "development"
+    },
+    {
+      "id": "448",
+      "relevant": [
+        "2052720"
+      ],
+      "source_group": "2052720",
+      "role": "development"
+    },
+    {
+      "id": "972",
+      "relevant": [
+        "27873158",
+        "28617573",
+        "46695481",
+        "9764256"
+      ],
+      "source_group": "27446873",
+      "role": "development"
+    },
+    {
+      "id": "1043",
+      "relevant": [
+        "17671145"
+      ],
+      "source_group": "17671145",
+      "role": "development"
+    },
+    {
+      "id": "564",
+      "relevant": [
+        "2867345"
+      ],
+      "source_group": "2867345",
+      "role": "development"
+    },
+    {
+      "id": "1144",
+      "relevant": [
+        "10071552"
+      ],
+      "source_group": "10071552",
+      "role": "held_out"
+    },
+    {
+      "id": "274",
+      "relevant": [
+        "11614737"
+      ],
+      "source_group": "11614737",
+      "role": "held_out"
+    },
+    {
+      "id": "1171",
+      "relevant": [
+        "18956141"
+      ],
+      "source_group": "18956141",
+      "role": "held_out"
+    },
+    {
+      "id": "189",
+      "relevant": [
+        "4421578"
+      ],
+      "source_group": "4421578",
+      "role": "held_out"
+    },
+    {
+      "id": "1348",
+      "relevant": [
+        "19005293"
+      ],
+      "source_group": "19005293",
+      "role": "held_out"
+    },
+    {
+      "id": "1322",
+      "relevant": [
+        "16284655"
+      ],
+      "source_group": "16284655",
+      "role": "held_out"
+    },
+    {
+      "id": "1352",
+      "relevant": [
+        "12885341"
+      ],
+      "source_group": "12885341",
+      "role": "held_out"
+    },
+    {
+      "id": "1298",
+      "relevant": [
+        "11718220"
+      ],
+      "source_group": "11718220",
+      "role": "held_out"
+    },
+    {
+      "id": "1406",
+      "relevant": [
+        "2617858"
+      ],
+      "source_group": "2617858",
+      "role": "held_out"
+    },
+    {
+      "id": "149",
+      "relevant": [
+        "6227220"
+      ],
+      "source_group": "6227220",
+      "role": "held_out"
+    },
+    {
+      "id": "105",
+      "relevant": [
+        "36606083"
+      ],
+      "source_group": "36606083",
+      "role": "held_out"
+    },
+    {
+      "id": "1259",
+      "relevant": [
+        "24341590"
+      ],
+      "source_group": "24341590",
+      "role": "held_out"
+    },
+    {
+      "id": "955",
+      "relevant": [
+        "2078658",
+        "30507607"
+      ],
+      "source_group": "2078658",
+      "role": "held_out"
+    },
+    {
+      "id": "104",
+      "relevant": [
+        "40164383"
+      ],
+      "source_group": "40164383",
+      "role": "held_out"
+    },
+    {
+      "id": "885",
+      "relevant": [
+        "6477536"
+      ],
+      "source_group": "6477536",
+      "role": "held_out"
+    },
+    {
+      "id": "123",
+      "relevant": [
+        "4883040"
+      ],
+      "source_group": "4883040",
+      "role": "held_out"
+    },
+    {
+      "id": "178",
+      "relevant": [
+        "16322674",
+        "17450673",
+        "23557241",
+        "27123743"
+      ],
+      "source_group": "16322674",
+      "role": "held_out"
+    },
+    {
+      "id": "1177",
+      "relevant": [
+        "13910150"
+      ],
+      "source_group": "13910150",
+      "role": "held_out"
+    },
+    {
+      "id": "356",
+      "relevant": [
+        "6144337"
+      ],
+      "source_group": "6144337",
+      "role": "held_out"
+    },
+    {
+      "id": "1087",
+      "relevant": [
+        "39281140"
+      ],
+      "source_group": "39281140",
+      "role": "held_out"
+    }
+  ]
+}

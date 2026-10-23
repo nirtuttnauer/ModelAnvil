@@ -1395,6 +1395,12 @@
                       "hnsw"
                     ],
                     "description": "Native PostgreSQL vector strategy. Default is the pinned index strategy (hnsw for current builds). Exact bypasses ANN ordering."
+                  },
+                  "ef_search": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1000,
+                    "description": "Explicit HNSW search effort; defaults to the pinned index setting and is recorded in execution receipts."
                   }
                 }
               }

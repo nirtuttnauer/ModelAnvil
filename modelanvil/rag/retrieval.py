@@ -100,16 +100,19 @@ class RetrievalEngine:
     def get_eligible_chunks(self) -> list[DocumentChunk]:
         return list(self.eligible_queryset())
 
-    def settings(self, top_k=10, dense_search=None):
+    def settings(self, top_k=10, dense_search=None, ef_search=None):
         from django.db import connection
         config = self.index_version.configuration.get('retrieval_settings',{})
         strategy = dense_search or config.get('dense_search','hnsw')
         if strategy not in ('exact','hnsw'):
             raise ValueError('Dense search must be exact or hnsw.')
+        ef=ef_search if ef_search is not None else config.get('hnsw',{}).get('ef_search',100)
+        if type(ef) is not int or not 1<=ef<=1000:
+            raise ValueError('HNSW ef_search must be an integer between 1 and 1000.')
         return {'backend':'postgresql' if connection.vendor=='postgresql' else 'sqlite_compatibility',
             'lexical':'postgresql-ts-rank-cd-simple-v1' if connection.vendor=='postgresql' else 'lexical-token-overlap-v1',
             'dense_search':strategy,'operator':'cosine','hnsw':{'m':16,'ef_construction':64,
-                'ef_search':100,'iterative_scan':'strict_order','max_scan_tuples':20000},
+                'ef_search':ef,'iterative_scan':'strict_order','max_scan_tuples':20000},
             'execution':dict(self.execution),'underfill_policy':'exact_fallback','rrf_k':60,'candidate_count':min(200,top_k*2),'candidate_count_per_channel':True}
 
     def retrieve_lexical(self, query: str, top_k: int = 10) -> list[ScoredChunk]:
@@ -146,7 +149,7 @@ class RetrievalEngine:
             item.rank = rank
         return results
 
-    def retrieve_dense(self, query_embedding: Sequence[float], top_k: int = 10, *, dense_search=None) -> list[ScoredChunk]:
+    def retrieve_dense(self, query_embedding: Sequence[float], top_k: int = 10, *, dense_search=None, ef_search=None, allow_exact_fallback=True) -> list[ScoredChunk]:
         """Dense vector search using embedding cosine similarity."""
         expected_dim = self.index_version.embedding_space.dimension
         if len(query_embedding) != expected_dim:
@@ -170,7 +173,7 @@ class RetrievalEngine:
                 raise ValueError('Real vector search requires PostgreSQL with pgvector.')
             from django.db import transaction
             from django.db.models import F, Value
-            settings = self.settings(top_k,dense_search)
+            settings = self.settings(top_k,dense_search,ef_search)
             distances = vectors.annotate(
                 distance=CosineDistance(Cast('vector',VectorField(dimensions=expected_dim)),list(query_embedding)))
             with transaction.atomic(), connection.cursor() as cursor:
@@ -179,7 +182,7 @@ class RetrievalEngine:
                 if extension is None or tuple(int(v) for v in extension[0].split('.')[:2])<(0,8):
                     raise ValueError('SQL retrieval requires pgvector 0.8 or newer for filtered iterative scans.')
                 names = ['hnsw.ef_search','hnsw.iterative_scan','hnsw.max_scan_tuples']
-                values = ['100','strict_order','20000']
+                values = [str(settings['hnsw']['ef_search']),'strict_order','20000']
                 if settings['dense_search']=='hnsw':
                     # Explicit ANN mode prefers its ordered index over a filter-and-sort plan.
                     names.append('enable_sort');values.append('off')
@@ -189,9 +192,9 @@ class RetrievalEngine:
                     cursor.execute('SELECT current_setting(%s,true)',[name]);previous.append(cursor.fetchone()[0] or defaults[name])
                     cursor.execute('SELECT set_config(%s,%s,true)',[name,value])
                 order = 'distance' if settings['dense_search']=='hnsw' else F('distance')+Value(0.0)
-                self.execution={'exact_fallback_used':False,'pgvector_version':extension[0]}
+                self.execution={'exact_fallback_enabled':allow_exact_fallback,'exact_fallback_used':False,'pgvector_version':extension[0]}
                 ranked = list(distances.order_by(order)[:top_k])
-                if settings['dense_search']=='hnsw' and len(ranked)<min(top_k,eligible.count()):
+                if allow_exact_fallback and settings['dense_search']=='hnsw' and len(ranked)<min(top_k,eligible.count()):
                     self.execution['exact_fallback_used']=True
                     ranked = list(distances.order_by(F('distance')+Value(0.0),'chunk_id')[:top_k])
                 # Exceptions roll the local settings back with this atomic block.
@@ -232,14 +235,14 @@ class RetrievalEngine:
         query_embedding: Sequence[float],
         top_k: int = 10,
         rrf_constant: int = 60,
-        *, dense_search=None,
+        *, dense_search=None, ef_search=None,
     ) -> list[ScoredChunk]:
         """Hybrid search combining lexical and dense lists via Reciprocal Rank Fusion (RRF).
 
         RRF formula: score(d) = sum(1 / (rrf_constant + rank_i(d)))
         """
         lex_results = self.retrieve_lexical(query, top_k=top_k * 2)
-        dense_results = self.retrieve_dense(query_embedding, top_k=top_k * 2,dense_search=dense_search)
+        dense_results = self.retrieve_dense(query_embedding, top_k=top_k * 2,dense_search=dense_search,ef_search=ef_search)
 
         fused_scores: dict[str, float] = {}
         chunk_map: dict[str, DocumentChunk] = {}
