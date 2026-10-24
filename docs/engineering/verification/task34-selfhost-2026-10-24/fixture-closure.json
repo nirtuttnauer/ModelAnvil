@@ -1,0 +1,31 @@
+{
+  "fixtures": [
+    {
+      "active_keys_revoked": 9,
+      "active_keys_remaining": 0,
+      "tenant_suspended": true,
+      "user_disabled": true,
+      "workers_draining": true,
+      "outstanding_reservations": 0,
+      "running_jobs_or_attempts": 0,
+      "fixture": "selfhost-instance-v2",
+      "owned_containers_removed": true,
+      "private_data_volumes_retained": true
+    },
+    {
+      "active_keys_revoked": 5,
+      "active_keys_remaining": 0,
+      "tenant_suspended": true,
+      "user_disabled": true,
+      "workers_draining": true,
+      "outstanding_reservations": 0,
+      "running_jobs_or_attempts": 0,
+      "fixture": "selfhost-restored-v2",
+      "owned_containers_removed": true,
+      "private_data_volumes_retained": true
+    }
+  ],
+  "failed_first_install_created_no_application_resources": true,
+  "reproducer_synthetic_projects_removed": true,
+  "private_backups_and_source_packages_retained": true
+}

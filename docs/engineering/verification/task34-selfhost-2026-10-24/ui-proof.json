@@ -1,0 +1,23 @@
+{
+  "actual_owner_ui_signin": true,
+  "compiled_installed_frontend": true,
+  "actual_reference_model_chat": true,
+  "usage": {
+    "prompt_tokens": 8,
+    "completion_tokens": 4,
+    "total_tokens": 12
+  },
+  "errors": [],
+  "viewports": [
+    {
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "overflow": false
+    }
+  ],
+  "browser_certificate_verification": "UI context ignored the private CA error; separate stdlib host and network-namespace clients verified CA+hostname and rejected untrusted CA.",
+  "production_qualified": false
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": "modelanvil.selfhost-qualification.v1",
+  "production_qualified": false,
+  "fresh_install": true,
+  "verified_tls": true,
+  "owner_authentication": true,
+  "explicit_local_model_import": true,
+  "offline": true,
+  "external_acquisition_refused": true,
+  "actual_optimizer_steps": 4,
+  "checkpoint_count": 4,
+  "base_weights_sha256": "781970663eee1110dc870fe5359ee65c3aa6ffd1ba20fad7e90cdea8610d8eab",
+  "trained_weights_sha256": "4eb5d89d7717297d865202914c87aa4a840df12e16c44e996f2fac1f8cc6931a",
+  "isolated_restore_checked_state_and_all_artifact_hashes_equal": true,
+  "upgrade_preserved_checked_state_and_all_artifact_hashes": true,
+  "uninstall_retained_four_data_volumes": true,
+  "retained_installation_restarted": true,
+  "artifact_count": 4,
+  "source_release": "cpu-8a77223-v2",
+  "qualification_scope": "Small numerical CPU reference pipeline and local-CA Docker package; no pretrained/task quality, public DNS/ACME, physical second host or native signing qualification.",
+  "owned_synthetic_projects_removed": true,
+  "wall_seconds": 102.5051585830006
+}

@@ -1,0 +1,91 @@
+{
+  "backup_verified": true,
+  "restored_into_distinct_docker_project": true,
+  "restored_workspace_identity_preserved": true,
+  "restored_all_artifact_hashes_equal": true,
+  "logical_state": {
+    "models": [
+      {
+        "model_version_id": "01a16c59-dcbf-71ad-8e60-c2b8c49c7ac5",
+        "artifact_manifest_id": "01a16c59-dcb9-750b-b1d2-d687747e0167",
+        "state": "draft"
+      },
+      {
+        "model_version_id": "01a16c59-f5db-719b-899c-eb895d59d542",
+        "artifact_manifest_id": "01a16c59-f5d6-71f7-899d-93764574be13",
+        "state": "draft"
+      }
+    ],
+    "datasets": [
+      {
+        "dataset_id": "01a16c59-dcc5-77e7-b047-5af97d417fc8",
+        "name": "offline-example-explicit-example",
+        "current_revision": 1
+      },
+      {
+        "dataset_id": "01a16c59-df79-7460-b09a-8b077a96a3c0",
+        "name": "Actual offline CSV upload",
+        "current_revision": 2
+      }
+    ],
+    "runs": [
+      {
+        "run_id": "01a16c59-e010-74d6-af40-17223e014875",
+        "status": "completed",
+        "current_step": 4,
+        "total_steps": 4,
+        "output_model_version_uuid": "01a16c59-f5db-719b-899c-eb895d59d542"
+      }
+    ],
+    "reservations": [
+      {
+        "job_id": "01a16c59-e010-72e2-99f5-4311e2fe62ba",
+        "state": "settled",
+        "settled_amount": "4.000000"
+      }
+    ],
+    "artifacts": [
+      {
+        "id": "01a16c59-dcb9-750b-b1d2-d687747e0167",
+        "sha256": "4f029379dff4f607760f12e8db96d0be054ceb6da4184938f099f961c5123234",
+        "bytes": 17805
+      },
+      {
+        "id": "01a16c59-dcc0-7b7f-bfcb-12849878f098",
+        "sha256": "e3ee54a7fe3b39564559731c03852e1ac6d94f9a9b24f41b9cf9baca37c0e48a",
+        "bytes": 1463
+      },
+      {
+        "id": "01a16c59-dcc9-7291-9c32-fea0907e5a67",
+        "sha256": "fbf1d90bce49a34af5b360db08c22a0063494e791d6848ca9d31bdce313482e6",
+        "bytes": 1850
+      },
+      {
+        "id": "01a16c59-df59-7cd3-967c-6747da582412",
+        "sha256": "731337351c274274f7fa32ab91269a15f9207d569fc01f1d16ea03b1a61f91b4",
+        "bytes": 74
+      },
+      {
+        "id": "01a16c59-df8e-7d4a-9f8c-64f8b444b6c1",
+        "sha256": "9830befd966d1b5ddfafd27ea09b46ebc7d261dfb201cbba20ddb69d0f74bd23",
+        "bytes": 1679
+      },
+      {
+        "id": "01a16c59-f5d6-71f7-899d-93764574be13",
+        "sha256": "b07c09aee67edeed4afcfd60502e1c7b5151e0abde3921d6ab9ede7038d2baa7",
+        "bytes": 19480
+      }
+    ]
+  },
+  "restored_trained_model_chat_usage": {
+    "prompt_tokens": 8,
+    "completion_tokens": 4,
+    "total_tokens": 12
+  },
+  "uninstall_retained_four_named_volumes": true,
+  "uninstall_retained_private_directory": true,
+  "retained_installation_restarted_with_same_data": true,
+  "retained_ca_identical": true,
+  "wall_seconds": 40.86007241700281,
+  "production_qualified": false
+}

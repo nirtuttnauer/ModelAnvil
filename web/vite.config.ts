@@ -2,7 +2,9 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 // @ts-ignore Node is supplied by the Vite runtime.
 import { execFileSync } from 'node:child_process';
-const apiBuild = JSON.parse(execFileSync('python3', ['-m', 'modelanvil.build_info'], { cwd: new URL('..', import.meta.url), encoding: 'utf8' }));
+// @ts-ignore Node is supplied by the Vite runtime.
+import { readFileSync } from 'node:fs';
+const apiBuild = JSON.parse(process.env.MODELANVIL_BUILD_INFO_PATH ? readFileSync(process.env.MODELANVIL_BUILD_INFO_PATH, 'utf8') : execFileSync('python3', ['-m', 'modelanvil.build_info'], { cwd: new URL('..', import.meta.url), encoding: 'utf8' }));
 
 declare const process: { env: Record<string, string | undefined> };
 

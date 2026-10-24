@@ -1,0 +1,19 @@
+{
+  "source_release": "cpu-8a77223-v2",
+  "target_release": "cpu-91c0a7a-v3",
+  "same_instance_and_workspace": true,
+  "models_runs_budgets_and_all_artifact_hashes_equal": true,
+  "dataset_count_preserved": 2,
+  "saved_conversation_messages_and_configuration_preserved": true,
+  "saved_conversation_count": 1,
+  "certificate_authority_preserved": true,
+  "trained_model_actual_inference_after_upgrade": {
+    "prompt_tokens": 8,
+    "completion_tokens": 4,
+    "total_tokens": 12
+  },
+  "backup_verified": true,
+  "previous_release_retained": true,
+  "wall_seconds": 15.479942000005394,
+  "production_qualified": false
+}

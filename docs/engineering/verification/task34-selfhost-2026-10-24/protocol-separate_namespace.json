@@ -1,0 +1,83 @@
+{
+  "status": "passed",
+  "scope": "Actual HTTPS CPU general transformer reference inference; a separate network namespace, not a physical second machine.",
+  "tls_versions": [
+    "TLSv1.3"
+  ],
+  "ca_verified": true,
+  "hostname_verification_enabled": true,
+  "untrusted_ca_refused": true,
+  "client_imported_application": false,
+  "json_completion": {
+    "id": "chatcmpl-01a16c5e971971909c6843de82dbe6e3",
+    "created": 1792819501,
+    "model": "01a16c59-dcbf-71ad-8e60-c2b8c49c7ac5",
+    "object": "chat.completion",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "N7EN\ufffdN7,"
+        },
+        "finish_reason": "length"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3,
+      "completion_tokens": 8,
+      "total_tokens": 11
+    },
+    "modelanvil": {
+      "device": "cpu",
+      "elapsed_seconds": 0.47127116699994076,
+      "runtime": {
+        "format": "cpu-reference",
+        "signature": "18cf95dfa4879fb2fb01dde4d9b212e01f13b20c1aa361e1709f5ed6465d90ef",
+        "input_identity": "1bafc5fab0bd65c110e56d9a252d6382c8502d286754867aa4d79adf8da3c00b",
+        "device": "cpu",
+        "provenance": {
+          "implementation": {
+            "inference.py": "9b58a0f885418a11255c88d05f111f137ff18bbe64e5cca7655846ec06135a32",
+            "gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+            "training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+            "capabilities.py": "4a033f356ca8b1fde6d84c571c61adf45007b0c7d98a18f9945c348861bbfe29",
+            "../api/views/model_workspace.py": "e33260c3359bc4e0d7a9af6e515a30598f9d982b503c1d2935020e10d40f6eee",
+            "../../scripts/mlx_candidate_infer.py": "2ad996a7a7e80bae14b439f389123c9ee47275214546391fd1dc1efb7ae61522",
+            "vlm_inference.py": "ae5f973136b2c485d672127f92157a067ca34436e4c4817c0afbf8eab0dd52f5",
+            "training/vlm_math.py": "2a8a1a30037b2764477ea1bffb79869a43c5d1c1ee55ba753f49df8d9d5ebd13",
+            "training/vlm_data.py": "38239496ea8ead2a86187be785bc40cd23c5219a3291b1d99f1d4fc711fb2da2"
+          },
+          "format": "cpu-reference",
+          "device": "cpu",
+          "host": "0c90d2b260b5487c174385d253799ee76e612dfe515451eeafdf2cb505aa1dbd",
+          "cpu": null,
+          "platform": "Linux-7.0.14-linuxkit-aarch64-with-glibc2.41",
+          "python": "3.12.15",
+          "packages": {}
+        },
+        "observation": {
+          "format": "cpu-reference",
+          "actual_device": "cpu"
+        }
+      }
+    }
+  },
+  "stream_completion": {
+    "id": "chatcmpl-01a16c5e99c37865b22cb1052c9ca42d",
+    "text": "N7EN\ufffdN7,",
+    "usage": {
+      "prompt_tokens": 3,
+      "completion_tokens": 8,
+      "total_tokens": 11
+    }
+  },
+  "replay_after_restart": false,
+  "structured_refusals": [
+    "validation_failed",
+    "validation_failed",
+    "validation_failed"
+  ],
+  "project_scope_refused": true,
+  "actual_load_observed": true
+}

@@ -1,0 +1,8 @@
+{
+  "installed_macos_app_executable_started_stack": true,
+  "browser_url": "https://localhost:53947",
+  "browser_open_used_test_sink": true,
+  "linux_desktop_file_shipped": true,
+  "native_launchservices_signing_notarization_and_clean_os_install": "unqualified",
+  "production_qualified": false
+}
