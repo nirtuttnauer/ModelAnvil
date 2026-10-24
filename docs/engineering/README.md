@@ -24,6 +24,8 @@ Both scratch pretraining and fine-tuning remain required for the first complete 
 
 ## Supporting contracts
 
+- [Private AI customer discovery](../product/customer-discovery.md) provides the TASK-43 interview guide, use-case comparison rubric, pilot scope records and discovery gates. The customer evidence and use-case selection remain open.
+
 - [Supported capability baseline and local activation measurements](supported-capabilities.md) indexes operation-specific evidence, remaining limits, and the explicit improvement-decision metric.
 
 - [Guided local LLM fine-tuning](guided-fine-tuning.md) covers fresh accounts, ordinary training datasets and installation-managed local GPU execution.
