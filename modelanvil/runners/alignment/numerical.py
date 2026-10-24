@@ -343,7 +343,6 @@ def train_alignment(algorithm, policy_bundle, train_preferences, heldout_prefere
             steps=steps, hyperparameters=hyperparameters, seed=seed, rule=verifier_spec, on_step=on_step, resume_bundle=resume_bundle, before_step=before_step)
     if resume_bundle is not None:
         raise ValueError('Checkpoint resume is available only for the bounded GRPO recipe.')
-    from . import rlhf_stages as stages
     hp = normalize_hyperparameters(algorithm, hyperparameters)
     if type(steps) is not int or not 1 <= steps <= 100 or type(seed) is not int or not 0 <= seed <= 2147483647:
         raise ValueError('Use 1–100 steps and a nonnegative 32-bit initialization seed.')
@@ -388,12 +387,47 @@ def train_alignment(algorithm, policy_bundle, train_preferences, heldout_prefere
             norm = _apply(model, gradients, hp)
             metrics = {'loss': loss, 'reward_margin': margin, 'preference_accuracy': float(margin > 0), 'gradient_norm': norm}
         elif algorithm == 'reward_model':
-            reward_weights, metrics = stages.train_reward_head(model, spec, row, reward_weights, hp)
+            delta = [a - b for a, b in zip(_features(model, spec, row['prompt'], row['chosen']), _features(model, spec, row['prompt'], row['rejected']))]
+            margin = _dot(reward_weights, delta)
+            derivative = _sigmoid(margin) - 1.
+            gradient = [derivative * feature for feature in delta]
+            norm = math.sqrt(sum(g * g for g in gradient)); scale = min(1., hp['max_gradient_norm'] / max(norm, 1e-12))
+            reward_weights = [w - hp['learning_rate'] * scale * g for w, g in zip(reward_weights, gradient)]
+            metrics = {'loss': _pair_loss(margin), 'reward_margin': margin, 'preference_accuracy': float(margin > 0), 'gradient_norm': norm}
         else:
-            generated = stages.generate_rollouts(model, reference, spec, training, step, hp, rng)
-            rollouts = stages.score_rollouts(model, reference, reward_model, reward_weights, spec, training,
-                generated, value_weights, step, hp, verifier_spec=verifier_spec if algorithm == 'verifier_rl' else None)
-            value_weights, metrics = stages.update_policy(model, reference, spec, rollouts, value_weights, hp)
+            for index in range(hp['rollout_batch_size']):
+                task = training[((step - 1) * hp['rollout_batch_size'] + index) % len(training)]
+                rollout = _sample(model, reference, spec, task['prompt'], rng, hp['max_new_tokens'])
+                feature = _features(model, spec, task['prompt'], '')
+                reward = ((1. if _verify(rollout['response'], task.get('ground_truth', task.get('chosen')), verifier_spec) else -1.) if algorithm == 'verifier_rl'
+                          else _dot(reward_weights, _features(reward_model, spec, task['prompt'], rollout['response'])))
+                value = _dot(value_weights, feature)
+                rollout.update(reward=reward, value=value, advantage=reward - value, step=step,
+                               kl_divergence=_kl(model, reference, rollout['transitions']))
+                rollouts.append(rollout)
+            clipped_count, objective, norm = 0, 0., 0.
+            for epoch in range(hp['ppo_epochs']):
+                gradients = _zero_grad(model); objective = 0.
+                for rollout in rollouts:
+                    logp = _logp(model, rollout['transitions'], allowed=[2, *range(4, model.vocab_size)])
+                    surrogate, derivative, clipped = _ppo_objective(logp - rollout['old_log_probability'], rollout['advantage'], hp['clip_range'])
+                    objective += surrogate / len(rollouts)
+                    clipped_count += int(clipped)
+                    if not clipped:
+                        _logp(model, rollout['transitions'], allowed=[2, *range(4, model.vocab_size)], gradients=gradients, coefficient=derivative / len(rollouts))
+                    objective += hp['kl_coefficient'] * _kl(model, reference, rollout['transitions'], gradients, hp['kl_coefficient'] / len(rollouts)) / len(rollouts)
+                norm = _apply(model, gradients, hp)
+            value_loss = 0.
+            for rollout in rollouts:
+                feature = _features(model, spec, rollout['prompt'], '')
+                error = _dot(value_weights, feature) - rollout['reward']; value_loss += error * error / len(rollouts)
+                value_weights = [w - hp['value_learning_rate'] * error * f / len(rollouts) for w, f in zip(value_weights, feature)]
+            mean_reward = sum(r['reward'] for r in rollouts) / len(rollouts)
+            mean_kl = sum(r['kl_divergence'] for r in rollouts) / len(rollouts)
+            metrics = {'policy_loss': objective, 'value_loss': value_loss, 'raw_reward_mean': mean_reward,
+                       'net_reward_mean': mean_reward - hp['kl_coefficient'] * mean_kl,
+                       'kl_divergence': mean_kl, 'gradient_norm': norm,
+                       'clip_fraction': clipped_count / (len(rollouts) * hp['ppo_epochs']), 'sample_count': len(rollouts)}
             if algorithm == 'verifier_rl':
                 metrics['pass_rate'] = sum(r['reward'] > 0 for r in rollouts) / len(rollouts)
         state = {'algorithm': algorithm, 'seed': seed, 'step': step, 'hyperparameters': hp,

@@ -217,6 +217,44 @@
       ],
       "production_qualified": false,
       "hardware_qualified": false
+    },
+    {
+      "operation": "training",
+      "recipe": "Pretrained CPU learned scalar reward head and on-policy rank-eight q/v RLOO",
+      "runtime": "modelanvil.smollm2-cpu-rlhf.v1",
+      "hardware": "Observed Apple M5 Pro, 48 GiB unified memory; CPU FP32 single worker/thread",
+      "evidence_date": "2026-10-24",
+      "level": "integrated_execution",
+      "artifact_identity": {
+        "base_revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "reward_head_sha256": "5f6fda722d98701a37910610f4f964005c33a647dbdc985e79bf0be5bd343891",
+        "policy_adapter_sha256": "5a4666d79f235111e3203c49de90d6c34df97592456b89fefcbbcb12de3623cc",
+        "runtime_build_digest": "172737d58876e28c6b2c6ff7ce287948f3cff3d08a71a4f408250e0cf02539e6"
+      },
+      "evidence": [
+        {
+          "path": "verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+          "sha256": "e3401ed6a2ebe6f76dace0bd2188382eb88fd996043048e8c722031df9599b0f"
+        },
+        {
+          "path": "verification/task24-cpu-rlhf-2026-10-24/browser-report.json",
+          "sha256": "b4f006400d6110c20e37a7e9e1b52ef6ab16aff5c91a982e807b313e107d20e1"
+        },
+        {
+          "path": "verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json",
+          "sha256": "702c4063e8204428e1dbe5839c828c668232c3b8f6f6b1d19c16bfff8b7ec5eb"
+        },
+        {
+          "path": "verification/task24-cpu-rlhf-2026-10-24/boundary-report.json",
+          "sha256": "5afbe9ebfa1ac1ef042f7d42a4df143c73b6266bd70a6e49a23a1cea555b6032"
+        }
+      ],
+      "remaining": [
+        "Authored fixture-owner labels are correctness evidence, not independent human/customer quality.",
+        "Other model/device profiles and production qualification require separate evidence."
+      ],
+      "production_qualified": false,
+      "hardware_qualified": false
     }
   ]
 }

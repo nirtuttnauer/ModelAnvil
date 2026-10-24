@@ -507,6 +507,7 @@ class AlignmentRun(TenantContextModel):
         DPO = "dpo", "Direct Preference Optimization"
         REWARD_MODEL = "reward_model", "Bradley-Terry Reward Model"
         PPO_RLHF = "ppo_rlhf", "Learned-Reward PPO RLHF"
+        RLOO = "rloo", "Learned-Reward RLOO RLHF"
         VERIFIER_RL = "verifier_rl", "Verifier Rule-Guided RL"
         GRPO = "grpo", "Group Relative Policy Optimization"
 
@@ -596,6 +597,69 @@ class AlignmentCheckpoint(TenantContextModel):
 
     def __str__(self) -> str:
         return f"AlignmentCheckpoint {self.alignment_run_id} step {self.step}"
+
+
+class AlignmentStageAttempt(TenantContextModel):
+    """One fenced CPU stage: measured work or an explicit interrupted-work upper bound."""
+    receipt_id = models.UUIDField(default=uuid7, unique=True, editable=False)
+    alignment_run = models.ForeignKey(AlignmentRun, on_delete=models.PROTECT, related_name='stage_attempts')
+    job_attempt = models.ForeignKey('jobs.JobAttempt', on_delete=models.PROTECT, related_name='alignment_stages')
+    sequence = models.PositiveIntegerField()
+    phase = models.CharField(max_length=24, choices=[(name, name) for name in
+        ('reward_update', 'rollout', 'score', 'policy_update', 'evaluation')])
+    input_digest = models.CharField(max_length=64)
+    upper_units = models.JSONField()
+    actual_units = models.JSONField(null=True, blank=True)
+    observations = models.JSONField(default=dict, blank=True)
+    status = models.CharField(max_length=16, default='started', choices=[(name, name) for name in
+        ('started', 'committed', 'measured_aborted', 'uncertain', 'unavailable')])
+    checkpoint = models.OneToOneField(AlignmentCheckpoint, on_delete=models.PROTECT, null=True, blank=True,
+        related_name='stage_receipt')
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=('alignment_run', 'job_attempt', 'sequence'),
+            name='alignment_stage_attempt_sequence_uniq')]
+
+    def clean(self):
+        super().clean()
+        units = {'training_steps', 'generated_tokens', 'alignment_scores'}
+        if (not isinstance(self.upper_units, dict) or set(self.upper_units) != units
+                or any(type(value) is not int or not 0 <= value <= 100000 for value in self.upper_units.values())
+                or not any(self.upper_units.values())):
+            raise ValidationError('Stage bounds require three finite nonnegative integer unit counts and nonzero work.')
+        measured = self.status in ('committed', 'measured_aborted')
+        if measured:
+            if (not isinstance(self.actual_units, dict) or set(self.actual_units) != units
+                    or any(type(value) is not int or not 0 <= value <= self.upper_units[key]
+                           for key, value in self.actual_units.items())):
+                raise ValidationError('Measured stage units must fit their declared bounds.')
+        elif self.actual_units is not None:
+            raise ValidationError('Uncertain or started work has no measured actual count.')
+        if bool(self.checkpoint_id) != (self.status in ('committed', 'unavailable')) or (self.status == 'unavailable' and self.phase != 'evaluation'):
+            raise ValidationError('A measured stage or explicitly unavailable evaluation must own its completion checkpoint.')
+        if (self.alignment_run.tenant_id != self.tenant_id or self.job_attempt.tenant_id != self.tenant_id
+                or self.alignment_run.job_id != self.job_attempt.job_id):
+            raise ValidationError('Stage receipt must belong to the alignment run and its same-tenant worker attempt.')
+        if self.checkpoint_id and (self.checkpoint.alignment_run_id != self.alignment_run_id
+                or self.checkpoint.tenant_id != self.tenant_id or self.checkpoint.step != self.sequence):
+            raise ValidationError('Stage checkpoint scope or sequence differs.')
+        if len(self.input_digest) != 64 or any(char not in '0123456789abcdef' for char in self.input_digest):
+            raise ValidationError('Stage input digest must be a SHA-256 digest.')
+        if not 1 <= self.sequence <= 301:
+            raise ValidationError('Stage sequence exceeds the bounded CPU profile.')
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            previous = type(self).all_objects.get(pk=self.pk)
+            immutable = ('tenant_id', 'alignment_run_id', 'job_attempt_id', 'sequence', 'phase', 'input_digest', 'upper_units')
+            if any(getattr(previous, field) != getattr(self, field) for field in immutable):
+                raise ValueError('Stage attempt identity and bounds are immutable.')
+            if previous.status != 'started':
+                terminal = ('status', 'actual_units', 'observations', 'checkpoint_id')
+                if any(getattr(previous, field) != getattr(self, field) for field in terminal):
+                    raise ValueError('Completed or uncertain stage receipts are immutable.')
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
 
 class LocalTrainingHost(models.Model):

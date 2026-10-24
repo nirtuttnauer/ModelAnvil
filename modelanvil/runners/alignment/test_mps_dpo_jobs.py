@@ -112,6 +112,13 @@ class DPOJobControlsTests(TestCase):
             self.assertTrue(json.loads(raw)['review']['labels_reviewed'])
             self.assertNotEqual(artifact.sha256, reviewed.sha256)
             self.assertEqual(mps_dpo._preferences(reviewed, self.tenant.pk, self.project.pk)[2], {'one'})
+            from modelanvil.core.models import AuditEvent
+            other = Project.objects.create(tenant_id=self.tenant.pk, team=self.project.team, slug='other-review', name='Other')
+            audit = AuditEvent.all_objects.get(tenant_id=self.tenant.pk, action='preferences.register', resource_id=reviewed.artifact_id)
+            AuditEvent.all_objects.filter(pk=audit.pk).update(project_id=other.pk)
+            with self.assertRaisesRegex(ValueError, 'review'): mps_dpo._preferences(reviewed, self.tenant.pk, self.project.pk)
+            AuditEvent.all_objects.filter(pk=audit.pk).update(project_id=self.project.pk)
+
             forged = Artifact.all_objects.create(tenant_id=self.tenant.pk, project=self.project,
                 storage_location_id='local', object_key=f'forged/{uuid.uuid4()}.json', sha256=reviewed.sha256,
                 byte_size=len(raw), media_type='application/json')
@@ -156,3 +163,12 @@ class DPOJobControlsTests(TestCase):
                 sha256=replacement.sha256, byte_size=replacement.byte_size)
             original.refresh_from_db()
             with self.assertRaisesRegex(ValueError, 'review'): mps_dpo._preferences(original, self.tenant.pk, self.project.pk)
+
+    def test_dpo_download_preserves_manifest_validation_before_export(self):
+        self.run.status = 'completed'; self.run.output_model_version = self.run.policy_model_version; self.run.save()
+        with patch('modelanvil.runners.inference.snapshot', side_effect=ValueError('Candidate manifest differs from checkpoint.')) as checked, \
+                patch.object(mps_dpo, 'candidate_bundle', return_value={'files': {}}), \
+                patch('modelanvil.runners.training.hf_runtime.staged_files', side_effect=AssertionError('Must not stage invalid manifest')):
+            response = self.client.get(f'/api/v1/alignment-runs/{self.run.run_id}/download/')
+        self.assertEqual(response.status_code, 400, response.content)
+        checked.assert_called_once()

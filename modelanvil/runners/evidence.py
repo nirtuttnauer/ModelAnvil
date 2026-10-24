@@ -49,7 +49,7 @@ def model_evidence(model):
         output_model_version=model, status=AlignmentRun.Status.COMPLETED).exclude(execution_pins={}).first()
     if alignment:
         result = evidence('integrated_execution',
-            f'Candidate produced by pinned {"Apple GPU" if alignment.job_id else "CPU character"} {alignment.algorithm} alignment; measured checkpoints and held-out scores')
+            f'Candidate produced by pinned {"Apple GPU" if alignment.job_id and alignment.algorithm == "dpo" else "pretrained CPU" if alignment.job_id else "CPU character"} {alignment.algorithm} alignment; measured checkpoints and held-out scores')
         result['runtime_scope'] = alignment.execution_pins.get('runtime')
         return result
     if model.metadata.get("source_run_id"):

@@ -11293,6 +11293,7 @@
               "dpo",
               "reward_model",
               "ppo_rlhf",
+              "rloo",
               "verifier_rl",
               "grpo"
             ]
@@ -11444,7 +11445,10 @@
                 {
                   "properties": {
                     "algorithm": {
-                      "const": "ppo_rlhf"
+                      "enum": [
+                        "ppo_rlhf",
+                        "rloo"
+                      ]
                     }
                   }
                 }
@@ -11554,7 +11558,11 @@
               ],
               "properties": {
                 "algorithm": {
-                  "const": "dpo"
+                  "enum": [
+                    "dpo",
+                    "reward_model",
+                    "rloo"
+                  ]
                 },
                 "total_steps": {
                   "type": "integer",
@@ -11564,6 +11572,39 @@
                 "regression_dataset_artifact": {
                   "type": "string",
                   "format": "uuid"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "algorithm"
+              ],
+              "properties": {
+                "algorithm": {
+                  "const": "rloo"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "worker_pool",
+                "reference_model_version",
+                "reward_model_version",
+                "train_dataset_artifact",
+                "held_out_dataset_artifact",
+                "regression_dataset_artifact"
+              ],
+              "properties": {
+                "worker_pool": {
+                  "type": "integer"
+                },
+                "reference_model_version": {
+                  "type": "integer"
+                },
+                "reward_model_version": {
+                  "type": "integer"
                 }
               }
             }
@@ -12123,6 +12164,7 @@
               "dpo",
               "reward_model",
               "ppo_rlhf",
+              "rloo",
               "verifier_rl",
               "grpo"
             ]

@@ -1,0 +1,157 @@
+{
+  "independent_cpu_zip_consumer": {
+    "weights_sha256": "5a4666d79f235111e3203c49de90d6c34df97592456b89fefcbbcb12de3623cc",
+    "prompt": "Once upon a time",
+    "file_hashes": {
+      "adapter_model.safetensors": "5a4666d79f235111e3203c49de90d6c34df97592456b89fefcbbcb12de3623cc",
+      "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+      "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+      "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+      "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+      "model.safetensors": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+      "adapter_config.json": "e26975b1208fefabaf728899009234d2c3c8a896d8cdc7a51177e67706ea1d08"
+    },
+    "generated_token_ids": [
+      28,
+      665,
+      436,
+      253,
+      1838,
+      8180,
+      3365,
+      14176
+    ],
+    "completion": ", there was a little girl named Lily",
+    "parameter_count": 134975808,
+    "execution": {
+      "backend": "cpu",
+      "device": "cpu",
+      "precision": "fp32",
+      "device_residency_checked": true,
+      "wall_seconds": 0.09612829199977568,
+      "allocated_bytes": null
+    },
+    "consumer_imported_modelanvil_or_django": false
+  },
+  "cpu": {
+    "completion": ", there was a little girl named Lily",
+    "usage": {
+      "prompt_tokens": 4,
+      "completion_tokens": 8,
+      "total_tokens": 12
+    },
+    "matched_independent_cpu_zip": true
+  },
+  "archive_sha256": "7cc90ed3ccf819f90954760cded27b9ae181b93e9e52ed74ac6cf6814f412700",
+  "model_version_id": "01a16b46-50b9-7a09-ade7-df26ad0a58ba",
+  "production_qualified": false,
+  "independent_reward_zip_consumer": {
+    "schema_version": "modelanvil.independent-cpu-rlhf-evaluation.v1",
+    "role": "reward",
+    "manifest_sha256": "82358e9d8663535f2d8d1387dab13a481ce5ef1bb32857067be312b296dffafc",
+    "file_sha256": {
+      "base": {
+        "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+        "model.safetensors": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+        "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+        "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424"
+      },
+      "candidate": {
+        "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+        "model.safetensors": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+        "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+        "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424"
+      },
+      "reward_head": "5f6fda722d98701a37910610f4f964005c33a647dbdc985e79bf0be5bd343891"
+    },
+    "input_sha256": {
+      "preferences": "93f85b38cca3ecb97461cee875fa09e145d6227934997df4c4dac2adaad0f2d6",
+      "regression": "f4e996b1d3cf7aebb5f654dd880e59e87e7fd4af5da90cfae962a8d02c4c540e"
+    },
+    "baseline": {
+      "pair_count": 1,
+      "accuracy": 0.5,
+      "pair_log_loss": 0.6931471805599453,
+      "brier_score": 0.25,
+      "calibration_bins": [
+        {
+          "lower": 0.4,
+          "upper": 0.6,
+          "orientation_count": 2,
+          "mean_probability": 0.5,
+          "observed_fraction": 0.5
+        }
+      ],
+      "scores": [
+        {
+          "chosen_score": 0.0,
+          "rejected_score": 0.0,
+          "preferred_probability": 0.5
+        }
+      ]
+    },
+    "candidate": {
+      "pair_count": 1,
+      "accuracy": 1.0,
+      "pair_log_loss": 0.5763945224442992,
+      "brier_score": 0.19191346333885256,
+      "calibration_bins": [
+        {
+          "lower": 0.4,
+          "upper": 0.6,
+          "orientation_count": 2,
+          "mean_probability": 0.5,
+          "observed_fraction": 0.5
+        }
+      ],
+      "scores": [
+        {
+          "chosen_score": 0.1960219293832779,
+          "rejected_score": -0.05293890833854675,
+          "preferred_probability": 0.5619207111277086
+        }
+      ]
+    },
+    "regression": {
+      "pair_count": 1,
+      "accuracy": 1.0,
+      "pair_log_loss": 0.5776148860800873,
+      "brier_score": 0.192514390196293,
+      "calibration_bins": [
+        {
+          "lower": 0.4,
+          "upper": 0.6,
+          "orientation_count": 2,
+          "mean_probability": 0.5,
+          "observed_fraction": 0.5
+        }
+      ],
+      "scores": [
+        {
+          "chosen_score": 0.1786457747220993,
+          "rejected_score": -0.0675315260887146,
+          "preferred_probability": 0.5612353817862099
+        }
+      ]
+    },
+    "checks": {
+      "ranking_above_chance": true,
+      "heldout_log_loss_not_regressed": true,
+      "separate_regression_ranking_above_chance": true
+    },
+    "passed": true,
+    "production_qualified": false,
+    "actual_units": {
+      "training_steps": 0,
+      "generated_tokens": 0,
+      "alignment_scores": 4
+    },
+    "cpu_seconds": 0.6701809999999999,
+    "wall_seconds": 0.5933507919980912,
+    "consumer_imported_modelanvil_or_django": false,
+    "scope": "Bounded independent CPU held-out ranking/calibration and separate regression gate; small authored fixtures cannot establish customer quality or production qualification."
+  },
+  "scope": "Independent CPU reload of downloaded CPU-trained RLOO and learned reward head; no GPU or customer qualification."
+}
