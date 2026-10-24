@@ -46,4 +46,3 @@ def read_reviewed_preferences(artifact, tenant, project):
             raise ValueError('Every reviewed preference/regression row requires a source group ID.')
         groups.add(group.strip())
     return pairs, sha, groups
-

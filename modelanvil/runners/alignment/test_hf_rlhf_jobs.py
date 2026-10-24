@@ -87,3 +87,12 @@ class CPUStageControlsTests(TestCase):
         self.assertEqual(self.run.stop_reason, 'categorical_kl_stop')
         self.assertEqual(self.run.latest_metrics['stage_usage']['measured_units']['training_steps'], 1)
         self.assertEqual(self.run.latest_metrics['stage_usage']['uncertain_upper_units']['training_steps'], 0)
+
+    def test_missing_optional_runtime_package_has_actionable_admission_error(self):
+        import importlib.metadata
+        def version(name):
+            if name == 'accelerate': raise importlib.metadata.PackageNotFoundError(name)
+            return runtime.CONTRACT['packages'][name]
+        with patch.object(runtime.hf, 'require_packages'), patch.object(runtime.hf, 'require_adapter_package'), \
+                patch('importlib.metadata.version', side_effect=version):
+            with self.assertRaisesRegex(ValueError, 'accelerate==1.15.0'): runtime.environment()

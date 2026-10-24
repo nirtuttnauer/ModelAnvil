@@ -74,8 +74,11 @@ def build_digest():
 def environment():
     hf.require_packages(); hf.require_adapter_package()
     import importlib.metadata
-    if any(importlib.metadata.version(n).split('+')[0] != v for n, v in CONTRACT['packages'].items()):
-        raise ValueError('Install the exact pinned CPU alignment packages.')
+    for name, expected in CONTRACT['packages'].items():
+        try: installed = importlib.metadata.version(name).split('+')[0]
+        except importlib.metadata.PackageNotFoundError: installed = None
+        if installed != expected:
+            raise ValueError(f'Install {name}=={expected} for the pinned CPU alignment profile.')
     return {**cpu.observed_device('cpu'), 'python': platform.python_version(), 'platform': platform.platform(),
         'alignment_packages': CONTRACT['packages']}
 

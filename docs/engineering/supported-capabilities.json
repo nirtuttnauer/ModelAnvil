@@ -229,24 +229,24 @@
         "base_revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
         "reward_head_sha256": "5f6fda722d98701a37910610f4f964005c33a647dbdc985e79bf0be5bd343891",
         "policy_adapter_sha256": "5a4666d79f235111e3203c49de90d6c34df97592456b89fefcbbcb12de3623cc",
-        "runtime_build_digest": "172737d58876e28c6b2c6ff7ce287948f3cff3d08a71a4f408250e0cf02539e6"
+        "runtime_build_digest": "aee3936130b3204933979351c4a5c2463a8f3900fe19b3fb6b84fb579207829a"
       },
       "evidence": [
         {
           "path": "verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
-          "sha256": "e3401ed6a2ebe6f76dace0bd2188382eb88fd996043048e8c722031df9599b0f"
+          "sha256": "6d486d864d2fa450cf1ac786260521c99ddee432f15f8dd84f5de39143d2c116"
         },
         {
           "path": "verification/task24-cpu-rlhf-2026-10-24/browser-report.json",
-          "sha256": "b4f006400d6110c20e37a7e9e1b52ef6ab16aff5c91a982e807b313e107d20e1"
+          "sha256": "ecbe420d6cbd2599800b22f642d9d5fcd170eee164288bb34a4ac202cfc58d3f"
         },
         {
           "path": "verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json",
-          "sha256": "702c4063e8204428e1dbe5839c828c668232c3b8f6f6b1d19c16bfff8b7ec5eb"
+          "sha256": "241fc8e8a8bd2189f3f6129e450246eff5ff9e916336a4804f7bc0e8084191a7"
         },
         {
           "path": "verification/task24-cpu-rlhf-2026-10-24/boundary-report.json",
-          "sha256": "5afbe9ebfa1ac1ef042f7d42a4df143c73b6266bd70a6e49a23a1cea555b6032"
+          "sha256": "32f914914bd5263fe6b2494542d61d8de76c874ebb65db34509f5d5f18b4b23d"
         }
       ],
       "remaining": [
