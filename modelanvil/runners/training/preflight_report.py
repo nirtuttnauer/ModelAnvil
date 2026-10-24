@@ -60,11 +60,15 @@ def estimate_from_pilot(inputs, *, tenant, pool, project):
         estimate['source'] = 'GPU estimate unavailable; CPU process time is not GPU elapsed time.'
         return estimate
     seqs = inputs['sequences']
-    pairs = sum(len(seqs[i % len(seqs)]) - 1 for i in range(pins['steps']))
+    vision = pins.get('config', {}).get('model_role') == 'vision_language'
+    pairs = sum(len(seqs[i % len(seqs)]) - (inputs['samples'][i % len(seqs)]['prompt_tokens'] if vision else 1) for i in range(pins['steps']))
     estimate['total_tokens'] = pairs
     estimate['assumptions'] = ['One step passes one encoded sample; samples cycle in manifest order.',
         'Queue time, database writes, checkpoint storage and retries are excluded.',
         'Linear scaling by next-token pairs assumes the pilot worker hardware; placement and timing variation are unmeasured.']
+    if vision:
+        estimate['units']['tokens'] = 'assistant response tokens'
+        estimate['assumptions'][0] = 'One step passes one encoded image/question/answer pair; only assistant response tokens contribute to loss.'
     from modelanvil.identity.models import get_accessible_queryset
     pilots = get_accessible_queryset(TrainingRun, tenant_id=tenant, project_id=project).filter(pool=pool, status='completed').order_by('-completed_at')[:20]
     for run in pilots:

@@ -19,3 +19,11 @@ test('CPU character and UTF-8 byte context counts include BOS/EOS and output res
  assert.match(referenceInputError(model,[{role:'user',content:'a'}],1,1,'plain'),/greedy/);
  assert.equal(referenceInputError({format:'safetensors'},[{role:'user',content:'text'}],128,0,'model'),null);
 });
+test('vision questions preserve processor bounds and do not accept text overrides', () => {
+ const model={format:'vision'};
+ assert.equal(referenceInputError(model,[{role:'user',content:'What color?'}],8,0,'model'),null);
+ assert.match(referenceInputError(model,[{role:'user',content:'What color?'}],17,0,'model'),/1–16/);
+ assert.match(referenceInputError(model,[{role:'user',content:'What color?'}],8,0,'plain'),/native processor/);
+ assert.match(referenceInputError(model,[{role:'system',content:'Rules'},{role:'user',content:'What color?'}],8,0,'model'),/one visual question/);
+ assert.match(referenceInputError(model,[{role:'user',content:'x'.repeat(513)}],8,0,'model'),/512/);
+});

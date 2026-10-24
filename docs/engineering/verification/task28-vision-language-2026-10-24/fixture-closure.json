@@ -1,0 +1,21 @@
+{
+  "fixtures": [
+    {
+      "fixture": "vlm-actual-final-v6",
+      "active_keys_revoked": 1,
+      "outstanding_reservations": 0,
+      "running_jobs_or_attempts": 0,
+      "workers_offline": true,
+      "tenants_suspended": true
+    },
+    {
+      "fixture": "vlm-actual-final-v6-mps",
+      "active_keys_revoked": 1,
+      "outstanding_reservations": 0,
+      "running_jobs_or_attempts": 0,
+      "workers_offline": true,
+      "tenants_suspended": true
+    }
+  ],
+  "listeners_18771_18772_stopped": true
+}

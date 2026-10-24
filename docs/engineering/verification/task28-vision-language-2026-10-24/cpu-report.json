@@ -1,0 +1,578 @@
+{
+  "result": {
+    "claimed": true,
+    "committed": true,
+    "status": "succeeded"
+  },
+  "run_status": "completed",
+  "current_step": 2,
+  "metrics": [
+    {
+      "loss": 4.598624229431152,
+      "gradient_norm": 13.552632331848145,
+      "changed_parameters": 184320,
+      "trainable_parameters": 460800,
+      "measured_at": "2026-10-24T01:40:01.715676+00:00",
+      "validation_samples": 1,
+      "gpu_allocated_bytes": null,
+      "step": 1,
+      "sample_id": "b08e1236-8972-4015-877a-118b801d4b7c",
+      "image_sha256": "6e35e4c2d632339a28e9d33792e5135892dd7292f450041988f7b30c5aced00f",
+      "training_pairs": 4,
+      "cpu_seconds": 1.080216,
+      "engine_wall_seconds": 1.0830168329994194,
+      "total_parameters": 256945728,
+      "validation_loss_before_training": 4.597644329071045,
+      "validation_loss": 4.551823616027832,
+      "validation_prediction_tokens": 4,
+      "gpu_backend": "cpu",
+      "gpu_device": "cpu",
+      "device_residency_checked": true,
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "production_qualified": false,
+      "tokens_per_second": 3.693386730584772
+    },
+    {
+      "loss": 4.549929141998291,
+      "gradient_norm": 13.347182273864746,
+      "changed_parameters": 460800,
+      "trainable_parameters": 460800,
+      "measured_at": "2026-10-24T01:40:03.621606+00:00",
+      "validation_samples": 1,
+      "gpu_allocated_bytes": null,
+      "step": 2,
+      "sample_id": "b08e1236-8972-4015-877a-118b801d4b7c",
+      "image_sha256": "6e35e4c2d632339a28e9d33792e5135892dd7292f450041988f7b30c5aced00f",
+      "training_pairs": 4,
+      "cpu_seconds": 1.0608090000000008,
+      "engine_wall_seconds": 1.0613903750054305,
+      "total_parameters": 256945728,
+      "validation_loss_before_training": 4.597644329071045,
+      "validation_loss": 4.506149768829346,
+      "validation_prediction_tokens": 4,
+      "gpu_backend": "cpu",
+      "gpu_device": "cpu",
+      "device_residency_checked": true,
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "production_qualified": false,
+      "tokens_per_second": 3.7686416743505275
+    }
+  ],
+  "hardware_config": {
+    "execution_mode": "worker",
+    "purpose": "experiment",
+    "setup_check": false,
+    "pins": {
+      "runtime": "modelanvil.smolvlm-cpu-lora.v1",
+      "contract_digest": "c41a9ee8717d602acfb15cc2ea955085bc301cd509128aaae6207778b97b85fd",
+      "build_digest": "c8983fdcfa1e4c47eda8ac05d464d00abcd6750d858ee63290b6014c79ea895f",
+      "dataset_id": "01a16b90-8cc3-7bf0-9cc1-7f2ae2baeee9",
+      "dataset_digest": "8bd84e52aab5cf98c0a01f71da4199fb4b45a18293a4b7ace50a6c00ada39811",
+      "base_id": "01a16b90-8cba-7552-bf10-810de2b4c03f",
+      "base_artifact_id": "01a16b90-84e3-7065-9ad7-ba52a773a0dc",
+      "base_digest": "ef737ff61836f5011af678b0dfbd1194ed23a7670b92b632213aebc5d7498dae",
+      "base_input_identity": "2d47f67ce33cb42ecc48e1ed906c64d41dccd38fdb84455cbe3e308e39be4272",
+      "tokenizer_id": "01a16b90-8cb7-79d3-8745-052a772ea30c",
+      "tokenizer_digest": "86542573dda29a968832f84c7d9985614909e287070dae4f63f6960076399687",
+      "processor_identity": {
+        "id": 1,
+        "tenant_id": "01a16b90-8253-7ba5-b858-c020915ec05d",
+        "created_at": "2026-10-24 01:39:57.749239+00:00",
+        "updated_at": "2026-10-24 01:39:57.749353+00:00",
+        "processor_id": "01a16b90-8cb5-7a1e-aaf8-0691bf4ee5e8",
+        "name": "vision-fixture-processor",
+        "revision_no": 1,
+        "processor_type": "multimodal",
+        "configuration_digest": "0abb63fd94140505995866906c882fc42d7e2963d1d5dda0f98f48105f9d01d6",
+        "metadata": {
+          "vision_profile": {
+            "size": {
+              "longest_edge": 512
+            },
+            "do_image_splitting": false
+          },
+          "artifact_manifest_id": "01a16b90-84e3-7065-9ad7-ba52a773a0dc",
+          "source": {
+            "repo_id": "HuggingFaceTB/SmolVLM-256M-Instruct",
+            "revision": "7e3e67edbbed1bf9888184d9df282b700a323964",
+            "license": "Apache-2.0"
+          }
+        }
+      },
+      "processor_id": "01a16b90-8cb5-7a1e-aaf8-0691bf4ee5e8",
+      "processor_digest": "0abb63fd94140505995866906c882fc42d7e2963d1d5dda0f98f48105f9d01d6",
+      "runner_id": "01a16b90-8cc5-76fc-8bfc-7cd70492cc4a",
+      "runner_digest": "668c74b03159f5fa711c67d643d96635d53dcd03f1c81c008d5178b077b35eee",
+      "pool_id": 1,
+      "worker_id": 1,
+      "steps": 2,
+      "config": {
+        "runtime": "modelanvil.smolvlm-cpu-lora.v1",
+        "source": {
+          "repo_id": "HuggingFaceTB/SmolVLM-256M-Instruct",
+          "revision": "7e3e67edbbed1bf9888184d9df282b700a323964",
+          "license": "Apache-2.0"
+        },
+        "processor_overrides": {
+          "size": {
+            "longest_edge": 512
+          },
+          "do_image_splitting": false
+        },
+        "sequence_tokens": 128,
+        "model_role": "vision_language"
+      },
+      "source": {
+        "repo_id": "HuggingFaceTB/SmolVLM-256M-Instruct",
+        "revision": "7e3e67edbbed1bf9888184d9df282b700a323964",
+        "license": "Apache-2.0"
+      },
+      "optimizer": {
+        "algorithm": "adamw",
+        "learning_rate": 2e-05,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "weight_decay": 0.0
+      },
+      "adapter": {
+        "r": 8,
+        "lora_alpha": 16,
+        "target_modules": "model\\.text_model\\.layers\\.\\d+\\.self_attn\\.(q_proj|v_proj)",
+        "lora_dropout": 0.0,
+        "bias": "none",
+        "task_type": "CAUSAL_LM"
+      },
+      "recipe": "lora_adapter",
+      "initialization_seed": 42,
+      "sample_order": "seeded_epoch_shuffle_v1",
+      "chat_sft": true,
+      "accelerator": {
+        "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+        "device": {
+          "id": "cpu",
+          "backend": "cpu",
+          "torch_device": "cpu",
+          "name": "Apple M5 Pro",
+          "total_memory_bytes": 51539607552
+        },
+        "packages": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "safetensors": "0.8.0",
+          "tokenizers": "0.22.2"
+        },
+        "capacity_source": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+      },
+      "sample_digest": "b9dc824d5f5f79da55245c70b164059061b702c50792c22c8d7e1c9048a4a32a",
+      "validation_digest": "73b2e741de15737d235885177de8e939ff3c612a55e5aabe30743dfa49a670cc",
+      "protected_test_digest": "1e9d3b5700d0b93ecd3f0ec314e2c9511030fb189e9521fb930958a18585a064",
+      "asset_pins": {
+        "test": [
+          {
+            "sha256": "0fa253f88939b5072b0963be775bfb36793bd9f6f8056e50cb8367977fdcdd3e",
+            "byte_size": 181,
+            "media_type": "image/png",
+            "decoded_width": 64,
+            "decoded_height": 64,
+            "transform": "exif_transpose_rgb_v1",
+            "artifact": {
+              "artifact_id": "01a16b90-825c-72d4-9351-71c4776caa01",
+              "sha256": "0fa253f88939b5072b0963be775bfb36793bd9f6f8056e50cb8367977fdcdd3e",
+              "byte_size": 181
+            }
+          }
+        ],
+        "train": [
+          {
+            "sha256": "6e35e4c2d632339a28e9d33792e5135892dd7292f450041988f7b30c5aced00f",
+            "byte_size": 181,
+            "media_type": "image/png",
+            "decoded_width": 64,
+            "decoded_height": 64,
+            "transform": "exif_transpose_rgb_v1",
+            "artifact": {
+              "artifact_id": "01a16b90-8258-7354-906a-6afd2adf9cab",
+              "sha256": "6e35e4c2d632339a28e9d33792e5135892dd7292f450041988f7b30c5aced00f",
+              "byte_size": 181
+            }
+          }
+        ],
+        "validation": [
+          {
+            "sha256": "e9da449bcc3b10b9b37834ea7add3566c3df058c3bf56f74ef706f49848d0126",
+            "byte_size": 181,
+            "media_type": "image/png",
+            "decoded_width": 64,
+            "decoded_height": 64,
+            "transform": "exif_transpose_rgb_v1",
+            "artifact": {
+              "artifact_id": "01a16b90-825a-73db-9212-60906ed599ac",
+              "sha256": "e9da449bcc3b10b9b37834ea7add3566c3df058c3bf56f74ef706f49848d0126",
+              "byte_size": 181
+            }
+          }
+        ]
+      },
+      "splits": {
+        "consumed": "train",
+        "train_rows": 1,
+        "excluded_rows": {
+          "test": 1,
+          "validation": 1
+        }
+      },
+      "trainable_parameters": 460800,
+      "production_qualified": false
+    },
+    "independent_evaluation": {
+      "status": "completed",
+      "passed": true,
+      "report": {
+        "schema_version": "modelanvil.independent-vlm-evaluation.v1",
+        "manifest_sha256": "24012ef80f2055a1acb47629a034e7466b8b7fd9d23fd224ce83d2ecd8fe915e",
+        "file_sha256": {
+          "base": {
+            "added_tokens.json": "74135b8664b56088c0006f1c8e848d79a8eba003411f72ebf1dc2ee96227be3a",
+            "chat_template.json": "a68ad1a42681ae44eacd109ff8dd56a840f761c03d72f4ff4c515d092f882168",
+            "config.json": "b70fb4bfde88df9eeebc9d8ff523733b8bf70d6c9b06c610325960e06ae9db52",
+            "generation_config.json": "067a2a54e5f87162ecac6e0e911cc4665fc8f7f3324794ecbac0f76badb56636",
+            "merges.txt": "0b54e8aa4e53d5383e2e4bc635a56b43f9647f7b13832d5d9ecd8f82dac4f510",
+            "model.safetensors": "74dea5904032e5ae99a2e0eef5179e6ac0f1dedc3ab0c7c2a5d4d387c843203e",
+            "preprocessor_config.json": "6cb6e36d6fcb88ca1502c4a26750715dc3e7dedddc9a8f17b27d8d167d1457e7",
+            "processor_config.json": "e7bff42da73ae9eec9042ef20e066e11f1ee20f025358ff79131e3c0fb549b46",
+            "special_tokens_map.json": "aa0ff906077086dfa9734a7f97f68c825877a48f9468807be65504495cdeef09",
+            "tokenizer.json": "5ece781dc8d2b2f3e2f289ca0ae50b17cfc27dd27bfe7971bb8241e0b964331a",
+            "tokenizer_config.json": "36c6fd44d07d10fd8180ee6b46dcccf69fb7c06753968ff0d7e17b8bfe17b777",
+            "vocab.json": "82b84012e3add4d01d12ba14442026e49b8cbbaead1f79ecf3d919784f82dc79"
+          },
+          "candidate": {
+            "adapter_config.json": "27cdfa0887152a8c3c692f373f0b26c3102867f823329ec681b19609c325614e",
+            "adapter_model.safetensors": "0b602ec49de0a779f06ec586c7a203e4a95992bd4fb53e516f1e4a56200a7695",
+            "added_tokens.json": "74135b8664b56088c0006f1c8e848d79a8eba003411f72ebf1dc2ee96227be3a",
+            "chat_template.json": "a68ad1a42681ae44eacd109ff8dd56a840f761c03d72f4ff4c515d092f882168",
+            "config.json": "b70fb4bfde88df9eeebc9d8ff523733b8bf70d6c9b06c610325960e06ae9db52",
+            "generation_config.json": "067a2a54e5f87162ecac6e0e911cc4665fc8f7f3324794ecbac0f76badb56636",
+            "merges.txt": "0b54e8aa4e53d5383e2e4bc635a56b43f9647f7b13832d5d9ecd8f82dac4f510",
+            "model.safetensors": "74dea5904032e5ae99a2e0eef5179e6ac0f1dedc3ab0c7c2a5d4d387c843203e",
+            "preprocessor_config.json": "6cb6e36d6fcb88ca1502c4a26750715dc3e7dedddc9a8f17b27d8d167d1457e7",
+            "processor_config.json": "e7bff42da73ae9eec9042ef20e066e11f1ee20f025358ff79131e3c0fb549b46",
+            "special_tokens_map.json": "aa0ff906077086dfa9734a7f97f68c825877a48f9468807be65504495cdeef09",
+            "tokenizer.json": "5ece781dc8d2b2f3e2f289ca0ae50b17cfc27dd27bfe7971bb8241e0b964331a",
+            "tokenizer_config.json": "36c6fd44d07d10fd8180ee6b46dcccf69fb7c06753968ff0d7e17b8bfe17b777",
+            "vocab.json": "82b84012e3add4d01d12ba14442026e49b8cbbaead1f79ecf3d919784f82dc79"
+          }
+        },
+        "image_sha256": {
+          "94d4a583-a18c-44b8-8974-03ff8a2ee0cc": "0fa253f88939b5072b0963be775bfb36793bd9f6f8056e50cb8367977fdcdd3e"
+        },
+        "baseline": {
+          "loss": 4.307127952575684,
+          "exact_match": 1.0,
+          "cases": [
+            {
+              "sample_id": "94d4a583-a18c-44b8-8974-03ff8a2ee0cc",
+              "image_sha256": "0fa253f88939b5072b0963be775bfb36793bd9f6f8056e50cb8367977fdcdd3e",
+              "completion": " Green",
+              "expected": "Green.",
+              "exact_match": true,
+              "negative_log_likelihood": 17.228511810302734,
+              "prediction_tokens": 4
+            }
+          ],
+          "prediction_tokens": 4
+        },
+        "candidate": {
+          "loss": 4.23956298828125,
+          "exact_match": 1.0,
+          "cases": [
+            {
+              "sample_id": "94d4a583-a18c-44b8-8974-03ff8a2ee0cc",
+              "image_sha256": "0fa253f88939b5072b0963be775bfb36793bd9f6f8056e50cb8367977fdcdd3e",
+              "completion": " Green",
+              "expected": "Green.",
+              "exact_match": true,
+              "negative_log_likelihood": 16.958251953125,
+              "prediction_tokens": 4
+            }
+          ],
+          "prediction_tokens": 4
+        },
+        "checks": {
+          "visual_exact_match_not_regressed": true,
+          "visual_holdout_loss_within_five_percent": true
+        },
+        "passed": true,
+        "production_qualified": false,
+        "cpu_seconds": 5.291575,
+        "wall_seconds": 5.113859000004595,
+        "consumer_imported_modelanvil_or_django": false
+      },
+      "checkpoint_digest": "1a74a7b16d6728d828697b5ea507db92def035bc75e487b6e1deb1321a5db689",
+      "production_qualified": false
+    }
+  },
+  "production_qualified": false,
+  "chat": [
+    {
+      "id": "chatcmpl-01a16b90c6827ee791d029048c89b758",
+      "created": 1792806013,
+      "model": "01a16b90-c501-7c39-a3bd-32e5cc1e3cea",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": " Red"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 86,
+        "completion_tokens": 2,
+        "total_tokens": 88
+      },
+      "modelanvil": {
+        "device": "cpu",
+        "elapsed_seconds": 0.9988010419983766,
+        "runtime": {
+          "format": "vision",
+          "signature": "9e1007616572956459c4e5dbbedbc2d6f8530fdaecea965a322773d5c0f64e00",
+          "input_identity": "ac29e86a19d16009fe6991d43f368d2a845bedec8845fa3a84b9fcd256f12dad",
+          "device": "cpu",
+          "provenance": {
+            "implementation": {
+              "inference.py": "98b2a00f689702df9266c7a1fb93a5cba4c653f2f580bb8cfe015879925602fa",
+              "gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+              "training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+              "capabilities.py": "3efcac5cca5ff9b7082d9f945021f4f74cbff99a41a9872f4019e36fd3cf4925",
+              "../api/views/model_workspace.py": "352a431546fd99997141012c3a26e25a3e8bd1522d742cfd47606d105949501e",
+              "../../scripts/mlx_candidate_infer.py": "2ad996a7a7e80bae14b439f389123c9ee47275214546391fd1dc1efb7ae61522",
+              "vlm_inference.py": "ae5f973136b2c485d672127f92157a067ca34436e4c4817c0afbf8eab0dd52f5",
+              "training/vlm_math.py": "2a8a1a30037b2764477ea1bffb79869a43c5d1c1ee55ba753f49df8d9d5ebd13",
+              "training/vlm_data.py": "38239496ea8ead2a86187be785bc40cd23c5219a3291b1d99f1d4fc711fb2da2"
+            },
+            "format": "vision",
+            "device": "cpu",
+            "host": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+            "cpu": "Apple M5 Pro",
+            "platform": "macOS-27.0.1-arm64-arm-64bit",
+            "python": "3.12.15",
+            "packages": {
+              "torch": "2.13.0",
+              "transformers": "5.14.0",
+              "tokenizers": "0.22.2",
+              "safetensors": "0.8.0",
+              "peft": "0.21.2",
+              "pillow": "13.0.0",
+              "torchvision": "0.28.0"
+            }
+          },
+          "observation": {
+            "format": "vision",
+            "actual_device": "cpu",
+            "tensor_devices": [
+              "cpu"
+            ],
+            "backend": "torch-cpu",
+            "image": {
+              "sha256": "6e35e4c2d632339a28e9d33792e5135892dd7292f450041988f7b30c5aced00f",
+              "byte_size": 181,
+              "media_type": "image/png",
+              "decoded_width": 64,
+              "decoded_height": 64,
+              "transform": "exif_transpose_rgb_v1",
+              "artifact": {
+                "artifact_id": "01a16b90-8258-7354-906a-6afd2adf9cab",
+                "sha256": "6e35e4c2d632339a28e9d33792e5135892dd7292f450041988f7b30c5aced00f",
+                "byte_size": 181
+              }
+            },
+            "processor": {
+              "source": "Idefics3Processor",
+              "image_tokens": 64,
+              "size": 512,
+              "image_splitting": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "chatcmpl-01a16b90cf7379109451f2b67235ce65",
+      "created": 1792806016,
+      "model": "01a16b90-c501-7c39-a3bd-32e5cc1e3cea",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": " Blue"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 86,
+        "completion_tokens": 2,
+        "total_tokens": 88
+      },
+      "modelanvil": {
+        "device": "cpu",
+        "elapsed_seconds": 1.0010157910000999,
+        "runtime": {
+          "format": "vision",
+          "signature": "9e1007616572956459c4e5dbbedbc2d6f8530fdaecea965a322773d5c0f64e00",
+          "input_identity": "ac29e86a19d16009fe6991d43f368d2a845bedec8845fa3a84b9fcd256f12dad",
+          "device": "cpu",
+          "provenance": {
+            "implementation": {
+              "inference.py": "98b2a00f689702df9266c7a1fb93a5cba4c653f2f580bb8cfe015879925602fa",
+              "gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+              "training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+              "capabilities.py": "3efcac5cca5ff9b7082d9f945021f4f74cbff99a41a9872f4019e36fd3cf4925",
+              "../api/views/model_workspace.py": "352a431546fd99997141012c3a26e25a3e8bd1522d742cfd47606d105949501e",
+              "../../scripts/mlx_candidate_infer.py": "2ad996a7a7e80bae14b439f389123c9ee47275214546391fd1dc1efb7ae61522",
+              "vlm_inference.py": "ae5f973136b2c485d672127f92157a067ca34436e4c4817c0afbf8eab0dd52f5",
+              "training/vlm_math.py": "2a8a1a30037b2764477ea1bffb79869a43c5d1c1ee55ba753f49df8d9d5ebd13",
+              "training/vlm_data.py": "38239496ea8ead2a86187be785bc40cd23c5219a3291b1d99f1d4fc711fb2da2"
+            },
+            "format": "vision",
+            "device": "cpu",
+            "host": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+            "cpu": "Apple M5 Pro",
+            "platform": "macOS-27.0.1-arm64-arm-64bit",
+            "python": "3.12.15",
+            "packages": {
+              "torch": "2.13.0",
+              "transformers": "5.14.0",
+              "tokenizers": "0.22.2",
+              "safetensors": "0.8.0",
+              "peft": "0.21.2",
+              "pillow": "13.0.0",
+              "torchvision": "0.28.0"
+            }
+          },
+          "observation": {
+            "format": "vision",
+            "actual_device": "cpu",
+            "tensor_devices": [
+              "cpu"
+            ],
+            "backend": "torch-cpu",
+            "image": {
+              "sha256": "e9da449bcc3b10b9b37834ea7add3566c3df058c3bf56f74ef706f49848d0126",
+              "byte_size": 181,
+              "media_type": "image/png",
+              "decoded_width": 64,
+              "decoded_height": 64,
+              "transform": "exif_transpose_rgb_v1",
+              "artifact": {
+                "artifact_id": "01a16b90-825a-73db-9212-60906ed599ac",
+                "sha256": "e9da449bcc3b10b9b37834ea7add3566c3df058c3bf56f74ef706f49848d0126",
+                "byte_size": 181
+              }
+            },
+            "processor": {
+              "source": "Idefics3Processor",
+              "image_tokens": 64,
+              "size": 512,
+              "image_splitting": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "chatcmpl-01a16b90d868785483a257024c3d14fa",
+      "created": 1792806018,
+      "model": "01a16b90-c501-7c39-a3bd-32e5cc1e3cea",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": " Green"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 86,
+        "completion_tokens": 2,
+        "total_tokens": 88
+      },
+      "modelanvil": {
+        "device": "cpu",
+        "elapsed_seconds": 1.0032512079997105,
+        "runtime": {
+          "format": "vision",
+          "signature": "9e1007616572956459c4e5dbbedbc2d6f8530fdaecea965a322773d5c0f64e00",
+          "input_identity": "ac29e86a19d16009fe6991d43f368d2a845bedec8845fa3a84b9fcd256f12dad",
+          "device": "cpu",
+          "provenance": {
+            "implementation": {
+              "inference.py": "98b2a00f689702df9266c7a1fb93a5cba4c653f2f580bb8cfe015879925602fa",
+              "gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+              "training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+              "capabilities.py": "3efcac5cca5ff9b7082d9f945021f4f74cbff99a41a9872f4019e36fd3cf4925",
+              "../api/views/model_workspace.py": "352a431546fd99997141012c3a26e25a3e8bd1522d742cfd47606d105949501e",
+              "../../scripts/mlx_candidate_infer.py": "2ad996a7a7e80bae14b439f389123c9ee47275214546391fd1dc1efb7ae61522",
+              "vlm_inference.py": "ae5f973136b2c485d672127f92157a067ca34436e4c4817c0afbf8eab0dd52f5",
+              "training/vlm_math.py": "2a8a1a30037b2764477ea1bffb79869a43c5d1c1ee55ba753f49df8d9d5ebd13",
+              "training/vlm_data.py": "38239496ea8ead2a86187be785bc40cd23c5219a3291b1d99f1d4fc711fb2da2"
+            },
+            "format": "vision",
+            "device": "cpu",
+            "host": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+            "cpu": "Apple M5 Pro",
+            "platform": "macOS-27.0.1-arm64-arm-64bit",
+            "python": "3.12.15",
+            "packages": {
+              "torch": "2.13.0",
+              "transformers": "5.14.0",
+              "tokenizers": "0.22.2",
+              "safetensors": "0.8.0",
+              "peft": "0.21.2",
+              "pillow": "13.0.0",
+              "torchvision": "0.28.0"
+            }
+          },
+          "observation": {
+            "format": "vision",
+            "actual_device": "cpu",
+            "tensor_devices": [
+              "cpu"
+            ],
+            "backend": "torch-cpu",
+            "image": {
+              "sha256": "0fa253f88939b5072b0963be775bfb36793bd9f6f8056e50cb8367977fdcdd3e",
+              "byte_size": 181,
+              "media_type": "image/png",
+              "decoded_width": 64,
+              "decoded_height": 64,
+              "transform": "exif_transpose_rgb_v1",
+              "artifact": {
+                "artifact_id": "01a16b90-825c-72d4-9351-71c4776caa01",
+                "sha256": "0fa253f88939b5072b0963be775bfb36793bd9f6f8056e50cb8367977fdcdd3e",
+                "byte_size": 181
+              }
+            },
+            "processor": {
+              "source": "Idefics3Processor",
+              "image_tokens": 64,
+              "size": 512,
+              "image_splitting": false
+            }
+          }
+        }
+      }
+    }
+  ]
+}

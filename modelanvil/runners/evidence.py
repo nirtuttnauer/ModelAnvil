@@ -29,7 +29,8 @@ def training_evidence(run):
             if pins.get('accelerator'):
                 backend = pins['accelerator']['device']['backend']
                 recipe = {'lora_adapter': 'LoRA', 'qlora_adapter': 'four-bit QLoRA', 'continued_pretraining': 'continued pretraining'}.get(pins.get('recipe'), 'full SFT')
-                source = (f'Pinned SmolLM2 {backend} {recipe}; measured device metrics and fenced checkpoints'
+                family = 'SmolVLM-256M image/text' if pins.get('config', {}).get('model_role') == 'vision_language' else 'SmolLM2'
+                source = (f'Pinned {family} {backend} {recipe}; measured device metrics and fenced checkpoints'
                           if run.current_step else f'Budgeted {backend} worker job awaiting checkpoint evidence')
             result = evidence('integrated_execution' if run.current_step else 'configuration_only', source)
             result['runtime_scope'] = module.RUNTIME_ID

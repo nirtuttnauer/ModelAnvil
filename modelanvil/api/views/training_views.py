@@ -40,10 +40,10 @@ from modelanvil.artifacts.models import Artifact
 def training_export_options(run):
     if run.status != TrainingRun.Status.COMPLETED:
         return []
-    from modelanvil.runners.training import hf_runtime, mlx_runtime, cpu_hf_runtime
+    from modelanvil.runners.training import hf_runtime, mlx_runtime, cpu_hf_runtime, vlm_runtime, cpu_vlm_runtime
     from modelanvil.runners.training.registry import runtime_for_run, is_worker_run
     module = runtime_for_run(run)
-    transformer = is_worker_run(run) and module in (hf_runtime, mlx_runtime, cpu_hf_runtime)
+    transformer = is_worker_run(run) and module in (hf_runtime, mlx_runtime, cpu_hf_runtime, vlm_runtime, cpu_vlm_runtime)
     options = []
     if transformer:
         options.append({'format': 'native', 'label': 'MLX snapshot (ZIP)' if module is mlx_runtime else 'Safetensors snapshot (ZIP)',
@@ -155,11 +155,11 @@ class TrainingRunSerializer(serializers.ModelSerializer):
         return attrs
 
     def validate_gpu_options(self, attrs):
-        from modelanvil.runners.training import hf_runtime, mlx_runtime, cpu_hf_runtime
+        from modelanvil.runners.training import hf_runtime, mlx_runtime, cpu_hf_runtime, vlm_runtime, cpu_vlm_runtime
         from modelanvil.runners.training.registry import runtime_for_architecture
         base = attrs.get('base_model_version', getattr(self.instance, 'base_model_version', None))
         module = runtime_for_architecture(base.architecture_ref) if base else None
-        if module in (hf_runtime, mlx_runtime, cpu_hf_runtime):
+        if module in (hf_runtime, mlx_runtime, cpu_hf_runtime, vlm_runtime, cpu_vlm_runtime):
             unknown = set(self.initial_data) - set(self.fields) - {'precision', 'adapter', 'quantization'}
             if unknown:
                 raise serializers.ValidationError({'gpu_options': 'Unsupported training options: ' + ', '.join(sorted(unknown))})
@@ -366,7 +366,7 @@ class TrainingRunViewSet(TenantScopedViewSet):
     def download(self, request, *args, **kwargs):
         """Download verified native files or a JSON bundle; optimizer state stays in checkpoints."""
         from django.http import FileResponse
-        from modelanvil.runners.training import hf_runtime, mlx_runtime, cpu_hf_runtime
+        from modelanvil.runners.training import hf_runtime, mlx_runtime, cpu_hf_runtime, vlm_runtime, cpu_vlm_runtime
         from modelanvil.runners.training.registry import runtime_for_run, is_worker_run
         import tempfile
         import zipfile
@@ -396,7 +396,7 @@ class TrainingRunViewSet(TenantScopedViewSet):
         try:
             if selected_format == 'json':
                 from modelanvil.runners.training.registry import verify_bundle
-                if not is_worker_run(run) or module not in (hf_runtime, mlx_runtime, cpu_hf_runtime):
+                if not is_worker_run(run) or module not in (hf_runtime, mlx_runtime, cpu_hf_runtime, vlm_runtime, cpu_vlm_runtime):
                     verify_bundle(bundle)
                 output.write(json.dumps(bundle, indent=2, allow_nan=False).encode())
                 output.seek(0)

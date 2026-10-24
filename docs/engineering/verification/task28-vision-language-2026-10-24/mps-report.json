@@ -1,0 +1,639 @@
+{
+  "result": {
+    "claimed": true,
+    "committed": true,
+    "status": "succeeded"
+  },
+  "run_status": "completed",
+  "current_step": 2,
+  "metrics": [
+    {
+      "loss": 4.598624229431152,
+      "gradient_norm": 13.552648544311523,
+      "changed_parameters": 184320,
+      "trainable_parameters": 460800,
+      "measured_at": "2026-10-24T01:40:27.974851+00:00",
+      "validation_samples": 1,
+      "gpu_allocated_bytes": 1093031680,
+      "step": 1,
+      "sample_id": "4538ff0c-aae8-4032-9289-8d94b58b142a",
+      "image_sha256": "6e35e4c2d632339a28e9d33792e5135892dd7292f450041988f7b30c5aced00f",
+      "training_pairs": 4,
+      "cpu_seconds": 0.1521170000000005,
+      "engine_wall_seconds": 0.4324613339995267,
+      "total_parameters": 256945728,
+      "validation_loss_before_training": 4.597657680511475,
+      "validation_loss": 4.551812648773193,
+      "validation_prediction_tokens": 4,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "device_residency_checked": true,
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "production_qualified": false,
+      "tokens_per_second": 9.249381818732441,
+      "unified_memory": {
+        "recommended_bytes": 40200896512,
+        "process_limit_bytes": 36180806860,
+        "driver_allocated_bytes": 1661566976,
+        "process_headroom_bytes": 34519239884,
+        "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+      }
+    },
+    {
+      "loss": 4.549922943115234,
+      "gradient_norm": 13.347200393676758,
+      "changed_parameters": 460800,
+      "trainable_parameters": 460800,
+      "measured_at": "2026-10-24T01:40:29.207794+00:00",
+      "validation_samples": 1,
+      "gpu_allocated_bytes": 1083079936,
+      "step": 2,
+      "sample_id": "4538ff0c-aae8-4032-9289-8d94b58b142a",
+      "image_sha256": "6e35e4c2d632339a28e9d33792e5135892dd7292f450041988f7b30c5aced00f",
+      "training_pairs": 4,
+      "cpu_seconds": 0.09717699999999851,
+      "engine_wall_seconds": 0.368743708000693,
+      "total_parameters": 256945728,
+      "validation_loss_before_training": 4.597657680511475,
+      "validation_loss": 4.506138801574707,
+      "validation_prediction_tokens": 4,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "device_residency_checked": true,
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "production_qualified": false,
+      "tokens_per_second": 10.84764272097758,
+      "unified_memory": {
+        "recommended_bytes": 40200896512,
+        "process_limit_bytes": 36180806860,
+        "driver_allocated_bytes": 1737064448,
+        "process_headroom_bytes": 34443742412,
+        "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+      }
+    }
+  ],
+  "hardware_config": {
+    "execution_mode": "worker",
+    "purpose": "experiment",
+    "setup_check": false,
+    "pins": {
+      "runtime": "modelanvil.smolvlm-mps-lora.v1",
+      "contract_digest": "dbddbc4c23170d4622bbc78f8e8b9314223b4e5ff21d99a371077b7c59b1abf0",
+      "build_digest": "c8983fdcfa1e4c47eda8ac05d464d00abcd6750d858ee63290b6014c79ea895f",
+      "dataset_id": "01a16b90-f692-7dbb-84be-7ea1d1fddbdd",
+      "dataset_digest": "19c8ad9cef1ee72941c8538cd0ea07dff320ade9367d82f0e4083c3abc5f0060",
+      "base_id": "01a16b90-f689-79c8-a194-222fdc28e165",
+      "base_artifact_id": "01a16b90-f06c-7ad5-ac01-eb4e22aab301",
+      "base_digest": "2c887477475cf2e80f119ae1a1cbe251439a81ab19bfed085cbc55e63f1a5b71",
+      "base_input_identity": "14435aaced0290f5666927fa873dabed252930e3359c0eff968b61797b6817a6",
+      "tokenizer_id": "01a16b90-f686-77b6-bad4-45de5db30f14",
+      "tokenizer_digest": "23470d12593a1f3ec396ab8ce788d49bf61b8d85cf1f28359f9742ca47971d04",
+      "processor_identity": {
+        "id": 1,
+        "tenant_id": "01a16b90-ec40-71ed-b706-8fc2fb51188b",
+        "created_at": "2026-10-24 01:40:24.836492+00:00",
+        "updated_at": "2026-10-24 01:40:24.836603+00:00",
+        "processor_id": "01a16b90-f684-7917-af3c-f81d228df11e",
+        "name": "vision-fixture-processor",
+        "revision_no": 1,
+        "processor_type": "multimodal",
+        "configuration_digest": "0abb63fd94140505995866906c882fc42d7e2963d1d5dda0f98f48105f9d01d6",
+        "metadata": {
+          "vision_profile": {
+            "size": {
+              "longest_edge": 512
+            },
+            "do_image_splitting": false
+          },
+          "artifact_manifest_id": "01a16b90-f06c-7ad5-ac01-eb4e22aab301",
+          "source": {
+            "repo_id": "HuggingFaceTB/SmolVLM-256M-Instruct",
+            "revision": "7e3e67edbbed1bf9888184d9df282b700a323964",
+            "license": "Apache-2.0"
+          }
+        }
+      },
+      "processor_id": "01a16b90-f684-7917-af3c-f81d228df11e",
+      "processor_digest": "0abb63fd94140505995866906c882fc42d7e2963d1d5dda0f98f48105f9d01d6",
+      "runner_id": "01a16b90-f694-7e7e-917f-f49190e40b13",
+      "runner_digest": "a1750c1abc9aee24dd80473000eb936b296cf9f9f0af7b86b7c45f11707af502",
+      "pool_id": 1,
+      "worker_id": 1,
+      "steps": 2,
+      "config": {
+        "runtime": "modelanvil.smolvlm-mps-lora.v1",
+        "source": {
+          "repo_id": "HuggingFaceTB/SmolVLM-256M-Instruct",
+          "revision": "7e3e67edbbed1bf9888184d9df282b700a323964",
+          "license": "Apache-2.0"
+        },
+        "processor_overrides": {
+          "size": {
+            "longest_edge": 512
+          },
+          "do_image_splitting": false
+        },
+        "sequence_tokens": 128,
+        "model_role": "vision_language"
+      },
+      "source": {
+        "repo_id": "HuggingFaceTB/SmolVLM-256M-Instruct",
+        "revision": "7e3e67edbbed1bf9888184d9df282b700a323964",
+        "license": "Apache-2.0"
+      },
+      "optimizer": {
+        "algorithm": "adamw",
+        "learning_rate": 2e-05,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "weight_decay": 0.0
+      },
+      "adapter": {
+        "r": 8,
+        "lora_alpha": 16,
+        "target_modules": "model\\.text_model\\.layers\\.\\d+\\.self_attn\\.(q_proj|v_proj)",
+        "lora_dropout": 0.0,
+        "bias": "none",
+        "task_type": "CAUSAL_LM"
+      },
+      "recipe": "lora_adapter",
+      "initialization_seed": 42,
+      "sample_order": "seeded_epoch_shuffle_v1",
+      "chat_sft": true,
+      "accelerator": {
+        "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+        "host": {
+          "system": "Darwin",
+          "machine": "arm64",
+          "release": "27.0.0"
+        },
+        "device": {
+          "id": "mps:0",
+          "backend": "mps",
+          "torch_device": "mps:0",
+          "name": "Metal Performance Shaders device",
+          "vendor": "Apple",
+          "total_memory_bytes": null,
+          "memory_scope": "shared_unified",
+          "runtime_recommended_memory_bytes": 40200896512
+        },
+        "framework": {
+          "name": "torch",
+          "version": "2.13.0",
+          "cuda_version": null,
+          "hip_version": null
+        },
+        "packages": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "safetensors": "0.8.0",
+          "tokenizers": "0.22.2"
+        },
+        "capacity_source": "MPS recommended shared-memory budget"
+      },
+      "sample_digest": "42eded29e1981f62318fed6cafb492488a5ec2e19702ec524fd622efc8ebf202",
+      "validation_digest": "5f3c5073b85a015031f723144232e230bbe51cba69ccdb1d6e00fbb7f2e81c67",
+      "protected_test_digest": "ddd06658afbe9a8b888342b2e64d2a9d91230c961221ee9483ee890cf0c888f1",
+      "asset_pins": {
+        "test": [
+          {
+            "sha256": "0fa253f88939b5072b0963be775bfb36793bd9f6f8056e50cb8367977fdcdd3e",
+            "byte_size": 181,
+            "media_type": "image/png",
+            "decoded_width": 64,
+            "decoded_height": 64,
+            "transform": "exif_transpose_rgb_v1",
+            "artifact": {
+              "artifact_id": "01a16b90-ec4a-7ce1-9a6b-c4be342f05ac",
+              "sha256": "0fa253f88939b5072b0963be775bfb36793bd9f6f8056e50cb8367977fdcdd3e",
+              "byte_size": 181
+            }
+          }
+        ],
+        "train": [
+          {
+            "sha256": "6e35e4c2d632339a28e9d33792e5135892dd7292f450041988f7b30c5aced00f",
+            "byte_size": 181,
+            "media_type": "image/png",
+            "decoded_width": 64,
+            "decoded_height": 64,
+            "transform": "exif_transpose_rgb_v1",
+            "artifact": {
+              "artifact_id": "01a16b90-ec45-7c50-942e-b0b12b3734c5",
+              "sha256": "6e35e4c2d632339a28e9d33792e5135892dd7292f450041988f7b30c5aced00f",
+              "byte_size": 181
+            }
+          }
+        ],
+        "validation": [
+          {
+            "sha256": "e9da449bcc3b10b9b37834ea7add3566c3df058c3bf56f74ef706f49848d0126",
+            "byte_size": 181,
+            "media_type": "image/png",
+            "decoded_width": 64,
+            "decoded_height": 64,
+            "transform": "exif_transpose_rgb_v1",
+            "artifact": {
+              "artifact_id": "01a16b90-ec47-7694-b2da-bbfe98f3c4c2",
+              "sha256": "e9da449bcc3b10b9b37834ea7add3566c3df058c3bf56f74ef706f49848d0126",
+              "byte_size": 181
+            }
+          }
+        ]
+      },
+      "splits": {
+        "consumed": "train",
+        "train_rows": 1,
+        "excluded_rows": {
+          "test": 1,
+          "validation": 1
+        }
+      },
+      "trainable_parameters": 460800,
+      "production_qualified": false
+    },
+    "independent_evaluation": {
+      "status": "completed",
+      "passed": true,
+      "report": {
+        "schema_version": "modelanvil.independent-vlm-evaluation.v1",
+        "manifest_sha256": "217ceabafc5a523879aee896e8de7ee0193983d804cf6f4a83223e12cee06320",
+        "file_sha256": {
+          "base": {
+            "added_tokens.json": "74135b8664b56088c0006f1c8e848d79a8eba003411f72ebf1dc2ee96227be3a",
+            "chat_template.json": "a68ad1a42681ae44eacd109ff8dd56a840f761c03d72f4ff4c515d092f882168",
+            "config.json": "b70fb4bfde88df9eeebc9d8ff523733b8bf70d6c9b06c610325960e06ae9db52",
+            "generation_config.json": "067a2a54e5f87162ecac6e0e911cc4665fc8f7f3324794ecbac0f76badb56636",
+            "merges.txt": "0b54e8aa4e53d5383e2e4bc635a56b43f9647f7b13832d5d9ecd8f82dac4f510",
+            "model.safetensors": "74dea5904032e5ae99a2e0eef5179e6ac0f1dedc3ab0c7c2a5d4d387c843203e",
+            "preprocessor_config.json": "6cb6e36d6fcb88ca1502c4a26750715dc3e7dedddc9a8f17b27d8d167d1457e7",
+            "processor_config.json": "e7bff42da73ae9eec9042ef20e066e11f1ee20f025358ff79131e3c0fb549b46",
+            "special_tokens_map.json": "aa0ff906077086dfa9734a7f97f68c825877a48f9468807be65504495cdeef09",
+            "tokenizer.json": "5ece781dc8d2b2f3e2f289ca0ae50b17cfc27dd27bfe7971bb8241e0b964331a",
+            "tokenizer_config.json": "36c6fd44d07d10fd8180ee6b46dcccf69fb7c06753968ff0d7e17b8bfe17b777",
+            "vocab.json": "82b84012e3add4d01d12ba14442026e49b8cbbaead1f79ecf3d919784f82dc79"
+          },
+          "candidate": {
+            "adapter_config.json": "27cdfa0887152a8c3c692f373f0b26c3102867f823329ec681b19609c325614e",
+            "adapter_model.safetensors": "3e8170c8b83090cd7ad4d2db00c82010a5e4bbec673f16eec37774d023eea42e",
+            "added_tokens.json": "74135b8664b56088c0006f1c8e848d79a8eba003411f72ebf1dc2ee96227be3a",
+            "chat_template.json": "a68ad1a42681ae44eacd109ff8dd56a840f761c03d72f4ff4c515d092f882168",
+            "config.json": "b70fb4bfde88df9eeebc9d8ff523733b8bf70d6c9b06c610325960e06ae9db52",
+            "generation_config.json": "067a2a54e5f87162ecac6e0e911cc4665fc8f7f3324794ecbac0f76badb56636",
+            "merges.txt": "0b54e8aa4e53d5383e2e4bc635a56b43f9647f7b13832d5d9ecd8f82dac4f510",
+            "model.safetensors": "74dea5904032e5ae99a2e0eef5179e6ac0f1dedc3ab0c7c2a5d4d387c843203e",
+            "preprocessor_config.json": "6cb6e36d6fcb88ca1502c4a26750715dc3e7dedddc9a8f17b27d8d167d1457e7",
+            "processor_config.json": "e7bff42da73ae9eec9042ef20e066e11f1ee20f025358ff79131e3c0fb549b46",
+            "special_tokens_map.json": "aa0ff906077086dfa9734a7f97f68c825877a48f9468807be65504495cdeef09",
+            "tokenizer.json": "5ece781dc8d2b2f3e2f289ca0ae50b17cfc27dd27bfe7971bb8241e0b964331a",
+            "tokenizer_config.json": "36c6fd44d07d10fd8180ee6b46dcccf69fb7c06753968ff0d7e17b8bfe17b777",
+            "vocab.json": "82b84012e3add4d01d12ba14442026e49b8cbbaead1f79ecf3d919784f82dc79"
+          }
+        },
+        "image_sha256": {
+          "e90df661-5540-480e-af2d-185b21410e5a": "0fa253f88939b5072b0963be775bfb36793bd9f6f8056e50cb8367977fdcdd3e"
+        },
+        "baseline": {
+          "loss": 4.307127952575684,
+          "exact_match": 1.0,
+          "cases": [
+            {
+              "sample_id": "e90df661-5540-480e-af2d-185b21410e5a",
+              "image_sha256": "0fa253f88939b5072b0963be775bfb36793bd9f6f8056e50cb8367977fdcdd3e",
+              "completion": " Green",
+              "expected": "Green.",
+              "exact_match": true,
+              "negative_log_likelihood": 17.228511810302734,
+              "prediction_tokens": 4
+            }
+          ],
+          "prediction_tokens": 4
+        },
+        "candidate": {
+          "loss": 4.239556312561035,
+          "exact_match": 1.0,
+          "cases": [
+            {
+              "sample_id": "e90df661-5540-480e-af2d-185b21410e5a",
+              "image_sha256": "0fa253f88939b5072b0963be775bfb36793bd9f6f8056e50cb8367977fdcdd3e",
+              "completion": " Green",
+              "expected": "Green.",
+              "exact_match": true,
+              "negative_log_likelihood": 16.95822525024414,
+              "prediction_tokens": 4
+            }
+          ],
+          "prediction_tokens": 4
+        },
+        "checks": {
+          "visual_exact_match_not_regressed": true,
+          "visual_holdout_loss_within_five_percent": true
+        },
+        "passed": true,
+        "production_qualified": false,
+        "cpu_seconds": 5.200894,
+        "wall_seconds": 4.998577917001967,
+        "consumer_imported_modelanvil_or_django": false
+      },
+      "checkpoint_digest": "fda0fb466fd3472d7aae1cebc79c8134b277d8373229f94702695f214b4fc3a6",
+      "production_qualified": false
+    }
+  },
+  "production_qualified": false,
+  "chat": [
+    {
+      "id": "chatcmpl-01a16b9129e079b7b346431dbd093786",
+      "created": 1792806039,
+      "model": "01a16b91-28a9-71df-9b68-704a3a8dff69",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": " Red"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 86,
+        "completion_tokens": 2,
+        "total_tokens": 88
+      },
+      "modelanvil": {
+        "device": "mps:0",
+        "elapsed_seconds": 0.20403408400306944,
+        "runtime": {
+          "format": "vision",
+          "signature": "d20993fd340a7a521cb9f1128ae4224c9fbffefe75f5fb54c55a1a81a1892935",
+          "input_identity": "455841ed95415c39b0114b3b3c53af2a8aaa8c69676230fc5e7c7478b56dc5f2",
+          "device": "mps:0",
+          "provenance": {
+            "implementation": {
+              "inference.py": "98b2a00f689702df9266c7a1fb93a5cba4c653f2f580bb8cfe015879925602fa",
+              "gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+              "training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+              "capabilities.py": "3efcac5cca5ff9b7082d9f945021f4f74cbff99a41a9872f4019e36fd3cf4925",
+              "../api/views/model_workspace.py": "352a431546fd99997141012c3a26e25a3e8bd1522d742cfd47606d105949501e",
+              "../../scripts/mlx_candidate_infer.py": "2ad996a7a7e80bae14b439f389123c9ee47275214546391fd1dc1efb7ae61522",
+              "vlm_inference.py": "ae5f973136b2c485d672127f92157a067ca34436e4c4817c0afbf8eab0dd52f5",
+              "training/vlm_math.py": "2a8a1a30037b2764477ea1bffb79869a43c5d1c1ee55ba753f49df8d9d5ebd13",
+              "training/vlm_data.py": "38239496ea8ead2a86187be785bc40cd23c5219a3291b1d99f1d4fc711fb2da2"
+            },
+            "format": "vision",
+            "device": "mps:0",
+            "host": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+            "cpu": "Apple M5 Pro",
+            "platform": "macOS-27.0.1-arm64-arm-64bit",
+            "python": "3.12.15",
+            "packages": {
+              "torch": "2.13.0",
+              "transformers": "5.14.0",
+              "tokenizers": "0.22.2",
+              "safetensors": "0.8.0",
+              "peft": "0.21.2",
+              "pillow": "13.0.0",
+              "torchvision": "0.28.0"
+            }
+          },
+          "observation": {
+            "format": "vision",
+            "actual_device": "mps:0",
+            "tensor_devices": [
+              "mps:0"
+            ],
+            "backend": "torch-mps",
+            "memory": {
+              "recommended_bytes": 40200896512,
+              "process_limit_bytes": 36180806860,
+              "driver_allocated_bytes": 1518092288,
+              "process_headroom_bytes": 34662714572,
+              "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+            },
+            "peak_allocated_bytes": null,
+            "reserved_bytes": null,
+            "current_allocated_bytes": 1027783424,
+            "memory_scope": "Observed PyTorch process allocations/headroom; no true peak/reserved counters.",
+            "image": {
+              "sha256": "6e35e4c2d632339a28e9d33792e5135892dd7292f450041988f7b30c5aced00f",
+              "byte_size": 181,
+              "media_type": "image/png",
+              "decoded_width": 64,
+              "decoded_height": 64,
+              "transform": "exif_transpose_rgb_v1",
+              "artifact": {
+                "artifact_id": "01a16b90-ec45-7c50-942e-b0b12b3734c5",
+                "sha256": "6e35e4c2d632339a28e9d33792e5135892dd7292f450041988f7b30c5aced00f",
+                "byte_size": 181
+              }
+            },
+            "processor": {
+              "source": "Idefics3Processor",
+              "image_tokens": 64,
+              "size": 512,
+              "image_splitting": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "chatcmpl-01a16b91304d7f6c8a92b5e6c80d783c",
+      "created": 1792806040,
+      "model": "01a16b91-28a9-71df-9b68-704a3a8dff69",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": " Blue"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 86,
+        "completion_tokens": 2,
+        "total_tokens": 88
+      },
+      "modelanvil": {
+        "device": "mps:0",
+        "elapsed_seconds": 0.19725349999498576,
+        "runtime": {
+          "format": "vision",
+          "signature": "d20993fd340a7a521cb9f1128ae4224c9fbffefe75f5fb54c55a1a81a1892935",
+          "input_identity": "455841ed95415c39b0114b3b3c53af2a8aaa8c69676230fc5e7c7478b56dc5f2",
+          "device": "mps:0",
+          "provenance": {
+            "implementation": {
+              "inference.py": "98b2a00f689702df9266c7a1fb93a5cba4c653f2f580bb8cfe015879925602fa",
+              "gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+              "training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+              "capabilities.py": "3efcac5cca5ff9b7082d9f945021f4f74cbff99a41a9872f4019e36fd3cf4925",
+              "../api/views/model_workspace.py": "352a431546fd99997141012c3a26e25a3e8bd1522d742cfd47606d105949501e",
+              "../../scripts/mlx_candidate_infer.py": "2ad996a7a7e80bae14b439f389123c9ee47275214546391fd1dc1efb7ae61522",
+              "vlm_inference.py": "ae5f973136b2c485d672127f92157a067ca34436e4c4817c0afbf8eab0dd52f5",
+              "training/vlm_math.py": "2a8a1a30037b2764477ea1bffb79869a43c5d1c1ee55ba753f49df8d9d5ebd13",
+              "training/vlm_data.py": "38239496ea8ead2a86187be785bc40cd23c5219a3291b1d99f1d4fc711fb2da2"
+            },
+            "format": "vision",
+            "device": "mps:0",
+            "host": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+            "cpu": "Apple M5 Pro",
+            "platform": "macOS-27.0.1-arm64-arm-64bit",
+            "python": "3.12.15",
+            "packages": {
+              "torch": "2.13.0",
+              "transformers": "5.14.0",
+              "tokenizers": "0.22.2",
+              "safetensors": "0.8.0",
+              "peft": "0.21.2",
+              "pillow": "13.0.0",
+              "torchvision": "0.28.0"
+            }
+          },
+          "observation": {
+            "format": "vision",
+            "actual_device": "mps:0",
+            "tensor_devices": [
+              "mps:0"
+            ],
+            "backend": "torch-mps",
+            "memory": {
+              "recommended_bytes": 40200896512,
+              "process_limit_bytes": 36180806860,
+              "driver_allocated_bytes": 1518092288,
+              "process_headroom_bytes": 34662714572,
+              "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+            },
+            "peak_allocated_bytes": null,
+            "reserved_bytes": null,
+            "current_allocated_bytes": 1027783424,
+            "memory_scope": "Observed PyTorch process allocations/headroom; no true peak/reserved counters.",
+            "image": {
+              "sha256": "e9da449bcc3b10b9b37834ea7add3566c3df058c3bf56f74ef706f49848d0126",
+              "byte_size": 181,
+              "media_type": "image/png",
+              "decoded_width": 64,
+              "decoded_height": 64,
+              "transform": "exif_transpose_rgb_v1",
+              "artifact": {
+                "artifact_id": "01a16b90-ec47-7694-b2da-bbfe98f3c4c2",
+                "sha256": "e9da449bcc3b10b9b37834ea7add3566c3df058c3bf56f74ef706f49848d0126",
+                "byte_size": 181
+              }
+            },
+            "processor": {
+              "source": "Idefics3Processor",
+              "image_tokens": 64,
+              "size": 512,
+              "image_splitting": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "chatcmpl-01a16b9136b775ffb24f40270809eff4",
+      "created": 1792806042,
+      "model": "01a16b91-28a9-71df-9b68-704a3a8dff69",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": " Green"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 86,
+        "completion_tokens": 2,
+        "total_tokens": 88
+      },
+      "modelanvil": {
+        "device": "mps:0",
+        "elapsed_seconds": 0.20179554100468522,
+        "runtime": {
+          "format": "vision",
+          "signature": "d20993fd340a7a521cb9f1128ae4224c9fbffefe75f5fb54c55a1a81a1892935",
+          "input_identity": "455841ed95415c39b0114b3b3c53af2a8aaa8c69676230fc5e7c7478b56dc5f2",
+          "device": "mps:0",
+          "provenance": {
+            "implementation": {
+              "inference.py": "98b2a00f689702df9266c7a1fb93a5cba4c653f2f580bb8cfe015879925602fa",
+              "gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+              "training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+              "capabilities.py": "3efcac5cca5ff9b7082d9f945021f4f74cbff99a41a9872f4019e36fd3cf4925",
+              "../api/views/model_workspace.py": "352a431546fd99997141012c3a26e25a3e8bd1522d742cfd47606d105949501e",
+              "../../scripts/mlx_candidate_infer.py": "2ad996a7a7e80bae14b439f389123c9ee47275214546391fd1dc1efb7ae61522",
+              "vlm_inference.py": "ae5f973136b2c485d672127f92157a067ca34436e4c4817c0afbf8eab0dd52f5",
+              "training/vlm_math.py": "2a8a1a30037b2764477ea1bffb79869a43c5d1c1ee55ba753f49df8d9d5ebd13",
+              "training/vlm_data.py": "38239496ea8ead2a86187be785bc40cd23c5219a3291b1d99f1d4fc711fb2da2"
+            },
+            "format": "vision",
+            "device": "mps:0",
+            "host": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+            "cpu": "Apple M5 Pro",
+            "platform": "macOS-27.0.1-arm64-arm-64bit",
+            "python": "3.12.15",
+            "packages": {
+              "torch": "2.13.0",
+              "transformers": "5.14.0",
+              "tokenizers": "0.22.2",
+              "safetensors": "0.8.0",
+              "peft": "0.21.2",
+              "pillow": "13.0.0",
+              "torchvision": "0.28.0"
+            }
+          },
+          "observation": {
+            "format": "vision",
+            "actual_device": "mps:0",
+            "tensor_devices": [
+              "mps:0"
+            ],
+            "backend": "torch-mps",
+            "memory": {
+              "recommended_bytes": 40200896512,
+              "process_limit_bytes": 36180806860,
+              "driver_allocated_bytes": 1518092288,
+              "process_headroom_bytes": 34662714572,
+              "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+            },
+            "peak_allocated_bytes": null,
+            "reserved_bytes": null,
+            "current_allocated_bytes": 1027783424,
+            "memory_scope": "Observed PyTorch process allocations/headroom; no true peak/reserved counters.",
+            "image": {
+              "sha256": "0fa253f88939b5072b0963be775bfb36793bd9f6f8056e50cb8367977fdcdd3e",
+              "byte_size": 181,
+              "media_type": "image/png",
+              "decoded_width": 64,
+              "decoded_height": 64,
+              "transform": "exif_transpose_rgb_v1",
+              "artifact": {
+                "artifact_id": "01a16b90-ec4a-7ce1-9a6b-c4be342f05ac",
+                "sha256": "0fa253f88939b5072b0963be775bfb36793bd9f6f8056e50cb8367977fdcdd3e",
+                "byte_size": 181
+              }
+            },
+            "processor": {
+              "source": "Idefics3Processor",
+              "image_tokens": 64,
+              "size": 512,
+              "image_splitting": false
+            }
+          }
+        }
+      }
+    }
+  ]
+}

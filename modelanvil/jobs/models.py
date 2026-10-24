@@ -611,7 +611,14 @@ def commit_result(
         if job.desired_action == Job.DesiredAction.CANCEL:
             job_status = Job.Status.CANCELLED
         from modelanvil.runners.training.registry import finalize_job
-        finalize_job(job, job_status)
+        resolved = finalize_job(job, job_status)
+        if resolved is not None:
+            if resolved not in Job.Status.values:
+                raise ValueError('Training finalizer returned an invalid durable status.')
+            job_status = resolved
+            if job_status == Job.Status.FAILED and current.status == JobAttempt.Status.SUCCEEDED:
+                current.status = JobAttempt.Status.FAILED
+                current.save(update_fields=['status', 'updated_at'])
     if job.payload.get('type') == 'qualified_evaluation':
         if job.desired_action == Job.DesiredAction.CANCEL:
             job_status = Job.Status.CANCELLED

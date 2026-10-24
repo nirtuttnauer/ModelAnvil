@@ -1,0 +1,28 @@
+{
+  "recovery": {
+    "expired_after_committed_step": 1,
+    "stale_publication_refused": true,
+    "resumed_updates": 1,
+    "adapter_and_adam_byte_identical": true,
+    "attempts": 2
+  },
+  "cancellation": {
+    "candidate": false,
+    "committed_steps": 0,
+    "status": "cancelled",
+    "attempt_status": "interrupted",
+    "reservation_settled_steps": "0.000000",
+    "uncommitted_compute": "One fault-injected update ran before cancellation; no checkpoint or candidate was published. Accounting unit is committed optimizer updates, not elapsed compute."
+  },
+  "cross_project_refused": 404,
+  "metadata_only_candidate_refused": 400,
+  "outstanding_reservations": 0,
+  "unavailable_consumer": {
+    "committed_updates": 2,
+    "training_status": "completed",
+    "evaluation_status": "unavailable",
+    "evaluation_passed": false,
+    "candidate_state": "draft",
+    "production_qualified": false
+  }
+}

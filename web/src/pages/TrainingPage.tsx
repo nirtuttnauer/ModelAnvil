@@ -93,7 +93,7 @@ interface Checkpoint {
 }
 
 interface Run {
-  runtime?: { execution_mode?: string; setup_check?: boolean; purpose?: string; pins?: { runtime?: string } };
+  runtime?: { execution_mode?: string; setup_check?: boolean; purpose?: string; pins?: { runtime?: string }; independent_evaluation?: { status: string; passed: boolean; reason?: string; report?: Record<string, unknown> } };
   execution_evidence?: { level: string; source: string };
   run_id: string;
   recipe_type: string;
@@ -223,11 +223,17 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
   const plan = guidedPlan(revision, recipe === 'lora_adapter');
   const selectedModel = models.find(model => String(model.id) === base);
   const trainingCapability = selectedModel?.capabilities?.train;
+  const visionProfile = selectedModel?.architecture_ref?.startsWith('modelanvil.smolvlm-') || false;
+  useEffect(() => {
+    if (visionProfile) { setRecipe('lora_adapter'); setPreset('custom'); setSteps('3'); setSeed('42'); }
+  }, [base, visionProfile]);
   const modelLabel = modelName || selectedModel?.model_name || '';
   const datasetLabel = registeredRevision?.dataset_name || (revision?.dataset_name ?? '');
   const canReview = !!tokenizer && (recipe === 'scratch_pretraining' || !!base) && Number.isInteger(steps) && steps > 0 && steps <= 3000 &&
     (mode === 'simulation' || !!selectedDataset && !!selectedPool && !!selectedPolicy && !!runner);
   const focusRun = latestTrainingRun(runs, currentRunId);
+  const visionRun = focusRun?.runtime?.pins?.runtime?.startsWith('modelanvil.smolvlm-') || false;
+  const visualEvaluation = focusRun?.runtime?.independent_evaluation;
   const detailRun = tab === 'current-run' ? focusRun : selected;
   function prepareModel(inputs: GuidedInputs, name: string) {
     const fields = preparedTrainingFields(inputs, name);
@@ -543,7 +549,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
             )}
 
             {/* External Inference Candidate Testing */}
-            <details style={{ marginTop: 'var(--space-20)', borderTop: '1px solid var(--color-border, #e2e8f0)', paddingTop: 'var(--space-16)' }}>
+            {detailRun.runtime?.pins?.runtime?.startsWith('modelanvil.smolvlm-') ? <p className="muted">Vision candidates require an image. {detailRun.output_model_version_uuid && <a href={`#chat?model_version=${encodeURIComponent(detailRun.output_model_version_uuid)}`}>Open image chat</a>}</p> : <details style={{ marginTop: 'var(--space-20)', borderTop: '1px solid var(--color-border, #e2e8f0)', paddingTop: 'var(--space-16)' }}>
               <summary>Advanced inference check</summary>
               <p className="muted" style={{ fontSize: 'var(--type-13)' }}>
                 Load the exported weights and decode text in the server CPU runtime. GPU inference uses the independent consumer on the worker host.
@@ -609,7 +615,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
                   </div>
                 </div>
               )}
-            </details>
+            </details>}
           </div>
         ) : null;
 
@@ -657,7 +663,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
                     <h3 className="full-width">Model, data and compute</h3>
             <label>Execution
               <select value={mode} onChange={(e) => { setMode(e.target.value); setRecipe('full_sft'); setSelectedPool(''); setSelectedPolicy(''); setRunner(''); }}>
-                <option value="worker">Worker text fine-tuning</option>
+                <option value="worker">Worker fine-tuning</option>
                 <option value="simulation">Synthetic training fixture (demo — not a real model)</option>
               </select>
             </label>
@@ -665,7 +671,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
               Recipe type
               <select value={recipe} onChange={(e) => setRecipe(e.target.value)}>
                 <option value="full_sft">Full parameter SFT</option>
-                {mode === 'worker' && <option value="lora_adapter">LoRA · pinned CPU or GPU SmolLM2 profile</option>}
+                {mode === 'worker' && <option value="lora_adapter">LoRA · pinned CPU/GPU text or vision profile</option>}
                 {mode === 'worker' && <option value="qlora_adapter">Apple GPU QLoRA · four-bit SmolLM2 profile</option>}
                 {mode === 'worker' && <option value="continued_pretraining">GPU continued pretraining · pinned text corpus</option>}
                 {mode === 'simulation' && <>
@@ -708,6 +714,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
                 unavailable: mode === 'worker' && (!m.capabilities?.train.eligible || !m.capabilities.train.recipes.includes(recipe)) ? m.capabilities?.train.reason || 'This model does not support the selected training recipe.' : undefined }))}
               />}
 
+            {visionProfile && <p className="muted full-width">Vision LoRA uses one PNG/JPEG and a question/answer per sample, protected image/source splits, the pinned processor and 1–20 updates. Register paired inputs on the worker host with setup_vlm_training. Independent visual scores remain separate from production qualification.</p>}
             <p className="muted full-width"><a href="#models">Initialize a CPU base in Models</a> or select a pinned pretrained CPU or GPU base registered on your worker host. Choose its matching tokenizer.</p>
             {base && mode === 'worker' && <p className="muted full-width">{models.find(m => String(m.id) === base)?.capabilities?.train.reason || 'Inspect model compatibility in Models before launch.'}</p>}
             {base && mode === 'worker' && <ModelHardwareFit memory={selectedModel?.capabilities?.memory_requirements}
@@ -781,7 +788,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
                       <option value="recommended" disabled={!revision}>Recommended{revision ? ` · ${plan.epochs} passes` : ' · prepare a dataset first'}</option>
                       <option value="quick">Quick setup check · 3 steps</option><option value="custom">Custom step count</option>
                     </select></label>
-                    {preset === 'custom' && <label>Total steps<Field required type="number" min="1" max="3000" step="1" value={manualSteps} onChange={event => setSteps(event.target.value)} /></label>}
+                    {preset === 'custom' && <label>Total steps<Field required type="number" min="1" max={visionProfile ? 20 : 3000} step="1" value={manualSteps} onChange={event => setSteps(event.target.value)} /></label>}
                     <p>{preset === 'recommended' ? revision ? `${plan.epochs} complete passes through ${plan.trainingExamples} training examples (${steps} updates).` : 'Add your dataset to calculate the recommended training plan automatically.' : `${steps} training updates.`}</p>
                     {preset === 'quick' && <p>This short run checks your setup. Use more training steps to assess model quality.</p>}
                     {revision && <p>{revision.metadata.split_counts.validation ?? 0} validation and {revision.metadata.split_counts.test ?? 0} test examples remain held out.</p>}
@@ -815,8 +822,9 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
           {focusRun && <>
         {(focusRun.status === 'running' || focusRun.status === 'pending') && <Button type="button" style={{ borderColor: 'var(--error)', color: 'var(--error)' }} disabled={busy} onClick={() => cancelRun(focusRun.run_id)}><XCircle size={14} /> Cancel run</Button>}
         {tab === 'current-run' && <TrainingRunProgress key={`progress-${focusRun.run_id}`} run={focusRun} refreshedAt={runsRefreshedAt} refreshError={progressError} onRefresh={() => void refreshProgress()} />}
-        {focusRun.status === 'completed' && <GuidedDecision key={`${token}:${focusRun.run_id}`} token={token} runId={focusRun.run_id} />}
-        {focusRun.status === 'completed' && focusRun.output_model_version_uuid && <Notice className="notice"><p>Chat and download let you inspect this candidate. They are not evidence that it improved, and a downloaded file is not deployed.</p><div className="actions"><a href={`#chat?model_version=${encodeURIComponent(focusRun.output_model_version_uuid)}`}>Inspect in chat</a>{focusRun.base_model_version && <a href={`#chat?model_version=${encodeURIComponent(focusRun.output_model_version_uuid)}&compare_base=1`}>Inspect both models in chat</a>}</div></Notice>}
+        {focusRun.status === 'completed' && !visionRun && <GuidedDecision key={`${token}:${focusRun.run_id}`} token={token} runId={focusRun.run_id} />}
+        {visionRun && visualEvaluation && <Notice className="notice" role="status"><p>Independent visual check: {visualEvaluation.status === 'unavailable' ? 'unavailable' : visualEvaluation.passed ? 'passed' : 'failed'}. This candidate remains a draft; customer quality and production release require separate qualification.</p>{visualEvaluation.reason && <p>{visualEvaluation.reason}</p>}<details><summary>Protected visual scores and exact input hashes</summary><DataInspector value={visualEvaluation.report || visualEvaluation} /></details></Notice>}
+        {focusRun.status === 'completed' && focusRun.output_model_version_uuid && <Notice className="notice"><p>Chat and download let you inspect this candidate. They are not evidence that it improved, and a downloaded file is not deployed.</p><div className="actions"><a href={`#chat?model_version=${encodeURIComponent(focusRun.output_model_version_uuid)}`}>Inspect in chat</a>{focusRun.base_model_version && !visionRun && <a href={`#chat?model_version=${encodeURIComponent(focusRun.output_model_version_uuid)}&compare_base=1`}>Inspect both models in chat</a>}</div></Notice>}
         {tab === 'current-run' && exportPanel}
         <div className="ml-section-heading"><div><span className="ml-eyebrow">EXPERIMENT MONITOR</span><h3>Loss & checkpoint activity</h3><p>Recorded training loss at committed steps, alongside saved checkpoint artifacts.</p></div></div>
         <div className="visualization-grid">

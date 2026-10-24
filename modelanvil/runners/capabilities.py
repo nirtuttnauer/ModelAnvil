@@ -9,18 +9,18 @@ def training_memory_requirements(architecture_ref, source=None):
     module = runtime_for_architecture(architecture_ref)
     if module is None:
         return None
-    from modelanvil.runners.training import hf_runtime, mlx_runtime, cpu_hf_runtime
+    from modelanvil.runners.training import hf_runtime, mlx_runtime, cpu_hf_runtime, vlm_runtime, cpu_vlm_runtime
     large = module is hf_runtime and source == hf_runtime.LARGE_GUIDED_SOURCE
     return {'host_memory_bytes': 32 * 1024**3 if large else module.LIMITS['memory_bytes'],
             'accelerator_memory_bytes': 12 * 1024**3 if large else module.LIMITS.get('gpu_memory_bytes', 0),
             'accelerator_backends': ['mps'] if large else ['mlx'] if module is mlx_runtime
-                                    else ['cuda', 'rocm', 'xpu', 'mps'] if module is hf_runtime else ['cpu'],
+                                    else ['mps'] if module is vlm_runtime else ['cuda', 'rocm', 'xpu', 'mps'] if module is hf_runtime else ['cpu'],
             'runtime_contract': module.CONTRACT_DIGEST,
             'basis': 'Pinned training profile minimum. Preflight checks live accelerator headroom, inputs and allocation.'}
 
 
 def model_capabilities(version):
-    from modelanvil.runners.training import general_runtime, hf_runtime, mlx_runtime, cpu_hf_runtime
+    from modelanvil.runners.training import general_runtime, hf_runtime, mlx_runtime, cpu_hf_runtime, vlm_runtime, cpu_vlm_runtime
     from modelanvil.runners.training import runtime as character
     result = {'train': {'eligible': False, 'recipes': [], 'reason': 'No supported verified training inputs.'},
               'evaluate': {'eligible': False, 'reason': 'This model needs a supported evaluation runtime.'},
@@ -74,7 +74,12 @@ def model_capabilities(version):
             if not isinstance(config, dict):
                 raise ValueError('Model configuration must be an object.')
         format = plan['format']
-        if format == 'gguf':
+        if format == 'vision':
+            vlm_runtime.require_packages()
+            devices = ['cpu']
+            import torch
+            if torch.backends.mps.is_available(): devices.append('mps:0')
+        elif format == 'gguf':
             from modelanvil.runners.gguf_runtime import MAX_WEIGHT_BYTES
             if not 0 < weight_bytes <= MAX_WEIGHT_BYTES:
                 raise ValueError('CPU GGUF weights must fit within the verified 1 GiB limit.')
@@ -112,9 +117,12 @@ def model_capabilities(version):
                           'reason': 'Snapshot inputs verified; actual loading and memory admission are checked at generation.'}
         from modelanvil.runners.inference import probed_devices
         result['chat']['load_tested_devices'] = probed_devices(version, format, devices, tenant, project)
+        if format == 'vision':
+            result['chat'].update(max_tokens=16, context_limit=128, modalities=['image', 'text'],
+                reason='One PNG/JPEG image, one visual question, native processor and greedy decoding. CPU/MPS loading is checked at generation.')
         if format == 'safetensors' and 'cpu' in devices:
             result['evaluate'] = {'eligible': True, 'reason': 'Verified bounded CPU snapshot; evaluation rechecks exact inputs and context.'}
-        if module in (hf_runtime, mlx_runtime, cpu_hf_runtime):
+        if module in (hf_runtime, mlx_runtime, cpu_hf_runtime, vlm_runtime, cpu_vlm_runtime):
             recipes = module.CONTRACT['recipes']
             result['train'] = {'eligible': True, 'recipes': recipes, 'reason': 'Pinned profile; training preflight checks exact runtime, tokenizer, device and input bytes.'}
     except (ValueError, TypeError, KeyError, OSError) as exc:
