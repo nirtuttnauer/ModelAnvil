@@ -181,3 +181,16 @@ class ControlledExecutorTests(TestCase):
         self.assertEqual(next_job.status, Job.Status.QUEUED)
         self.assertEqual(JobAttempt.objects.filter(job=self.job).count(), 1)
         self.assertFalse(JobAttempt.objects.filter(job=next_job).exists())
+
+    def test_trusted_training_finalizer_can_refuse_worker_success(self):
+        from unittest.mock import patch
+        from modelanvil.jobs.executor import execute_one
+        self.job.payload = {'type': 'qualified_training', 'run_id': str(uuid.uuid4())}
+        self.job.save()
+        with patch('modelanvil.runners.training.admission.gpu_claim_plan', return_value=None), \
+                patch('modelanvil.runners.training.registry.finalize_job', return_value=Job.Status.FAILED):
+            outcome = execute_one(self.worker, lambda descriptor, context: None)
+        self.job.refresh_from_db()
+        self.assertEqual(outcome['status'], Job.Status.FAILED)
+        self.assertEqual(self.job.status, Job.Status.FAILED)
+        self.assertEqual(self.job.attempts.get().status, JobAttempt.Status.FAILED)

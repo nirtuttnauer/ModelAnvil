@@ -6,6 +6,10 @@ export function modelDisplayName(name: string): string {
 }
 
 export function referenceInputError(model: { format: string; tokenizer_kind?: string; context_limit?: number } | undefined, messages: { role: string; content: string }[], maxTokens: number, temperature: number, format: string): string | null {
+  if (model?.format === 'vision') {
+    if (messages.length !== 1 || messages[0].role !== 'user' || messages[0].content.length > 512) return 'Ask one visual question up to 512 characters without a system prompt.';
+    if (temperature !== 0 || format !== 'model' || !Number.isInteger(maxTokens) || maxTokens < 1 || maxTokens > 16) return 'Vision chat uses the native processor, greedy decoding and 1–16 output tokens.';
+  }
   if (model?.format !== 'cpu-reference') return null;
   if (messages.length !== 1 || messages[0].role !== 'user') return 'This CPU reference accepts one user prompt. Start a new conversation without a system prompt.';
   if (temperature !== 0 || format === 'chatml' || !Number.isInteger(maxTokens) || maxTokens < 1 || maxTokens > 32) return 'CPU references support greedy decoding, plain text and 1–32 output tokens.';

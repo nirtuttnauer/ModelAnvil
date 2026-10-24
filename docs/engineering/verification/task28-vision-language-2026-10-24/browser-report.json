@@ -1,0 +1,563 @@
+{
+  "actual_api": true,
+  "training_run_id": "01a16b92-3e86-75cd-96d1-8258c3cf2eba",
+  "preflight": {
+    "status": "approved",
+    "recipe_type": "lora_adapter",
+    "execution_mode": "worker",
+    "checks": [
+      {
+        "check": "recipe-execution-mode",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Worker recipe must match the selected runtime.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "dataset_revision",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "dataset_revision: selected accessible resource.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "base_model_version",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "base_model_version: selected accessible resource.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "tokenizer_version",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "tokenizer_version: selected accessible resource.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "runner_manifest",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "runner_manifest: selected accessible resource.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "pool",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "pool: selected accessible resource.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "dataset-published",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Dataset must be published with immutable prepared text.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "model-tokenizer",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Base weights must pin the selected tokenizer.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "runner-contract",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Runner must be enabled and match the qualified runtime contract.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "pinned-inputs",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Verified dataset bytes, base weights, tokenizer encoding and runner contract.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "worker-memory",
+        "category": "capacity",
+        "status": "pass",
+        "blocking": false,
+        "reason": "A worker must declare the selected contract and sufficient memory.",
+        "corrective_action": null,
+        "detail": {
+          "required_memory_bytes": 17179869184,
+          "matching_workers": 1
+        }
+      },
+      {
+        "check": "worker-slots",
+        "category": "capacity",
+        "status": "pass",
+        "blocking": false,
+        "reason": "1 free matching worker slot(s); one required.",
+        "corrective_action": null,
+        "detail": {
+          "available_slots": 1,
+          "required_slots": 1
+        }
+      },
+      {
+        "check": "budget",
+        "category": "budget",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Budget must be enabled, use training_steps, and cover the requested sample passes.",
+        "corrective_action": null,
+        "detail": {
+          "policy_id": "01a16b90-8cc6-76ee-a85e-753833b0175e",
+          "period": "lifetime",
+          "period_start": "1970-01-01",
+          "unit": "training_steps",
+          "currency": null,
+          "limit": "100.000000",
+          "committed": "4",
+          "remaining": "96.000000",
+          "requested": 2
+        }
+      },
+      {
+        "check": "device-admission",
+        "category": "capacity",
+        "status": "pass",
+        "blocking": false,
+        "reason": "The named local device must be idle across cooperating API and training processes.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "storage",
+        "category": "capacity",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Local artifact and checkpoint storage must cover the projected states.",
+        "corrective_action": null,
+        "detail": {
+          "artifacts": {
+            "available_bytes": 193785487360,
+            "required_bytes": 1052370320
+          },
+          "checkpoints": {
+            "available_bytes": 193785487360,
+            "required_bytes": 1052370320
+          }
+        }
+      }
+    ],
+    "blocking_checks": [],
+    "samples": [
+      {
+        "sample_id": "b08e1236-8972-4015-877a-118b801d4b7c",
+        "text_preview": "What is the main color? Answer with one word.\nRed.",
+        "token_ids": [
+          1,
+          11126,
+          42,
+          49189,
+          49152,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49190,
+          49189,
+          1780,
+          314,
+          260,
+          1085,
+          2380,
+          47,
+          19842,
+          351,
+          582,
+          2229,
+          30,
+          49279,
+          198,
+          9519,
+          9531,
+          42,
+          3950,
+          30,
+          49279,
+          198
+        ],
+        "token_count": 90
+      }
+    ],
+    "sample_count": 1,
+    "pins": {
+      "runtime": "modelanvil.smolvlm-cpu-lora.v1",
+      "contract_digest": "c41a9ee8717d602acfb15cc2ea955085bc301cd509128aaae6207778b97b85fd",
+      "build_digest": "c8983fdcfa1e4c47eda8ac05d464d00abcd6750d858ee63290b6014c79ea895f",
+      "dataset_id": "01a16b90-8cc3-7bf0-9cc1-7f2ae2baeee9",
+      "dataset_digest": "8bd84e52aab5cf98c0a01f71da4199fb4b45a18293a4b7ace50a6c00ada39811",
+      "base_id": "01a16b90-8cba-7552-bf10-810de2b4c03f",
+      "base_artifact_id": "01a16b90-84e3-7065-9ad7-ba52a773a0dc",
+      "base_digest": "ef737ff61836f5011af678b0dfbd1194ed23a7670b92b632213aebc5d7498dae",
+      "base_input_identity": "2d47f67ce33cb42ecc48e1ed906c64d41dccd38fdb84455cbe3e308e39be4272",
+      "tokenizer_id": "01a16b90-8cb7-79d3-8745-052a772ea30c",
+      "tokenizer_digest": "86542573dda29a968832f84c7d9985614909e287070dae4f63f6960076399687",
+      "processor_identity": {
+        "id": 1,
+        "tenant_id": "01a16b90-8253-7ba5-b858-c020915ec05d",
+        "created_at": "2026-10-24 01:39:57.749239+00:00",
+        "updated_at": "2026-10-24 01:39:57.749353+00:00",
+        "processor_id": "01a16b90-8cb5-7a1e-aaf8-0691bf4ee5e8",
+        "name": "vision-fixture-processor",
+        "revision_no": 1,
+        "processor_type": "multimodal",
+        "configuration_digest": "0abb63fd94140505995866906c882fc42d7e2963d1d5dda0f98f48105f9d01d6",
+        "metadata": {
+          "vision_profile": {
+            "size": {
+              "longest_edge": 512
+            },
+            "do_image_splitting": false
+          },
+          "artifact_manifest_id": "01a16b90-84e3-7065-9ad7-ba52a773a0dc",
+          "source": {
+            "repo_id": "HuggingFaceTB/SmolVLM-256M-Instruct",
+            "revision": "7e3e67edbbed1bf9888184d9df282b700a323964",
+            "license": "Apache-2.0"
+          }
+        }
+      },
+      "processor_id": "01a16b90-8cb5-7a1e-aaf8-0691bf4ee5e8",
+      "processor_digest": "0abb63fd94140505995866906c882fc42d7e2963d1d5dda0f98f48105f9d01d6",
+      "runner_id": "01a16b90-8cc5-76fc-8bfc-7cd70492cc4a",
+      "runner_digest": "668c74b03159f5fa711c67d643d96635d53dcd03f1c81c008d5178b077b35eee",
+      "pool_id": 1,
+      "worker_id": 1,
+      "steps": 2,
+      "config": {
+        "runtime": "modelanvil.smolvlm-cpu-lora.v1",
+        "source": {
+          "repo_id": "HuggingFaceTB/SmolVLM-256M-Instruct",
+          "revision": "7e3e67edbbed1bf9888184d9df282b700a323964",
+          "license": "Apache-2.0"
+        },
+        "processor_overrides": {
+          "size": {
+            "longest_edge": 512
+          },
+          "do_image_splitting": false
+        },
+        "sequence_tokens": 128,
+        "model_role": "vision_language"
+      },
+      "source": {
+        "repo_id": "HuggingFaceTB/SmolVLM-256M-Instruct",
+        "revision": "7e3e67edbbed1bf9888184d9df282b700a323964",
+        "license": "Apache-2.0"
+      },
+      "optimizer": {
+        "algorithm": "adamw",
+        "learning_rate": 2e-05,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "weight_decay": 0
+      },
+      "adapter": {
+        "r": 8,
+        "lora_alpha": 16,
+        "target_modules": "model\\.text_model\\.layers\\.\\d+\\.self_attn\\.(q_proj|v_proj)",
+        "lora_dropout": 0,
+        "bias": "none",
+        "task_type": "CAUSAL_LM"
+      },
+      "recipe": "lora_adapter",
+      "initialization_seed": 42,
+      "sample_order": "seeded_epoch_shuffle_v1",
+      "chat_sft": true,
+      "accelerator": {
+        "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+        "device": {
+          "id": "cpu",
+          "backend": "cpu",
+          "torch_device": "cpu",
+          "name": "Apple M5 Pro",
+          "total_memory_bytes": 51539607552
+        },
+        "packages": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "safetensors": "0.8.0",
+          "tokenizers": "0.22.2"
+        },
+        "capacity_source": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+      },
+      "sample_digest": "b9dc824d5f5f79da55245c70b164059061b702c50792c22c8d7e1c9048a4a32a",
+      "validation_digest": "73b2e741de15737d235885177de8e939ff3c612a55e5aabe30743dfa49a670cc",
+      "protected_test_digest": "1e9d3b5700d0b93ecd3f0ec314e2c9511030fb189e9521fb930958a18585a064",
+      "asset_pins": {
+        "test": [
+          {
+            "sha256": "0fa253f88939b5072b0963be775bfb36793bd9f6f8056e50cb8367977fdcdd3e",
+            "byte_size": 181,
+            "media_type": "image/png",
+            "decoded_width": 64,
+            "decoded_height": 64,
+            "transform": "exif_transpose_rgb_v1",
+            "artifact": {
+              "artifact_id": "01a16b90-825c-72d4-9351-71c4776caa01",
+              "sha256": "0fa253f88939b5072b0963be775bfb36793bd9f6f8056e50cb8367977fdcdd3e",
+              "byte_size": 181
+            }
+          }
+        ],
+        "train": [
+          {
+            "sha256": "6e35e4c2d632339a28e9d33792e5135892dd7292f450041988f7b30c5aced00f",
+            "byte_size": 181,
+            "media_type": "image/png",
+            "decoded_width": 64,
+            "decoded_height": 64,
+            "transform": "exif_transpose_rgb_v1",
+            "artifact": {
+              "artifact_id": "01a16b90-8258-7354-906a-6afd2adf9cab",
+              "sha256": "6e35e4c2d632339a28e9d33792e5135892dd7292f450041988f7b30c5aced00f",
+              "byte_size": 181
+            }
+          }
+        ],
+        "validation": [
+          {
+            "sha256": "e9da449bcc3b10b9b37834ea7add3566c3df058c3bf56f74ef706f49848d0126",
+            "byte_size": 181,
+            "media_type": "image/png",
+            "decoded_width": 64,
+            "decoded_height": 64,
+            "transform": "exif_transpose_rgb_v1",
+            "artifact": {
+              "artifact_id": "01a16b90-825a-73db-9212-60906ed599ac",
+              "sha256": "e9da449bcc3b10b9b37834ea7add3566c3df058c3bf56f74ef706f49848d0126",
+              "byte_size": 181
+            }
+          }
+        ]
+      },
+      "splits": {
+        "consumed": "train",
+        "train_rows": 1,
+        "excluded_rows": {
+          "test": 1,
+          "validation": 1
+        }
+      },
+      "trainable_parameters": 460800,
+      "production_qualified": false
+    },
+    "requirements": {
+      "runtime": "modelanvil.smolvlm-cpu-lora.v1",
+      "recipe": "lora_adapter",
+      "config": {
+        "runtime": "modelanvil.smolvlm-cpu-lora.v1",
+        "source": {
+          "repo_id": "HuggingFaceTB/SmolVLM-256M-Instruct",
+          "revision": "7e3e67edbbed1bf9888184d9df282b700a323964",
+          "license": "Apache-2.0"
+        },
+        "processor_overrides": {
+          "size": {
+            "longest_edge": 512
+          },
+          "do_image_splitting": false
+        },
+        "sequence_tokens": 128,
+        "model_role": "vision_language"
+      },
+      "optimizer": {
+        "algorithm": "adamw",
+        "learning_rate": 2e-05,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "weight_decay": 0
+      },
+      "cpu_slots": 1,
+      "memory_bytes": 17179869184,
+      "storage_bytes": 1052370320,
+      "checkpoint_count": 2,
+      "storage_assumption": "Immutable shared base references plus FP32 adapter weights and Adam moments per step; shared local host.",
+      "device_memory": {
+        "total_bytes": 51539607552,
+        "required_bytes": 17179869184,
+        "scope": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+      },
+      "gpu_count": 0,
+      "accelerator": {
+        "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+        "device": {
+          "id": "cpu",
+          "backend": "cpu",
+          "torch_device": "cpu",
+          "name": "Apple M5 Pro",
+          "total_memory_bytes": 51539607552
+        },
+        "packages": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "safetensors": "0.8.0",
+          "tokenizers": "0.22.2"
+        },
+        "capacity_source": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+      },
+      "precision": "fp32",
+      "adapter": {
+        "r": 8,
+        "lora_alpha": 16,
+        "target_modules": "model\\.text_model\\.layers\\.\\d+\\.self_attn\\.(q_proj|v_proj)",
+        "lora_dropout": 0,
+        "bias": "none",
+        "task_type": "CAUSAL_LM"
+      },
+      "trainable_parameters": 460800
+    },
+    "budget": {
+      "policy_id": "01a16b90-8cc6-76ee-a85e-753833b0175e",
+      "period": "lifetime",
+      "period_start": "1970-01-01",
+      "unit": "training_steps",
+      "currency": null,
+      "limit": "100.000000",
+      "committed": "4",
+      "remaining": "96.000000",
+      "requested": 2
+    },
+    "estimate": {
+      "known": true,
+      "source": "Measured completed worker pilot 01a16b91-49b9-7d48-81ca-217068a975cc",
+      "assumptions": [
+        "One step passes one encoded image/question/answer pair; only assistant response tokens contribute to loss.",
+        "Queue time, database writes, checkpoint storage and retries are excluded.",
+        "Linear scaling by next-token pairs assumes the pilot worker hardware; placement and timing variation are unmeasured."
+      ],
+      "units": {
+        "duration": "CPU seconds (engine only)",
+        "tokens": "assistant response tokens",
+        "currency": null
+      },
+      "currency": null,
+      "uncertainty": "Unknown; no confidence interval has been measured.",
+      "estimated_duration_seconds": 2.123387,
+      "estimated_cost": {
+        "known": false,
+        "value": null,
+        "reason": "No measured monetary rate or currency is configured."
+      },
+      "total_tokens": 8,
+      "pilot": {
+        "run_id": "01a16b91-49b9-7d48-81ca-217068a975cc",
+        "cpu_seconds": 2.123387,
+        "training_pairs": 8
+      }
+    },
+    "fingerprint": "f12cb335025249f48456d409d5c38201424181500c15d4759595899d69ff047c",
+    "checked_at": "2026-10-24T01:41:47.932712+00:00",
+    "expires_in_seconds": 600,
+    "runtime_scope": {
+      "targets": [],
+      "available": [
+        "modelanvil.smolvlm-cpu-lora.v1"
+      ],
+      "unavailable": []
+    },
+    "capacity_note": "Capacity is observed during preview. Launch rechecks; GPU claim revalidates placement/runtime/headroom/budget and reserves the physical local device for its fenced attempt. Process admission remains held until allocation cleanup; budget reservation is atomic."
+  },
+  "cli_worker": true,
+  "download_bytes": 519769861,
+  "image_upload": true,
+  "visual_output": "Red",
+  "viewports": [
+    1440,
+    390
+  ],
+  "page_errors": [],
+  "horizontal_overflow": false,
+  "native_picker_emulation": "OS picker emulated with real OPFS disk-stream handle; native OS dialog not qualified. Earlier same-export guard test correctly refused the 256 MiB browser-memory fallback.",
+  "production_qualified": false
+}

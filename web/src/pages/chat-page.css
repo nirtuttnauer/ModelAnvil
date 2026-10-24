@@ -176,3 +176,8 @@
   .chat-page-comparison .chat-composer { padding-block: var(--space-4); }
   .chat-page-comparison .chat-composer > label { padding-block: var(--space-4); }
 }
+
+.chat-vision-input { padding-block: 0.5rem; }
+.chat-vision-attachment { display: flex; align-items: center; flex-wrap: wrap; gap: 0.75rem; }
+.chat-vision-attachment img { width: 5rem; height: 5rem; object-fit: contain; border-radius: 8px; }
+.chat-vision-attachment span { overflow-wrap: anywhere; max-width: 30ch; }

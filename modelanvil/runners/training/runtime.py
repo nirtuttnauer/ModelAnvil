@@ -272,7 +272,7 @@ def execute_training(run, context):
 
 
 def _finalize_worker_job(job, status, *, runtime_id, contract_digest, model_name_prefix,
-                         checkpoint_bundle, is_worker_run, select_checkpoint=None):
+                         checkpoint_bundle, is_worker_run, select_checkpoint=None, candidate_metadata=None):
     """Shared terminal accounting and candidate creation for any worker runtime."""
     import io
     from django.utils import timezone
@@ -294,11 +294,15 @@ def _finalize_worker_job(job, status, *, runtime_id, contract_digest, model_name
             sha256=hashlib.sha256(payload).hexdigest(), byte_size=len(payload), media_type='application/json')
         upload_staged_artifact(artifact, io.BytesIO(payload), backend=artifact_storage_backend())
         model = Model.all_objects.create(tenant_id=run.tenant_id, project_id=run.project_id,
-            name=f'{model_name_prefix}-{run.run_id}', intended_tasks=['text_generation'])
+            name=f'{model_name_prefix}-{run.run_id}',
+            intended_tasks=['image_text_to_text'] if bundle.get('config.json', {}).get('model_role') == 'vision_language' else ['text_generation'])
         run.output_model_version = ModelVersion.all_objects.create(tenant_id=run.tenant_id,
             project_id=run.project_id, model=model, revision_no=1, tokenizer=run.tokenizer_version,
             architecture_ref=runtime_id, artifact_manifest_id=str(artifact.artifact_id),
-            state=ModelVersion.State.DRAFT, metadata={'source_run_id': str(run.run_id),
+            state=ModelVersion.State.DRAFT,
+            **({'processor': run.base_model_version.processor, 'producing_job_id': job.job_id,
+                'parameters_count': checkpoint.metrics['total_parameters']} if bundle.get('config.json', {}).get('model_role') == 'vision_language' else {}),
+            metadata={**(candidate_metadata or {}), 'source_run_id': str(run.run_id),
                 'selected_checkpoint_step': checkpoint.step,
                 'weights_sha256': bundle['weights_manifest.json']['weights_sha256'],
                 'runtime_contract': contract_digest, 'checkpoint_digest': checkpoint.state_digest})

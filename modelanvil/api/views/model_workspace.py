@@ -138,6 +138,7 @@ class ModelImportViewSet(TenantScopedViewSet):
 
 class CompletionInput(serializers.Serializer):
     model = serializers.UUIDField()
+    image_artifact = serializers.UUIDField(required=False)
     messages = serializers.JSONField()
     max_tokens = serializers.IntegerField(min_value=1, max_value=256, default=128)
     temperature = serializers.FloatField(min_value=0, max_value=2, default=0)
@@ -156,6 +157,10 @@ class CompletionInput(serializers.Serializer):
     def validate(self, attrs):
         if not math.isfinite(attrs['temperature']):
             raise serializers.ValidationError('Temperature must be finite.')
+        if attrs.get('image_artifact') is not None and (len(attrs['messages']) != 1 or attrs['messages'][0]['role'] != 'user'
+                or len(attrs['messages'][0]['content']) > 512 or attrs['temperature'] != 0
+                or attrs['max_tokens'] > 16 or attrs['prompt_format'] != 'model'):
+            raise serializers.ValidationError('Vision chat requires one question up to 512 characters, native formatting, greedy decoding and 1–16 tokens.')
         unknown = set(self.initial_data) - set(self.fields)
         if unknown:
             raise serializers.ValidationError('Unsupported completion options: ' + ', '.join(sorted(unknown)))
@@ -201,6 +206,12 @@ class ConversationSerializer(serializers.ModelSerializer):
                 exists = False
             if not exists:
                 raise serializers.ValidationError('Select an accessible model version.')
+        if value.get('image_artifact'):
+            from modelanvil.runners.training.vlm_data import read_image
+            try: read_image(value['image_artifact'], get_active_tenant(), get_active_project())
+            except ValueError as exc: raise serializers.ValidationError(str(exc)) from exc
+            if value.get('system_prompt') or value.get('compare_model') or value.get('comparison_mode') == 'base-trained':
+                raise serializers.ValidationError('Vision conversations support single-model visual questions without system prompts.')
         prompt = value.get('system_prompt', '')
         if not isinstance(prompt, str) or len(prompt) > 8000:
             raise serializers.ValidationError('System prompt must fit within 8,000 characters.')
@@ -327,6 +338,8 @@ class ComparisonViewSet(TenantScopedViewSet):
                     project=project, principal_id=str(request.user.pk), status='completed').first()
                 if record is None or not external_inference.accessible_request(record, get_active_tenant(), project.pk) or record.input_digest != digest(messages):
                     raise ValueError('Use your completed requests for exactly the same comparison input.')
+                if record.configuration.get('image_artifact'):
+                    raise ValueError('Image responses require a separate visual review workflow; text comparisons are unsupported.')
                 expected = hashlib.sha256(response['text'].encode()).hexdigest() if response['text'] else ''
                 if expected != record.output_digest:
                     raise ValueError('Comparison output differs from its measured inference request.')
@@ -430,20 +443,38 @@ class InferenceViewSet(TenantScopedViewSet):
         from rest_framework.exceptions import NotFound
         raise NotFound()
 
+    @action(detail=False, methods=['post'], url_path='upload-image')
+    def upload_image(self, request):
+        import io
+        from modelanvil.runners.training.vlm_math import decode_image
+        from modelanvil.runners.model_catalog import _store
+        project = selected_project(); file = request.data.get('file')
+        if file is None or not hasattr(file, 'read') or not 0 < file.size <= 2 * 1024**2:
+            raise serializers.ValidationError('Choose one PNG/JPEG image of at most 2 MiB and 1024 by 1024 pixels.')
+        raw = file.read(2 * 1024**2 + 1)
+        media = 'image/png' if raw.startswith(b'\x89PNG\r\n\x1a\n') else 'image/jpeg'
+        try:
+            _, pin = decode_image(raw, media)
+            ref = _store(io.BytesIO(raw), tenant=get_active_tenant(), project=project.pk, name='vision-image', size=len(raw),
+                media_type=media, metadata={'kind': 'vision_image', **pin})
+        except (ValueError, OSError):
+            raise serializers.ValidationError('Image is malformed or exceeds the supported PNG/JPEG limits.') from None
+        return Response({**ref, 'image': pin}, status=201)
+
     def list(self, request):
         selected_project()
         from django.db.models import Q
         from modelanvil.runners.models import TrainingRun
-        from modelanvil.runners.training import hf_runtime, mlx_runtime, cpu_hf_runtime, runtime, general_runtime
+        from modelanvil.runners.training import hf_runtime, mlx_runtime, cpu_hf_runtime, vlm_runtime, cpu_vlm_runtime, runtime, general_runtime
         trained_runs = get_accessible_queryset(TrainingRun).filter(status='completed', job__status='succeeded',
-            base_model_version__architecture_ref__in=[cpu_hf_runtime.RUNTIME_ID, hf_runtime.RUNTIME_ID, mlx_runtime.RUNTIME_ID, runtime.RUNTIME_ID, general_runtime.RUNTIME_ID]).select_related('base_model_version').order_by('-created_at', '-pk')
+            base_model_version__architecture_ref__in=[cpu_hf_runtime.RUNTIME_ID, hf_runtime.RUNTIME_ID, mlx_runtime.RUNTIME_ID, vlm_runtime.RUNTIME_ID, cpu_vlm_runtime.RUNTIME_ID, runtime.RUNTIME_ID, general_runtime.RUNTIME_ID]).select_related('base_model_version').order_by('-created_at', '-pk')
         lineage = {}
         for run in trained_runs:
             if run.output_model_version_id:
                 lineage.setdefault(run.output_model_version_id, run)
         from modelanvil.runners.models import AlignmentRun
         aligned = get_accessible_queryset(AlignmentRun).filter(status='completed', job__status='succeeded').values('output_model_version_id')
-        rows = self.get_queryset().filter(Q(metadata__imported=True) | Q(metadata__managed_local=True) | Q(pk__in=lineage) | Q(pk__in=aligned) | Q(architecture_ref__in=[runtime.RUNTIME_ID, general_runtime.RUNTIME_ID, cpu_hf_runtime.RUNTIME_ID, hf_runtime.RUNTIME_ID, mlx_runtime.RUNTIME_ID])).exclude(architecture_ref__in=['modelanvil.ocr.v1', 'modelanvil.laya.v1'])
+        rows = self.get_queryset().filter(Q(metadata__imported=True) | Q(metadata__managed_local=True) | Q(pk__in=lineage) | Q(pk__in=aligned) | Q(architecture_ref__in=[runtime.RUNTIME_ID, general_runtime.RUNTIME_ID, cpu_hf_runtime.RUNTIME_ID, hf_runtime.RUNTIME_ID, mlx_runtime.RUNTIME_ID, vlm_runtime.RUNTIME_ID, cpu_vlm_runtime.RUNTIME_ID])).exclude(architecture_ref__in=['modelanvil.ocr.v1', 'modelanvil.laya.v1'])
         from modelanvil.runners.capabilities import model_capabilities
         from modelanvil.runners.inference import model_chat_template
         eligible = [(v, model_capabilities(v)['chat']) for v in rows]
@@ -452,7 +483,7 @@ class InferenceViewSet(TenantScopedViewSet):
             'created': int(v.created_at.timestamp()), 'owned_by': 'modelanvil', 'name': v.model.name,
             'format': capability.get('format', v.metadata.get('format', 'safetensors')), 'load_tested': bool(capability.get('load_tested_devices')), 'load_tested_devices': capability.get('load_tested_devices', []),
             'devices': capability['devices'], 'max_tokens': capability['max_tokens'], 'context_limit': capability['context_limit'],
-            'tokenizer_kind': capability.get('tokenizer_kind'),
+            'tokenizer_kind': capability.get('tokenizer_kind'), 'modalities': capability.get('modalities', ['text']),
             'training_run_id': str(lineage[v.pk].run_id) if v.pk in lineage else None,
             'base_model_id': str(lineage[v.pk].base_model_version.model_version_id) if v.pk in lineage and str(lineage[v.pk].base_model_version.model_version_id) in eligible_ids else None,
             'has_chat_template': bool(model_chat_template(v)), 'chat_template': model_chat_template(v)} for v, capability in eligible if capability['eligible']] + external_inference.catalog(get_active_tenant(), get_active_project())})
@@ -488,6 +519,23 @@ class InferenceViewSet(TenantScopedViewSet):
                 guard = snapshot_guard(version, tenant, project.pk)
         except ValueError as exc:
             raise serializers.ValidationError(str(exc)) from exc
+        image_id = options.get('image_artifact')
+        if (guard.format == 'vision' if version is not None else False) != (image_id is not None):
+            raise serializers.ValidationError('Vision chat requires one image artifact; other models accept text only.')
+        if image_id is not None:
+            from modelanvil.runners.training.vlm_data import read_image
+            from modelanvil.runners.training.runtime import digest
+            try: _, image_pin = read_image(image_id, tenant, project.pk)
+            except ValueError as exc: raise serializers.ValidationError(str(exc)) from exc
+            model_guard = guard
+            def guard():
+                model_guard()
+                if read_image(image_id, tenant, project.pk)[1] != image_pin:
+                    raise ValueError('Vision image inputs or current access changed.')
+            guard.format = model_guard.format
+            guard.identity = digest({'model': model_guard.identity, 'image': image_pin})
+            # JSON persistence uses string identities; never serialize raw image bytes.
+            options['image_artifact'] = str(image_id)
         replay, replayed = inference_replay.reserve(request, options, guard.identity)
         tenant = get_active_tenant()
         record = None
@@ -559,7 +607,8 @@ class InferenceViewSet(TenantScopedViewSet):
                 parts = stack.enter_context(external_inference.session(provider, options['messages'], max_tokens=options['max_tokens'],
                     temperature=options['temperature'], seed=options['seed'], prompt_format=options['prompt_format'], device=options['device']))
             else:
-                session = stack.enter_context(local_session(version, tenant=tenant, project=project.pk, device=options['device']))
+                session = stack.enter_context(local_session(version, tenant=tenant, project=project.pk, device=options['device'],
+                    **({'image_id': image_id} if image_id is not None else {})))
                 measurement = session.setdefault('measurement', {})
                 parts = generate(session, options['messages'], max_tokens=options['max_tokens'],
                                  temperature=options['temperature'], seed=options['seed'], prompt_format=options['prompt_format'])

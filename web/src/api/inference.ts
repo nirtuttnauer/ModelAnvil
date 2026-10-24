@@ -1,7 +1,7 @@
 import { apiPath, ApiRequestError, getActiveProjectId, authHeaders } from './client.ts';
 
 export interface ChatMessage { role: 'system' | 'user' | 'assistant'; content: string }
-export interface LocalModel { endpoint?: string; credential_id?: string; model?: string; id: string; name: string; format: string; load_tested: boolean; load_tested_devices?: string[]; chat_template: string; devices?: string[]; max_tokens?: number; context_limit?: number; tokenizer_kind?: string; base_model_id?: string | null; training_run_id?: string | null }
+export interface LocalModel { modalities?: string[]; endpoint?: string; credential_id?: string; model?: string; id: string; name: string; format: string; load_tested: boolean; load_tested_devices?: string[]; chat_template: string; devices?: string[]; max_tokens?: number; context_limit?: number; tokenizer_kind?: string; base_model_id?: string | null; training_run_id?: string | null }
 export interface TokenUsage { prompt_tokens: number; completion_tokens: number; total_tokens: number }
 
 export async function streamCompletion(token: string, body: Record<string, unknown>, signal: AbortSignal,

@@ -1,0 +1,4 @@
+# Optional exact local CPU/MPS SmolVLM training and image chat dependencies.
+-r requirements.gpu.txt
+pillow==13.0.0
+torchvision==0.28.0

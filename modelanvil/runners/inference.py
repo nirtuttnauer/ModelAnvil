@@ -20,7 +20,7 @@ _allocation = threading.Lock()
 MAX_BYTES = 8 * 1024**3
 _RUNTIME_CODE = {name: hashlib.sha256((Path(__file__).parent / name).read_bytes()).hexdigest()
                  for name in ('inference.py', 'gguf_runtime.py', 'training/hf_runtime.py', 'capabilities.py',
-                              '../api/views/model_workspace.py', '../../scripts/mlx_candidate_infer.py')}
+                              '../api/views/model_workspace.py', '../../scripts/mlx_candidate_infer.py', 'vlm_inference.py', 'training/vlm_math.py', 'training/vlm_data.py')}
 
 
 def generation_configuration(configuration):
@@ -34,6 +34,7 @@ def runtime_provenance(format, device):
     from modelanvil.device_admission import host_key
     from modelanvil.runners.training.hardware import cpu_brand
     packages = {'safetensors': ['torch', 'transformers', 'tokenizers', 'safetensors'],
+                'vision': ['torch', 'transformers', 'tokenizers', 'safetensors', 'peft', 'pillow', 'torchvision'],
                 'mlx': ['mlx', 'mlx-metal', 'mlx-lm', 'transformers', 'tokenizers'],
                 'gguf': ['xllamacpp', 'gguf', 'requests']}.get(format, [])
     versions = {}
@@ -51,7 +52,8 @@ def runtime_signature(format, device):
 
 def runtime_input_identity(version):
     fields = lambda obj: {field.attname: getattr(obj, field.attname) for field in obj._meta.concrete_fields}
-    return hashlib.sha256(json.dumps({'model': fields(version), 'tokenizer': fields(version.tokenizer)},
+    return hashlib.sha256(json.dumps({'model': fields(version), 'tokenizer': fields(version.tokenizer),
+        **({'processor': fields(version.processor)} if version.processor_id else {})},
         sort_keys=True, default=str, allow_nan=False).encode()).hexdigest()
 
 
@@ -79,7 +81,7 @@ def runtime_observation(session):
         import mlx.core as mx
         value.update(backend='apple-mlx', active_bytes=mx.get_active_memory(), peak_allocated_bytes=mx.get_peak_memory(),
                      reserved_bytes=None, memory_scope='MLX process allocations; no reserved/global-free-memory measurement.')
-    elif session['format'] == 'safetensors':
+    elif session['format'] in ('safetensors', 'vision'):
         value['tensor_devices'] = sorted({str(p.device) for p in session['model'].parameters()})
         if str(session['device']).startswith('mps'):
             import torch
@@ -90,6 +92,9 @@ def runtime_observation(session):
         else: value['backend'] = 'torch-cpu' if session['device'] == 'cpu' else 'torch-device'
     elif session['format'] == 'gguf':
         value.update(backend='llama.cpp-cpu', gpu_layers=0, kv_offload=False, op_offload=False)
+    if session['format'] == 'vision':
+        value['image'] = session['image_pin']
+        value['processor'] = {'source': session['processor'].__class__.__name__, 'image_tokens': 64, 'size': 512, 'image_splitting': False}
     return value
 
 
@@ -164,6 +169,10 @@ def snapshot(version, tenant, project):
     from modelanvil.runners.training import cpu_hf_runtime
     if not check_resource_access(version, project, tenant) or not check_resource_access(version.tokenizer, project, tenant):
         raise ValueError('Model or tokenizer is outside this project.')
+    from modelanvil.runners.training import vlm_runtime, cpu_vlm_runtime
+    if version.architecture_ref in (vlm_runtime.RUNTIME_ID, cpu_vlm_runtime.RUNTIME_ID):
+        from modelanvil.runners.vlm_inference import snapshot as vision_snapshot
+        return vision_snapshot(version, tenant, project)
     import io
     ref = version.metadata.get('snapshot_manifest')
     from modelanvil.runners.alignment import mps_dpo, hf_rlhf
@@ -245,6 +254,7 @@ def snapshot_guard(version, tenant, project):
     def fields(obj):
         return {f.attname: deepcopy(getattr(obj, f.attname)) for f in obj._meta.concrete_fields}
     model_pin, tokenizer_pin = fields(version), fields(version.tokenizer)
+    processor_pin = fields(version.processor) if version.processor_id else None
     refs, plan = [], None
     if version.architecture_ref not in (runtime.RUNTIME_ID, general_runtime.RUNTIME_ID):
         plan = snapshot(version, tenant, project)
@@ -259,6 +269,8 @@ def snapshot_guard(version, tenant, project):
         current = type(version).all_objects.select_related('tokenizer').filter(pk=version.pk, tenant_id=tenant).first()
         if (current is None or current.state in ('archived', 'rejected') or fields(current) != model_pin
                 or fields(current.tokenizer) != tokenizer_pin
+                or (fields(current.processor) if current.processor_id else None) != processor_pin
+                or current.processor_id and not check_resource_access(current.processor, project, tenant)
                 or not check_resource_access(current, project, tenant)
                 or not check_resource_access(current.tokenizer, project, tenant)):
             raise ValueError('Model inputs or current project access changed; generation stopped.')
@@ -266,7 +278,7 @@ def snapshot_guard(version, tenant, project):
             verified_artifact(ref, tenant, project)
     check()
     check.format = plan['format'] if plan else 'cpu-reference'
-    check.identity = hashlib.sha256(json.dumps({'model': model_pin, 'tokenizer': tokenizer_pin, 'artifacts': refs},
+    check.identity = hashlib.sha256(json.dumps({'model': model_pin, 'tokenizer': tokenizer_pin, 'processor': processor_pin, 'artifacts': refs},
         sort_keys=True, default=str, allow_nan=False).encode()).hexdigest()
     return check
 
@@ -299,7 +311,7 @@ def rendered_prompt(tokenizer, messages, prompt_format='model'):
 
 
 @contextmanager
-def local_session(version, *, tenant, project, device='cpu'):
+def local_session(version, *, tenant, project, device='cpu', image_id=None):
     """One model per process and exclusive local device use; close always unloads."""
     from modelanvil.runners.training import runtime, general_runtime
     if version.state in ('archived', 'rejected'):
@@ -318,6 +330,15 @@ def local_session(version, *, tenant, project, device='cpu'):
             _allocation.release()
         return
     plan = snapshot(version, tenant, project)
+    if plan['format'] == 'vision':
+        from modelanvil.runners.vlm_inference import session as vision_session
+        if not _allocation.acquire(blocking=False): raise ValueError('Local inference is busy.')
+        try:
+            with vision_session(plan, image_id=image_id, tenant=tenant, project=project, device=device) as session:
+                yield session
+        finally: _allocation.release()
+        return
+    if image_id is not None: raise ValueError('Image input requires a supported vision model.')
     if not _allocation.acquire(blocking=False):
         raise ValueError('Local inference is busy; retry after the current request finishes.')
     model, session, admission = None, {}, ExitStack()
@@ -451,6 +472,10 @@ def generate(session, messages, *, max_tokens=128, temperature=0.0, seed=42, pro
     def observe(prompt_count, generated_count):
         measured.update(usage={'prompt_tokens': prompt_count, 'completion_tokens': generated_count,
             'total_tokens': prompt_count + generated_count}, elapsed_seconds=time.monotonic() - started)
+    if session['format'] == 'vision':
+        from modelanvil.runners.vlm_inference import generate as vision_generate
+        yield from vision_generate(session, messages, max_tokens=max_tokens, temperature=temperature, prompt_format=prompt_format, cancelled=cancelled)
+        return
     if session['format'] == 'cpu-reference':
         from modelanvil.runners.training import runtime, general_runtime, registry
         if temperature != 0 or max_tokens > 32:

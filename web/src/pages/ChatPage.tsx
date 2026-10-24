@@ -27,7 +27,7 @@ export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refre
   const [conversationId, setConversationId] = selectionDraft.field('conversationId');
   const conversation = conversations.find(c => c.conversation_id === conversationId) || null;
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const draft = useDraft('chat-composer', { model: '', compare: '', comparisonMode: 'blind', compareDevice: 'cpu', prompt: '', system: '', promptFormat: 'model', device: 'cpu', temperature: 0, maxTokens: 128, seed: 42, renameTitle: '' }, conversationId || 'new');
+  const draft = useDraft('chat-composer', { model: '', compare: '', comparisonMode: 'blind', compareDevice: 'cpu', prompt: '', system: '', promptFormat: 'model', device: 'cpu', temperature: 0, maxTokens: 128, seed: 42, renameTitle: '', imageArtifact: '' }, conversationId || 'new');
   const [comparisonMode, setComparisonMode] = draft.field('comparisonMode');
   const baseComparison = comparisonMode === 'base-trained' || draft.status === 'empty' && conversation?.configuration.comparison_mode === 'base-trained';
   const [nextSelection, setNextSelection] = useState<{ model: string; paired: boolean } | null>(null);
@@ -43,6 +43,16 @@ export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refre
   const [maxTokens, setMaxTokens] = draft.field('maxTokens');
   const [seed, setSeed] = draft.field('seed');
   const [renameTitle, setRenameTitle] = draft.field('renameTitle');
+  const [imageArtifact, setImageArtifact] = draft.field('imageArtifact');
+  const [imagePreview, setImagePreview] = useState('');
+  const [imageName, setImageName] = useState('');
+  const [imageBusy, setImageBusy] = useState(false);
+  const imageUpload = useRef<AbortController | null>(null);
+  useEffect(() => () => { if (imagePreview) URL.revokeObjectURL(imagePreview); }, [imagePreview]);
+  useEffect(() => {
+    imageUpload.current?.abort(); setImageBusy(false);
+    return () => imageUpload.current?.abort();
+  }, [token, refreshKey, conversationId]);
   const [conversationQuery, setConversationQuery] = useState('');
   const [historyOpen, setHistoryOpen] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
@@ -63,6 +73,10 @@ export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refre
     if (stream.current && followOutput.current) stream.current.scrollTop = stream.current.scrollHeight;
   }, [messages, answers, conversationId, baseComparison]);
   const selectedModel = models.find(m => m.id === model);
+  const vision = selectedModel?.format === 'vision';
+  useEffect(() => {
+    if (vision) { setCompare(''); setComparisonMode('blind'); setSystem(''); setPromptFormat('model'); setTemperature(0); }
+  }, [vision]);
   const selectedCompare = models.find(m => m.id === compare);
   const devices = selectedModel?.devices || ['cpu'];
   const comparisonDevices = selectedCompare?.devices || ['cpu'];
@@ -110,6 +124,8 @@ export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refre
     return () => c.abort();
   }, [baseComparison, token, refreshKey]);
   function select(value: Conversation | null) {
+    imageUpload.current?.abort(); setImageBusy(false); setImagePreview(''); setImageName('');
+    setImageArtifact(String(value?.configuration.image_artifact || ''));
     setOptionsOpen(false);
     controller.current?.abort(); controller.current = null; setBusy(false); setConversationId(value?.conversation_id || ''); setMessages(value?.messages || []); setAnswers([]); setNotice(''); setError(''); setDeleteReview(false);
     setComparison(comparisons.find(c => c.conversation_id === value?.conversation_id) || null);
@@ -118,6 +134,7 @@ export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refre
     setMessages(conversation?.messages || []);
     if (!conversation || draft.status !== 'empty') return;
     const config = conversation.configuration;
+    setImageArtifact(String(config.image_artifact || ''));
     setComparisonMode(config.comparison_mode === 'base-trained' ? 'base-trained' : 'blind');
     setModel(String(config.model || '')); setCompare(String(config.compare_model || '')); setDevice(String(config.device || 'cpu')); setCompareDevice(String(config.compare_device || 'cpu'));
     setSystem(String(config.system_prompt || '')); setTemperature(Number(config.temperature || 0)); setMaxTokens(Number(config.max_tokens || 128)); setSeed(Number(config.seed ?? 42)); setPromptFormat(String(config.prompt_format || 'model'));
@@ -125,14 +142,15 @@ export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refre
 
   async function run(history: ChatMessage[]) {
     if (controller.current || baseComparison && !pairReady) return;
-    const generationHistory = comparisonInput(history, baseComparison);
+    if (vision && !imageArtifact) { setError('Attach a PNG or JPEG before asking a visual question.'); return; }
+    const generationHistory = vision ? history.filter(message => message.role === 'user').slice(-1) : comparisonInput(history, baseComparison);
     const inputMessages = system.trim() ? [{ role: 'system', content: system }, ...generationHistory] : generationHistory;
     const inputError = referenceInputError(selectedModel, inputMessages, maxTokens, temperature, promptFormat) || referenceInputError(selectedCompare, inputMessages, maxTokens, temperature, promptFormat);
     if (inputError) { setError(inputError); return; }
     followOutput.current = true;
     setBusy(true); setError(''); setNotice(''); setComparison(null);
     const c = new AbortController(); controller.current = c;
-    const configuration = { model, compare_model: compare || null, comparison_mode: comparisonMode, compare_device: compareDevice, device, temperature, max_tokens: maxTokens, seed, system_prompt: system, prompt_format: promptFormat };
+    const configuration = { model, compare_model: compare || null, comparison_mode: comparisonMode, compare_device: compareDevice, device, temperature, max_tokens: maxTokens, seed, system_prompt: system, prompt_format: promptFormat, ...(vision ? { image_artifact: imageArtifact } : {}) };
     const input = system.trim() ? [{ role: 'system' as const, content: system }, ...generationHistory] : generationHistory;
     setAnswerInput(input);
     const identifiers = baseComparison ? [compare, model] : [model, ...(compare ? [compare] : [])];
@@ -146,7 +164,7 @@ export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refre
         if (c.signal.aborted || controller.current !== c) return;
         setAnswers(prior => prior.map(a => a.model === identifier ? { ...result } : a));
         try {
-          result.requestId = await streamCompletion(token, { model: identifier, messages: input, device: identifier === model ? device : compareDevice, temperature, max_tokens: maxTokens, seed, prompt_format: promptFormat }, c.signal,
+          result.requestId = await streamCompletion(token, { model: identifier, messages: input, device: identifier === model ? device : compareDevice, temperature, max_tokens: maxTokens, seed, prompt_format: promptFormat, ...(vision ? { image_artifact: imageArtifact } : {}) }, c.signal,
             text => { result.text += text; if (controller.current === c) setAnswers(prior => prior.map(a => a.model === identifier ? { ...result } : a)); },
             usage => { result.usage = usage; });
           if (c.signal.aborted || controller.current !== c) return;
@@ -187,8 +205,24 @@ export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refre
       setAnswers(prior => prior.map(a => a.status !== 'completed' ? { ...a, status: c.signal.aborted ? 'stopped' : 'failed' } : a));
     } finally { if (controller.current === c) { controller.current = null; setBusy(false); } }
   }
+  async function attachImage(file?: File) {
+    if (!file || busy || messages.length) return;
+    if (!['image/png', 'image/jpeg'].includes(file.type) || !file.size || file.size > 2 * 1024 ** 2) {
+      setError('Choose a PNG or JPEG of at most 2 MiB and 1024 by 1024 pixels.'); return;
+    }
+    const request = new AbortController(); imageUpload.current?.abort(); imageUpload.current = request;
+    setImageBusy(true); setError('');
+    try {
+      const body = new FormData(); body.set('file', file);
+      const result = await apiRequest<{ artifact_id: string }>('/api/v1/inference/models/upload-image/', token,
+        { method: 'POST', body, signal: request.signal });
+      if (request.signal.aborted) return;
+      setImageArtifact(result.artifact_id); setImageName(file.name); setImagePreview(URL.createObjectURL(file));
+    } catch (error) { if (!request.signal.aborted) setError(errorMessage(error)); }
+    finally { if (imageUpload.current === request) { imageUpload.current = null; setImageBusy(false); } }
+  }
   function send(event: React.FormEvent) {
-    event.preventDefault(); const text = prompt.trim(); if (!text || busy || voteBusy || !model || baseComparison && !pairReady) return;
+    event.preventDefault(); const text = prompt.trim(); if (!text || busy || imageBusy || vision && !imageArtifact || voteBusy || !model || baseComparison && !pairReady) return;
     void run(messages.at(-1)?.role === 'user' && messages.at(-1)?.content === text ? messages : [...messages, { role: 'user', content: text }]);
   }
   function regenerate() {
@@ -259,7 +293,7 @@ export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refre
   const singleAnswer = !comparison && answers.length === 1 ? answers[0] : null;
   return <div className={`resource-view ml-page chat-page${baseComparison ? ' chat-page-comparison' : ''}`} data-options-open={showOptions}><Card className="panel ml-main-panel">
     <div className="panel-title chat-header"><div>{conversation && !baseComparison && <p>{conversation.title}</p>}</div>
-      <div className="chat-view-options" role="group" aria-label="Chat view"><Button type="button" aria-pressed={!baseComparison} disabled={busy || voteBusy} onClick={() => changeView(false)}>Chat</Button><Button type="button" aria-pressed={baseComparison} disabled={busy || voteBusy} onClick={() => changeView(true)}>Base vs trained</Button></div>
+      <div className="chat-view-options" role="group" aria-label="Chat view"><Button type="button" aria-pressed={!baseComparison} disabled={busy || voteBusy} onClick={() => changeView(false)}>Chat</Button><Button type="button" aria-pressed={baseComparison} disabled={busy || voteBusy || vision} onClick={() => changeView(true)}>Base vs trained</Button></div>
       <div className="chat-toolbar"><div className="chat-model-picker">
         <label>{baseComparison ? 'Trained model' : 'Model'}<select aria-label={baseComparison ? 'Trained model' : 'Model'} value={model} required disabled={busy} onChange={e => { setHandoffModel(null); setModel(e.target.value); const candidate = models.find(m => m.id === e.target.value); setPromptFormat(candidate?.format === 'external' || candidate?.chat_template && (!baseComparison || matchedBaseModel(candidate, models)?.chat_template) ? 'model' : 'plain'); if (models.find(m => m.id === e.target.value)?.format === 'cpu-reference') setTemperature(0); if (e.target.value === compare) setCompare(''); setDevice(candidate?.devices?.[0] || 'cpu'); }}><option value="">Select a model</option>{(baseComparison ? trainedModels : models).map(m => <option key={m.id} value={m.id}>{modelDisplayName(m.name)}{m.format === 'external' ? ` · External · ${m.credential_id}` : ''}</option>)}</select></label>
       </div></div>
@@ -274,14 +308,14 @@ export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refre
       {conversation && <div><form className="form-grid" onSubmit={renameConversation}><label>New conversation title<Field maxLength={180} value={renameTitle} onChange={e => setRenameTitle(e.target.value)} disabled={busy} required /></label><Button disabled={busy || !renameTitle.trim()}>Rename conversation</Button><Button type="button" disabled={busy || voteBusy} onClick={() => setDeleteReview(true)}>Delete conversation…</Button></form>{deleteReview && <Notice className="notice" role="group" aria-label="Delete conversation confirmation"><p>Delete “{conversation.title}” from saved conversations? Independent review and accounting records retain their own history.</p><Button disabled={busy} onClick={() => void deleteConversation()}>Confirm deletion</Button><Button disabled={busy} onClick={() => setDeleteReview(false)}>Keep conversation</Button></Notice>}</div>}
       </details>
       <details><summary>Generation settings</summary><div className="form-grid">
-        {!baseComparison && <label>Compare with<select value={compare} disabled={busy} onChange={e => { setCompare(e.target.value); const choice = models.find(m => m.id === e.target.value); setCompareDevice(choice?.devices?.[0] || 'cpu'); if (choice?.format === 'external') setPromptFormat('model'); }}><option value="">Single model</option>{models.filter(m => m.id !== model).map(m => <option key={m.id} value={m.id}>{modelDisplayName(m.name)}{m.format === 'external' ? ` · External · ${m.credential_id}` : ''}</option>)}</select></label>}
+        {!baseComparison && <label>Compare with<select value={compare} disabled={busy || vision} onChange={e => { setCompare(e.target.value); const choice = models.find(m => m.id === e.target.value); setCompareDevice(choice?.devices?.[0] || 'cpu'); if (choice?.format === 'external') setPromptFormat('model'); }}><option value="">Single model</option>{models.filter(m => m.id !== model && m.format !== 'vision').map(m => <option key={m.id} value={m.id}>{modelDisplayName(m.name)}{m.format === 'external' ? ` · External · ${m.credential_id}` : ''}</option>)}</select></label>}
         <label>Device<select value={device} disabled={busy} onChange={e => setDevice(e.target.value)}>{devices.map(value => <option key={value} value={value}>{({cpu: 'CPU', 'mps:0': 'Apple Silicon GPU (PyTorch)', 'mlx:0': 'Apple Silicon GPU (MLX)'}[value] || value)}</option>)}</select></label>
         {compare && <label>Comparison device<select value={compareDevice} disabled={busy} onChange={e => setCompareDevice(e.target.value)}>{comparisonDevices.map(value => <option key={value} value={value}>{({cpu: 'CPU', 'mps:0': 'Apple Silicon GPU (PyTorch)', 'mlx:0': 'Apple Silicon GPU (MLX)'}[value] || value)}</option>)}</select></label>}
-        <label>Prompt formatting<select value={promptFormat} disabled={busy || selectedModel?.format === 'external' || selectedCompare?.format === 'external'} onChange={e => setPromptFormat(e.target.value)}><option value="model">Model or provider native template</option><option value="plain">Plain text (one user prompt)</option><option value="chatml">ChatML override</option></select></label>
+        <label>Prompt formatting<select value={promptFormat} disabled={busy || vision || selectedModel?.format === 'external' || selectedCompare?.format === 'external'} onChange={e => setPromptFormat(e.target.value)}><option value="model">Model or provider native template</option><option value="plain">Plain text (one user prompt)</option><option value="chatml">ChatML override</option></select></label>
         <label>Imported chat template<MultilineField readOnly rows={3} value={selectedModel?.format === 'external' ? 'The provider applies its native chat template; its internal template is not available for local inspection.' : selectedModel?.chat_template || 'No chat template in this snapshot.'} /></label>
-        <label>System prompt<MultilineField value={system} maxLength={8000} disabled={busy} onChange={e => setSystem(e.target.value)} placeholder="Requires a model with a chat template" /></label>
+        <label>System prompt<MultilineField value={system} maxLength={8000} disabled={busy || vision} onChange={e => setSystem(e.target.value)} placeholder="Requires a model with a chat template" /></label>
         <label>Output tokens<Field type="number" value={maxTokens} min={1} max={baseComparison ? sharedOutputLimit(selectedModel, pairedBase) : selectedModel?.max_tokens || 256} disabled={busy} onChange={e => setMaxTokens(Number(e.target.value))} /></label>
-        <label>Temperature<Field type="number" value={temperature} min={0} max={2} step={0.1} disabled={busy} onChange={e => setTemperature(Number(e.target.value))} /></label>
+        <label>Temperature<Field type="number" value={temperature} min={0} max={2} step={0.1} disabled={busy || vision} onChange={e => setTemperature(Number(e.target.value))} /></label>
         <label>Seed<Field type="number" value={seed} min={0} max={2147483647} disabled={busy} onChange={e => setSeed(Number(e.target.value))} /></label>
       </div>{selectedModel && <p className="muted">Supported context: {selectedModel.context_limit ?? 'not reported'} tokens · output limit: {selectedModel.max_tokens ?? 256} tokens. Actual device capacity is checked before generation.</p>}<p className="muted">Base models without a chat template accept one user prompt. Comparisons use the same input and generation settings.</p></details>
       </div>
@@ -315,8 +349,15 @@ export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refre
       </section>}
       {!comparison && !baseComparison && answers.length > 1 && <div className="chat-arena chat-arena-pair">{answers.map((answer, index) => <article className="detail-box" key={answer.model}><h3>Response {index + 1}</h3><ChatResponseContent copyable={!!answer.text} text={answer.text || (answer.status === 'completed' ? 'The model stopped without generating text.' : answer.status === 'failed' || answer.status === 'stopped' ? 'No completed response.' : answer.status === 'pending' ? 'Waiting for the local runtime…' : 'Generating…')} /><p className="muted" role="status">{answer.status}{answer.seconds ? ` · ${answer.seconds.toFixed(2)} seconds including serving and transport` : ''}{answer.usage ? ` · ${answer.usage.prompt_tokens} input / ${answer.usage.completion_tokens} output tokens` : ''}</p></article>)}</div>}
       </div>
-      <form className="chat-composer" onSubmit={send}><label>Message<MultilineField aria-label="Message" aria-describedby="chat-keyboard-hint" placeholder={baseComparison ? 'Ask both models…' : 'Message your model…'} value={prompt} onChange={e => setPrompt(e.target.value)} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} maxLength={16000} disabled={busy} required rows={1} /></label>
-        <div className="chat-composer-footer"><small id="chat-keyboard-hint">Enter to send · Shift + Enter for a new line</small><div className="actions">{busy ? <Button type="button" onClick={() => controller.current?.abort()}><Square size={16} aria-hidden="true" /> Stop</Button> : <Button type="button" aria-label="Regenerate" title="Regenerate" disabled={voteBusy || !messages.length || !model || baseComparison && !pairReady} onClick={regenerate}><RotateCcw size={16} aria-hidden="true" /> Regenerate</Button>}<Button className="primary" aria-label="Send message" disabled={busy || voteBusy || !model || !prompt.trim() || baseComparison && !pairReady}>Send <ArrowUp size={17} aria-hidden="true" /></Button></div></div></form>
+      <form className="chat-composer" onSubmit={send}>
+        {vision && <div className="chat-vision-input" aria-label="Visual question image">
+          <p className="muted">One PNG or JPEG, up to 2 MiB and 1024 × 1024 pixels. Each question uses this image and up to 16 output tokens.</p>
+          {imageArtifact ? <div className="chat-vision-attachment">{imagePreview && <img src={imagePreview} alt="Attached visual question input" />}<span>{imageName || 'Saved image attached'}</span><Button type="button" disabled={busy || !!messages.length} onClick={() => { setImageArtifact(''); setImagePreview(''); setImageName(''); }}>Remove image</Button></div>
+            : <label>Attach image<Field type="file" accept="image/png,image/jpeg" disabled={busy || imageBusy || !!messages.length} onChange={event => { void attachImage(event.target.files?.[0]); event.target.value = ''; }} /></label>}
+          {imageBusy && <p role="status">Verifying image…</p>}
+        </div>}
+        <label>Message<MultilineField aria-label="Message" aria-describedby="chat-keyboard-hint" placeholder={baseComparison ? 'Ask both models…' : 'Message your model…'} value={prompt} onChange={e => setPrompt(e.target.value)} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} maxLength={vision ? 512 : 16000} disabled={busy} required rows={1} /></label>
+        <div className="chat-composer-footer"><small id="chat-keyboard-hint">Enter to send · Shift + Enter for a new line</small><div className="actions">{busy ? <Button type="button" onClick={() => controller.current?.abort()}><Square size={16} aria-hidden="true" /> Stop</Button> : <Button type="button" aria-label="Regenerate" title="Regenerate" disabled={voteBusy || !messages.length || !model || baseComparison && !pairReady} onClick={regenerate}><RotateCcw size={16} aria-hidden="true" /> Regenerate</Button>}<Button className="primary" aria-label="Send message" disabled={busy || imageBusy || vision && !imageArtifact || voteBusy || !model || !prompt.trim() || baseComparison && !pairReady}>Send <ArrowUp size={17} aria-hidden="true" /></Button></div></div></form>
       {!baseComparison && messageDraft}
     </div></Card></div>;
 }
