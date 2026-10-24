@@ -32,6 +32,7 @@
     "web/src/pages/ChatPage.tsx": "28a8479e7b3a2e53717c15129d110932a275f33a261cd1f64c81ffb5bcb607a9",
     "web/src/pages/TrainingPage.tsx": "4c78757133721e5df5ad8a447a0425c75bbd4f3cd57b3689b087e51bb597186d",
     "web/src/pages/chat-page.css": "d63957b205f61933640dca1de0a60e39e96e5e21e3264754439b36c522e0ebe4",
-    "web/tests/chat-input.test.mjs": "be4fd8a5f43c7d72347dd2fc30254eae52d5baff00a98d44a35d8e96488897dd"
+    "web/tests/chat-input.test.mjs": "be4fd8a5f43c7d72347dd2fc30254eae52d5baff00a98d44a35d8e96488897dd",
+    "deploy/production/Dockerfile": "420e7e7fda18fbca6a4e68b63977219ff2c33cc375ed14211fb079dcd480e365"
   }
 }

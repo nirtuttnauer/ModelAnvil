@@ -1,7 +1,7 @@
 FROM python:3.12-slim AS backend
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
-COPY requirements.txt requirements.production.txt requirements.embeddings.txt ./
+COPY requirements*.txt ./
 RUN pip install --no-cache-dir -r requirements.production.txt
 COPY manage.py ./
 COPY modelanvil ./modelanvil
@@ -9,7 +9,8 @@ COPY contracts ./contracts
 COPY catalog ./catalog
 COPY scripts ./scripts
 COPY deploy/production/gunicorn.conf.py ./deploy/production/gunicorn.conf.py
-RUN DJANGO_SETTINGS_MODULE=modelanvil.settings python manage.py collectstatic --noinput \
+RUN DJANGO_SETTINGS_MODULE=modelanvil.settings python manage.py check \
+    && DJANGO_SETTINGS_MODULE=modelanvil.settings python manage.py collectstatic --noinput \
     && rm modelanvil/identity/management/commands/bootstrap_dev.py \
     && chmod -R a+rX /app
 
