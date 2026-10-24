@@ -1,0 +1,31 @@
+{
+  "base_main": "fc5cfc327b05c5ebf4f038a9b4d34d577a211d68",
+  "runtime_build_digest": "aee3936130b3204933979351c4a5c2463a8f3900fe19b3fb6b84fb579207829a",
+  "files": {
+    "contracts/schemas/openapi.json": "30d6f502959b95c43efdcf145eae61df37c908c72e3abe7408fe8483a3923648",
+    "modelanvil/api/views/jobs_artifacts.py": "7a2957472c8f67584d4ceb82881a2dd1799731d6ccdc044b2b15e72a291d428e",
+    "modelanvil/api/views/training_views.py": "855fdc641b6e3c42becf53dc2319b0b9e4c932e35add3f0d2967503ec6108054",
+    "modelanvil/jobs/models.py": "842117a978e352673110d9297b4712d6346f80b840841940a3935a700757ba0d",
+    "modelanvil/runners/alignment/execution.py": "1240776b82e401d71a3db687a6cea8bf79d1ee13e0098b0a218494bd03bded32",
+    "modelanvil/runners/alignment/hf_rlhf.py": "7368da9efcc3880bac00c525d6eee3945470b13540eb367a77d275f4196f435d",
+    "modelanvil/runners/alignment/mps_dpo.py": "6d361b6a0bdafa87179e5b9002c214419d54a9cad4c3b242d298b3297f73c6f1",
+    "modelanvil/runners/alignment/reviewed_inputs.py": "d841ceb47b01123718f503dad4d9c7568104427e42b2a03dc6f54476d1e2e9ec",
+    "modelanvil/runners/alignment/test_hf_rlhf_jobs.py": "38659aef750f45bb1945879efa57fec5061589e68d4b2081abcd64cbf9977a3d",
+    "modelanvil/runners/alignment/test_mps_dpo_jobs.py": "00e3ad93e2983239e093f12603e0d608f4660e7207b4ce7fb8c4745d9457049c",
+    "modelanvil/runners/alignment/test_stage_receipts.py": "071e1dfaabe87986ce971590892816a338cdbfb59144fa51c4f5823d1ace348d",
+    "modelanvil/runners/alignment/test_torch_rlhf.py": "98101ad7d60ec28b6e762738e3bee21bfaecd6e3f397584fc9b2484aaacc2180",
+    "modelanvil/runners/alignment/torch_rlhf.py": "162b9cb89bc1c103b46aa0f486ae258759d51af16f8fdaa1b3ae90bf31f36b15",
+    "modelanvil/runners/evidence.py": "ac2984293a2d67f6f361f625541d044b2adedc3144a35f8a072decb34304d3ba",
+    "modelanvil/runners/inference.py": "31dcfc79bfca7fb30a0a1f2726e2a29c6b66edabfe435cafef892d7a2ed7aa83",
+    "modelanvil/runners/management/commands/setup_cpu_rlhf_worker.py": "126350344e5a7b091a3dce8afe58298841164a9f9f9c448f4e83c5f6425c482e",
+    "modelanvil/runners/migrations/0021_cpu_alignment_stage_receipts.py": "b735eff9b31a49be76589c936e53e691bdb1b14f8de695088ccda015de3bb9ae",
+    "modelanvil/runners/models.py": "1f2fda0d1a2681fb7a3fd81c347209db38b12b64f583c6c223750702c50b036c",
+    "modelanvil/runners/training/admission.py": "7c8b5bcb6362d8fa7036e254f6225cbc3497c15741ae68464d0122e929edb41a",
+    "scripts/qualify_cpu_rlhf.py": "4178c8b35db6e850764421971af75cc7c25724b191f9483aadb1538595c8d6fa",
+    "scripts/score_hf_rlhf.py": "dbefe9f273008c82b3e7b58fd45909ef676df52c92e17b1ef6b3513a33f8336b",
+    "web/src/api/alignment.ts": "6a5551826c3813cd2545d33460a5c37159c021d98de0f1e406b34a7574661936",
+    "web/src/components/form-data.ts": "a92cba07d3a0689c02bf480b1c43f929eeeaa7e296faa4395f2419ef8c25aec8",
+    "web/src/pages/AlignmentPage.tsx": "67b2ab61d3a7d7e589ec8ace3441d00ee4bab6a0a60239c1586216ada4866ac6",
+    "web/src/pages/BudgetsPage.tsx": "eac6a357816c436b9d17ed4a2b9d7b5374ca714e40bfa1aa488a3ff25861e54f"
+  }
+}

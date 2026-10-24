@@ -1,0 +1,37 @@
+{
+  "runtime_build_digest": "aee3936130b3204933979351c4a5c2463a8f3900fe19b3fb6b84fb579207829a",
+  "production_qualified": false,
+  "started_run_and_job_immutable": true,
+  "registry_labels_cannot_supply_reward": 400,
+  "disabled_score_policy_refused": 400,
+  "other_project": {
+    "/api/v1/alignment-runs/01a16b56-27a0-74a7-921a-e19da721237e/": 404,
+    "/api/v1/jobs/01a16b56-2865-797c-9359-6df1c634f25d/": 404,
+    "/api/v1/alignment-runs/01a16b56-27a0-74a7-921a-e19da721237e/download/": 404
+  },
+  "corrupted_weight": {
+    "status": "failed",
+    "committed_updates": 0,
+    "candidate": false,
+    "usage": {
+      "measured_units": {
+        "training_steps": 0,
+        "generated_tokens": 0,
+        "alignment_scores": 0
+      },
+      "uncertain_upper_units": {
+        "training_steps": 0,
+        "generated_tokens": 6,
+        "alignment_scores": 0
+      },
+      "charged_units": {
+        "training_steps": 0,
+        "generated_tokens": 6,
+        "alignment_scores": 0
+      },
+      "uncertain_is_measurement": false
+    },
+    "measurement": "No committed update; pre-compute interrupted stage conservatively charged its explicit upper bound, without claiming measured training."
+  },
+  "remaining_reservations": 0
+}

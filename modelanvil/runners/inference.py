@@ -166,7 +166,11 @@ def snapshot(version, tenant, project):
         raise ValueError('Model or tokenizer is outside this project.')
     import io
     ref = version.metadata.get('snapshot_manifest')
-    from modelanvil.runners.alignment import mps_dpo
+    from modelanvil.runners.alignment import mps_dpo, hf_rlhf
+    if version.architecture_ref == hf_rlhf.RUNTIME_ID:
+        bundle = hf_rlhf.candidate_bundle(version, tenant, project, role="policy")
+        return {"format": "safetensors", "files": bundle["files"], "recipe": "lora_adapter", "trained": True,
+            "source": bundle["source"], "adapter": bundle["adapter"]}
     if version.architecture_ref == mps_dpo.RUNTIME_ID:
         from modelanvil.runners.training.runtime import digest
         from modelanvil.runners.training.hf_runtime import file_ref

@@ -1,0 +1,17 @@
+{
+  "run_id": "01a16b56-27a0-74a7-921a-e19da721237e",
+  "viewports": [
+    1440,
+    390
+  ],
+  "actual_setup_queue_worker_poll_download": true,
+  "configured_budgets": 3,
+  "stage_use_inspection": true,
+  "chart_uses_stage_ordinals_without_duplicate_evaluation_loss": true,
+  "only_actual_qualified_reward_selectable": true,
+  "failed_gate_visible": true,
+  "horizontal_overflow": false,
+  "page_errors": [],
+  "disk_picker_emulated_unavailable": true,
+  "production_qualified": false
+}

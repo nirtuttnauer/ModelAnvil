@@ -45,9 +45,9 @@ export function registerPreferences(token: string, name: string, samples: Prefer
 }
 export function createAlignmentPlan(token: string, plan: AlignmentPlan, signal?: AbortSignal) {
   const limit = plan.worker_pool ? 20 : 100;
-  if (!Number.isInteger(plan.total_steps) || plan.total_steps < 1 || plan.total_steps > limit) throw new Error(`Choose between 1 and ${limit} ${plan.worker_pool ? 'Apple GPU' : 'CPU'} steps.`);
-  if (plan.worker_pool && (plan.algorithm !== 'dpo' || !plan.regression_dataset_artifact ||
-      [plan.train_dataset_artifact, plan.held_out_dataset_artifact].includes(plan.regression_dataset_artifact))) throw new Error('Apple GPU DPO requires a separate regression artifact.');
+  if (!Number.isInteger(plan.total_steps) || plan.total_steps < 1 || plan.total_steps > limit) throw new Error(`Choose between 1 and ${limit} ${plan.worker_pool ? 'pretrained worker' : 'CPU'} steps.`);
+  if (plan.worker_pool && (!['dpo', 'reward_model', 'rloo'].includes(plan.algorithm) || !plan.regression_dataset_artifact ||
+      [plan.train_dataset_artifact, plan.held_out_dataset_artifact].includes(plan.regression_dataset_artifact))) throw new Error('Pretrained alignment requires a separate regression artifact.');
   if (!plan.train_dataset_artifact || !plan.held_out_dataset_artifact || plan.train_dataset_artifact === plan.held_out_dataset_artifact) throw new Error('Pin separate training and held-out preference artifacts.');
   return apiRequest<AlignmentRun>('/api/v1/alignment-runs/', token,
     { method: 'POST', body: JSON.stringify(plan), signal });

@@ -566,7 +566,7 @@ class AlignmentRunSerializer(serializers.ModelSerializer):
     def get_execution_evidence(self, obj):
         if obj.execution_pins:
             result = evidence('integrated_execution' if obj.current_step else 'configuration_only',
-                'Bounded Apple GPU DPO on pinned preference bytes and model weights; independent qualification gates apply.' if obj.job_id else
+                ('Bounded pretrained CPU reward/RLOO stages with separate resource budgets and independent qualification gates.' if obj.algorithm in ('reward_model', 'rloo') else 'Bounded Apple GPU DPO on pinned preference bytes and model weights; independent qualification gates apply.') if obj.job_id else
                 'Bounded CPU character alignment on pinned preference bytes and model weights; no hardware or production qualification.')
             result['runtime_scope'] = obj.execution_pins.get('runtime')
             return result
@@ -624,10 +624,10 @@ class AlignmentRunSerializer(serializers.ModelSerializer):
             ref_model = attrs.get("reference_model_version", getattr(self.instance, "reference_model_version", None))
             if not ref_model:
                 raise serializers.ValidationError({"reference_model_version": "DPO requires a pinned reference model version."})
-        elif algo == "ppo_rlhf":
+        elif algo in ("ppo_rlhf", "rloo"):
             reward_model = attrs.get("reward_model_version", getattr(self.instance, "reward_model_version", None))
             if not reward_model:
-                raise serializers.ValidationError({"reward_model_version": "PPO RLHF requires a pinned reward model version."})
+                raise serializers.ValidationError({"reward_model_version": "Learned-reward RLHF requires a pinned trained reward model version."})
         elif algo == "verifier_rl":
             verifier_spec = attrs.get("verifier_spec", getattr(self.instance, "verifier_spec", {}))
             if not verifier_spec:
@@ -729,30 +729,34 @@ class AlignmentRunViewSet(TenantScopedViewSet):
         import zipfile
         from pathlib import Path
         from django.http import FileResponse
-        from modelanvil.runners.alignment import mps_dpo
+        from modelanvil.runners.alignment import mps_dpo, hf_rlhf
         from modelanvil.runners.inference import snapshot
         from modelanvil.runners.training import hf_runtime
         run = self.get_object()
         if not run.job_id or run.status != 'completed' or not run.output_model_version_id:
-            raise serializers.ValidationError('Complete an Apple GPU DPO run before downloading its adapter.')
+            raise serializers.ValidationError('Complete a pretrained worker alignment run before downloading its weights.')
         try:
-            plan = snapshot(run.output_model_version, run.tenant_id, run.project_id)
-            bundle = mps_dpo.candidate_bundle(run.output_model_version, run.tenant_id, run.project_id)
+            module = hf_rlhf if run.algorithm in ('reward_model', 'rloo') else mps_dpo
+            if module is mps_dpo:
+                snapshot(run.output_model_version, run.tenant_id, run.project_id)
+            bundle = module.candidate_bundle(run.output_model_version, run.tenant_id, run.project_id)
+            names = ('reward_head.safetensors',) if run.algorithm == 'reward_model' else ('adapter_model.safetensors', 'adapter_config.json')
+            staging = hf_rlhf.stage_files if module == hf_rlhf else hf_runtime.staged_files
             stream = tempfile.SpooledTemporaryFile(max_size=8 * 1024**2)
-            with hf_runtime.staged_files({name: plan['files'][name] for name in
-                    ('adapter_model.safetensors', 'adapter_config.json')}, run.tenant_id, run.project_id) as directory:
+            with staging({name: bundle['files'][name] for name in names}, run.tenant_id, run.project_id) as directory:
                 with zipfile.ZipFile(stream, 'w', compression=zipfile.ZIP_STORED) as archive:
-                    for name in ('adapter_model.safetensors', 'adapter_config.json'):
-                        archive.write(directory / name, name)
+                    for name in names: archive.write(directory / name, name)
+                    if run.algorithm == 'reward_model':
+                        archive.writestr('reward_config.json', json.dumps(bundle['reward_config'], sort_keys=True))
                     archive.write(Path(hf_runtime.__file__).parent / 'assets/Apache-2.0.txt', 'LICENSE.txt')
                     archive.writestr('provenance.json', json.dumps({**bundle,
                         'independent_evaluation': run.latest_metrics.get('independent_evaluation'),
-                        'archive_scope': 'Adapter only; acquire the exact pinned base revision separately.'}, sort_keys=True))
+                        'archive_scope': 'Learned head or adapter only; acquire the exact pinned base revision separately.'}, sort_keys=True))
             stream.seek(0)
         except (ValueError, OSError) as exc:
             if 'stream' in locals(): stream.close()
             raise serializers.ValidationError({'download': str(exc)}) from exc
-        return FileResponse(stream, as_attachment=True, filename=f'dpo-{run.run_id}-adapter.zip', content_type='application/zip')
+        return FileResponse(stream, as_attachment=True, filename=f'{run.algorithm}-{run.run_id}-weights.zip', content_type='application/zip')
 
     @action(detail=False, methods=['get'], url_path='preference-artifacts')
     def preference_artifacts(self, request):

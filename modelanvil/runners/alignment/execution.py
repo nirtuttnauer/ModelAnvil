@@ -65,8 +65,7 @@ def validate_preference_pairs(pairs):
 
 def validate_alignment_inputs(run):
     if run.worker_pool_id:
-        from .mps_dpo import validate_inputs
-        return validate_inputs(run)
+        return worker_runtime(run).validate_inputs(run)
     from .numerical import normalize_hyperparameters, score_reward
     if run.algorithm not in ALGORITHMS:
         raise ValueError('Select a supported alignment recipe.')
@@ -149,17 +148,17 @@ def validate_alignment_inputs(run):
 
 def alignment_capabilities(run):
     if run.worker_pool_id:
-        from . import mps_dpo
-        reason = 'Bounded Apple GPU DPO; independent preference and regression gates remain separate.'
+        module = worker_runtime(run)
+        reason = ('Bounded Apple GPU DPO; independent preference and regression gates remain separate.' if run.algorithm == 'dpo' else 'Bounded pretrained CPU reward/RLOO stages; independent qualification gates remain separate.')
         can_execute = run.status == 'pending' and not run.job_id
         if can_execute:
-            try: mps_dpo.validate_inputs(run)
+            try: module.validate_inputs(run)
             except (ValueError, TypeError, AttributeError) as exc: can_execute, reason = False, str(exc)
         elif run.job_id:
             reason = f'Worker job {run.job.status}; model qualification requires passed independent evaluation.'
         return {'can_execute': can_execute, 'can_resume': bool(run.job_id and run.status == 'interrupted'
                 and run.job.status in ('queued', 'interrupted') and run.job.desired_action == 'run'),
-                'supported_algorithms': ['dpo'], 'runtime': mps_dpo.RUNTIME_ID, 'reason': reason, 'limits': mps_dpo.LIMITS}
+                'supported_algorithms': ['dpo'] if run.algorithm == 'dpo' else ['reward_model', 'rloo'], 'runtime': module.RUNTIME_ID, 'reason': reason, 'limits': module.LIMITS}
     reason = 'Bounded local CPU alignment; candidate weights require independent evaluation.'
     can_execute = run.status == AlignmentRun.Status.PENDING
     if can_execute:
@@ -237,8 +236,7 @@ def _live(run, token):
 
 def execute_alignment(run, *, resume=False):
     if run.worker_pool_id:
-        from .mps_dpo import launch
-        return launch(run, resume=resume)
+        return worker_runtime(run).launch(run, resume=resume)
     """Numerical work outside transactions; each checkpoint and candidate checks the claim."""
     from .numerical import train_alignment
     resume_bundle = None
@@ -361,8 +359,7 @@ def execute_alignment(run, *, resume=False):
 
 def cancel_alignment(run):
     if run.worker_pool_id:
-        from .mps_dpo import cancel
-        return cancel(run)
+        return worker_runtime(run).cancel(run)
     with transaction.atomic():
         locked = AlignmentRun.all_objects.select_for_update().get(pk=run.pk, tenant_id=run.tenant_id)
         if locked.status in (AlignmentRun.Status.COMPLETED, AlignmentRun.Status.FAILED, AlignmentRun.Status.CANCELLED):
@@ -372,3 +369,19 @@ def cancel_alignment(run):
         locked.save(update_fields=['status', 'stop_reason', 'completed_at', 'execution_token', 'updated_at'])
         _settle(locked)
         return locked
+
+
+def worker_runtime(run):
+    if run.algorithm == 'dpo':
+        from . import mps_dpo
+        return mps_dpo
+    from . import hf_rlhf
+    return hf_rlhf
+
+
+def finalize_worker_job(job, status):
+    run = AlignmentRun.all_objects.filter(job=job, tenant_id=job.tenant_id).first()
+    if run is None: return 'failed'
+    module = worker_runtime(run)
+    if run.execution_pins.get('runtime') != module.RUNTIME_ID: return 'failed'
+    return module.finalize_job(job, status)

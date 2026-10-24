@@ -84,3 +84,18 @@ test('Apple GPU DPO requires a separate regression set and at most twenty steps'
     assert.equal(calls.length, 2);
   } finally { globalThis.fetch = original; }
 });
+
+test('pretrained CPU RLOO pins learned reward and separate resource budgets', async () => {
+  const original = globalThis.fetch; const calls = [];
+  globalThis.fetch = async (path, init) => { calls.push(JSON.parse(init.body)); return new Response('{}'); };
+  try {
+    const plan = { algorithm: 'rloo', worker_pool: 9, policy_model_version: 1, reference_model_version: 1,
+      reward_model_version: 4, train_dataset_artifact: artifact, held_out_dataset_artifact: held,
+      regression_dataset_artifact: '80000000-0000-4000-8000-000000000003', total_steps: 2,
+      hyperparameters: { budget_policy_id: 'steps', scoring_budget_policy_id: 'scores', rollout_budget_policy_id: 'tokens' }, verifier_spec: {} };
+    await client.createAlignmentPlan('test-key', plan);
+    assert.deepEqual(calls, [plan]);
+    for (const changes of [{ total_steps: 21 }, { regression_dataset_artifact: artifact }])
+      assert.throws(() => client.createAlignmentPlan('test-key', { ...plan, ...changes }));
+  } finally { globalThis.fetch = original; }
+});
