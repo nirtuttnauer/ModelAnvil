@@ -179,6 +179,8 @@ class ProjectPrivacyPolicy(TenantContextModel):
     offline = models.BooleanField(default=False)
     acquisition_origins = models.JSONField(default=list)
     external_generation_targets = models.JSONField(default=list)
+    mcp_targets = models.JSONField(default=list)
+    code_execution = models.BooleanField(default=False)
     measurement_retention_days = models.PositiveSmallIntegerField(default=30)
 
 

@@ -166,6 +166,9 @@ def staged_snapshot(files, tenant, project):
 
 
 def snapshot(version, tenant, project):
+    if version.architecture_ref == 'modelanvil.qwen3-cpu-tools.v1':
+        from modelanvil.runners.tool_runtime import candidate_bundle
+        return candidate_bundle(version,tenant,project)
     if version.architecture_ref == "modelanvil.speecht5-cpu-output-head.v1":
         from modelanvil.runners.audio_generation import candidate_bundle
         return candidate_bundle(version,tenant,project)
@@ -333,6 +336,8 @@ def local_session(version, *, tenant, project, device='cpu', image_id=None):
             _allocation.release()
         return
     plan = snapshot(version, tenant, project)
+    if plan['format'] == 'tools':
+        raise ValueError('Use the Tools workspace or native tool-completion fields for this model.')
     if plan['format'] == 'audio':
         raise ValueError('Speech models require the typed queued audio API.')
     if plan['format'] == 'vision':

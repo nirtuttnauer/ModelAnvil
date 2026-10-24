@@ -1,0 +1,18 @@
+{
+  "actual_browser_queue": true,
+  "actual_worker_result": true,
+  "discovered_schemas": true,
+  "authenticated_trace_download": true,
+  "answer": "The result of adding 17 and 25 is 42.",
+  "errors": [],
+  "screenshots": [
+    {
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "overflow": false
+    }
+  ]
+}

@@ -39,10 +39,12 @@ def accessible_jobs():
         accessible_snapshot_id=Replace(KeyTextTransform("snapshot_id", "payload"), Value("-"), Value(""), output_field=CharField())
     ).filter(Q(payload__type__isnull=True) | ~Q(payload__type="dataset_acquisition") | Q(accessible_snapshot_id__in=snapshots)).annotate(
         accessible_request_id=Replace(KeyTextTransform('request_id', 'payload'), Value('-'), Value(''), output_field=CharField())
-    ).filter(Q(payload__type__isnull=True) | ~Q(payload__type__in=('specialist_inference','qualified_audio_generation')) | Q(accessible_request_id__in=requests)).exclude(pk__in=hidden_recipes.values('job_id')).filter(Q(payload__type__isnull=True) | ~Q(payload__type='embedding_build') | Q(pk__in=embedding_jobs))
+    ).filter(Q(payload__type__isnull=True) | ~Q(payload__type__in=('specialist_inference','qualified_audio_generation','qualified_tool_chat')) | Q(accessible_request_id__in=requests)).exclude(pk__in=hidden_recipes.values('job_id')).filter(Q(payload__type__isnull=True) | ~Q(payload__type='embedding_build') | Q(pk__in=embedding_jobs))
 
 
 def cancellation_endpoint(job):
+    if job.payload.get('type')=='qualified_tool_chat':
+        return f"/api/v1/tools/jobs/{job.payload['request_id']}/cancel/"
     if job.payload.get("type")=="qualified_audio_generation":
         return f"/api/v1/audio/jobs/{job.payload['request_id']}/cancel/"
     if hasattr(job, 'alignment_run'):

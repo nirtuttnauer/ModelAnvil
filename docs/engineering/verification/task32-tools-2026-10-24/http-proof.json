@@ -1,0 +1,1268 @@
+{
+  "cases": {
+    "mcp": {
+      "request_id": "01a16c38-3cde-7f51-bfea-d0ae9c47240b",
+      "job_id": "01a16c38-3cdd-7ca7-b3e4-0420bd470352",
+      "status": "succeeded",
+      "desired_action": "run",
+      "attempt_count": 1,
+      "usage": {
+        "completion_tokens": 44,
+        "model_turns": 2,
+        "tool_calls": 1,
+        "unknown_inflight_tokens": 0
+      },
+      "trace": [
+        {
+          "kind": "model",
+          "turn": 0,
+          "input": {
+            "max_tokens": 128,
+            "messages": [
+              {
+                "content": "Use add to calculate 17 plus 25, then explain the result.",
+                "role": "user"
+              }
+            ],
+            "tools": [
+              {
+                "function": {
+                  "description": "Add two bounded integers.",
+                  "name": "add",
+                  "parameters": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "a": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      },
+                      "b": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "a",
+                      "b"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "type": "function"
+              },
+              {
+                "function": {
+                  "description": "Multiply two bounded integers.",
+                  "name": "multiply",
+                  "parameters": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "a": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      },
+                      "b": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "a",
+                      "b"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "report": {
+            "schema_version": "modelanvil.independent-tool-generation.v1",
+            "source": {
+              "repo_id": "Qwen/Qwen3-0.6B",
+              "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+              "license": "Apache-2.0"
+            },
+            "file_sha256": {
+              "config.json": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+              "generation_config.json": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2",
+              "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+              "tokenizer_config.json": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+              "model.safetensors": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b",
+              "LICENSE": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+            },
+            "input_sha256": "95f449014040a6d75706a2ab7dd47063098175b688f43d60e480a9d9b04db937",
+            "content": "<tool_call>\n{\"name\": \"add\", \"arguments\": {\"a\": 17, \"b\": 25}}\n</tool_call>",
+            "finish_reason": "stop",
+            "usage": {
+              "prompt_tokens": 349,
+              "completion_tokens": 27,
+              "total_tokens": 376
+            },
+            "cpu_seconds": 4.320377,
+            "wall_seconds": 3.891520125005627,
+            "parameters": 596049920,
+            "device": "cpu",
+            "precision": "fp32",
+            "thinking": false,
+            "production_qualified": false,
+            "consumer_imported_modelanvil_or_django": false
+          }
+        },
+        {
+          "kind": "tool_started",
+          "id": "call_0_0",
+          "call": {
+            "name": "add",
+            "arguments": {
+              "a": 17,
+              "b": 25
+            }
+          }
+        },
+        {
+          "kind": "tool_result",
+          "id": "call_0_0",
+          "name": "add",
+          "binding": {
+            "kind": "mcp",
+            "server_id": "f8be2557-c8ce-59a4-b44b-2247b0932a45"
+          },
+          "result": {
+            "schema_version": "modelanvil.mcp-tool-client.v1",
+            "status": "completed",
+            "protocol": {
+              "protocol_version": "2025-11-25",
+              "server_info": {
+                "name": "ModelAnvil bounded arithmetic",
+                "version": "1"
+              }
+            },
+            "result": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"value\": 42}"
+                }
+              ],
+              "structured_content": {
+                "value": 42
+              },
+              "is_error": false,
+              "catalog_digest": "175dc9cc4c3f0623a85e1aa9b868cb936fd728a45861c602b45988cc930171aa",
+              "tool_name": "add"
+            },
+            "wall_seconds": 0.016749750000599306,
+            "production_qualified": false,
+            "server": {
+              "id": "f8be2557-c8ce-59a4-b44b-2247b0932a45",
+              "name": "Local arithmetic MCP",
+              "kind": "builtin_math",
+              "allowed_tools": [
+                "add",
+                "multiply"
+              ],
+              "read_only": true,
+              "available": true
+            }
+          },
+          "successful": true
+        },
+        {
+          "kind": "model",
+          "turn": 1,
+          "input": {
+            "max_tokens": 128,
+            "messages": [
+              {
+                "content": "Use add to calculate 17 plus 25, then explain the result.",
+                "role": "user"
+              },
+              {
+                "content": "",
+                "role": "assistant",
+                "tool_calls": [
+                  {
+                    "function": {
+                      "arguments": {
+                        "a": 17,
+                        "b": 25
+                      },
+                      "name": "add"
+                    },
+                    "id": "call_0_0",
+                    "type": "function"
+                  }
+                ]
+              },
+              {
+                "content": "{\"value\": 42}",
+                "name": "add",
+                "role": "tool",
+                "tool_call_id": "call_0_0"
+              }
+            ],
+            "tools": [
+              {
+                "function": {
+                  "description": "Add two bounded integers.",
+                  "name": "add",
+                  "parameters": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "a": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      },
+                      "b": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "a",
+                      "b"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "type": "function"
+              },
+              {
+                "function": {
+                  "description": "Multiply two bounded integers.",
+                  "name": "multiply",
+                  "parameters": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "a": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      },
+                      "b": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "a",
+                      "b"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "report": {
+            "schema_version": "modelanvil.independent-tool-generation.v1",
+            "source": {
+              "repo_id": "Qwen/Qwen3-0.6B",
+              "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+              "license": "Apache-2.0"
+            },
+            "file_sha256": {
+              "config.json": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+              "generation_config.json": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2",
+              "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+              "tokenizer_config.json": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+              "model.safetensors": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b",
+              "LICENSE": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+            },
+            "input_sha256": "1b5200ef87ee4583c693f79daca7aa7303919647bca14e77c7ee1a139e7f4746",
+            "content": "The result of adding 17 and 25 is 42.",
+            "finish_reason": "stop",
+            "usage": {
+              "prompt_tokens": 395,
+              "completion_tokens": 17,
+              "total_tokens": 412
+            },
+            "cpu_seconds": 4.005808,
+            "wall_seconds": 3.599605415998667,
+            "parameters": 596049920,
+            "device": "cpu",
+            "precision": "fp32",
+            "thinking": false,
+            "production_qualified": false,
+            "consumer_imported_modelanvil_or_django": false
+          }
+        },
+        {
+          "kind": "answer",
+          "turn": 1,
+          "content": "The result of adding 17 and 25 is 42."
+        }
+      ],
+      "trace_artifact": {
+        "artifact_id": "01a16c38-6710-7b4f-87f1-7fb427a3c526",
+        "sha256": "bf32717beff23e793db326182b9332e257f3018bc5d849ae9f18cd4b55c15701",
+        "byte_size": 5820
+      },
+      "answer": "The result of adding 17 and 25 is 42.",
+      "error": "",
+      "wall_seconds": 11.059223083000688
+    },
+    "python": {
+      "request_id": "01a16c38-67f6-7423-82b2-66c345e79e3b",
+      "job_id": "01a16c38-67f5-714b-9179-cf5b850716f2",
+      "status": "succeeded",
+      "desired_action": "run",
+      "attempt_count": 1,
+      "usage": {
+        "completion_tokens": 41,
+        "model_turns": 2,
+        "tool_calls": 1,
+        "unknown_inflight_tokens": 0
+      },
+      "trace": [
+        {
+          "kind": "model",
+          "turn": 0,
+          "input": {
+            "max_tokens": 128,
+            "messages": [
+              {
+                "content": "Use python to compute 17 + 25. Print the result, then explain it.",
+                "role": "user"
+              }
+            ],
+            "tools": [
+              {
+                "function": {
+                  "description": "Execute bounded Python in a disposable offline sandbox. Print the result.",
+                  "name": "python",
+                  "parameters": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "code": {
+                        "maxLength": 4096,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "code"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "report": {
+            "schema_version": "modelanvil.independent-tool-generation.v1",
+            "source": {
+              "repo_id": "Qwen/Qwen3-0.6B",
+              "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+              "license": "Apache-2.0"
+            },
+            "file_sha256": {
+              "config.json": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+              "generation_config.json": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2",
+              "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+              "tokenizer_config.json": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+              "model.safetensors": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b",
+              "LICENSE": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+            },
+            "input_sha256": "94f5f7f72f6da0e51702f1abf0c981ff03078c7b2eaaef7420ca5090aaffc4ec",
+            "content": "<tool_call>\n{\"name\": \"python\", \"arguments\": {\"code\": \"17 + 25\"}}\n</tool_call>",
+            "finish_reason": "stop",
+            "usage": {
+              "prompt_tokens": 190,
+              "completion_tokens": 24,
+              "total_tokens": 214
+            },
+            "cpu_seconds": 3.912681,
+            "wall_seconds": 3.501904625001771,
+            "parameters": 596049920,
+            "device": "cpu",
+            "precision": "fp32",
+            "thinking": false,
+            "production_qualified": false,
+            "consumer_imported_modelanvil_or_django": false
+          }
+        },
+        {
+          "kind": "tool_started",
+          "id": "call_0_0",
+          "call": {
+            "name": "python",
+            "arguments": {
+              "code": "17 + 25"
+            }
+          }
+        },
+        {
+          "kind": "tool_result",
+          "id": "call_0_0",
+          "name": "python",
+          "binding": {
+            "kind": "python"
+          },
+          "result": {
+            "schema_version": "modelanvil.python-sandbox.v1",
+            "status": "completed",
+            "exit_code": 0,
+            "stdout": "",
+            "stderr": "",
+            "stdout_bytes": 0,
+            "stderr_bytes": 0,
+            "wall_seconds": 0.007987290999153629,
+            "cpu_seconds": null,
+            "execution_uid": 65534,
+            "network": "none",
+            "persistent_files": false,
+            "isolation": {
+              "image": "python@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704",
+              "read_only_root": true,
+              "network": "none",
+              "host_mounts": false,
+              "memory_bytes": 134217728,
+              "cpu_cores": 1.0,
+              "pids": 32,
+              "trusted_watchdog_uid": 0,
+              "execution_uid": 65534,
+              "watchdog_capabilities": [
+                "SETUID",
+                "SETGID",
+                "KILL"
+              ],
+              "untrusted_child_capabilities": [],
+              "no_new_privileges": true,
+              "logging": "none"
+            },
+            "limits": {
+              "source_bytes": 8192,
+              "stdout_bytes": 16384,
+              "stderr_bytes": 16384,
+              "execution_seconds": 5,
+              "container_memory_bytes": 134217728,
+              "cpu_cores": 1,
+              "pids": 32,
+              "writable_tmpfs_bytes": 33554432,
+              "network": "none",
+              "filesystem": "read-only image plus private /work and /tmp tmpfs; no host mounts",
+              "execution_uid": 65534,
+              "persistent_files": false
+            },
+            "controller_wall_seconds": 0.22691962500539375,
+            "container_removed": true,
+            "engine_version": "29.8.2",
+            "security": [
+              "name=seccomp,profile=builtin",
+              "name=cgroupns"
+            ],
+            "production_qualified": false
+          },
+          "successful": true
+        },
+        {
+          "kind": "model",
+          "turn": 1,
+          "input": {
+            "max_tokens": 128,
+            "messages": [
+              {
+                "content": "Use python to compute 17 + 25. Print the result, then explain it.",
+                "role": "user"
+              },
+              {
+                "content": "",
+                "role": "assistant",
+                "tool_calls": [
+                  {
+                    "function": {
+                      "arguments": {
+                        "code": "17 + 25"
+                      },
+                      "name": "python"
+                    },
+                    "id": "call_0_0",
+                    "type": "function"
+                  }
+                ]
+              },
+              {
+                "content": "{\"status\": \"completed\", \"stdout\": \"\", \"stderr\": \"\", \"exit_code\": 0}",
+                "name": "python",
+                "role": "tool",
+                "tool_call_id": "call_0_0"
+              }
+            ],
+            "tools": [
+              {
+                "function": {
+                  "description": "Execute bounded Python in a disposable offline sandbox. Print the result.",
+                  "name": "python",
+                  "parameters": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "code": {
+                        "maxLength": 4096,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "code"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "report": {
+            "schema_version": "modelanvil.independent-tool-generation.v1",
+            "source": {
+              "repo_id": "Qwen/Qwen3-0.6B",
+              "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+              "license": "Apache-2.0"
+            },
+            "file_sha256": {
+              "config.json": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+              "generation_config.json": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2",
+              "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+              "tokenizer_config.json": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+              "model.safetensors": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b",
+              "LICENSE": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+            },
+            "input_sha256": "f9b524fd621f2fd6bf41ad43a081562d161a4121649538dc540e379f603d976a",
+            "content": "The result of $17 + 25$ is $42$.",
+            "finish_reason": "stop",
+            "usage": {
+              "prompt_tokens": 247,
+              "completion_tokens": 17,
+              "total_tokens": 264
+            },
+            "cpu_seconds": 3.797421,
+            "wall_seconds": 3.383394333999604,
+            "parameters": 596049920,
+            "device": "cpu",
+            "precision": "fp32",
+            "thinking": false,
+            "production_qualified": false,
+            "consumer_imported_modelanvil_or_django": false
+          }
+        },
+        {
+          "kind": "answer",
+          "turn": 1,
+          "content": "The result of $17 + 25$ is $42$."
+        }
+      ],
+      "trace_artifact": {
+        "artifact_id": "01a16c38-93cb-7d5c-90f2-1fdb0ad84d9a",
+        "sha256": "fe732982a0b946dfcc535bfedf406bd2b080ce46561978d97a46c9cffe0ecd70",
+        "byte_size": 5657
+      },
+      "answer": "The result of $17 + 25$ is $42$.",
+      "error": "",
+      "wall_seconds": 11.349166916006652
+    },
+    "truncated": {
+      "request_id": "01a16c38-9458-71ec-b6b6-45c106fc20c7",
+      "job_id": "01a16c38-9456-7057-8303-87139c67f2ae",
+      "status": "failed",
+      "desired_action": "run",
+      "attempt_count": 1,
+      "usage": {
+        "completion_tokens": 3,
+        "model_turns": 3,
+        "tool_calls": 0,
+        "unknown_inflight_tokens": 0
+      },
+      "trace": [
+        {
+          "kind": "model",
+          "turn": 0,
+          "input": {
+            "max_tokens": 1,
+            "messages": [
+              {
+                "content": "Use add to calculate17plus25.",
+                "role": "user"
+              }
+            ],
+            "tools": [
+              {
+                "function": {
+                  "description": "Add two bounded integers.",
+                  "name": "add",
+                  "parameters": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "a": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      },
+                      "b": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "a",
+                      "b"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "type": "function"
+              },
+              {
+                "function": {
+                  "description": "Multiply two bounded integers.",
+                  "name": "multiply",
+                  "parameters": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "a": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      },
+                      "b": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "a",
+                      "b"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "report": {
+            "schema_version": "modelanvil.independent-tool-generation.v1",
+            "source": {
+              "repo_id": "Qwen/Qwen3-0.6B",
+              "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+              "license": "Apache-2.0"
+            },
+            "file_sha256": {
+              "config.json": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+              "generation_config.json": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2",
+              "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+              "tokenizer_config.json": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+              "model.safetensors": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b",
+              "LICENSE": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+            },
+            "input_sha256": "7db9d3e689e577cc893ee4d856f5af9f7326a57ecb3d2a6216917339b603d1ed",
+            "content": "<tool_call>",
+            "finish_reason": "length",
+            "usage": {
+              "prompt_tokens": 342,
+              "completion_tokens": 1,
+              "total_tokens": 343
+            },
+            "cpu_seconds": 3.482231,
+            "wall_seconds": 3.044530457998917,
+            "parameters": 596049920,
+            "device": "cpu",
+            "precision": "fp32",
+            "thinking": false,
+            "production_qualified": false,
+            "consumer_imported_modelanvil_or_django": false
+          }
+        },
+        {
+          "kind": "validation_failure",
+          "turn": 0,
+          "reason": "Incomplete or invalid native tool reply; no dispatch."
+        },
+        {
+          "kind": "model",
+          "turn": 1,
+          "input": {
+            "max_tokens": 1,
+            "messages": [
+              {
+                "content": "Use add to calculate17plus25.",
+                "role": "user"
+              },
+              {
+                "content": "The previous response failed tool validation. Return a complete native call using only the offered names and exact JSON arguments, or a plain final answer.",
+                "role": "user"
+              }
+            ],
+            "tools": [
+              {
+                "function": {
+                  "description": "Add two bounded integers.",
+                  "name": "add",
+                  "parameters": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "a": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      },
+                      "b": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "a",
+                      "b"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "type": "function"
+              },
+              {
+                "function": {
+                  "description": "Multiply two bounded integers.",
+                  "name": "multiply",
+                  "parameters": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "a": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      },
+                      "b": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "a",
+                      "b"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "report": {
+            "schema_version": "modelanvil.independent-tool-generation.v1",
+            "source": {
+              "repo_id": "Qwen/Qwen3-0.6B",
+              "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+              "license": "Apache-2.0"
+            },
+            "file_sha256": {
+              "config.json": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+              "generation_config.json": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2",
+              "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+              "tokenizer_config.json": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+              "model.safetensors": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b",
+              "LICENSE": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+            },
+            "input_sha256": "f6c3057f4c1aaf53c67ea9539d409ed6bb9de9a383364a6f200ccc97f30e89c9",
+            "content": "<tool_call>",
+            "finish_reason": "length",
+            "usage": {
+              "prompt_tokens": 375,
+              "completion_tokens": 1,
+              "total_tokens": 376
+            },
+            "cpu_seconds": 3.460863,
+            "wall_seconds": 3.083074249996571,
+            "parameters": 596049920,
+            "device": "cpu",
+            "precision": "fp32",
+            "thinking": false,
+            "production_qualified": false,
+            "consumer_imported_modelanvil_or_django": false
+          }
+        },
+        {
+          "kind": "validation_failure",
+          "turn": 1,
+          "reason": "Incomplete or invalid native tool reply; no dispatch."
+        },
+        {
+          "kind": "model",
+          "turn": 2,
+          "input": {
+            "max_tokens": 1,
+            "messages": [
+              {
+                "content": "Use add to calculate17plus25.",
+                "role": "user"
+              },
+              {
+                "content": "The previous response failed tool validation. Return a complete native call using only the offered names and exact JSON arguments, or a plain final answer.",
+                "role": "user"
+              },
+              {
+                "content": "The previous response failed tool validation. Return a complete native call using only the offered names and exact JSON arguments, or a plain final answer.",
+                "role": "user"
+              }
+            ],
+            "tools": [
+              {
+                "function": {
+                  "description": "Add two bounded integers.",
+                  "name": "add",
+                  "parameters": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "a": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      },
+                      "b": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "a",
+                      "b"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "type": "function"
+              },
+              {
+                "function": {
+                  "description": "Multiply two bounded integers.",
+                  "name": "multiply",
+                  "parameters": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "a": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      },
+                      "b": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "a",
+                      "b"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "report": {
+            "schema_version": "modelanvil.independent-tool-generation.v1",
+            "source": {
+              "repo_id": "Qwen/Qwen3-0.6B",
+              "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+              "license": "Apache-2.0"
+            },
+            "file_sha256": {
+              "config.json": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+              "generation_config.json": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2",
+              "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+              "tokenizer_config.json": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+              "model.safetensors": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b",
+              "LICENSE": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+            },
+            "input_sha256": "ff75bac958f42131abe8e07f70265534185b1fcb075d2583c02c1bff420d4504",
+            "content": "{\"",
+            "finish_reason": "length",
+            "usage": {
+              "prompt_tokens": 408,
+              "completion_tokens": 1,
+              "total_tokens": 409
+            },
+            "cpu_seconds": 3.5469850000000003,
+            "wall_seconds": 3.10518654200132,
+            "parameters": 596049920,
+            "device": "cpu",
+            "precision": "fp32",
+            "thinking": false,
+            "production_qualified": false,
+            "consumer_imported_modelanvil_or_django": false
+          }
+        },
+        {
+          "kind": "validation_failure",
+          "turn": 2,
+          "reason": "Incomplete or invalid native tool reply; no dispatch."
+        },
+        {
+          "kind": "failure",
+          "reason": "The bounded tool run could not complete; inspect validation, tool reports and current permissions."
+        }
+      ],
+      "trace_artifact": {
+        "artifact_id": "01a16c38-ccfa-7925-aa0b-629bc303ee81",
+        "sha256": "1301bfa4f2bb277373d7d7f7ff57ea592f846932f730e5ff03418dc0e125a47f",
+        "byte_size": 7359
+      },
+      "answer": "",
+      "error": "The bounded tool chat did not complete. Review the retained trace, permissions and worker profile.",
+      "wall_seconds": 14.611468082999636
+    },
+    "timeout": {
+      "request_id": "01a16c38-cd66-7b1d-870a-bc0e226b345e",
+      "job_id": "01a16c38-cd65-7ebc-b929-c85b6ab2528a",
+      "status": "failed",
+      "desired_action": "run",
+      "attempt_count": 1,
+      "usage": {
+        "completion_tokens": 30,
+        "model_turns": 1,
+        "tool_calls": 1,
+        "unknown_inflight_tokens": 0
+      },
+      "trace": [
+        {
+          "kind": "model",
+          "turn": 0,
+          "input": {
+            "max_tokens": 128,
+            "messages": [
+              {
+                "content": "Use python to run this exact code: print(\"started\",flush=True)\nwhile True: pass",
+                "role": "user"
+              }
+            ],
+            "tools": [
+              {
+                "function": {
+                  "description": "Execute bounded Python in a disposable offline sandbox. Print the result.",
+                  "name": "python",
+                  "parameters": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "code": {
+                        "maxLength": 4096,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "code"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "report": {
+            "schema_version": "modelanvil.independent-tool-generation.v1",
+            "source": {
+              "repo_id": "Qwen/Qwen3-0.6B",
+              "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+              "license": "Apache-2.0"
+            },
+            "file_sha256": {
+              "config.json": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+              "generation_config.json": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2",
+              "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+              "tokenizer_config.json": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+              "model.safetensors": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b",
+              "LICENSE": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+            },
+            "input_sha256": "7866c6b094f4b29a9c555678f26d157fc5e391423b6db5ca44e99a4fd7261123",
+            "content": "<tool_call>\n{\"name\": \"python\", \"arguments\": {\"code\": \"print(\\\"started\\\", flush=True)\\nwhile True: pass\"}}\n</tool_call>",
+            "finish_reason": "stop",
+            "usage": {
+              "prompt_tokens": 189,
+              "completion_tokens": 30,
+              "total_tokens": 219
+            },
+            "cpu_seconds": 4.114307,
+            "wall_seconds": 3.6962083329999587,
+            "parameters": 596049920,
+            "device": "cpu",
+            "precision": "fp32",
+            "thinking": false,
+            "production_qualified": false,
+            "consumer_imported_modelanvil_or_django": false
+          }
+        },
+        {
+          "kind": "tool_started",
+          "id": "call_0_0",
+          "call": {
+            "name": "python",
+            "arguments": {
+              "code": "print(\"started\", flush=True)\nwhile True: pass"
+            }
+          }
+        },
+        {
+          "kind": "tool_result",
+          "id": "call_0_0",
+          "name": "python",
+          "binding": {
+            "kind": "python"
+          },
+          "result": {
+            "schema_version": "modelanvil.python-sandbox.v1",
+            "status": "timeout",
+            "exit_code": -9,
+            "stdout": "started\n",
+            "stderr": "",
+            "stdout_bytes": 8,
+            "stderr_bytes": 0,
+            "wall_seconds": 5.011477585998364,
+            "cpu_seconds": null,
+            "execution_uid": 65534,
+            "network": "none",
+            "persistent_files": false,
+            "isolation": {
+              "image": "python@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704",
+              "read_only_root": true,
+              "network": "none",
+              "host_mounts": false,
+              "memory_bytes": 134217728,
+              "cpu_cores": 1.0,
+              "pids": 32,
+              "trusted_watchdog_uid": 0,
+              "execution_uid": 65534,
+              "watchdog_capabilities": [
+                "SETUID",
+                "SETGID",
+                "KILL"
+              ],
+              "untrusted_child_capabilities": [],
+              "no_new_privileges": true,
+              "logging": "none"
+            },
+            "limits": {
+              "source_bytes": 8192,
+              "stdout_bytes": 16384,
+              "stderr_bytes": 16384,
+              "execution_seconds": 5,
+              "container_memory_bytes": 134217728,
+              "cpu_cores": 1,
+              "pids": 32,
+              "writable_tmpfs_bytes": 33554432,
+              "network": "none",
+              "filesystem": "read-only image plus private /work and /tmp tmpfs; no host mounts",
+              "execution_uid": 65534,
+              "persistent_files": false
+            },
+            "controller_wall_seconds": 5.223565374995815,
+            "container_removed": true,
+            "engine_version": "29.8.2",
+            "security": [
+              "name=seccomp,profile=builtin",
+              "name=cgroupns"
+            ],
+            "production_qualified": false
+          },
+          "successful": false
+        },
+        {
+          "kind": "failure",
+          "reason": "The bounded tool run could not complete; inspect validation, tool reports and current permissions."
+        }
+      ],
+      "trace_artifact": {
+        "artifact_id": "01a16c38-fbad-72a7-8fab-f19eae1311ea",
+        "sha256": "52a0d62852edd9f79b75e9aa6059261fbc96cfdabc9fb92f978b025ea0bb2dd6",
+        "byte_size": 3791
+      },
+      "answer": "",
+      "error": "The bounded tool chat did not complete. Review the retained trace, permissions and worker profile.",
+      "wall_seconds": 12.012208416002977
+    },
+    "cancel": {
+      "request_id": "01a16c38-fc4d-7806-9ce2-4fbaf5ef19e9",
+      "job_id": "01a16c38-fc4b-76be-87cb-ae088122c01c",
+      "status": "cancelled",
+      "desired_action": "cancel",
+      "attempt_count": 1,
+      "usage": {
+        "completion_tokens": 34,
+        "model_turns": 1,
+        "tool_calls": 1,
+        "unknown_inflight_tokens": 0
+      },
+      "trace": [
+        {
+          "kind": "model",
+          "turn": 0,
+          "input": {
+            "max_tokens": 128,
+            "messages": [
+              {
+                "content": "Use python to run this exact code: import time\nprint(\"started\",flush=True)\ntime.sleep(4)",
+                "role": "user"
+              }
+            ],
+            "tools": [
+              {
+                "function": {
+                  "description": "Execute bounded Python in a disposable offline sandbox. Print the result.",
+                  "name": "python",
+                  "parameters": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "code": {
+                        "maxLength": 4096,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "code"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "report": {
+            "schema_version": "modelanvil.independent-tool-generation.v1",
+            "source": {
+              "repo_id": "Qwen/Qwen3-0.6B",
+              "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+              "license": "Apache-2.0"
+            },
+            "file_sha256": {
+              "config.json": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+              "generation_config.json": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2",
+              "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+              "tokenizer_config.json": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+              "model.safetensors": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b",
+              "LICENSE": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+            },
+            "input_sha256": "346a1fb5072afedef05f3eba27168b7015b8987c3242b1c461d26b55a3001699",
+            "content": "<tool_call>\n{\"name\": \"python\", \"arguments\": {\"code\": \"import time\\nprint(\\\"started\\\", flush=True)\\ntime.sleep(4)\"}}\n</tool_call>",
+            "finish_reason": "stop",
+            "usage": {
+              "prompt_tokens": 193,
+              "completion_tokens": 34,
+              "total_tokens": 227
+            },
+            "cpu_seconds": 4.213312,
+            "wall_seconds": 3.8193842920009047,
+            "parameters": 596049920,
+            "device": "cpu",
+            "precision": "fp32",
+            "thinking": false,
+            "production_qualified": false,
+            "consumer_imported_modelanvil_or_django": false
+          }
+        },
+        {
+          "kind": "tool_started",
+          "id": "call_0_0",
+          "call": {
+            "name": "python",
+            "arguments": {
+              "code": "import time\nprint(\"started\", flush=True)\ntime.sleep(4)"
+            }
+          }
+        },
+        {
+          "kind": "tool_result",
+          "id": "call_0_0",
+          "name": "python",
+          "binding": {
+            "kind": "python"
+          },
+          "result": {
+            "schema_version": "modelanvil.python-sandbox.v1",
+            "status": "cancelled",
+            "exit_code": -9,
+            "stdout": "started\n",
+            "stderr": "",
+            "stdout_bytes": 8,
+            "stderr_bytes": 0,
+            "wall_seconds": 0.48667895900143776,
+            "cpu_seconds": null,
+            "execution_uid": 65534,
+            "network": "none",
+            "persistent_files": false,
+            "isolation": {
+              "image": "python@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704",
+              "read_only_root": true,
+              "network": "none",
+              "host_mounts": false,
+              "memory_bytes": 134217728,
+              "cpu_cores": 1.0,
+              "pids": 32,
+              "trusted_watchdog_uid": 0,
+              "execution_uid": 65534,
+              "watchdog_capabilities": [
+                "SETUID",
+                "SETGID",
+                "KILL"
+              ],
+              "untrusted_child_capabilities": [],
+              "no_new_privileges": true,
+              "logging": "none"
+            },
+            "limits": {
+              "source_bytes": 8192,
+              "stdout_bytes": 16384,
+              "stderr_bytes": 16384,
+              "execution_seconds": 5,
+              "container_memory_bytes": 134217728,
+              "cpu_cores": 1,
+              "pids": 32,
+              "writable_tmpfs_bytes": 33554432,
+              "network": "none",
+              "filesystem": "read-only image plus private /work and /tmp tmpfs; no host mounts",
+              "execution_uid": 65534,
+              "persistent_files": false
+            },
+            "controller_wall_seconds": 0.7121160000024247,
+            "container_removed": true,
+            "engine_version": "29.8.2",
+            "security": [
+              "name=seccomp,profile=builtin",
+              "name=cgroupns"
+            ],
+            "production_qualified": false
+          },
+          "successful": false
+        },
+        {
+          "kind": "failure",
+          "reason": "The bounded tool run could not complete; inspect validation, tool reports and current permissions."
+        }
+      ],
+      "trace_artifact": {
+        "artifact_id": "01a16c39-192c-7c5d-b62b-24467e8a0177",
+        "sha256": "01355aea0e2b5aff168a0633fac372ed25b9a36104259497916672f5231b6a75",
+        "byte_size": 3830
+      },
+      "answer": "",
+      "error": "",
+      "wall_seconds": 7.497394666999753
+    }
+  },
+  "production_qualified": false
+}

@@ -42,6 +42,9 @@ def project_policy(tenant, project):
     installed = list(settings.MODELANVIL_ACQUISITION_ORIGINS)
     from modelanvil.runners.external_inference import installed_targets
     providers = installed_targets(tenant, project)
+    from modelanvil.runners.mcp_connections import installed_targets as installed_mcp
+    mcp = installed_mcp(tenant, project)
+    allowed_mcp = [v for v in (policy.mcp_targets if policy else []) if v in {m['id'] for m in mcp if m['available']}]
     allowed = [value for value in (policy.external_generation_targets if policy else []) if value in {p['id'] for p in providers}]
     return {'offline': settings.MODELANVIL_OFFLINE or bool(policy and policy.offline),
         'acquisition_origins': [v for v in (policy.acquisition_origins if policy else installed) if v in installed],
@@ -49,6 +52,7 @@ def project_policy(tenant, project):
         'measurement_retention_days': policy.measurement_retention_days if policy else 30,
         'external_judges': False, 'external_generation': bool(allowed) and not (settings.MODELANVIL_OFFLINE or bool(policy and policy.offline)),
         'external_generation_targets': allowed, 'installed_generation_targets': providers, 'external_analytics': False,
+        'mcp_targets': allowed_mcp, 'installed_mcp_targets': mcp, 'code_execution': bool(policy and policy.code_execution),
         'support_upload': False, 'diagnostic_content_collection': False,
         'product_history_retention': 'Retained until explicitly deleted through the authorized product APIs.'}
 

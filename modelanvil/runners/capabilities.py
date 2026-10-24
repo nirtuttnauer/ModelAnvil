@@ -73,6 +73,13 @@ def model_capabilities(version):
             config = json.loads(raw.getvalue())
             if not isinstance(config, dict):
                 raise ValueError('Model configuration must be an object.')
+        if plan['format']=='tools':
+            from modelanvil.runners import tool_runtime
+            tool_runtime.require_packages()
+            result['tool_chat']={'eligible':True,'devices':['cpu'],'max_tokens':128,'context_limit':1536,'reason':'Native tools in the Tools workspace; explicit project grants and a bounded worker are required.'}
+            result['chat']['reason']='Use Tools for native MCP and isolated Python calls.'
+            result['evaluate']['reason']='Tool behavior and task quality need separate qualification.'
+            return result
         if plan['format']=='audio':
             from modelanvil.runners.training import audio_runtime
             audio_runtime.require_packages()

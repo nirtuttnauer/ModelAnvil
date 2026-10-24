@@ -491,6 +491,9 @@ class InferenceViewSet(TenantScopedViewSet):
     @action(detail=False, methods=['post'], url_path='chat/completions')
     def completions(self, request):
         project = selected_project()
+        if 'tools' in request.data or 'tool_choice' in request.data:
+            from modelanvil.api.views.tools import compatible_completion
+            return compatible_completion(self,request,project)
         form = CompletionInput(data=request.data); form.is_valid(raise_exception=True)
         options = form.validated_data
         if request.accepted_renderer.format == 'sse' and not options['stream']:

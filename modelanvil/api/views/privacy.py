@@ -21,6 +21,16 @@ class PolicyInput(serializers.Serializer):
     acquisition_origins = serializers.ListField(child=serializers.CharField(max_length=255), max_length=30)
     measurement_retention_days = serializers.IntegerField(min_value=1, max_value=365)
     external_generation_targets = serializers.ListField(child=serializers.UUIDField(), max_length=16, required=False)
+    mcp_targets = serializers.ListField(child=serializers.UUIDField(), max_length=17, required=False)
+    code_execution = serializers.BooleanField(required=False)
+
+    def validate_mcp_targets(self, values):
+        from modelanvil.runners.mcp_connections import installed_targets
+        from modelanvil.core.tenancy import get_active_tenant, get_active_project
+        available = {v['id'] for v in installed_targets(get_active_tenant(),get_active_project()) if v['available']}
+        if any(str(v) not in available for v in values):
+            raise serializers.ValidationError('Select only available installed read-only MCP targets for this project.')
+        return sorted({str(v) for v in values})
 
     def validate_external_generation_targets(self, values):
         from modelanvil.runners.external_inference import installed_targets
@@ -37,7 +47,7 @@ class PolicyInput(serializers.Serializer):
         return sorted(set(values))
 
     def validate(self, attrs):
-        if set(self.initial_data) - set(self.fields) or set(self.fields) - {'external_generation_targets'} - set(self.initial_data):
+        if set(self.initial_data) - set(self.fields) or set(self.fields) - {'external_generation_targets','mcp_targets','code_execution'} - set(self.initial_data):
             raise serializers.ValidationError('Submit offline, acquisition_origins, measurement_retention_days and optional external_generation_targets.')
         return attrs
 
@@ -62,11 +72,12 @@ class ProjectPrivacy(APIView):
     def put(self, request):
         project = selected_project()
         form = PolicyInput(data=request.data); form.is_valid(raise_exception=True)
-        ProjectPrivacyPolicy.all_objects.update_or_create(tenant_id=project.tenant_id, project=project, defaults=form.validated_data)
+        policy,_=ProjectPrivacyPolicy.all_objects.update_or_create(tenant_id=project.tenant_id, project=project, defaults=form.validated_data)
         from modelanvil.annotation.feedback import shorten_retention
         shorten_retention(project,form.validated_data['measurement_retention_days'])
         record_audit('update', 'project_privacy', project.pk, input_snapshot={'offline': form.validated_data['offline'],
-            'external_target_ids': form.validated_data.get('external_generation_targets', []),
+            'external_target_ids':policy.external_generation_targets,
+            'mcp_target_ids':policy.mcp_targets,'code_execution':policy.code_execution,
             'origin_count': len(form.validated_data['acquisition_origins']), 'measurement_retention_days': form.validated_data['measurement_retention_days']})
         return self.response(project)
 
