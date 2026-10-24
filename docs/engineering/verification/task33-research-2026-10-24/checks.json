@@ -1,0 +1,27 @@
+{
+  "full_backend": {
+    "tests": 1210,
+    "optional_skips": 11,
+    "seconds": 193.917,
+    "result": "passed",
+    "scope": "Research branch before unrelated TASK34 merge; final boundary refinements separately rechecked."
+  },
+  "final_research_guards": {
+    "tests": 11,
+    "seconds": 0.127,
+    "result": "passed"
+  },
+  "actual_postgresql_research": {
+    "tests": 1,
+    "result": "passed"
+  },
+  "frontend": {
+    "tests": 234,
+    "result": "passed"
+  },
+  "production_build": "passed",
+  "storybook_build": "passed",
+  "django_check": "passed",
+  "migration_drift": "none",
+  "git_diff_check": "passed"
+}

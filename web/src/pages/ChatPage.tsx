@@ -1,3 +1,4 @@
+import { ResearchChat } from './ResearchChat';
 import { ToolsChat } from './ToolsChat';
 import { Button, Card, Field, MultilineField, Notice } from '../components/ui';
 import { modelDisplayName, referenceInputError } from '../api/chat-input';
@@ -364,6 +365,6 @@ function TextChatPage({ token = '', refreshKey = 0 }: { token?: string; refreshK
 }
 
 export function ChatPage(props: { token?: string; refreshKey?: number }) {
-  const [tools, setTools] = useState(false);
-  return <><div className="actions" role="group" aria-label="Chat workspace"><Button aria-pressed={!tools} onClick={() => setTools(false)}>Conversation</Button><Button aria-pressed={tools} onClick={() => setTools(true)}>Tools</Button></div>{tools ? <ToolsChat token={props.token || ''} refreshKey={props.refreshKey} /> : <TextChatPage {...props} />}</>;
+  const [workspace, setWorkspace] = useState('conversation');
+  return <><div className="actions" role="group" aria-label="Chat workspace">{[['conversation', 'Conversation'], ['tools', 'Tools'], ['research', 'Documents & research']].map(([id, label]) => <Button key={id} aria-pressed={workspace === id} onClick={() => setWorkspace(id)}>{label}</Button>)}</div>{workspace === 'research' ? <ResearchChat token={props.token || ''} refreshKey={props.refreshKey} /> : workspace === 'tools' ? <ToolsChat token={props.token || ''} refreshKey={props.refreshKey} /> : <TextChatPage {...props} />}</>;
 }

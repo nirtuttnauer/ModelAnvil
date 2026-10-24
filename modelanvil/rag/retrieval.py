@@ -80,6 +80,8 @@ class RetrievalEngine:
             document__tenant_id=self.tenant_id,document__knowledge_base=current.knowledge_base_id,
             document__knowledge_base_id__in=bases.values('pk'),document__is_revoked=False,document__is_deleted=False
         ).filter(Exists(indexes))
+        from modelanvil.rag.attachments import unavailable_documents
+        chunks = chunks.exclude(document_id__in=unavailable_documents(current.knowledge_base_id,self.tenant_id,project))
         if current.configuration.get('embedding_profile'):
             from modelanvil.rag.models import EmbeddingSpace
             chunks = chunks.filter(Exists(accessible(EmbeddingSpace).filter(pk=current.embedding_space_id)))

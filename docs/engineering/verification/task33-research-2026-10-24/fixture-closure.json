@@ -1,0 +1,9 @@
+{
+  "fixture": "research-actual-v1",
+  "active_keys_revoked": 1,
+  "outstanding_reservations": 0,
+  "running_jobs_or_attempts": 0,
+  "device_claims": 0,
+  "workers_offline": true,
+  "tenant_suspended": true
+}

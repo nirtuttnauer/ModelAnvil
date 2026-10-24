@@ -1,0 +1,61 @@
+{
+  "actual_ui_document_upload": true,
+  "actual_local_cpu_generation": true,
+  "status": "answered",
+  "answer": "[1] The access code for the browser station is WILLOW.\n\n[2] The access code for the harbor tower is MAPLE.",
+  "citations": [
+    {
+      "label": 1,
+      "chunk_id": "01a16c98-9a3f-7d4a-9236-6decdd977098",
+      "title": "browser-note.txt",
+      "source_uri": "attachment:01a16c98-9a31-75ef-a1fb-de8d51d57eba",
+      "content_hash": "cbacc55391016ff2287177d35c9d0169d1ac45983ba5f15f5801f71425785472",
+      "span_start": 0,
+      "span_end": 50,
+      "source_locations": [
+        {
+          "start": 0,
+          "end": 50,
+          "source_path": "text"
+        }
+      ]
+    },
+    {
+      "label": 2,
+      "chunk_id": "01a16c92-27be-73aa-a300-773213b582f7",
+      "title": "harbor.docx",
+      "source_uri": "attachment:01a16c92-27bc-7817-b140-4cf10eb40251",
+      "content_hash": "38c15ba224ee990856ba5ce1be68e8da42c7811882b9b2705f26cd0e2309f832",
+      "span_start": 0,
+      "span_end": 46,
+      "source_locations": [
+        {
+          "start": 0,
+          "end": 46,
+          "source_path": "word/document.xml/paragraph/1"
+        }
+      ]
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 133,
+    "completion_tokens": 32,
+    "total_tokens": 165
+  },
+  "memory_inspected": true,
+  "token_budget_inspected": true,
+  "removed_source_id": "01a16c98-9a32-752c-84bf-791472f6f49c",
+  "source_removal_hid_cached_turns": true,
+  "console_errors": 0,
+  "errors": [],
+  "viewports": [
+    {
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "overflow": false
+    }
+  ]
+}

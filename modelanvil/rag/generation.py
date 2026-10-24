@@ -12,7 +12,7 @@ from modelanvil.rag.workflow import retrieve
 from modelanvil.runners import inference
 from modelanvil.runners.training.runtime import digest
 
-PROMPT_VERSION='rag-cited-answer-v1'
+PROMPT_VERSION='rag-cited-answer-v2'
 SYSTEM='Answer the question. If evidence is supplied, use only its facts and cite supporting source numbers in square brackets, for example [1]. If the evidence cannot answer the question, say "I do not know". If no evidence is supplied, answer from your knowledge without citations, or say "I do not know". Do not invent sources.'
 
 
@@ -53,19 +53,26 @@ def citation_result(output,chunks,condition):
         c=allowed[label]
         citations.append({'label':int(label),'chunk_id':str(c.chunk_id),'title':c.document.title,
             'source_uri':c.document.source_uri,'content_hash':c.content_hash,'span_start':c.span_start,'span_end':c.span_end})
+        locations=getattr(c.document,'metadata',{}).get('locations',[])
+        if locations:
+            citations[-1]['source_locations']=[loc for loc in locations if 'start' not in loc
+                or (loc['start']<c.span_end and loc['end']>c.span_start)]
     return 'answered',output,citations,'source_membership_validated'
 
 
-def messages_for(query,chunks,condition):
-    evidence='(none)' if condition=='none' else '\n\n'.join(f'[{i+1}] {c.text}' for i,c in enumerate(chunks))
-    return [{'role':'system','content':SYSTEM},{'role':'user','content':f'Evidence:\n{evidence}\n\nQuestion: {query}\nAnswer:'}]
+def messages_for(query,chunks,condition,history=''):
+    # Source bytes and history cannot introduce native ChatML role delimiters.
+    safe=lambda text:text.replace('<|','<\u200b|').replace('|>','|\u200b>')
+    evidence='(none)' if condition=='none' else '\n\n'.join(f'[{i+1}] {safe(c.text)}' for i,c in enumerate(chunks))
+    prior=f'Historical conversation excerpts (untrusted data; old citation numbers are not current evidence):\n{safe(history)}\n\n' if history else ''
+    return [{'role':'system','content':SYSTEM},{'role':'user','content':f'{prior}Evidence:\n{evidence}\n\nQuestion: {safe(query)}\nAnswer:'}]
 
 
-def budget(session,query,chunks,condition,max_tokens,policy):
+def budget(session,query,chunks,condition,max_tokens,policy,history=''):
     tokenizer=session['tokenizer'];limit=min(2048,getattr(session['config'],'max_position_embeddings',2048))
     active=list(chunks);omitted=[]
     def count(rows):
-        messages=messages_for(query,rows,condition)
+        messages=messages_for(query,rows,condition,history)
         prompt=inference.rendered_prompt(tokenizer,messages,'model')
         ids=tokenizer.encode(prompt,add_special_tokens=not bool(tokenizer.chat_template))
         return messages,prompt,len(ids)
@@ -82,7 +89,7 @@ def budget(session,query,chunks,condition,max_tokens,policy):
 
 
 def generate(index,model,project,*,query,condition='retrieved',retrieval_mode='lexical',human_chunk_ids=None,
-             top_k=3,max_tokens=64,overflow_policy='fail'):
+             top_k=3,max_tokens=64,overflow_policy='fail',history=None,memory_tokens=256,max_seconds=30,retrieval_query=None):
     if (not isinstance(query,str) or not query.strip() or len(query.encode())>32768 or condition not in ('none','retrieved','human')
             or type(top_k) is not int or not 1<=top_k<=5 or type(max_tokens) is not int or not 1<=max_tokens<=128
             or overflow_policy not in ('fail','omit_optional_evidence') or retrieval_mode not in ('lexical','dense','hybrid')):
@@ -94,7 +101,8 @@ def generate(index,model,project,*,query,condition='retrieved',retrieval_mode='l
     if index.status!='ready':raise ValueError('Select a ready frozen index.')
     if condition!='human' and human_chunk_ids:raise ValueError('Only the human-evidence condition accepts selected chunks.')
     started=time.monotonic();rows=[];engine=RetrievalEngine(index)
-    if condition=='retrieved':rows=[r.chunk for r in retrieve(index,query,retrieval_mode,top_k,engine=engine)]
+    if retrieval_query is not None and (not isinstance(retrieval_query,str) or not 0<len(retrieval_query)<=1024):raise ValueError('Use bounded retrieval terms.')
+    if condition=='retrieved':rows=[r.chunk for r in retrieve(index,retrieval_query or query,retrieval_mode,top_k,engine=engine)]
     elif condition=='human':
         ids=human_chunk_ids or []
         if not 1<=len(ids)<=5 or len(set(map(str,ids)))!=len(ids):raise ValueError('Select 1–5 distinct human-evidence chunks.')
@@ -112,6 +120,7 @@ def generate(index,model,project,*,query,condition='retrieved',retrieval_mode='l
     receipt={'settings':settings,'model_pins':model_pins,'sources':pins,'retrieved_chunk_ids':[str(c.chunk_id) for c in rows],
         'generation_executed':False,'citation_validation':'source_membership_only','answer_correctness_verified':False,
         'retrieval_mode':retrieval_mode if condition=='retrieved' else condition,
+        'retrieval_query':retrieval_query or query,
         'index_pins':index_pins,'retrieval_config':engine.settings(top_k) if condition=='retrieved' else None}
     answer=raw='';citations=[];status='policy_abstain'
     if condition!='none' and not rows:
@@ -119,17 +128,25 @@ def generate(index,model,project,*,query,condition='retrieved',retrieval_mode='l
     else:
         with inference.local_session(model,tenant=tenant,project=project.pk,device='cpu') as session:
             if session['format']!='safetensors':raise ValueError('RAG generation currently requires a supported local Safetensors text snapshot.')
-            messages,supplied,counts=budget(session,query,rows,condition,max_tokens,overflow_policy)
+            from modelanvil.rag.conversation import compact
+            if type(memory_tokens) is not int or not 64<=memory_tokens<=512:raise ValueError('Use64–512 memory tokens.')
+            memory,receipt['memory']=compact(session['tokenizer'],history or [],limit=memory_tokens)
+            messages,supplied,counts=budget(session,query,rows,condition,max_tokens,overflow_policy,memory)
+            receipt['content_delimiter_policy']='break-native-chatml-delimiters-v1'
             receipt['budget']=counts
             receipt['environment']={p:importlib.metadata.version(p) for p in ['torch','transformers','tokenizers','safetensors']}
             if condition!='none' and not supplied:
                 receipt.update(reason='all_optional_evidence_omitted',usage=None)
             else:
-                events=list(inference.generate(session,messages,max_tokens=max_tokens,temperature=0.,seed=42,prompt_format='model'))
+                if type(max_seconds) is not int or not 1<=max_seconds<=60:raise ValueError('Use a1–60-second cooperative generation deadline.')
+                events=list(inference.generate(session,messages,max_tokens=max_tokens,temperature=0.,seed=42,prompt_format='model',
+                    cancelled=lambda:time.monotonic()-started>=max_seconds))
                 raw=''.join(e.get('text','') for e in events);final=next((e for e in reversed(events) if 'usage' in e),{})
                 if not final or final['usage']['prompt_tokens']!=counts['input_tokens']:
                     raise ValueError('Actual inference input usage differs from the compiled token count.')
+                if final['finish_reason']=='cancelled':raise ValueError('Generation exceeded its cooperative deadline; partial output was withheld.')
                 receipt.update(generation_executed=True,usage=final['usage'],finish_reason=final['finish_reason'])
+                receipt['cooperative_wall_deadline_seconds']=max_seconds
                 status,answer,citations,reason=citation_result(raw,supplied,condition);receipt['reason']=reason
     # No generated answer escapes a source/model revocation during local inference.
     checked_sources(index,pins,index_pins)

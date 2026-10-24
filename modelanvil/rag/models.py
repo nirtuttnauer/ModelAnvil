@@ -28,6 +28,19 @@ class KnowledgeBase(TenantContextModel):
         return f"{self.name} ({self.tenant_id})"
 
 
+class ResearchSession(TenantContextModel):
+    session_id = models.UUIDField(default=uuid7, unique=True, editable=False)
+    project = models.ForeignKey('identity.Project', on_delete=models.PROTECT)
+    title = models.CharField(max_length=180)
+    knowledge_base = models.OneToOneField(KnowledgeBase, on_delete=models.PROTECT)
+    index = models.ForeignKey('IndexVersion', on_delete=models.PROTECT, null=True)
+    model_version = models.ForeignKey('runners.ModelVersion', on_delete=models.PROTECT)
+    turns = models.JSONField(default=list)
+    memory = models.JSONField(default=dict)
+    research_steps = models.JSONField(default=list)
+    revision_no = models.PositiveIntegerField(default=1)
+
+
 class SourceDocument(TenantContextModel):
     """Source document with versioned revisions, hashes, and access revocation (TECH-024)."""
 

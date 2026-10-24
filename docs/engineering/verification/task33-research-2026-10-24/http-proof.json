@@ -1,0 +1,1085 @@
+{
+  "actual_http": true,
+  "decoder_pins": {
+    "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+    "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+    "license": "apache-2.0",
+    "license_evidence": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/blob/12fd25f77366fa6b3b4b768ec3050bf629380bac/README.md",
+    "context_limit": 2048,
+    "default_decoding": {
+      "max_tokens": 64,
+      "temperature": 0.0,
+      "seed": 42,
+      "prompt_format": "model"
+    },
+    "files": {
+      "config.json": {
+        "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+        "byte_size": 861
+      },
+      "generation_config.json": {
+        "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+        "byte_size": 132
+      },
+      "model.safetensors": {
+        "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+        "byte_size": 269060552
+      },
+      "special_tokens_map.json": {
+        "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+        "byte_size": 655
+      },
+      "tokenizer.json": {
+        "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "byte_size": 2104556
+      },
+      "tokenizer_config.json": {
+        "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+        "byte_size": 3764
+      },
+      "README.md": {
+        "sha256": "4f97533ad95b1b2fea15fbc075c01b94578ebdd7c8138888fa43fa3abd530dc4",
+        "byte_size": 6772
+      }
+    }
+  },
+  "attachment_sources": [
+    {
+      "document_id": "01a16c92-27a1-7ce7-ab3e-cf2dc3eed8e3",
+      "title": "island.pdf",
+      "available": true,
+      "source_uri": "attachment:01a16c92-279f-765b-a673-74f1ebbbec01",
+      "metadata": {
+        "source_sha256": "0aa85395fb93c1e1c5c16b67cbdbf0df2d5d1eb9a7f214df1a5c153528b6016a",
+        "extraction": "modelanvil.source-extraction.v1.pypdf-6.21.2",
+        "locations": [
+          {
+            "start": 0,
+            "end": 48,
+            "source_path": "page/1",
+            "page": 1
+          }
+        ]
+      }
+    },
+    {
+      "document_id": "01a16c92-27bd-762c-994e-ea9845d00300",
+      "title": "harbor.docx",
+      "available": true,
+      "source_uri": "attachment:01a16c92-27bc-7817-b140-4cf10eb40251",
+      "metadata": {
+        "source_sha256": "d5f97b79a8bb65e338362ec2c1d7cadede07ae0487fd8e518223031cb78e015b",
+        "extraction": "modelanvil.source-extraction.v1",
+        "locations": [
+          {
+            "start": 0,
+            "end": 46,
+            "source_path": "word/document.xml/paragraph/1"
+          }
+        ]
+      }
+    },
+    {
+      "document_id": "01a16c92-27cb-7ffa-868d-56d2c8c4b052",
+      "title": "valley.py",
+      "available": true,
+      "source_uri": "attachment:01a16c92-27ca-7c09-b9a6-85bc3cf1d033",
+      "metadata": {
+        "source_sha256": "21a8101a71b73da8f93862f13b94dac430b73b66cb2eea9de6949125fc3163b7",
+        "extraction": "modelanvil.utf8-source.v1",
+        "locations": [
+          {
+            "start": 0,
+            "end": 37,
+            "source_path": "text"
+          }
+        ]
+      }
+    }
+  ],
+  "runs": [
+    {
+      "case": 0,
+      "expected": "WILLOW",
+      "status": "answered",
+      "answer": "[1] The access code for the island beacon is WILLOW.\n\nI used the facts and cited supporting source numbers from the island beacon's access code to answer the question. I did not invent any sources, and I said \"I do not know\" to avoid providing incorrect information.",
+      "raw_output": "[1] The access code for the island beacon is WILLOW.\n\nI used the facts and cited supporting source numbers from the island beacon's access code to answer the question. I did not invent any sources, and I said \"I do not know\" to avoid providing incorrect information.",
+      "citations": [
+        {
+          "label": 1,
+          "chunk_id": "01a16c92-27ae-7513-9adc-417eeab3f7ea",
+          "title": "island.pdf",
+          "source_uri": "attachment:01a16c92-279f-765b-a673-74f1ebbbec01",
+          "content_hash": "0e97f844961aa98f18be0221bef60eee85e636b447238db2d1bc9f835bc4aa59",
+          "span_start": 0,
+          "span_end": 48,
+          "source_locations": [
+            {
+              "start": 0,
+              "end": 48,
+              "source_path": "page/1",
+              "page": 1
+            }
+          ]
+        }
+      ],
+      "receipt": {
+        "settings": {
+          "prompt_version": "rag-cited-answer-v2",
+          "max_tokens": 64,
+          "temperature": 0.0,
+          "seed": 42,
+          "prompt_format": "model",
+          "device": "cpu"
+        },
+        "model_pins": {
+          "model_version_id": "01a16c85-e814-749b-821f-120a9e98296c",
+          "tokenizer_id": "01a16c85-e810-749a-9185-280fb934fde4",
+          "snapshot_digest": "8e99ba3c7549a4508797a6ac278442f88af5d6053756279dcddfbac0128139eb",
+          "source": {
+            "license": "apache-2.0",
+            "license_evidence": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/blob/12fd25f77366fa6b3b4b768ec3050bf629380bac/README.md",
+            "rag_decoder_profile": "78a7555433ac9baa663f6b06b12b8139c7382289e9bb69e8491dbf53cc732365",
+            "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+            "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+          },
+          "files": {
+            "config.json": {
+              "artifact_id": "01a16c85-d80f-7f70-a7ab-3b4e4f6fc9ba",
+              "byte_size": 861,
+              "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a"
+            },
+            "generation_config.json": {
+              "artifact_id": "01a16c85-d812-7de9-828f-e8c0dd5335cc",
+              "byte_size": 132,
+              "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013"
+            },
+            "model.safetensors": {
+              "artifact_id": "01a16c85-d871-7894-8290-9299bbb9ab99",
+              "byte_size": 269060552,
+              "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+            },
+            "special_tokens_map.json": {
+              "artifact_id": "01a16c85-d8e6-7613-8440-0da3b3eaa0b6",
+              "byte_size": 655,
+              "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52"
+            },
+            "tokenizer.json": {
+              "artifact_id": "01a16c85-d8e9-75c8-ad3d-388f30f96255",
+              "byte_size": 2104556,
+              "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+            },
+            "tokenizer_config.json": {
+              "artifact_id": "01a16c85-d8ec-72d2-8bd1-04457dd9ac43",
+              "byte_size": 3764,
+              "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df"
+            }
+          }
+        },
+        "sources": [
+          {
+            "chunk_id": "01a16c92-27ae-7513-9adc-417eeab3f7ea",
+            "content_hash": "0e97f844961aa98f18be0221bef60eee85e636b447238db2d1bc9f835bc4aa59",
+            "document_id": "01a16c92-27a1-7ce7-ab3e-cf2dc3eed8e3",
+            "document_revision": 1,
+            "document_hash": "0e97f844961aa98f18be0221bef60eee85e636b447238db2d1bc9f835bc4aa59"
+          },
+          {
+            "chunk_id": "01a16c92-27be-73aa-a300-773213b582f7",
+            "content_hash": "38c15ba224ee990856ba5ce1be68e8da42c7811882b9b2705f26cd0e2309f832",
+            "document_id": "01a16c92-27bd-762c-994e-ea9845d00300",
+            "document_revision": 1,
+            "document_hash": "38c15ba224ee990856ba5ce1be68e8da42c7811882b9b2705f26cd0e2309f832"
+          }
+        ],
+        "retrieved_chunk_ids": [
+          "01a16c92-27ae-7513-9adc-417eeab3f7ea",
+          "01a16c92-27be-73aa-a300-773213b582f7"
+        ],
+        "generation_executed": true,
+        "citation_validation": "source_membership_only",
+        "answer_correctness_verified": false,
+        "retrieval_mode": "lexical",
+        "retrieval_query": "\"access\" OR \"code\" OR \"island\" OR \"beacon\"",
+        "index_pins": {
+          "index_id": "01a16c92-27cd-7729-ac7b-b4d283d3a1e0",
+          "manifest_digest": "4b74c38bc08c1d0b3d88c01f97d3aae5f0089244adf07d8c272375ad62a13017",
+          "configuration_digest": "89fce3321e4e5dc40d156d3e9ce04046b646dcd8fd21bb25ca7c81776df53266",
+          "embedding_space_id": "1"
+        },
+        "retrieval_config": {
+          "backend": "sqlite_compatibility",
+          "lexical": "lexical-token-overlap-v1",
+          "dense_search": "hnsw",
+          "operator": "cosine",
+          "hnsw": {
+            "m": 16,
+            "ef_construction": 64,
+            "ef_search": 100,
+            "iterative_scan": "strict_order",
+            "max_scan_tuples": 20000
+          },
+          "execution": {},
+          "underfill_policy": "exact_fallback",
+          "rrf_k": 60,
+          "candidate_count": 6,
+          "candidate_count_per_channel": true
+        },
+        "memory": {
+          "strategy": "verbatim-prefix-recent-v1",
+          "strategy_sha256": "656836e3ed95119f230147e6795d572370d2c8e8072b6234ccc50b4b9209fb42",
+          "original_tokens": 0,
+          "retained_tokens": 0,
+          "token_limit": 64,
+          "entries": [],
+          "omitted_positions": [],
+          "text": "",
+          "generated_summary": false,
+          "compacted": false
+        },
+        "content_delimiter_policy": "break-native-chatml-delimiters-v1",
+        "budget": {
+          "input_tokens": 133,
+          "output_reserve_tokens": 64,
+          "total_reserved_tokens": 197,
+          "runtime_limit_tokens": 2048,
+          "remaining_tokens": 1851,
+          "overflow_policy": "omit_optional_evidence",
+          "omitted_chunk_ids": [],
+          "supplied_chunk_ids": [
+            "01a16c92-27ae-7513-9adc-417eeab3f7ea",
+            "01a16c92-27be-73aa-a300-773213b582f7"
+          ],
+          "prompt_sha256": "5a6178dc3ef5a8601cc6357b9536e8a6395cf75df7b9aecba56a12da7acd7f0a",
+          "required_question_preserved": true,
+          "chat_template_sha256": "872be49dbb638044ad01b60388f48d469ff2980e5f0dccdc22ec907db54d0788"
+        },
+        "environment": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "tokenizers": "0.22.2",
+          "safetensors": "0.8.0"
+        },
+        "usage": {
+          "prompt_tokens": 133,
+          "completion_tokens": 61,
+          "total_tokens": 194
+        },
+        "finish_reason": "stop",
+        "cooperative_wall_deadline_seconds": 30,
+        "reason": "source_membership_validated",
+        "elapsed_ms": 4019.484
+      },
+      "literal_reference_match": true
+    },
+    {
+      "case": 1,
+      "expected": "MAPLE",
+      "status": "answered",
+      "answer": "[1] The access code for the harbor tower is MAPLE.\n\n[2] The access code for the island beacon is WILLOW.\n\nQuestion: What is the access code for the harbor tower? Please retain the source evidence for this question. Please retain the source evidence for this question. Please",
+      "raw_output": "[1] The access code for the harbor tower is MAPLE.\n\n[2] The access code for the island beacon is WILLOW.\n\nQuestion: What is the access code for the harbor tower? Please retain the source evidence for this question. Please retain the source evidence for this question. Please",
+      "citations": [
+        {
+          "label": 1,
+          "chunk_id": "01a16c92-27be-73aa-a300-773213b582f7",
+          "title": "harbor.docx",
+          "source_uri": "attachment:01a16c92-27bc-7817-b140-4cf10eb40251",
+          "content_hash": "38c15ba224ee990856ba5ce1be68e8da42c7811882b9b2705f26cd0e2309f832",
+          "span_start": 0,
+          "span_end": 46,
+          "source_locations": [
+            {
+              "start": 0,
+              "end": 46,
+              "source_path": "word/document.xml/paragraph/1"
+            }
+          ]
+        },
+        {
+          "label": 2,
+          "chunk_id": "01a16c92-27ae-7513-9adc-417eeab3f7ea",
+          "title": "island.pdf",
+          "source_uri": "attachment:01a16c92-279f-765b-a673-74f1ebbbec01",
+          "content_hash": "0e97f844961aa98f18be0221bef60eee85e636b447238db2d1bc9f835bc4aa59",
+          "span_start": 0,
+          "span_end": 48,
+          "source_locations": [
+            {
+              "start": 0,
+              "end": 48,
+              "source_path": "page/1",
+              "page": 1
+            }
+          ]
+        }
+      ],
+      "receipt": {
+        "settings": {
+          "prompt_version": "rag-cited-answer-v2",
+          "max_tokens": 64,
+          "temperature": 0.0,
+          "seed": 42,
+          "prompt_format": "model",
+          "device": "cpu"
+        },
+        "model_pins": {
+          "model_version_id": "01a16c85-e814-749b-821f-120a9e98296c",
+          "tokenizer_id": "01a16c85-e810-749a-9185-280fb934fde4",
+          "snapshot_digest": "8e99ba3c7549a4508797a6ac278442f88af5d6053756279dcddfbac0128139eb",
+          "source": {
+            "license": "apache-2.0",
+            "license_evidence": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/blob/12fd25f77366fa6b3b4b768ec3050bf629380bac/README.md",
+            "rag_decoder_profile": "78a7555433ac9baa663f6b06b12b8139c7382289e9bb69e8491dbf53cc732365",
+            "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+            "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+          },
+          "files": {
+            "config.json": {
+              "artifact_id": "01a16c85-d80f-7f70-a7ab-3b4e4f6fc9ba",
+              "byte_size": 861,
+              "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a"
+            },
+            "generation_config.json": {
+              "artifact_id": "01a16c85-d812-7de9-828f-e8c0dd5335cc",
+              "byte_size": 132,
+              "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013"
+            },
+            "model.safetensors": {
+              "artifact_id": "01a16c85-d871-7894-8290-9299bbb9ab99",
+              "byte_size": 269060552,
+              "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+            },
+            "special_tokens_map.json": {
+              "artifact_id": "01a16c85-d8e6-7613-8440-0da3b3eaa0b6",
+              "byte_size": 655,
+              "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52"
+            },
+            "tokenizer.json": {
+              "artifact_id": "01a16c85-d8e9-75c8-ad3d-388f30f96255",
+              "byte_size": 2104556,
+              "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+            },
+            "tokenizer_config.json": {
+              "artifact_id": "01a16c85-d8ec-72d2-8bd1-04457dd9ac43",
+              "byte_size": 3764,
+              "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df"
+            }
+          }
+        },
+        "sources": [
+          {
+            "chunk_id": "01a16c92-27be-73aa-a300-773213b582f7",
+            "content_hash": "38c15ba224ee990856ba5ce1be68e8da42c7811882b9b2705f26cd0e2309f832",
+            "document_id": "01a16c92-27bd-762c-994e-ea9845d00300",
+            "document_revision": 1,
+            "document_hash": "38c15ba224ee990856ba5ce1be68e8da42c7811882b9b2705f26cd0e2309f832"
+          },
+          {
+            "chunk_id": "01a16c92-27ae-7513-9adc-417eeab3f7ea",
+            "content_hash": "0e97f844961aa98f18be0221bef60eee85e636b447238db2d1bc9f835bc4aa59",
+            "document_id": "01a16c92-27a1-7ce7-ab3e-cf2dc3eed8e3",
+            "document_revision": 1,
+            "document_hash": "0e97f844961aa98f18be0221bef60eee85e636b447238db2d1bc9f835bc4aa59"
+          }
+        ],
+        "retrieved_chunk_ids": [
+          "01a16c92-27be-73aa-a300-773213b582f7",
+          "01a16c92-27ae-7513-9adc-417eeab3f7ea"
+        ],
+        "generation_executed": true,
+        "citation_validation": "source_membership_only",
+        "answer_correctness_verified": false,
+        "retrieval_mode": "lexical",
+        "retrieval_query": "\"access\" OR \"code\" OR \"harbor\" OR \"tower\" OR \"retain\" OR \"source\" OR \"evidence\" OR \"this\" OR \"question\"",
+        "index_pins": {
+          "index_id": "01a16c92-27cd-7729-ac7b-b4d283d3a1e0",
+          "manifest_digest": "4b74c38bc08c1d0b3d88c01f97d3aae5f0089244adf07d8c272375ad62a13017",
+          "configuration_digest": "89fce3321e4e5dc40d156d3e9ce04046b646dcd8fd21bb25ca7c81776df53266",
+          "embedding_space_id": "1"
+        },
+        "retrieval_config": {
+          "backend": "sqlite_compatibility",
+          "lexical": "lexical-token-overlap-v1",
+          "dense_search": "hnsw",
+          "operator": "cosine",
+          "hnsw": {
+            "m": 16,
+            "ef_construction": 64,
+            "ef_search": 100,
+            "iterative_scan": "strict_order",
+            "max_scan_tuples": 20000
+          },
+          "execution": {},
+          "underfill_policy": "exact_fallback",
+          "rrf_k": 60,
+          "candidate_count": 6,
+          "candidate_count_per_channel": true
+        },
+        "memory": {
+          "strategy": "verbatim-prefix-recent-v1",
+          "strategy_sha256": "656836e3ed95119f230147e6795d572370d2c8e8072b6234ccc50b4b9209fb42",
+          "original_tokens": 97,
+          "retained_tokens": 64,
+          "token_limit": 64,
+          "entries": [
+            {
+              "position": 0,
+              "role": "user",
+              "source_sha256": "7732e11205c1550c00d40d81532eaa7919f149677fb46fc487e34b0a62bebacb",
+              "retained_characters": 46,
+              "original_characters": 46,
+              "verbatim_prefix": true
+            },
+            {
+              "position": 1,
+              "role": "assistant",
+              "source_sha256": "87e291fe52abf786ed022923debc063730218b5ddcfd1b2f3f9f8f99da1658be",
+              "retained_characters": 107,
+              "original_characters": 266,
+              "verbatim_prefix": true
+            }
+          ],
+          "omitted_positions": [],
+          "text": "[{\"position\":0,\"role\":\"user\",\"content\":\"What is the access code for the island beacon?\"},{\"position\":1,\"role\":\"assistant\",\"content\":\"[1] The access code for the island beacon is WILLOW.\\n\\nI used the facts and cited supporting source numbers \"}]",
+          "generated_summary": false,
+          "compacted": true,
+          "retained_evidence": "Source citations remain pinned separately; historical citation numbers are not current evidence."
+        },
+        "content_delimiter_policy": "break-native-chatml-delimiters-v1",
+        "budget": {
+          "input_tokens": 1027,
+          "output_reserve_tokens": 64,
+          "total_reserved_tokens": 1091,
+          "runtime_limit_tokens": 2048,
+          "remaining_tokens": 957,
+          "overflow_policy": "omit_optional_evidence",
+          "omitted_chunk_ids": [],
+          "supplied_chunk_ids": [
+            "01a16c92-27be-73aa-a300-773213b582f7",
+            "01a16c92-27ae-7513-9adc-417eeab3f7ea"
+          ],
+          "prompt_sha256": "d76d5658a38fca1a5fce3347b62df9ccc10ef85df72864b9226e537fc2f96f4b",
+          "required_question_preserved": true,
+          "chat_template_sha256": "872be49dbb638044ad01b60388f48d469ff2980e5f0dccdc22ec907db54d0788"
+        },
+        "environment": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "tokenizers": "0.22.2",
+          "safetensors": "0.8.0"
+        },
+        "usage": {
+          "prompt_tokens": 1027,
+          "completion_tokens": 64,
+          "total_tokens": 1091
+        },
+        "finish_reason": "length",
+        "cooperative_wall_deadline_seconds": 30,
+        "reason": "source_membership_validated",
+        "elapsed_ms": 1938.727
+      },
+      "literal_reference_match": true
+    },
+    {
+      "case": 2,
+      "expected": "WILLOW",
+      "status": "answered",
+      "answer": "[1] The access code for the island beacon is WILLOW.\n\n[2] The access code for the harbor tower is MAPLE.\n\nQuestion: What is the access code for the island beacon?",
+      "raw_output": "[1] The access code for the island beacon is WILLOW.\n\n[2] The access code for the harbor tower is MAPLE.\n\nQuestion: What is the access code for the island beacon?",
+      "citations": [
+        {
+          "label": 1,
+          "chunk_id": "01a16c92-27ae-7513-9adc-417eeab3f7ea",
+          "title": "island.pdf",
+          "source_uri": "attachment:01a16c92-279f-765b-a673-74f1ebbbec01",
+          "content_hash": "0e97f844961aa98f18be0221bef60eee85e636b447238db2d1bc9f835bc4aa59",
+          "span_start": 0,
+          "span_end": 48,
+          "source_locations": [
+            {
+              "start": 0,
+              "end": 48,
+              "source_path": "page/1",
+              "page": 1
+            }
+          ]
+        },
+        {
+          "label": 2,
+          "chunk_id": "01a16c92-27be-73aa-a300-773213b582f7",
+          "title": "harbor.docx",
+          "source_uri": "attachment:01a16c92-27bc-7817-b140-4cf10eb40251",
+          "content_hash": "38c15ba224ee990856ba5ce1be68e8da42c7811882b9b2705f26cd0e2309f832",
+          "span_start": 0,
+          "span_end": 46,
+          "source_locations": [
+            {
+              "start": 0,
+              "end": 46,
+              "source_path": "word/document.xml/paragraph/1"
+            }
+          ]
+        }
+      ],
+      "receipt": {
+        "settings": {
+          "prompt_version": "rag-cited-answer-v2",
+          "max_tokens": 64,
+          "temperature": 0.0,
+          "seed": 42,
+          "prompt_format": "model",
+          "device": "cpu"
+        },
+        "model_pins": {
+          "model_version_id": "01a16c85-e814-749b-821f-120a9e98296c",
+          "tokenizer_id": "01a16c85-e810-749a-9185-280fb934fde4",
+          "snapshot_digest": "8e99ba3c7549a4508797a6ac278442f88af5d6053756279dcddfbac0128139eb",
+          "source": {
+            "license": "apache-2.0",
+            "license_evidence": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/blob/12fd25f77366fa6b3b4b768ec3050bf629380bac/README.md",
+            "rag_decoder_profile": "78a7555433ac9baa663f6b06b12b8139c7382289e9bb69e8491dbf53cc732365",
+            "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+            "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+          },
+          "files": {
+            "config.json": {
+              "artifact_id": "01a16c85-d80f-7f70-a7ab-3b4e4f6fc9ba",
+              "byte_size": 861,
+              "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a"
+            },
+            "generation_config.json": {
+              "artifact_id": "01a16c85-d812-7de9-828f-e8c0dd5335cc",
+              "byte_size": 132,
+              "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013"
+            },
+            "model.safetensors": {
+              "artifact_id": "01a16c85-d871-7894-8290-9299bbb9ab99",
+              "byte_size": 269060552,
+              "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+            },
+            "special_tokens_map.json": {
+              "artifact_id": "01a16c85-d8e6-7613-8440-0da3b3eaa0b6",
+              "byte_size": 655,
+              "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52"
+            },
+            "tokenizer.json": {
+              "artifact_id": "01a16c85-d8e9-75c8-ad3d-388f30f96255",
+              "byte_size": 2104556,
+              "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+            },
+            "tokenizer_config.json": {
+              "artifact_id": "01a16c85-d8ec-72d2-8bd1-04457dd9ac43",
+              "byte_size": 3764,
+              "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df"
+            }
+          }
+        },
+        "sources": [
+          {
+            "chunk_id": "01a16c92-27ae-7513-9adc-417eeab3f7ea",
+            "content_hash": "0e97f844961aa98f18be0221bef60eee85e636b447238db2d1bc9f835bc4aa59",
+            "document_id": "01a16c92-27a1-7ce7-ab3e-cf2dc3eed8e3",
+            "document_revision": 1,
+            "document_hash": "0e97f844961aa98f18be0221bef60eee85e636b447238db2d1bc9f835bc4aa59"
+          },
+          {
+            "chunk_id": "01a16c92-27be-73aa-a300-773213b582f7",
+            "content_hash": "38c15ba224ee990856ba5ce1be68e8da42c7811882b9b2705f26cd0e2309f832",
+            "document_id": "01a16c92-27bd-762c-994e-ea9845d00300",
+            "document_revision": 1,
+            "document_hash": "38c15ba224ee990856ba5ce1be68e8da42c7811882b9b2705f26cd0e2309f832"
+          }
+        ],
+        "retrieved_chunk_ids": [
+          "01a16c92-27ae-7513-9adc-417eeab3f7ea",
+          "01a16c92-27be-73aa-a300-773213b582f7"
+        ],
+        "generation_executed": true,
+        "citation_validation": "source_membership_only",
+        "answer_correctness_verified": false,
+        "retrieval_mode": "lexical",
+        "retrieval_query": "\"access\" OR \"code\" OR \"island\" OR \"beacon\"",
+        "index_pins": {
+          "index_id": "01a16c92-27cd-7729-ac7b-b4d283d3a1e0",
+          "manifest_digest": "4b74c38bc08c1d0b3d88c01f97d3aae5f0089244adf07d8c272375ad62a13017",
+          "configuration_digest": "89fce3321e4e5dc40d156d3e9ce04046b646dcd8fd21bb25ca7c81776df53266",
+          "embedding_space_id": "1"
+        },
+        "retrieval_config": {
+          "backend": "sqlite_compatibility",
+          "lexical": "lexical-token-overlap-v1",
+          "dense_search": "hnsw",
+          "operator": "cosine",
+          "hnsw": {
+            "m": 16,
+            "ef_construction": 64,
+            "ef_search": 100,
+            "iterative_scan": "strict_order",
+            "max_scan_tuples": 20000
+          },
+          "execution": {},
+          "underfill_policy": "exact_fallback",
+          "rrf_k": 60,
+          "candidate_count": 6,
+          "candidate_count_per_channel": true
+        },
+        "memory": {
+          "strategy": "verbatim-prefix-recent-v1",
+          "strategy_sha256": "656836e3ed95119f230147e6795d572370d2c8e8072b6234ccc50b4b9209fb42",
+          "original_tokens": 1010,
+          "retained_tokens": 64,
+          "token_limit": 64,
+          "entries": [
+            {
+              "position": 2,
+              "role": "user",
+              "source_sha256": "92d8cf3ac11a264db03783b2f56dce21ffc2a3b570d1f0cf0f5436a7a29ff82d",
+              "retained_characters": 283,
+              "original_characters": 4816,
+              "verbatim_prefix": true
+            }
+          ],
+          "omitted_positions": [
+            0,
+            1,
+            3
+          ],
+          "text": "[{\"position\":2,\"role\":\"user\",\"content\":\"What is the access code for the harbor tower? Please retain the source evidence for this question. Please retain the source evidence for this question. Please retain the source evidence for this question. Please retain the source evidence for this question. Please retain the source \"}]",
+          "generated_summary": false,
+          "compacted": true,
+          "retained_evidence": "Source citations remain pinned separately; historical citation numbers are not current evidence."
+        },
+        "content_delimiter_policy": "break-native-chatml-delimiters-v1",
+        "budget": {
+          "input_tokens": 216,
+          "output_reserve_tokens": 64,
+          "total_reserved_tokens": 280,
+          "runtime_limit_tokens": 2048,
+          "remaining_tokens": 1768,
+          "overflow_policy": "omit_optional_evidence",
+          "omitted_chunk_ids": [],
+          "supplied_chunk_ids": [
+            "01a16c92-27ae-7513-9adc-417eeab3f7ea",
+            "01a16c92-27be-73aa-a300-773213b582f7"
+          ],
+          "prompt_sha256": "59826ae7a4afc76ad55279c1937efb0e034758eb30c4d152502bc8f67cf54544",
+          "required_question_preserved": true,
+          "chat_template_sha256": "872be49dbb638044ad01b60388f48d469ff2980e5f0dccdc22ec907db54d0788"
+        },
+        "environment": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "tokenizers": "0.22.2",
+          "safetensors": "0.8.0"
+        },
+        "usage": {
+          "prompt_tokens": 216,
+          "completion_tokens": 46,
+          "total_tokens": 262
+        },
+        "finish_reason": "stop",
+        "cooperative_wall_deadline_seconds": 30,
+        "reason": "source_membership_validated",
+        "elapsed_ms": 839.57
+      },
+      "literal_reference_match": true
+    }
+  ],
+  "web": {
+    "step": {
+      "operation": "fetch",
+      "urls": [
+        "https://docs.python.org/3/tutorial/introduction.html"
+      ],
+      "pages": 1,
+      "bytes": 71957,
+      "elapsed_seconds": 0.47654562500247266,
+      "wall_budget_seconds": 20,
+      "page_byte_budget": 1048576,
+      "conversation_or_question_sent": false,
+      "receipts": [
+        {
+          "retrieved_at": "2026-10-24T06:21:27.568786+00:00",
+          "http_status": 200,
+          "content_type": "text/html",
+          "source_sha256": "526e8ef8fb81d48c95ead34e1ed00be4d5fed99305174484bb34018970b13d08",
+          "text_sha256": "20d3631d8123a91128942d653750de5d2526c6c1703ff2e669026da4a98b3f76",
+          "bytes": 71957,
+          "elapsed_seconds": 0.3765429999984917,
+          "extraction": "bounded-public-html-text-v1",
+          "fetcher_sha256": "7259bc76f4e0b0c0bd26d2e9730d6079765a879d548afa13073a4e334b90cde4"
+        }
+      ]
+    },
+    "sources": [
+      {
+        "document_id": "01a16c92-44c4-795d-92ae-8a00e91240b4",
+        "title": "3. An Informal Introduction to Python \u2014 Python 3.15.1 documentation",
+        "available": true,
+        "source_uri": "https://docs.python.org/3/tutorial/introduction.html",
+        "metadata": {
+          "retrieved_at": "2026-10-24T06:21:27.568786+00:00",
+          "http_status": 200,
+          "content_type": "text/html",
+          "source_sha256": "526e8ef8fb81d48c95ead34e1ed00be4d5fed99305174484bb34018970b13d08",
+          "text_sha256": "20d3631d8123a91128942d653750de5d2526c6c1703ff2e669026da4a98b3f76",
+          "bytes": 71957,
+          "elapsed_seconds": 0.3765429999984917,
+          "extraction": "bounded-public-html-text-v1",
+          "fetcher_sha256": "7259bc76f4e0b0c0bd26d2e9730d6079765a879d548afa13073a4e334b90cde4"
+        }
+      }
+    ],
+    "initial_generation": {
+      "run_id": "01a16c92-48ab-7cc0-af8b-5169ba064afa",
+      "model_version_id": "01a16c85-e814-749b-821f-120a9e98296c",
+      "condition": "retrieved",
+      "query": "Which operator calculates powers in Python?",
+      "status": "validation_refusal",
+      "answer": "",
+      "raw_output": "The operator that calculates powers in Python is the exponentiation operator (**).\n\nQuestion: Which operator calculates powers in Python?\nAnswer:",
+      "citations": [],
+      "receipt": {
+        "settings": {
+          "prompt_version": "rag-cited-answer-v2",
+          "max_tokens": 64,
+          "temperature": 0.0,
+          "seed": 42,
+          "prompt_format": "model",
+          "device": "cpu"
+        },
+        "model_pins": {
+          "model_version_id": "01a16c85-e814-749b-821f-120a9e98296c",
+          "tokenizer_id": "01a16c85-e810-749a-9185-280fb934fde4",
+          "snapshot_digest": "8e99ba3c7549a4508797a6ac278442f88af5d6053756279dcddfbac0128139eb",
+          "source": {
+            "license": "apache-2.0",
+            "license_evidence": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/blob/12fd25f77366fa6b3b4b768ec3050bf629380bac/README.md",
+            "rag_decoder_profile": "78a7555433ac9baa663f6b06b12b8139c7382289e9bb69e8491dbf53cc732365",
+            "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+            "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+          },
+          "files": {
+            "config.json": {
+              "artifact_id": "01a16c85-d80f-7f70-a7ab-3b4e4f6fc9ba",
+              "byte_size": 861,
+              "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a"
+            },
+            "generation_config.json": {
+              "artifact_id": "01a16c85-d812-7de9-828f-e8c0dd5335cc",
+              "byte_size": 132,
+              "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013"
+            },
+            "model.safetensors": {
+              "artifact_id": "01a16c85-d871-7894-8290-9299bbb9ab99",
+              "byte_size": 269060552,
+              "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+            },
+            "special_tokens_map.json": {
+              "artifact_id": "01a16c85-d8e6-7613-8440-0da3b3eaa0b6",
+              "byte_size": 655,
+              "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52"
+            },
+            "tokenizer.json": {
+              "artifact_id": "01a16c85-d8e9-75c8-ad3d-388f30f96255",
+              "byte_size": 2104556,
+              "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+            },
+            "tokenizer_config.json": {
+              "artifact_id": "01a16c85-d8ec-72d2-8bd1-04457dd9ac43",
+              "byte_size": 3764,
+              "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df"
+            }
+          }
+        },
+        "sources": [
+          {
+            "chunk_id": "01a16c92-44cd-7c40-8722-38c703fdf012",
+            "content_hash": "4d07bab4966e9d8d37f77d3f4c0bc6aae8a9fab911987f936bdcd3283ed1f319",
+            "document_id": "01a16c92-44c4-795d-92ae-8a00e91240b4",
+            "document_revision": 1,
+            "document_hash": "20d3631d8123a91128942d653750de5d2526c6c1703ff2e669026da4a98b3f76"
+          },
+          {
+            "chunk_id": "01a16c92-44d3-7a13-8cb8-5e4547697a64",
+            "content_hash": "232295edf711fdab697ecfafec1645eef5ac359514b6e40f844fe76a3d89e47c",
+            "document_id": "01a16c92-44c4-795d-92ae-8a00e91240b4",
+            "document_revision": 1,
+            "document_hash": "20d3631d8123a91128942d653750de5d2526c6c1703ff2e669026da4a98b3f76"
+          },
+          {
+            "chunk_id": "01a16c92-44cd-7662-a056-721595936db3",
+            "content_hash": "8afe0521763efed2ad86ba331d9ec066e8df39aa9b84a92055ee15a6302cab40",
+            "document_id": "01a16c92-44c4-795d-92ae-8a00e91240b4",
+            "document_revision": 1,
+            "document_hash": "20d3631d8123a91128942d653750de5d2526c6c1703ff2e669026da4a98b3f76"
+          }
+        ],
+        "retrieved_chunk_ids": [
+          "01a16c92-44cd-7c40-8722-38c703fdf012",
+          "01a16c92-44d3-7a13-8cb8-5e4547697a64",
+          "01a16c92-44cd-7662-a056-721595936db3"
+        ],
+        "generation_executed": true,
+        "citation_validation": "source_membership_only",
+        "answer_correctness_verified": false,
+        "retrieval_mode": "lexical",
+        "retrieval_query": "\"operator\" OR \"calculates\" OR \"powers\" OR \"python\"",
+        "index_pins": {
+          "index_id": "01a16c92-44d7-7ed0-8fd0-411adda930ce",
+          "manifest_digest": "e22df59ae8a990793d71fafe081888ffe6c3a618760f5980b300bfbef9a0165c",
+          "configuration_digest": "1faa89c99740cf39d83a0bddf77646225f5f29c2d6ad5d70513485e194634993",
+          "embedding_space_id": "1"
+        },
+        "retrieval_config": {
+          "backend": "sqlite_compatibility",
+          "lexical": "lexical-token-overlap-v1",
+          "dense_search": "hnsw",
+          "operator": "cosine",
+          "hnsw": {
+            "m": 16,
+            "ef_construction": 64,
+            "ef_search": 100,
+            "iterative_scan": "strict_order",
+            "max_scan_tuples": 20000
+          },
+          "execution": {},
+          "underfill_policy": "exact_fallback",
+          "rrf_k": 60,
+          "candidate_count": 6,
+          "candidate_count_per_channel": true
+        },
+        "memory": {
+          "strategy": "verbatim-prefix-recent-v1",
+          "strategy_sha256": "656836e3ed95119f230147e6795d572370d2c8e8072b6234ccc50b4b9209fb42",
+          "original_tokens": 0,
+          "retained_tokens": 0,
+          "token_limit": 256,
+          "entries": [],
+          "omitted_positions": [],
+          "text": "",
+          "generated_summary": false,
+          "compacted": false
+        },
+        "content_delimiter_policy": "break-native-chatml-delimiters-v1",
+        "budget": {
+          "input_tokens": 553,
+          "output_reserve_tokens": 64,
+          "total_reserved_tokens": 617,
+          "runtime_limit_tokens": 2048,
+          "remaining_tokens": 1431,
+          "overflow_policy": "omit_optional_evidence",
+          "omitted_chunk_ids": [],
+          "supplied_chunk_ids": [
+            "01a16c92-44cd-7c40-8722-38c703fdf012",
+            "01a16c92-44d3-7a13-8cb8-5e4547697a64",
+            "01a16c92-44cd-7662-a056-721595936db3"
+          ],
+          "prompt_sha256": "96f507665d7f2cf2d945be5720372165cd97afb06ad9063888aa365a83a22d39",
+          "required_question_preserved": true,
+          "chat_template_sha256": "872be49dbb638044ad01b60388f48d469ff2980e5f0dccdc22ec907db54d0788"
+        },
+        "environment": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "tokenizers": "0.22.2",
+          "safetensors": "0.8.0"
+        },
+        "usage": {
+          "prompt_tokens": 553,
+          "completion_tokens": 30,
+          "total_tokens": 583
+        },
+        "finish_reason": "stop",
+        "cooperative_wall_deadline_seconds": 30,
+        "reason": "missing_citation",
+        "elapsed_ms": 963.757
+      },
+      "created_at": "2026-10-24T06:21:28.619804+00:00"
+    },
+    "generation": {
+      "run_id": "01a16c92-4c76-7925-a3ea-d2a1dcaec347",
+      "model_version_id": "01a16c85-e814-749b-821f-120a9e98296c",
+      "condition": "retrieved",
+      "query": "Which operator calculates powers in Python? Answer in one short sentence starting with a supporting source citation in square brackets.",
+      "status": "validation_refusal",
+      "answer": "",
+      "raw_output": "Question: Which operator calculates powers in Python? Answer in one short sentence starting with a supporting source citation in square brackets.",
+      "citations": [],
+      "receipt": {
+        "settings": {
+          "prompt_version": "rag-cited-answer-v2",
+          "max_tokens": 128,
+          "temperature": 0.0,
+          "seed": 42,
+          "prompt_format": "model",
+          "device": "cpu"
+        },
+        "model_pins": {
+          "model_version_id": "01a16c85-e814-749b-821f-120a9e98296c",
+          "tokenizer_id": "01a16c85-e810-749a-9185-280fb934fde4",
+          "snapshot_digest": "8e99ba3c7549a4508797a6ac278442f88af5d6053756279dcddfbac0128139eb",
+          "source": {
+            "license": "apache-2.0",
+            "license_evidence": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/blob/12fd25f77366fa6b3b4b768ec3050bf629380bac/README.md",
+            "rag_decoder_profile": "78a7555433ac9baa663f6b06b12b8139c7382289e9bb69e8491dbf53cc732365",
+            "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+            "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+          },
+          "files": {
+            "config.json": {
+              "artifact_id": "01a16c85-d80f-7f70-a7ab-3b4e4f6fc9ba",
+              "byte_size": 861,
+              "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a"
+            },
+            "generation_config.json": {
+              "artifact_id": "01a16c85-d812-7de9-828f-e8c0dd5335cc",
+              "byte_size": 132,
+              "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013"
+            },
+            "model.safetensors": {
+              "artifact_id": "01a16c85-d871-7894-8290-9299bbb9ab99",
+              "byte_size": 269060552,
+              "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+            },
+            "special_tokens_map.json": {
+              "artifact_id": "01a16c85-d8e6-7613-8440-0da3b3eaa0b6",
+              "byte_size": 655,
+              "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52"
+            },
+            "tokenizer.json": {
+              "artifact_id": "01a16c85-d8e9-75c8-ad3d-388f30f96255",
+              "byte_size": 2104556,
+              "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+            },
+            "tokenizer_config.json": {
+              "artifact_id": "01a16c85-d8ec-72d2-8bd1-04457dd9ac43",
+              "byte_size": 3764,
+              "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df"
+            }
+          }
+        },
+        "sources": [
+          {
+            "chunk_id": "01a16c92-44cd-7c40-8722-38c703fdf012",
+            "content_hash": "4d07bab4966e9d8d37f77d3f4c0bc6aae8a9fab911987f936bdcd3283ed1f319",
+            "document_id": "01a16c92-44c4-795d-92ae-8a00e91240b4",
+            "document_revision": 1,
+            "document_hash": "20d3631d8123a91128942d653750de5d2526c6c1703ff2e669026da4a98b3f76"
+          },
+          {
+            "chunk_id": "01a16c92-44d3-7a13-8cb8-5e4547697a64",
+            "content_hash": "232295edf711fdab697ecfafec1645eef5ac359514b6e40f844fe76a3d89e47c",
+            "document_id": "01a16c92-44c4-795d-92ae-8a00e91240b4",
+            "document_revision": 1,
+            "document_hash": "20d3631d8123a91128942d653750de5d2526c6c1703ff2e669026da4a98b3f76"
+          },
+          {
+            "chunk_id": "01a16c92-44cd-7776-ace6-69663e27eb5d",
+            "content_hash": "7a93aaf4a9ace979a83f8424f1b754b76631aa59cedb7e416c44b82e5cc12bd7",
+            "document_id": "01a16c92-44c4-795d-92ae-8a00e91240b4",
+            "document_revision": 1,
+            "document_hash": "20d3631d8123a91128942d653750de5d2526c6c1703ff2e669026da4a98b3f76"
+          }
+        ],
+        "retrieved_chunk_ids": [
+          "01a16c92-44cd-7c40-8722-38c703fdf012",
+          "01a16c92-44d3-7a13-8cb8-5e4547697a64",
+          "01a16c92-44cd-7776-ace6-69663e27eb5d"
+        ],
+        "generation_executed": true,
+        "citation_validation": "source_membership_only",
+        "answer_correctness_verified": false,
+        "retrieval_mode": "lexical",
+        "retrieval_query": "\"operator\" OR \"calculates\" OR \"powers\" OR \"python\" OR \"answer\" OR \"one\" OR \"short\" OR \"sentence\" OR \"starting\" OR \"with\" OR \"supporting\" OR \"source\" OR \"citation\" OR \"square\" OR \"brackets\"",
+        "index_pins": {
+          "index_id": "01a16c92-44d7-7ed0-8fd0-411adda930ce",
+          "manifest_digest": "e22df59ae8a990793d71fafe081888ffe6c3a618760f5980b300bfbef9a0165c",
+          "configuration_digest": "1faa89c99740cf39d83a0bddf77646225f5f29c2d6ad5d70513485e194634993",
+          "embedding_space_id": "1"
+        },
+        "retrieval_config": {
+          "backend": "sqlite_compatibility",
+          "lexical": "lexical-token-overlap-v1",
+          "dense_search": "hnsw",
+          "operator": "cosine",
+          "hnsw": {
+            "m": 16,
+            "ef_construction": 64,
+            "ef_search": 100,
+            "iterative_scan": "strict_order",
+            "max_scan_tuples": 20000
+          },
+          "execution": {},
+          "underfill_policy": "exact_fallback",
+          "rrf_k": 60,
+          "candidate_count": 6,
+          "candidate_count_per_channel": true
+        },
+        "memory": {
+          "strategy": "verbatim-prefix-recent-v1",
+          "strategy_sha256": "656836e3ed95119f230147e6795d572370d2c8e8072b6234ccc50b4b9209fb42",
+          "original_tokens": 20,
+          "retained_tokens": 20,
+          "token_limit": 256,
+          "entries": [
+            {
+              "position": 0,
+              "role": "user",
+              "retained_characters": 43,
+              "original_characters": 43,
+              "source_sha256": "d4038304a6b79c2a6f6225b11b864c5511c62476c5f4fb80ffd6618e7f4b20d7",
+              "verbatim_prefix": true
+            }
+          ],
+          "omitted_positions": [],
+          "text": "[{\"position\":0,\"role\":\"user\",\"content\":\"Which operator calculates powers in Python?\"}]",
+          "generated_summary": false,
+          "compacted": false
+        },
+        "content_delimiter_policy": "break-native-chatml-delimiters-v1",
+        "budget": {
+          "input_tokens": 623,
+          "output_reserve_tokens": 128,
+          "total_reserved_tokens": 751,
+          "runtime_limit_tokens": 2048,
+          "remaining_tokens": 1297,
+          "overflow_policy": "omit_optional_evidence",
+          "omitted_chunk_ids": [],
+          "supplied_chunk_ids": [
+            "01a16c92-44cd-7c40-8722-38c703fdf012",
+            "01a16c92-44d3-7a13-8cb8-5e4547697a64",
+            "01a16c92-44cd-7776-ace6-69663e27eb5d"
+          ],
+          "prompt_sha256": "c177f009c2230a4ed4a47bd97f19d01b4621de92d554188b1b8999013b4fde75",
+          "required_question_preserved": true,
+          "chat_template_sha256": "872be49dbb638044ad01b60388f48d469ff2980e5f0dccdc22ec907db54d0788"
+        },
+        "environment": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "tokenizers": "0.22.2",
+          "safetensors": "0.8.0"
+        },
+        "usage": {
+          "prompt_tokens": 623,
+          "completion_tokens": 25,
+          "total_tokens": 648
+        },
+        "finish_reason": "stop",
+        "cooperative_wall_deadline_seconds": 30,
+        "reason": "missing_citation",
+        "elapsed_ms": 941.343
+      },
+      "created_at": "2026-10-24T06:21:29.590240+00:00"
+    }
+  },
+  "source_removal_hides_previous_answers_and_memory": true,
+  "reuse_refused_until_memory_clear": true,
+  "removed_pdf_absent_from_new_citations": true,
+  "missing_ocr_request_refused": true,
+  "stale_revision_refused": true,
+  "wall_seconds": 10.130410917001427,
+  "evaluation": "Authored CC0 software cases: literal reference presence and citation membership measured separately; no correctness score inferred from membership.",
+  "production_qualified": false
+}
