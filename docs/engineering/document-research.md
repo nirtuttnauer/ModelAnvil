@@ -1,6 +1,6 @@
 # Document chat, reviewed-page research and conversation memory
 
-Chat → Documents & research provides owned-project sessions with a provisioned local CPU answer model, attached sources, actual lexical retrieval, validated citations and inspectable conversation memory. It reuses the actual RAG decoder/generation and current source authorization from TASK-11, and the measured-token, explicit-overflow approach from TASK-12. It does not replace those evaluations with generated scores.
+Chat → Documents & research provides owned-project sessions with a provisioned local CPU answer model, attached sources, actual lexical retrieval, validated citations and inspectable conversation memory. It reuses the actual RAG decoder/generation and current source authorization from TASK-11, and the measured-token, explicit-overflow approach from TASK-12. It does not replace those evaluations with generated scores. Existing no-history benchmark calls retain their pinned `rag-cited-answer-v1` protocol; research sessions explicitly use `rag-cited-answer-v2`.
 
 ## Provisioning
 

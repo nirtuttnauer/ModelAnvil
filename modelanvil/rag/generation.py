@@ -12,7 +12,8 @@ from modelanvil.rag.workflow import retrieve
 from modelanvil.runners import inference
 from modelanvil.runners.training.runtime import digest
 
-PROMPT_VERSION='rag-cited-answer-v2'
+PROMPT_VERSION='rag-cited-answer-v1'
+RESEARCH_PROMPT_VERSION='rag-cited-answer-v2'
 SYSTEM='Answer the question. If evidence is supplied, use only its facts and cite supporting source numbers in square brackets, for example [1]. If the evidence cannot answer the question, say "I do not know". If no evidence is supplied, answer from your knowledge without citations, or say "I do not know". Do not invent sources.'
 
 
@@ -116,7 +117,8 @@ def generate(index,model,project,*,query,condition='retrieved',retrieval_mode='l
         raise ValueError('RAG generation requires a verified local Safetensors text snapshot.')
     model_pins={'model_version_id':str(model.model_version_id),'tokenizer_id':str(model.tokenizer.tokenizer_id),
         'snapshot_digest':digest(plan),'source':plan.get('source'),'files':plan['files']}
-    settings={'prompt_version':PROMPT_VERSION,'max_tokens':max_tokens,'temperature':0.,'seed':42,'prompt_format':'model','device':'cpu'}
+    settings={'prompt_version':RESEARCH_PROMPT_VERSION if history is not None else PROMPT_VERSION,
+        'max_tokens':max_tokens,'temperature':0.,'seed':42,'prompt_format':'model','device':'cpu'}
     receipt={'settings':settings,'model_pins':model_pins,'sources':pins,'retrieved_chunk_ids':[str(c.chunk_id) for c in rows],
         'generation_executed':False,'citation_validation':'source_membership_only','answer_correctness_verified':False,
         'retrieval_mode':retrieval_mode if condition=='retrieved' else condition,
