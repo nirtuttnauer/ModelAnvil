@@ -1,0 +1,9 @@
+{
+  "actual_postgresql_model_retrieval_compaction_revocation": "passed",
+  "database_image": "sha256:7b822b0aac60967beb1ea5e576b8602c94c300a157d187f385ae3e0da199b90a",
+  "cpu_limit": 1,
+  "memory_bytes": 536870912,
+  "decoder_source_revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+  "wall_seconds": 11.101280000002589,
+  "owned_container_and_volumes_removed": true
+}

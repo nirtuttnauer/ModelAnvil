@@ -24,7 +24,7 @@ from modelanvil.api.views import identity as identity_views
 from modelanvil.api.views import jobs_artifacts as resource_views
 from modelanvil.api.views import models_evals
 from modelanvil.api.views import model_workspace
-from modelanvil.api.views import specialists, audio, tools
+from modelanvil.api.views import specialists, audio, tools, research
 from modelanvil.api.views import recipes as recipe_views
 from modelanvil.api.views import openapi as openapi_views
 from modelanvil.api.views import rag_views, embeddings
@@ -37,6 +37,7 @@ from modelanvil.api.views import workers as worker_views
 from modelanvil.data.bank import views as bank_views
 
 router = DefaultRouter()
+router.register("research-sessions", research.ResearchViewSet, basename="research-session")
 router.register("application-feedback", application_feedback.ApplicationFeedbackViewSet, basename="application-feedback")
 router.register("compute-plugins", compute_views.PluginViewSet, basename="compute-plugin")
 router.register("compute-allocations", compute_views.AllocationViewSet, basename="compute-allocation")

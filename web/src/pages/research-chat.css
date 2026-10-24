@@ -1,0 +1,2 @@
+.research-chat label { display: grid; gap: var(--space-8); min-width: 0; }
+.research-chat li { margin-block: var(--space-16); }

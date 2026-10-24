@@ -1,0 +1,42 @@
+{
+  "README.md": {
+    "sha256": "01618c53bbc9017dcfa856b809408ba1a70564a5530e4aaf6234ad804784ae75",
+    "bytes": 3381
+  },
+  "checks.json": {
+    "sha256": "4b575bbcb74206f45b4429c7686bc107c5fe5b2140361036e76ab04730122374",
+    "bytes": 618
+  },
+  "fixture-closure.json": {
+    "sha256": "fe5b550ed32de1ca519c054db54dfdec4fff91113c70352986ba1e2e6a0d6f01",
+    "bytes": 208
+  },
+  "http-proof.json": {
+    "sha256": "e1ce33847f736389ba14053d7b70e725225add8910464f8067267f9d11d5420f",
+    "bytes": 46130
+  },
+  "measurements.json": {
+    "sha256": "f94811bc01090ba935b918040500d17ab661813ebf584df1cf2cc7c1d5eca721",
+    "bytes": 2883
+  },
+  "postgresql-proof.json": {
+    "sha256": "7dc94c628eb2453d879ee688d1ab919adc2523306266da6f80a356333606163b",
+    "bytes": 373
+  },
+  "source-sha256.json": {
+    "sha256": "6bf477f0ce8d0033b055a796c0ea09a2a4897673548760cb845e55647b37a30e",
+    "bytes": 1344
+  },
+  "ui-1440.png": {
+    "sha256": "39f5248140afbdba54dd7177b6612f273f2a5e8811e53a359cb8477da9889b99",
+    "bytes": 264053
+  },
+  "ui-390.png": {
+    "sha256": "ad35321816efedcebdd0f3ceca586d5f9f82e4aff144e07b8ad95bf77cd347d9",
+    "bytes": 209442
+  },
+  "ui-proof.json": {
+    "sha256": "4bbab1b650bdd3b650efc60b19f8ec266478c907b6cb064efd499e9fe196488e",
+    "bytes": 1629
+  }
+}

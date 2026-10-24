@@ -1,0 +1,15 @@
+{
+  "modelanvil/rag/models.py": "da4470c373e12388e6673b3e93ee552dbc0627ce7d594d71412b6cee2fc9e095",
+  "modelanvil/rag/generation.py": "54c3cddc2d7062701e6375a5c69d5b7458f2d6901b82af6a1a3354fb1168a662",
+  "modelanvil/rag/retrieval.py": "413979ae886096a790c29d667aa22f8eea91b35fc6e7038fc7089dd211818793",
+  "modelanvil/rag/attachments.py": "95d7a56ca38fc471579d900e17182a7fc3ceaa5e6275008438e01d7495a4424c",
+  "modelanvil/rag/conversation.py": "656836e3ed95119f230147e6795d572370d2c8e8072b6234ccc50b4b9209fb42",
+  "modelanvil/rag/research.py": "208e6b027a751d4bf7f5d24fceca2dcdb1a4ffac92b7db873f9ef32ce78e1656",
+  "modelanvil/api/views/research.py": "29da76e95f522c3724846b711d7af9aecd28f928eaedcf3839123c790cd4337c",
+  "modelanvil/api/urls.py": "e910741421b9424ee7261b7d875c6910409b7b88aade656bc62f09eadff52452",
+  "modelanvil/rag/migrations/0011_researchsession.py": "806d473c26c22729c13cc42e03ad3db97c8b8f6c7fc479800da4bc217142da43",
+  "scripts/research_fetch.py": "7259bc76f4e0b0c0bd26d2e9730d6079765a879d548afa13073a4e334b90cde4",
+  "web/src/pages/ResearchChat.tsx": "aa1a6e40c5e18c4e14781cbf1164228818de88df6d4b711f7b95a29931cb9c5a",
+  "web/src/pages/research-chat.css": "07fb7880e20f6deb950cfb8fe24ac27bab9d03cb731cd195a33dbdbf2f89e28e",
+  "web/src/pages/ChatPage.tsx": "341d972f0d6478b48dafff00ed16e0eda2a05527683256286af853ff0eae3aa1"
+}
