@@ -139,7 +139,8 @@ def model_capabilities(version):
         if format == 'safetensors' and 'cpu' in devices:
             result['evaluate'] = {'eligible': True, 'reason': 'Verified bounded CPU snapshot; evaluation rechecks exact inputs and context.'}
         if module in (hf_runtime, mlx_runtime, cpu_hf_runtime, vlm_runtime, cpu_vlm_runtime):
-            recipes = module.CONTRACT['recipes']
+            recipes = [recipe for recipe in module.CONTRACT['recipes']
+                       if recipe != 'continued_pretraining' or plan.get('source') == hf_runtime.SOURCE]
             result['train'] = {'eligible': True, 'recipes': recipes, 'reason': 'Pinned profile; training preflight checks exact runtime, tokenizer, device and input bytes.'}
     except (ValueError, TypeError, KeyError, OSError) as exc:
         result['chat']['reason'] = str(exc) if isinstance(exc, ValueError) else 'Snapshot inputs are unavailable or incompatible.'

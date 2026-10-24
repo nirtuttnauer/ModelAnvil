@@ -22,6 +22,10 @@
     "result": "passed",
     "scope": "Full suite before final three additional guards; final changed engine/corpus paths also pass the focused suite below. Exact final-head full CI is a separate merge gate."
   },
+  "instruction_base_eligibility": {
+    "test": "Actual model-version API excludes continued pretraining for both instruction-model base sizes.",
+    "result": "passed"
+  },
   "final_corpus_and_engine_guards": {
     "tests": 40,
     "seconds": 2.287,

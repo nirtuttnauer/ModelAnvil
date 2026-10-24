@@ -1,4 +1,5 @@
 {
+  "modelanvil/runners/capabilities.py": "1f00ee7d4164dc47e4cbdc7f373455483eef590cd788e7cb7bf3d9b2fc58bf62",
   "modelanvil/data/continued_corpus.py": "a267cdefa1d5265e8807622209931c36bafa98bd43875ee09f4577f0e2e63430",
   "modelanvil/api/views/continued_corpus.py": "84d2a8b0e735c3ad8346a678d4d19952f2dc3dea7845ce8d8071d22dea043acc",
   "modelanvil/api/urls.py": "ddb2722b9d45dccca5070da751a9836eff11b4fba52ba0ebfffa0728faaa045c",
