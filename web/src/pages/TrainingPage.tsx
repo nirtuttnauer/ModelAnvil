@@ -110,7 +110,7 @@ interface Run {
   checkpoints: Checkpoint[];
   tokenizer_version: number;
   base_model_version: number | null;
-  metrics_log?: Array<{ step: number; loss: number; measured_at?: string; gradient_norm?: number; tokens_per_second?: number;
+  metrics_log?: Array<{ step: number; loss: number; measured_at?: string; gradient_norm?: number; tokens_per_second?: number; prediction_frames_per_second?: number; validation_prediction_frames?: number;
     engine_wall_seconds?: number; updates_since_checkpoint?: number;
     gpu_allocated_bytes?: number; peak_allocated_bytes?: number | null; gpu_utilization_percent?: number | null; trainable_parameters?: number; total_parameters?: number; validation_loss?: number; validation_prediction_tokens?: number }>;
   output_model_version?: number | null;
@@ -223,16 +223,19 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
   const plan = guidedPlan(revision, recipe === 'lora_adapter');
   const selectedModel = models.find(model => String(model.id) === base);
   const trainingCapability = selectedModel?.capabilities?.train;
+  const audioProfile = selectedModel?.architecture_ref === 'modelanvil.speecht5-cpu-output-head.v1';
   const visionProfile = selectedModel?.architecture_ref?.startsWith('modelanvil.smolvlm-') || false;
   useEffect(() => {
+    if (audioProfile) { setRecipe('tts_output_head'); setPreset('custom'); setSteps('3'); setSeed('42'); }
     if (visionProfile) { setRecipe('lora_adapter'); setPreset('custom'); setSteps('3'); setSeed('42'); }
-  }, [base, visionProfile]);
+  }, [base, visionProfile, audioProfile]);
   const modelLabel = modelName || selectedModel?.model_name || '';
   const datasetLabel = registeredRevision?.dataset_name || (revision?.dataset_name ?? '');
-  const canReview = !!tokenizer && (recipe === 'scratch_pretraining' || !!base) && Number.isInteger(steps) && steps > 0 && steps <= 3000 &&
+  const canReview = !!tokenizer && (recipe === 'scratch_pretraining' || !!base) && Number.isInteger(steps) && steps > 0 && steps <= (audioProfile ? 10 : visionProfile ? 20 : 3000) &&
     (mode === 'simulation' || !!selectedDataset && !!selectedPool && !!selectedPolicy && !!runner);
   const focusRun = latestTrainingRun(runs, currentRunId);
   const visionRun = focusRun?.runtime?.pins?.runtime?.startsWith('modelanvil.smolvlm-') || false;
+  const audioRun = focusRun?.runtime?.pins?.runtime === 'modelanvil.speecht5-cpu-output-head.v1';
   const visualEvaluation = focusRun?.runtime?.independent_evaluation;
   const detailRun = tab === 'current-run' ? focusRun : selected;
   function prepareModel(inputs: GuidedInputs, name: string) {
@@ -671,7 +674,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
               Recipe type
               <select value={recipe} onChange={(e) => setRecipe(e.target.value)}>
                 <option value="full_sft">Full parameter SFT</option>
-                {mode === 'worker' && <option value="lora_adapter">LoRA · pinned CPU/GPU text or vision profile</option>}
+                {mode === 'worker' && <option value="lora_adapter">LoRA · pinned CPU/GPU text or vision profile</option>}{mode === 'worker' && <option value="tts_output_head">Speech output head · pinned CPU audio profile</option>}
                 {mode === 'worker' && <option value="qlora_adapter">Apple GPU QLoRA · four-bit SmolLM2 profile</option>}
                 {mode === 'worker' && <option value="continued_pretraining">GPU continued pretraining · pinned text corpus</option>}
                 {mode === 'simulation' && <>
@@ -714,6 +717,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
                 unavailable: mode === 'worker' && (!m.capabilities?.train.eligible || !m.capabilities.train.recipes.includes(recipe)) ? m.capabilities?.train.reason || 'This model does not support the selected training recipe.' : undefined }))}
               />}
 
+            {audioProfile && <p className="muted full-width">Speech output-head training uses paired PCM16 WAV/FLAC recordings and transcripts, protected speaker/source splits and 1–10 CPU updates. Import the exact processor/vocoder profile with setup_audio_training. Independent intelligibility checks and human quality remain separate gates.</p>}
             {visionProfile && <p className="muted full-width">Vision LoRA uses one PNG/JPEG and a question/answer per sample, protected image/source splits, the pinned processor and 1–20 updates. Register paired inputs on the worker host with setup_vlm_training. Independent visual scores remain separate from production qualification.</p>}
             <p className="muted full-width"><a href="#models">Initialize a CPU base in Models</a> or select a pinned pretrained CPU or GPU base registered on your worker host. Choose its matching tokenizer.</p>
             {base && mode === 'worker' && <p className="muted full-width">{models.find(m => String(m.id) === base)?.capabilities?.train.reason || 'Inspect model compatibility in Models before launch.'}</p>}
@@ -788,7 +792,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
                       <option value="recommended" disabled={!revision}>Recommended{revision ? ` · ${plan.epochs} passes` : ' · prepare a dataset first'}</option>
                       <option value="quick">Quick setup check · 3 steps</option><option value="custom">Custom step count</option>
                     </select></label>
-                    {preset === 'custom' && <label>Total steps<Field required type="number" min="1" max={visionProfile ? 20 : 3000} step="1" value={manualSteps} onChange={event => setSteps(event.target.value)} /></label>}
+                    {preset === 'custom' && <label>Total steps<Field required type="number" min="1" max={audioProfile ? 10 : visionProfile ? 20 : 3000} step="1" value={manualSteps} onChange={event => setSteps(event.target.value)} /></label>}
                     <p>{preset === 'recommended' ? revision ? `${plan.epochs} complete passes through ${plan.trainingExamples} training examples (${steps} updates).` : 'Add your dataset to calculate the recommended training plan automatically.' : `${steps} training updates.`}</p>
                     {preset === 'quick' && <p>This short run checks your setup. Use more training steps to assess model quality.</p>}
                     {revision && <p>{revision.metadata.split_counts.validation ?? 0} validation and {revision.metadata.split_counts.test ?? 0} test examples remain held out.</p>}
@@ -822,16 +826,16 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
           {focusRun && <>
         {(focusRun.status === 'running' || focusRun.status === 'pending') && <Button type="button" style={{ borderColor: 'var(--error)', color: 'var(--error)' }} disabled={busy} onClick={() => cancelRun(focusRun.run_id)}><XCircle size={14} /> Cancel run</Button>}
         {tab === 'current-run' && <TrainingRunProgress key={`progress-${focusRun.run_id}`} run={focusRun} refreshedAt={runsRefreshedAt} refreshError={progressError} onRefresh={() => void refreshProgress()} />}
-        {focusRun.status === 'completed' && !visionRun && <GuidedDecision key={`${token}:${focusRun.run_id}`} token={token} runId={focusRun.run_id} />}
-        {visionRun && visualEvaluation && <Notice className="notice" role="status"><p>Independent visual check: {visualEvaluation.status === 'unavailable' ? 'unavailable' : visualEvaluation.passed ? 'passed' : 'failed'}. This candidate remains a draft; customer quality and production release require separate qualification.</p>{visualEvaluation.reason && <p>{visualEvaluation.reason}</p>}<details><summary>Protected visual scores and exact input hashes</summary><DataInspector value={visualEvaluation.report || visualEvaluation} /></details></Notice>}
-        {focusRun.status === 'completed' && focusRun.output_model_version_uuid && <Notice className="notice"><p>Chat and download let you inspect this candidate. They are not evidence that it improved, and a downloaded file is not deployed.</p><div className="actions"><a href={`#chat?model_version=${encodeURIComponent(focusRun.output_model_version_uuid)}`}>Inspect in chat</a>{focusRun.base_model_version && !visionRun && <a href={`#chat?model_version=${encodeURIComponent(focusRun.output_model_version_uuid)}&compare_base=1`}>Inspect both models in chat</a>}</div></Notice>}
+        {focusRun.status === 'completed' && !visionRun && !audioRun && <GuidedDecision key={`${token}:${focusRun.run_id}`} token={token} runId={focusRun.run_id} />}
+        {(visionRun || audioRun) && visualEvaluation && <Notice className="notice" role="status"><p>Independent {audioRun ? 'audio' : 'visual'} check: {visualEvaluation.status === 'unavailable' ? 'unavailable' : visualEvaluation.passed ? 'passed' : 'failed'}. This candidate remains a draft; customer quality and production release require separate qualification.</p>{visualEvaluation.reason && <p>{visualEvaluation.reason}</p>}<details><summary>Protected scores and exact input hashes</summary><DataInspector value={visualEvaluation.report || visualEvaluation} /></details></Notice>}
+        {focusRun.status === 'completed' && focusRun.output_model_version_uuid && <Notice className="notice"><p>{audioRun ? 'Generate speech and download this draft to inspect it. Human quality and production release require separate qualification.' : 'Chat and download let you inspect this candidate. They are not evidence that it improved, and a downloaded file is not deployed.'}</p><div className="actions">{audioRun ? <a href="#audio">Inspect in Audio</a> : <a href={`#chat?model_version=${encodeURIComponent(focusRun.output_model_version_uuid)}`}>Inspect in chat</a>}{focusRun.base_model_version && !visionRun && !audioRun && <a href={`#chat?model_version=${encodeURIComponent(focusRun.output_model_version_uuid)}&compare_base=1`}>Inspect both models in chat</a>}</div></Notice>}
         {tab === 'current-run' && exportPanel}
         <div className="ml-section-heading"><div><span className="ml-eyebrow">EXPERIMENT MONITOR</span><h3>Loss & checkpoint activity</h3><p>Recorded training loss at committed steps, alongside saved checkpoint artifacts.</p></div></div>
         <div className="visualization-grid">
           <ChartPanel title="Training & validation loss" description={`${runLabel(focusRun.run_id)} · ${focusRun.execution_evidence?.level || 'unknown evidence'} · exact recorded values`}>{lossSeries.length ? <LineChart key={focusRun.run_id} series={lossSeries} xLabel="Committed step" yLabel="Loss" /> : <ChartEmpty message={focusRun.status === 'pending' ? 'This run is queued. Loss will appear after the first measured checkpoint.' : 'No loss measurements have been recorded for this run.'} />}</ChartPanel>
           <ChartPanel title="Checkpoint timeline" description="Saved artifacts from the selected run.">{focusRun ? <><div className="ml-run-progress"><span>Committed steps</span><strong>{focusRun.current_step} / {focusRun.total_steps}</strong><progress value={focusRun.current_step} max={focusRun.total_steps || 1} aria-label="Selected run committed steps" /></div>{focusRun.checkpoints.length ? <EventTimeline events={focusRun.checkpoints.slice(-5).map(c => ({ label: `Checkpoint · step ${c.step}`, detail: c.is_valid ? 'Verified checkpoint artifact' : 'Checkpoint validation failed', status: c.is_valid ? 'completed' : 'failed' }))} /> : <ChartEmpty message="No checkpoint artifacts have been recorded for this run." />}</> : <ChartEmpty message="Create a training run to inspect committed steps and checkpoints." />}</ChartPanel>
         </div>
-        {focusRun?.metrics_log?.some(m => m.measured_at) && <div className="table-scroll" tabIndex={0}><RecordTable className="resource-table"><caption>Measured optimizer steps; throughput includes the post-update loss pass. Missing metrics are not estimated.</caption><thead><tr><th>Step / timestamp</th><th>Protected validation loss</th><th>Gradient norm</th><th>Prediction tokens/sec</th><th>Allocated / peak MiB</th><th>GPU utilization</th><th>Trainable / total parameters</th></tr></thead><tbody>{focusRun.metrics_log.slice(-10).map(m => <tr key={m.step}><td>{m.step}<br />{m.measured_at || 'Not reported'}</td><td>{m.validation_loss?.toFixed(6) ?? 'Not reported'}<br />{m.validation_prediction_tokens == null ? '' : `${m.validation_prediction_tokens} prediction tokens`}</td><td>{m.gradient_norm?.toFixed(4) ?? 'Not reported'}</td><td>{m.tokens_per_second?.toFixed(2) ?? 'Not reported'}</td><td>{m.gpu_allocated_bytes == null ? 'Not reported' : (m.gpu_allocated_bytes / 1024**2).toFixed(1)} / {m.peak_allocated_bytes == null ? 'Not reported' : (m.peak_allocated_bytes / 1024**2).toFixed(1)}</td><td>{m.gpu_utilization_percent == null ? 'Not reported' : `${m.gpu_utilization_percent}%`}</td><td>{m.trainable_parameters?.toLocaleString() ?? 'Not reported'} / {m.total_parameters?.toLocaleString() ?? 'Not reported'}</td></tr>)}</tbody></RecordTable></div>}
+        {focusRun?.metrics_log?.some(m => m.measured_at) && <div className="table-scroll" tabIndex={0}><RecordTable className="resource-table"><caption>Measured optimizer steps; throughput includes the post-update loss pass. Missing metrics are not estimated.</caption><thead><tr><th>Step / timestamp</th><th>Protected validation loss</th><th>Gradient norm</th><th>{audioRun ? 'Target mel frames/sec' : 'Prediction tokens/sec'}</th><th>Allocated / peak MiB</th><th>GPU utilization</th><th>Trainable / total parameters</th></tr></thead><tbody>{focusRun.metrics_log.slice(-10).map(m => <tr key={m.step}><td>{m.step}<br />{m.measured_at || 'Not reported'}</td><td>{m.validation_loss?.toFixed(6) ?? 'Not reported'}<br />{m.validation_prediction_tokens == null ? '' : `${m.validation_prediction_tokens} prediction tokens`}</td><td>{m.gradient_norm?.toFixed(4) ?? 'Not reported'}</td><td>{(audioRun ? m.prediction_frames_per_second : m.tokens_per_second)?.toFixed(2) ?? 'Not reported'}</td><td>{m.gpu_allocated_bytes == null ? 'Not reported' : (m.gpu_allocated_bytes / 1024**2).toFixed(1)} / {m.peak_allocated_bytes == null ? 'Not reported' : (m.peak_allocated_bytes / 1024**2).toFixed(1)}</td><td>{m.gpu_utilization_percent == null ? 'Not reported' : `${m.gpu_utilization_percent}%`}</td><td>{m.trainable_parameters?.toLocaleString() ?? 'Not reported'} / {m.total_parameters?.toLocaleString() ?? 'Not reported'}</td></tr>)}</tbody></RecordTable></div>}
           </>}
         </div>
         <div id="training-panel-history" role="tabpanel" aria-labelledby="training-tab-history" hidden={tab !== 'history'}>

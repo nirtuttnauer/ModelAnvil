@@ -1,0 +1,21 @@
+{
+  "length_limited": {
+    "job_status": "failed",
+    "candidate_audio_published": false,
+    "charge": {
+      "samples": 15872,
+      "basis": "verified_generated_frames",
+      "cpu_seconds": 2.0088850000000003,
+      "wall_seconds": 1.9823051249986747
+    }
+  },
+  "cancelled_child": {
+    "job_status": "cancelled",
+    "audio_published": false,
+    "charge": {
+      "samples": 96000,
+      "basis": "unknown_inflight_upper_bound"
+    },
+    "physical_cpu_released_after_kill_and_wait": true
+  }
+}

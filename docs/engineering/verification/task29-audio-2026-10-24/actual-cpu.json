@@ -1,0 +1,900 @@
+{
+  "worker": {
+    "claimed": true,
+    "committed": true,
+    "status": "succeeded"
+  },
+  "status": "completed",
+  "cursor": 2,
+  "metrics": [
+    {
+      "loss": 2.5144691467285156,
+      "gradient_norm": 21.587604522705078,
+      "changed_parameters": 124578,
+      "trainable_parameters": 124578,
+      "step": 1,
+      "measured_at": "2026-10-24T03:17:11.168580+00:00",
+      "sample_id": "86b0bd25-25f1-496f-970c-d0815335b6ba",
+      "audio_sha256": "560d719e10b10f9da0c1b0a7485506fc9e4042c12b2667a7c5b50240c795a7ea",
+      "normalized_audio_sha256": "e35704eaca16d868f25d010bc172c8ea42495646657f341226645599dc0e4ad8",
+      "loss_kind": "speecht5_composite_spectrogram_stop_attention_v1",
+      "training_pairs": 215,
+      "prediction_mel_frames": 215,
+      "padded_mel_frames": 216,
+      "cpu_seconds": 0.06953300000000073,
+      "engine_wall_seconds": 0.06969512499927077,
+      "total_parameters": 144431684,
+      "validation_loss_before_training": 2.8402786254882812,
+      "validation_loss": 2.8355352878570557,
+      "validation_samples": 1,
+      "validation_prediction_frames": 175,
+      "gpu_backend": "cpu",
+      "gpu_device": "cpu",
+      "device_residency_checked": true,
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "production_qualified": false,
+      "prediction_frames_per_second": 3084.8642570373404
+    },
+    {
+      "loss": 2.44572114944458,
+      "gradient_norm": 21.26004981994629,
+      "changed_parameters": 124578,
+      "trainable_parameters": 124578,
+      "step": 2,
+      "measured_at": "2026-10-24T03:17:12.073439+00:00",
+      "sample_id": "86b0bd25-25f1-496f-970c-d0815335b6ba",
+      "audio_sha256": "560d719e10b10f9da0c1b0a7485506fc9e4042c12b2667a7c5b50240c795a7ea",
+      "normalized_audio_sha256": "e35704eaca16d868f25d010bc172c8ea42495646657f341226645599dc0e4ad8",
+      "loss_kind": "speecht5_composite_spectrogram_stop_attention_v1",
+      "training_pairs": 215,
+      "prediction_mel_frames": 215,
+      "padded_mel_frames": 216,
+      "cpu_seconds": 0.06842600000000054,
+      "engine_wall_seconds": 0.06845429100212641,
+      "total_parameters": 144431684,
+      "validation_loss_before_training": 2.8402786254882812,
+      "validation_loss": 2.8311264514923096,
+      "validation_samples": 1,
+      "validation_prediction_frames": 175,
+      "gpu_backend": "cpu",
+      "gpu_device": "cpu",
+      "device_residency_checked": true,
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "production_qualified": false,
+      "prediction_frames_per_second": 3140.7819269258284
+    }
+  ],
+  "hardware_config": {
+    "execution_mode": "worker",
+    "purpose": "experiment",
+    "setup_check": false,
+    "pins": {
+      "runtime": "modelanvil.speecht5-cpu-output-head.v1",
+      "contract_digest": "d222e1f6dfeb9a332253b9d6b24a3e0a833138aa78e5398f0ba405c9fa5c6c20",
+      "build_digest": "278a58962e6c72721309e1f4d3421d9fc8a0c3c3546a24760388f713512a864f",
+      "dataset_id": "01a16be9-85bb-73e8-bf15-90225695df71",
+      "dataset_digest": "779f9eb6617bc8b4b7aff59b4d8572b29f935610296ee278e467740a856ff7a4",
+      "base_id": "01a16be9-85b3-74db-9a9f-729487b9034c",
+      "base_artifact_id": "01a16be9-7daf-777a-85d2-11301a93ce32",
+      "base_digest": "b44bbd5b772cfa9ce6a35611d0b813b67ab6f86b6a309459fcd356942ce70d38",
+      "base_input_identity": "8c43b6bbf894a693a6279f34570db43049722b2603a80ad82533c16b7888959c",
+      "tokenizer_id": "01a16be9-85b3-74d4-90f8-30bbdc5cf1b9",
+      "tokenizer_digest": "08b23774f97d46c1022bbd506df4ff29d6688c08ba648e00554b38c2e4b8b5b3",
+      "processor_id": "01a16be9-85b2-739e-88e0-5539ae2a1e6c",
+      "processor_digest": "28983c1d174cf1ad66da50f82cc863926951a981bd7139b15720d7a159d32a61",
+      "runner_id": "01a16be9-85bc-75cc-a756-263bcdc97530",
+      "runner_digest": "90ad25b406b72c681e1be2038dea541ae9b1b4db08c72c4e1f736cc767790a5a",
+      "pool_id": 1,
+      "worker_id": 1,
+      "steps": 2,
+      "config": {
+        "runtime": "modelanvil.speecht5-cpu-output-head.v1",
+        "source": {
+          "tts": {
+            "repo_id": "microsoft/speecht5_tts",
+            "revision": "30fcde30f19b87502b8435427b5f5068e401d5f6",
+            "license": "MIT",
+            "upstream_weights_sha256": "d60d28067349ef66b50d8cd643ae56b6d6b8f27def929bc4ef6fcad907954190"
+          },
+          "vocoder": {
+            "repo_id": "microsoft/speecht5_hifigan",
+            "revision": "bb6f429406e86a9992357a972c0698b22043307d",
+            "license": "MIT",
+            "upstream_weights_sha256": "b171e9bcd8a2b50dc9780040478dfa26783a9ee4be012cf5776914f091d6887b"
+          },
+          "speaker": {
+            "repo_id": "Matthijs/cmu-arctic-xvectors",
+            "revision": "5c1297a9eb6c91714ea77c0d4ac5aca9b6a952e5",
+            "license": "MIT",
+            "archive_sha256": "28ea1b685a49fedce92d1af7e68b22bf511a23432bc7a13d621a4deeee9fe9a1",
+            "member": "spkrec-xvect/cmu_us_slt_arctic-wav-arctic_a0001.npy",
+            "speaker_sha256": "21719c0414a470561e6d037466fd239ab59c1f9ed4e1b97db557dad6d0223e73",
+            "norm": 0.9999998807907104
+          }
+        },
+        "processor": {
+          "sample_rate": 16000,
+          "max_seconds": 6,
+          "channels": "mean_to_mono",
+          "transform": "pcm16_mean_channels_scipy_resample_poly_kaiser5_clip_v1",
+          "maximum_text_characters": 96,
+          "maximum_text_tokens": 128,
+          "maximum_mel_frames": 376,
+          "reduction_factor": 2,
+          "odd_mel_padding": "one_masked_frame",
+          "speaker": "fixed_published_demo",
+          "loss": "speecht5_composite_spectrogram_stop_attention_v1"
+        },
+        "model_role": "text_to_speech",
+        "sequence_tokens": 128
+      },
+      "source": {
+        "tts": {
+          "repo_id": "microsoft/speecht5_tts",
+          "revision": "30fcde30f19b87502b8435427b5f5068e401d5f6",
+          "license": "MIT",
+          "upstream_weights_sha256": "d60d28067349ef66b50d8cd643ae56b6d6b8f27def929bc4ef6fcad907954190"
+        },
+        "vocoder": {
+          "repo_id": "microsoft/speecht5_hifigan",
+          "revision": "bb6f429406e86a9992357a972c0698b22043307d",
+          "license": "MIT",
+          "upstream_weights_sha256": "b171e9bcd8a2b50dc9780040478dfa26783a9ee4be012cf5776914f091d6887b"
+        },
+        "speaker": {
+          "repo_id": "Matthijs/cmu-arctic-xvectors",
+          "revision": "5c1297a9eb6c91714ea77c0d4ac5aca9b6a952e5",
+          "license": "MIT",
+          "archive_sha256": "28ea1b685a49fedce92d1af7e68b22bf511a23432bc7a13d621a4deeee9fe9a1",
+          "member": "spkrec-xvect/cmu_us_slt_arctic-wav-arctic_a0001.npy",
+          "speaker_sha256": "21719c0414a470561e6d037466fd239ab59c1f9ed4e1b97db557dad6d0223e73",
+          "norm": 0.9999998807907104
+        }
+      },
+      "optimizer": {
+        "algorithm": "adamw",
+        "learning_rate": 1e-05,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "weight_decay": 0.0
+      },
+      "recipe": "tts_output_head",
+      "initialization_seed": 42,
+      "sample_order": "seeded_epoch_shuffle_v1",
+      "accelerator": {
+        "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+        "device": {
+          "id": "cpu",
+          "backend": "cpu",
+          "torch_device": "cpu",
+          "name": "Apple M5 Pro",
+          "total_memory_bytes": 51539607552
+        },
+        "packages": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "safetensors": "0.8.0",
+          "tokenizers": "0.22.2"
+        },
+        "capacity_source": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+      },
+      "trainable_parameters": 124578,
+      "sample_digest": "90dc9bcac3e19d25436cf25a668570e820a3b6d8dda37c6439365d1068326834",
+      "validation_digest": "d96cec30c51058ef862c9b57559a358c5421243a44b4fb6708cc411ba90986b3",
+      "protected_test_digest": "198706db3c8890e77c0284aa558db73c5feefb1a94fddb7ff6d9d33132e2f815",
+      "asset_pins": {
+        "test": [
+          {
+            "sha256": "2439aaaaf7edc055d4051a1c43c3130582dcb4c3f4c797936fe118208d06b1bb",
+            "byte_size": 105899,
+            "media_type": "audio/flac",
+            "sample_rate": 48000,
+            "channels": 1,
+            "frames": 98473,
+            "duration_seconds": 2.0515208333333335,
+            "normalized_sample_rate": 16000,
+            "normalized_frames": 32825,
+            "normalized_sha256": "b4f36364077a07a0ed3ac5a86d64292f028cb59ef6cafc9e61fbdb0f1055b756",
+            "clipped_samples": 0,
+            "normalized_rms": 0.10902473028140992,
+            "transform": "pcm16_mean_channels_scipy_resample_poly_kaiser5_clip_v1",
+            "artifact": {
+              "artifact_id": "01a16be9-79bf-7669-91d3-e07d0c6801a9",
+              "sha256": "2439aaaaf7edc055d4051a1c43c3130582dcb4c3f4c797936fe118208d06b1bb",
+              "byte_size": 105899
+            }
+          }
+        ],
+        "train": [
+          {
+            "sha256": "560d719e10b10f9da0c1b0a7485506fc9e4042c12b2667a7c5b50240c795a7ea",
+            "byte_size": 134703,
+            "media_type": "audio/flac",
+            "sample_rate": 48000,
+            "channels": 1,
+            "frames": 164581,
+            "duration_seconds": 3.4287708333333335,
+            "normalized_sample_rate": 16000,
+            "normalized_frames": 54861,
+            "normalized_sha256": "e35704eaca16d868f25d010bc172c8ea42495646657f341226645599dc0e4ad8",
+            "clipped_samples": 0,
+            "normalized_rms": 0.08392653843122656,
+            "transform": "pcm16_mean_channels_scipy_resample_poly_kaiser5_clip_v1",
+            "artifact": {
+              "artifact_id": "01a16be9-79c5-7804-87c4-018cb615a834",
+              "sha256": "560d719e10b10f9da0c1b0a7485506fc9e4042c12b2667a7c5b50240c795a7ea",
+              "byte_size": 134703
+            }
+          }
+        ],
+        "validation": [
+          {
+            "sha256": "450ba3382afcfb0e3ec50d52296bc64a95be4b9bc89e0a10a5bfdc57f4756864",
+            "byte_size": 134652,
+            "media_type": "audio/flac",
+            "sample_rate": 48000,
+            "channels": 1,
+            "frames": 134338,
+            "duration_seconds": 2.7987083333333334,
+            "normalized_sample_rate": 16000,
+            "normalized_frames": 44780,
+            "normalized_sha256": "30b97a4b0806812f647d1dd6e5ae2362a774f9b9fbe350625ae151e6453460bc",
+            "clipped_samples": 0,
+            "normalized_rms": 0.06657389571894934,
+            "transform": "pcm16_mean_channels_scipy_resample_poly_kaiser5_clip_v1",
+            "artifact": {
+              "artifact_id": "01a16be9-79c3-7131-9493-a84b7a999cb7",
+              "sha256": "450ba3382afcfb0e3ec50d52296bc64a95be4b9bc89e0a10a5bfdc57f4756864",
+              "byte_size": 134652
+            }
+          }
+        ]
+      },
+      "splits": {
+        "consumed": "train",
+        "train_rows": 1,
+        "excluded_rows": {
+          "test": 1,
+          "validation": 1
+        }
+      },
+      "evaluator_source": {
+        "repo_id": "openai/whisper-tiny.en",
+        "revision": "87c7102498dcde7456f24cfd30239ca606ed9063",
+        "license": "Apache-2.0"
+      },
+      "evaluator_files": {
+        "evaluator/added_tokens.json": {
+          "artifact_id": "01a16be9-7d18-7c30-80bf-64aee7a21c77",
+          "byte_size": 34604,
+          "sha256": "560be47bea388757f8d4cc185c5d82067426cbb6361e38016dd90ddc01ab203a"
+        },
+        "evaluator/config.json": {
+          "artifact_id": "01a16be9-7d1a-7edf-ad66-e9fc6bc5f50c",
+          "byte_size": 1937,
+          "sha256": "b5366317df280f79e6cc366f259f379674f81a8721d458acf2e00680ccb10b1d"
+        },
+        "evaluator/generation_config.json": {
+          "artifact_id": "01a16be9-7d1c-791c-8913-35c1c81b1afe",
+          "byte_size": 1621,
+          "sha256": "38744c19d5cede6ff4dab5079c6d6ddc02ca726960bbef208fb602ad5a030eab"
+        },
+        "evaluator/merges.txt": {
+          "artifact_id": "01a16be9-7d1d-736d-9706-8bdf92259dd1",
+          "byte_size": 456318,
+          "sha256": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5"
+        },
+        "evaluator/model.safetensors": {
+          "artifact_id": "01a16be9-7d55-7172-935a-96b1f35d065a",
+          "byte_size": 151060136,
+          "sha256": "db59695928ded6043adaef491a53ef4e12da9611184d77c53baa691a60b958ad"
+        },
+        "evaluator/normalizer.json": {
+          "artifact_id": "01a16be9-7da1-7e74-bd3b-d322f6ed55ab",
+          "byte_size": 52666,
+          "sha256": "bf1c507dc8724ca9cf9903640dacfb69dae2f00edee4f21ceba106a7392f26dd"
+        },
+        "evaluator/preprocessor_config.json": {
+          "artifact_id": "01a16be9-7da4-7b8a-839f-19e9bfa22e7a",
+          "byte_size": 184990,
+          "sha256": "9b5cd03a36fbb8a627c64d98a5b5b126ead95a77720723944487311f0110b666"
+        },
+        "evaluator/special_tokens_map.json": {
+          "artifact_id": "01a16be9-7da6-7ad4-8664-f842b9d3b933",
+          "byte_size": 1830,
+          "sha256": "014f8f802366ed818919550be0ad9e35907327cb9e142e8aaa102420f460bda8"
+        },
+        "evaluator/tokenizer.json": {
+          "artifact_id": "01a16be9-7da8-7740-9164-3d9205c94834",
+          "byte_size": 2405679,
+          "sha256": "5eb60cec1e77aeeb6869a2bb5a8e01a84c3fe5d072d75369343021fe6f5310d0"
+        },
+        "evaluator/tokenizer_config.json": {
+          "artifact_id": "01a16be9-7dab-7c59-8823-bba18a6d4cdf",
+          "byte_size": 805,
+          "sha256": "14f84bdf4b9ecdbd4738ddc81c17a1baedfc02bb93c6e049c951e15a1b40b70d"
+        },
+        "evaluator/vocab.json": {
+          "artifact_id": "01a16be9-7dad-77d4-9483-5fe63c527174",
+          "byte_size": 798156,
+          "sha256": "3ba3c3109ff33976c4bd966589c11ee14fcaa1f4c9e5e154c2ed7f99d80709e7"
+        }
+      },
+      "production_qualified": false
+    },
+    "independent_evaluation": {
+      "status": "completed",
+      "passed": true,
+      "report": {
+        "schema_version": "modelanvil.independent-audio-evaluation.v1",
+        "manifest_sha256": "a68afb3afca2f2bd3fe1bee83f57373c1be0fbde3d211017ac39e1f725155b7c",
+        "file_sha256": {
+          "base": {
+            "added_tokens.json": "74be21ecff0a1fb1f304fe7c72ab21e4f0c046f8359fdf2852eb1b80967069ad",
+            "spm_char.model": "7fcc48f3e225f627b1641db410ceb0c8649bd2b0c982e150b03f8be3728ab560",
+            "speaker.npy": "21719c0414a470561e6d037466fd239ab59c1f9ed4e1b97db557dad6d0223e73",
+            "vocoder/config.json": "ac281bbb65c617a3fe7c5c082c8106f5a35b14d236b6a12f99cbbb12e576ab96",
+            "preprocessor_config.json": "9461d890ff65badba5ad726f9059436bc69963883dc803fa6ed3cdb8f8af3687",
+            "tokenizer_config.json": "d589430c619db2d95ff0fa757a187b55ef5ea44eff7fb08a6fbf0e78e32a6247",
+            "special_tokens_map.json": "2a098b61fe8ec4cfd7674832ca00b4268c07569743a4ad15c8164e8f60ebf981",
+            "model.safetensors": "aec2409d90f7f8e521021d7dea905cf11245cf9e4f2013634b478183aeb1349d",
+            "vocoder/model.safetensors": "38907fe505de5bfc5ebd8c956d56721a2c30fdf8f5c7d4d9604f24759186246b",
+            "config.json": "2caf62dde93699a90cfc35ff2a8de27b02b479a0c98881cbc55f9682cc43e258"
+          },
+          "candidate": {
+            "added_tokens.json": "74be21ecff0a1fb1f304fe7c72ab21e4f0c046f8359fdf2852eb1b80967069ad",
+            "spm_char.model": "7fcc48f3e225f627b1641db410ceb0c8649bd2b0c982e150b03f8be3728ab560",
+            "speaker.npy": "21719c0414a470561e6d037466fd239ab59c1f9ed4e1b97db557dad6d0223e73",
+            "vocoder/config.json": "ac281bbb65c617a3fe7c5c082c8106f5a35b14d236b6a12f99cbbb12e576ab96",
+            "preprocessor_config.json": "9461d890ff65badba5ad726f9059436bc69963883dc803fa6ed3cdb8f8af3687",
+            "tokenizer_config.json": "d589430c619db2d95ff0fa757a187b55ef5ea44eff7fb08a6fbf0e78e32a6247",
+            "special_tokens_map.json": "2a098b61fe8ec4cfd7674832ca00b4268c07569743a4ad15c8164e8f60ebf981",
+            "audio_head.safetensors": "d68cb933530bd7d8c4e918a46c4aee4a1dad437d58cf81ea0a6f97c77bde80ed",
+            "model.safetensors": "aec2409d90f7f8e521021d7dea905cf11245cf9e4f2013634b478183aeb1349d",
+            "vocoder/model.safetensors": "38907fe505de5bfc5ebd8c956d56721a2c30fdf8f5c7d4d9604f24759186246b",
+            "config.json": "2caf62dde93699a90cfc35ff2a8de27b02b479a0c98881cbc55f9682cc43e258"
+          },
+          "evaluator": {
+            "evaluator/added_tokens.json": "560be47bea388757f8d4cc185c5d82067426cbb6361e38016dd90ddc01ab203a",
+            "evaluator/config.json": "b5366317df280f79e6cc366f259f379674f81a8721d458acf2e00680ccb10b1d",
+            "evaluator/generation_config.json": "38744c19d5cede6ff4dab5079c6d6ddc02ca726960bbef208fb602ad5a030eab",
+            "evaluator/merges.txt": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5",
+            "evaluator/model.safetensors": "db59695928ded6043adaef491a53ef4e12da9611184d77c53baa691a60b958ad",
+            "evaluator/normalizer.json": "bf1c507dc8724ca9cf9903640dacfb69dae2f00edee4f21ceba106a7392f26dd",
+            "evaluator/preprocessor_config.json": "9b5cd03a36fbb8a627c64d98a5b5b126ead95a77720723944487311f0110b666",
+            "evaluator/special_tokens_map.json": "014f8f802366ed818919550be0ad9e35907327cb9e142e8aaa102420f460bda8",
+            "evaluator/tokenizer.json": "5eb60cec1e77aeeb6869a2bb5a8e01a84c3fe5d072d75369343021fe6f5310d0",
+            "evaluator/tokenizer_config.json": "14f84bdf4b9ecdbd4738ddc81c17a1baedfc02bb93c6e049c951e15a1b40b70d",
+            "evaluator/vocab.json": "3ba3c3109ff33976c4bd966589c11ee14fcaa1f4c9e5e154c2ed7f99d80709e7"
+          }
+        },
+        "audio_sha256": {
+          "095282f4-eeaa-40fc-b8a5-b68c3b7fbd2e": "2439aaaaf7edc055d4051a1c43c3130582dcb4c3f4c797936fe118208d06b1bb"
+        },
+        "normalized_sha256": {
+          "095282f4-eeaa-40fc-b8a5-b68c3b7fbd2e": "b4f36364077a07a0ed3ac5a86d64292f028cb59ef6cafc9e61fbdb0f1055b756"
+        },
+        "baseline": {
+          "loss": 2.328864574432373,
+          "prediction_mel_frames": 129,
+          "cases": [
+            {
+              "sample_id": "095282f4-eeaa-40fc-b8a5-b68c3b7fbd2e",
+              "speaker_id": "p225",
+              "source_group_id": "vctk:speaker:p225",
+              "expected": "Please call Stella.",
+              "composite_loss": 2.328864574432373,
+              "prediction_mel_frames": 129,
+              "wave_filename": "baseline-0.wav",
+              "wave_sha256": "57a7487fe01b1beb5b60d52b10f4cb8caad675c372b795e759090f3f293749f9",
+              "observation": {
+                "frames": 17408,
+                "sample_rate": 16000,
+                "channels": 1,
+                "sample_format": "PCM_S16_LE",
+                "duration_seconds": 1.088,
+                "rms_before_quantization": 0.09017502482017671,
+                "clipped_fraction": 0.0,
+                "finish_reason": "stop",
+                "last_stop_probability_sum": 0.7867637276649475,
+                "prompt_tokens": 21,
+                "seed": 42,
+                "maximum_seconds": 6
+              },
+              "asr_transcript": " Please call Stella.",
+              "word_errors": 0,
+              "reference_words": 3,
+              "word_error_rate": 0.0,
+              "audio_artifact": {
+                "artifact_id": "01a16be9-ac23-786a-a7fa-18e5cc9b18ce",
+                "sha256": "57a7487fe01b1beb5b60d52b10f4cb8caad675c372b795e759090f3f293749f9",
+                "byte_size": 34860
+              }
+            }
+          ],
+          "word_error_rate": 0.0,
+          "word_errors": 0,
+          "reference_words": 3
+        },
+        "candidate": {
+          "loss": 2.3267734050750732,
+          "prediction_mel_frames": 129,
+          "cases": [
+            {
+              "sample_id": "095282f4-eeaa-40fc-b8a5-b68c3b7fbd2e",
+              "speaker_id": "p225",
+              "source_group_id": "vctk:speaker:p225",
+              "expected": "Please call Stella.",
+              "composite_loss": 2.3267734050750732,
+              "prediction_mel_frames": 129,
+              "wave_filename": "candidate-0.wav",
+              "wave_sha256": "5b87ff471811aa0d2540a6766277c25d66478f43cc8341bdb503f0ad7c586cb1",
+              "observation": {
+                "frames": 17408,
+                "sample_rate": 16000,
+                "channels": 1,
+                "sample_format": "PCM_S16_LE",
+                "duration_seconds": 1.088,
+                "rms_before_quantization": 0.08598840923534157,
+                "clipped_fraction": 0.0,
+                "finish_reason": "stop",
+                "last_stop_probability_sum": 0.8507487177848816,
+                "prompt_tokens": 21,
+                "seed": 42,
+                "maximum_seconds": 6
+              },
+              "asr_transcript": " Please call Stella.",
+              "word_errors": 0,
+              "reference_words": 3,
+              "word_error_rate": 0.0,
+              "audio_artifact": {
+                "artifact_id": "01a16be9-ac26-7b24-a52a-2388e508544c",
+                "sha256": "5b87ff471811aa0d2540a6766277c25d66478f43cc8341bdb503f0ad7c586cb1",
+                "byte_size": 34860
+              }
+            }
+          ],
+          "word_error_rate": 0.0,
+          "word_errors": 0,
+          "reference_words": 3
+        },
+        "checks": {
+          "tts_natural_stop": true,
+          "tts_loss_within_ten_percent": true,
+          "asr_proxy_wer_at_most_half": true,
+          "asr_proxy_wer_not_regressed": true
+        },
+        "passed": true,
+        "production_qualified": false,
+        "quality_scope": "English fixed-demo-conditioning TTS composite loss and independent WhisperTiny transcription proxy; no product ASR, speaker fidelity or human/customer qualification.",
+        "cpu_seconds": 3.3808720000000005,
+        "wall_seconds": 3.3357480419945205,
+        "consumer_imported_modelanvil_or_django": false
+      },
+      "checkpoint_digest": "c2f2c6d818059b412e77a5a163ecb73e3ff5dc542d458de6a2a4fd2759100bc9",
+      "production_qualified": false
+    }
+  },
+  "split_seed": "3",
+  "generation": {
+    "base": {
+      "outcome": {
+        "claimed": true,
+        "committed": true,
+        "status": "succeeded"
+      },
+      "status": "completed",
+      "configuration": {
+        "kind": "qualified_audio_generation",
+        "job_id": "01a16be9-b3f7-73c9-a47f-a292801a731e",
+        "frozen": {
+          "settings": {
+            "text": "Hello world.",
+            "seed": 42,
+            "max_seconds": 6
+          },
+          "model_id": "01a16be9-85b3-74db-9a9f-729487b9034c",
+          "model_identity": "8c43b6bbf894a693a6279f34570db43049722b2603a80ad82533c16b7888959c",
+          "plan": {
+            "format": "audio",
+            "files": {
+              "added_tokens.json": {
+                "artifact_id": "01a16be9-7b1c-79fc-acbc-9180ab904c60",
+                "byte_size": 40,
+                "sha256": "74be21ecff0a1fb1f304fe7c72ab21e4f0c046f8359fdf2852eb1b80967069ad"
+              },
+              "config.json": {
+                "artifact_id": "01a16be9-7b13-7b69-b416-f9b68962575b",
+                "byte_size": 2062,
+                "sha256": "2caf62dde93699a90cfc35ff2a8de27b02b479a0c98881cbc55f9682cc43e258"
+              },
+              "model.safetensors": {
+                "artifact_id": "01a16be9-7bee-7e03-9a23-03003fa8ad58",
+                "byte_size": 585395816,
+                "sha256": "aec2409d90f7f8e521021d7dea905cf11245cf9e4f2013634b478183aeb1349d"
+              },
+              "preprocessor_config.json": {
+                "artifact_id": "01a16be9-7b17-7f83-a511-05f5ebe26d19",
+                "byte_size": 433,
+                "sha256": "9461d890ff65badba5ad726f9059436bc69963883dc803fa6ed3cdb8f8af3687"
+              },
+              "speaker.npy": {
+                "artifact_id": "01a16be9-7d17-7a37-b3d9-9bdf7644d517",
+                "byte_size": 2176,
+                "sha256": "21719c0414a470561e6d037466fd239ab59c1f9ed4e1b97db557dad6d0223e73"
+              },
+              "special_tokens_map.json": {
+                "artifact_id": "01a16be9-7b1b-784d-89a6-a02a40ef0024",
+                "byte_size": 234,
+                "sha256": "2a098b61fe8ec4cfd7674832ca00b4268c07569743a4ad15c8164e8f60ebf981"
+              },
+              "spm_char.model": {
+                "artifact_id": "01a16be9-7b1e-763a-9dce-40707d921247",
+                "byte_size": 238473,
+                "sha256": "7fcc48f3e225f627b1641db410ceb0c8649bd2b0c982e150b03f8be3728ab560"
+              },
+              "tokenizer_config.json": {
+                "artifact_id": "01a16be9-7b19-76e3-a665-300a3de0ea2d",
+                "byte_size": 232,
+                "sha256": "d589430c619db2d95ff0fa757a187b55ef5ea44eff7fb08a6fbf0e78e32a6247"
+              },
+              "vocoder/config.json": {
+                "artifact_id": "01a16be9-7cea-716c-9209-053d0fbfd3af",
+                "byte_size": 636,
+                "sha256": "ac281bbb65c617a3fe7c5c082c8106f5a35b14d236b6a12f99cbbb12e576ab96"
+              },
+              "vocoder/model.safetensors": {
+                "artifact_id": "01a16be9-7cfe-7bbd-a58f-db42d43ebb47",
+                "byte_size": 50640692,
+                "sha256": "38907fe505de5bfc5ebd8c956d56721a2c30fdf8f5c7d4d9604f24759186246b"
+              }
+            },
+            "source": {
+              "tts": {
+                "repo_id": "microsoft/speecht5_tts",
+                "revision": "30fcde30f19b87502b8435427b5f5068e401d5f6",
+                "license": "MIT",
+                "upstream_weights_sha256": "d60d28067349ef66b50d8cd643ae56b6d6b8f27def929bc4ef6fcad907954190"
+              },
+              "vocoder": {
+                "repo_id": "microsoft/speecht5_hifigan",
+                "revision": "bb6f429406e86a9992357a972c0698b22043307d",
+                "license": "MIT",
+                "upstream_weights_sha256": "b171e9bcd8a2b50dc9780040478dfa26783a9ee4be012cf5776914f091d6887b"
+              },
+              "speaker": {
+                "repo_id": "Matthijs/cmu-arctic-xvectors",
+                "revision": "5c1297a9eb6c91714ea77c0d4ac5aca9b6a952e5",
+                "license": "MIT",
+                "archive_sha256": "28ea1b685a49fedce92d1af7e68b22bf511a23432bc7a13d621a4deeee9fe9a1",
+                "member": "spkrec-xvect/cmu_us_slt_arctic-wav-arctic_a0001.npy",
+                "speaker_sha256": "21719c0414a470561e6d037466fd239ab59c1f9ed4e1b97db557dad6d0223e73",
+                "norm": 0.9999998807907104
+              }
+            },
+            "trained": false,
+            "recipe": "tts_output_head",
+            "production_qualified": false
+          },
+          "build_digest": "278a58962e6c72721309e1f4d3421d9fc8a0c3c3546a24760388f713512a864f",
+          "accelerator": {
+            "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+            "device": {
+              "id": "cpu",
+              "backend": "cpu",
+              "torch_device": "cpu",
+              "name": "Apple M5 Pro",
+              "total_memory_bytes": 51539607552
+            },
+            "packages": {
+              "torch": "2.13.0",
+              "transformers": "5.14.0",
+              "safetensors": "0.8.0",
+              "tokenizers": "0.22.2"
+            },
+            "capacity_source": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+          }
+        },
+        "attempt_charges": {
+          "01a16be9-b416-73a4-967f-b6613cb0a253": {
+            "samples": 12800,
+            "basis": "verified_generated_frames",
+            "cpu_seconds": 1.9337920000000002,
+            "wall_seconds": 1.908400292006263
+          }
+        },
+        "checkpoint": {
+          "input_digest": "41713936be2d455bcb4e9921223911dd608aec8e26d78587fb5434e7da7084f0",
+          "audio": {
+            "artifact_id": "01a16be9-c1d0-7d8c-820a-8d6586dac55b",
+            "sha256": "23d227c048e97b0c80e80fd6d8c7acdaed70c268456afb54c4dd9e6a8f077d1c",
+            "byte_size": 25644
+          },
+          "report": {
+            "frames": 12800,
+            "sample_rate": 16000,
+            "channels": 1,
+            "sample_format": "PCM_S16_LE",
+            "duration_seconds": 0.8,
+            "rms_before_quantization": 0.07251070914352434,
+            "clipped_fraction": 0.0,
+            "finish_reason": "stop",
+            "last_stop_probability_sum": 0.9997496008872986,
+            "prompt_tokens": 14,
+            "seed": 42,
+            "maximum_seconds": 6,
+            "schema_version": "modelanvil.independent-audio-generation.v1",
+            "file_sha256": {
+              "added_tokens.json": "74be21ecff0a1fb1f304fe7c72ab21e4f0c046f8359fdf2852eb1b80967069ad",
+              "vocoder/model.safetensors": "38907fe505de5bfc5ebd8c956d56721a2c30fdf8f5c7d4d9604f24759186246b",
+              "model.safetensors": "aec2409d90f7f8e521021d7dea905cf11245cf9e4f2013634b478183aeb1349d",
+              "config.json": "2caf62dde93699a90cfc35ff2a8de27b02b479a0c98881cbc55f9682cc43e258",
+              "speaker.npy": "21719c0414a470561e6d037466fd239ab59c1f9ed4e1b97db557dad6d0223e73",
+              "tokenizer_config.json": "d589430c619db2d95ff0fa757a187b55ef5ea44eff7fb08a6fbf0e78e32a6247",
+              "vocoder/config.json": "ac281bbb65c617a3fe7c5c082c8106f5a35b14d236b6a12f99cbbb12e576ab96",
+              "preprocessor_config.json": "9461d890ff65badba5ad726f9059436bc69963883dc803fa6ed3cdb8f8af3687",
+              "spm_char.model": "7fcc48f3e225f627b1641db410ceb0c8649bd2b0c982e150b03f8be3728ab560",
+              "special_tokens_map.json": "2a098b61fe8ec4cfd7674832ca00b4268c07569743a4ad15c8164e8f60ebf981"
+            },
+            "wave_sha256": "23d227c048e97b0c80e80fd6d8c7acdaed70c268456afb54c4dd9e6a8f077d1c",
+            "wave_bytes": 25644,
+            "cpu_seconds": 1.9337920000000002,
+            "wall_seconds": 1.908400292006263,
+            "production_qualified": false,
+            "consumer_imported_modelanvil_or_django": false
+          },
+          "source": {
+            "tts": {
+              "repo_id": "microsoft/speecht5_tts",
+              "revision": "30fcde30f19b87502b8435427b5f5068e401d5f6",
+              "license": "MIT",
+              "upstream_weights_sha256": "d60d28067349ef66b50d8cd643ae56b6d6b8f27def929bc4ef6fcad907954190"
+            },
+            "vocoder": {
+              "repo_id": "microsoft/speecht5_hifigan",
+              "revision": "bb6f429406e86a9992357a972c0698b22043307d",
+              "license": "MIT",
+              "upstream_weights_sha256": "b171e9bcd8a2b50dc9780040478dfa26783a9ee4be012cf5776914f091d6887b"
+            },
+            "speaker": {
+              "repo_id": "Matthijs/cmu-arctic-xvectors",
+              "revision": "5c1297a9eb6c91714ea77c0d4ac5aca9b6a952e5",
+              "license": "MIT",
+              "archive_sha256": "28ea1b685a49fedce92d1af7e68b22bf511a23432bc7a13d621a4deeee9fe9a1",
+              "member": "spkrec-xvect/cmu_us_slt_arctic-wav-arctic_a0001.npy",
+              "speaker_sha256": "21719c0414a470561e6d037466fd239ab59c1f9ed4e1b97db557dad6d0223e73",
+              "norm": 0.9999998807907104
+            }
+          },
+          "settings": {
+            "text": "Hello world.",
+            "seed": 42,
+            "max_seconds": 6
+          },
+          "model_identity": "8c43b6bbf894a693a6279f34570db43049722b2603a80ad82533c16b7888959c",
+          "production_qualified": false
+        }
+      },
+      "usage": {
+        "generated_samples": 12800,
+        "sample_rate": 16000,
+        "duration_seconds": 0.8
+      },
+      "download_sha256": "23d227c048e97b0c80e80fd6d8c7acdaed70c268456afb54c4dd9e6a8f077d1c"
+    },
+    "candidate": {
+      "outcome": {
+        "claimed": true,
+        "committed": true,
+        "status": "succeeded"
+      },
+      "status": "completed",
+      "configuration": {
+        "kind": "qualified_audio_generation",
+        "job_id": "01a16be9-c487-703f-8dcb-1543f834b624",
+        "frozen": {
+          "settings": {
+            "text": "Hello world.",
+            "seed": 42,
+            "max_seconds": 6
+          },
+          "model_id": "01a16be9-b27d-7693-940c-8ffd897c021f",
+          "model_identity": "4251d018a9de869336f46138f6c8d6d949ae210c7329514a44521b955a7883cb",
+          "plan": {
+            "format": "audio",
+            "files": {
+              "added_tokens.json": {
+                "artifact_id": "01a16be9-7b1c-79fc-acbc-9180ab904c60",
+                "byte_size": 40,
+                "sha256": "74be21ecff0a1fb1f304fe7c72ab21e4f0c046f8359fdf2852eb1b80967069ad"
+              },
+              "config.json": {
+                "artifact_id": "01a16be9-7b13-7b69-b416-f9b68962575b",
+                "byte_size": 2062,
+                "sha256": "2caf62dde93699a90cfc35ff2a8de27b02b479a0c98881cbc55f9682cc43e258"
+              },
+              "model.safetensors": {
+                "artifact_id": "01a16be9-7bee-7e03-9a23-03003fa8ad58",
+                "byte_size": 585395816,
+                "sha256": "aec2409d90f7f8e521021d7dea905cf11245cf9e4f2013634b478183aeb1349d"
+              },
+              "preprocessor_config.json": {
+                "artifact_id": "01a16be9-7b17-7f83-a511-05f5ebe26d19",
+                "byte_size": 433,
+                "sha256": "9461d890ff65badba5ad726f9059436bc69963883dc803fa6ed3cdb8f8af3687"
+              },
+              "speaker.npy": {
+                "artifact_id": "01a16be9-7d17-7a37-b3d9-9bdf7644d517",
+                "byte_size": 2176,
+                "sha256": "21719c0414a470561e6d037466fd239ab59c1f9ed4e1b97db557dad6d0223e73"
+              },
+              "special_tokens_map.json": {
+                "artifact_id": "01a16be9-7b1b-784d-89a6-a02a40ef0024",
+                "byte_size": 234,
+                "sha256": "2a098b61fe8ec4cfd7674832ca00b4268c07569743a4ad15c8164e8f60ebf981"
+              },
+              "spm_char.model": {
+                "artifact_id": "01a16be9-7b1e-763a-9dce-40707d921247",
+                "byte_size": 238473,
+                "sha256": "7fcc48f3e225f627b1641db410ceb0c8649bd2b0c982e150b03f8be3728ab560"
+              },
+              "tokenizer_config.json": {
+                "artifact_id": "01a16be9-7b19-76e3-a665-300a3de0ea2d",
+                "byte_size": 232,
+                "sha256": "d589430c619db2d95ff0fa757a187b55ef5ea44eff7fb08a6fbf0e78e32a6247"
+              },
+              "vocoder/config.json": {
+                "artifact_id": "01a16be9-7cea-716c-9209-053d0fbfd3af",
+                "byte_size": 636,
+                "sha256": "ac281bbb65c617a3fe7c5c082c8106f5a35b14d236b6a12f99cbbb12e576ab96"
+              },
+              "vocoder/model.safetensors": {
+                "artifact_id": "01a16be9-7cfe-7bbd-a58f-db42d43ebb47",
+                "byte_size": 50640692,
+                "sha256": "38907fe505de5bfc5ebd8c956d56721a2c30fdf8f5c7d4d9604f24759186246b"
+              },
+              "audio_head.safetensors": {
+                "artifact_id": "01a16be9-94c9-7f1d-9609-26407fae91f4",
+                "sha256": "d68cb933530bd7d8c4e918a46c4aee4a1dad437d58cf81ea0a6f97c77bde80ed",
+                "byte_size": 498720
+              }
+            },
+            "source": {
+              "tts": {
+                "repo_id": "microsoft/speecht5_tts",
+                "revision": "30fcde30f19b87502b8435427b5f5068e401d5f6",
+                "license": "MIT",
+                "upstream_weights_sha256": "d60d28067349ef66b50d8cd643ae56b6d6b8f27def929bc4ef6fcad907954190"
+              },
+              "vocoder": {
+                "repo_id": "microsoft/speecht5_hifigan",
+                "revision": "bb6f429406e86a9992357a972c0698b22043307d",
+                "license": "MIT",
+                "upstream_weights_sha256": "b171e9bcd8a2b50dc9780040478dfa26783a9ee4be012cf5776914f091d6887b"
+              },
+              "speaker": {
+                "repo_id": "Matthijs/cmu-arctic-xvectors",
+                "revision": "5c1297a9eb6c91714ea77c0d4ac5aca9b6a952e5",
+                "license": "MIT",
+                "archive_sha256": "28ea1b685a49fedce92d1af7e68b22bf511a23432bc7a13d621a4deeee9fe9a1",
+                "member": "spkrec-xvect/cmu_us_slt_arctic-wav-arctic_a0001.npy",
+                "speaker_sha256": "21719c0414a470561e6d037466fd239ab59c1f9ed4e1b97db557dad6d0223e73",
+                "norm": 0.9999998807907104
+              }
+            },
+            "trained": true,
+            "recipe": "tts_output_head",
+            "production_qualified": false
+          },
+          "build_digest": "278a58962e6c72721309e1f4d3421d9fc8a0c3c3546a24760388f713512a864f",
+          "accelerator": {
+            "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+            "device": {
+              "id": "cpu",
+              "backend": "cpu",
+              "torch_device": "cpu",
+              "name": "Apple M5 Pro",
+              "total_memory_bytes": 51539607552
+            },
+            "packages": {
+              "torch": "2.13.0",
+              "transformers": "5.14.0",
+              "safetensors": "0.8.0",
+              "tokenizers": "0.22.2"
+            },
+            "capacity_source": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+          }
+        },
+        "attempt_charges": {
+          "01a16be9-c5e6-7aa6-b5df-ae9b001a8936": {
+            "samples": 12800,
+            "basis": "verified_generated_frames",
+            "cpu_seconds": 1.9553699999999998,
+            "wall_seconds": 1.929305875004502
+          }
+        },
+        "checkpoint": {
+          "input_digest": "591abf3a422b2f9ccedb2b1bb264851f151c4fe3b6fd1d970ff43e7549510556",
+          "audio": {
+            "artifact_id": "01a16be9-d96e-72eb-bc1c-e146cf022cd6",
+            "sha256": "67d0215099814edb5a30edec15cf558a8a77427388f11bbff207113cbce705a4",
+            "byte_size": 25644
+          },
+          "report": {
+            "frames": 12800,
+            "sample_rate": 16000,
+            "channels": 1,
+            "sample_format": "PCM_S16_LE",
+            "duration_seconds": 0.8,
+            "rms_before_quantization": 0.069409654087223,
+            "clipped_fraction": 0.0,
+            "finish_reason": "stop",
+            "last_stop_probability_sum": 0.999757707118988,
+            "prompt_tokens": 14,
+            "seed": 42,
+            "maximum_seconds": 6,
+            "schema_version": "modelanvil.independent-audio-generation.v1",
+            "file_sha256": {
+              "preprocessor_config.json": "9461d890ff65badba5ad726f9059436bc69963883dc803fa6ed3cdb8f8af3687",
+              "config.json": "2caf62dde93699a90cfc35ff2a8de27b02b479a0c98881cbc55f9682cc43e258",
+              "audio_head.safetensors": "d68cb933530bd7d8c4e918a46c4aee4a1dad437d58cf81ea0a6f97c77bde80ed",
+              "added_tokens.json": "74be21ecff0a1fb1f304fe7c72ab21e4f0c046f8359fdf2852eb1b80967069ad",
+              "model.safetensors": "aec2409d90f7f8e521021d7dea905cf11245cf9e4f2013634b478183aeb1349d",
+              "special_tokens_map.json": "2a098b61fe8ec4cfd7674832ca00b4268c07569743a4ad15c8164e8f60ebf981",
+              "spm_char.model": "7fcc48f3e225f627b1641db410ceb0c8649bd2b0c982e150b03f8be3728ab560",
+              "vocoder/config.json": "ac281bbb65c617a3fe7c5c082c8106f5a35b14d236b6a12f99cbbb12e576ab96",
+              "speaker.npy": "21719c0414a470561e6d037466fd239ab59c1f9ed4e1b97db557dad6d0223e73",
+              "vocoder/model.safetensors": "38907fe505de5bfc5ebd8c956d56721a2c30fdf8f5c7d4d9604f24759186246b",
+              "tokenizer_config.json": "d589430c619db2d95ff0fa757a187b55ef5ea44eff7fb08a6fbf0e78e32a6247"
+            },
+            "wave_sha256": "67d0215099814edb5a30edec15cf558a8a77427388f11bbff207113cbce705a4",
+            "wave_bytes": 25644,
+            "cpu_seconds": 1.9553699999999998,
+            "wall_seconds": 1.929305875004502,
+            "production_qualified": false,
+            "consumer_imported_modelanvil_or_django": false
+          },
+          "source": {
+            "tts": {
+              "repo_id": "microsoft/speecht5_tts",
+              "revision": "30fcde30f19b87502b8435427b5f5068e401d5f6",
+              "license": "MIT",
+              "upstream_weights_sha256": "d60d28067349ef66b50d8cd643ae56b6d6b8f27def929bc4ef6fcad907954190"
+            },
+            "vocoder": {
+              "repo_id": "microsoft/speecht5_hifigan",
+              "revision": "bb6f429406e86a9992357a972c0698b22043307d",
+              "license": "MIT",
+              "upstream_weights_sha256": "b171e9bcd8a2b50dc9780040478dfa26783a9ee4be012cf5776914f091d6887b"
+            },
+            "speaker": {
+              "repo_id": "Matthijs/cmu-arctic-xvectors",
+              "revision": "5c1297a9eb6c91714ea77c0d4ac5aca9b6a952e5",
+              "license": "MIT",
+              "archive_sha256": "28ea1b685a49fedce92d1af7e68b22bf511a23432bc7a13d621a4deeee9fe9a1",
+              "member": "spkrec-xvect/cmu_us_slt_arctic-wav-arctic_a0001.npy",
+              "speaker_sha256": "21719c0414a470561e6d037466fd239ab59c1f9ed4e1b97db557dad6d0223e73",
+              "norm": 0.9999998807907104
+            }
+          },
+          "settings": {
+            "text": "Hello world.",
+            "seed": 42,
+            "max_seconds": 6
+          },
+          "model_identity": "4251d018a9de869336f46138f6c8d6d949ae210c7329514a44521b955a7883cb",
+          "production_qualified": false
+        }
+      },
+      "usage": {
+        "generated_samples": 12800,
+        "sample_rate": 16000,
+        "duration_seconds": 0.8
+      },
+      "download_sha256": "67d0215099814edb5a30edec15cf558a8a77427388f11bbff207113cbce705a4"
+    }
+  }
+}

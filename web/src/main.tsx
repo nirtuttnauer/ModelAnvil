@@ -59,6 +59,7 @@ const WorkflowsPage = React.lazy(() => import('./pages/WorkflowsPage').then(modu
 const BudgetsPage = React.lazy(() => import('./pages/BudgetsPage').then(module => ({ default: module.BudgetsPage })));
 const ModelsPage = React.lazy(() => import('./pages/ModelsPage').then(module => ({ default: module.ModelsPage })));
 const ChatPage = React.lazy(() => import('./pages/ChatPage').then(module => ({ default: module.ChatPage })));
+const AudioPage = React.lazy(() => import('./pages/AudioPage').then(module => ({ default: module.AudioPage })));
 const SpecialistsPage = React.lazy(() => import('./pages/SpecialistsPage').then(module => ({ default: module.SpecialistsPage })));
 const RecipesPage = React.lazy(() => import('./pages/RecipesPage').then(module => ({ default: module.RecipesPage })));
 const TrainingPage = React.lazy(() => import('./pages/TrainingPage').then(module => ({ default: module.TrainingPage })));
@@ -86,6 +87,7 @@ type Page =
   | 'Models'
   | 'Chat'
   | 'Specialists'
+  | 'Audio'
   | 'Recipes'
   | 'Training'
   | 'Workflows'
@@ -104,6 +106,7 @@ const pages: { name: Page; icon: React.ElementType; endpoint: string; slug?: str
   { name: 'Annotation', icon: Tags, endpoint: '/api/v1/labeling-campaigns/' },
   { name: 'Models', icon: Bot, endpoint: '/api/v1/models/' },
   { name: 'Chat', icon: MessageSquare, endpoint: '/api/v1/inference/models/' },
+  { name: 'Audio', icon: ScanText, endpoint: '/api/v1/audio/' },
   { name: 'Specialists', icon: ScanText, endpoint: '/api/v1/specialists/' },
   { name: 'Recipes', icon: ListTree, endpoint: '/api/v1/recipes/' },
   { name: 'Training', icon: Flame, endpoint: '/api/v1/training-runs/' },
@@ -130,13 +133,14 @@ const primaryNavigation: { label: string; names: Page[] }[] = [
 ];
 const advancedNavigation: { label: string; names: Page[] }[] = [
   { label: 'Data', names: ['Annotation'] },
-  { label: 'Develop', names: ['Models', 'Specialists'] },
+  { label: 'Develop', names: ['Models', 'Audio', 'Specialists'] },
   { label: 'Context & release', names: ['RAG', 'Releases'] },
   { label: 'Operations', names: ['Workflows', 'Infrastructure', 'Budgets', 'Audit'] },
 ];
 const navigationGroups = [...primaryNavigation, ...advancedNavigation];
 
 const descriptions: Record<Page, string> = {
+  Audio: 'Generate bounded English speech and inspect verified WAV output.',
   Overview: 'Your data, experiments, and next decisions. All in one workspace.',
   'Dataset Bank': 'Find source data and inspect its license and readiness.',
   Datasets: 'Acquire, prepare, and publish data, including typed recipes.',
@@ -805,6 +809,8 @@ export function App() {
             <ChatPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
           ) : active === 'Recipes' ? (
             <RecipesPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
+          ) : active === 'Audio' ? (
+            <AudioPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
           ) : active === 'Specialists' ? (
             <SpecialistsPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
           ) : active === 'Training' ? (

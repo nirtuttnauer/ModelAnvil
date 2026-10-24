@@ -1,0 +1,12 @@
+# Optional exact local CPU SpeechT5 head training, synthesis and independent proxy scoring.
+# Framework pins match requirements.gpu.txt; this recipe does not need GPU/adapter extras.
+torch==2.13.0
+transformers==5.14.0
+safetensors==0.8.0
+tokenizers==0.22.2
+numpy==2.3.3
+scipy==1.18.1
+sentencepiece==0.2.1
+soundfile==0.14.0
+cffi==2.1.1
+pycparser==3.12

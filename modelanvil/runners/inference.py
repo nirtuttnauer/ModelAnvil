@@ -166,6 +166,9 @@ def staged_snapshot(files, tenant, project):
 
 
 def snapshot(version, tenant, project):
+    if version.architecture_ref == "modelanvil.speecht5-cpu-output-head.v1":
+        from modelanvil.runners.audio_generation import candidate_bundle
+        return candidate_bundle(version,tenant,project)
     from modelanvil.runners.training import cpu_hf_runtime
     if not check_resource_access(version, project, tenant) or not check_resource_access(version.tokenizer, project, tenant):
         raise ValueError('Model or tokenizer is outside this project.')
@@ -330,6 +333,8 @@ def local_session(version, *, tenant, project, device='cpu', image_id=None):
             _allocation.release()
         return
     plan = snapshot(version, tenant, project)
+    if plan['format'] == 'audio':
+        raise ValueError('Speech models require the typed queued audio API.')
     if plan['format'] == 'vision':
         from modelanvil.runners.vlm_inference import session as vision_session
         if not _allocation.acquire(blocking=False): raise ValueError('Local inference is busy.')

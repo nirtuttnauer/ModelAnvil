@@ -57,7 +57,10 @@ def normalize_questions(questions):
 
 
 def _guard(run):
-    if (run.hardware_config or {}).get('pins', {}).get('config', {}).get('model_role') == 'vision_language':
+    role=(run.hardware_config or {}).get('pins',{}).get('config',{}).get('model_role')
+    if role=='text_to_speech':
+        raise ValueError('Use the independent audio evaluation recorded on the speech run; text comparison cannot evaluate audio outputs.')
+    if role=='vision_language':
         raise ValueError('Use the independent visual evaluation recorded on the vision run; text comparison cannot evaluate image inputs.')
     if run.status != 'completed' or not run.job_id or run.job.status != 'succeeded' or not run.output_model_version_id or not run.base_model_version_id:
         raise ValueError('Finish a real training run that produced a candidate and kept its base model.')

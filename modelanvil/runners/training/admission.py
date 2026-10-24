@@ -3,6 +3,9 @@ from modelanvil.device_admission import device_available,device_key
 
 
 def gpu_claim_plan(job,worker):
+    if isinstance(job.payload,dict) and job.payload.get("type")=="qualified_audio_generation":
+        from modelanvil.runners.audio_generation import gpu_claim_plan as audio_claim_plan
+        return audio_claim_plan(job,worker)
     if isinstance(job.payload, dict) and job.payload.get('type') == 'qualified_rlhf':
         from modelanvil.runners.alignment.hf_rlhf import gpu_claim_plan as rlhf_claim_plan
         return rlhf_claim_plan(job, worker)
