@@ -1,0 +1,25 @@
+{
+  "independent_reader": "stdlib JSON/Safetensors header+struct F32 finite and per-tensor comparison; no model/Django imports",
+  "base_weights_sha256": "781970663eee1110dc870fe5359ee65c3aa6ffd1ba20fad7e90cdea8610d8eab",
+  "trained_weights_sha256": "4eb5d89d7717297d865202914c87aa4a840df12e16c44e996f2fac1f8cc6931a",
+  "parameters": 2424,
+  "changed_parameters": 1428,
+  "changed_tensors": [
+    "lm_head.weight",
+    "transformer.layers.0.attn.k.weight",
+    "transformer.layers.0.attn.o.weight",
+    "transformer.layers.0.attn.q.weight",
+    "transformer.layers.0.attn.v.weight",
+    "transformer.layers.0.attn_ln.bias",
+    "transformer.layers.0.attn_ln.weight",
+    "transformer.layers.0.mlp.fc1.weight",
+    "transformer.layers.0.mlp.fc2.weight",
+    "transformer.layers.0.mlp_ln.bias",
+    "transformer.layers.0.mlp_ln.weight",
+    "transformer.ln_f.bias",
+    "transformer.ln_f.weight",
+    "transformer.wpe.weight",
+    "transformer.wte.weight"
+  ],
+  "production_qualified": false
+}

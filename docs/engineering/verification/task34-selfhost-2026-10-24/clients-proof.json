@@ -1,0 +1,24 @@
+{
+  "trained_model_chat_usage": {
+    "prompt_tokens": 8,
+    "completion_tokens": 4,
+    "total_tokens": 12
+  },
+  "reservation": {
+    "state": "settled",
+    "estimated_amount": "4.000000",
+    "settled_amount": "4.000000",
+    "unit": "training_steps",
+    "job_id": "01a16c59-e010-72e2-99f5-4311e2fe62ba"
+  },
+  "external_model_acquisition_refused_offline": true,
+  "backend_network_internal": true,
+  "egress": {
+    "outbound_test_net_connection_refused": true,
+    "errno": 101
+  },
+  "separate_namespace_verified_tls_auth": true,
+  "restart_replay_verified": true,
+  "temporary_protocol_key_revoked": true,
+  "production_qualified": false
+}

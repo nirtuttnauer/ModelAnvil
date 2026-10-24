@@ -1,0 +1,20 @@
+{
+  "executable_source_revision": "91c0a7aaa7125f8d2c6cdd094efe7cb67e6e616e",
+  "backend": {
+    "tests": 1209,
+    "optional_skips": 11,
+    "seconds": 194.685,
+    "result": "passed"
+  },
+  "frontend": {
+    "tests": 234,
+    "result": "passed"
+  },
+  "production_build": "passed",
+  "storybook_build": "passed",
+  "django_check": "passed",
+  "migration_drift": "none",
+  "git_diff_check": "passed",
+  "selfhost_boundary_tests": 9,
+  "qualification": "Fresh Linuxarm64 Docker application state on this Mac, bounded numerical CPU reference; no pretrained quality, physical second host or signed native OS qualification."
+}

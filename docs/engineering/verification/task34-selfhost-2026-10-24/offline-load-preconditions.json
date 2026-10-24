@@ -1,0 +1,9 @@
+{
+  "removed_only_unused_owned_release_images": [
+    "sha256:37f2d7a05befade20590f9ed7bcee0daa393823e29917d8ab49ad67901aa9c50",
+    "sha256:5dc7009a7b442fb7f2f6bc6504e19911e3c8d46e9d19d01f3f274ccd46e4d675"
+  ],
+  "api_and_web_missing_before_install": true,
+  "archive_sha256": "7b4210c14bf639c468e341c1dfa7ca350844e327550e6102ae7acdd857f1573b",
+  "shared_database_image_retained": true
+}

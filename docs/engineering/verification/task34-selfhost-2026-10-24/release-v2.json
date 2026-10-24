@@ -1,0 +1,49 @@
+{
+  "schema_version": "modelanvil.selfhost-release.v1",
+  "version": "cpu-8a77223-v2",
+  "source_revision": "8a77223e3452201bb6d58a762fc3c57a11d30e28",
+  "architecture": "arm64",
+  "os": "linux",
+  "images": {
+    "api": "sha256:37f2d7a05befade20590f9ed7bcee0daa393823e29917d8ab49ad67901aa9c50",
+    "web": "sha256:5dc7009a7b442fb7f2f6bc6504e19911e3c8d46e9d19d01f3f274ccd46e4d675",
+    "db": "sha256:7b822b0aac60967beb1ea5e576b8602c94c300a157d187f385ae3e0da199b90a"
+  },
+  "files": {
+    "LICENSE": {
+      "sha256": "49c10de93c7da966e8196f4fa81969f9e95f7f34eae8c13e9a981a97ce53d714",
+      "bytes": 1070
+    },
+    "README.md": {
+      "sha256": "00dd5f8abd7d068c086cc6304a201338faaa40e7c8650e6f6cd78eef9f2feadb",
+      "bytes": 7707
+    },
+    "compose.yaml": {
+      "sha256": "eb782b244d90c2cc058f7c88107130a6336588bdee76a30181f125511834053c",
+      "bytes": 3221
+    },
+    "images.tar": {
+      "sha256": "7b4210c14bf639c468e341c1dfa7ca350844e327550e6102ae7acdd857f1573b",
+      "bytes": 349686784
+    },
+    "modelanvil.py": {
+      "sha256": "1fde45ad2982a01bce99b47d035aadce0c9b175684064285c76870a8622511a8",
+      "bytes": 21580
+    },
+    "reference.json": {
+      "sha256": "4f029379dff4f607760f12e8db96d0be054ceb6da4184938f099f961c5123234",
+      "bytes": 17805
+    },
+    "requirements.selfhost.lock.txt": {
+      "sha256": "47a2a234728cb2eb30a620adcdcfda1bb6869ec561623ebc96c28285f1e7804d",
+      "bytes": 805
+    }
+  },
+  "qualified_recipe": {
+    "runtime": "modelanvil.general-transformer-sft.v1",
+    "recipe": "full_sft",
+    "profile": "Small numerical CPU transformer reference; no pretrained/task quality claim."
+  },
+  "desktop_launchers": "Experimental unsigned macOS app and Linux desktop shortcut; Docker and Python3.9+ prerequisite.",
+  "production_qualified": false
+}

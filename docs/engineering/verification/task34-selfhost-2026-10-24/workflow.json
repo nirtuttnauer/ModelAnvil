@@ -1,0 +1,73 @@
+{
+  "origin": "https://localhost:53947",
+  "tls_verified_with_explicit_ca": true,
+  "unauthenticated_api_status": 401,
+  "owner_login_succeeded": true,
+  "offline": true,
+  "model_import": {
+    "model": "01a16c59-dcbf-71ad-8e60-c2b8c49c7ac5",
+    "model_pk": 1,
+    "bundle_sha256": "4f029379dff4f607760f12e8db96d0be054ceb6da4184938f099f961c5123234",
+    "runtime": "modelanvil.general-transformer-sft.v1",
+    "production_qualified": false,
+    "launch": {
+      "project": "01a16c58-dd55-7c9a-8459-725ce51fc9b4",
+      "execution_mode": "worker",
+      "recipe_type": "full_sft",
+      "base_model_version": 1,
+      "tokenizer_version": 1,
+      "dataset_revision": 1,
+      "runner_manifest": 2,
+      "pool": 1,
+      "budget_policy_id": "01a16c59-dcd7-7738-b73e-d875e76ce14f",
+      "total_steps": 4
+    }
+  },
+  "base_chat_usage": {
+    "prompt_tokens": 8,
+    "completion_tokens": 4,
+    "total_tokens": 12
+  },
+  "prepared_csv": {
+    "revision_id": "01a16c59-df92-7e80-a47c-c0f9b8d6076b",
+    "state": "published",
+    "row_count": 2,
+    "manifest_digest": "9830befd966d1b5ddfafd27ea09b46ebc7d261dfb201cbba20ddb69d0f74bd23"
+  },
+  "training": {
+    "run_id": "01a16c59-e010-74d6-af40-17223e014875",
+    "status": "completed",
+    "current_step": 4,
+    "total_steps": 4,
+    "output_model_version_uuid": "01a16c59-f5db-719b-899c-eb895d59d542",
+    "checkpoints": [
+      {
+        "checkpoint_id": "01a16c59-e7e4-7322-9c37-f9341cd9ac02",
+        "step": 1,
+        "state_digest": "f43b3a5d487226ff13aeed1a593f9f301d801f7ba2eb74483ac6e268754b41d2"
+      },
+      {
+        "checkpoint_id": "01a16c59-eb8b-7cff-8467-28a45d1ca0a2",
+        "step": 2,
+        "state_digest": "ba3e5ef4224b7b8df204ce627b8c581d049544fe6c18e6bff0f1f0896528317d"
+      },
+      {
+        "checkpoint_id": "01a16c59-f017-767d-b82d-f6366c179827",
+        "step": 3,
+        "state_digest": "9936f0a76a75592dd016d566acffaca73be9a3293a79ffe6d41c92520f238e8c"
+      },
+      {
+        "checkpoint_id": "01a16c59-f5cb-743f-8bf2-ccb9eb92d7cf",
+        "step": 4,
+        "state_digest": "6ba57daa71cc14aa418d7c92f22f8ce7cb84d78158f5ae33b69c0e73759b8d73"
+      }
+    ]
+  },
+  "export_response_fields": [
+    "model_version_id",
+    "bundle",
+    "verification"
+  ],
+  "wall_seconds": 7.901941874995828,
+  "production_qualified": false
+}
