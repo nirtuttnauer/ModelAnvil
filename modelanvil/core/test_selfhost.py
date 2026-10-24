@@ -118,3 +118,23 @@ class InstallerBoundaryTests(SimpleTestCase):
         with patch.object(instance,'compose',side_effect=[b'',installer.InstallError('active jobs')]),patch.object(instance,'start') as restart:
             with self.assertRaises(installer.InstallError):instance.backup(self.root/'backup',restart=False)
             restart.assert_called_once()
+
+    def test_compose_plugin_is_exposed_without_forwarding_host_docker_credentials(self):
+        import os
+        import stat
+        binary=self.root/'installed-docker-compose';binary.write_text('fixture');binary.chmod(0o700)
+        replies=[SimpleNamespace(returncode=0,stdout=b'"unix:///installed/docker.sock"'),
+            SimpleNamespace(returncode=0,stdout=json.dumps([{'Name':'compose','Path':str(binary)}]).encode()),
+            SimpleNamespace(returncode=0,stdout=b'2.42.0'),SimpleNamespace(returncode=0,stdout=b'{"OSType":"linux","MemTotal":8589934592}')]
+        real_stat=os.stat
+        def socket_stat(path,*args,**kwargs):
+            if str(path)=='/installed/docker.sock':return SimpleNamespace(st_mode=stat.S_IFSOCK)
+            return real_stat(path,*args,**kwargs)
+        with patch.dict(os.environ,{'DOCKER_HOST':'tcp://unreviewed.example:2375','DOCKER_AUTH_CONFIG':'private-fixture'}), \
+                patch.object(installer.subprocess,'run',side_effect=replies) as execute,patch.object(installer.os,'stat',side_effect=socket_stat):
+            instance=installer.Instance(self.root/'new-instance')
+            self.addCleanup(instance.temporary.cleanup)
+            plugin=Path(instance.temporary.name)/'cli-plugins/docker-compose';self.assertEqual(plugin.resolve(),binary.resolve())
+            for call in execute.call_args_list:
+                self.assertNotIn('DOCKER_HOST',call.kwargs['env']);self.assertNotIn('DOCKER_AUTH_CONFIG',call.kwargs['env'])
+            self.assertEqual(instance.env['DOCKER_CONFIG'],instance.temporary.name)

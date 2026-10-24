@@ -77,6 +77,14 @@ class Instance:
             if not isinstance(endpoint,str) or not endpoint.startswith('unix:///') or not stat.S_ISSOCK(os.stat(endpoint[7:]).st_mode):raise ValueError()
         except (OSError,ValueError,subprocess.SubprocessError):raise InstallError('Start the local Unix-socket Docker engine with Compose v2, then retry.') from None
         self.docker=['docker','--host',endpoint];self.env={**clean,'DOCKER_CONFIG':self.temporary.name}
+        # Compose can be installed under the user's Docker config. Expose only that installed binary, never registry credentials.
+        plugins=subprocess.run([*self.docker,'info','--format','{{json .ClientInfo.Plugins}}'],env=clean,capture_output=True,timeout=5,check=True)
+        compose=next((Path(v['Path']).resolve() for v in json.loads(plugins.stdout) if v.get('Name')=='compose'),None)
+        if compose is None or not compose.is_absolute() or not compose.is_file() or not os.access(compose,os.X_OK):raise InstallError('Install Docker Compose v2 or later, then retry.')
+        directory=Path(self.temporary.name)/'cli-plugins';directory.mkdir(mode=0o700);(directory/'docker-compose').symlink_to(compose)
+        version=self.call(['compose','version','--short'],timeout=5).decode().strip()
+        match=re.match(r'^v?(\d+)\.',version)
+        if not match or int(match[1])<2:raise InstallError('Docker Compose v2 or later is required.')
         info=json.loads(self.call(['info','--format','{{json .}}']))
         if info.get('OSType')!='linux' or type(info.get('MemTotal')) is not int or info['MemTotal']<4*1024**3:raise InstallError('The CPU self-host package requires a local Linux Docker engine with at least4GiB assigned memory.')
         self.state=read_json(self.root/'instance.json') if (self.root/'instance.json').exists() else None
@@ -85,7 +93,12 @@ class Instance:
         with tempfile.TemporaryFile() as diagnostic:
             try:
                 result=subprocess.run([*self.docker,*args],input=data,stdin=input_file,stdout=output or subprocess.PIPE,stderr=diagnostic,env=self.env,timeout=timeout)
-                if result.returncode:raise InstallError('Docker operation failed: '+args[0]+'. Check the local engine and run diagnostics.')
+                if result.returncode:
+                    if self.root.is_dir():
+                        diagnostic.seek(0);raw=diagnostic.read(1024*1024)
+                        with open(self.root/'controller-private.log','ab',opener=lambda p,flags:os.open(p,flags,0o600)) as stream:
+                            stream.write(('Operation: '+args[0]+'\n').encode()+raw+b'\n')
+                    raise InstallError('Docker operation failed: '+args[0]+'. Inspect status and the private controller log.')
                 return result.stdout
             except subprocess.TimeoutExpired:raise InstallError('Docker operation exceeded its time limit. Inspect status before retrying.') from None
 

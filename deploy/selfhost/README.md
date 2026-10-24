@@ -25,7 +25,7 @@ python3 modelanvil.py diagnostics --directory "$HOME/ModelAnvil"
 python3 modelanvil.py stop --directory "$HOME/ModelAnvil"
 ```
 
-Diagnostics report public instance/image/container identity and offline status; they do not export passwords, API keys, model content or database dumps. All runtime image references are immutable local image IDs and use `pull_policy:never`. The installer verifies every package file and image identity. Checksums detect corruption; release signing/distribution trust is a separate gate.
+Diagnostics report public instance/image/container identity and offline status; they do not export passwords, API keys, model content or database dumps. Detailed Docker errors remain in `controller-private.log` in the private instance directory and are excluded from the diagnostics command. All runtime image references are immutable local image IDs and use `pull_policy:never`. The installer verifies every package file and image identity. Checksums detect corruption; release signing/distribution trust is a separate gate.
 
 ## Explicit local import and recipe
 
