@@ -24,7 +24,7 @@ from modelanvil.api.views import identity as identity_views
 from modelanvil.api.views import jobs_artifacts as resource_views
 from modelanvil.api.views import models_evals
 from modelanvil.api.views import model_workspace
-from modelanvil.api.views import specialists
+from modelanvil.api.views import specialists, audio
 from modelanvil.api.views import recipes as recipe_views
 from modelanvil.api.views import openapi as openapi_views
 from modelanvil.api.views import rag_views, embeddings
@@ -76,6 +76,7 @@ router.register("worker-inventory", infrastructure_views.WorkerViewSet, basename
 
 # Models & Evaluations
 router.register("models", models_evals.ModelViewSet, basename="model")
+router.register("audio", audio.AudioViewSet, basename="audio")
 router.register("specialists", specialists.SpecialistViewSet, basename="specialist")
 router.register("recipes", recipe_views.RecipeViewSet, basename="recipe")
 router.register("model-imports", model_workspace.ModelImportViewSet, basename="model-import")

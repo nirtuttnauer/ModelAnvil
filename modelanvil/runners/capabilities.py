@@ -73,6 +73,15 @@ def model_capabilities(version):
             config = json.loads(raw.getvalue())
             if not isinstance(config, dict):
                 raise ValueError('Model configuration must be an object.')
+        if plan['format']=='audio':
+            from modelanvil.runners.training import audio_runtime
+            audio_runtime.require_packages()
+            result['train']={'eligible':not plan['trained'],'recipes':[] if plan['trained'] else ['tts_output_head'],
+                'reason':'Start a new run from the exact imported speech base; automatic lease recovery preserves a run checkpoint.' if plan['trained'] else 'Pinned CPU speech output-head profile; preflight checks actual paired data and budget.'}
+            result['audio_generate']={'eligible':True,'devices':['cpu'],'max_seconds':6,'reason':'Typed queued speech generation with exact processor and vocoder.'}
+            result['chat']['reason']='Use the Audio workspace for playable speech.'
+            result['evaluate']['reason']='Use independent protected audio loss and transcription proxy; human quality is a separate gate.'
+            return result
         format = plan['format']
         if format == 'vision':
             vlm_runtime.require_packages()

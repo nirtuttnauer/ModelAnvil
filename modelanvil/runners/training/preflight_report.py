@@ -62,10 +62,18 @@ def estimate_from_pilot(inputs, *, tenant, pool, project):
     seqs = inputs['sequences']
     vision = pins.get('config', {}).get('model_role') == 'vision_language'
     pairs = sum(len(seqs[i % len(seqs)]) - (inputs['samples'][i % len(seqs)]['prompt_tokens'] if vision else 1) for i in range(pins['steps']))
+    if pins.get('config',{}).get('model_role')=='text_to_speech':
+        from modelanvil.runners.training.hf_runtime import training_sample_index
+        pairs=sum(inputs['samples'][training_sample_index(i+1,len(inputs['samples']),pins)]['mel_frames'] for i in range(pins['steps']))
+        estimate['units']['tokens']='target mel frames'
     estimate['total_tokens'] = pairs
     estimate['assumptions'] = ['One step passes one encoded sample; samples cycle in manifest order.',
         'Queue time, database writes, checkpoint storage and retries are excluded.',
         'Linear scaling by next-token pairs assumes the pilot worker hardware; placement and timing variation are unmeasured.']
+    if pins.get('config',{}).get('model_role')=='text_to_speech':
+        estimate['assumptions']=['One step passes one paired recording/transcript, in pinned seeded epoch order.',
+            'Queue, input staging, checkpoint writes, independent scoring and retries are excluded.',
+            'Linear scaling by target mel frames assumes the same pilot worker; timing variation is unmeasured.']
     if vision:
         estimate['units']['tokens'] = 'assistant response tokens'
         estimate['assumptions'][0] = 'One step passes one encoded image/question/answer pair; only assistant response tokens contribute to loss.'

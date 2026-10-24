@@ -28,8 +28,8 @@ def training_evidence(run):
                           else 'Budgeted CPU worker job awaiting checkpoint evidence')
             if pins.get('accelerator'):
                 backend = pins['accelerator']['device']['backend']
-                recipe = {'lora_adapter': 'LoRA', 'qlora_adapter': 'four-bit QLoRA', 'continued_pretraining': 'continued pretraining'}.get(pins.get('recipe'), 'full SFT')
-                family = 'SmolVLM-256M image/text' if pins.get('config', {}).get('model_role') == 'vision_language' else 'SmolLM2'
+                recipe = {'lora_adapter': 'LoRA', 'qlora_adapter': 'four-bit QLoRA', 'continued_pretraining': 'continued pretraining', 'tts_output_head':'speech output head'}.get(pins.get('recipe'), 'full SFT')
+                family = {'vision_language':'SmolVLM-256M image/text','text_to_speech':'SpeechT5 English speech'}.get(pins.get('config',{}).get('model_role'),'SmolLM2')
                 source = (f'Pinned {family} {backend} {recipe}; measured device metrics and fenced checkpoints'
                           if run.current_step else f'Budgeted {backend} worker job awaiting checkpoint evidence')
             result = evidence('integrated_execution' if run.current_step else 'configuration_only', source)

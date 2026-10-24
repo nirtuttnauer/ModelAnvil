@@ -1,0 +1,14 @@
+{
+  "tts": {
+    "converted_sha256": "aec2409d90f7f8e521021d7dea905cf11245cf9e4f2013634b478183aeb1349d",
+    "source_bytes": 585476837,
+    "reader": "torch.load(weights_only=True,mmap=True,map_location=cpu)",
+    "no_remote_code": true
+  },
+  "vocoder": {
+    "converted_sha256": "38907fe505de5bfc5ebd8c956d56721a2c30fdf8f5c7d4d9604f24759186246b",
+    "source_bytes": 50672453,
+    "reader": "torch.load(weights_only=True,mmap=True,map_location=cpu)",
+    "no_remote_code": true
+  }
+}

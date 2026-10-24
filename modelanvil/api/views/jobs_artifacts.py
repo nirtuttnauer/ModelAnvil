@@ -85,7 +85,7 @@ class JobSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs.get('payload', {}).get('type') in ('qualified_dpo', 'qualified_rlhf') or (self.instance and hasattr(self.instance, 'alignment_run')):
             raise serializers.ValidationError('Manage DPO jobs through their alignment run.')
-        if attrs.get('payload', {}).get('type') in {'specialist_inference','recipe_execution','embedding_build'} or (self.instance and self.instance.payload.get('type') in {'specialist_inference','recipe_execution','embedding_build'}):
+        if attrs.get('payload', {}).get('type') in {'specialist_inference','recipe_execution','embedding_build','qualified_audio_generation'} or (self.instance and self.instance.payload.get('type') in {'specialist_inference','recipe_execution','embedding_build','qualified_audio_generation'}):
             raise serializers.ValidationError('Manage this job through its specialist, recipe or embedding-build API.')
         if attrs.get('payload', {}).get('type') == 'qualified_evaluation' or (self.instance and self.instance.evaluation_runs.exists()):
             raise serializers.ValidationError('Manage evaluation jobs through their evaluation run.')
@@ -248,7 +248,7 @@ class JobViewSet(ScopedViewSet):
             raise serializers.ValidationError('Alignment jobs retain durable execution and accounting history.')
         if instance.payload.get('type') == 'model_import':
             raise serializers.ValidationError('Model import jobs retain their acquisition history.')
-        if instance.payload.get('type') in {'specialist_inference','recipe_execution','embedding_build'}:
+        if instance.payload.get('type') in {'specialist_inference','recipe_execution','embedding_build','qualified_audio_generation'}:
             raise serializers.ValidationError('Execution jobs retain durable request and accounting history.')
         super().perform_destroy(instance)
 
@@ -259,7 +259,7 @@ class JobViewSet(ScopedViewSet):
             raise serializers.ValidationError('Cancel this job through its alignment run.')
         if job.payload.get('type') == 'model_import':
             raise serializers.ValidationError('Cancel this job through its model import.')
-        if job.payload.get('type') in {'specialist_inference','recipe_execution','embedding_build'}:
+        if job.payload.get('type') in {'specialist_inference','recipe_execution','embedding_build','qualified_audio_generation'}:
             raise serializers.ValidationError('Cancel this job through its specialist, recipe or embedding-build API.')
         if job.evaluation_runs.exists():
             raise serializers.ValidationError('Manage this job through its evaluation run.')

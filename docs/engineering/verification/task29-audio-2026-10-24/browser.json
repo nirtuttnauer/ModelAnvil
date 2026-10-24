@@ -1,0 +1,606 @@
+{
+  "actual_api": true,
+  "training_run_id": "01a16beb-7db5-7f15-a719-af79cc554804",
+  "request_id": "01a16bed-c4ae-736e-b73a-edb8ac01d139",
+  "preflight": {
+    "status": "approved",
+    "recipe_type": "tts_output_head",
+    "execution_mode": "worker",
+    "checks": [
+      {
+        "check": "recipe-execution-mode",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Worker recipe must match the selected runtime.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "dataset_revision",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "dataset_revision: selected accessible resource.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "base_model_version",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "base_model_version: selected accessible resource.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "tokenizer_version",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "tokenizer_version: selected accessible resource.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "runner_manifest",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "runner_manifest: selected accessible resource.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "pool",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "pool: selected accessible resource.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "dataset-published",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Dataset must be published with immutable prepared text.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "model-tokenizer",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Base weights must pin the selected tokenizer.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "runner-contract",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Runner must be enabled and match the qualified runtime contract.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "pinned-inputs",
+        "category": "compatibility",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Verified dataset bytes, base weights, tokenizer encoding and runner contract.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "worker-memory",
+        "category": "capacity",
+        "status": "pass",
+        "blocking": false,
+        "reason": "A worker must declare the selected contract and sufficient memory.",
+        "corrective_action": null,
+        "detail": {
+          "required_memory_bytes": 17179869184,
+          "matching_workers": 1
+        }
+      },
+      {
+        "check": "worker-slots",
+        "category": "capacity",
+        "status": "pass",
+        "blocking": false,
+        "reason": "1 free matching worker slot(s); one required.",
+        "corrective_action": null,
+        "detail": {
+          "available_slots": 1,
+          "required_slots": 1
+        }
+      },
+      {
+        "check": "budget",
+        "category": "budget",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Budget must be enabled, use training_steps, and cover the requested sample passes.",
+        "corrective_action": null,
+        "detail": {
+          "policy_id": "01a16be9-85bd-7179-989b-0f6c56ff461b",
+          "period": "lifetime",
+          "period_start": "1970-01-01",
+          "unit": "training_steps",
+          "currency": null,
+          "limit": "100.000000",
+          "committed": "8",
+          "remaining": "92.000000",
+          "requested": 2
+        }
+      },
+      {
+        "check": "device-admission",
+        "category": "capacity",
+        "status": "pass",
+        "blocking": false,
+        "reason": "The named local device must be idle across cooperating API and training processes.",
+        "corrective_action": null,
+        "detail": {}
+      },
+      {
+        "check": "storage",
+        "category": "capacity",
+        "status": "pass",
+        "blocking": false,
+        "reason": "Local artifact and checkpoint storage must cover the projected states.",
+        "corrective_action": null,
+        "detail": {
+          "artifacts": {
+            "available_bytes": 183288942592,
+            "required_bytes": 1437734378
+          },
+          "checkpoints": {
+            "available_bytes": 183288926208,
+            "required_bytes": 1437734378
+          }
+        }
+      }
+    ],
+    "blocking_checks": [],
+    "samples": [
+      {
+        "sample_id": "86b0bd25-25f1-496f-970c-d0815335b6ba",
+        "text_preview": "Please call Stella.",
+        "token_ids": [
+          4,
+          49,
+          15,
+          5,
+          7,
+          12,
+          5,
+          4,
+          17,
+          7,
+          15,
+          15,
+          4,
+          34,
+          6,
+          5,
+          15,
+          15,
+          7,
+          26,
+          2
+        ],
+        "token_count": 21
+      }
+    ],
+    "sample_count": 1,
+    "pins": {
+      "runtime": "modelanvil.speecht5-cpu-output-head.v1",
+      "contract_digest": "d222e1f6dfeb9a332253b9d6b24a3e0a833138aa78e5398f0ba405c9fa5c6c20",
+      "build_digest": "278a58962e6c72721309e1f4d3421d9fc8a0c3c3546a24760388f713512a864f",
+      "dataset_id": "01a16be9-85bb-73e8-bf15-90225695df71",
+      "dataset_digest": "779f9eb6617bc8b4b7aff59b4d8572b29f935610296ee278e467740a856ff7a4",
+      "base_id": "01a16be9-85b3-74db-9a9f-729487b9034c",
+      "base_artifact_id": "01a16be9-7daf-777a-85d2-11301a93ce32",
+      "base_digest": "b44bbd5b772cfa9ce6a35611d0b813b67ab6f86b6a309459fcd356942ce70d38",
+      "base_input_identity": "8c43b6bbf894a693a6279f34570db43049722b2603a80ad82533c16b7888959c",
+      "tokenizer_id": "01a16be9-85b3-74d4-90f8-30bbdc5cf1b9",
+      "tokenizer_digest": "08b23774f97d46c1022bbd506df4ff29d6688c08ba648e00554b38c2e4b8b5b3",
+      "processor_id": "01a16be9-85b2-739e-88e0-5539ae2a1e6c",
+      "processor_digest": "28983c1d174cf1ad66da50f82cc863926951a981bd7139b15720d7a159d32a61",
+      "runner_id": "01a16be9-85bc-75cc-a756-263bcdc97530",
+      "runner_digest": "90ad25b406b72c681e1be2038dea541ae9b1b4db08c72c4e1f736cc767790a5a",
+      "pool_id": 1,
+      "worker_id": 1,
+      "steps": 2,
+      "config": {
+        "runtime": "modelanvil.speecht5-cpu-output-head.v1",
+        "source": {
+          "tts": {
+            "repo_id": "microsoft/speecht5_tts",
+            "revision": "30fcde30f19b87502b8435427b5f5068e401d5f6",
+            "license": "MIT",
+            "upstream_weights_sha256": "d60d28067349ef66b50d8cd643ae56b6d6b8f27def929bc4ef6fcad907954190"
+          },
+          "vocoder": {
+            "repo_id": "microsoft/speecht5_hifigan",
+            "revision": "bb6f429406e86a9992357a972c0698b22043307d",
+            "license": "MIT",
+            "upstream_weights_sha256": "b171e9bcd8a2b50dc9780040478dfa26783a9ee4be012cf5776914f091d6887b"
+          },
+          "speaker": {
+            "repo_id": "Matthijs/cmu-arctic-xvectors",
+            "revision": "5c1297a9eb6c91714ea77c0d4ac5aca9b6a952e5",
+            "license": "MIT",
+            "archive_sha256": "28ea1b685a49fedce92d1af7e68b22bf511a23432bc7a13d621a4deeee9fe9a1",
+            "member": "spkrec-xvect/cmu_us_slt_arctic-wav-arctic_a0001.npy",
+            "speaker_sha256": "21719c0414a470561e6d037466fd239ab59c1f9ed4e1b97db557dad6d0223e73",
+            "norm": 0.9999998807907104
+          }
+        },
+        "processor": {
+          "sample_rate": 16000,
+          "max_seconds": 6,
+          "channels": "mean_to_mono",
+          "transform": "pcm16_mean_channels_scipy_resample_poly_kaiser5_clip_v1",
+          "maximum_text_characters": 96,
+          "maximum_text_tokens": 128,
+          "maximum_mel_frames": 376,
+          "reduction_factor": 2,
+          "odd_mel_padding": "one_masked_frame",
+          "speaker": "fixed_published_demo",
+          "loss": "speecht5_composite_spectrogram_stop_attention_v1"
+        },
+        "model_role": "text_to_speech",
+        "sequence_tokens": 128
+      },
+      "source": {
+        "tts": {
+          "repo_id": "microsoft/speecht5_tts",
+          "revision": "30fcde30f19b87502b8435427b5f5068e401d5f6",
+          "license": "MIT",
+          "upstream_weights_sha256": "d60d28067349ef66b50d8cd643ae56b6d6b8f27def929bc4ef6fcad907954190"
+        },
+        "vocoder": {
+          "repo_id": "microsoft/speecht5_hifigan",
+          "revision": "bb6f429406e86a9992357a972c0698b22043307d",
+          "license": "MIT",
+          "upstream_weights_sha256": "b171e9bcd8a2b50dc9780040478dfa26783a9ee4be012cf5776914f091d6887b"
+        },
+        "speaker": {
+          "repo_id": "Matthijs/cmu-arctic-xvectors",
+          "revision": "5c1297a9eb6c91714ea77c0d4ac5aca9b6a952e5",
+          "license": "MIT",
+          "archive_sha256": "28ea1b685a49fedce92d1af7e68b22bf511a23432bc7a13d621a4deeee9fe9a1",
+          "member": "spkrec-xvect/cmu_us_slt_arctic-wav-arctic_a0001.npy",
+          "speaker_sha256": "21719c0414a470561e6d037466fd239ab59c1f9ed4e1b97db557dad6d0223e73",
+          "norm": 0.9999998807907104
+        }
+      },
+      "optimizer": {
+        "algorithm": "adamw",
+        "learning_rate": 1e-05,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "weight_decay": 0
+      },
+      "recipe": "tts_output_head",
+      "initialization_seed": 42,
+      "sample_order": "seeded_epoch_shuffle_v1",
+      "accelerator": {
+        "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+        "device": {
+          "id": "cpu",
+          "backend": "cpu",
+          "torch_device": "cpu",
+          "name": "Apple M5 Pro",
+          "total_memory_bytes": 51539607552
+        },
+        "packages": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "safetensors": "0.8.0",
+          "tokenizers": "0.22.2"
+        },
+        "capacity_source": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+      },
+      "trainable_parameters": 124578,
+      "sample_digest": "90dc9bcac3e19d25436cf25a668570e820a3b6d8dda37c6439365d1068326834",
+      "validation_digest": "d96cec30c51058ef862c9b57559a358c5421243a44b4fb6708cc411ba90986b3",
+      "protected_test_digest": "198706db3c8890e77c0284aa558db73c5feefb1a94fddb7ff6d9d33132e2f815",
+      "asset_pins": {
+        "test": [
+          {
+            "sha256": "2439aaaaf7edc055d4051a1c43c3130582dcb4c3f4c797936fe118208d06b1bb",
+            "byte_size": 105899,
+            "media_type": "audio/flac",
+            "sample_rate": 48000,
+            "channels": 1,
+            "frames": 98473,
+            "duration_seconds": 2.0515208333333335,
+            "normalized_sample_rate": 16000,
+            "normalized_frames": 32825,
+            "normalized_sha256": "b4f36364077a07a0ed3ac5a86d64292f028cb59ef6cafc9e61fbdb0f1055b756",
+            "clipped_samples": 0,
+            "normalized_rms": 0.10902473028140992,
+            "transform": "pcm16_mean_channels_scipy_resample_poly_kaiser5_clip_v1",
+            "artifact": {
+              "artifact_id": "01a16be9-79bf-7669-91d3-e07d0c6801a9",
+              "sha256": "2439aaaaf7edc055d4051a1c43c3130582dcb4c3f4c797936fe118208d06b1bb",
+              "byte_size": 105899
+            }
+          }
+        ],
+        "train": [
+          {
+            "sha256": "560d719e10b10f9da0c1b0a7485506fc9e4042c12b2667a7c5b50240c795a7ea",
+            "byte_size": 134703,
+            "media_type": "audio/flac",
+            "sample_rate": 48000,
+            "channels": 1,
+            "frames": 164581,
+            "duration_seconds": 3.4287708333333335,
+            "normalized_sample_rate": 16000,
+            "normalized_frames": 54861,
+            "normalized_sha256": "e35704eaca16d868f25d010bc172c8ea42495646657f341226645599dc0e4ad8",
+            "clipped_samples": 0,
+            "normalized_rms": 0.08392653843122656,
+            "transform": "pcm16_mean_channels_scipy_resample_poly_kaiser5_clip_v1",
+            "artifact": {
+              "artifact_id": "01a16be9-79c5-7804-87c4-018cb615a834",
+              "sha256": "560d719e10b10f9da0c1b0a7485506fc9e4042c12b2667a7c5b50240c795a7ea",
+              "byte_size": 134703
+            }
+          }
+        ],
+        "validation": [
+          {
+            "sha256": "450ba3382afcfb0e3ec50d52296bc64a95be4b9bc89e0a10a5bfdc57f4756864",
+            "byte_size": 134652,
+            "media_type": "audio/flac",
+            "sample_rate": 48000,
+            "channels": 1,
+            "frames": 134338,
+            "duration_seconds": 2.7987083333333334,
+            "normalized_sample_rate": 16000,
+            "normalized_frames": 44780,
+            "normalized_sha256": "30b97a4b0806812f647d1dd6e5ae2362a774f9b9fbe350625ae151e6453460bc",
+            "clipped_samples": 0,
+            "normalized_rms": 0.06657389571894934,
+            "transform": "pcm16_mean_channels_scipy_resample_poly_kaiser5_clip_v1",
+            "artifact": {
+              "artifact_id": "01a16be9-79c3-7131-9493-a84b7a999cb7",
+              "sha256": "450ba3382afcfb0e3ec50d52296bc64a95be4b9bc89e0a10a5bfdc57f4756864",
+              "byte_size": 134652
+            }
+          }
+        ]
+      },
+      "splits": {
+        "consumed": "train",
+        "train_rows": 1,
+        "excluded_rows": {
+          "test": 1,
+          "validation": 1
+        }
+      },
+      "evaluator_source": {
+        "repo_id": "openai/whisper-tiny.en",
+        "revision": "87c7102498dcde7456f24cfd30239ca606ed9063",
+        "license": "Apache-2.0"
+      },
+      "evaluator_files": {
+        "evaluator/added_tokens.json": {
+          "artifact_id": "01a16be9-7d18-7c30-80bf-64aee7a21c77",
+          "byte_size": 34604,
+          "sha256": "560be47bea388757f8d4cc185c5d82067426cbb6361e38016dd90ddc01ab203a"
+        },
+        "evaluator/config.json": {
+          "artifact_id": "01a16be9-7d1a-7edf-ad66-e9fc6bc5f50c",
+          "byte_size": 1937,
+          "sha256": "b5366317df280f79e6cc366f259f379674f81a8721d458acf2e00680ccb10b1d"
+        },
+        "evaluator/generation_config.json": {
+          "artifact_id": "01a16be9-7d1c-791c-8913-35c1c81b1afe",
+          "byte_size": 1621,
+          "sha256": "38744c19d5cede6ff4dab5079c6d6ddc02ca726960bbef208fb602ad5a030eab"
+        },
+        "evaluator/merges.txt": {
+          "artifact_id": "01a16be9-7d1d-736d-9706-8bdf92259dd1",
+          "byte_size": 456318,
+          "sha256": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5"
+        },
+        "evaluator/model.safetensors": {
+          "artifact_id": "01a16be9-7d55-7172-935a-96b1f35d065a",
+          "byte_size": 151060136,
+          "sha256": "db59695928ded6043adaef491a53ef4e12da9611184d77c53baa691a60b958ad"
+        },
+        "evaluator/normalizer.json": {
+          "artifact_id": "01a16be9-7da1-7e74-bd3b-d322f6ed55ab",
+          "byte_size": 52666,
+          "sha256": "bf1c507dc8724ca9cf9903640dacfb69dae2f00edee4f21ceba106a7392f26dd"
+        },
+        "evaluator/preprocessor_config.json": {
+          "artifact_id": "01a16be9-7da4-7b8a-839f-19e9bfa22e7a",
+          "byte_size": 184990,
+          "sha256": "9b5cd03a36fbb8a627c64d98a5b5b126ead95a77720723944487311f0110b666"
+        },
+        "evaluator/special_tokens_map.json": {
+          "artifact_id": "01a16be9-7da6-7ad4-8664-f842b9d3b933",
+          "byte_size": 1830,
+          "sha256": "014f8f802366ed818919550be0ad9e35907327cb9e142e8aaa102420f460bda8"
+        },
+        "evaluator/tokenizer.json": {
+          "artifact_id": "01a16be9-7da8-7740-9164-3d9205c94834",
+          "byte_size": 2405679,
+          "sha256": "5eb60cec1e77aeeb6869a2bb5a8e01a84c3fe5d072d75369343021fe6f5310d0"
+        },
+        "evaluator/tokenizer_config.json": {
+          "artifact_id": "01a16be9-7dab-7c59-8823-bba18a6d4cdf",
+          "byte_size": 805,
+          "sha256": "14f84bdf4b9ecdbd4738ddc81c17a1baedfc02bb93c6e049c951e15a1b40b70d"
+        },
+        "evaluator/vocab.json": {
+          "artifact_id": "01a16be9-7dad-77d4-9483-5fe63c527174",
+          "byte_size": 798156,
+          "sha256": "3ba3c3109ff33976c4bd966589c11ee14fcaa1f4c9e5e154c2ed7f99d80709e7"
+        }
+      },
+      "production_qualified": false
+    },
+    "requirements": {
+      "runtime": "modelanvil.speecht5-cpu-output-head.v1",
+      "recipe": "tts_output_head",
+      "config": {
+        "runtime": "modelanvil.speecht5-cpu-output-head.v1",
+        "source": {
+          "tts": {
+            "repo_id": "microsoft/speecht5_tts",
+            "revision": "30fcde30f19b87502b8435427b5f5068e401d5f6",
+            "license": "MIT",
+            "upstream_weights_sha256": "d60d28067349ef66b50d8cd643ae56b6d6b8f27def929bc4ef6fcad907954190"
+          },
+          "vocoder": {
+            "repo_id": "microsoft/speecht5_hifigan",
+            "revision": "bb6f429406e86a9992357a972c0698b22043307d",
+            "license": "MIT",
+            "upstream_weights_sha256": "b171e9bcd8a2b50dc9780040478dfa26783a9ee4be012cf5776914f091d6887b"
+          },
+          "speaker": {
+            "repo_id": "Matthijs/cmu-arctic-xvectors",
+            "revision": "5c1297a9eb6c91714ea77c0d4ac5aca9b6a952e5",
+            "license": "MIT",
+            "archive_sha256": "28ea1b685a49fedce92d1af7e68b22bf511a23432bc7a13d621a4deeee9fe9a1",
+            "member": "spkrec-xvect/cmu_us_slt_arctic-wav-arctic_a0001.npy",
+            "speaker_sha256": "21719c0414a470561e6d037466fd239ab59c1f9ed4e1b97db557dad6d0223e73",
+            "norm": 0.9999998807907104
+          }
+        },
+        "processor": {
+          "sample_rate": 16000,
+          "max_seconds": 6,
+          "channels": "mean_to_mono",
+          "transform": "pcm16_mean_channels_scipy_resample_poly_kaiser5_clip_v1",
+          "maximum_text_characters": 96,
+          "maximum_text_tokens": 128,
+          "maximum_mel_frames": 376,
+          "reduction_factor": 2,
+          "odd_mel_padding": "one_masked_frame",
+          "speaker": "fixed_published_demo",
+          "loss": "speecht5_composite_spectrogram_stop_attention_v1"
+        },
+        "model_role": "text_to_speech",
+        "sequence_tokens": 128
+      },
+      "optimizer": {
+        "algorithm": "adamw",
+        "learning_rate": 1e-05,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "weight_decay": 0
+      },
+      "cpu_slots": 1,
+      "memory_bytes": 17179869184,
+      "storage_bytes": 1437734378,
+      "checkpoint_count": 2,
+      "storage_assumption": "FP32 weights and Adam moments for the planned checkpoint cadence, plus staging/candidate headroom; shared local host.",
+      "device_memory": {
+        "total_bytes": 51539607552,
+        "required_bytes": 17179869184,
+        "scope": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+      },
+      "gpu_count": 0,
+      "accelerator": {
+        "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+        "device": {
+          "id": "cpu",
+          "backend": "cpu",
+          "torch_device": "cpu",
+          "name": "Apple M5 Pro",
+          "total_memory_bytes": 51539607552
+        },
+        "packages": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "safetensors": "0.8.0",
+          "tokenizers": "0.22.2"
+        },
+        "capacity_source": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+      },
+      "precision": "fp32"
+    },
+    "budget": {
+      "policy_id": "01a16be9-85bd-7179-989b-0f6c56ff461b",
+      "period": "lifetime",
+      "period_start": "1970-01-01",
+      "unit": "training_steps",
+      "currency": null,
+      "limit": "100.000000",
+      "committed": "8",
+      "remaining": "92.000000",
+      "requested": 2
+    },
+    "estimate": {
+      "known": true,
+      "source": "Measured completed worker pilot 01a16beb-7db5-7f15-a719-af79cc554804",
+      "assumptions": [
+        "One step passes one paired recording/transcript, in pinned seeded epoch order.",
+        "Queue, input staging, checkpoint writes, independent scoring and retries are excluded.",
+        "Linear scaling by target mel frames assumes the same pilot worker; timing variation is unmeasured."
+      ],
+      "units": {
+        "duration": "CPU seconds (engine only)",
+        "tokens": "target mel frames",
+        "currency": null
+      },
+      "currency": null,
+      "uncertainty": "Unknown; no confidence interval has been measured.",
+      "estimated_duration_seconds": 0.14080900000000085,
+      "estimated_cost": {
+        "known": false,
+        "value": null,
+        "reason": "No measured monetary rate or currency is configured."
+      },
+      "total_tokens": 430,
+      "pilot": {
+        "run_id": "01a16beb-7db5-7f15-a719-af79cc554804",
+        "cpu_seconds": 0.14080900000000085,
+        "training_pairs": 430
+      }
+    },
+    "fingerprint": "79eb215b6538f375f81f874c019ad5b57ac6e27af5f52a55aa705bd41cbaa91c",
+    "checked_at": "2026-10-24T03:21:44.941615+00:00",
+    "expires_in_seconds": 600,
+    "runtime_scope": {
+      "targets": [],
+      "available": [
+        "modelanvil.speecht5-cpu-output-head.v1"
+      ],
+      "unavailable": []
+    },
+    "capacity_note": "Capacity is observed during preview. Launch rechecks; GPU claim revalidates placement/runtime/headroom/budget and reserves the physical local device for its fenced attempt. Process admission remains held until allocation cleanup; budget reservation is atomic."
+  },
+  "cli_worker": true,
+  "download_bytes": 636797504,
+  "wav_download_bytes": 25644,
+  "playback_browser_decoded": true,
+  "viewports": [
+    1440,
+    390
+  ],
+  "page_errors": [],
+  "horizontal_overflow": {
+    "desktop": false,
+    "mobile": false
+  },
+  "native_picker_emulation": "OS picker emulated with real OPFS disk-stream handle; native OS dialog not qualified.",
+  "production_qualified": false
+}

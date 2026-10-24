@@ -1,0 +1,42 @@
+{
+  "runtime": "modelanvil.speecht5-cpu-output-head.v1",
+  "build_digest": "278a58962e6c72721309e1f4d3421d9fc8a0c3c3546a24760388f713512a864f",
+  "contract_digest": "d222e1f6dfeb9a332253b9d6b24a3e0a833138aa78e5398f0ba405c9fa5c6c20",
+  "packages": {
+    "torch": "2.13.0",
+    "transformers": "5.14.0",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.22.2",
+    "numpy": "2.3.3",
+    "scipy": "1.18.1",
+    "sentencepiece": "0.2.1",
+    "soundfile": "0.14.0",
+    "cffi": "2.1.1",
+    "pycparser": "3.12"
+  },
+  "files": {
+    "modelanvil/runners/training/audio_runtime.py": "36743d31a0b29fc7b52fedca8d60af2dd92212544ce5816c92c2b7f7f847261f",
+    "modelanvil/runners/training/audio_math.py": "742455f0d7e8a71adaa7ca0a883c27f80c31523b4d70e314d4e504ab948d34fd",
+    "modelanvil/runners/training/audio_data.py": "e631f8682f38eace11bb1d50e70fe84d1a45eac34f8f25ec5777a4a7e7476ad2",
+    "modelanvil/runners/training/registry.py": "fcb72cf124e442757efd8bc4975324409aacf1b2a10c8b83a77e2f0093428987",
+    "modelanvil/runners/training/runtime.py": "5fadf9793e874e4cd23194f5fd6f17f63de26c39b9ac5bb891c40d1f254c9c1c",
+    "modelanvil/runners/training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+    "modelanvil/runners/alignment/torch_rlhf.py": "162b9cb89bc1c103b46aa0f486ae258759d51af16f8fdaa1b3ae90bf31f36b15",
+    "modelanvil/runners/training/admission.py": "ceea9cb0336ca4e4e14e7f8233fda38466b2a9c3b018eec4603139e129330852",
+    "modelanvil/runners/inference.py": "bc9995ba9de871fc991e82a8b52c147707ab690a9565be26e7b8d172b6cd2404",
+    "modelanvil/runners/models.py": "82f23cc5fa8fc6e5866aeaeafd620ca97da27596bf3ef6e87db9121ad5076954",
+    "modelanvil/jobs/models.py": "53a470b6e1a62f29197512e2f40fd619ea3d9e410c8df34e6f9651c18defc907",
+    "modelanvil/device_admission.py": "3dad22f6c16aaa525579c38f0a935ab2e60ebbc94418eeb7e65a0cb0efbe4295",
+    "modelanvil/runners/audio_generation.py": "f1231d7e69c9f663ce212633453537d082b77d1b5a42268213e66095745c859f",
+    "modelanvil/api/views/audio.py": "35e8d78f1e60e4020bab5d7e975ba310c5371115d2e6c1acb3ee5c22d9ab169a",
+    "modelanvil/runners/capabilities.py": "17b2f4a1b5926cedf1b457257dca2145393250af2dcd52b366f5715642818972",
+    "modelanvil/jobs/access.py": "17098e34c7487696b8ca975cb98ffa39d507186d0e99d40ec8bef895361e8abe",
+    "modelanvil/api/views/jobs_artifacts.py": "91bd4b4b3fcad7d153f0a5e38b9dc973a2c4d494cc787c837c6262437c4f2cb0",
+    "modelanvil/api/views/training_views.py": "014e24def46623b209ccd33e2544be1791e85fe67b231876fca0461b7d3daba6",
+    "modelanvil/runners/management/commands/setup_audio_training.py": "4c3930e5d2d6e6cb9d3e8360e289a4a3fb518435a8bffcee861dc1cbe738400b",
+    "scripts/convert_speecht5.py": "7a0ba2d5def493d366de996f427f7f6dc2bbe80cac7886f9ced14ce451c9d63d",
+    "scripts/audio_candidate_infer.py": "e5f9b530cbb6d3d5e90a13d465c0a247c17c169fc8d3c099e77068d2f3a23542",
+    "scripts/score_audio_candidate.py": "4c5ac13acb22e29b4d44a75c1ef011d47bfc5f0b0e80bc87637054b0937d2fe5",
+    "requirements.audio.txt": "b7468f2c3c7a6ba454f966bcc682d246317b5b6cd971f8317ab669a46e32ab6c"
+  }
+}

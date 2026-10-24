@@ -406,6 +406,7 @@ class TrainingRun(TenantContextModel):
         FULL_SFT = "full_sft", "Full Parameter SFT"
         LORA_ADAPTER = "lora_adapter", "LoRA Adapter"
         QLORA_ADAPTER = "qlora_adapter", "Quantized LoRA Adapter"
+        TTS_OUTPUT_HEAD = "tts_output_head", "Speech Output Head"
 
     class Status(models.TextChoices):
         PENDING = "pending", "Pending"
