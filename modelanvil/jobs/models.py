@@ -619,6 +619,12 @@ def commit_result(
             if job_status == Job.Status.FAILED and current.status == JobAttempt.Status.SUCCEEDED:
                 current.status = JobAttempt.Status.FAILED
                 current.save(update_fields=['status', 'updated_at'])
+    if job.payload.get('type') == 'qualified_tool_chat':
+        from modelanvil.runners.tool_jobs import finalize_job as finalize_tools
+        job_status=finalize_tools(job,job_status)
+        if job_status==Job.Status.FAILED and current.status==JobAttempt.Status.SUCCEEDED:
+            current.status=JobAttempt.Status.FAILED
+            current.save(update_fields=['status','updated_at'])
     if job.payload.get('type') == 'qualified_audio_generation':
         from modelanvil.runners.audio_generation import finalize_job as finalize_audio
         job_status=finalize_audio(job,job_status)
@@ -742,6 +748,11 @@ def reconcile_expired_leases(*, job_ids=None) -> int:
         if current_job_attempt and job.status in (Job.Status.FAILED, Job.Status.INTERRUPTED, Job.Status.CANCELLED) and job.payload.get('type') == 'embedding_build':
             from modelanvil.rag.embedding_jobs import finalize_job as finalize_embedding
             finalize_embedding(job, job.status)
+        if current_job_attempt and job.payload.get('type')=='qualified_tool_chat':
+            from modelanvil.runners.tool_jobs import finalize_job as finalize_tools
+            resolved=finalize_tools(job,job.status)
+            if resolved!=job.status:
+                job.status=resolved;job.save(update_fields=['status','updated_at'])
         if current_job_attempt and job.payload.get('type')=='qualified_audio_generation':
             from modelanvil.runners.audio_generation import finalize_job as finalize_audio
             resolved=finalize_audio(job,job.status)

@@ -3,6 +3,9 @@ from modelanvil.device_admission import device_available,device_key
 
 
 def gpu_claim_plan(job,worker):
+    if isinstance(job.payload,dict) and job.payload.get('type')=='qualified_tool_chat':
+        from modelanvil.runners.tool_jobs import gpu_claim_plan as tools_claim_plan
+        return tools_claim_plan(job,worker)
     if isinstance(job.payload,dict) and job.payload.get("type")=="qualified_audio_generation":
         from modelanvil.runners.audio_generation import gpu_claim_plan as audio_claim_plan
         return audio_claim_plan(job,worker)

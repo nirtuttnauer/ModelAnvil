@@ -1,3 +1,4 @@
+import { ToolsChat } from './ToolsChat';
 import { Button, Card, Field, MultilineField, Notice } from '../components/ui';
 import { modelDisplayName, referenceInputError } from '../api/chat-input';
 import { comparisonInput, matchedBaseModel, sharedOutputLimit, trainedChatModels } from '../api/chat-comparison';
@@ -19,7 +20,7 @@ interface Answer { model: string; text: string; usage: TokenUsage | null; second
 interface Comparison { review_eligible?: boolean; review_campaign_id?: string | null; comparison_id: string; conversation_id: string; messages: ChatMessage[]; vote: string; created_at: string;
   sides: { label: string; text: string; model?: string; role?: 'base' | 'trained'; name?: string; usage?: TokenUsage; elapsed_seconds?: number; configuration?: Record<string, unknown>; destination?: string; credential_id?: string; requested_model?: string; reported_model?: string }[] }
 
-export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refreshKey?: number }) {
+function TextChatPage({ token = '', refreshKey = 0 }: { token?: string; refreshKey?: number }) {
   const [models, setModels] = useState<LocalModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -360,4 +361,9 @@ export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refre
         <div className="chat-composer-footer"><small id="chat-keyboard-hint">Enter to send · Shift + Enter for a new line</small><div className="actions">{busy ? <Button type="button" onClick={() => controller.current?.abort()}><Square size={16} aria-hidden="true" /> Stop</Button> : <Button type="button" aria-label="Regenerate" title="Regenerate" disabled={voteBusy || !messages.length || !model || baseComparison && !pairReady} onClick={regenerate}><RotateCcw size={16} aria-hidden="true" /> Regenerate</Button>}<Button className="primary" aria-label="Send message" disabled={busy || imageBusy || vision && !imageArtifact || voteBusy || !model || !prompt.trim() || baseComparison && !pairReady}>Send <ArrowUp size={17} aria-hidden="true" /></Button></div></div></form>
       {!baseComparison && messageDraft}
     </div></Card></div>;
+}
+
+export function ChatPage(props: { token?: string; refreshKey?: number }) {
+  const [tools, setTools] = useState(false);
+  return <><div className="actions" role="group" aria-label="Chat workspace"><Button aria-pressed={!tools} onClick={() => setTools(false)}>Conversation</Button><Button aria-pressed={tools} onClick={() => setTools(true)}>Tools</Button></div>{tools ? <ToolsChat token={props.token || ''} refreshKey={props.refreshKey} /> : <TextChatPage {...props} />}</>;
 }

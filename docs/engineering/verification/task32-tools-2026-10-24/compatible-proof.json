@@ -1,0 +1,107 @@
+{
+  "first_response": {
+    "id": "chatcmpl-01a16c3d-df24-7f2a-8f08-1032bbd926b8",
+    "object": "chat.completion",
+    "created": 1792817356,
+    "model": "01a16c30-33bc-7133-8dfa-78563b0cc94f",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "id": "call_01a16c3ddf24_0",
+              "type": "function",
+              "function": {
+                "name": "add",
+                "arguments": "{\"a\":17,\"b\":25}"
+              }
+            }
+          ]
+        },
+        "finish_reason": "tool_calls"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 174,
+      "completion_tokens": 27,
+      "total_tokens": 201
+    },
+    "modelanvil": {
+      "request_id": "01a16c3d-df24-7f2a-8f08-1032bbd926b8",
+      "tool_execution": "caller_managed",
+      "caller_tool_results_verified": false,
+      "production_qualified": false
+    }
+  },
+  "caller_explicit_mcp_result": {
+    "schema_version": "modelanvil.mcp-tool-client.v1",
+    "status": "completed",
+    "protocol": {
+      "protocol_version": "2025-11-25",
+      "server_info": {
+        "name": "ModelAnvil bounded arithmetic",
+        "version": "1"
+      }
+    },
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"value\": 42}"
+        }
+      ],
+      "structured_content": {
+        "value": 42
+      },
+      "is_error": false,
+      "catalog_digest": "175dc9cc4c3f0623a85e1aa9b868cb936fd728a45861c602b45988cc930171aa",
+      "tool_name": "add"
+    },
+    "wall_seconds": 0.017168417005450465,
+    "production_qualified": false,
+    "server": {
+      "id": "f8be2557-c8ce-59a4-b44b-2247b0932a45",
+      "name": "Local arithmetic MCP",
+      "kind": "builtin_math",
+      "allowed_tools": [
+        "add",
+        "multiply"
+      ],
+      "read_only": true,
+      "available": true
+    }
+  },
+  "continuation": {
+    "id": "chatcmpl-01a16c3d-f52b-7db4-8257-1981f14361e4",
+    "object": "chat.completion",
+    "created": 1792817362,
+    "model": "01a16c30-33bc-7133-8dfa-78563b0cc94f",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "The result of adding 17 and 25 is 42."
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 220,
+      "completion_tokens": 17,
+      "total_tokens": 237
+    },
+    "modelanvil": {
+      "request_id": "01a16c3d-f52b-7db4-8257-1981f14361e4",
+      "tool_execution": "caller_managed",
+      "caller_tool_results_verified": false,
+      "production_qualified": false
+    }
+  },
+  "same_key_replay_identical": true,
+  "wall_seconds": 10.9557916249978,
+  "production_qualified": false
+}

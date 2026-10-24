@@ -1,0 +1,18 @@
+{
+  "errors": [],
+  "screens": [
+    {
+      "width": 1440,
+      "overflow": false,
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "0px"
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "0px"
+    }
+  ],
+  "used_real_http_worker_result": true
+}
