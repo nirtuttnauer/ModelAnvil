@@ -1,0 +1,311 @@
+{
+  "recipe": "full_sft",
+  "source": {
+    "repo_id": "HuggingFaceTB/SmolLM2-135M",
+    "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+    "license": "Apache-2.0"
+  },
+  "pins": {
+    "runtime": "modelanvil.smollm2-gpu-sft.v1",
+    "contract_digest": "563cb3bb9995d4fac2714a78189582163c55d490208f0ce23d6f05feab29d6f2",
+    "build_digest": "892ca7c531eb1d731c693ed872ff2dc7290eb82d86905e84046430e81471d7e8",
+    "dataset_digest": "150466cecae83507925bae0de0878030ebcb9ef6ef48e5eee65bff33d77f5238",
+    "tokenizer_digest": "99edf742ed159b64cdeeac80815daa8d1aa7519ca74da746416f6058c5035719",
+    "runner_digest": "814df89b62520f1f1bd06e3338bac6b0fcbbcf0536b18864965ebacd07862651",
+    "steps": 3,
+    "optimizer": {
+      "algorithm": "adamw",
+      "learning_rate": 2e-05,
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "epsilon": 1e-08,
+      "weight_decay": 0.0
+    },
+    "sample_digest": "f367f714563844c169e62a33f87264fc219a5b0243bdd238a4daff91f3d40756",
+    "recipe": "full_sft",
+    "accelerator": {
+      "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+      "host": {
+        "system": "Darwin",
+        "machine": "arm64",
+        "release": "27.0.0"
+      },
+      "device": {
+        "id": "mps:0",
+        "backend": "mps",
+        "torch_device": "mps:0",
+        "name": "Metal Performance Shaders device",
+        "vendor": "Apple",
+        "total_memory_bytes": null,
+        "memory_scope": "shared_unified",
+        "runtime_recommended_memory_bytes": 40200896512
+      },
+      "framework": {
+        "name": "torch",
+        "version": "2.13.0",
+        "cuda_version": null,
+        "hip_version": null
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "capacity_source": "MPS recommended shared-memory budget"
+    }
+  },
+  "host": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "machine": "arm64",
+    "processor": "arm",
+    "system": "Darwin",
+    "release": "27.0.0",
+    "cpu_brand": "Apple M5 Pro",
+    "logical_cores": 18,
+    "physical_cores": 18,
+    "total_memory_bytes": 51539607552,
+    "python": {
+      "version": "3.12.15",
+      "implementation": "CPython",
+      "compiler": "Clang 22.1.3 "
+    }
+  },
+  "metrics": [
+    {
+      "step": 1,
+      "loss": 2.878113031387329,
+      "post_update_loss": 2.0976176261901855,
+      "sample_id": "18eae090-b8a7-4ebc-ad7d-aa0ae0e10978",
+      "training_pairs": 11,
+      "cpu_seconds": 0.3207789999999999,
+      "engine_wall_seconds": 0.7705012500009616,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "device_residency_checked": true,
+      "gradient_norm": 81.90996551513672,
+      "trainable_parameters": 134515008,
+      "total_parameters": 134515008,
+      "measured_at": "2026-10-24T06:42:36.063897+00:00",
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "gpu_allocated_bytes": 2240704000,
+      "tokens_per_second": 14.276420706632562,
+      "gpu_utilization_percent": null,
+      "unified_memory": {
+        "recommended_bytes": 40200896512,
+        "process_limit_bytes": 36180806860,
+        "driver_allocated_bytes": 3388030976,
+        "process_headroom_bytes": 32792775884,
+        "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+      },
+      "updates_since_checkpoint": 1
+    },
+    {
+      "step": 2,
+      "loss": 4.152444362640381,
+      "post_update_loss": 3.55300235748291,
+      "sample_id": "6ec9f944-3163-47f8-b0ef-ee8262bbf662",
+      "training_pairs": 8,
+      "cpu_seconds": 0.21978799999999943,
+      "engine_wall_seconds": 0.6020702090027044,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "device_residency_checked": true,
+      "gradient_norm": 106.8191909790039,
+      "trainable_parameters": 134515008,
+      "total_parameters": 134515008,
+      "measured_at": "2026-10-24T06:42:38.677817+00:00",
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "gpu_allocated_bytes": 2238739456,
+      "tokens_per_second": 13.287486875079823,
+      "gpu_utilization_percent": null,
+      "unified_memory": {
+        "recommended_bytes": 40200896512,
+        "process_limit_bytes": 36180806860,
+        "driver_allocated_bytes": 3398303744,
+        "process_headroom_bytes": 32782503116,
+        "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+      },
+      "updates_since_checkpoint": 1
+    },
+    {
+      "step": 3,
+      "loss": 2.774653911590576,
+      "post_update_loss": 2.344489097595215,
+      "sample_id": "665dc08e-c2f6-4821-9713-527d514462ce",
+      "training_pairs": 11,
+      "cpu_seconds": 0.13623099999999866,
+      "engine_wall_seconds": 0.5188792499975534,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "device_residency_checked": true,
+      "gradient_norm": 117.30472564697266,
+      "trainable_parameters": 134515008,
+      "total_parameters": 134515008,
+      "measured_at": "2026-10-24T06:42:41.259620+00:00",
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "gpu_allocated_bytes": 2238780416,
+      "tokens_per_second": 21.199537272018233,
+      "gpu_utilization_percent": null,
+      "unified_memory": {
+        "recommended_bytes": 40200896512,
+        "process_limit_bytes": 36180806860,
+        "driver_allocated_bytes": 3398303744,
+        "process_headroom_bytes": 32782503116,
+        "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+      },
+      "updates_since_checkpoint": 1
+    }
+  ],
+  "checkpoints": [
+    {
+      "step": 1,
+      "state_digest": "fe0b0fd1315f48e543a4124a594f17b9438cccfd1a00c77fde888b201daf0332",
+      "weights_sha256": "f35d3c1e2fec7e15b2f5f458a11842e57920ef033b7fb104430c93160d010f4f"
+    },
+    {
+      "step": 2,
+      "state_digest": "9c50f1ace263a27f9e37936a0939f0106512615f6b1ecfb4234dbf9a4ea40128",
+      "weights_sha256": "305c084b5696cd80bcf3b751b2df589bb746104b1cd174398ee3cdb5de69096b"
+    },
+    {
+      "step": 3,
+      "state_digest": "30966d58a40a95286747ee2c41818f97d1bd5ce6f79241fd30ddc98fffcd1106",
+      "weights_sha256": "f9f7c24c2787a4f871dc0ad718184bd5148223c5851b1ef80fdb0e9dd3955eef"
+    }
+  ],
+  "cpu_independent_reload": {
+    "weights_sha256": "f9f7c24c2787a4f871dc0ad718184bd5148223c5851b1ef80fdb0e9dd3955eef",
+    "prompt": "Once upon a time",
+    "file_hashes": {
+      "model.safetensors": "f9f7c24c2787a4f871dc0ad718184bd5148223c5851b1ef80fdb0e9dd3955eef",
+      "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+      "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+      "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+      "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3"
+    },
+    "generated_token_ids": [
+      28,
+      665,
+      436,
+      253,
+      1838,
+      8180,
+      3365,
+      14176
+    ],
+    "completion": ", there was a little girl named Lily",
+    "parameter_count": 134515008,
+    "execution": {
+      "backend": "cpu",
+      "device": "cpu",
+      "precision": "fp32",
+      "device_residency_checked": true,
+      "wall_seconds": 0.0917470409985981,
+      "allocated_bytes": null
+    },
+    "consumer_imported_modelanvil_or_django": false,
+    "scope": "Independent process, cpu FP32 inference from actual GPU-produced candidate; no quality or production claim."
+  },
+  "mps_independent_reload": {
+    "weights_sha256": "f9f7c24c2787a4f871dc0ad718184bd5148223c5851b1ef80fdb0e9dd3955eef",
+    "prompt": "Once upon a time",
+    "file_hashes": {
+      "model.safetensors": "f9f7c24c2787a4f871dc0ad718184bd5148223c5851b1ef80fdb0e9dd3955eef",
+      "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+      "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+      "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+      "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3"
+    },
+    "generated_token_ids": [
+      28,
+      665,
+      436,
+      253,
+      1838,
+      8180,
+      3365,
+      14176
+    ],
+    "completion": ", there was a little girl named Lily",
+    "parameter_count": 134515008,
+    "execution": {
+      "backend": "mps",
+      "device": "mps:0",
+      "precision": "fp32",
+      "device_residency_checked": true,
+      "wall_seconds": 0.2617482920031762,
+      "allocated_bytes": 538060800,
+      "driver_allocated_bytes": 1116635136,
+      "recommended_bytes": 40200896512,
+      "process_headroom_bytes": 35064171724
+    },
+    "consumer_imported_modelanvil_or_django": false,
+    "scope": "Independent process, mps:0 FP32 inference from actual GPU-produced candidate; no quality or production claim."
+  },
+  "export_archive_sha256": "84ff8a5c76b58c4c4a65e6375f33774736d5be67388756161aa0cc8a02e302f5",
+  "export_files_checked": [
+    {
+      "file": "config.json",
+      "sha256": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+      "bytes": 704
+    },
+    {
+      "file": "model.safetensors",
+      "sha256": "f9f7c24c2787a4f871dc0ad718184bd5148223c5851b1ef80fdb0e9dd3955eef",
+      "bytes": 538090408
+    },
+    {
+      "file": "special_tokens_map.json",
+      "sha256": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+      "bytes": 831
+    },
+    {
+      "file": "tokenizer.json",
+      "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+      "bytes": 2104556
+    },
+    {
+      "file": "tokenizer_config.json",
+      "sha256": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+      "bytes": 3658
+    }
+  ],
+  "recovery_and_adverse_cases": {
+    "recovery": {
+      "run_id": "01a16ca5-e602-7555-8f34-f70177e65e1f",
+      "attempts": 2,
+      "final_weights_sha256": "f9f7c24c2787a4f871dc0ad718184bd5148223c5851b1ef80fdb0e9dd3955eef",
+      "exactly_matches_uninterrupted": true,
+      "steps": 3
+    },
+    "cancel": {
+      "run_id": "01a16ca6-15c8-70cd-8b02-9a4d0f62bf80",
+      "steps": 1,
+      "settled": "1.000000",
+      "candidate": null
+    },
+    "corruption": {
+      "run_id": "01a16ca6-2670-7d29-8d69-4e49463d297a",
+      "steps": 0,
+      "settled": "0",
+      "candidate": null
+    },
+    "scope": "Real mps:0 SmolLM2 GPU worker, isolated database, live fencing/cancellation/corruption/accounting. Does not qualify other vendors or production scheduling."
+  },
+  "fixture_closure": {
+    "temporary_keys_revoked": 1,
+    "workers_offline": 1,
+    "fixture_tenants_suspended": true,
+    "pending_jobs": 0,
+    "running_attempts": 0,
+    "reserved_budgets": 0,
+    "active_device_claims": 0,
+    "command_exit": 0
+  },
+  "scope": "One local mps:0 SmolLM2 fp32 full_sft pilot; synthetic correctness corpus; no cross-vendor or production claim.",
+  "production_qualified": false
+}

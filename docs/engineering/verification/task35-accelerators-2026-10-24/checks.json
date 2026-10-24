@@ -1,0 +1,16 @@
+{
+  "full_backend": {
+    "tests": 1216,
+    "optional_skips": 11,
+    "seconds": 193.123,
+    "result": "passed"
+  },
+  "targeted_operation_and_inventory": {
+    "tests": 20,
+    "result": "passed"
+  },
+  "django_check": "passed",
+  "migration_drift": "none",
+  "git_diff_check": "passed",
+  "frontend": "No frontend source changed; required push/PR frontend CI remains a merge gate."
+}
