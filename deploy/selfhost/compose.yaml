@@ -1,0 +1,99 @@
+x-api: &api
+  image: ${MODELANVIL_API_IMAGE:?Use a verified self-host release}
+  pull_policy: never
+  environment: &environment
+    DJANGO_SETTINGS_MODULE: modelanvil.production
+    DJANGO_DEBUG: "0"
+    DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Missing instance secret}
+    DJANGO_ALLOWED_HOSTS: ${MODELANVIL_DOMAIN:?Missing hostname}
+    MODELANVIL_PUBLIC_ORIGIN: ${MODELANVIL_PUBLIC_ORIGIN:?Missing HTTPS origin}
+    MODELANVIL_OFFLINE: "1"
+    MODELANVIL_PUBLIC_MODEL_DOWNLOADS: "0"
+    DATABASE_ENGINE: postgresql
+    DATABASE_NAME: modelanvil
+    DATABASE_USER: modelanvil
+    DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?Missing database secret}
+    DATABASE_HOST: db
+    MODELANVIL_ARTIFACT_BACKEND: filesystem
+    MODELANVIL_ARTIFACT_ROOT: /app/storage/artifacts
+    OMP_NUM_THREADS: "1"
+    OPENBLAS_NUM_THREADS: "1"
+  volumes: [artifacts:/app/storage/artifacts]
+  networks: [backend]
+  read_only: true
+  tmpfs: [/tmp]
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  cpus: 1
+  mem_limit: 1g
+
+services:
+  db:
+    image: ${MODELANVIL_DB_IMAGE:?Use a verified self-host release}
+    pull_policy: never
+    environment:
+      POSTGRES_DB: modelanvil
+      POSTGRES_USER: modelanvil
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Missing database secret}
+    volumes: [database:/var/lib/postgresql/data]
+    networks: [backend]
+    restart: unless-stopped
+    mem_limit: 512m
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U modelanvil -d modelanvil]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  migrate:
+    <<: *api
+    command: [python, manage.py, migrate, --noinput]
+    profiles: [tools]
+    healthcheck: {disable: true}
+    depends_on:
+      db: {condition: service_healthy}
+  api:
+    <<: *api
+    restart: unless-stopped
+    depends_on:
+      db: {condition: service_healthy}
+  worker:
+    <<: *api
+    command: [sh, -c, 'exec python manage.py run_worker --worker-id "$${SELFHOST_WORKER_ID}" --executor modelanvil.runners.training.executor.training_worker_executor']
+    environment:
+      <<: *environment
+      SELFHOST_WORKER_ID: ${MODELANVIL_SELFHOST_WORKER_ID:?Initialize the private workspace first}
+    healthcheck: {disable: true}
+    restart: unless-stopped
+    depends_on:
+      api: {condition: service_healthy}
+  reconciler:
+    <<: *api
+    command: [python, manage.py, reconcile_leases, --loop]
+    healthcheck: {disable: true}
+    restart: unless-stopped
+    depends_on:
+      api: {condition: service_healthy}
+  web:
+    image: ${MODELANVIL_WEB_IMAGE:?Use a verified self-host release}
+    pull_policy: never
+    environment:
+      MODELANVIL_DOMAIN: ${MODELANVIL_DOMAIN:?Missing hostname}
+      MODELANVIL_HTTPS_PORT: ${MODELANVIL_HTTPS_PORT:?Missing HTTPS port}
+    ports:
+      - '${MODELANVIL_BIND_ADDRESS:-127.0.0.1}:${MODELANVIL_HTTP_PORT:?Missing HTTP port}:80'
+      - '${MODELANVIL_BIND_ADDRESS:-127.0.0.1}:${MODELANVIL_HTTPS_PORT:?Missing HTTPS port}:443'
+    volumes: [certificates:/data, caddy_config:/config]
+    networks: [edge, backend]
+    restart: unless-stopped
+    mem_limit: 256m
+    depends_on:
+      api: {condition: service_healthy}
+
+networks:
+  edge:
+  backend: {internal: true}
+volumes:
+  database:
+  artifacts:
+  certificates:
+  caddy_config:
