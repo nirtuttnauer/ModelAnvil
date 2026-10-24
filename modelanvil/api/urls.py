@@ -6,7 +6,7 @@ alignment, RAG, Context Lab, releases, and operational endpoints.
 """
 
 from __future__ import annotations
-from modelanvil.api.views import application_feedback
+from modelanvil.api.views import application_feedback, accelerator_support
 
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
@@ -111,6 +111,7 @@ router.register("release-versions", release_views.ReleaseVersionViewSet, basenam
 router.register("serving-endpoints", release_views.ServingEndpointViewSet, basename="serving-endpoint")
 
 urlpatterns = [
+    path("compute-support/", accelerator_support.OperationSupport.as_view()),
     path('privacy/', privacy.ProjectPrivacy.as_view()),
     path('privacy/diagnostics/', privacy.Diagnostics.as_view()),
     path('privacy/purge-measurements/', privacy.PurgeMeasurements.as_view()),

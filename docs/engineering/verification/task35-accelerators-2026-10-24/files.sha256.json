@@ -1,0 +1,38 @@
+{
+  "README.md": {
+    "sha256": "1e51dcf9d2f47b9ac4484157a8261456dddf69eaeaeff540ecea50dc353264cc",
+    "bytes": 2924
+  },
+  "api-proof.json": {
+    "sha256": "47c07dddcfbccce73d43c1c3a946535f5fb4dd131e2ae1061691c3625b9171c0",
+    "bytes": 1214
+  },
+  "checks.json": {
+    "sha256": "0383fe293318588dc37db99957b69fc949490e8b5e775ce0ef594866b16abcb7",
+    "bytes": 388
+  },
+  "full_sft.json": {
+    "sha256": "aafcc03b38dc7d372d52f291225874a92bbd8e8193df05e93f18b925a2c5302c",
+    "bytes": 11117
+  },
+  "inference.json": {
+    "sha256": "1527c6945963f74ddce9cc1469aff8d38d4e00976aaa88f0efda1b76bc5777ab",
+    "bytes": 45979
+  },
+  "lora_adapter.json": {
+    "sha256": "194ecbc0e2dac41b0361cb1d7b059d7f20774a4bf39f4cf00bf73924db5b39e8",
+    "bytes": 11838
+  },
+  "operation-report.json": {
+    "sha256": "c83bd8b1e2e6b15183b6a0e94099b75122b97f08fb099d572cc712bdb5059e5f",
+    "bytes": 34011
+  },
+  "source-sha256.json": {
+    "sha256": "a606d0094528554b6e8c77705684cada482a23dcbac2baab23ff330e59eead38",
+    "bytes": 1543
+  },
+  "summary.json": {
+    "sha256": "593a1670067dff9f2664fa53da46ccfaa908af7defc02589204851029fbb91a4",
+    "bytes": 1209
+  }
+}

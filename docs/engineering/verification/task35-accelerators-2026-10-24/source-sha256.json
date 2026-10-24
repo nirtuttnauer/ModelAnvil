@@ -1,0 +1,16 @@
+{
+  "modelanvil/runners/accelerator_support.py": "40df406c68a8b2da286305aa20b8765eb618b9e96a692360d1718bab01cb6854",
+  "modelanvil/runners/management/commands/accelerator_support.py": "8b311ce49acc35f66ac5698c04a49f2ba0a7cfd53b2381701952235af655dfe9",
+  "modelanvil/api/views/accelerator_support.py": "e22246029914db49b4be77c9f7f9eb55e8a59b0cac03d55169294c54d319562d",
+  "modelanvil/api/urls.py": "6057041d6f4546d4be0b1a47b21a7415dc87242815e6a375daa99be7a7fd718e",
+  "modelanvil/accelerators.py": "b928897f385219596cf6f8ddec049d55a520a1024e02046c2a060e9a1afadfbc",
+  "modelanvil/runners/inference.py": "9b58a0f885418a11255c88d05f111f137ff18bbe64e5cca7655846ec06135a32",
+  "modelanvil/runners/gguf_runtime.py": "7c5927dc0cc6fbe4e4a3b4ac31d1f76e870a48aaf64008efd500bde228dd7901",
+  "modelanvil/runners/training/hf_runtime.py": "99d6828b7967451d1f940964b021cded00d7d3b056687e878e9ee1e3b6518907",
+  "modelanvil/runners/training/cpu_hf_runtime.py": "9d5a372872ba92ee87890e39b611a1e9c2d84eb372a0b8d92b441a9cc227471b",
+  "modelanvil/runners/training/mlx_runtime.py": "5fa3920f551a14fa6f196cf135884794c53ba31c7e8023549856c519c2f097d0",
+  "modelanvil/device_admission.py": "3dad22f6c16aaa525579c38f0a935ab2e60ebbc94418eeb7e65a0cb0efbe4295",
+  "scripts/qualify_apple_inference.py": "42670209c733cedb7cfbdf243f941316a4a27ef14ac5edf83d0d960c15d6b2ac",
+  "scripts/qualify_hf_gpu.py": "bc575e248045333d292725d5a4c636d16f9554e0fad5eb1639e7b378b4286966",
+  "scripts/hf_candidate_infer.py": "5772a1a290e9079fff70b45e48ea0119cbdb77a131104cecd84728851e66ee2d"
+}

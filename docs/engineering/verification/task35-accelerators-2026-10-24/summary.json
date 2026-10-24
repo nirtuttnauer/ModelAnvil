@@ -1,0 +1,38 @@
+{
+  "recipes": {
+    "full_sft": {
+      "steps": 3,
+      "parameters": 134515008,
+      "trainable_parameters": 134515008,
+      "final_weights_sha256": "f9f7c24c2787a4f871dc0ad718184bd5148223c5851b1ef80fdb0e9dd3955eef",
+      "cpu_mps_token_ids_equal": true,
+      "exact_recovery": true,
+      "closed": true
+    },
+    "lora_adapter": {
+      "steps": 3,
+      "parameters": 134975808,
+      "trainable_parameters": 460800,
+      "final_weights_sha256": "266058817e89632f3023feb7507e15b268367e1227c51dd4973d440da67d1f55",
+      "cpu_mps_token_ids_equal": true,
+      "exact_recovery": true,
+      "closed": true
+    }
+  },
+  "inference_formats": [
+    "safetensors:cpu",
+    "safetensors:mps:0",
+    "mlx:mlx:0",
+    "gguf:cpu"
+  ],
+  "actual_vendor_hardware": "Apple M5 Pro only; CPU inference is separate.",
+  "unavailable_vendors": [
+    "NVIDIA CUDA",
+    "AMD ROCm",
+    "Intel XPU"
+  ],
+  "unavailable_vendor_policy_is_physical_qualification": false,
+  "new_readiness_report_is_model_qualification": false,
+  "native_qlora_quality_gate": "Earlier TASK77 failed unquantized-baseline comparison retained; not refreshed or promoted by these dense-inference checks.",
+  "production_qualified": false
+}

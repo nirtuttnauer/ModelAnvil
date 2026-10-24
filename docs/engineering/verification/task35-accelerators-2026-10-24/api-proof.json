@@ -1,0 +1,29 @@
+{
+  "actual_authenticated_django_api_handler": true,
+  "no_store": true,
+  "unavailable_vendor_selections_refused": true,
+  "option_refusals": [
+    {
+      "selection": "operation=full_sft&device=mps:0&precision=fp16",
+      "reason": "This profile requires FP32 and refuses model/optimizer offloading; no recipe is changed automatically."
+    },
+    {
+      "selection": "operation=full_sft&device=mps:0&offload=true",
+      "reason": "This profile requires FP32 and refuses model/optimizer offloading; no recipe is changed automatically."
+    },
+    {
+      "selection": "operation=qlora_adapter&device=cuda:0&quantization=int4",
+      "reason": "This installed QLoRA implementation supports only explicit Apple mlx:0; CUDA/ROCm/XPU variants need separate implementations and qualification."
+    }
+  ],
+  "ambiguous_device_refused": true,
+  "models_created": 0,
+  "training_runs_created": 0,
+  "jobs_created": 0,
+  "budget_reservations_created": 0,
+  "mps_tensor_allocated_bytes_before": 0,
+  "mps_tensor_allocated_bytes_after": 0,
+  "scope": "Actual installed Mac handler/detection and option policy, not physical NVIDIA/AMD/Intel qualification.",
+  "temporary_key_revoked": true,
+  "tenant_suspended": true
+}

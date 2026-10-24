@@ -1,0 +1,920 @@
+{
+  "schema_version": "modelanvil.operation-support.v1",
+  "observed_at": "2026-10-24T06:44:38.121137+00:00",
+  "host": {
+    "system": "Darwin",
+    "release": "27.0.0",
+    "machine": "arm64"
+  },
+  "framework_inventory": {
+    "schema_version": 1,
+    "host": {
+      "system": "Darwin",
+      "machine": "arm64",
+      "release": "27.0.0"
+    },
+    "framework": {
+      "name": "torch",
+      "version": "2.13.0",
+      "cuda_version": null,
+      "hip_version": null
+    },
+    "backends": {
+      "cuda": {
+        "vendor": "NVIDIA",
+        "status": "unavailable",
+        "devices": [],
+        "reason": "Installed PyTorch was not built for cuda; install the matching runtime."
+      },
+      "rocm": {
+        "vendor": "AMD",
+        "status": "unavailable",
+        "devices": [],
+        "reason": "Installed PyTorch was not built for rocm; install the matching runtime."
+      },
+      "xpu": {
+        "vendor": "Intel",
+        "status": "unavailable",
+        "devices": [],
+        "reason": "PyTorch reports xpu unavailable. Check the compatible runtime, OS, driver, device permissions and visibility settings."
+      },
+      "mps": {
+        "vendor": "Apple",
+        "status": "available",
+        "devices": [
+          {
+            "id": "mps:0",
+            "backend": "mps",
+            "torch_device": "mps:0",
+            "name": "Metal Performance Shaders device",
+            "vendor": "Apple",
+            "total_memory_bytes": null,
+            "memory_scope": "shared_unified",
+            "runtime_recommended_memory_bytes": 40200896512
+          }
+        ],
+        "reason": "Framework-visible devices; model and operation qualification is still required."
+      }
+    },
+    "model_qualified": false,
+    "production_qualified": false
+  },
+  "operations": [
+    {
+      "operation": "text_inference",
+      "device": "cpu",
+      "installed_compatible": true,
+      "reason": "Installed profile/device checks pass without loading a model. Launch still verifies exact inputs, quotas, current capacity and device admission.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 8589934592,
+      "runtime_contract": null,
+      "recipe_changed": false,
+      "cpu_fallback": false,
+      "observed_device": {
+        "device": {
+          "id": "cpu",
+          "backend": "cpu"
+        },
+        "cpu_threads": 1
+      }
+    },
+    {
+      "operation": "text_inference",
+      "device": "cuda:0",
+      "installed_compatible": false,
+      "reason": "This named FP32 inference support profile is bounded to CPU or Apple MPS; other hardware needs separate inference qualification.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false
+    },
+    {
+      "operation": "text_inference",
+      "device": "rocm:0",
+      "installed_compatible": false,
+      "reason": "This named FP32 inference support profile is bounded to CPU or Apple MPS; other hardware needs separate inference qualification.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false
+    },
+    {
+      "operation": "text_inference",
+      "device": "xpu:0",
+      "installed_compatible": false,
+      "reason": "This named FP32 inference support profile is bounded to CPU or Apple MPS; other hardware needs separate inference qualification.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false
+    },
+    {
+      "operation": "text_inference",
+      "device": "mps:0",
+      "installed_compatible": true,
+      "reason": "Installed profile/device checks pass without loading a model. Launch still verifies exact inputs, quotas, current capacity and device admission.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 8589934592,
+      "runtime_contract": null,
+      "recipe_changed": false,
+      "cpu_fallback": false,
+      "observed_device": {
+        "device": {
+          "id": "mps:0",
+          "backend": "mps",
+          "torch_device": "mps:0",
+          "name": "Metal Performance Shaders device",
+          "vendor": "Apple",
+          "total_memory_bytes": null,
+          "memory_scope": "shared_unified",
+          "runtime_recommended_memory_bytes": 40200896512
+        },
+        "memory": {
+          "recommended_bytes": 40200896512,
+          "process_limit_bytes": 36180806860,
+          "driver_allocated_bytes": 458752,
+          "process_headroom_bytes": 36180348108,
+          "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+        }
+      }
+    },
+    {
+      "operation": "text_inference",
+      "device": "mlx:0",
+      "installed_compatible": false,
+      "reason": "Select the native qlora_adapter operation for MLX training; dense MLX inference has its own documented profile.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false
+    },
+    {
+      "operation": "full_sft",
+      "device": "cpu",
+      "installed_compatible": true,
+      "reason": "Installed profile/device checks pass without loading a model. Launch still verifies exact inputs, quotas, current capacity and device admission.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 17179869184,
+      "runtime_contract": "db3b11b1ad38cf0085c6b494a964d78bd8ad0de12138f6d73664820173524613",
+      "recipe_changed": false,
+      "cpu_fallback": false,
+      "observed_device": {
+        "device": {
+          "id": "cpu",
+          "backend": "cpu"
+        },
+        "cpu_threads": 1
+      }
+    },
+    {
+      "operation": "full_sft",
+      "device": "cuda:0",
+      "installed_compatible": false,
+      "reason": "Installed PyTorch was not built for cuda; install the matching runtime.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 8589934592,
+      "runtime_contract": "563cb3bb9995d4fac2714a78189582163c55d490208f0ce23d6f05feab29d6f2",
+      "recipe_changed": false,
+      "cpu_fallback": false
+    },
+    {
+      "operation": "full_sft",
+      "device": "rocm:0",
+      "installed_compatible": false,
+      "reason": "Installed PyTorch was not built for rocm; install the matching runtime.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 8589934592,
+      "runtime_contract": "563cb3bb9995d4fac2714a78189582163c55d490208f0ce23d6f05feab29d6f2",
+      "recipe_changed": false,
+      "cpu_fallback": false
+    },
+    {
+      "operation": "full_sft",
+      "device": "xpu:0",
+      "installed_compatible": false,
+      "reason": "PyTorch reports xpu unavailable. Check the compatible runtime, OS, driver, device permissions and visibility settings.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 8589934592,
+      "runtime_contract": "563cb3bb9995d4fac2714a78189582163c55d490208f0ce23d6f05feab29d6f2",
+      "recipe_changed": false,
+      "cpu_fallback": false
+    },
+    {
+      "operation": "full_sft",
+      "device": "mps:0",
+      "installed_compatible": true,
+      "reason": "Installed profile/device checks pass without loading a model. Launch still verifies exact inputs, quotas, current capacity and device admission.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 8589934592,
+      "runtime_contract": "563cb3bb9995d4fac2714a78189582163c55d490208f0ce23d6f05feab29d6f2",
+      "recipe_changed": false,
+      "cpu_fallback": false,
+      "observed_device": {
+        "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+        "host": {
+          "system": "Darwin",
+          "machine": "arm64",
+          "release": "27.0.0"
+        },
+        "device": {
+          "id": "mps:0",
+          "backend": "mps",
+          "torch_device": "mps:0",
+          "name": "Metal Performance Shaders device",
+          "vendor": "Apple",
+          "total_memory_bytes": null,
+          "memory_scope": "shared_unified",
+          "runtime_recommended_memory_bytes": 40200896512
+        },
+        "framework": {
+          "name": "torch",
+          "version": "2.13.0",
+          "cuda_version": null,
+          "hip_version": null
+        },
+        "packages": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "safetensors": "0.8.0",
+          "tokenizers": "0.22.2"
+        },
+        "capacity_source": "MPS recommended shared-memory budget"
+      }
+    },
+    {
+      "operation": "full_sft",
+      "device": "mlx:0",
+      "installed_compatible": false,
+      "reason": "Select the native qlora_adapter operation for MLX training; dense MLX inference has its own documented profile.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false
+    },
+    {
+      "operation": "lora_adapter",
+      "device": "cpu",
+      "installed_compatible": true,
+      "reason": "Installed profile/device checks pass without loading a model. Launch still verifies exact inputs, quotas, current capacity and device admission.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 17179869184,
+      "runtime_contract": "db3b11b1ad38cf0085c6b494a964d78bd8ad0de12138f6d73664820173524613",
+      "recipe_changed": false,
+      "cpu_fallback": false,
+      "observed_device": {
+        "device": {
+          "id": "cpu",
+          "backend": "cpu"
+        },
+        "cpu_threads": 1
+      }
+    },
+    {
+      "operation": "lora_adapter",
+      "device": "cuda:0",
+      "installed_compatible": false,
+      "reason": "Installed PyTorch was not built for cuda; install the matching runtime.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 8589934592,
+      "runtime_contract": "563cb3bb9995d4fac2714a78189582163c55d490208f0ce23d6f05feab29d6f2",
+      "recipe_changed": false,
+      "cpu_fallback": false
+    },
+    {
+      "operation": "lora_adapter",
+      "device": "rocm:0",
+      "installed_compatible": false,
+      "reason": "Installed PyTorch was not built for rocm; install the matching runtime.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 8589934592,
+      "runtime_contract": "563cb3bb9995d4fac2714a78189582163c55d490208f0ce23d6f05feab29d6f2",
+      "recipe_changed": false,
+      "cpu_fallback": false
+    },
+    {
+      "operation": "lora_adapter",
+      "device": "xpu:0",
+      "installed_compatible": false,
+      "reason": "PyTorch reports xpu unavailable. Check the compatible runtime, OS, driver, device permissions and visibility settings.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 8589934592,
+      "runtime_contract": "563cb3bb9995d4fac2714a78189582163c55d490208f0ce23d6f05feab29d6f2",
+      "recipe_changed": false,
+      "cpu_fallback": false
+    },
+    {
+      "operation": "lora_adapter",
+      "device": "mps:0",
+      "installed_compatible": true,
+      "reason": "Installed profile/device checks pass without loading a model. Launch still verifies exact inputs, quotas, current capacity and device admission.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 8589934592,
+      "runtime_contract": "563cb3bb9995d4fac2714a78189582163c55d490208f0ce23d6f05feab29d6f2",
+      "recipe_changed": false,
+      "cpu_fallback": false,
+      "observed_device": {
+        "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+        "host": {
+          "system": "Darwin",
+          "machine": "arm64",
+          "release": "27.0.0"
+        },
+        "device": {
+          "id": "mps:0",
+          "backend": "mps",
+          "torch_device": "mps:0",
+          "name": "Metal Performance Shaders device",
+          "vendor": "Apple",
+          "total_memory_bytes": null,
+          "memory_scope": "shared_unified",
+          "runtime_recommended_memory_bytes": 40200896512
+        },
+        "framework": {
+          "name": "torch",
+          "version": "2.13.0",
+          "cuda_version": null,
+          "hip_version": null
+        },
+        "packages": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "safetensors": "0.8.0",
+          "tokenizers": "0.22.2"
+        },
+        "capacity_source": "MPS recommended shared-memory budget"
+      }
+    },
+    {
+      "operation": "lora_adapter",
+      "device": "mlx:0",
+      "installed_compatible": false,
+      "reason": "Select the native qlora_adapter operation for MLX training; dense MLX inference has its own documented profile.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false
+    },
+    {
+      "operation": "qlora_adapter",
+      "device": "cpu",
+      "installed_compatible": false,
+      "reason": "This installed QLoRA implementation supports only explicit Apple mlx:0; CUDA/ROCm/XPU variants need separate implementations and qualification.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "int4",
+      "offload": false
+    },
+    {
+      "operation": "qlora_adapter",
+      "device": "cuda:0",
+      "installed_compatible": false,
+      "reason": "This installed QLoRA implementation supports only explicit Apple mlx:0; CUDA/ROCm/XPU variants need separate implementations and qualification.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "int4",
+      "offload": false
+    },
+    {
+      "operation": "qlora_adapter",
+      "device": "rocm:0",
+      "installed_compatible": false,
+      "reason": "This installed QLoRA implementation supports only explicit Apple mlx:0; CUDA/ROCm/XPU variants need separate implementations and qualification.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "int4",
+      "offload": false
+    },
+    {
+      "operation": "qlora_adapter",
+      "device": "xpu:0",
+      "installed_compatible": false,
+      "reason": "This installed QLoRA implementation supports only explicit Apple mlx:0; CUDA/ROCm/XPU variants need separate implementations and qualification.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "int4",
+      "offload": false
+    },
+    {
+      "operation": "qlora_adapter",
+      "device": "mps:0",
+      "installed_compatible": false,
+      "reason": "This installed QLoRA implementation supports only explicit Apple mlx:0; CUDA/ROCm/XPU variants need separate implementations and qualification.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "int4",
+      "offload": false
+    },
+    {
+      "operation": "qlora_adapter",
+      "device": "mlx:0",
+      "installed_compatible": true,
+      "reason": "Installed profile/device checks pass without loading a model. Launch still verifies exact inputs, quotas, current capacity and device admission.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "int4",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2",
+        "mlx": "0.32.3",
+        "mlx-metal": "0.32.3",
+        "mlx-lm": "0.29.1"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 8589934592,
+      "runtime_contract": "259e3c4a452dfd56de01b25ae569f7cafa3659781338c8e6b2c5e9769fc7bc74",
+      "recipe_changed": false,
+      "cpu_fallback": false,
+      "observed_device": {
+        "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+        "device": {
+          "id": "mlx:0",
+          "backend": "mlx",
+          "name": "Apple M5 Pro",
+          "runtime_recommended_memory_bytes": 40200896512,
+          "memory_scope": "shared_unified"
+        },
+        "framework": {
+          "name": "mlx",
+          "version": "0.32.3"
+        },
+        "packages": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "safetensors": "0.8.0",
+          "tokenizers": "0.22.2",
+          "mlx": "0.32.3",
+          "mlx-metal": "0.32.3",
+          "mlx-lm": "0.29.1"
+        },
+        "capacity_source": "MLX recommended process working set, not system-wide free memory"
+      }
+    },
+    {
+      "operation": "continued_pretraining",
+      "device": "cpu",
+      "installed_compatible": false,
+      "reason": "The selected operation is absent from this installed runtime contract; select a supported recipe without automatic substitution.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false
+    },
+    {
+      "operation": "continued_pretraining",
+      "device": "cuda:0",
+      "installed_compatible": false,
+      "reason": "Installed PyTorch was not built for cuda; install the matching runtime.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 8589934592,
+      "runtime_contract": "563cb3bb9995d4fac2714a78189582163c55d490208f0ce23d6f05feab29d6f2",
+      "recipe_changed": false,
+      "cpu_fallback": false
+    },
+    {
+      "operation": "continued_pretraining",
+      "device": "rocm:0",
+      "installed_compatible": false,
+      "reason": "Installed PyTorch was not built for rocm; install the matching runtime.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 8589934592,
+      "runtime_contract": "563cb3bb9995d4fac2714a78189582163c55d490208f0ce23d6f05feab29d6f2",
+      "recipe_changed": false,
+      "cpu_fallback": false
+    },
+    {
+      "operation": "continued_pretraining",
+      "device": "xpu:0",
+      "installed_compatible": false,
+      "reason": "PyTorch reports xpu unavailable. Check the compatible runtime, OS, driver, device permissions and visibility settings.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 8589934592,
+      "runtime_contract": "563cb3bb9995d4fac2714a78189582163c55d490208f0ce23d6f05feab29d6f2",
+      "recipe_changed": false,
+      "cpu_fallback": false
+    },
+    {
+      "operation": "continued_pretraining",
+      "device": "mps:0",
+      "installed_compatible": true,
+      "reason": "Installed profile/device checks pass without loading a model. Launch still verifies exact inputs, quotas, current capacity and device admission.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false,
+      "profile_source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "license": "Apache-2.0"
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "host_memory_bytes": 51539607552,
+      "required_host_memory_bytes": 8589934592,
+      "runtime_contract": "563cb3bb9995d4fac2714a78189582163c55d490208f0ce23d6f05feab29d6f2",
+      "recipe_changed": false,
+      "cpu_fallback": false,
+      "observed_device": {
+        "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+        "host": {
+          "system": "Darwin",
+          "machine": "arm64",
+          "release": "27.0.0"
+        },
+        "device": {
+          "id": "mps:0",
+          "backend": "mps",
+          "torch_device": "mps:0",
+          "name": "Metal Performance Shaders device",
+          "vendor": "Apple",
+          "total_memory_bytes": null,
+          "memory_scope": "shared_unified",
+          "runtime_recommended_memory_bytes": 40200896512
+        },
+        "framework": {
+          "name": "torch",
+          "version": "2.13.0",
+          "cuda_version": null,
+          "hip_version": null
+        },
+        "packages": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "safetensors": "0.8.0",
+          "tokenizers": "0.22.2"
+        },
+        "capacity_source": "MPS recommended shared-memory budget"
+      }
+    },
+    {
+      "operation": "continued_pretraining",
+      "device": "mlx:0",
+      "installed_compatible": false,
+      "reason": "Select the native qlora_adapter operation for MLX training; dense MLX inference has its own documented profile.",
+      "model_loaded": false,
+      "tensors_created": false,
+      "model_qualified": false,
+      "production_qualified": false,
+      "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+      "precision": "fp32",
+      "quantization": "none",
+      "offload": false
+    }
+  ],
+  "automatic_backend_selection": false,
+  "scope": "Named pinned SmolLM2-135M text operations. Other model families use their own runtime contracts; detection does not qualify them.",
+  "production_qualified": false,
+  "qualification_guide": "docs/engineering/accelerator-support.md"
+}
