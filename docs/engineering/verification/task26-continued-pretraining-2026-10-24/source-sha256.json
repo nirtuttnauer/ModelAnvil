@@ -1,0 +1,23 @@
+{
+  "modelanvil/data/continued_corpus.py": "a267cdefa1d5265e8807622209931c36bafa98bd43875ee09f4577f0e2e63430",
+  "modelanvil/api/views/continued_corpus.py": "84d2a8b0e735c3ad8346a678d4d19952f2dc3dea7845ce8d8071d22dea043acc",
+  "modelanvil/api/urls.py": "ddb2722b9d45dccca5070da751a9836eff11b4fba52ba0ebfffa0728faaa045c",
+  "modelanvil/runners/training/hf_runtime.py": "5481d45eadf5a3e04f709617c93e61b1327f464b626fed131795121fdb161c6a",
+  "modelanvil/runners/training/cpu_hf_runtime.py": "30e826571d3d687c7e1b21542b39f7b560c5aa789d15142becba4cac22cd0503",
+  "modelanvil/runners/training/runtime.py": "5fadf9793e874e4cd23194f5fd6f17f63de26c39b9ac5bb891c40d1f254c9c1c",
+  "modelanvil/runners/training/executor.py": "b0fe20e843d14bbebcfe98e4869dfda7a929ce265552f929e3ea9e6d8ae60a5c",
+  "modelanvil/runners/training/registry.py": "fcb72cf124e442757efd8bc4975324409aacf1b2a10c8b83a77e2f0093428987",
+  "modelanvil/runners/training/admission.py": "43f610a45202f9e65a43ab4b8eaca978527380725e5095e60ee3b28e5d89ca77",
+  "modelanvil/data/training_import.py": "e4c206050e4fd365058ee1e532f97739d7cf9cab1f89bf6550a687b15e92ad8d",
+  "modelanvil/jobs/models.py": "a4aeb3b100ef40a7afbf31dc9d1241670dc663c443e2a0ebcf5732e8f7b02022",
+  "modelanvil/api/training_admission.py": "1252d5f85d839670752bd25d23f445b03fcb9f1390153e54470e091acaccb414",
+  "modelanvil/runners/training/preflight_report.py": "0efb0183007618192a63cf828f9506b94411a4d1fa7b7bf1f645eaf66af35a73",
+  "modelanvil/device_admission.py": "3dad22f6c16aaa525579c38f0a935ab2e60ebbc94418eeb7e65a0cb0efbe4295",
+  "modelanvil/accelerators.py": "b928897f385219596cf6f8ddec049d55a520a1024e02046c2a060e9a1afadfbc",
+  "scripts/qualify_continued_pretraining.py": "36f1d8a72fdd309cbf7e7f6579d61d5a0357a99ad75f9e24bc9cd3ceeab688f2",
+  "scripts/score_continued_pretraining.py": "a9c516a832117d6a64484383ea1f90e463c03443846bb6a5bca04614ff4ce687",
+  "scripts/hf_candidate_score.py": "f8196592d0cf7189bc763f6f986b7e2b97cb5e831809c701717c68fa80ac600e",
+  "scripts/hf_candidate_infer.py": "5772a1a290e9079fff70b45e48ea0119cbdb77a131104cecd84728851e66ee2d",
+  "web/src/components/ContinuedCorpusBuilder.tsx": "bbada312386242f313ff4c3f0ad39d8f7c8070e24b83ad022983c58bef4308ff",
+  "web/src/pages/TrainingPage.tsx": "fc40d6e250c49f9af42d3909c95e9ae969d60e22e8743756a62b62395111dfa4"
+}

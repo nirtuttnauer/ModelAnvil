@@ -1,3 +1,4 @@
+import { ContinuedCorpusBuilder } from '../components/ContinuedCorpusBuilder';
 import { Identifier } from '../components/Identifier';
 import { Badge, Button, Card, Field, Notice, RecordTable, Tab } from '../components/ui';
 import { GuidedFineTune } from '../components/GuidedFineTune';
@@ -57,7 +58,7 @@ interface DatasetRevision {
   manifest_digest: string;
   row_count?: number;
   state: string;
-  metadata?: GuidedRevision['metadata'];
+  metadata?: GuidedRevision['metadata'] & { preparation_kind?: string };
 }
 
 interface Runner { id: number; manifest_id: string; name: string; enabled: boolean; compatibility: { contract_digest?: string }; }
@@ -672,11 +673,11 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
             </label>
             <label>
               Recipe type
-              <select value={recipe} onChange={(e) => setRecipe(e.target.value)}>
+              <select aria-label="Recipe type" value={recipe} onChange={(e) => { setRecipe(e.target.value); if (e.target.value === 'continued_pretraining') { setPreset('custom'); setSteps('3'); } }}>
                 <option value="full_sft">Full parameter SFT</option>
                 {mode === 'worker' && <option value="lora_adapter">LoRA · pinned CPU/GPU text or vision profile</option>}{mode === 'worker' && <option value="tts_output_head">Speech output head · pinned CPU audio profile</option>}
                 {mode === 'worker' && <option value="qlora_adapter">Apple GPU QLoRA · four-bit SmolLM2 profile</option>}
-                {mode === 'worker' && <option value="continued_pretraining">GPU continued pretraining · pinned text corpus</option>}
+                {mode === 'worker' && <option value="continued_pretraining">CPU/GPU continued pretraining · pinned text corpus</option>}
                 {mode === 'simulation' && <>
                   <option value="lora_adapter">LoRA adapter fixture</option>
                   <option value="continued_pretraining">Continued pretraining fixture</option>
@@ -729,6 +730,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
             <ResourcePicker label="Prepared dataset revision" action={registeredRevision && <Identifier value={registeredRevision.manifest_digest} label="Dataset manifest digest" />} loading={loading} disabled={busy || preflightBusy} required={mode === 'worker'} value={selectedDataset} onChange={setSelectedDataset}
               options={datasetRevisions.map(d => ({ value: String(d.id), id: d.revision_id, name: d.dataset_name || 'Dataset', revision: d.revision_no,
                 state: d.state, description: `${d.row_count ?? 'Unknown'} rows`, href: resourceHash('dataset-revision', d.revision_id) }))} />
+            {mode === 'worker' && recipe === 'continued_pretraining' && <ContinuedCorpusBuilder key={refreshKey} token={token} revisions={datasetRevisions} onPublished={id => { setSelectedDataset(String(id)); setRevisionJson(''); setPreset('custom'); setSteps('3'); void loadDependencies(); }} />}
             {advanced && mode === 'worker' && registeredRevision && <div className="full-width"><PreparedDatasetPreview key={`${registeredRevision.revision_id}-${refreshKey}`} revisionId={registeredRevision.revision_id} token={token} /></div>}
 
             <label>

@@ -20,7 +20,7 @@ All entries are planned or undecided. No implementation is currently qualified. 
 | Recipe | Release intent | Evidence needed |
 | --- | --- | --- |
 | Text model from scratch | R1 required | Architecture, tokenizer, hardware, loss/validation, external loading |
-| Continued pretraining | R1 required | Corpus mixture, baseline, regression evaluation |
+| Continued pretraining | Bounded pretrained CPU slice implemented; broader R1 gates remain | [Versioned weighted corpora, independent original-test loss proxies, candidate export and exact recovery](engineering/continued-pretraining.md); unbounded streaming/customer/other-device qualification separate |
 | Full supervised fine-tuning | R1 required | Input template, output loading, independent evaluation |
 | LoRA/QLoRA | R1 on supported backends | Base revision, quantization/backend compatibility, adapter loading |
 | DPO | R1 required | Validated pairs, reference settings, held-out evaluation |

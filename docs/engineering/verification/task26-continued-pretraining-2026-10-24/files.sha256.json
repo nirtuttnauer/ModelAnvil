@@ -1,0 +1,50 @@
+{
+  "README.md": {
+    "sha256": "e36ec260c73e39f7b48c8f2b8947bece87151cd2c145d68949832664c6a94b8d",
+    "bytes": 4126
+  },
+  "checks.json": {
+    "sha256": "e5201471aaff724d5c0e1678e37982ffc20dbf95e6769590c2f84bfeb0b320b9",
+    "bytes": 1171
+  },
+  "corpus-1440.png": {
+    "sha256": "6fefd8752a662b971b4cd9e7e843cdbc02f55899760bf8d8b047b91bbb5ec966",
+    "bytes": 76908
+  },
+  "corpus-390.png": {
+    "sha256": "e4e533fde5958c47b18ac34015142b8c1b19b7f22fb46799886c7fada349a06b",
+    "bytes": 76173
+  },
+  "export.json": {
+    "sha256": "7077b6c57e02d5d837225078a63c125f055cd8ebaf9f57f84339aa4f0aae3aa3",
+    "bytes": 1037
+  },
+  "fixture-closure.json": {
+    "sha256": "b1db0908a8115cceb93e81eda732b7022ed5e3ada47630f1c252f4fadd6c3236",
+    "bytes": 1330
+  },
+  "independent-evaluation.json": {
+    "sha256": "d8d5d81282dda231a5af7a96b2e298ebb5f262b8872c81c335922f086ec1aa25",
+    "bytes": 1854
+  },
+  "independent-reload.json": {
+    "sha256": "d7ff1041a660bab521c3833a0afdfbf5376f396e61cfeaefa335e9ff1dbc5f90",
+    "bytes": 1177
+  },
+  "recovery-and-withdrawal.json": {
+    "sha256": "68ea6fb63ea6c0d85f8a93c3ce6e41bd195848e157de551da75da1ebd4757697",
+    "bytes": 953
+  },
+  "source-sha256.json": {
+    "sha256": "ee101b47cd400d66c410b9acfe82ed0b506494bd201311f41037cd0ba7740ea8",
+    "bytes": 2305
+  },
+  "training.json": {
+    "sha256": "bc5a9c1ad3589def855267b8d6a1fd0db7729e0a9becf9ba146f5bea0b9f92b6",
+    "bytes": 20503
+  },
+  "ui-proof.json": {
+    "sha256": "1cd5726cd2d487ea8312b57662eaef328748324d6cc21a1be1c979d3d1bbfdb7",
+    "bytes": 2000
+  }
+}

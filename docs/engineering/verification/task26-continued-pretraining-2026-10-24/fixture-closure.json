@@ -1,0 +1,54 @@
+{
+  "qualification": {
+    "temporary_keys_revoked": 0,
+    "workers_offline": 1,
+    "fixture_tenants_suspended": true,
+    "pending_jobs": 0,
+    "running_attempts": 0,
+    "reserved_budgets": 0,
+    "active_device_claims": 0,
+    "command_exit": 0
+  },
+  "exit_cleanup": {
+    "revoked_active_keys": 0,
+    "active_keys": 0,
+    "pending_jobs": 0,
+    "running_attempts": 0,
+    "reserved_budgets": 0,
+    "device_claims": 0,
+    "tenant_suspended": true,
+    "workers_offline": true
+  },
+  "ui": {
+    "temporary_ui_keys_revoked": 1,
+    "active_keys": 0,
+    "workers_online": 0,
+    "pending_jobs": 0,
+    "running_attempts": 0,
+    "open_reservations": 0,
+    "device_claims": 0,
+    "tenant_suspended": true
+  },
+  "controlled_failure_after_key_creation": {
+    "revoked_active_keys": 1,
+    "active_keys": 0,
+    "pending_jobs": 0,
+    "running_attempts": 0,
+    "reserved_budgets": 0,
+    "device_claims": 0,
+    "tenant_suspended": true,
+    "workers_offline": true
+  },
+  "expected_missing_snapshot_failure": {
+    "revoked_active_keys": 0,
+    "active_keys": 0,
+    "pending_jobs": 0,
+    "running_attempts": 0,
+    "reserved_budgets": 0,
+    "device_claims": 0,
+    "tenant_suspended": true,
+    "workers_offline": true
+  },
+  "local_api_and_vite_stopped": true,
+  "all_model_archives_and_databases_private": true
+}

@@ -24,7 +24,7 @@ class PretrainedCPUGuards(SimpleTestCase):
         self.assertNotEqual(cpu.CONTRACT_DIGEST, gpu.CONTRACT_DIGEST)
         self.assertEqual(cpu.LIMITS['steps'], 20)
         self.assertNotIn('qlora_adapter', cpu.CONTRACT['recipes'])
-        self.assertNotIn('continued_pretraining', cpu.CONTRACT['recipes'])
+        self.assertIn('continued_pretraining', cpu.CONTRACT['recipes'])
 
     def test_wrong_worker_runtime_device_packages_memory_or_slots_refused(self):
         caps = {'training_runtime': cpu.CONTRACT_DIGEST, 'gpu_backend': 'cpu', 'gpu_device': 'cpu',

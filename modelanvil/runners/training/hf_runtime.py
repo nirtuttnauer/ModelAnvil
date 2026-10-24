@@ -67,6 +67,7 @@ CONTRACT = {'runtime': RUNTIME_ID, 'source': SOURCE, 'file_hashes': FILE_HASHES,
             'large_guided_recipe': 'lora_adapter', 'large_guided_learning_rate': 0.0002, 'large_guided_adapter': GUIDED_LORA,
             'gradient_clip_norm': 1.0, 'guided_checkpoints': 'three_spaced_checkpoints_best_validation_v1'}
 CONTRACT['guided_sample_order'] = 'seeded_epoch_shuffle_v1'
+CONTRACT['continued_corpus_protocol'] = 'modelanvil.continued-corpus.v1'
 CONTRACT_DIGEST = digest(CONTRACT)
 MPS_MEMORY_FRACTION = 0.9
 
@@ -118,7 +119,7 @@ def runner_manifest():
 def build_digest():
     root = Path(__file__).parent
     paths = [root / name for name in ['hf_runtime.py', 'runtime.py', 'executor.py', 'registry.py', 'admission.py']]
-    paths.extend(root.parents[1] / name for name in ('accelerators.py', 'device_admission.py', 'data/training_import.py', 'jobs/models.py', 'api/training_admission.py', 'runners/training/preflight_report.py'))
+    paths.extend(root.parents[1] / name for name in ('accelerators.py', 'device_admission.py', 'data/training_import.py', 'data/continued_corpus.py', 'jobs/models.py', 'api/training_admission.py', 'runners/training/preflight_report.py'))
     return hashlib.sha256(b''.join(p.read_bytes() for p in paths)).hexdigest()
 
 
@@ -344,7 +345,8 @@ def _training_samples(dataset, tokenizer, tenant, project, *, split='train'):
         text, ids, labels = tokenize_blocks(row['blocks'], tokenizer)
         if not text or not 2 <= len(ids) <= LIMITS['sequence_tokens']:
             raise ValueError('Prepare nonempty samples of 2–128 actual tokenizer tokens; samples are never truncated.')
-        samples.append({'sample_id': identifier, 'text': text, 'token_ids': ids, **({'labels': labels} if labels != ids else {})})
+        samples.append({'sample_id': identifier, 'text': text, 'token_ids': ids, **({'labels': labels} if labels != ids else {}),
+            **({'source_revision':row['metadata']['mixture_source_revision']} if prepared.get('recipe',{}).get('version') == 'modelanvil.continued-corpus.v1' and row.get('metadata',{}).get('mixture_source_revision') else {})})
     if (not samples and split == 'train') or (set(train) | set(held)) - seen:
         raise ValueError('Published split identifiers do not resolve to actual samples.')
     return samples, {'consumed': split, 'train_rows': len(train), 'excluded_rows': {n: len(ids) for n, ids in splits.items() if n != 'train'}, 'excluded_digest': digest(sorted(held))}
@@ -365,6 +367,8 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
     if not all([dataset, base, tokenizer, runner, pool]) or any(not check_resource_access(r, project, tenant) for r in [dataset, base, tokenizer, runner, pool]):
         raise ValueError('Select accessible published data, base weights, tokenizer, runner and pool.')
     source = base.metadata.get('source', SOURCE)
+    if recipe_type == 'continued_pretraining' and source != SOURCE:
+        raise ValueError('Continued pretraining requires the pinned plain SmolLM2-135M base; instruction-model profiles are separate recipes.')
     guided = source in (GUIDED_SOURCE, LARGE_GUIDED_SOURCE) and profile.RUNTIME_ID == RUNTIME_ID
     large_guided = source == LARGE_GUIDED_SOURCE
     expected_hashes = LARGE_GUIDED_FILE_HASHES if large_guided else GUIDED_FILE_HASHES if guided else FILE_HASHES
@@ -435,10 +439,12 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
     if recipe_type == 'lora_adapter':
         pins.update(adapter=GUIDED_LORA if large_guided else LORA, initialization_seed=initialization_seed, adapter_package={'peft': '0.21.2'})
     if recipe_type == 'continued_pretraining':
+        from modelanvil.data.continued_corpus import pins as corpus_pins
+        corpus = corpus_pins(dataset, tenant, project)
         pins.update(objective='causal_next_token_continued_pretraining', initialization='pinned_pretrained_weights',
-            corpus={'components': [{'revision_id': str(dataset.revision_id), 'manifest_digest': dataset.manifest_digest, 'weight': 1.0}],
-                'ordering': 'published_manifest_order_cyclic', 'sample_order_digest': digest([r['sample_id'] for r in samples]),
-                'validation_digest': digest(validation), 'sampler_rng': 'none_dropout_disabled'})
+            corpus={**corpus, 'source_pin_digest':digest(corpus), 'sample_count':len(samples),
+                'sample_order_digest':digest([r['sample_id'] for r in samples]), 'validation_digest':digest(validation),
+                'rng_envelope':'Frozen sampled order and zero dropout; no stochastic updates or runtime sampler RNG.'})
     # BF16 base becomes FP32 weights + two FP32 Adam moments, with staging/candidate headroom.
     checkpoint_bytes = 6 * files['model.safetensors']['byte_size'] + 1024**2
     if recipe_type in {'lora_adapter', 'qlora_adapter'}:
@@ -468,6 +474,10 @@ def checkpoint_bundle(run, checkpoint):
             or state.get('step') != checkpoint.step or state.get('run_id') != str(run.run_id)
             or state.get('optimizer') != {**state['pins'].get('optimizer', OPTIMIZER), 'updates': checkpoint.step} or state.get('metrics') != checkpoint.metrics):
         raise ValueError('GPU checkpoint checksum, cursor or pinned optimizer changed.')
+    if run.recipe_type == 'continued_pretraining':
+        _check_corpus(run)
+        if state.get('data_cursor') != continued_cursor(checkpoint.step,state['pins']):
+            raise ValueError('Continued corpus cursor or RNG envelope changed.')
     bundle = {'config.json': state['pins']['config'], 'files': state['files'], 'source': state['pins'].get('source', SOURCE),
               'weights_manifest.json': {'weights_sha256': state['files'].get('adapter_model.safetensors', state['files']['model.safetensors'])['sha256'],
                                         'base_weights_sha256': state['files']['model.safetensors']['sha256']},
@@ -477,6 +487,19 @@ def checkpoint_bundle(run, checkpoint):
     with staged_files({**state['files'], 'optimizer.safetensors': state['adam']}, run.tenant_id, run.project_id):
         pass
     return bundle
+
+
+def continued_cursor(step,pins):
+    corpus=pins['corpus'];count=corpus['sample_count']
+    return {'completed_updates':step,'next_sample_offset':step % count,'completed_epochs':step // count,
+        'frozen_order_digest':corpus['sample_order_digest'],'rng':'none_dropout_disabled_frozen_order'}
+
+
+def _check_corpus(run):
+    from modelanvil.data.continued_corpus import pins as corpus_pins
+    current=corpus_pins(run.dataset_revision,run.tenant_id,run.project_id)
+    if digest(current)!=run.hardware_config['pins']['corpus']['source_pin_digest']:
+        raise ValueError('Continued corpus source access or pins changed.')
 
 
 def _store_file(path, run, context, step):
@@ -576,11 +599,12 @@ def execute_training(run, context, *, profile=None):
                 api.empty_cache()
 
 
-def _validation_loss(model, samples, device):
+def _validation_loss(model, samples, device, heartbeat=None):
     import torch
     pairs, total = 0, 0.0
     with torch.no_grad():
         for sample in samples:
+            if heartbeat is not None and not heartbeat():raise ValueError('Validation was cancelled or fenced before the next sample.')
             ids = torch.tensor([sample['token_ids']], device=device, dtype=torch.long)
             value = model(input_ids=ids, labels=torch.tensor([sample.get('labels', sample['token_ids'])], device=device, dtype=torch.long)).loss
             if not torch.isfinite(value).item():
@@ -621,13 +645,15 @@ def _execute_updates(run, context, inputs, device, recovery, files, latest):
                 betas=(optimizer_spec['beta1'], optimizer_spec['beta2']), eps=optimizer_spec['epsilon'], weight_decay=optimizer_spec['weight_decay'], foreach=False)
             if latest:
                 _restore_optimizer(model, optimizer, directory, latest.step)
-            validation_before = _validation_loss(model, inputs['validation_samples'], device) if inputs['validation_samples'] else None
+            validation_heartbeat=context.heartbeat if run.recipe_type=='continued_pretraining' else None
+            validation_before = _validation_loss(model, inputs['validation_samples'], device,validation_heartbeat) if inputs['validation_samples'] else None
             validation_baseline = ({'loss': latest.metrics['validation_loss_before_training']}
                 if latest and latest.metrics.get('validation_loss_before_training') is not None else validation_before)
             window = {'training_pairs': 0, 'cpu_seconds': 0.0, 'engine_wall_seconds': 0.0, 'updates': 0}
             for step in range(run.current_step + 1, run.total_steps + 1):
                 if not context.heartbeat(progress=(step - 1) / run.total_steps):
                     return
+                if run.recipe_type == 'continued_pretraining':_check_corpus(run)
                 sample = inputs['samples'][training_sample_index(step, len(inputs['samples']), pins)]
                 ids = torch.tensor([sample['token_ids']], device=device, dtype=torch.long)
                 backend = pins['accelerator']['device']['backend']
@@ -661,6 +687,9 @@ def _execute_updates(run, context, inputs, device, recovery, files, latest):
                            'peak_allocated_bytes': None if backend in {'cpu', 'mps'} else api.max_memory_allocated(device),
                            'peak_reserved_bytes': None if backend in {'cpu', 'mps'} else api.max_memory_reserved(device),
                            'gpu_allocated_bytes': None if backend == 'cpu' else api.current_allocated_memory() if backend == 'mps' else api.memory_allocated(device)}
+                if run.recipe_type == 'continued_pretraining':
+                    metrics.update(corpus_revision_id=pins['dataset_id'],source_revision_id=sample.get('source_revision',pins['dataset_id']),
+                        corpus_recipe_digest=pins['corpus'].get('recipe_digest'),data_cursor=continued_cursor(step,pins))
                 metrics['tokens_per_second'] = metrics['training_pairs'] / metrics['engine_wall_seconds']
                 metrics['gpu_utilization_percent'] = None  # No portable utilization measurement is available in this runtime.
                 if backend == 'mps':
@@ -675,7 +704,7 @@ def _execute_updates(run, context, inputs, device, recovery, files, latest):
                 window = {'training_pairs': 0, 'cpu_seconds': 0.0, 'engine_wall_seconds': 0.0, 'updates': 0}
                 if validation_before is not None:
                     validation_started = time.perf_counter()
-                    after = _validation_loss(model, inputs['validation_samples'], device)
+                    after = _validation_loss(model, inputs['validation_samples'], device,validation_heartbeat)
                     metrics.update(validation_loss_before_update=validation_before['loss'], validation_loss_before_training=validation_baseline['loss'], validation_loss=after['loss'],
                         validation_prediction_tokens=after['prediction_tokens'], validation_samples=after['samples'],
                         validation_wall_seconds=time.perf_counter() - validation_started,
@@ -709,6 +738,9 @@ def _execute_updates(run, context, inputs, device, recovery, files, latest):
                         'files': saved_files, 'adam': adam_ref,
                         'optimizer': {**optimizer_spec, 'updates': step}, 'tokenizer': inputs['tokenizer'], 'metrics': metrics,
                         'attempt_id': str(context.attempt.attempt_id), 'fencing_token': context.fencing_token}
+                    if run.recipe_type == 'continued_pretraining':
+                        _check_corpus(run)
+                        state['data_cursor']=continued_cursor(step,pins)
                     latest = TrainingCheckpoint.all_objects.create(tenant_id=run.tenant_id, training_run=locked,
                         step=step, state_digest=digest(state), weights_manifest=state, metrics=metrics)
                     locked.current_step, locked.latest_loss = step, metrics['loss']
