@@ -1,0 +1,62 @@
+{
+  "actual_http_publication": true,
+  "corpus": {
+    "id": 5,
+    "revision_id": "01a16cd6-ded0-7073-be5a-9a701581742d",
+    "dataset": 5,
+    "name": "Browser weighted astronomy corpus final",
+    "manifest_digest": "a5105608920266fb82c658a31924533a6b1ef6dd5f67271005bdadf7ba786c9e",
+    "recipe_digest": "0be52eaf69b63107f66ec6e58fbcd7a4e7af52bb77633bc39822fc94695e2010",
+    "row_count": 26,
+    "split_counts": {
+      "train": 12,
+      "validation": 6,
+      "test": 8
+    },
+    "recipe": {
+      "version": "modelanvil.continued-corpus.v1",
+      "components": [
+        {
+          "revision_id": "01a16cd1-140c-7197-b3ff-532c0388b022",
+          "manifest_digest": "9d09f5164a3dc1898a13769b106172f3aaa2bb9b8b6396f6f3d0889828bbfaad",
+          "manifest_artifact_id": "01a16cd1-140a-734b-9a66-2cf819fd4e18",
+          "weight": "3.000",
+          "normalized_weight": "3/4",
+          "train_quota": 9
+        },
+        {
+          "revision_id": "01a16cd1-14d7-7a47-ba6f-7509bc14df3e",
+          "manifest_digest": "8ef8dcb4bb523539f10aadfbb074120135213768911d789086e1981804dc7f8e",
+          "manifest_artifact_id": "01a16cd1-14d5-7754-b7bc-c4b6a866b74f",
+          "weight": "1.000",
+          "normalized_weight": "1/4",
+          "train_quota": 3
+        }
+      ],
+      "seed": "browser-cpu-first-v1",
+      "ordering": "seeded_weighted_without_replacement_then_frozen_cyclic_v1",
+      "split_policy": "inherit_source_splits_no_reallocation",
+      "train_samples": 12,
+      "normalization": "NFKC_casefold_whitespace_duplicate_guard_v1"
+    },
+    "state": "published"
+  },
+  "selected_corpus": true,
+  "duplicate_name_refused": true,
+  "selection_preserved_after_refusal": true,
+  "numerical_training_started_from_ui": false,
+  "console_errors": 0,
+  "expected_http400_resource_errors": 1,
+  "unexpected_console_errors": 0,
+  "errors": [],
+  "viewports": [
+    {
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "overflow": false
+    }
+  ]
+}

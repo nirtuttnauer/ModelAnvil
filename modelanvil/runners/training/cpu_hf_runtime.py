@@ -14,7 +14,7 @@ SOURCE, FILE_HASHES, PACKAGES = hf.SOURCE, hf.FILE_HASHES, hf.PACKAGES
 OPTIMIZER, LORA = hf.OPTIMIZER, hf.LORA
 LIMITS = {**hf.LIMITS, 'steps': 20, 'memory_bytes': 16 * 1024**3, 'gpu_memory_bytes': 0}
 CONTRACT = {**copy.deepcopy(hf.CONTRACT), 'runtime': RUNTIME_ID, 'limits': LIMITS,
-            'recipes': ['full_sft', 'lora_adapter'], 'placement': 'one_trusted_local_cpu_worker',
+            'recipes': ['full_sft', 'lora_adapter', 'continued_pretraining'], 'placement': 'one_trusted_local_cpu_worker',
             'cpu_threads': 1, 'guided_source': None, 'large_guided_source': None}
 CONTRACT_DIGEST = digest(CONTRACT)
 file_ref, staged_files, _tokenizer = hf.file_ref, hf.staged_files, hf._tokenizer
@@ -37,7 +37,7 @@ def runner_manifest():
     value.update(adapter_id=RUNTIME_ID, image=f'local-python-contract@sha256:{CONTRACT_DIGEST}')
     value['capabilities'][0]['architectures'] = [RUNTIME_ID]
     value['resources'].update(gpu_count=0, memory_bytes=LIMITS['memory_bytes'])
-    value['limitations'] = ['Exact pinned pretrained SmolLM2-135M, FP32 full SFT or rank-8 q/v LoRA on CPU.',
+    value['limitations'] = ['Exact pinned pretrained SmolLM2-135M, FP32 full SFT, rank-8 q/v LoRA or continued pretraining on CPU.',
         'One thread and one dedicated local worker; 1–20 updates, at most 1000 examples and 128 tokens per example.',
         'No QLoRA, guided large model, GPU, distributed, remote, customer quality or production qualification.']
     return value

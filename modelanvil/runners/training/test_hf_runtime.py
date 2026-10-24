@@ -41,6 +41,24 @@ class GPUInputTests(TestCase):
         checkpoints.get.return_value = final
         self.assertIs(gpu.best_checkpoint(run), final)
 
+    def test_continued_cursor_cannot_be_rewritten_even_with_a_new_checksum(self):
+        pins={'corpus':{'sample_count':12,'sample_order_digest':'fixed-order'}}
+        self.assertEqual(gpu.continued_cursor(13,pins)['next_sample_offset'],1)
+        self.assertEqual(gpu.continued_cursor(13,pins)['completed_epochs'],1)
+        run=SimpleNamespace(recipe_type='continued_pretraining',run_id=uuid.uuid4(),hardware_config={'pins':pins})
+        state={'pins':pins,'step':1,'run_id':str(run.run_id),'optimizer':{**gpu.OPTIMIZER,'updates':1},'metrics':{},'data_cursor':{**gpu.continued_cursor(1,pins),'next_sample_offset':2}}
+        checkpoint=SimpleNamespace(is_valid=True,weights_manifest=state,state_digest=gpu.digest(state),step=1,metrics={})
+        with patch.object(gpu,'_check_corpus') as source_check,patch.object(gpu,'staged_files') as stage:
+            with self.assertRaisesRegex(ValueError,'cursor'):gpu.checkpoint_bundle(run,checkpoint)
+            source_check.assert_called_once_with(run);stage.assert_not_called()
+
+    def test_continued_pretraining_refuses_instruction_source_before_loading(self):
+        profile=SimpleNamespace(CONTRACT={'recipes':['continued_pretraining']},LIMITS={'steps':20},require_packages=lambda:None)
+        with patch.object(gpu,'check_resource_access',return_value=True),patch.object(gpu,'staged_files') as stage:
+            with self.assertRaisesRegex(ValueError,'plain SmolLM2'):
+                gpu.resolve_inputs(dataset=object(),base=SimpleNamespace(metadata={'source':gpu.GUIDED_SOURCE}),tokenizer=object(),runner=object(),pool=object(),tenant=self.tenant.pk,project=self.project.pk,steps=3,recipe_type='continued_pretraining',profile=profile)
+            stage.assert_not_called()
+
     def setUp(self):
         root = tempfile.TemporaryDirectory(); self.addCleanup(root.cleanup)
         override = override_settings(MODELANVIL={**settings.MODELANVIL, 'artifact_root': root.name, 'artifact_backend': 'filesystem'})

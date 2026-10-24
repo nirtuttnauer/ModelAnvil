@@ -1,0 +1,45 @@
+{
+  "host": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "machine": "arm64",
+    "processor": "arm",
+    "system": "Darwin",
+    "release": "27.0.0",
+    "cpu_brand": "Apple M5 Pro",
+    "logical_cores": 18,
+    "physical_cores": 18,
+    "total_memory_bytes": 51539607552,
+    "python": {
+      "version": "3.12.15",
+      "implementation": "CPython",
+      "compiler": "Clang 22.1.3 "
+    }
+  },
+  "full_backend": {
+    "tests": 1234,
+    "optional_skips": 11,
+    "seconds": 196.263,
+    "result": "passed",
+    "scope": "Full suite before final three additional guards; final changed engine/corpus paths also pass the focused suite below. Exact final-head full CI is a separate merge gate."
+  },
+  "instruction_base_eligibility": {
+    "test": "Actual model-version API excludes continued pretraining for both instruction-model base sizes.",
+    "result": "passed"
+  },
+  "final_corpus_and_engine_guards": {
+    "tests": 40,
+    "seconds": 2.287,
+    "result": "passed"
+  },
+  "web_tests": {
+    "tests": 234,
+    "result": "passed"
+  },
+  "web_build": "passed",
+  "storybook_build": "passed",
+  "django_check": "passed",
+  "migration_drift": "none",
+  "git_diff_check": "passed",
+  "customer_and_production_quality": "not qualified",
+  "streaming_scope": "Bounded materialized frozen shards, not unbounded/distributed streaming."
+}

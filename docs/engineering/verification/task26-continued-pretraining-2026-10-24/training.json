@@ -1,0 +1,530 @@
+{
+  "source": {
+    "repo_id": "HuggingFaceTB/SmolLM2-135M",
+    "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+    "license": "Apache-2.0"
+  },
+  "pins": {
+    "runtime": "modelanvil.smollm2-cpu-sft.v1",
+    "contract_digest": "06969ca0bd90354c19ae2fbb208bd0ef9e450080a186a2cd919c9158cbbd63a2",
+    "build_digest": "0ed763a446d311f3cd424f898bdfa8eb42b0625d16d826c3f651287da6d640b6",
+    "dataset_id": "01a16cdb-c5ca-7dc0-a67d-4e6b1fafa813",
+    "dataset_digest": "967726846a07f8818ec827fd55d4da7612e392078e02a798fa7e4d65b9f3a90b",
+    "base_id": "01a16cdb-c4b5-7778-b06f-488716cf7108",
+    "base_artifact_id": "01a16cdb-bcfa-733d-a24e-ffe40d68d3a0",
+    "base_digest": "11d49941e7259736098625f1eda2979fd0b29836e84531eb65098f16113aa0a7",
+    "tokenizer_id": "01a16cdb-c4b2-7dfd-a10a-763ae6fc3175",
+    "tokenizer_digest": "576dc24bb54d2cf0dd63ab28c64a9b454a8e63e01ad23567511ca2671aa93e4d",
+    "runner_id": "01a16cdb-c4c0-70c8-a56c-3881f811bd44",
+    "runner_digest": "9a51e5d24fe0ce3f66cfaaa22c25874d9557e198288fcb97c1de0ade0c03530d",
+    "pool_id": 1,
+    "steps": 3,
+    "config": {
+      "architectures": [
+        "LlamaForCausalLM"
+      ],
+      "attention_bias": false,
+      "attention_dropout": 0.0,
+      "bos_token_id": 0,
+      "eos_token_id": 0,
+      "hidden_act": "silu",
+      "hidden_size": 576,
+      "initializer_range": 0.041666666666666664,
+      "intermediate_size": 1536,
+      "is_llama_config": true,
+      "max_position_embeddings": 8192,
+      "model_type": "llama",
+      "num_attention_heads": 9,
+      "num_hidden_layers": 30,
+      "num_key_value_heads": 3,
+      "pretraining_tp": 1,
+      "rms_norm_eps": 1e-05,
+      "rope_interleaved": false,
+      "rope_scaling": null,
+      "rope_theta": 100000,
+      "tie_word_embeddings": true,
+      "torch_dtype": "bfloat16",
+      "transformers_version": "4.40.1",
+      "use_cache": true,
+      "vocab_size": 49152,
+      "runtime": "modelanvil.smollm2-cpu-sft.v1"
+    },
+    "optimizer": {
+      "algorithm": "adamw",
+      "learning_rate": 2e-05,
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "epsilon": 1e-08,
+      "weight_decay": 0.0
+    },
+    "sample_digest": "c1a7b35f47a21319ba7be1c7e056776e158c910e2383fec5b884d5e0097186d2",
+    "splits": {
+      "consumed": "train",
+      "train_rows": 12,
+      "excluded_rows": {
+        "test": 8,
+        "validation": 6
+      },
+      "excluded_digest": "fb62633a103494d7064507982e15455113b49d32d605a7620821de10d24c460d"
+    },
+    "accelerator": {
+      "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+      "device": {
+        "id": "cpu",
+        "backend": "cpu",
+        "torch_device": "cpu",
+        "name": "Apple M5 Pro",
+        "total_memory_bytes": 51539607552
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "capacity_source": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+    },
+    "worker_id": 1,
+    "chat_sft": false,
+    "recipe": "continued_pretraining",
+    "objective": "causal_next_token_continued_pretraining",
+    "initialization": "pinned_pretrained_weights",
+    "corpus": {
+      "components": [
+        {
+          "manifest_artifact_id": "01a16cdb-c4bc-7020-a31c-120b423be4b5",
+          "manifest_digest": "9d09f5164a3dc1898a13769b106172f3aaa2bb9b8b6396f6f3d0889828bbfaad",
+          "normalized_weight": "3/4",
+          "revision_id": "01a16cdb-c4be-7843-b6be-612b825aef2e",
+          "train_quota": 9,
+          "weight": "3.000"
+        },
+        {
+          "manifest_artifact_id": "01a16cdb-c580-7fed-9abd-fed6d4181e27",
+          "manifest_digest": "8ef8dcb4bb523539f10aadfbb074120135213768911d789086e1981804dc7f8e",
+          "normalized_weight": "1/4",
+          "revision_id": "01a16cdb-c582-70a8-a361-068ac0413c5e",
+          "train_quota": 3,
+          "weight": "1.000"
+        }
+      ],
+      "normalization": "NFKC_casefold_whitespace_duplicate_guard_v1",
+      "ordering": "seeded_weighted_without_replacement_then_frozen_cyclic_v1",
+      "seed": "cpu-continued-both-shards-v1",
+      "split_policy": "inherit_source_splits_no_reallocation",
+      "train_samples": 12,
+      "version": "modelanvil.continued-corpus.v1",
+      "recipe_digest": "0eac3b462d6b115f8445d531ce4165989165d92a68de86ed04ae3c797933dfe3",
+      "sampler_rng": "frozen_order_no_runtime_sampling_dropout_disabled",
+      "source_pin_digest": "c0c6e2ca72b1fa4bcdd53d0047291716c3c72b9bbdd73b81f2e33cad8a68f7aa",
+      "sample_count": 12,
+      "sample_order_digest": "e3704b9fd8b4c3b6a0cfa7bb03223de408812914af360d8e06fabe55101e37c7",
+      "validation_digest": "ddebe82a8b75376dfec87de69c3c024b68760e18d21fd2720bf2704c2f220945",
+      "rng_envelope": "Frozen sampled order and zero dropout; no stochastic updates or runtime sampler RNG."
+    }
+  },
+  "corpus": {
+    "id": 3,
+    "revision_id": "01a16cdb-c5ca-7dc0-a67d-4e6b1fafa813",
+    "dataset": 3,
+    "name": "gpu-6885e3fd-corpus",
+    "manifest_digest": "967726846a07f8818ec827fd55d4da7612e392078e02a798fa7e4d65b9f3a90b",
+    "recipe_digest": "0eac3b462d6b115f8445d531ce4165989165d92a68de86ed04ae3c797933dfe3",
+    "row_count": 26,
+    "split_counts": {
+      "train": 12,
+      "validation": 6,
+      "test": 8
+    },
+    "recipe": {
+      "version": "modelanvil.continued-corpus.v1",
+      "components": [
+        {
+          "revision_id": "01a16cdb-c4be-7843-b6be-612b825aef2e",
+          "manifest_digest": "9d09f5164a3dc1898a13769b106172f3aaa2bb9b8b6396f6f3d0889828bbfaad",
+          "manifest_artifact_id": "01a16cdb-c4bc-7020-a31c-120b423be4b5",
+          "weight": "3.000",
+          "normalized_weight": "3/4",
+          "train_quota": 9
+        },
+        {
+          "revision_id": "01a16cdb-c582-70a8-a361-068ac0413c5e",
+          "manifest_digest": "8ef8dcb4bb523539f10aadfbb074120135213768911d789086e1981804dc7f8e",
+          "manifest_artifact_id": "01a16cdb-c580-7fed-9abd-fed6d4181e27",
+          "weight": "1.000",
+          "normalized_weight": "1/4",
+          "train_quota": 3
+        }
+      ],
+      "seed": "cpu-continued-both-shards-v1",
+      "ordering": "seeded_weighted_without_replacement_then_frozen_cyclic_v1",
+      "split_policy": "inherit_source_splits_no_reallocation",
+      "train_samples": 12,
+      "normalization": "NFKC_casefold_whitespace_duplicate_guard_v1"
+    },
+    "state": "published"
+  },
+  "source_roles": {
+    "domain": "01a16cdb-c4be-7843-b6be-612b825aef2e",
+    "protected": "01a16cdb-c582-70a8-a361-068ac0413c5e"
+  },
+  "metrics": [
+    {
+      "step": 1,
+      "loss": 3.476762294769287,
+      "post_update_loss": 2.6377053260803223,
+      "sample_id": "1b0222d0-bf8a-577b-96c8-950208bea44f",
+      "training_pairs": 10,
+      "cpu_seconds": 0.43329400000000007,
+      "engine_wall_seconds": 0.4362055000019609,
+      "gpu_backend": "cpu",
+      "gpu_device": "cpu",
+      "device_residency_checked": true,
+      "gradient_norm": 97.81311798095703,
+      "trainable_parameters": 134515008,
+      "total_parameters": 134515008,
+      "measured_at": "2026-10-24T07:41:46.981479+00:00",
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "gpu_allocated_bytes": null,
+      "corpus_revision_id": "01a16cdb-c5ca-7dc0-a67d-4e6b1fafa813",
+      "source_revision_id": "01a16cdb-c582-70a8-a361-068ac0413c5e",
+      "corpus_recipe_digest": "0eac3b462d6b115f8445d531ce4165989165d92a68de86ed04ae3c797933dfe3",
+      "data_cursor": {
+        "completed_updates": 1,
+        "next_sample_offset": 1,
+        "completed_epochs": 0,
+        "frozen_order_digest": "e3704b9fd8b4c3b6a0cfa7bb03223de408812914af360d8e06fabe55101e37c7",
+        "rng": "none_dropout_disabled_frozen_order"
+      },
+      "tokens_per_second": 22.924974581831375,
+      "gpu_utilization_percent": null,
+      "updates_since_checkpoint": 1,
+      "validation_loss_before_update": 4.1609984874725345,
+      "validation_loss_before_training": 4.1609984874725345,
+      "validation_loss": 4.1110634400294375,
+      "validation_prediction_tokens": 65,
+      "validation_samples": 6,
+      "validation_wall_seconds": 0.11274150000099326,
+      "cumulative_training_prediction_tokens": 10
+    },
+    {
+      "step": 2,
+      "loss": 4.553244590759277,
+      "post_update_loss": 3.9033119678497314,
+      "sample_id": "1c4497f4-8087-5e24-be02-ca96d81192ef",
+      "training_pairs": 10,
+      "cpu_seconds": 0.3300509999999992,
+      "engine_wall_seconds": 0.3303013330005342,
+      "gpu_backend": "cpu",
+      "gpu_device": "cpu",
+      "device_residency_checked": true,
+      "gradient_norm": 134.8103485107422,
+      "trainable_parameters": 134515008,
+      "total_parameters": 134515008,
+      "measured_at": "2026-10-24T07:41:48.886374+00:00",
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "gpu_allocated_bytes": null,
+      "corpus_revision_id": "01a16cdb-c5ca-7dc0-a67d-4e6b1fafa813",
+      "source_revision_id": "01a16cdb-c4be-7843-b6be-612b825aef2e",
+      "corpus_recipe_digest": "0eac3b462d6b115f8445d531ce4165989165d92a68de86ed04ae3c797933dfe3",
+      "data_cursor": {
+        "completed_updates": 2,
+        "next_sample_offset": 2,
+        "completed_epochs": 0,
+        "frozen_order_digest": "e3704b9fd8b4c3b6a0cfa7bb03223de408812914af360d8e06fabe55101e37c7",
+        "rng": "none_dropout_disabled_frozen_order"
+      },
+      "tokens_per_second": 30.275384931564375,
+      "gpu_utilization_percent": null,
+      "updates_since_checkpoint": 1,
+      "validation_loss_before_update": 4.1110634400294375,
+      "validation_loss_before_training": 4.1609984874725345,
+      "validation_loss": 4.06470876106849,
+      "validation_prediction_tokens": 65,
+      "validation_samples": 6,
+      "validation_wall_seconds": 0.11293437499989523,
+      "cumulative_training_prediction_tokens": 20
+    },
+    {
+      "step": 3,
+      "loss": 4.146079063415527,
+      "post_update_loss": 3.5425095558166504,
+      "sample_id": "11f318c5-2a5c-589d-a306-e563910cdc4b",
+      "training_pairs": 11,
+      "cpu_seconds": 0.33839099999999966,
+      "engine_wall_seconds": 0.33855533400492277,
+      "gpu_backend": "cpu",
+      "gpu_device": "cpu",
+      "device_residency_checked": true,
+      "gradient_norm": 118.78655242919922,
+      "trainable_parameters": 134515008,
+      "total_parameters": 134515008,
+      "measured_at": "2026-10-24T07:41:50.814198+00:00",
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "gpu_allocated_bytes": null,
+      "corpus_revision_id": "01a16cdb-c5ca-7dc0-a67d-4e6b1fafa813",
+      "source_revision_id": "01a16cdb-c4be-7843-b6be-612b825aef2e",
+      "corpus_recipe_digest": "0eac3b462d6b115f8445d531ce4165989165d92a68de86ed04ae3c797933dfe3",
+      "data_cursor": {
+        "completed_updates": 3,
+        "next_sample_offset": 3,
+        "completed_epochs": 0,
+        "frozen_order_digest": "e3704b9fd8b4c3b6a0cfa7bb03223de408812914af360d8e06fabe55101e37c7",
+        "rng": "none_dropout_disabled_frozen_order"
+      },
+      "tokens_per_second": 32.49099599133787,
+      "gpu_utilization_percent": null,
+      "updates_since_checkpoint": 1,
+      "validation_loss_before_update": 4.06470876106849,
+      "validation_loss_before_training": 4.1609984874725345,
+      "validation_loss": 4.034061468564547,
+      "validation_prediction_tokens": 65,
+      "validation_samples": 6,
+      "validation_wall_seconds": 0.1122875830042176,
+      "cumulative_training_prediction_tokens": 31
+    }
+  ],
+  "checkpoints": [
+    {
+      "step": 1,
+      "state_digest": "317c9f8c531090cbea67bd8d11d40fbe495247749bb23a51f0be2f54651c595a",
+      "weights_sha256": "db90ea3bfc81f21143176e68f7d042aeac5a0524d8b0ab644df7dbe98be6c643"
+    },
+    {
+      "step": 2,
+      "state_digest": "37f6b658e5edf7a7b9f208861edc0ce5223b3a8c1447d2c401f7a71c6e80c8b0",
+      "weights_sha256": "aba42f49ec4cd2e74c137ea97160a12686b90742c9c175694bdbb0113cee64ca"
+    },
+    {
+      "step": 3,
+      "state_digest": "ab299fba0704be92f8e27733316b277cff68babadadc951461616b7f6e6fbbe6",
+      "weights_sha256": "80a3f8af80daf882955607c1ea188a60972cac1b42b0757254ff100acff6842e"
+    }
+  ],
+  "selected_candidate_step": 3,
+  "candidate_state": "draft",
+  "corpus_source_lineage_edges": [
+    {
+      "relation": "continued_corpus_source",
+      "detail": {
+        "source_revision": "01a16cdb-c4be-7843-b6be-612b825aef2e",
+        "recipe_digest": "0eac3b462d6b115f8445d531ce4165989165d92a68de86ed04ae3c797933dfe3"
+      }
+    },
+    {
+      "relation": "continued_corpus_source",
+      "detail": {
+        "source_revision": "01a16cdb-c582-70a8-a361-068ac0413c5e",
+        "recipe_digest": "0eac3b462d6b115f8445d531ce4165989165d92a68de86ed04ae3c797933dfe3"
+      }
+    }
+  ],
+  "candidate_provenance": {
+    "tenant_id": "01a16cdb-bb9d-7307-b57d-2113bd56286f",
+    "project_id": "01a16cdb-bb9e-794e-8052-a5eaa19cd22f",
+    "run_id": "01a16cdb-c9cd-713d-9525-6bfc65a6bb9d",
+    "pins": {
+      "runtime": "modelanvil.smollm2-cpu-sft.v1",
+      "contract_digest": "06969ca0bd90354c19ae2fbb208bd0ef9e450080a186a2cd919c9158cbbd63a2",
+      "build_digest": "0ed763a446d311f3cd424f898bdfa8eb42b0625d16d826c3f651287da6d640b6",
+      "dataset_id": "01a16cdb-c5ca-7dc0-a67d-4e6b1fafa813",
+      "dataset_digest": "967726846a07f8818ec827fd55d4da7612e392078e02a798fa7e4d65b9f3a90b",
+      "base_id": "01a16cdb-c4b5-7778-b06f-488716cf7108",
+      "base_artifact_id": "01a16cdb-bcfa-733d-a24e-ffe40d68d3a0",
+      "base_digest": "11d49941e7259736098625f1eda2979fd0b29836e84531eb65098f16113aa0a7",
+      "tokenizer_id": "01a16cdb-c4b2-7dfd-a10a-763ae6fc3175",
+      "tokenizer_digest": "576dc24bb54d2cf0dd63ab28c64a9b454a8e63e01ad23567511ca2671aa93e4d",
+      "runner_id": "01a16cdb-c4c0-70c8-a56c-3881f811bd44",
+      "runner_digest": "9a51e5d24fe0ce3f66cfaaa22c25874d9557e198288fcb97c1de0ade0c03530d",
+      "pool_id": 1,
+      "steps": 3,
+      "config": {
+        "architectures": [
+          "LlamaForCausalLM"
+        ],
+        "attention_bias": false,
+        "attention_dropout": 0.0,
+        "bos_token_id": 0,
+        "eos_token_id": 0,
+        "hidden_act": "silu",
+        "hidden_size": 576,
+        "initializer_range": 0.041666666666666664,
+        "intermediate_size": 1536,
+        "is_llama_config": true,
+        "max_position_embeddings": 8192,
+        "model_type": "llama",
+        "num_attention_heads": 9,
+        "num_hidden_layers": 30,
+        "num_key_value_heads": 3,
+        "pretraining_tp": 1,
+        "rms_norm_eps": 1e-05,
+        "rope_interleaved": false,
+        "rope_scaling": null,
+        "rope_theta": 100000,
+        "tie_word_embeddings": true,
+        "torch_dtype": "bfloat16",
+        "transformers_version": "4.40.1",
+        "use_cache": true,
+        "vocab_size": 49152,
+        "runtime": "modelanvil.smollm2-cpu-sft.v1"
+      },
+      "optimizer": {
+        "algorithm": "adamw",
+        "learning_rate": 2e-05,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "weight_decay": 0.0
+      },
+      "sample_digest": "c1a7b35f47a21319ba7be1c7e056776e158c910e2383fec5b884d5e0097186d2",
+      "splits": {
+        "consumed": "train",
+        "train_rows": 12,
+        "excluded_rows": {
+          "test": 8,
+          "validation": 6
+        },
+        "excluded_digest": "fb62633a103494d7064507982e15455113b49d32d605a7620821de10d24c460d"
+      },
+      "accelerator": {
+        "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+        "device": {
+          "id": "cpu",
+          "backend": "cpu",
+          "torch_device": "cpu",
+          "name": "Apple M5 Pro",
+          "total_memory_bytes": 51539607552
+        },
+        "packages": {
+          "torch": "2.13.0",
+          "transformers": "5.14.0",
+          "safetensors": "0.8.0",
+          "tokenizers": "0.22.2"
+        },
+        "capacity_source": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+      },
+      "worker_id": 1,
+      "chat_sft": false,
+      "recipe": "continued_pretraining",
+      "objective": "causal_next_token_continued_pretraining",
+      "initialization": "pinned_pretrained_weights",
+      "corpus": {
+        "components": [
+          {
+            "manifest_artifact_id": "01a16cdb-c4bc-7020-a31c-120b423be4b5",
+            "manifest_digest": "9d09f5164a3dc1898a13769b106172f3aaa2bb9b8b6396f6f3d0889828bbfaad",
+            "normalized_weight": "3/4",
+            "revision_id": "01a16cdb-c4be-7843-b6be-612b825aef2e",
+            "train_quota": 9,
+            "weight": "3.000"
+          },
+          {
+            "manifest_artifact_id": "01a16cdb-c580-7fed-9abd-fed6d4181e27",
+            "manifest_digest": "8ef8dcb4bb523539f10aadfbb074120135213768911d789086e1981804dc7f8e",
+            "normalized_weight": "1/4",
+            "revision_id": "01a16cdb-c582-70a8-a361-068ac0413c5e",
+            "train_quota": 3,
+            "weight": "1.000"
+          }
+        ],
+        "normalization": "NFKC_casefold_whitespace_duplicate_guard_v1",
+        "ordering": "seeded_weighted_without_replacement_then_frozen_cyclic_v1",
+        "seed": "cpu-continued-both-shards-v1",
+        "split_policy": "inherit_source_splits_no_reallocation",
+        "train_samples": 12,
+        "version": "modelanvil.continued-corpus.v1",
+        "recipe_digest": "0eac3b462d6b115f8445d531ce4165989165d92a68de86ed04ae3c797933dfe3",
+        "sampler_rng": "frozen_order_no_runtime_sampling_dropout_disabled",
+        "source_pin_digest": "c0c6e2ca72b1fa4bcdd53d0047291716c3c72b9bbdd73b81f2e33cad8a68f7aa",
+        "sample_count": 12,
+        "sample_order_digest": "e3704b9fd8b4c3b6a0cfa7bb03223de408812914af360d8e06fabe55101e37c7",
+        "validation_digest": "ddebe82a8b75376dfec87de69c3c024b68760e18d21fd2720bf2704c2f220945",
+        "rng_envelope": "Frozen sampled order and zero dropout; no stochastic updates or runtime sampler RNG."
+      }
+    },
+    "step": 3
+  },
+  "preflight_requirements": {
+    "runtime": "modelanvil.smollm2-cpu-sft.v1",
+    "recipe": "continued_pretraining",
+    "config": {
+      "architectures": [
+        "LlamaForCausalLM"
+      ],
+      "attention_bias": false,
+      "attention_dropout": 0.0,
+      "bos_token_id": 0,
+      "eos_token_id": 0,
+      "hidden_act": "silu",
+      "hidden_size": 576,
+      "initializer_range": 0.041666666666666664,
+      "intermediate_size": 1536,
+      "is_llama_config": true,
+      "max_position_embeddings": 8192,
+      "model_type": "llama",
+      "num_attention_heads": 9,
+      "num_hidden_layers": 30,
+      "num_key_value_heads": 3,
+      "pretraining_tp": 1,
+      "rms_norm_eps": 1e-05,
+      "rope_interleaved": false,
+      "rope_scaling": null,
+      "rope_theta": 100000,
+      "tie_word_embeddings": true,
+      "torch_dtype": "bfloat16",
+      "transformers_version": "4.40.1",
+      "use_cache": true,
+      "vocab_size": 49152,
+      "runtime": "modelanvil.smollm2-cpu-sft.v1"
+    },
+    "optimizer": {
+      "algorithm": "adamw",
+      "learning_rate": 2e-05,
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "epsilon": 1e-08,
+      "weight_decay": 0.0
+    },
+    "cpu_slots": 1,
+    "memory_bytes": 17179869184,
+    "storage_bytes": 8077059440,
+    "checkpoint_count": 3,
+    "storage_assumption": "FP32 weights and Adam moments for the planned checkpoint cadence, plus staging/candidate headroom; shared local host.",
+    "device_memory": {
+      "total_bytes": 51539607552,
+      "required_bytes": 17179869184,
+      "scope": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+    },
+    "gpu_count": 0,
+    "accelerator": {
+      "host_key": "618c1e2f39ed0ad97f7fd5b12af8f09a2e7a6d891c20855cc1d6bccbafd1e846",
+      "device": {
+        "id": "cpu",
+        "backend": "cpu",
+        "torch_device": "cpu",
+        "name": "Apple M5 Pro",
+        "total_memory_bytes": 51539607552
+      },
+      "packages": {
+        "torch": "2.13.0",
+        "transformers": "5.14.0",
+        "safetensors": "0.8.0",
+        "tokenizers": "0.22.2"
+      },
+      "capacity_source": "Observed physical host memory; bounded tensors, not a free-memory reservation."
+    },
+    "precision": "fp32"
+  },
+  "budget": [
+    {
+      "reserved": "3.000000",
+      "settled": "3.000000"
+    }
+  ],
+  "scope": "One local cpu SmolLM2 fp32 continued_pretraining pilot; authored CC0 original protected text shards; no cross-vendor or production claim.",
+  "actual_both_shards_consumed": true,
+  "production_qualified": false
+}

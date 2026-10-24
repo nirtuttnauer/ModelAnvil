@@ -227,6 +227,9 @@ class ModelWorkspaceTests(TransactionTestCase):
                 plan = snapshot(version, self.tenant.pk, self.project.pk)
                 self.assertEqual(plan['format'], 'safetensors')
                 self.assertEqual(plan['guided_large'], source == hf_runtime.LARGE_GUIDED_SOURCE)
+                compatibility = self.client.get(f'/api/v1/model-versions/{version.model_version_id}/').data['capabilities']
+                self.assertTrue(compatibility['train']['eligible'], compatibility)
+                self.assertNotIn('continued_pretraining', compatibility['train']['recipes'])
                 with local_session(version, tenant=self.tenant.pk, project=self.project.pk) as session:
                     self.assertEqual(session['format'], 'safetensors')
                 for changes in ({'source': {}}, {'managed_local': False}):
