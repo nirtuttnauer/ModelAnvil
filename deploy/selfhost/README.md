@@ -4,7 +4,7 @@ This package installs an authenticated HTTPS workspace, database, artifact stora
 
 The initial supported profile is a small numerical CPU transformer and its named `full_sft` recipe. The included opt-in example is randomly initialized, not a pretrained language model. It qualifies installation, data flow, real inference and actual parameter updates. Language quality, larger/pretrained models, accelerators and production/customer readiness have separate gates. The package does not claim that every ModelAnvil model/runtime is installed.
 
-Requirements: local Linuxarm64 Docker engine with Composev2, at least4GiB assigned to Docker, Python3.9+ on the controller host, and the complete verified release directory. Windows and other architectures are unqualified. macOS `.app` and Linux `.desktop` launchers are unsigned experimental shortcuts to this same installation; signing/notarization and clean native OS qualification remain separate.
+Requirements: local Linuxarm64 Docker engine with Composev2, at least4GiB assigned to Docker, Python3.9+ on the controller host, and the complete verified release directory. Windows and other engine architectures are unqualified and refused. The controller does not silently emulate the arm64 release. macOS `.app` and Linux `.desktop` launchers are unsigned experimental shortcuts to this same installation; signing/notarization and clean native OS qualification remain separate.
 
 From a verified release directory:
 
@@ -79,3 +79,12 @@ python3 scripts/build_selfhost_release.py --output /private/new-release
 ```
 
 The builder uses pinned Python/Node/Caddy/PostgreSQL image digests, the complete Linuxarm64 Python lock and the frontend package lock. It preserves source revision and exact built image IDs, saves all runtime images into the package, verifies installed Python dependencies and hashes every shipped file. Build-time acquisition is explicit; installation/runtime require no pulls or dependency downloads. Existing release versions/tags are never rebuilt. Keep generated images, private instances, backups and credentials outside the repository.
+
+The repository includes a repeatable private qualification command:
+
+```sh
+python3 scripts/qualify_selfhost.py --release /path/to/baseline-release \
+  --upgrade-release /path/to/new-release --output /private/new-qualification
+```
+
+It installs a fresh synthetic workspace, performs authenticated TLS import/inference and actual four-step training, compares exported tensor hashes, verifies paired restore and upgrade state, then tests uninstall retention and reconnect. Its default cleanup removes only the generated synthetic Docker projects/volumes; `--retain` keeps those private fixtures for inspection. Credentials and private command logs remain in the private output directory and are excluded from the qualification receipt. Each controller operation must run alone for a given instance. Concurrent multi-operator upgrades and future schema compatibility need separate qualification.

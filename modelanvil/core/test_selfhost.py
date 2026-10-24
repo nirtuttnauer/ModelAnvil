@@ -125,7 +125,7 @@ class InstallerBoundaryTests(SimpleTestCase):
         binary=self.root/'installed-docker-compose';binary.write_text('fixture');binary.chmod(0o700)
         replies=[SimpleNamespace(returncode=0,stdout=b'"unix:///installed/docker.sock"'),
             SimpleNamespace(returncode=0,stdout=json.dumps([{'Name':'compose','Path':str(binary)}]).encode()),
-            SimpleNamespace(returncode=0,stdout=b'2.42.0'),SimpleNamespace(returncode=0,stdout=b'{"OSType":"linux","MemTotal":8589934592}')]
+            SimpleNamespace(returncode=0,stdout=b'2.42.0'),SimpleNamespace(returncode=0,stdout=b'{"OSType":"linux","MemTotal":8589934592,"Architecture":"aarch64"}')]
         real_stat=os.stat
         def socket_stat(path,*args,**kwargs):
             if str(path)=='/installed/docker.sock':return SimpleNamespace(st_mode=stat.S_IFSOCK)
@@ -138,3 +138,9 @@ class InstallerBoundaryTests(SimpleTestCase):
             for call in execute.call_args_list:
                 self.assertNotIn('DOCKER_HOST',call.kwargs['env']);self.assertNotIn('DOCKER_AUTH_CONFIG',call.kwargs['env'])
             self.assertEqual(instance.env['DOCKER_CONFIG'],instance.temporary.name)
+
+    def test_installation_does_not_silently_emulate_a_different_cpu_architecture(self):
+        instance=self.instance(self.root/'instance');instance.architecture='amd64'
+        with patch.object(instance,'call') as command:
+            with self.assertRaisesRegex(installer.InstallError,'emulation'):instance.load_images({'architecture':'arm64','images':{}})
+            command.assert_not_called()

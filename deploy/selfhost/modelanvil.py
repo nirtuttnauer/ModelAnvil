@@ -87,6 +87,8 @@ class Instance:
         if not match or int(match[1])<2:raise InstallError('Docker Compose v2 or later is required.')
         info=json.loads(self.call(['info','--format','{{json .}}']))
         if info.get('OSType')!='linux' or type(info.get('MemTotal')) is not int or info['MemTotal']<4*1024**3:raise InstallError('The CPU self-host package requires a local Linux Docker engine with at least4GiB assigned memory.')
+        self.architecture={'aarch64':'arm64','x86_64':'amd64'}.get(info.get('Architecture'),info.get('Architecture'))
+        if self.architecture!='arm64':raise InstallError('This package requires a native Linux arm64 Docker engine; emulation and other architectures need separate qualification.')
         self.state=read_json(self.root/'instance.json') if (self.root/'instance.json').exists() else None
 
     def call(self,args,*,data=None,input_file=None,output=None,timeout=240):
@@ -123,6 +125,7 @@ class Instance:
         write_json(self.root/'instance.json',self.state)
 
     def load_images(self,manifest,directory=None):
+        if manifest.get('architecture')!=self.architecture:raise InstallError('Release and native engine architectures differ; emulation is not qualified.')
         for identifier in manifest['images'].values():
             try:self.call(['image','inspect',identifier],timeout=5)
             except InstallError:
@@ -158,7 +161,7 @@ class Instance:
         import plistlib
         with (app/'Info.plist').open('wb') as stream:plistlib.dump({'CFBundleIdentifier':'local.modelanvil.launcher','CFBundleName':'ModelAnvil','CFBundleExecutable':'launch','CFBundlePackageType':'APPL','CFBundleVersion':'1'},stream)
         # The desktop-file format uses quoted arguments, not shell expansion.
-        quote=lambda text:'"'+str(text).replace('\\','\\\\').replace('"','\\"').replace('`','\\`').replace('$','\\$')+'"'
+        quote=lambda text:'"'+str(text).replace('%','%%').replace('\\','\\\\').replace('"','\\"').replace('`','\\`').replace('$','\\$')+'"'
         (self.root/'ModelAnvil.desktop').write_text('[Desktop Entry]\nType=Application\nName=ModelAnvil\nTerminal=false\nExec=python3 '+quote(self.root/'release/modelanvil.py')+' start --directory '+quote(self.root)+' --open\n')
         (self.root/'ModelAnvil.desktop').chmod(0o700)
 
