@@ -1,5 +1,7 @@
 # ModelAnvil category leadership roadmap
 
+> **Historical.** The current support surface is the [capability ledger](engineering/capability-ledger.md). Week ranges in this file are not a schedule.
+
 Historical planning snapshot. Delivery status is tracked in Aftur and the [current integration inventory](engineering/integration-inventory.md); proposed goals here are not measured results.
 
 21 October 2026 · Audience: small teams building private AI products

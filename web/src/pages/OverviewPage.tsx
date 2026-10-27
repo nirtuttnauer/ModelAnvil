@@ -1,3 +1,4 @@
+import { EvidenceLabel } from '../components/EvidenceLabel';
 import { TeamAccess } from '../components/TeamAccess';
 import { useReviewOnly } from '../components/Access';
 import { Identifier } from '../components/Identifier';
@@ -341,7 +342,7 @@ export function OverviewPage({
                 <div>
                   <strong>Candidate model</strong> <Identifier value={String(e.candidate_model_version)} label="Candidate model record ID" />
                   <Identifier value={e.run_id} label="Evaluation run ID" />
-                  <small className="id-text">{e.execution_evidence?.level || 'Unknown execution evidence'} · {e.execution_evidence?.source || 'Execution provenance not recorded'}</small>
+                  <EvidenceLabel evidence={e.execution_evidence} />
                   <a href={runHash('evaluation', e.run_id)}>Inspect this evaluation</a>
                   {e.metrics.length ? (
                     e.metrics.slice(0, 2).map((m, i) => (

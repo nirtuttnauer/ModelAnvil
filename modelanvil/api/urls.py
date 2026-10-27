@@ -11,7 +11,7 @@ from modelanvil.api.views import application_feedback, accelerator_support, cont
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from modelanvil.api.views import accounts, guided_training
+from modelanvil.api.views import accounts, capability_ledger, guided_training
 from modelanvil.api.views import activation
 from modelanvil.api.views import privacy
 from modelanvil.api.views import audit as audit_views
@@ -119,6 +119,7 @@ urlpatterns = [
     path('activation/events/', activation.ActivationEvents.as_view()),
     path('activation/report/', activation.ActivationReport.as_view()),
     path("accounts/status/", accounts.AccountStatus.as_view()),
+    path("capability-ledger/", capability_ledger.CapabilityLedger.as_view()),
     path("accounts/signup/", accounts.AccountSignUp.as_view()),
     path("accounts/signin/", accounts.AccountSignIn.as_view()),
     path("accounts/signout/", accounts.AccountSignOut.as_view()),

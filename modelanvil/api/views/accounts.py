@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as PasswordError
+from django.core.mail import send_mail
 from django.db import IntegrityError, transaction
 from django.middleware.csrf import rotate_token
 from django.utils import timezone
@@ -55,9 +56,10 @@ class AccountStatus(APIView):
             tenant__status='active', created_by__is_active=True).first() if secret else None
         membership = Membership.objects.filter(tenant_id=key.tenant_id, user_id=key.created_by_id).first() if key else None
         authenticated = bool(membership)
+        from modelanvil.core.pilot_gate import commercial_status
         response = Response({'signup_enabled': settings.MODELANVIL_SELF_SERVICE_ACCOUNTS, 'authenticated': authenticated,
             'role': membership.role if membership else None, 'can_invite': bool(membership and membership.role == Role.OWNER),
-            'email': key.created_by.email if membership else None})
+            'email': key.created_by.email if membership else None, **commercial_status()})
         response['Cache-Control'] = 'no-store'
         return response
 
@@ -157,7 +159,20 @@ class AccountPasswordReset(APIView):
         user = User.objects.filter(email=email, is_active=True).first()
         code = issue_action(AccountAction.Purpose.PASSWORD_RESET, email, hours=1) if user else None
         payload = {'status': 'ok'}
-        if code and settings.DEBUG:
+        if settings.MODELANVIL_SEND_RESET_EMAIL and settings.EMAIL_HOST:
+            if code:
+                try:
+                    send_mail(
+                        'ModelAnvil password reset',
+                        f'Your ModelAnvil reset code is {code}. It expires in one hour. If you did not request this, ignore this message.',
+                        getattr(settings, 'DEFAULT_FROM_EMAIL', 'root@localhost'),
+                        [email],
+                        fail_silently=False,
+                    )
+                except Exception:
+                    code = None
+            payload['delivery'] = 'If this address has an account, reset instructions were emailed.'
+        elif code and settings.DEBUG:
             payload['reset_code'] = code
             payload['delivery'] = 'This installation has no email delivery. Use the reset code below.'
         else:

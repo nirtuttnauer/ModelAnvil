@@ -1,7 +1,14 @@
 """Server-owned descriptions of current execution paths; metadata is not qualification."""
 from __future__ import annotations
 
-EVIDENCE_DOC = "/docs/engineering/supported-capabilities.md"
+EVIDENCE_DOC = "/docs/engineering/capability-ledger.md"
+LEVELS = {
+    "configuration_only": "Configuration only",
+    "simulation": "Simulation",
+    "integrated_execution": "Integrated execution",
+    "hardware_qualified": "Hardware qualified",
+    "unknown": "Unknown evidence",
+}
 
 
 def evidence(level="unknown", source="No verified execution evidence recorded"):

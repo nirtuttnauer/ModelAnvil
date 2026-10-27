@@ -213,14 +213,16 @@ class EvaluationSuiteViewSet(TenantScopedViewSet):
         from modelanvil.identity.models import Tenant
         Tenant.objects.select_for_update().get(pk=get_active_tenant())
         from modelanvil.annotation.feedback import assert_uninspected_cases
-        if request.data.get('protected_role') != 'protected_eval':
-            raise serializers.ValidationError({'protected_role': 'Declare this suite as protected evaluation before pinning it.'})
+        role = request.data.get('protected_role')
+        if role not in ('protected_eval', 'development'):
+            raise serializers.ValidationError({'protected_role': 'Declare this suite as protected evaluation or development before pinning it.'})
         cases = request.data.get('cases')
         scorer = request.data.get('scorer_type', 'exact_match')
         config = request.data.get('scorer_config', {})
         try:
             validate_local_suite(cases, scorer, config, require_source_groups=True)
-            assert_uninspected_cases(get_active_tenant(),cases)
+            if role == 'protected_eval':
+                assert_uninspected_cases(get_active_tenant(),cases)
         except ValueError as exc:
             raise serializers.ValidationError({'cases': str(exc)}) from exc
         tenant = get_active_tenant()
@@ -233,7 +235,7 @@ class EvaluationSuiteViewSet(TenantScopedViewSet):
                     suite = EvaluationSuite.objects.create(tenant_id=tenant, project_id=project, name=name)
                     version = EvaluationSuiteVersion.objects.create(
                         tenant_id=suite.tenant_id, project_id=suite.project_id, suite=suite, cases=cases,
-                        scorer_type=scorer, scorer_config=config, protected_role='protected_eval')
+                        scorer_type=scorer, scorer_config=config, protected_role=role)
                     created = True
                 else:
                     suite_id = serializers.IntegerField(min_value=1).run_validation(suite_pk)
@@ -241,8 +243,8 @@ class EvaluationSuiteViewSet(TenantScopedViewSet):
                     if suite is None or suite.project_id != project or not check_resource_access(suite, project, tenant):
                         raise serializers.ValidationError({'suite': 'Choose a suite in this project to version.'})
                     latest = suite.versions.select_for_update().order_by('-revision_no').first()
-                    if latest and latest.protected_role != 'protected_eval':
-                        raise serializers.ValidationError({'protected_role': 'New versions keep the protected evaluation role.'})
+                    if latest and latest.protected_role != role:
+                        raise serializers.ValidationError({'protected_role': 'New versions keep the existing evaluation role.'})
                     same = latest and latest.cases == cases and latest.scorer_type == scorer and latest.scorer_config == config
                     if same:
                         version, created = latest, False
@@ -250,7 +252,7 @@ class EvaluationSuiteViewSet(TenantScopedViewSet):
                         version = EvaluationSuiteVersion.objects.create(
                             tenant_id=suite.tenant_id, project_id=suite.project_id or project, suite=suite,
                             revision_no=(latest.revision_no + 1) if latest else 1, cases=cases,
-                            scorer_type=scorer, scorer_config=config, protected_role='protected_eval')
+                            scorer_type=scorer, scorer_config=config, protected_role=role)
                         created = True
         except IntegrityError as exc:
             raise serializers.ValidationError({'name': 'An evaluation suite with this name already exists.'}) from exc
@@ -396,6 +398,23 @@ class EvaluationRunViewSet(TenantScopedViewSet):
             raise serializers.ValidationError(str(exc)) from exc
         return Response({'decision_id': str(decision.decision_id), 'outcome': decision.outcome,
             'accepted_improvement': decision.accepted_improvement, 'production_qualified': False}, status=201 if created else 200)
+
+    @action(detail=True, methods=['get'], url_path='decision-report')
+    def decision_report(self, request, run_id=None):
+        from modelanvil.core.decision_report import report_for_run
+        return Response(report_for_run(self.get_object()))
+
+    @action(detail=True, methods=['post'], url_path='development-handoff')
+    def development_handoff(self, request, run_id=None):
+        from modelanvil.runners.development_cycle import handoff_failed_cases
+        if set(request.data) != {'corrections', 'dataset_name'}:
+            raise serializers.ValidationError('Submit only corrections and a dataset name.')
+        try:
+            result = handoff_failed_cases(run=self.get_object(), corrections=request.data.get('corrections'),
+                dataset_name=request.data.get('dataset_name'))
+        except (ValueError, TypeError) as exc:
+            raise serializers.ValidationError(str(exc)) from exc
+        return Response(result, status=201)
 
     def perform_create(self, serializer):
         from modelanvil.identity.models import check_resource_access

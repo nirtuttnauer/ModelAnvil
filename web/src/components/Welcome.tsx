@@ -14,6 +14,7 @@ export function Welcome({ onConnected }: { onConnected: (token: string, role?: s
   const [busy, setBusy] = useState(false);
   const [ready, setReady] = useState(false);
   const [signup, setSignup] = useState<boolean | null>(null);
+  const [commercial, setCommercial] = useState('');
   const [retry, setRetry] = useState(0);
   const [error, setError] = useState('');
   useEffect(() => {
@@ -22,7 +23,7 @@ export function Welcome({ onConnected }: { onConnected: (token: string, role?: s
       if (!response.ok) throw new Error('Could not connect to ModelAnvil. Try again when the app is running.');
       const result = await response.json();
       if (controller.signal.aborted) return;
-      setSignup(result.signup_enabled); setMode(current => current === 'reset' || current === 'invite' ? current : result.signup_enabled ? 'signup' : 'signin'); setReady(true);
+      setSignup(result.signup_enabled); setCommercial(result.paid_packaging === 'closed' && typeof result.commercial_reason === 'string' ? result.commercial_reason : ''); setMode(current => current === 'reset' || current === 'invite' ? current : result.signup_enabled ? 'signup' : 'signin'); setReady(true);
       if (result.authenticated) onConnected('session', result.role);
     }).catch(e => { if (!controller.signal.aborted) { setError(errorMessage(e)); setReady(true); } });
     return () => controller.abort();
@@ -62,6 +63,7 @@ export function Welcome({ onConnected }: { onConnected: (token: string, role?: s
     <h1>Fine-tune an LLM with your own data.</h1>
     <p>Choose a pretrained model, upload your examples, and train on this computer. ModelAnvil handles the setup.</p>
     <ol className="welcome-journey"><li>Choose your model</li><li>Add your dataset</li><li>Review and train</li></ol>
+    {commercial && <p className="muted">{commercial}</p>}
   </div><section className="welcome-card" aria-labelledby="welcome-title">
     <h2 id="welcome-title">{mode === 'signup' ? 'Create your workspace' : mode === 'reset' ? 'Reset your password' : mode === 'invite' ? 'Join this workspace' : 'Welcome back'}</h2>
     <p>{mode === 'signup' ? 'Your account includes a project for your first fine-tune.' : mode === 'reset' ? 'Email accounts created here can set a new password.' : mode === 'invite' ? 'Use the one-time code from the workspace owner. You can review results and record the decision.' : 'Sign in to continue your training and saved models.'}</p>

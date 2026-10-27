@@ -1,0 +1,4 @@
+{"messages": [{"role": "user", "content": "Is the refund window open?"}, {"role": "assistant", "content": "billing"}]}
+{"messages": [{"role": "user", "content": "The service is down."}, {"role": "assistant", "content": "technical"}]}
+{"messages": [{"role": "user", "content": "Can we add seats?"}, {"role": "assistant", "content": "sales"}]}
+{"messages": [{"role": "user", "content": "Where is the invoice?"}, {"role": "assistant", "content": "billing"}]}

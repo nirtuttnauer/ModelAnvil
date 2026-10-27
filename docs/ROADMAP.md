@@ -1,5 +1,19 @@
 # ModelAnvil delivery roadmap
 
+> **Historical plan below the current section.** The support claim is the [capability ledger](engineering/capability-ledger.md). Release scope is [PRD section 5.4](PRD.md).
+
+## Current release sequence
+
+1. Keep one ledger and make browser evidence labels use it.
+2. Raise a SmolLM2 token envelope only after `scripts/measure_sequence_envelope.py` writes a valid report. The guided GPU wall stays 128 tokens until a GPU measurement exists.
+3. Ship the decision report, three playbooks, and development-case exclusion.
+4. Qualify the single-host install named in [installation qualification](engineering/installation-qualification.md). Do not claim a recovery time.
+5. Leave customer discovery and paid packaging gated on observed human pilots.
+6. For each older R1 line, the ledger names an envelope or section 5.4 moves it to Target.
+7. Add no second device or provider until a pilot asks. Runpod is the only implemented control plane, and it is not live-qualified.
+
+## Historical outline
+
 This is a dependency-based planning outline. Dates, owners, staffing, and budgets are not assigned. Both scratch training and fine-tuning are required for the first complete release.
 
 ## Milestone 1 — Foundation and feasibility

@@ -1,5 +1,7 @@
 # ModelAnvil product improvement backlog
 
+> **Historical.** The current support surface is the [capability ledger](engineering/capability-ledger.md). The decision loop described below is the product sequence; this file is not the status page.
+
 22 October 2026 · Rebaselined against the 21 October capability baseline
 
 The current P0 is the fine-tune decision loop: a new account trains a guided SmolLM2 profile, compares that exact candidate with its base model through the native chat template, and records an accept or reject. See [decision 003](decisions/003-fine-tune-decision-loop.md). MA-PM-10, MA-PM-11, and MA-PM-12 stay later than that slice. MA-PM-02 remains ongoing relationship hardening. The 11 October review below is retained as history; its recommended path is no longer the build order.

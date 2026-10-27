@@ -49,6 +49,7 @@ SECRET_KEY = os.environ.get(
 )
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
 MODELANVIL_SELF_SERVICE_ACCOUNTS = os.environ.get("MODELANVIL_SELF_SERVICE_ACCOUNTS", "1" if DEBUG else "0") == "1"
+MODELANVIL_SEND_RESET_EMAIL = os.environ.get("MODELANVIL_SEND_RESET_EMAIL", "").lower() in {"1", "true", "yes"}
 MODELANVIL_LOCAL_MODEL_DIR = os.environ.get("MODELANVIL_LOCAL_MODEL_DIR", "")
 ALLOWED_HOSTS = [
     h.strip()

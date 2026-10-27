@@ -43,7 +43,7 @@ def profile_details(profile):
     if profile == 'cpu-evaluation':
         runtime = profile_runtime(profile)
         return {'id': profile, 'name': PROFILES[profile][0], 'memory_bytes': runtime.MEMORY_BYTES,
-                'available': True, 'limitations': ['Up to 64 held-out cases, 32 generated tokens per case, greedy decoding.',
+                'available': True, 'limitations': [f'Up to 64 held-out cases, {runtime.CONTRACT["max_tokens"]} generated tokens per case, greedy decoding.',
                     'Plain prompts for reference bundles. Guided chat snapshots use their native chat template.',
                     'Supports verified CPU reference bundles and bounded Safetensors snapshots; production qualification unavailable.']}
     if profile == 'model-import':

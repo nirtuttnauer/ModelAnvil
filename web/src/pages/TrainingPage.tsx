@@ -1,3 +1,4 @@
+import { EvidenceLabel } from '../components/EvidenceLabel';
 import { ContinuedCorpusBuilder } from '../components/ContinuedCorpusBuilder';
 import { Identifier } from '../components/Identifier';
 import { Badge, Button, Card, Field, Notice, RecordTable, Tab } from '../components/ui';
@@ -480,7 +481,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
   const runLabel = (id: string) => `Training run ${runs.findIndex(run => run.run_id === id) + 1}`;
   const exportPanel = detailRun?.status === 'completed' ? <ModelExport key={`export-${detailRun.run_id}`} runId={detailRun.run_id}
     options={detailRun.export_options || []} token={token} checkpointStep={detailRun.quality_summary?.selected_step ?? detailRun.total_steps}
-    synthetic={detailRun.runtime?.execution_mode === 'simulation'} /> : null;
+    synthetic={detailRun.runtime?.execution_mode === 'simulation'} evidence={detailRun.execution_evidence} /> : null;
 
   const runDetail = detailRun ? (
           <div className="detail-box">
@@ -488,6 +489,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
               <div>
                 <h3>{runLabel(detailRun.run_id)} <Identifier value={detailRun.run_id} label="Run ID" /></h3>
                 <Badge className={`state state-${detailRun.status}`}>{detailRun.status}</Badge>
+                <EvidenceLabel evidence={detailRun.execution_evidence} />
               </div>
               <div style={{ display: 'flex', gap: 'var(--space-8)' }}>
                 {tab === 'history' && detailRun.status === 'completed' && detailRun.output_model_version_uuid && <a className="primary" href={`#chat?model_version=${encodeURIComponent(detailRun.output_model_version_uuid)}`}>Try your model</a>}
@@ -874,7 +876,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
                     <td>{r.recipe_type}</td>
                     <td>
                       <Badge className={`state state-${r.status}`}>{r.status}</Badge>
-                      <small title={r.execution_evidence?.source}> · {r.execution_evidence?.level || "unknown evidence"}</small>
+                      <EvidenceLabel evidence={r.execution_evidence} />
                     </td>
                     <td>
                       <progress

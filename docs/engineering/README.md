@@ -1,5 +1,7 @@
 # ModelAnvil Engineering Planning Pack
 
+> **Proposed pack, not the status page.** Current support is the [capability ledger](capability-ledger.md). This pack remains the October planning baseline.
+
 Version 0.1 | 8 October 2026 | Derived from PRD 0.7 | Proposed implementation baseline
 
 This pack turns the product scope into engineering contracts, user journeys, interface direction, a relational data model, and a dependency-based delivery plan. It is ready for architecture review and issue breakdown. It does not establish an implemented or qualified integration, a delivery date, or an approved budget.

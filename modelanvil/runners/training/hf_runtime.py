@@ -306,7 +306,7 @@ def _recipe_model(directory, recipe_type='full_sft', seed=42, *, training=False,
     return model
 
 
-def _training_samples(dataset, tokenizer, tenant, project, *, split='train'):
+def _training_samples(dataset, tokenizer, tenant, project, *, split='train', sequence_tokens=None):
     if split not in {'train', 'validation'}:
         raise ValueError('The training runtime never consumes the protected test split.')
     from contracts import validate_envelope
@@ -343,8 +343,9 @@ def _training_samples(dataset, tokenizer, tenant, project, *, split='train'):
             continue
         from modelanvil.data.training_import import tokenize_blocks
         text, ids, labels = tokenize_blocks(row['blocks'], tokenizer)
-        if not text or not 2 <= len(ids) <= LIMITS['sequence_tokens']:
-            raise ValueError('Prepare nonempty samples of 2–128 actual tokenizer tokens; samples are never truncated.')
+        token_limit = LIMITS['sequence_tokens'] if sequence_tokens is None else sequence_tokens
+        if not text or not 2 <= len(ids) <= token_limit:
+            raise ValueError(f'Prepare nonempty samples of 2–{token_limit} actual tokenizer tokens; samples are never truncated.')
         samples.append({'sample_id': identifier, 'text': text, 'token_ids': ids, **({'labels': labels} if labels != ids else {}),
             **({'source_revision':row['metadata']['mixture_source_revision']} if prepared.get('recipe',{}).get('version') == 'modelanvil.continued-corpus.v1' and row.get('metadata',{}).get('mixture_source_revision') else {})})
     if (not samples and split == 'train') or (set(train) | set(held)) - seen:
@@ -415,10 +416,10 @@ def resolve_inputs(*, dataset, base, tokenizer, runner, pool, tenant, project, s
         config = json.loads((directory / 'config.json').read_text())
         if len(spec) != tokenizer.vocabulary_size or config['vocab_size'] != tokenizer.vocabulary_size:
             raise ValueError('Tokenizer vocabulary does not match the pinned transformer.')
-        samples, splits = _training_samples(dataset, spec, tenant, project)
+        samples, splits = _training_samples(dataset, spec, tenant, project, sequence_tokens=profile.LIMITS['sequence_tokens'])
         if guided and tokenizer.chat_template != spec.chat_template:
             raise ValueError('The instruction model requires its verified native chat template.')
-        validation = _training_samples(dataset, spec, tenant, project, split='validation')[0] if guided or recipe_type == 'continued_pretraining' else []
+        validation = _training_samples(dataset, spec, tenant, project, split='validation', sequence_tokens=profile.LIMITS['sequence_tokens'])[0] if guided or recipe_type == 'continued_pretraining' else []
     pins = {'runtime': profile.RUNTIME_ID, 'contract_digest': profile.CONTRACT_DIGEST, 'build_digest': profile.build_digest(),
             'dataset_id': str(dataset.revision_id), 'dataset_digest': dataset.manifest_digest,
             'base_id': str(base.model_version_id), 'base_artifact_id': str(artifact.artifact_id),

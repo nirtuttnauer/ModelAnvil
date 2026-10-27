@@ -15,8 +15,10 @@ from modelanvil.runners.eval_executor import SCORER_VERSION, _aggregate_metrics,
 from modelanvil.runners.models import EvaluationCaseResult, EvaluationMetric, EvaluationRun
 from modelanvil.runners.training.runtime import digest
 
+from modelanvil.runners.training.sequence_envelope import generated_token_ceiling
+
 RUNTIME_ID = 'modelanvil.local-cpu-evaluation.v1'
-CONTRACT = {'runtime': RUNTIME_ID, 'cases': 64, 'max_tokens': 32, 'decoding': 'greedy', 'formats': ['plain', 'native_template']}
+CONTRACT = {'runtime': RUNTIME_ID, 'cases': 64, 'max_tokens': generated_token_ceiling(), 'decoding': 'greedy', 'formats': ['plain', 'native_template']}
 CONTRACT_DIGEST = digest(CONTRACT)
 BUILD_DIGEST = hashlib.sha256(b''.join((Path(__file__).parent / name).read_bytes()
     for name in ('eval_worker.py', 'eval_executor.py', 'local_execution.py', 'inference.py',
@@ -114,8 +116,9 @@ def resolve_inputs(run, max_tokens):
         raise ValueError('Use candidate and baseline versions with the same pinned tokenizer.')
     if baseline and baseline['device'] != candidate['device']:
         raise ValueError('Candidate and baseline must evaluate on the same device.')
-    if type(max_tokens) is not int or not 1 <= max_tokens <= 32:
-        raise ValueError('Choose 1–32 generated tokens per case.')
+    ceiling = generated_token_ceiling()
+    if type(max_tokens) is not int or not 1 <= max_tokens <= ceiling:
+        raise ValueError(f'Choose 1–{ceiling} generated tokens per case.')
     prompt_format = evaluation_prompt_format(run)
     if prompt_format == 'native_template' and (candidate['kind'] != 'snapshot' or (baseline and baseline['kind'] != 'snapshot')):
         raise ValueError('Native-template comparison requires Safetensors snapshots for the candidate and baseline.')

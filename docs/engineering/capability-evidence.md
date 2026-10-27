@@ -1,5 +1,7 @@
 # Capability evidence audit
 
+> **The scenario table later in this file is historical.** The current scenario reading is in the [capability ledger](capability-ledger.md). A later task report can supersede a row there; this audit keeps the original review.
+
 Current delivery addendum (23 October 2026): see the [integration inventory](integration-inventory.md), [operation-specific capability baseline](supported-capabilities.md), and dated verification reports. The original review below is historical; current dependency pins require operation-specific GPU qualification; the bounded current MPS evidence is recorded below. Customer discovery remains blocked on customer input.
 
 For current operation-specific support, artifact references and remaining qualification, see the [updated capability baseline](supported-capabilities.md). This audit retains its original scenario-by-scenario review scope.
