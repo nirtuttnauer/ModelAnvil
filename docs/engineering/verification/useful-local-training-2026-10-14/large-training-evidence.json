@@ -1,0 +1,56 @@
+{
+  "run_id": "6a350e9b-67c3-4713-a610-5a9aad692d7e",
+  "candidate_id": "30cd7424-5a30-4f15-9089-ab5059982b82",
+  "status": "completed",
+  "job_status": "succeeded",
+  "recipe": "lora_adapter",
+  "updates": 144,
+  "duration_seconds": 89.38052,
+  "splits": {
+    "train": 48,
+    "validation": 6,
+    "test": 6
+  },
+  "source": {
+    "repo_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    "revision": "31b70e2e869a7173562077fd711b654946d38674",
+    "license": "Apache-2.0"
+  },
+  "optimizer": {
+    "algorithm": "adamw",
+    "learning_rate": 0.0001,
+    "beta1": 0.9,
+    "beta2": 0.999,
+    "epsilon": 1e-08,
+    "weight_decay": 0.0
+  },
+  "selected_checkpoint": 144,
+  "trainable_parameters": 1572864,
+  "total_parameters": 1712949248,
+  "checkpoints": [
+    {
+      "step": 48,
+      "validation_loss": 2.3120724390382352,
+      "baseline_validation_loss": 3.405925100264342,
+      "updates_since_checkpoint": 48,
+      "gpu_allocated_bytes": 6911312896,
+      "training_pairs": 734
+    },
+    {
+      "step": 96,
+      "validation_loss": 1.6259183404238329,
+      "baseline_validation_loss": 3.405925100264342,
+      "updates_since_checkpoint": 48,
+      "gpu_allocated_bytes": 6911312896,
+      "training_pairs": 734
+    },
+    {
+      "step": 144,
+      "validation_loss": 1.0100039881856546,
+      "baseline_validation_loss": 3.405925100264342,
+      "updates_since_checkpoint": 48,
+      "gpu_allocated_bytes": 6911312896,
+      "training_pairs": 734
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+.training-dataset-preview { min-width: 0; padding: var(--space-16); border: 1px solid var(--border); border-radius: var(--radius-10); background: var(--surface); margin: var(--space-16) 0; }
+.training-dataset-preview h4 { margin: 0 0 var(--space-12); }
+.training-dataset-preview h4:not(:first-child) { margin-top: var(--space-24); }
+.training-sample-table { max-width: 100%; min-width: 0; overflow: auto; margin: var(--space-16) 0; border: 1px solid var(--border); border-radius: var(--radius-8); }
+.training-sample-table table { width: 100%; }
+.training-sample-table caption { text-align: start; padding: var(--space-12); color: var(--text-secondary); background: var(--surface-subtle); }
+.training-sample-table td { min-width: 150px; max-width: 340px; white-space: pre-wrap; overflow-wrap: anywhere; vertical-align: top; }
+.training-column-mapping { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-16); }
+.training-column-mapping label { display: grid; gap: var(--space-8); min-width: 0; }
+.training-column-mapping select { width: 100%; min-height: 44px; }
+.training-mapping-summary { display: flex; flex-wrap: wrap; gap: var(--space-16); }
+.training-mapping-summary dt { color: var(--text-secondary); font-size: var(--type-13); }
+.training-mapping-summary dd { margin: var(--space-4) 0 0; }
+.training-dataset-validation { min-width: 0; margin: var(--space-16) 0; padding: var(--space-16); border: 1px solid var(--border); border-radius: var(--radius-10); background: var(--surface); overflow-wrap: anywhere; }
+.training-dataset-validation h4 { margin-top: 0; }
+.training-validation-counts { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: var(--space-12); }
+.training-validation-counts div { padding: var(--space-12); background: var(--surface-subtle); border: 1px solid var(--border); border-radius: var(--radius-8); }
+.training-validation-counts dd { margin: var(--space-4) 0 0; font-size: 22px; font-weight: 600; }
+.training-dataset-validation .notice { display: block; margin-top: var(--space-12); }
+.training-dataset-validation ul { padding-inline-start: 24px; }
+@media (max-width: 540px) { .training-column-mapping { grid-template-columns: minmax(0, 1fr); } }
+.training-mapping-options { margin-top: var(--space-16); }
+.training-mapping-options summary { cursor: pointer; min-height: 44px; padding-block: var(--space-12); }
+@media (max-width: 540px) {
+  .training-sample-table { overflow: visible; }
+  .training-sample-table table { display: block; min-width: 0; }
+  .training-sample-table caption, .training-sample-table tbody { display: block; }
+  .training-sample-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .training-sample-table tbody tr { display: grid; grid-template-columns: minmax(0, 1fr); border-top: 1px solid var(--border); }
+  .training-sample-table :is(td, th[scope="row"]) { display: block; min-width: 0; max-width: none; border: 0; padding: var(--space-10) var(--space-12); text-align: start; }
+  .training-sample-table [data-label]::before { content: attr(data-label); display: block; margin-bottom: var(--space-4); color: var(--text-secondary); font-size: var(--type-12); font-weight: 600; }
+}

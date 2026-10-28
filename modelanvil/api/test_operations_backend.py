@@ -40,8 +40,8 @@ class OperationsBackendTests(TestCase):
                 resource_kind='cpu', unit='cpu_seconds', unit_price=Decimal('2'), currency=currency,
                 effective_from=timezone.now()-timezone.timedelta(days=1), source='schedule')
             UsageEvent.record(tenant_id=self.tenant.pk, provider_event_key=currency, quantity=quantity,
-                unit='cpu_seconds', rate_revision=rate.revision)
-        UsageEvent.record(tenant_id=self.tenant.pk, provider_event_key='unpriced', quantity=4, unit='cpu_seconds')
+                unit='cpu_seconds', rate_revision=rate.revision, detail={'project_id':str(self.project.pk)})
+        UsageEvent.record(tenant_id=self.tenant.pk, provider_event_key='unpriced', quantity=4, unit='cpu_seconds', detail={'project_id':str(self.project.pk)})
         response = self.client.get('/api/v1/usage-events/summary/')
         self.assertEqual(response.status_code, 200, response.content)
         rows = {r['currency']: r for r in response.json()['usage_by_unit']}
@@ -55,7 +55,7 @@ class OperationsBackendTests(TestCase):
         for unit, currency in [('training_steps', ''), ('usd', 'USD')]:
             policy = BudgetPolicy.objects.create(tenant_id=self.tenant.pk, name=unit, period='lifetime',
                 unit=unit, currency=currency, limit_amount=100)
-            BudgetReservation.reserve(tenant_id=self.tenant.pk, policy=policy, job_id=uuid.uuid4(), estimated_amount=10)
+            BudgetReservation.reserve(tenant_id=self.tenant.pk, policy=policy, job_id=self.job(project=self.project).job_id, estimated_amount=10)
         data = self.client.get('/api/v1/usage-events/summary/').json()
         self.assertIsNone(data['total_reserved_amount'])
         self.assertEqual({r['unit'] for r in data['reserved_by_unit']}, {'training_steps', 'usd'})

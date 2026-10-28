@@ -339,6 +339,16 @@ class DatasetBankViewSet(viewsets.ViewSet):
             status=status.HTTP_201_CREATED if launch.created else status.HTTP_200_OK,
         )
 
+    @action(detail=False, methods=['get'], url_path='acquisitions')
+    def list_acquisitions(self, request):
+        from modelanvil.data.models import SourceSnapshot
+        from modelanvil.identity.models import get_accessible_queryset
+        from rest_framework.pagination import CursorPagination
+        snapshots = get_accessible_queryset(SourceSnapshot).filter(detail__acquisition__isnull=False)
+        paginator = CursorPagination(); paginator.ordering = '-created_at'
+        page = paginator.paginate_queryset(snapshots, request, view=self)
+        return paginator.get_paginated_response([acquisition_state(snapshot) for snapshot in page])
+
     @action(detail=False, methods=["get"], url_path=r"acquisitions/(?P<snapshot_id>[^/.]+)")
     def retrieve_acquisition(self, request: Request, snapshot_id: str) -> Response:
         snapshot = self._acquisition(snapshot_id)

@@ -1,0 +1,12 @@
+{"timestamp": "2026-10-21T20:32:14+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a1602a-1a20-7e26-9b60-427a96bd722d", "tenant_id": "01a1602a-18bc-73b9-bff2-4b6976d454c8", "http_status": 400}
+{"timestamp": "2026-10-21T20:32:14+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a1602a-1a21-7dbd-bb73-65bd662917e2", "tenant_id": "01a1602a-18bc-73b9-bff2-4b6976d454c8", "http_status": 404}
+{"timestamp": "2026-10-21T20:32:14+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a1602a-1a2b-7dda-a637-9e17f0587f6a", "tenant_id": "01a1602a-18bc-73b9-bff2-4b6976d454c8", "http_status": 404}
+{"timestamp": "2026-10-21T20:32:14+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a1602a-1a33-72d2-b454-db22466dc5c7", "tenant_id": "01a1602a-18bc-73b9-bff2-4b6976d454c8", "http_status": 404}
+.
+----------------------------------------------------------------------
+Ran 1 test in 2.522s
+
+OK
+Destroying test database for alias 'default'...
+Found 1 test(s).
+System check identified no issues (0 silenced).

@@ -1,0 +1,16 @@
+# Remaining local workflow fixes
+
+Four remaining problems were fixed and verified on 12 October 2026. These changes extend the earlier [local acceptance](local-workflows.md) with app-based setup, correct admission when compute is unavailable, faithful recipe-history restoration and readable refusal messages.
+
+| Problem | Fix and observed result |
+| --- | --- |
+| Dataset Bank and deterministic recipes required manual API worker registration | Infrastructure now offers **Dataset Bank acquisition** and **CPU data recipes**. Both use the existing one-time credential flow and shipped `run_worker --profile` command. Browser setup connected the bank worker and published three real Iris records. The recipe worker completed a preview, required review, published two rows and opened their exact revision. |
+| Observed stale or draining workers could admit jobs and reserve quota | Bank, recipe and specialist admission now checks fresh observed capacity, slots and draining. Provisioned profiles also require an active credential. Focused tests cover stale heartbeats, draining, zero slots and credential revocation. A browser request after stopping the recipe worker was refused, with job and reservation counts unchanged. Legacy registrations without observations retain their prior admission contract. |
+| Selecting a completed full recipe run left the default editor graph on screen | History now restores the actual frozen definition, source bindings, model, device, pool and quota. The browser restored the recorded recipe name, two-row sampler and exact generator. Restoring a full run does not restore publication approval; a matching preview must still be reviewed. |
+| Workflow refusals exposed Django `ErrorDetail(...)` text | Root validation messages now contain plain strings. The stopped-worker error displayed the actionable pool/worker message without internal object syntax. Field-specific messages and structured error envelopes remain intact. An unused error helper referencing an undefined request was removed. |
+
+The current checkout passed **829 backend tests**, with 9 skips, and **156 frontend tests**, with no failures. The production build, Django checks, migration consistency and diff whitespace checks passed. Browser accessibility checks passed for recipe publication and the refusal state; the mobile refusal screen had no page overflow. No browser page exceptions were recorded. The initial-bundle warning recorded during this run was subsequently resolved with screen splitting; see [production bundle and regression QA](bundle-performance.md).
+
+The browser used an isolated database copied from the previous QA workspace, its verified artifacts and a frozen source snapshot. [Evidence](remaining-fixes-evidence.json) records the source digest, final browser assertions and unchanged quota counts. QA services were stopped, isolated keys disabled and the new workers left offline. Existing application data and services were retained.
+
+Setup instructions are updated in [Dataset Bank qualification](../../../dataset-bank-qualification.md) and [data recipes](../../resumable-pages-and-data-recipes.md). Apple recipe generation and specialist devices retain their explicit operator commands. Generated content still requires human review; these fixes do not establish model accuracy or production qualification.

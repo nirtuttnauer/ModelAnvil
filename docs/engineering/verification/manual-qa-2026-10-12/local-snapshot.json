@@ -1,0 +1,14 @@
+{
+  "revision": "unversioned",
+  "source_digest": "acd04b02a9903a261cd3789d05d566dbaa446baa0acfc6ee43017dba02604fdd",
+  "protocol": "modelanvil.local-beta.v1",
+  "dataset_formats": [
+    "jsonl",
+    "csv",
+    "docx",
+    "json",
+    "pdf"
+  ],
+  "production_qualified": false,
+  "source_manifest_sha256": "04633cc2f1b7cb08393773c3a5cb1f87b78ee97938102df025005ba84ac36b70"
+}

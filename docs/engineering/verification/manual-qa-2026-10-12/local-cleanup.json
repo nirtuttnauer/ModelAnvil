@@ -1,0 +1,54 @@
+{
+  "workers": [
+    {
+      "name": "Final QA 1791769631149 evaluator",
+      "status": "offline",
+      "connection_state": "credential_unavailable",
+      "heartbeat_recorded": true
+    },
+    {
+      "name": "Final QA 1791769631149 worker",
+      "status": "offline",
+      "connection_state": "credential_unavailable",
+      "heartbeat_recorded": true
+    },
+    {
+      "name": "qa-bank",
+      "status": "offline",
+      "connection_state": "offline",
+      "heartbeat_recorded": true
+    },
+    {
+      "name": "qa-laya",
+      "status": "offline",
+      "connection_state": "offline",
+      "heartbeat_recorded": true
+    },
+    {
+      "name": "qa-ocr",
+      "status": "offline",
+      "connection_state": "offline",
+      "heartbeat_recorded": true
+    },
+    {
+      "name": "qa-recipe",
+      "status": "offline",
+      "connection_state": "offline",
+      "heartbeat_recorded": true
+    },
+    {
+      "name": "qa-recipe-cpu",
+      "status": "offline",
+      "connection_state": "offline",
+      "heartbeat_recorded": true
+    },
+    {
+      "name": "qa-recipe-cpu2",
+      "status": "offline",
+      "connection_state": "offline",
+      "heartbeat_recorded": true
+    }
+  ],
+  "active_api_keys": 0,
+  "active_worker_credentials": 0
+}

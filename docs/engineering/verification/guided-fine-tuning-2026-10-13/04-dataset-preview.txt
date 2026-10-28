@@ -1,0 +1,137 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+    - generic: MODEL WORKSPACE
+  - generic "Workspace is scoped to the connected API key and active project":
+    - generic: G
+    - strong: Guided flow QA workspace
+    - generic: My first fine-tune
+  - navigation "Main navigation":
+    - paragraph: Workspace
+    - button "Overview":
+      - generic: Overview
+    - paragraph: Data
+    - button "Dataset Bank":
+      - generic: Dataset Bank
+    - button "Datasets":
+      - generic: Datasets
+    - button "Annotation":
+      - generic: Annotation
+    - button "Recipes":
+      - generic: Recipes
+    - paragraph: Develop
+    - button "Models":
+      - generic: Models
+    - button "Chat":
+      - generic: Chat
+    - button "Specialists":
+      - generic: Specialists
+    - button "Training":
+      - generic: Training
+    - button "Alignment":
+      - generic: Alignment
+    - button "Evaluation":
+      - generic: Evaluation
+    - paragraph: Context & release
+    - button "RAG":
+      - generic: RAG
+    - button "Context Lab":
+      - generic: Context Lab
+    - button "Releases":
+      - generic: Releases
+    - paragraph: Operations
+    - button "Workflows":
+      - generic: Workflows
+    - button "Infrastructure":
+      - generic: Infrastructure
+    - button "Budgets":
+      - generic: Budgets
+    - button "Audit":
+      - generic: Audit
+  - text: API connected
+  - generic: Control plane
+- main:
+  - combobox "Organization":
+    - option "Guided flow QA workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Training
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Configure reproducible runs and follow their actual progress.
+  - region "Train a model on your data":
+    - text: YOUR FIRST FINE-TUNE
+    - heading "Train a model on your data" [level=2]
+    - paragraph: Everything you need, in four steps. Training runs on this computer.
+    - list "Fine-tuning progress":
+      - text: Model
+      - generic: "2"
+      - text: Dataset
+      - generic: "3"
+      - text: Review
+      - generic: "4"
+      - text: Train
+    - heading "Add your training examples" [level=3]
+    - paragraph:
+      - text: Upload JSONL, JSON or CSV. Use chat
+      - code: messages
+      - text: ","
+      - code: prompt
+      - text: /
+      - code: response
+      - text: pairs, or a
+      - code: text
+      - text: column. Up to 1,000 examples, 16 MiB total.
+    - text: Dataset name
+    - textbox "Dataset name": support-messages
+    - text: Training file
+    - button "Training file"
+    - generic "See the expected file format"
+    - button "Back"
+    - button "Preview dataset"
+    - heading "8 examples ready" [level=4]
+    - paragraph: 0 duplicate examples removed. Training learns assistant responses.
+    - term: Training
+    - definition: "6"
+    - term: Validation
+    - definition: "1"
+    - term: Test
+    - definition: "1"
+    - paragraph: Repeated prompts and related examples stay in the same split.
+    - generic "Sample examples"
+    - paragraph:
+      - strong: "user:"
+      - text: How do I reset my password?
+    - paragraph:
+      - strong: "assistant:"
+      - text: Open Settings, then choose Security and Reset password.
+    - paragraph:
+      - strong: "user:"
+      - text: Where can I download an invoice?
+    - paragraph:
+      - strong: "assistant:"
+      - text: Open Billing, select the invoice, and choose Download.
+    - paragraph:
+      - strong: "user:"
+      - text: How do I change my email address?
+    - paragraph:
+      - strong: "assistant:"
+      - text: Open Profile, enter your new email, and verify the address.
+    - button "Use this dataset":
+      - text: Use this dataset
+  - button "Advanced training workspace"
+  - text: ModelAnvil · c39a2e95 · b22e8eb9
+  - alert: "· API build changed; rebuild/reload this client before acceptance testing · Imports: JSONL, CSV, DOCX, JSON, PDF, TRAINING"
+  - text: Control plane

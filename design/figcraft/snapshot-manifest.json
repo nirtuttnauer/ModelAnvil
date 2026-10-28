@@ -1,0 +1,32 @@
+{
+  "desktop": {
+    "overview": 979,
+    "dataset-bank": 1451,
+    "datasets": 1940,
+    "recipes": 2333,
+    "annotation": 2701,
+    "models": 3145,
+    "chat": 3617,
+    "specialists": 4032,
+    "training": 4383,
+    "alignment": 4764,
+    "evaluation": 5156,
+    "rag": 5582,
+    "context-lab": 6022,
+    "releases": 6410,
+    "workflows": 6818,
+    "infrastructure": 7266,
+    "budgets": 7727,
+    "audit": 8149,
+    "run-detail": 8586
+  },
+  "states": {
+    "empty": 9263,
+    "loading": 9623,
+    "error": 9977,
+    "dark": 10343,
+    "mobile": 10769
+  },
+  "prototypeLinks": 344,
+  "foundations": 10963
+}

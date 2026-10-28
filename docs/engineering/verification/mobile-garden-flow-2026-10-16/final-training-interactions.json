@@ -1,0 +1,22 @@
+[
+  {
+    "story": "modelanvil-actions-compact-screens--first-training-setup",
+    "passed": true
+  },
+  {
+    "story": "modelanvil-actions-training-dataset-preview--publish-reviewed-mapping",
+    "passed": true
+  },
+  {
+    "story": "modelanvil-actions-engineering-components--training-modes-and-tabs",
+    "passed": true
+  },
+  {
+    "story": "modelanvil-actions-engineering-components--training-launch",
+    "passed": true
+  },
+  {
+    "story": "modelanvil-actions-base-chat-comparison--loading-comparison",
+    "passed": true
+  }
+]

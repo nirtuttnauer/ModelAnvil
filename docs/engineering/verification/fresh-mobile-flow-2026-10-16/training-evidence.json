@@ -1,0 +1,282 @@
+{
+  "run_id": "c67e2e82-4a2d-425f-8524-f42c9d841be3",
+  "status": "completed",
+  "job_status": "succeeded",
+  "recipe": "lora_adapter",
+  "updates": 288,
+  "requested_updates": 288,
+  "seed": 42,
+  "hyperparameters": {},
+  "hardware": {
+    "execution_mode": "worker",
+    "purpose": "experiment",
+    "pins": {
+      "runtime": "modelanvil.smollm2-gpu-sft.v1",
+      "contract_digest": "1cf024962f7b293343087422f1a03d4ddb674f31b853772b9a0f015222cae5e8",
+      "build_digest": "40f0a31888f7e81b69f401355dbcfb4508deaa67ec87ccd6f9ba92f1ba51320e",
+      "dataset_id": "53065ba4-8f90-4057-b34c-e9cefc7c9bf1",
+      "dataset_digest": "c307736491bf49a8fd04c98210e0228fdfb7a4164c896fa504c9304b609396e2",
+      "base_id": "1eee1032-d320-4588-a2dc-a1c8f3f4f048",
+      "base_artifact_id": "872e2a3a-71f8-49aa-a4b6-7adfdcd31039",
+      "base_digest": "45020533724d70deb820ed890f116b81103a7c68c2335cd7b0f1678bd3668edf",
+      "tokenizer_id": "b6f54d11-b9b5-4e8e-9caf-a49552253b10",
+      "tokenizer_digest": "e9242dafb65cc8c80e7ca70077a0621e59f94937cabef07f3212f3d5192cfa3b",
+      "runner_id": "80ad2ee0-807c-4a92-9f8a-f12211833c40",
+      "runner_digest": "ca2ef0d768f1b35546b49eec11ee994141761176c4ac66c583df9f04766227d8",
+      "pool_id": 8,
+      "steps": 288,
+      "config": {
+        "architectures": [
+          "LlamaForCausalLM"
+        ],
+        "attention_bias": false,
+        "attention_dropout": 0.0,
+        "bos_token_id": 1,
+        "eos_token_id": 2,
+        "hidden_act": "silu",
+        "hidden_size": 2048,
+        "initializer_range": 0.02,
+        "intermediate_size": 8192,
+        "max_position_embeddings": 8192,
+        "mlp_bias": false,
+        "model_type": "llama",
+        "num_attention_heads": 32,
+        "num_hidden_layers": 24,
+        "num_key_value_heads": 32,
+        "pad_token_id": 2,
+        "pretraining_tp": 1,
+        "rms_norm_eps": 1e-05,
+        "rope_scaling": null,
+        "rope_theta": 130000,
+        "tie_word_embeddings": true,
+        "torch_dtype": "bfloat16",
+        "transformers_version": "4.42.3",
+        "transformers.js_config": {
+          "dtype": "q4",
+          "kv_cache_dtype": {
+            "q4f16": "float16",
+            "fp16": "float16"
+          },
+          "use_external_data_format": {
+            "model.onnx": true,
+            "model_fp16.onnx": true
+          }
+        },
+        "use_cache": true,
+        "vocab_size": 49152,
+        "runtime": "modelanvil.smollm2-gpu-sft.v1"
+      },
+      "optimizer": {
+        "algorithm": "adamw",
+        "learning_rate": 0.0002,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "weight_decay": 0.0
+      },
+      "sample_digest": "2f9fe46462a063783f9ad00a8b11904a0d3c4b0f19613f0adb36bf3ba29885c8",
+      "splits": {
+        "consumed": "train",
+        "train_rows": 48,
+        "excluded_rows": {
+          "test": 6,
+          "validation": 6
+        },
+        "excluded_digest": "5f4bc18e76adc399443750a87a9e7f922f314042a5e6c58dbea82cfefaa57312"
+      },
+      "accelerator": {
+        "device": {
+          "id": "mps:0",
+          "backend": "mps",
+          "torch_device": "mps:0",
+          "name": "Metal Performance Shaders device",
+          "vendor": "Apple",
+          "total_memory_bytes": null,
+          "memory_scope": "shared_unified",
+          "runtime_recommended_memory_bytes": 40200896512
+        },
+        "framework": {
+          "name": "torch",
+          "version": "2.9.0",
+          "cuda_version": null,
+          "hip_version": null
+        },
+        "packages": {
+          "torch": "2.9.0",
+          "transformers": "4.57.1",
+          "safetensors": "0.6.2",
+          "tokenizers": "0.22.2"
+        },
+        "capacity_source": "MPS recommended shared-memory budget"
+      },
+      "worker_id": 8,
+      "chat_sft": true,
+      "recipe": "lora_adapter",
+      "source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+        "revision": "31b70e2e869a7173562077fd711b654946d38674",
+        "license": "Apache-2.0"
+      },
+      "checkpoint_interval": 96,
+      "validation_digest": "ef9f27bd92555988e9d6166586642cbfdabd0eb31b8f2fa6a8c3924246f69818",
+      "sample_order": "seeded_epoch_shuffle_v1",
+      "initialization_seed": 42,
+      "adapter": {
+        "r": 16,
+        "lora_alpha": 32,
+        "target_modules": [
+          "q_proj",
+          "k_proj",
+          "v_proj",
+          "o_proj",
+          "gate_proj",
+          "up_proj",
+          "down_proj"
+        ],
+        "lora_dropout": 0.0,
+        "bias": "none",
+        "task_type": "CAUSAL_LM"
+      },
+      "adapter_package": {
+        "peft": "0.17.1"
+      },
+      "trainable_parameters": 18087936
+    }
+  },
+  "dataset": "Juniper tool library support",
+  "split_counts": {
+    "train": 48,
+    "validation": 6,
+    "test": 6
+  },
+  "started_at": "2026-10-16 20:09:22.481098+00:00",
+  "completed_at": "2026-10-16 20:16:21.636325+00:00",
+  "duration_seconds": 419.155227,
+  "candidate_id": "712ab9ec-61e5-4a62-8753-ba3819c62a24",
+  "candidate_metadata": {
+    "source_run_id": "c67e2e82-4a2d-425f-8524-f42c9d841be3",
+    "selected_checkpoint_step": 288,
+    "weights_sha256": "18ef3c4139bb1237104133b4e16eaa58b859b4c0b7b0c93024d3cf41c8e48e70",
+    "runtime_contract": "1cf024962f7b293343087422f1a03d4ddb674f31b853772b9a0f015222cae5e8",
+    "checkpoint_digest": "71f076dabdfae10ded9d2fe4360c09d74b66aa7b6162bf4c0b5e2974cb8659c2"
+  },
+  "checkpoints": [
+    {
+      "step": 96,
+      "metrics": {
+        "step": 96,
+        "loss": 0.0010302526643499732,
+        "post_update_loss": 0.0009403320145793259,
+        "sample_id": "34276d6b-fd4b-5a98-acb5-d389c70d12a6",
+        "training_pairs": 2196,
+        "cpu_seconds": 104.57359699999915,
+        "engine_wall_seconds": 151.98256904620212,
+        "gpu_backend": "mps",
+        "gpu_device": "mps:0",
+        "device_residency_checked": true,
+        "gradient_norm": 0.019974198192358017,
+        "trainable_parameters": 18087936,
+        "total_parameters": 1729464320,
+        "measured_at": "2026-10-16T20:12:05.545417+00:00",
+        "peak_allocated_bytes": null,
+        "peak_reserved_bytes": null,
+        "gpu_allocated_bytes": 7222789632,
+        "tokens_per_second": 14.449025396671802,
+        "gpu_utilization_percent": null,
+        "unified_memory": {
+          "recommended_bytes": 40200896512,
+          "process_limit_bytes": 36180806860,
+          "driver_allocated_bytes": 8239185920,
+          "process_headroom_bytes": 27941620940,
+          "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+        },
+        "updates_since_checkpoint": 96,
+        "validation_loss_before_update": 2.889152620830675,
+        "validation_loss_before_training": 2.889152620830675,
+        "validation_loss": 0.1083165546131395,
+        "validation_prediction_tokens": 137,
+        "validation_samples": 6,
+        "validation_wall_seconds": 1.3656512920279056,
+        "cumulative_training_prediction_tokens": 2196
+      }
+    },
+    {
+      "step": 192,
+      "metrics": {
+        "step": 192,
+        "loss": 0.0007133929757401347,
+        "post_update_loss": 0.0006022312445566058,
+        "sample_id": "7e858d61-2ae1-58fd-98a0-26c39c0d0135",
+        "training_pairs": 2196,
+        "cpu_seconds": 55.893653999999515,
+        "engine_wall_seconds": 87.8624607543461,
+        "gpu_backend": "mps",
+        "gpu_device": "mps:0",
+        "device_residency_checked": true,
+        "gradient_norm": 0.018083475530147552,
+        "trainable_parameters": 18087936,
+        "total_parameters": 1729464320,
+        "measured_at": "2026-10-16T20:13:36.692967+00:00",
+        "peak_allocated_bytes": null,
+        "peak_reserved_bytes": null,
+        "gpu_allocated_bytes": 7223609344,
+        "tokens_per_second": 24.993609115271397,
+        "gpu_utilization_percent": null,
+        "unified_memory": {
+          "recommended_bytes": 40200896512,
+          "process_limit_bytes": 36180806860,
+          "driver_allocated_bytes": 8239185920,
+          "process_headroom_bytes": 27941620940,
+          "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+        },
+        "updates_since_checkpoint": 96,
+        "validation_loss_before_update": 0.1083165546131395,
+        "validation_loss_before_training": 2.889152620830675,
+        "validation_loss": 0.04687366250819139,
+        "validation_prediction_tokens": 137,
+        "validation_samples": 6,
+        "validation_wall_seconds": 1.4561519579729065,
+        "cumulative_training_prediction_tokens": 4392
+      }
+    },
+    {
+      "step": 288,
+      "metrics": {
+        "step": 288,
+        "loss": 0.0001930184953380376,
+        "post_update_loss": 0.00019055933807976544,
+        "sample_id": "b4e01796-74d9-5bea-9edb-dba5b953fff0",
+        "training_pairs": 2196,
+        "cpu_seconds": 111.60863100000051,
+        "engine_wall_seconds": 153.86424800020177,
+        "gpu_backend": "mps",
+        "gpu_device": "mps:0",
+        "device_residency_checked": true,
+        "gradient_norm": 0.003839656710624695,
+        "trainable_parameters": 18087936,
+        "total_parameters": 1729464320,
+        "measured_at": "2026-10-16T20:16:14.443562+00:00",
+        "peak_allocated_bytes": null,
+        "peak_reserved_bytes": null,
+        "gpu_allocated_bytes": 7222814720,
+        "tokens_per_second": 14.272321403716347,
+        "gpu_utilization_percent": null,
+        "unified_memory": {
+          "recommended_bytes": 40200896512,
+          "process_limit_bytes": 36180806860,
+          "driver_allocated_bytes": 8237088768,
+          "process_headroom_bytes": 27943718092,
+          "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+        },
+        "updates_since_checkpoint": 96,
+        "validation_loss_before_update": 0.04687366250819139,
+        "validation_loss_before_training": 2.889152620830675,
+        "validation_loss": 0.03467490705155876,
+        "validation_prediction_tokens": 137,
+        "validation_samples": 6,
+        "validation_wall_seconds": 1.4617535839788616,
+        "cumulative_training_prediction_tokens": 6588
+      }
+    }
+  ]
+}

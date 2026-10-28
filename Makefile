@@ -1,6 +1,10 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: check test test-broker-integration test-accounting-integration test-worker-integration test-dataset-integration test-web migrate migration-check smoke reconcile prune-transfer-parts web-install web-build up down logs
+.PHONY: test-production
+test-production:
+	$(PYTHON) scripts/production_integration.py
+
+.PHONY: check test test-broker-integration test-accounting-integration test-worker-integration test-dataset-integration test-web migrate migration-check smoke reconcile prune-transfer-parts web-install web-build up down logs local
 check:
 	DJANGO_SETTINGS_MODULE=modelanvil.settings PYTHONPATH=. $(PYTHON) manage.py check
 
@@ -42,7 +46,11 @@ test-dataset-integration:
 	docker compose -p "$$project" -f compose.yaml -f compose.dataset-tests.yaml run --build --rm --no-deps -e DJANGO_SETTINGS_MODULE=modelanvil.settings -e PYTHONPATH=/app api python -m django test modelanvil.data.test_preparation modelanvil.api.test_dataset_preparation modelanvil.api.test_dataset_preparation_http -v 1
 
 test-web:
-	cd web && node --test tests/datasets-client.test.mjs tests/datasets-shell.test.mjs tests/openapi.test.mjs
+	cd web && npm test
+
+.PHONY: test-web-browser
+test-web-browser:
+	cd web && npm run test:browser
 
 smoke:
 	PYTHONPATH=. $(PYTHON) -m scripts.smoke
@@ -68,3 +76,7 @@ down:
 
 logs:
 	docker compose -f compose.yaml logs -f api db rabbitmq object-store outbox-publisher lease-reconciler web
+
+# Installation owner entry point; user training runs are launched in the browser.
+local:
+	.venv-gpu/bin/python manage.py run_local

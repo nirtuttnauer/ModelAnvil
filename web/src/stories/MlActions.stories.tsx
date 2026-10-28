@@ -32,10 +32,53 @@ export const ExecuteEvaluation: Story = {
     await userEvent.selectOptions(selector, '30000000-0000-4000-8000-000000000007');
     await userEvent.clear(canvas.getByLabelText('Maximum generated tokens'));
     await userEvent.type(canvas.getByLabelText('Maximum generated tokens'), '4');
-    await userEvent.click(canvas.getByRole('button', { name: 'Execute CPU evaluation' }));
+    await userEvent.selectOptions(canvas.getByLabelText('Evaluation worker pool'), '1');
+    await userEvent.selectOptions(canvas.getByLabelText('Evaluation case budget'), '50000000-0000-4000-8000-000000000005');
+    await userEvent.click(canvas.getByRole('button', { name: 'Queue CPU evaluation' }));
     await expect(canvas.findByText('Demo evaluation completed with fictional Storybook results.')).resolves.toBeVisible();
-    await expect(canvas.findByText(/SUPPORT-001 · Pass/)).resolves.toBeVisible();
+    await expect(canvas.findByText('SUPPORT-001', { exact: true })).resolves.toBeVisible();
     await expect(demoRequests.filter(r => r.status >= 400)).toHaveLength(0);
+    canvasElement.dataset.demoVerified = 'passed';
+  },
+};
+
+export const GuidedClassificationComparison: Story = {
+  name: 'Review and run a guided classification comparison',
+  parameters: { demoRoute: '#evaluation?training_run=30000000-0000-4000-8000-000000000001', demoHeading: 'Evaluation', demoApiPath: '/api/v1/evaluation-runs/' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const prepare = await canvas.findByRole('button', { name: 'Prepare comparison' });
+    await waitFor(() => expect(prepare).toBeEnabled());
+    await userEvent.click(prepare);
+    await expect(canvas.findByText('Trained support model · Demo')).resolves.toBeVisible();
+    await expect(canvas.findByText('Synthetic preview only. No model is executed or qualified.')).resolves.toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'Run comparison' }));
+    await expect(canvas.findByText('2 improved · 0 regressed · 1 unchanged cases.')).resolves.toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Record accept decision' })).toBeDisabled();
+    await expect(demoRequests.filter(request => request.path.endsWith('/execute/'))[0]?.body).toMatchObject({ profile: 'guided-native', max_tokens: 32 });
+    await expect(demoRequests.filter(request => request.status >= 400)).toHaveLength(0);
+    canvasElement.dataset.demoVerified = 'passed';
+  },
+};
+
+export const GuidedExistingSuite: Story = {
+  name: 'Use an existing protected classification suite',
+  parameters: { demoRoute: '#evaluation?training_run=30000000-0000-4000-8000-000000000001', demoHeading: 'Evaluation', demoApiPath: '/api/v1/evaluation-runs/' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const register = await canvas.findByRole('button', { name: 'Register evaluation suite' });
+    await waitFor(() => expect(register).toBeEnabled());
+    await userEvent.click(register);
+    await userEvent.type(canvas.getByLabelText('Suite name'), 'Protected classification checks');
+    await userEvent.click(canvas.getByRole('button', { name: 'Pin evaluation suite' }));
+    const suite = await canvas.findByRole('option', { name: 'Protected classification checks · r1 · 1 cases' });
+    const suiteVersion = (suite as HTMLOptionElement).value;
+    await userEvent.selectOptions(canvas.getByLabelText('Protected comparison examples'), suiteVersion);
+    await waitFor(() => expect(window.location.hash).toContain(`suite_version=${suiteVersion}`));
+    await userEvent.click(canvas.getByRole('button', { name: 'Prepare comparison' }));
+    await expect(canvas.findByText('1 · Protected classification checks · r1')).resolves.toBeVisible();
+    await expect(demoRequests.find(request => request.path.endsWith('/prepare-evaluation/'))?.body).toEqual({ suite_version: suiteVersion });
+    await expect(demoRequests.filter(request => request.status >= 400)).toHaveLength(0);
     canvasElement.dataset.demoVerified = 'passed';
   },
 };
@@ -45,10 +88,12 @@ export const RegisterEvaluationSuite: Story = {
   parameters: { demoRoute: '#evaluation', demoHeading: 'Evaluation', demoApiPath: '/api/v1/evaluation-runs/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(await canvas.findByRole('button', { name: 'Register evaluation suite' }));
+    const register = await canvas.findByRole('button', { name: 'Register evaluation suite' });
+    await waitFor(() => expect(register).toBeEnabled());
+    await userEvent.click(register);
     await userEvent.type(canvas.getByLabelText('Suite name'), 'Storybook checks');
     await userEvent.click(canvas.getByRole('button', { name: 'Pin evaluation suite' }));
-    await expect(canvas.findByText('Evaluation suite pinned. Select a candidate to create an evaluation.')).resolves.toBeVisible();
+    await expect(canvas.findByText('Suite r1 pinned as protected evaluation with 1 source group.')).resolves.toBeVisible();
     await expect(canvas.getByLabelText('Evaluation suite version')).toHaveValue('3');
     await expect(demoRequests.filter(r => r.status >= 400)).toHaveLength(0);
     canvasElement.dataset.demoVerified = 'passed';
@@ -97,8 +142,11 @@ export const RegisterPreferencePairs: Story = {
     await waitFor(() => expect(registration).toBeEnabled());
     await userEvent.click(registration);
     await userEvent.type(canvas.getByLabelText('Preference artifact name'), 'Storybook preferences');
-    await userEvent.click(canvas.getByLabelText('Preference pairs JSON'));
-    await userEvent.paste(JSON.stringify([{ prompt: 'Say a', chosen: 'a', rejected: 'b' }]));
+    await userEvent.click(canvas.getByRole('button', { name: 'Add preference pair' }));
+    const pair = within(canvas.getByRole('group', { name: 'Preference pair 1' }));
+    await userEvent.type(pair.getByLabelText('Prompt'), 'Say a');
+    await userEvent.type(pair.getByLabelText('Preferred response'), 'a');
+    await userEvent.type(pair.getByLabelText('Rejected response'), 'b');
     await userEvent.click(canvas.getByRole('button', { name: 'Commit preference artifact' }));
     await expect(canvas.findByText('Preference artifact “Storybook preferences” committed. Select separate training and held-out inputs.')).resolves.toBeVisible();
     await userEvent.click(canvas.getByRole('button', { name: 'New alignment plan' }));

@@ -1,0 +1,72 @@
+[
+  {
+    "size": "320×568",
+    "story": "base-comparison",
+    "passed": true
+  },
+  {
+    "size": "320×568",
+    "story": "chat-composer",
+    "passed": true
+  },
+  {
+    "size": "320×568",
+    "story": "active-jobs",
+    "passed": true
+  },
+  {
+    "size": "430×932",
+    "story": "base-comparison",
+    "passed": true
+  },
+  {
+    "size": "844×390",
+    "story": "active-jobs",
+    "passed": true
+  },
+  {
+    "size": "844×390",
+    "story": "base-comparison",
+    "passed": true
+  },
+  {
+    "size": "768×1024",
+    "story": "active-jobs",
+    "passed": true
+  },
+  {
+    "size": "768×1024",
+    "story": "base-comparison",
+    "passed": true
+  },
+  {
+    "size": "1440×900",
+    "story": "active-jobs",
+    "passed": true
+  },
+  {
+    "size": "1440×900",
+    "story": "base-comparison",
+    "passed": true
+  },
+  {
+    "size": "375×812",
+    "story": "dark-base-comparison",
+    "passed": true
+  },
+  {
+    "size": "375×812",
+    "story": "chat-composer",
+    "passed": true
+  },
+  {
+    "size": "375×812",
+    "story": "active-jobs",
+    "passed": true
+  },
+  {
+    "size": "375→1440→375",
+    "story": "open-jobs-resize",
+    "passed": true
+  }
+]

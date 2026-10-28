@@ -1,15 +1,38 @@
+import { evaluationHash } from '../api/improvement';
+import { Identifier } from '../components/Identifier';
+import { Badge, Button, Card, Field, Notice, RecordTable, Tab } from '../components/ui';
+import { GuidedFineTune } from '../components/GuidedFineTune';
+import { ModelHardwareFit } from '../components/ModelHardwareFit';
+import { TrainingRunProgress } from '../components/TrainingRunProgress';
+import { ModelExport } from '../components/ModelExport';
+import { PreparedDatasetPreview } from '../components/TrainingDatasetPreview';
+import type { ModelExportOption } from '../api/model-export';
+import { trainingLossSeries } from '../api/training-progress';
+import { useHardwareInventory } from '../components/useHardwareInventory';
+import { workerHardware } from '../api/model-hardware';
+import { guidedPlan, readGuidedValue, type GuidedInputs, type GuidedRevision } from '../api/guided-training';
+import { trainingDefaults, legacyGuidedDefaults, preparedTrainingFields, migrateGuidedTraining, trainingStepCount, trainingLaunchPayload, trainingTab, latestTrainingRun, type TrainingTab } from '../api/training-workspace';
+import { PreflightChecklist, type PreflightReport } from '../components/PreflightChecklist';
+import { ResourcePicker } from '../components/ResourcePicker';
+import { resourceHash } from '../api/resource-routes';
+import { comparisonBlockers } from '../api/run-comparison';
+import { DataInspector } from '../components/DataInspector';
+import { allResources } from '../api/resources';
+import { useResourceHandoff } from '../components/ResourceHandoff';
+import { useDraft, DraftStatus } from '../components/Draft';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Plus, XCircle, Play, CheckCircle, RefreshCw } from 'lucide-react';
-import { ApiRequestError, apiPage, apiRequest, apiDownload, errorMessage } from '../api/client';
+import { ApiRequestError, apiRequest, errorMessage } from '../api/client';
 import { ResourceState } from '../components/ResourceState';
 import {
   RegisterTokenizerModal,
   RegisterModelVersionModal,
 } from '../components/PrerequisiteModals';
-import type { TokenizerVersion, RegisteredModelVersion } from '../api/resources';
+import type { TokenizerVersion, RegisteredModelVersion, ModelCapabilities } from '../api/resources';
 import { runHash } from '../api/runs';
 import { ChartPanel, ChartEmpty, LineChart, EventTimeline } from '../components/Charts';
 import './ml-pages.css';
+import './training-workspace.css';
 
 interface Tokenizer {
   id: number;
@@ -23,8 +46,10 @@ interface ModelVersion {
   id: number;
   model_version_id: string;
   model_name: string;
+  architecture_ref?: string;
   revision_no: number;
   state: string;
+  capabilities?: ModelCapabilities;
 }
 
 interface DatasetRevision {
@@ -35,6 +60,7 @@ interface DatasetRevision {
   manifest_digest: string;
   row_count?: number;
   state: string;
+  metadata?: GuidedRevision['metadata'];
 }
 
 interface Runner { id: number; manifest_id: string; name: string; enabled: boolean; compatibility: { contract_digest?: string }; }
@@ -51,6 +77,9 @@ interface BudgetPolicy {
   name: string;
   limit_amount: string;
   unit: string;
+  enabled: boolean;
+  currency: string;
+  allowance?: { remaining_amount: string };
 }
 
 interface Checkpoint {
@@ -67,6 +96,7 @@ interface Checkpoint {
 }
 
 interface Run {
+  guided_evaluation?: { eligible: boolean; reason: string };
   runtime?: { execution_mode?: string; pins?: { runtime?: string } };
   execution_evidence?: { level: string; source: string };
   run_id: string;
@@ -74,6 +104,7 @@ interface Run {
   status: string;
   initialization_seed: number;
   current_step: number;
+  progress_step?: number;
   total_steps: number;
   latest_loss: number | null;
   dataset_revision: number | null;
@@ -84,9 +115,15 @@ interface Run {
   tokenizer_version: number;
   base_model_version: number | null;
   metrics_log?: Array<{ step: number; loss: number; measured_at?: string; gradient_norm?: number; tokens_per_second?: number;
+    engine_wall_seconds?: number; updates_since_checkpoint?: number;
     gpu_allocated_bytes?: number; peak_allocated_bytes?: number | null; gpu_utilization_percent?: number | null; trainable_parameters?: number; total_parameters?: number; validation_loss?: number; validation_prediction_tokens?: number }>;
   output_model_version?: number | null;
+  output_model_version_uuid?: string | null;
+  export_options?: ModelExportOption[];
+  quality_summary?: { selected_step: number; baseline_loss: number | null; validation_loss: number | null; validation_examples: number } | null;
   created_at: string;
+  started_at?: string | null;
+  completed_at?: string | null;
 }
 
 interface InferResult {
@@ -105,64 +142,11 @@ interface InferResult {
   };
 }
 
-interface PreflightCheck {
-  check: string;
-  category: string;
-  status: string;
-  blocking: boolean;
-  reason: string;
-  corrective_action?: string | null;
-  detail?: Record<string, unknown>;
-}
-
-interface PreflightSample {
-  sample_id: string | null;
-  text_preview: string;
-  token_count: number;
-  token_ids: number[];
-}
-
-interface RuntimeScopeTarget {
-  target_id: string;
-  label: string;
-  category: string;
-  status: string;
-  reason: string;
-  corrective_action?: string | null;
-}
-
-interface PreflightReport {
-  status: string;
-  recipe_type: string;
-  execution_mode: string;
-  samples: PreflightSample[];
-  checks: PreflightCheck[];
-  estimate: {
-    known: boolean;
-    source: string;
-    assumptions: string[];
-    units: Record<string, string | null>;
-    currency: string | null;
-    uncertainty: string;
-    parameter_count?: number;
-    total_tokens?: number;
-    estimated_flops?: number;
-    estimated_duration_seconds?: number;
-    estimated_cost: { known: boolean; value?: number; reason?: string };
-  };
-  preflight_token: string | null;
-  pins: Record<string, unknown> | null;
-  requirements: Record<string, unknown>;
-  budget: { unit: string; limit: string; committed: string; remaining: string; requested: number } | null;
-  sample_count: number | null;
-  capacity_note: string;
-  expires_in_seconds: number;
-  runtime_scope: { targets: RuntimeScopeTarget[]; available: string[]; unavailable: string[] };
-  blocking_checks: string[];
-}
-
 export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; refreshKey?: number }) {
+  const hardware = useHardwareInventory(token, refreshKey);
   const [runs, setRuns] = useState<Run[]>([]);
+  const [runsRefreshedAt, setRunsRefreshedAt] = useState(0);
+  const [progressError, setProgressError] = useState<string | null>(null);
   const [tokenizers, setTokenizers] = useState<Tokenizer[]>([]);
   const [models, setModels] = useState<ModelVersion[]>([]);
   const [datasetRevisions, setDatasetRevisions] = useState<DatasetRevision[]>([]);
@@ -172,32 +156,99 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState('');
   const [retry, setRetry] = useState(0);
-  const [showForm, setShowForm] = useState(false);
+  const draft = useDraft('training', trainingDefaults);
+  const legacy = useDraft('guided-fine-tune', legacyGuidedDefaults);
+  const [advanced, setAdvanced] = draft.field('showForm');
+  const [preset, setPreset] = draft.field('preset');
+  const [revisionJson, setRevisionJson] = draft.field('revisionJson');
+  const [modelName, setModelName] = draft.field('modelName');
+  const [currentRunId, setCurrentRunId] = draft.field('currentRunId');
+  const [project] = draft.field('project');
+  const [launchKey, setLaunchKey] = draft.field('launchKey');
+  const [launchInputs, setLaunchInputs] = draft.field('launchInputs');
+  const [setupBusy, setSetupBusy] = useState(false);
+  const [routeHash, setRouteHash] = useState(window.location.hash);
+  const tab = trainingTab(routeHash);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const tabPanel = useRef<HTMLDivElement>(null);
+  function navigateTab(next: TrainingTab, runId?: string) {
+    const query = new URLSearchParams(window.location.hash.split('?')[1]);
+    query.set('tab', next);
+    query.delete('run');
+    query.delete('model_version');
+    query.delete('dataset_revision');
+    if (runId) query.set('run', runId);
+    window.location.hash = `training?${query}`;
+    setRouteHash(window.location.hash);
+  }
+  useEffect(() => {
+    function syncTab() { setRouteHash(window.location.hash); }
+    window.addEventListener('hashchange', syncTab);
+    return () => window.removeEventListener('hashchange', syncTab);
+  }, []);
+  // Consume the previous guided draft once; both modes now edit the training draft.
+  useEffect(() => {
+    if (!['saved', 'restored'].includes(legacy.status)) return;
+    if (draft.status === 'empty') {
+      const values = Object.fromEntries(Object.keys(legacyGuidedDefaults).map(key => [key, legacy.field(key as keyof typeof legacyGuidedDefaults)[0]])) as typeof legacyGuidedDefaults;
+      const migrated = migrateGuidedTraining(values);
+      for (const key of Object.keys(trainingDefaults) as Array<keyof typeof trainingDefaults>) draft.field(key)[1](migrated[key]);
+      if (migrated.currentRunId) navigateTab('current-run', migrated.currentRunId);
+    }
+    legacy.discard();
+  }, [legacy.status, draft.status]);
 
   // Form states
-  const [mode, setMode] = useState('worker');
-  const [recipe, setRecipe] = useState('full_sft');
+  const [learningRate, setLearningRate] = draft.field('learningRate'), [validationInterval, setValidationInterval] = draft.field('validationInterval');
+  const [pilotSteps, setPilotSteps] = draft.field('pilotSteps'), [comparisonIds, setComparisonIds] = draft.field('comparisonIds');
+  const [pilotReport, setPilotReport] = useState<PreflightReport | null>(null);
+  const [pilotBusy, setPilotBusy] = useState(false);
+  const [mode, setMode] = draft.field('mode');
+  const [recipe, setRecipe] = draft.field('recipe');
   const [runners, setRunners] = useState<Runner[]>([]);
-  const [runner, setRunner] = useState('');
-  const launchRequest = useRef<{ body: string; key: string } | null>(null);
-  const [tokenizer, setTokenizer] = useState('');
-  const [base, setBase] = useState('');
-  const [selectedDataset, setSelectedDataset] = useState('');
-  const [selectedPool, setSelectedPool] = useState('');
-  const [selectedPolicy, setSelectedPolicy] = useState('');
-  const [seed, setSeed] = useState('42');
-  const [steps, setSteps] = useState('50');
+  const [runner, setRunner] = draft.field('runner');
+  const [tokenizer, setTokenizer] = draft.field('tokenizer');
+  const [base, setBase] = draft.field('base');
+  const [selectedDataset, setSelectedDataset] = draft.field('selectedDataset');
+  const [selectedPool, setSelectedPool] = draft.field('selectedPool');
+  const [selectedPolicy, setSelectedPolicy] = draft.field('selectedPolicy');
+  const [seed, setSeed] = draft.field('seed');
+  const [manualSteps, setSteps] = draft.field('steps');
   const [busy, setBusy] = useState(false);
   const [selected, setSelected] = useState<Run | null>(null);
+  const uploadedRevision = readGuidedValue<GuidedRevision>(revisionJson);
+  const registeredRevision = datasetRevisions.find(revision => String(revision.id) === selectedDataset);
+  const revision = uploadedRevision && String(uploadedRevision.id) === selectedDataset ? uploadedRevision :
+    registeredRevision?.metadata && registeredRevision.row_count != null ? registeredRevision as GuidedRevision : null;
+  const configuration = { ...trainingDefaults, mode, recipe, base, tokenizer, runner, selectedDataset, selectedPool, selectedPolicy,
+    seed, steps: manualSteps, learningRate, validationInterval, preset, project };
+  const steps = trainingStepCount(configuration, revision);
+  const plan = guidedPlan(revision, recipe === 'lora_adapter');
+  const selectedModel = models.find(model => String(model.id) === base);
+  const trainingCapability = selectedModel?.capabilities?.train;
+  const modelLabel = modelName || selectedModel?.model_name || '';
+  const datasetLabel = registeredRevision?.dataset_name || (revision?.dataset_name ?? '');
+  const canReview = !!tokenizer && (recipe === 'scratch_pretraining' || !!base) && Number.isInteger(steps) && steps > 0 && steps <= 3000 &&
+    (mode === 'simulation' || !!selectedDataset && !!selectedPool && !!selectedPolicy && !!runner);
+  const focusRun = latestTrainingRun(runs, currentRunId);
+  const detailRun = tab === 'current-run' ? focusRun : selected;
+  function prepareModel(inputs: GuidedInputs, name: string) {
+    const fields = preparedTrainingFields(inputs, name);
+    for (const key of Object.keys(fields) as Array<keyof typeof fields>) draft.field(key)[1](fields[key]);
+    setPreset('recommended');
+    void loadDependencies();
+  }
+  function prepareDataset(value: GuidedRevision) {
+    setSelectedDataset(String(value.id)); setRevisionJson(JSON.stringify(value)); setPreset('recommended');
+    void loadDependencies();
+  }
   const [preflight, setPreflight] = useState<PreflightReport | null>(null);
   const [preflightBusy, setPreflightBusy] = useState(false);
   const preflightGeneration = useRef(0);
-  const preflightPanel = useRef<HTMLDivElement>(null);
-  useEffect(() => { if (preflight) preflightPanel.current?.focus(); }, [preflight]);
   useEffect(() => {
     preflightGeneration.current += 1;
-    setPreflight(null); setPreflightBusy(false);
-  }, [mode, recipe, tokenizer, base, selectedDataset, selectedPool, selectedPolicy, runner, steps, seed, token, refreshKey]);
+    setPreflight(null); setPreflightBusy(false); setPilotReport(null); setPilotBusy(false);
+  }, [mode, recipe, tokenizer, base, selectedDataset, selectedPool, selectedPolicy, runner, steps, seed, learningRate, validationInterval, pilotSteps, token, refreshKey]);
 
 
   // External inference testing state
@@ -211,7 +262,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
   useEffect(() => {
     inferenceGeneration.current += 1;
     setInferResult(null); setInferError(null); setInferring(false);
-  }, [selected?.run_id]);
+  }, [detailRun?.run_id]);
 
   const [showTokenizerModal, setShowTokenizerModal] = useState(false);
   const [showModelModal, setShowModelModal] = useState(false);
@@ -221,16 +272,17 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
     setError(null);
     try {
       const [r, t, m, dRes, pRes, bRes, manifests] = await Promise.all([
-        apiPage<Run>('/api/v1/training-runs/', token, signal),
-        apiPage<Tokenizer>('/api/v1/tokenizers/', token, signal),
-        apiPage<ModelVersion>('/api/v1/model-versions/', token, signal),
-        apiPage<DatasetRevision>('/api/v1/dataset-revisions/', token, signal).catch(() => ({ results: [] })),
-        apiPage<WorkerPool>('/api/v1/worker-pools/', token, signal).catch(() => ({ results: [] })),
-        apiPage<BudgetPolicy>('/api/v1/budget-policies/', token, signal),
-        apiPage<Runner>('/api/v1/runner-manifests/', token, signal),
+        allResources<Run>('/api/v1/training-runs/', token, signal).then(results => ({ results })),
+        allResources<Tokenizer>('/api/v1/tokenizers/', token, signal).then(results => ({ results })),
+        allResources<ModelVersion>('/api/v1/model-versions/', token, signal).then(results => ({ results })),
+        allResources<DatasetRevision>('/api/v1/dataset-revisions/', token, signal).then(results => ({ results })).catch(() => ({ results: [] })),
+        allResources<WorkerPool>('/api/v1/worker-pools/', token, signal).then(results => ({ results })).catch(() => ({ results: [] })),
+        allResources<BudgetPolicy>('/api/v1/budget-policies/', token, signal).then(results => ({ results })),
+        allResources<Runner>('/api/v1/runner-manifests/', token, signal).then(results => ({ results })),
       ]);
       if (!signal?.aborted) {
         setRuns(r.results);
+        setRunsRefreshedAt(Date.now()); setProgressError(null);
         setSelected((current) =>
           current ? r.results.find((run) => run.run_id === current.run_id) || null : null
         );
@@ -238,7 +290,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
         setModels(m.results);
         setDatasetRevisions((dRes.results || []).filter((d) => d.state === 'published'));
         setPools((pRes.results || []).filter((p) => p.status === 'active'));
-        setPolicies((bRes.results || []).filter((p) => p.unit === 'training_steps'));
+        setPolicies((bRes.results || []).filter((p) => p.enabled && p.unit === 'training_steps' && !p.currency));
         setRunners(manifests.results.filter((r) => r.enabled && r.compatibility.contract_digest));
       }
     } catch (e) {
@@ -259,49 +311,64 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
     return () => c.abort();
   }, [loadDependencies, refreshKey, retry]);
 
+  useEffect(() => {
+    const id = new URLSearchParams(routeHash.split('?')[1]).get('run');
+    if (!id) return;
+    if (tab === 'current-run') setCurrentRunId(id);
+    else if (tab === 'history') setSelected(runs.find(run => run.run_id === id) || null);
+  }, [routeHash, runs]);
+
+  const progressRequest = useRef(false);
+  const refreshProgress = useCallback(async (signal?: AbortSignal) => {
+    if (progressRequest.current) return;
+    progressRequest.current = true;
+    try {
+      const values = await allResources<Run>('/api/v1/training-runs/', token, signal);
+      if (!signal?.aborted) {
+        setRuns(values); setRunsRefreshedAt(Date.now()); setProgressError(null);
+        setSelected(current => current ? values.find(run => run.run_id === current.run_id) || null : null);
+      }
+    } catch (e) { if (!signal?.aborted) setProgressError(errorMessage(e)); }
+    finally { progressRequest.current = false; }
+  }, [token]);
   const hasActiveRuns = runs.some((run) => ['pending', 'running'].includes(run.status));
   useEffect(() => {
     if (!hasActiveRuns) return;
+    const controller = new AbortController();
     const timer = setInterval(() => {
-      if (document.visibilityState === 'visible') void loadDependencies();
+      if (document.visibilityState === 'visible') void refreshProgress(controller.signal);
     }, 3000);
-    return () => clearInterval(timer);
-  }, [hasActiveRuns, loadDependencies]);
+    return () => { controller.abort(); clearInterval(timer); };
+  }, [hasActiveRuns, refreshProgress]);
 
-  function launchPayload(): Record<string, unknown> {
-    return {
-      execution_mode: mode, recipe_type: recipe,
-      ...(tokenizer ? { tokenizer_version: Number(tokenizer) } : {}),
-      ...(recipe === 'scratch_pretraining' ? { base_model_version: null } : base ? { base_model_version: Number(base) } : {}),
-      initialization_seed: Number(seed), total_steps: Number(steps),
-      ...(selectedDataset ? { dataset_revision: Number(selectedDataset) } : {}),
-      ...(mode === 'worker' && selectedPool ? { pool: Number(selectedPool) } : {}),
-      ...(mode === 'worker' && selectedPolicy ? { budget_policy_id: selectedPolicy } : {}),
-      ...(mode === 'worker' && runner ? { runner_manifest: Number(runner) } : {}),
-    };
+  const referenceRuntime = ['modelanvil.cpu-character-sft.v1', 'modelanvil.general-transformer-sft.v1'].includes(models.find(m => String(m.id) === base)?.architecture_ref || '');
+  function launchPayload() { return trainingLaunchPayload(configuration, steps, referenceRuntime); }
+  function requestKey(inputs: Record<string, unknown>) {
+    const fingerprint = JSON.stringify(inputs);
+    if (launchKey && launchInputs === fingerprint) return launchKey;
+    const key = crypto.randomUUID(); setLaunchKey(key); setLaunchInputs(fingerprint); return key;
   }
 
   async function create(e: React.FormEvent) {
     e.preventDefault();
-    if (mode === 'worker' && !preflight?.preflight_token) return;
+    if (!canReview || setupBusy || pilotBusy || (mode === 'worker' && (preflight?.status !== 'approved' || !preflight.preflight_token))) return;
     setBusy(true); setError(null); setNotice('');
     try {
-      const payload = { ...launchPayload(), ...(mode === 'worker' ? { preflight_token: preflight?.preflight_token } : {}) };
-      const body = JSON.stringify(payload);
-      if (launchRequest.current?.body !== body) {
-        launchRequest.current = { body, key: crypto.randomUUID() };
-      }
+      const inputs = launchPayload();
+      const key = requestKey(inputs);
+      const body = JSON.stringify({ ...inputs, ...(mode === 'worker' ? { preflight_token: preflight?.preflight_token } : {}) });
       const run = await apiRequest<Run>('/api/v1/training-runs/', token, {
         method: 'POST',
         headers: {
-          'Idempotency-Key': launchRequest.current.key,
+          'Idempotency-Key': key,
         },
         body,
       });
 
-      launchRequest.current = null;
-      setNotice(`Training run dispatched successfully. State: ${run.status}.`);
-      setShowForm(false); setPreflight(null);
+      setLaunchKey(''); setLaunchInputs('');
+      setCurrentRunId(run.run_id);
+      setNotice('Training run dispatched successfully. Follow its live progress below.');
+      setPreflight(null); navigateTab('current-run', run.run_id); requestAnimationFrame(() => tabPanel.current?.focus());
       setRuns((current) => [run, ...current]);
       setSelected(run);
     } catch (e) {
@@ -322,6 +389,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
       setNotice(updated.status === 'cancelled' ? 'Run cancelled.' : 'Cancellation requested; waiting for the worker to acknowledge it.');
       setRuns((current) => current.map((r) => (r.run_id === runId ? updated : r)));
       setSelected(updated);
+      if (tab === 'current-run') setCurrentRunId(runId);
     } catch (e) {
       setError(errorMessage(e));
     } finally {
@@ -350,20 +418,8 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
     }
   }
 
-  async function downloadExport(runId: string) {
-    setBusy(true); setError(null);
-    try {
-      const transformer = ['modelanvil.smollm2-gpu-sft.v1', 'modelanvil.smollm2-mlx-qlora.v1'].includes(runs.find(r => r.run_id === runId)?.runtime?.pins?.runtime || '');
-      const blob = transformer ? await apiDownload(`/api/v1/training-runs/${runId}/download/`, token) :
-        new Blob([JSON.stringify((await apiRequest<{ bundle: unknown }>(`/api/v1/training-runs/${runId}/export/`, token, { method: 'POST' })).bundle)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a'); link.href = url; link.download = `modelanvil-${runId}.${transformer ? 'zip' : 'json'}`;
-      link.click(); URL.revokeObjectURL(url);
-    } catch (e) { setError(errorMessage(e)); }
-    finally { setBusy(false); }
-  }
-
   async function runPreflight() {
+    if (!canReview || setupBusy) return;
     const generation = ++preflightGeneration.current;
     setPreflightBusy(true); setError(null); setPreflight(null);
     try {
@@ -378,56 +434,246 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
     }
   }
 
-  const focusRun = selected || runs[0];
-  const lossPoints = (focusRun?.metrics_log || []).map(m => ({ x: m.step, y: m.loss }));
+  async function previewPilot() {
+    const generation = ++preflightGeneration.current;
+    setPilotBusy(true); setError(null); setPilotReport(null);
+    try { const report = await apiRequest<PreflightReport>('/api/v1/training-runs/preflight/', token, { method: 'POST', body: JSON.stringify({ ...launchPayload(), total_steps: Number(pilotSteps), purpose: 'pilot' }) }); if (generation === preflightGeneration.current) setPilotReport(report); }
+    catch (e) { if (generation === preflightGeneration.current) setError(errorMessage(e)); } finally { if (generation === preflightGeneration.current) setPilotBusy(false); }
+  }
+  async function launchPilot() {
+    if (pilotReport?.status !== 'approved' || !pilotReport.preflight_token || !canReview || busy || setupBusy || pilotBusy) return;
+    setPilotBusy(true); setError(null);
+    try {
+      const inputs = { ...launchPayload(), total_steps: Number(pilotSteps), purpose: 'pilot' };
+      const key = requestKey(inputs);
+      const body = JSON.stringify({ ...inputs, preflight_token: pilotReport.preflight_token });
+      const run = await apiRequest<Run>('/api/v1/training-runs/', token, { method: 'POST', headers: { 'Idempotency-Key': key }, body });
+      setLaunchKey(''); setLaunchInputs(''); setPilotReport(null); setRuns(current => [run, ...current]); setSelected(run); setCurrentRunId(run.run_id); navigateTab('current-run', run.run_id);
+      setNotice(`Real metered pilot queued: ${pilotSteps} optimizer steps. Monetary cost remains unknown unless priced usage is recorded.`);
+    } catch (e) { setError(errorMessage(e)); } finally { setPilotBusy(false); }
+  }
+  const compared = comparisonIds.split(',').filter(Boolean).map(id => runs.find(run => run.run_id === id)).filter((run): run is Run => !!run);
+  const compareBlocked = comparisonBlockers(compared);
+  const handoffError = useResourceHandoff(token, (kind, value) => { if (kind === 'model-version') { setBase(String(value.id)); setTokenizer(String(value.tokenizer || '')); } else setSelectedDataset(String(value.id)); setModelName(''); setPreset('custom'); setAdvanced(true); setPreflight(null); });
+  const lossSeries = trainingLossSeries(focusRun?.metrics_log);
   const savedCheckpoints = runs.reduce((sum, run) => sum + run.checkpoints.length, 0);
+  const tabs: Array<{ value: TrainingTab; label: string }> = [{ value: 'configure', label: 'Configure' }, { value: 'current-run', label: 'Current run' }, { value: 'history', label: 'History' }];
+  const locked = busy || setupBusy || pilotBusy;
+  const historicalRuns = [...runs].sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+  const runLabel = (id: string) => `Training run ${runs.findIndex(run => run.run_id === id) + 1}`;
+  const exportPanel = detailRun?.status === 'completed' ? <ModelExport key={`export-${detailRun.run_id}`} runId={detailRun.run_id}
+    options={detailRun.export_options || []} token={token} checkpointStep={detailRun.quality_summary?.selected_step ?? detailRun.total_steps}
+    synthetic={detailRun.runtime?.execution_mode === 'simulation'} /> : null;
+
+  const runDetail = detailRun ? (
+          <div className="detail-box">
+            <div className="actions" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h3>{runLabel(detailRun.run_id)} <Identifier value={detailRun.run_id} label="Run ID" /></h3>
+                <Badge className={`state state-${detailRun.status}`}>{detailRun.status}</Badge>
+              </div>
+              <div style={{ display: 'flex', gap: 'var(--space-8)' }}>
+                {tab === 'history' && detailRun.status === 'completed' && detailRun.guided_evaluation?.eligible && detailRun.base_model_version && detailRun.output_model_version_uuid && <a className="primary" href={evaluationHash(detailRun.run_id)}>Evaluate against base</a>}
+                {tab === 'history' && detailRun.status === 'completed' && detailRun.output_model_version_uuid && <a href={`#chat?model_version=${encodeURIComponent(detailRun.output_model_version_uuid)}`}>Try your model</a>}
+                {tab === 'history' && detailRun.status === 'completed' && detailRun.output_model_version_uuid && detailRun.base_model_version && <a href={`#chat?model_version=${encodeURIComponent(detailRun.output_model_version_uuid)}&compare_base=1`}>Compare with base model</a>}
+                {(detailRun.status === 'running' || detailRun.status === 'pending') && (
+                  <Button
+                    type="button"
+                    style={{ borderColor: 'var(--error)', color: 'var(--error)' }}
+                    disabled={busy}
+                    onClick={() => cancelRun(detailRun.run_id)}
+                  >
+                    <XCircle size={14} /> Cancel run
+                  </Button>
+                )}
+                <a href={runHash('training', detailRun.run_id)}>Open run</a>
+                {tab === 'history' && <Button onClick={() => { setSelected(null); navigateTab('history'); }}>Close details</Button>}
+              </div>
+            </div>
+
+            {tab === 'history' && exportPanel}
+
+            <p className="muted">
+              Tokenizer {tokenizers.find(t => t.id === detailRun.tokenizer_version)?.name || 'version'} <Identifier value={String(detailRun.tokenizer_version)} label="Tokenizer record ID" /> {detailRun.runtime?.execution_mode === 'worker' ? '· Pinned base weights' : `· Seed ${detailRun.initialization_seed}`} · Base model{' '}
+              {detailRun.base_model_version ? <>{models.find(m => m.id === detailRun.base_model_version)?.model_name || 'Pinned version'} <Identifier value={String(detailRun.base_model_version)} label="Base model record ID" /></> : 'Random init'}
+              {detailRun.dataset_manifest_digest && <> · Dataset manifest <Identifier value={detailRun.dataset_manifest_digest} label="Dataset manifest digest" /></>}
+              {detailRun.job && <> · Job <Identifier value={detailRun.job} label="Job ID" /></>}
+            </p>
+
+            {detailRun.quality_summary && <Notice className="notice"><h4>Training result</h4>
+              <p>Selected checkpoint: step {detailRun.quality_summary.selected_step} of {detailRun.total_steps}.</p>
+              {detailRun.quality_summary.validation_loss != null && detailRun.quality_summary.baseline_loss != null ? <>
+                <p>Validation loss: {detailRun.quality_summary.baseline_loss.toLocaleString(undefined, { maximumSignificantDigits: 4 })} before training → {detailRun.quality_summary.validation_loss.toLocaleString(undefined, { maximumSignificantDigits: 4 })} for the selected model. Lower is better.</p>
+                <p>{detailRun.quality_summary.validation_loss < detailRun.quality_summary.baseline_loss ? 'Validation improved.' : 'Validation did not improve.'} Based on {detailRun.quality_summary.validation_examples} validation examples; check actual answers too.</p>
+              </> : <p>No validation examples were available. Test the model on independent examples before using it for real work.</p>}
+            </Notice>}
+            {/* Checkpoints & Safetensors weights */}
+            <h4>Saved checkpoints ({detailRun.checkpoints.length})</h4>
+            {detailRun.checkpoints.length > 5 && <p className="muted">Showing the latest 5 checkpoints.</p>}
+            {detailRun.checkpoints.length ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+                {detailRun.checkpoints.slice(-5).map((c) => (
+                  <div key={c.checkpoint_id} style={{ padding: 'var(--space-8)', background: 'var(--surface-subtle)', borderRadius: '4px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <strong>Step {c.step}</strong>
+                      <Badge className={`state state-${c.is_valid ? 'completed' : 'failed'}`}>
+                        <CheckCircle size={12} style={{ display: 'inline', marginRight: 'var(--space-4)' }} />
+                        {c.is_valid ? 'Valid Safetensors' : 'Invalid'}
+                      </Badge>
+                    </div>
+                    <div className="muted" style={{ fontSize: '11px', marginTop: 'var(--space-4)' }}>
+                      State digest <Identifier value={c.state_digest} label="Checkpoint state digest" />
+                    </div>
+                    {(c.weights_manifest?.weights_sha256 || c.weights_manifest?.weights?.weights_sha256) && (
+                      <div className="muted" style={{ fontSize: '11px' }}>
+                        Weights SHA-256 <Identifier value={c.weights_manifest?.weights_sha256 || c.weights_manifest?.weights?.weights_sha256 || ''} label="Weights SHA-256" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="muted">No checkpoints recorded yet.</p>
+            )}
+
+            {/* External Inference Candidate Testing */}
+            <details style={{ marginTop: 'var(--space-20)', borderTop: '1px solid var(--color-border, #e2e8f0)', paddingTop: 'var(--space-16)' }}>
+              <summary>Advanced inference check</summary>
+              <p className="muted" style={{ fontSize: 'var(--type-13)' }}>
+                Load the exported weights and decode text in the server CPU runtime. GPU inference uses the independent consumer on the worker host.
+              </p>
+              <div className="training-inference-controls">
+                <Field
+                  type="text"
+                  aria-label="Inference test prompt"
+                  placeholder="Enter test prompt…"
+                  value={inferPrompt}
+                  onChange={(e) => setInferPrompt(e.target.value)}
+                  style={{ flex: 1 }}
+                />
+                <Field
+                  type="number"
+                  min="1"
+                  max="32"
+                  aria-label="Maximum generated tokens"
+                  value={inferMaxTokens}
+                  onChange={(e) => setInferMaxTokens(e.target.value)}
+                  style={{ width: '80px' }}
+                />
+                <Button
+                  type="button"
+                  className="primary"
+                  disabled={inferring || !inferPrompt.trim() || detailRun.status !== 'completed'}
+                  onClick={() => runExternalInference(detailRun.run_id)}
+                >
+                  {inferring ? <RefreshCw size={14} className="spin" /> : <Play size={14} />} Run inference
+                </Button>
+              </div>
+
+              {inferError && (
+                <Notice className="notice danger" style={{ marginTop: 'var(--space-8)' }}>
+                  {inferError}
+                </Notice>
+              )}
+
+              {inferResult && (
+                <div style={{ marginTop: 'var(--space-12)', padding: 'var(--space-12)', background: 'var(--color-bg-secondary, #f8f9fa)', borderRadius: 'var(--radius-6)' }}>
+                  <div style={{ display: 'flex', gap: 'var(--space-16)', marginBottom: 'var(--space-8)' }}>
+                    <Badge className="state state-completed">
+                      Format: {inferResult.verification.format}
+                    </Badge>
+                    <Badge className="state state-completed">
+                      CPU load and inference: {inferResult.verification.is_loadable ? 'Passed' : 'Failed'} · Independent runtime unverified
+                    </Badge>
+                    <span className="muted" style={{ fontSize: 'var(--type-12)' }}>
+                      Tensors: {inferResult.verification.num_tensors}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 'var(--type-12)', marginBottom: 'var(--space-6)' }}>
+                    <strong>Candidate Weights SHA-256:</strong>{' '}
+                    <Identifier value={inferResult.verification.weights_sha256} label="Verified weights SHA-256" />
+                  </div>
+                  <div style={{ padding: 'var(--space-8)', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '4px', fontFamily: 'monospace', fontSize: 'var(--type-13)' }}>
+                    <strong>Prompt:</strong> {inferResult.inference.prompt}
+                    <br />
+                    <strong>Completion:</strong>{' '}
+                    <span style={{ color: 'var(--primary-text)' }}>
+                      {inferResult.inference.completion}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </details>
+          </div>
+        ) : null;
 
   return (
-    <section className="panel ml-page ml-main-panel ml-training">
+    <Card className="panel ml-page ml-main-panel ml-training">
       <div className="panel-title" style={{ flexWrap: 'wrap' }}>
         <div style={{ flex: '1 1 300px' }}>
           <span className="ml-eyebrow">DEVELOP / TRAINING</span><h2>Training studio</h2>
-          <p>Fine-tune on a registered CPU or GPU worker using published text and pinned weights. Preview runtime requirements, then monitor committed steps, checkpoints and usage.</p>
+          <p>Choose your model and data, review your training plan, and follow the results in one workspace.</p>
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-          <button
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-8)' }}>
+          <Button
             type="button"
             disabled={!token.trim()}
             onClick={() => setShowTokenizerModal(true)}
           >
             <Plus size={14} /> Tokenizer
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             disabled={!token.trim()}
             onClick={() => setShowModelModal(true)}
           >
             <Plus size={14} /> Model Version
-          </button>
-          <button
+          </Button>
+          <Button
             className="primary"
+            hidden={tab === 'configure'}
             disabled={!token.trim() || loading}
-            onClick={() => setShowForm((v) => !v)}
+            onClick={() => { navigateTab('configure'); draft.field('guidedStage')[1](base && selectedDataset ? 2 : 0); }}
           >
-            {showForm ? 'Close setup' : 'New training run'}
-          </button>
+            Configure a run
+          </Button>
         </div>
       </div>
       <div className="panel-body">
-        <div className="ml-stat-strip" aria-label="Loaded training summary">
-          <div><span>Training runs</span><strong>{loading ? '—' : runs.length}</strong><small>In the loaded page</small></div>
+        <div className="training-tabs" role="tablist" aria-label="Training workspace">
+          {tabs.map((item, index) => <Tab key={item.value} ref={element => { tabRefs.current[index] = element; }}
+            type="button" role="tab" id={`training-tab-${item.value}`} aria-controls={`training-panel-${item.value}`}
+            aria-selected={tab === item.value} tabIndex={tab === item.value ? 0 : -1}
+            onClick={() => navigateTab(item.value)} onKeyDown={event => {
+              const next = event.key === 'ArrowRight' ? (index + 1) % tabs.length : event.key === 'ArrowLeft' ? (index + tabs.length - 1) % tabs.length : event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : null;
+              if (next !== null) { event.preventDefault(); navigateTab(tabs[next].value); tabRefs.current[next]?.focus(); }
+            }}>{item.label}{item.value === 'current-run' && hasActiveRuns && <span className="training-live-dot" aria-label="Training active" />}</Tab>)}
+        </div>
+        {(loading || runs.length > 0) && <div className="ml-stat-strip" aria-label="Loaded training summary">
+          <div><span>Training runs</span><strong>{loading ? '—' : runs.length}</strong><small>All accessible recorded runs</small></div>
           <div><span>Active runs</span><strong>{loading ? '—' : runs.filter(r => ['pending', 'running'].includes(r.status)).length}</strong><small>Pending or running</small></div>
           <div><span>Saved checkpoints</span><strong>{loading ? '—' : savedCheckpoints}</strong><small>Recorded checkpoint artifacts</small></div>
-          <div><span>Latest selected loss</span><strong>{focusRun?.latest_loss == null ? '—' : focusRun.latest_loss.toFixed(4)}</strong><small>{focusRun ? `Run ${focusRun.run_id.slice(0, 8)}` : 'Select a recorded run'}</small></div>
-        </div>
-        <ResourceState loading={loading} error={error} onRetry={() => setRetry((v) => v + 1)} />
+          <div><span>Latest selected loss</span><strong>{focusRun?.latest_loss == null ? '—' : focusRun.latest_loss.toFixed(4)}</strong><small>{focusRun ? runLabel(focusRun.run_id) : 'Select a recorded run'}</small></div>
+        </div>}
+        <>{handoffError && <p role="alert">{handoffError}</p>}</><ResourceState loading={loading} error={error} onRetry={() => setRetry((v) => v + 1)} />
         {notice && (
-          <div className="notice success" role="status">
+          <Notice tone="success" className="notice success" role="status">
             {notice}
-          </div>
+          </Notice>
         )}
-        {showForm && (
-          <form id="training-launch" className="form-grid" onSubmit={create}>
+        <div id="training-panel-configure" role="tabpanel" aria-labelledby="training-tab-configure" hidden={tab !== 'configure'}>
+          <div className="training-config-heading"><div><h3>Configure your training run</h3><p>Simple and advanced settings share the same saved configuration.</p></div>
+            <Button type="button" aria-expanded={advanced} aria-controls="training-advanced-settings" disabled={locked || preflightBusy}
+              onClick={() => { setAdvanced(value => !value); if (advanced) draft.field('guidedStage')[1](base && selectedDataset ? 2 : base ? 1 : 0); }}>{advanced ? 'Hide advanced settings' : 'Advanced settings'}</Button>
+          </div>
+          <div className={`training-config-layout${advanced || base && selectedDataset ? '' : ' training-config-guided'}`}>
+            <div className="training-config-fields">
+              <div hidden={advanced || mode !== 'worker'}><GuidedFineTune token={token} draft={draft} modelLabel={modelLabel} datasetLabel={datasetLabel} datasetRevisionId={registeredRevision?.revision_id || revision?.revision_id}
+                onModelPrepared={prepareModel} onDatasetPrepared={prepareDataset} onBusyChange={setSetupBusy} /></div>
+              <form id="training-launch" onSubmit={create}>
+                <fieldset disabled={locked || preflightBusy} className="training-fieldset">
+                  <div id="training-advanced-settings">{advanced && <div className="form-grid">
+                    <h3 className="full-width">Model, data and compute</h3>
             <label>Execution
               <select value={mode} onChange={(e) => { setMode(e.target.value); setRecipe('full_sft'); setSelectedPool(''); setSelectedPolicy(''); setRunner(''); }}>
                 <option value="worker">Worker text fine-tuning</option>
@@ -451,9 +697,9 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
 
             <label>
               Tokenizer version
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div style={{ display: 'flex', gap: 'var(--space-8)' }}>
                 <select
-                  required
+                  aria-label="Tokenizer version" required
                   value={tokenizer}
                   onChange={(e) => setTokenizer(e.target.value)}
                   style={{ flex: 1 }}
@@ -465,60 +711,33 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
                     </option>
                   ))}
                 </select>
-                <button
+                <Button
                   type="button"
                   style={{ whiteSpace: 'nowrap' }}
                   onClick={() => setShowTokenizerModal(true)}
                 >
                   + New
-                </button>
+                </Button>
               </div>
             </label>
 
-            {recipe !== 'scratch_pretraining' && (
-              <label>
-                Base model version
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <select
-                    required
-                    value={base}
-                    onChange={(e) => setBase(e.target.value)}
-                    style={{ flex: 1 }}
-                  >
-                    <option value="">Select a model version</option>
-                    {models.map((m) => (
-                      <option key={m.model_version_id} value={m.id}>
-                        {m.model_name} · r{m.revision_no} · {m.state}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    type="button"
-                    style={{ whiteSpace: 'nowrap' }}
-                    onClick={() => setShowModelModal(true)}
-                  >
-                    + New
-                  </button>
-                </div>
-              </label>
-            )}
+            {recipe !== 'scratch_pretraining' && <ResourcePicker label="Base model version" loading={loading} disabled={busy || preflightBusy} required value={base} onChange={value => { setBase(value); setModelName(''); }}
+              options={models.map(m => ({ value: String(m.id), id: m.model_version_id, name: m.model_name, revision: m.revision_no, state: m.state,
+                href: resourceHash('model-version', m.model_version_id), description: m.capabilities?.train.reason,
+                unavailable: mode === 'worker' && (!m.capabilities?.train.eligible || !m.capabilities.train.recipes.includes(recipe)) ? m.capabilities?.train.reason || 'This model does not support the selected training recipe.' : undefined }))}
+              action={<Button type="button" onClick={() => setShowModelModal(true)}>+ New</Button>} />}
 
             <p className="muted full-width"><a href="#models">Initialize a CPU base in Models</a> or select a GPU base registered on your worker host. Choose its matching tokenizer.</p>
-            <label>
-              Prepared dataset revision
-              <select
-                required={mode === 'worker'}
-                value={selectedDataset}
-                onChange={(e) => setSelectedDataset(e.target.value)}
-              >
-                <option value="">Select an immutable published revision</option>
-                {datasetRevisions.map((d) => (
-                  <option key={d.revision_id} value={d.id}>
-                    {d.dataset_name || `Dataset r${d.revision_no}`} · {d.row_count || 0} rows · SHA: {d.manifest_digest.slice(0, 10)}…
-                  </option>
-                ))}
-              </select>
-            </label>
+            {base && mode === 'worker' && <p className="muted full-width">{models.find(m => String(m.id) === base)?.capabilities?.train.reason || 'Inspect model compatibility in Models before launch.'}</p>}
+            {base && mode === 'worker' && <ModelHardwareFit memory={selectedModel?.capabilities?.memory_requirements}
+              targets={hardware.workers.filter(worker => !selectedPool || String(worker.pool) === selectedPool).map(worker => workerHardware(worker, hardware.reportedAt))}
+              compatible={!trainingCapability || trainingCapability.eligible && trainingCapability.recipes.includes(recipe)}
+              reason={trainingCapability?.eligible && !trainingCapability.recipes.includes(recipe) ? 'This model does not support the selected training recipe.' : trainingCapability?.reason} />}
+            {base && hardware.error && <p className="muted full-width" role="status">Hardware inventory unavailable: {hardware.error}</p>}
+            <ResourcePicker label="Prepared dataset revision" action={registeredRevision && <Identifier value={registeredRevision.manifest_digest} label="Dataset manifest digest" />} loading={loading} disabled={busy || preflightBusy} required={mode === 'worker'} value={selectedDataset} onChange={setSelectedDataset}
+              options={datasetRevisions.map(d => ({ value: String(d.id), id: d.revision_id, name: d.dataset_name || 'Dataset', revision: d.revision_no,
+                state: d.state, description: `${d.row_count ?? 'Unknown'} rows`, href: resourceHash('dataset-revision', d.revision_id) }))} />
+            {advanced && mode === 'worker' && registeredRevision && <div className="full-width"><PreparedDatasetPreview key={`${registeredRevision.revision_id}-${refreshKey}`} revisionId={registeredRevision.revision_id} token={token} /></div>}
 
             <label>
               Worker execution pool
@@ -545,8 +764,8 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
               >
                 <option value="">Select a training step budget</option>
                 {policies.map((p) => (
-                  <option key={p.policy_id} value={p.policy_id}>
-                    {p.name} (limit: {p.limit_amount} {p.unit})
+                  <option key={p.policy_id} value={p.policy_id} disabled={p.allowance !== undefined && Number(p.allowance.remaining_amount) <= 0}>
+                    {p.name} (remaining: {p.allowance?.remaining_amount ?? 'check preflight'} · limit: {p.limit_amount} {p.unit})
                   </option>
                 ))}
               </select>
@@ -561,7 +780,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
 
             <label>
               Initialization seed
-              <input
+              <Field
                 disabled={mode === 'worker'}
                 required
                 type="number"
@@ -573,122 +792,74 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
               />
             </label>
 
-            <label>
-              Total steps
-              <input
-                required
-                type="number"
-                min="1"
-                max="1000"
-                step="1"
-                value={steps}
-                onChange={(e) => setSteps(e.target.value)}
-              />
-            </label>
-
-            <div className="actions full-width">
-              {mode === 'simulation' && <button
-                className="primary"
-                disabled={busy || preflightBusy || !tokenizer || (recipe !== 'scratch_pretraining' && !base)}
-              >
-                {busy ? 'Creating…' : 'Create CPU training fixture'}
-              </button>}
-              {mode === 'worker' && <button type="button" disabled={busy || preflightBusy} onClick={runPreflight}>
-                {preflightBusy ? 'Checking…' : 'Preview preflight'}
-              </button>}
-              <button type="button" disabled={busy} onClick={() => setShowForm(false)}>
-                Cancel
-              </button>
+            {mode === 'worker' && referenceRuntime && <><label>Learning rate<Field type="number" min="0.000001" max="0.2" step="any" value={learningRate} placeholder="Pinned runtime default" onChange={e => setLearningRate(e.target.value)} /></label><label>Validation interval<Field type="number" required min="0" max="1000" value={validationInterval} onChange={e => setValidationInterval(e.target.value)} /></label><p className="muted full-width">Validation interval 0 disables validation; otherwise the source must have separate validation groups. Schedule is constant, with a full optimizer checkpoint at every committed step. GPU profiles keep their declared optimizer and cadence.</p></>}
+                  </div>}</div>
+                  {(advanced || selectedDataset) && <section className="training-plan detail-box">
+                    <h3>Training plan</h3>
+                    <label>Training plan<select value={preset} onChange={event => { setPreset(event.target.value); if (event.target.value === 'custom') setSteps(String(steps || 50)); }}>
+                      <option value="recommended" disabled={!revision}>Recommended{revision ? ` · ${plan.epochs} passes` : ' · prepare a dataset first'}</option>
+                      <option value="quick">Quick setup check · 3 steps</option><option value="custom">Custom step count</option>
+                    </select></label>
+                    {preset === 'custom' && <label>Total steps<Field required type="number" min="1" max="3000" step="1" value={manualSteps} onChange={event => setSteps(event.target.value)} /></label>}
+                    <p>{preset === 'recommended' ? revision ? `${plan.epochs} complete passes through ${plan.trainingExamples} training examples (${steps} updates).` : 'Add your dataset to calculate the recommended training plan automatically.' : `${steps} training updates.`}</p>
+                    {preset === 'quick' && <p>This short run checks your setup. Use more training steps to assess model quality.</p>}
+                    {revision && <p>{revision.metadata.split_counts.validation ?? 0} validation and {revision.metadata.split_counts.test ?? 0} test examples remain held out.</p>}
+                    {mode === 'simulation' && <Button className="primary" disabled={!canReview}>Create CPU training fixture</Button>}
+                  </section>}
+                </fieldset>
+              </form>
+              {advanced && mode === 'worker' && <details className="detail-box"><summary>Measured pilot (optional)</summary><label>Pilot optimizer steps<Field type="number" min="1" max="10" value={pilotSteps} onChange={e => setPilotSteps(e.target.value)} disabled={locked} /></label><Button disabled={locked || !canReview} onClick={() => void previewPilot()}>Review pilot preflight</Button><p className="muted">A pilot trains real weights and reserves its actual step count. A matching completed execution can inform the duration estimate; monetary cost stays unknown without a recorded rate.</p>{pilotReport && <PreflightChecklist report={pilotReport} busy={locked} title="Pilot preflight" launchLabel="Launch real metered pilot" onLaunch={() => void launchPilot()} onRefresh={() => void previewPilot()} />}</details>}
+              <details className="training-draft"><summary>Saved configuration</summary><DraftStatus draft={draft} disabled={locked || preflightBusy} /></details>
             </div>
-
-            <p className="muted full-width">
-              {mode === 'worker' ? `Reserves ${steps} training steps. Preflight resolves the selected runtime's data limits, hardware and storage requirements. Monetary cost is unknown.` : 'Synthetic fixtures use no worker or compute budget.'}
-            </p>
-          </form>
-        )}
-        {showForm && preflight && (
-          <div ref={preflightPanel} tabIndex={-1} className="detail-box" role="region" aria-label="Training preflight" aria-live="polite" style={{ overflowWrap: 'anywhere' }}>
-            <h3>
-              Preflight:{' '}
-              <span className={`state state-${preflight.status === 'approved' ? 'completed' : 'failed'}`}>
-                {preflight.status === 'approved' ? 'Ready to launch' : 'Blocked'}
-              </span>
-            </h3>
-            {preflight.blocking_checks.length > 0 && (
-              <p className="muted">
-                Blocking checks: {preflight.blocking_checks.join(', ')}
-              </p>
-            )}
-            {preflight.samples.length > 0 && (
-              <>
-                <h4>Encoded training samples · {preflight.sample_count} total, showing up to 5</h4>
-                <ul>
-                  {preflight.samples.map((sample, index) => (
-                    <li key={`${sample.sample_id ?? 'sample'}-${index}`}>
-                      <code>{sample.sample_id ?? `sample ${index + 1}`}</code> · {sample.token_count} tokens ·{' '}
-                      {sample.text_preview}
-                      <div><strong>Token IDs:</strong> <code>{sample.token_ids.join(', ')}</code></div>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-            <h4>Checks</h4>
-            <ul>
-              {preflight.checks.map((check) => (
-                <li key={check.check}>
-                  <strong>{check.check}</strong> · {check.category} · {check.status}: {check.reason}
-                  {check.corrective_action ? ` → ${check.corrective_action}` : ''}
-                  {check.detail && Object.keys(check.detail).length > 0 && <details><summary>Check details and units</summary><pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(check.detail, null, 2)}</pre></details>}
-                </li>
-              ))}
-            </ul>
-            <h4>Resolved requirements</h4>
-            <p>{String(preflight.requirements.runtime ?? 'Unresolved runtime')} · {String(preflight.requirements.cpu_slots ?? 'unknown')} worker slot · {typeof preflight.requirements.memory_bytes === 'number' ? `${preflight.requirements.memory_bytes / 1048576} MiB host memory` : 'memory unknown'} · {typeof preflight.requirements.storage_bytes === 'number' ? `${(preflight.requirements.storage_bytes / 1048576).toFixed(2)} MiB projected storage` : 'storage unknown'}.</p>
-            {preflight.requirements.accelerator != null && <>
-              <p>GPU devices required: {String(preflight.requirements.gpu_count ?? 'unknown')} · training precision: {String(preflight.requirements.precision ?? 'unknown')}.</p>
-              <details><summary>Resolved GPU device and capacity source</summary><pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(preflight.requirements.accelerator, null, 2)}</pre></details>
-            </>}
-            <p className="muted">{String(preflight.requirements.storage_assumption ?? 'Resolve the input checks to determine storage requirements.')}</p>
-            <details><summary>Resolved recipe parameters</summary><pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify({ config: preflight.requirements.config, optimizer: preflight.requirements.optimizer }, null, 2)}</pre></details>
-            {preflight.budget && <p>Budget: {preflight.budget.requested} {preflight.budget.unit} requested · {preflight.budget.remaining} remaining of {preflight.budget.limit} · {preflight.budget.committed} already committed.</p>}
-            <details><summary>Pinned input revisions and digests</summary><pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(preflight.pins, null, 2)}</pre></details>
-            <p className="muted">{preflight.capacity_note} Preview expires after {preflight.expires_in_seconds / 60} minutes.</p>
-            <h4>Estimate</h4>
-            <p>Engine time: {preflight.estimate.known ? preflight.estimate.estimated_duration_seconds?.toPrecision(3) : 'unknown — no matching measured pilot'} · units: {preflight.estimate.units.duration}. Total next-token pairs: {preflight.estimate.total_tokens ?? 'unknown'}.</p>
-            <p className="muted">{preflight.estimate.source} · uncertainty: {preflight.estimate.uncertainty}</p>
-            <ul>
-              {preflight.estimate.assumptions.map((assumption, index) => (
-                <li key={index}>{assumption}</li>
-              ))}
-            </ul>
-            {preflight.estimate.estimated_cost.known ? (
-              <p>
-                Estimated cost: {preflight.estimate.estimated_cost.value} {preflight.estimate.currency || ''}
-              </p>
-            ) : (
-              <p>Estimated cost: unknown — {preflight.estimate.estimated_cost.reason}</p>
-            )}
-            <button form="training-launch" type="submit" className="primary" disabled={busy || preflightBusy || !preflight.preflight_token}>
-              {busy ? 'Launching…' : 'Launch fine-tuning'}
-            </button>
-
+            {(advanced || base && selectedDataset) && <aside className="training-run-preview detail-box" aria-label="Run summary">
+              <span className="ml-eyebrow">RUN SUMMARY</span><h3>Your training run</h3>
+              <dl className="guided-review"><div><dt>Model</dt><dd>{base ? modelLabel || `Model #${base}` : recipe === 'scratch_pretraining' ? 'Random initialization' : 'Choose a model'}</dd></div>
+                <div><dt>Dataset</dt><dd>{selectedDataset ? datasetLabel || `Revision #${selectedDataset}` : 'Choose a dataset'}</dd></div>
+                <div><dt>Method</dt><dd>{recipe.replaceAll('_', ' ')}</dd></div>
+                <div><dt>Compute</dt><dd>{mode === 'simulation' ? 'Synthetic fixture' : pools.find(pool => String(pool.id) === selectedPool)?.name || 'Prepare or select compute'}</dd></div>
+                <div><dt>Training steps</dt><dd>{steps > 0 ? steps : 'Prepare a dataset'}</dd></div>
+              </dl>
+              <p className="muted">{mode === 'worker' ? `Reserves ${steps > 0 ? steps : 'the selected'} training steps. Preflight checks compatibility, hardware, storage and allowance before launch.` : 'Synthetic fixtures use no worker or compute budget.'}</p>
+              {mode === 'worker' && <Button type="button" className="primary" disabled={locked || preflightBusy || !canReview} onClick={() => void runPreflight()}>{preflightBusy ? 'Checking…' : 'Preview preflight'}</Button>}
+              {!canReview && <p role="status">Choose compatible model, tokenizer, dataset, compute and training settings to review this run.</p>}
+            </aside>}
           </div>
-        )}
-        <div className="ml-section-heading"><div><span className="ml-eyebrow">EXPERIMENT MONITOR</span><h3>Loss & checkpoint activity</h3><p>Recorded training loss at committed steps, alongside saved checkpoint artifacts.</p></div><label>Inspect run<select aria-label="Training run to visualize" value={focusRun?.run_id || ''} onChange={e => setSelected(runs.find(r => r.run_id === e.target.value) || null)}><option value="" disabled>Select a training run</option>{runs.map(r => <option key={r.run_id} value={r.run_id}>{r.run_id.slice(0, 8)} · {r.recipe_type} · {r.status}</option>)}</select></label></div>
-        <div className="visualization-grid">
-          <ChartPanel title="Training loss" description={focusRun ? `${focusRun.run_id.slice(0, 8)} · ${focusRun.execution_evidence?.level || 'unknown evidence'}` : 'Loss from committed training measurements.'}><LineChart series={[{ name: 'Training loss', points: lossPoints }]} xLabel="Committed step" yLabel="Loss" /></ChartPanel>
-          <ChartPanel title="Checkpoint timeline" description="Saved artifacts from the selected run.">{focusRun ? <><div className="ml-run-progress"><span>Committed steps</span><strong>{focusRun.current_step} / {focusRun.total_steps}</strong><progress value={focusRun.current_step} max={focusRun.total_steps || 1} aria-label="Selected run committed steps" /></div>{focusRun.checkpoints.length ? <EventTimeline events={focusRun.checkpoints.slice(-5).map(c => ({ label: `Checkpoint · step ${c.step}`, detail: c.state_digest.slice(0, 18) + '…', status: c.is_valid ? 'completed' : 'failed' }))} /> : <ChartEmpty message="No checkpoint artifacts have been recorded for this run." />}</> : <ChartEmpty message="Create a training run to inspect committed steps and checkpoints." />}</ChartPanel>
+          {preflight && <PreflightChecklist report={preflight} busy={locked || preflightBusy} form="training-launch" compact={!advanced} onRefresh={() => void runPreflight()} />}
         </div>
-        {focusRun?.metrics_log?.some(m => m.measured_at) && <div className="table-scroll" tabIndex={0}><table className="resource-table"><caption>Measured GPU optimizer steps; throughput includes the post-update loss pass. Missing metrics are not estimated.</caption><thead><tr><th>Step / timestamp</th><th>Protected validation loss</th><th>Gradient norm</th><th>Prediction tokens/sec</th><th>Allocated / peak MiB</th><th>GPU utilization</th><th>Trainable / total parameters</th></tr></thead><tbody>{focusRun.metrics_log.slice(-10).map(m => <tr key={m.step}><td>{m.step}<br />{m.measured_at || 'Not reported'}</td><td>{m.validation_loss?.toFixed(6) ?? 'Not reported'}<br />{m.validation_prediction_tokens == null ? '' : `${m.validation_prediction_tokens} prediction tokens`}</td><td>{m.gradient_norm?.toFixed(4) ?? 'Not reported'}</td><td>{m.tokens_per_second?.toFixed(2) ?? 'Not reported'}</td><td>{m.gpu_allocated_bytes == null ? 'Not reported' : (m.gpu_allocated_bytes / 1024**2).toFixed(1)} / {m.peak_allocated_bytes == null ? 'Not reported' : (m.peak_allocated_bytes / 1024**2).toFixed(1)}</td><td>{m.gpu_utilization_percent == null ? 'Not reported' : `${m.gpu_utilization_percent}%`}</td><td>{m.trainable_parameters?.toLocaleString() ?? 'Not reported'} / {m.total_parameters?.toLocaleString() ?? 'Not reported'}</td></tr>)}</tbody></table></div>}
+        <div ref={tabPanel} tabIndex={-1} id="training-panel-current-run" role="tabpanel" aria-labelledby="training-tab-current-run" hidden={tab !== 'current-run'}>
+          <div className="training-config-heading"><div><h3>Current run</h3><p>Live progress, recorded metrics and checkpoints.</p></div>
+            <label>Inspect run<select aria-label="Current training run" value={focusRun?.run_id || ''} onChange={event => { setCurrentRunId(event.target.value); navigateTab('current-run', event.target.value); }}><option value="">Select a run</option>{historicalRuns.map(run => <option key={run.run_id} value={run.run_id}>{runLabel(run.run_id)} · {run.recipe_type} · {run.status}</option>)}</select></label>
+          </div>
+          {!loading && !focusRun && <div className="training-empty"><h3>{currentRunId ? 'This run is unavailable' : 'No training run yet'}</h3><p>{currentRunId ? 'Refresh the workspace or choose another accessible run.' : 'Prepare your model and data, then launch a training run.'}</p><Button type="button" onClick={() => navigateTab('configure')}>Configure a run</Button></div>}
+          {focusRun && <>
+        {tab === 'current-run' && <TrainingRunProgress key={`progress-${focusRun.run_id}`} run={focusRun} refreshedAt={runsRefreshedAt} refreshError={progressError} onRefresh={() => void refreshProgress()} />}
+        {focusRun.status === 'completed' && focusRun.output_model_version_uuid && <Notice className="notice"><p>Your candidate is ready. Compare it with the starting model on held-out examples before deciding whether it improved.</p><div className="actions">{focusRun.guided_evaluation?.eligible && focusRun.base_model_version && <a className="primary" href={evaluationHash(focusRun.run_id)}>Evaluate against base</a>}<a href={`#chat?model_version=${encodeURIComponent(focusRun.output_model_version_uuid)}`}>Try your model</a>{focusRun.base_model_version && <a href={`#chat?model_version=${encodeURIComponent(focusRun.output_model_version_uuid)}&compare_base=1`}>Compare with base model</a>}</div></Notice>}
+        {tab === 'current-run' && exportPanel}
+        <div className="ml-section-heading"><div><span className="ml-eyebrow">EXPERIMENT MONITOR</span><h3>Loss & checkpoint activity</h3><p>Recorded training loss at committed steps, alongside saved checkpoint artifacts.</p></div></div>
+        <div className="visualization-grid">
+          <ChartPanel title="Training & validation loss" description={`${runLabel(focusRun.run_id)} · ${focusRun.execution_evidence?.level || 'unknown evidence'} · exact recorded values`}>{lossSeries.length ? <LineChart key={focusRun.run_id} series={lossSeries} xLabel="Committed step" yLabel="Loss" /> : <ChartEmpty message={focusRun.status === 'pending' ? 'This run is queued. Loss will appear after the first measured checkpoint.' : 'No loss measurements have been recorded for this run.'} />}</ChartPanel>
+          <ChartPanel title="Checkpoint timeline" description="Saved artifacts from the selected run.">{focusRun ? <><div className="ml-run-progress"><span>Committed steps</span><strong>{focusRun.current_step} / {focusRun.total_steps}</strong><progress value={focusRun.current_step} max={focusRun.total_steps || 1} aria-label="Selected run committed steps" /></div>{focusRun.checkpoints.length ? <EventTimeline events={focusRun.checkpoints.slice(-5).map(c => ({ label: `Checkpoint · step ${c.step}`, detail: c.is_valid ? 'Verified checkpoint artifact' : 'Checkpoint validation failed', status: c.is_valid ? 'completed' : 'failed' }))} /> : <ChartEmpty message="No checkpoint artifacts have been recorded for this run." />}</> : <ChartEmpty message="Create a training run to inspect committed steps and checkpoints." />}</ChartPanel>
+        </div>
+        {focusRun?.metrics_log?.some(m => m.measured_at) && <div className="table-scroll" tabIndex={0}><RecordTable className="resource-table"><caption>Measured GPU optimizer steps; throughput includes the post-update loss pass. Missing metrics are not estimated.</caption><thead><tr><th>Step / timestamp</th><th>Protected validation loss</th><th>Gradient norm</th><th>Prediction tokens/sec</th><th>Allocated / peak MiB</th><th>GPU utilization</th><th>Trainable / total parameters</th></tr></thead><tbody>{focusRun.metrics_log.slice(-10).map(m => <tr key={m.step}><td>{m.step}<br />{m.measured_at || 'Not reported'}</td><td>{m.validation_loss?.toFixed(6) ?? 'Not reported'}<br />{m.validation_prediction_tokens == null ? '' : `${m.validation_prediction_tokens} prediction tokens`}</td><td>{m.gradient_norm?.toFixed(4) ?? 'Not reported'}</td><td>{m.tokens_per_second?.toFixed(2) ?? 'Not reported'}</td><td>{m.gpu_allocated_bytes == null ? 'Not reported' : (m.gpu_allocated_bytes / 1024**2).toFixed(1)} / {m.peak_allocated_bytes == null ? 'Not reported' : (m.peak_allocated_bytes / 1024**2).toFixed(1)}</td><td>{m.gpu_utilization_percent == null ? 'Not reported' : `${m.gpu_utilization_percent}%`}</td><td>{m.trainable_parameters?.toLocaleString() ?? 'Not reported'} / {m.total_parameters?.toLocaleString() ?? 'Not reported'}</td></tr>)}</tbody></RecordTable></div>}
+          </>}
+          {tab === 'current-run' && runDetail}
+        </div>
+        <div id="training-panel-history" role="tabpanel" aria-labelledby="training-tab-history" hidden={tab !== 'history'}>
         <div className="ml-section-heading"><div><h3>Run history</h3><p>Inspect inputs, download candidates, and open the durable execution record.</p></div></div>
         {!loading && !error && !runs.length && <p className="muted">No training runs yet.</p>}
+        <section className="detail-box"><h3>Compare recorded experiments</h3><p className="muted">Choose up to two runs using the comparison checkboxes below.</p>
+          <p className="muted">Loss overlays require the same recipe, runtime build, tokenizer, architecture, dataset and validation protocol. Different optimizer settings remain visible as experimental changes. QLoRA quantized and unquantized baselines are distinct evidence; execution success does not pass a quality gate.</p>
+          {compareBlocked.map(reason => <p key={reason} role="status">{reason}</p>)}
+          {compared.map(run => <details key={run.run_id}><summary>{runLabel(run.run_id)} · {run.recipe_type}</summary><Identifier value={run.run_id} label="Run ID" /><DataInspector value={run.runtime} /></details>)}
+          {!compareBlocked.length && <LineChart series={compared.flatMap(run => [{ name: `${runLabel(run.run_id)} training`, points: (run.metrics_log || []).map(row => ({ x: row.step, y: row.loss })) }, { name: `${runLabel(run.run_id)} validation`, points: (run.metrics_log || []).flatMap(row => typeof row.validation_loss === 'number' ? [{ x: row.step, y: row.validation_loss! }] : []) }])} yLabel="Comparable loss" />}
+        </section>
+
         {!!runs.length && (
           <div className="table-scroll" tabIndex={0}>
-            <table className="resource-table">
+            <RecordTable className="resource-table">
               <thead>
                 <tr>
-                  <th>Run ID</th>
+                  <th>Run</th>
                   <th>Recipe</th>
                   <th>State</th>
                   <th>Progress</th>
@@ -697,22 +868,23 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
                 </tr>
               </thead>
               <tbody>
-                {runs.map((r) => (
-                  <tr key={r.run_id} className={focusRun?.run_id === r.run_id ? 'ml-selected-row' : undefined}>
+                {historicalRuns.map((r) => (
+                  <tr key={r.run_id} className={selected?.run_id === r.run_id ? 'ml-selected-row' : undefined}>
                     <td>
-                      <a href={runHash('training', r.run_id)}>{r.run_id.slice(0, 8)}</a>
-                      <button className="text-button" onClick={() => setSelected(r)}>Inline details</button>
+                      <label><input type="checkbox" checked={comparisonIds.split(',').includes(r.run_id)} onChange={e => setComparisonIds(e.target.checked ? [...comparisonIds.split(',').filter(Boolean).slice(-1), r.run_id].join(',') : comparisonIds.split(',').filter(id => id !== r.run_id).join(','))} />Compare this run</label>
+                      <a href={runHash('training', r.run_id)}>{runLabel(r.run_id)}</a> <Identifier value={r.run_id} label="Run ID" />
+                      <Button className="text-button" onClick={() => { setSelected(r); navigateTab('history', r.run_id); }}>Inspect run</Button><Button className="text-button" onClick={() => { setCurrentRunId(r.run_id); navigateTab('current-run', r.run_id); }}>View monitor</Button>
                     </td>
                     <td>{r.recipe_type}</td>
                     <td>
-                      <span className={`state state-${r.status}`}>{r.status}</span>
+                      <Badge className={`state state-${r.status}`}>{r.status}</Badge>
                       <small title={r.execution_evidence?.source}> · {r.execution_evidence?.level || "unknown evidence"}</small>
                     </td>
                     <td>
                       <progress
                         value={r.current_step}
                         max={r.total_steps || 1}
-                        aria-label={`Run ${r.run_id} progress`}
+                        aria-label={`${runLabel(r.run_id)} progress`}
                       />{' '}
                       {r.current_step} / {r.total_steps}
                     </td>
@@ -721,139 +893,12 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </RecordTable>
           </div>
         )}
-        {selected && (
-          <div className="detail-box">
-            <div className="actions" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <h3>Run {selected.run_id}</h3>
-                <span className={`state state-${selected.status}`}>{selected.status}</span>
-              </div>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                {selected.status === 'completed' && <button disabled={busy} onClick={() => downloadExport(selected.run_id)}>Download candidate</button>}
-                {(selected.status === 'running' || selected.status === 'pending') && (
-                  <button
-                    type="button"
-                    style={{ borderColor: 'var(--color-danger, #e53e3e)', color: 'var(--color-danger, #e53e3e)' }}
-                    disabled={busy}
-                    onClick={() => cancelRun(selected.run_id)}
-                  >
-                    <XCircle size={14} /> Cancel run
-                  </button>
-                )}
-                <a href={runHash('training', selected.run_id)}>Open run</a>
-                <button onClick={() => setSelected(null)}>Close details</button>
-              </div>
-            </div>
+          {tab === 'history' && runDetail}
+        </div>
 
-            <p className="muted">
-              Tokenizer #{selected.tokenizer_version} {selected.runtime?.execution_mode === 'worker' ? '· Pinned base weights' : `· Seed ${selected.initialization_seed}`} · Base model{' '}
-              {selected.base_model_version ? `#${selected.base_model_version}` : 'Random init'}
-              {selected.dataset_manifest_digest ? ` · Dataset digest: ${selected.dataset_manifest_digest.slice(0, 16)}…` : ''}
-              {selected.job ? ` · Job: ${selected.job.slice(0, 8)}` : ''}
-            </p>
-
-            {/* Checkpoints & Safetensors weights */}
-            <h4>Saved checkpoints ({selected.checkpoints.length})</h4>
-            {selected.checkpoints.length > 5 && <p className="muted">Showing the latest 5 checkpoints.</p>}
-            {selected.checkpoints.length ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                {selected.checkpoints.slice(-5).map((c) => (
-                  <div key={c.checkpoint_id} style={{ padding: '8px', background: 'var(--color-bg-secondary, #f8f9fa)', borderRadius: '4px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <strong>Step {c.step}</strong>
-                      <span className={`state state-${c.is_valid ? 'completed' : 'failed'}`}>
-                        <CheckCircle size={12} style={{ display: 'inline', marginRight: '4px' }} />
-                        {c.is_valid ? 'Valid Safetensors' : 'Invalid'}
-                      </span>
-                    </div>
-                    <div className="muted" style={{ fontSize: '11px', marginTop: '4px' }}>
-                      Digest: <code>{c.state_digest}</code>
-                    </div>
-                    {(c.weights_manifest?.weights_sha256 || c.weights_manifest?.weights?.weights_sha256) && (
-                      <div className="muted" style={{ fontSize: '11px' }}>
-                        Weights SHA-256: <code>{c.weights_manifest?.weights_sha256 || c.weights_manifest?.weights?.weights_sha256}</code>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="muted">No checkpoints recorded yet.</p>
-            )}
-
-            {/* External Inference Candidate Testing */}
-            <div style={{ marginTop: '20px', borderTop: '1px solid var(--color-border, #e2e8f0)', paddingTop: '16px' }}>
-              <h4>External Candidate Model Inference</h4>
-              <p className="muted" style={{ fontSize: '13px' }}>
-                Load the exported weights and decode text in the server CPU runtime. GPU inference uses the independent consumer on the worker host.
-              </p>
-              <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                <input
-                  type="text"
-                  aria-label="Inference test prompt"
-                  placeholder="Enter test prompt…"
-                  value={inferPrompt}
-                  onChange={(e) => setInferPrompt(e.target.value)}
-                  style={{ flex: 1 }}
-                />
-                <input
-                  type="number"
-                  min="1"
-                  max="32"
-                  aria-label="Maximum generated tokens"
-                  value={inferMaxTokens}
-                  onChange={(e) => setInferMaxTokens(e.target.value)}
-                  style={{ width: '80px' }}
-                />
-                <button
-                  type="button"
-                  className="primary"
-                  disabled={inferring || !inferPrompt.trim() || selected.status !== 'completed'}
-                  onClick={() => runExternalInference(selected.run_id)}
-                >
-                  {inferring ? <RefreshCw size={14} className="spin" /> : <Play size={14} />} Run inference
-                </button>
-              </div>
-
-              {inferError && (
-                <div className="notice danger" style={{ marginTop: '8px' }}>
-                  {inferError}
-                </div>
-              )}
-
-              {inferResult && (
-                <div style={{ marginTop: '12px', padding: '12px', background: 'var(--color-bg-secondary, #f8f9fa)', borderRadius: '6px' }}>
-                  <div style={{ display: 'flex', gap: '16px', marginBottom: '8px' }}>
-                    <span className="state state-completed">
-                      Format: {inferResult.verification.format}
-                    </span>
-                    <span className="state state-completed">
-                      CPU load and inference: {inferResult.verification.is_loadable ? 'Passed' : 'Failed'} · Independent runtime unverified
-                    </span>
-                    <span className="muted" style={{ fontSize: '12px' }}>
-                      Tensors: {inferResult.verification.num_tensors}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '12px', marginBottom: '6px' }}>
-                    <strong>Candidate Weights SHA-256:</strong>{' '}
-                    <code>{inferResult.verification.weights_sha256}</code>
-                  </div>
-                  <div style={{ padding: '8px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '4px', fontFamily: 'monospace', fontSize: '13px' }}>
-                    <strong>Prompt:</strong> {inferResult.inference.prompt}
-                    <br />
-                    <strong>Completion:</strong>{' '}
-                    <span style={{ color: 'var(--primary-text)' }}>
-                      {inferResult.inference.completion}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </div>
 
       <RegisterTokenizerModal
@@ -873,8 +918,9 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
         onSuccess={(mv: RegisteredModelVersion) => {
           setModels((current) => [...current, mv]);
           setBase(String(mv.id));
+          setModelName('');
         }}
       />
-    </section>
+    </Card>
   );
 }

@@ -1,0 +1,1282 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "First-time user review" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "Custom support assistant" [selected]
+    - option "+ New project…"
+  - strong: Datasets
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Connection":
+    - generic: Connection
+  - text: Data
+  - heading "Datasets" [level=1]
+  - paragraph: Prepare reproducible data, inspect splits, and publish immutable versions.
+  - region "Supported upload formats":
+    - heading "Supported upload formats" [level=2]
+    - paragraph: Upload canonical sample-envelope JSONL, CSV, a JSON record array, DOCX main-body text or a text PDF to prepare a dataset version. Files are stored locally and verified before publication.
+  - region "Upload and prepare":
+    - heading "Upload and prepare" [level=2]
+    - paragraph: Create one dataset and publish a revision after the uploaded bytes are verified.
+    - generic: LOCAL / CSV
+    - complementary "Local draft":
+      - status: Draft saved in this tab.
+      - paragraph: Drafts use this tab’s session storage and expire 8 hours after an edit. Browsers may retain session storage when restoring tabs; expired backups are removed when the app checks them. Discard removes the draft. Credentials and execution approvals are excluded. Avoid entering secrets in content.
+      - button "Restore saved draft"
+      - button "Discard draft"
+    - paragraph: File contents are not stored in drafts. Reattach the source file after navigation or reload.
+    - group "Source file & split configuration":
+      - generic: Source file & split configuration
+      - button "Use an example file"
+      - generic: Dataset name
+      - textbox "Dataset name": Support custom CSV
+      - generic: Source format
+      - combobox "Source format":
+        - option "Canonical sample-envelope JSONL"
+        - option "CSV records" [selected]
+        - option "JSON record array"
+        - option "DOCX main-body text"
+        - option "PDF page text"
+      - generic: Text field
+      - textbox "Text field": text
+      - generic: Source group field (optional)
+      - textbox "Source group field (optional)"
+      - generic: Source file
+      - button "Source file"
+      - paragraph: Maximum 16 MiB and 10,000 samples. CSV and JSON text fields must contain nonempty strings. Without a source group field, the entire file stays in one split. DOCX imports body paragraphs and table text; headers, images and embedded objects are excluded. PDF requires the optional document dependencies and supports up to 100 text pages, 1 MiB decoded content per page and 8 MiB total. Encrypted or scanned pages are refused; run OCR separately first.
+      - paragraph: "Selected: support-text.csv · 2,202 bytes"
+      - generic: Split seed
+      - textbox "Split seed": "0"
+      - generic: Text chunk size
+      - combobox "Text chunk size":
+        - option "Keep source rows" [selected]
+        - option "128 characters"
+        - option "256 characters"
+        - option "512 characters"
+        - option "1024 characters"
+        - option "2048 characters"
+        - option "4096 characters"
+      - paragraph: Plain text only. Exact source spans and split groups are retained. Training preflight separately checks tokenizer length.
+      - generic: Validation percentage
+      - spinbutton "Validation percentage": "10"
+      - generic: Test percentage
+      - spinbutton "Test percentage": "10"
+      - paragraph: Percentages must be nonnegative integers with a combined total below 100. Remaining rows belong to the training split; creating that split does not run training.
+      - checkbox "Detect privacy and low quality text"
+      - text: Detect privacy and low quality text
+      - checkbox "Remove exact and near duplicates"
+      - text: Remove exact and near duplicates
+      - paragraph: Single uploads support at most 16 MiB. Partial file uploads restart; a fully verified upload and dataset record are retained for explicit retry. Reattach the same file after reload. Publication repeats the previewed recipe.
+      - button "Preview parsed source"
+      - button "Upload and prepare dataset"
+      - generic: File integrity is verified before publication.
+  - complementary "Dataset preparation preview":
+    - heading "Parsed source and preparation review" [level=3]
+    - paragraph: "1 independent source groups · train: 20 · validation: 0 · test: 0"
+    - alert: Requested held-out allocation has no samples. Add independent source groups or revise the split recipe before training.
+    - term: Recipe digest
+    - definition:
+      - generic "ade487e13c5e…3e4ec853 Show full value":
+        - code: ade487e13c5e…3e4ec853
+        - generic: Show full value
+    - term: Row count
+    - definition: "20"
+    - term: Source group count
+    - definition: "1"
+    - term: Report
+    - definition: Not reported
+    - term: Limits
+    - definition: Preview shows at most 25 parsed samples and 25 exclusions. Publication repeats this exact recipe on verified source bytes; no resources were created by preview.
+    - region "Recipe":
+      - generic "recipe":
+        - strong: Recipe
+      - term: Algorithm
+      - definition: source_group_sha256_v1
+      - term: Seed
+      - definition: "0"
+      - term: Validation percent
+      - definition: "10"
+      - term: Test percent
+      - definition: "10"
+      - region "Detect":
+        - generic "detect":
+          - strong: Detect
+        - term: Privacy
+        - definition:
+          - text: "No"
+        - term: Quality
+        - definition:
+          - text: "No"
+        - term: Min text chars
+        - definition: "8"
+      - region "Dedup":
+        - generic "dedup":
+          - strong: Dedup
+        - term: Exact
+        - definition:
+          - text: "No"
+        - term: Near
+        - definition:
+          - text: "No"
+        - term: Near threshold
+        - definition: "3"
+      - region "Extraction":
+        - generic "extraction":
+          - strong: Extraction
+        - term: Version
+        - definition: modelanvil.source-extraction.v1
+        - term: Source format
+        - definition: csv
+        - term: Input SHA256
+        - definition:
+          - generic "693cdecf507e…5d317524 Show full value":
+            - code: 693cdecf507e…5d317524
+            - generic: Show full value
+        - term: Text field
+        - definition: text
+        - term: Group field
+        - definition: Not reported
+    - region "Split counts":
+      - generic "split_counts":
+        - strong: Split counts
+      - term: Train
+      - definition: "20"
+      - term: Validation
+      - definition: "0"
+      - term: Test
+      - definition: "0"
+    - region "Rows":
+      - generic "rows":
+        - strong: Rows
+        - generic: 20 items
+      - list:
+        - generic: "01"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "0ef3e38d-29d…8866e3b5 Show full value":
+            - code: 0ef3e38d-29d…8866e3b5
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: How do I reset my password? Answer: Open Settings, choose Security, then Reset password."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/1
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/1
+          - term: Content SHA256
+          - definition:
+            - generic "903c3bef2d0b…de5cefc8 Show full value":
+              - code: 903c3bef2d0b…de5cefc8
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "02"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "c2fe80cd-27d…e7597cfc Show full value":
+            - code: c2fe80cd-27d…e7597cfc
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: Can I cancel my subscription? Answer: Open Billing and choose Cancel subscription."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/2
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/2
+          - term: Content SHA256
+          - definition:
+            - generic "b4e635bbf880…b0841c0c Show full value":
+              - code: b4e635bbf880…b0841c0c
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "03"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "ae6d9376-404…41372c8c Show full value":
+            - code: ae6d9376-404…41372c8c
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: How do I download my invoice? Answer: Open Billing, select the invoice, and choose Download."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/3
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/3
+          - term: Content SHA256
+          - definition:
+            - generic "e96398054f94…ff3be942 Show full value":
+              - code: e96398054f94…ff3be942
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "04"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "7d0fc611-39f…b47c8a65 Show full value":
+            - code: 7d0fc611-39f…b47c8a65
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: How do I change my email? Answer: Open Profile, enter the new email, and verify it."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/4
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/4
+          - term: Content SHA256
+          - definition:
+            - generic "d698a8dc385b…6001149a Show full value":
+              - code: d698a8dc385b…6001149a
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "05"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "654f4b0b-62f…2f7bce39 Show full value":
+            - code: 654f4b0b-62f…2f7bce39
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: Where can I see my order? Answer: Open Orders and select your order to see its status."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/5
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/5
+          - term: Content SHA256
+          - definition:
+            - generic "0c703ee6d208…fb0f1e05 Show full value":
+              - code: 0c703ee6d208…fb0f1e05
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "06"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "e2dadac7-9ae…30d43b27 Show full value":
+            - code: e2dadac7-9ae…30d43b27
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: How do I reset my password? Answer: Open Settings, choose Security, then Reset password."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/6
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/6
+          - term: Content SHA256
+          - definition:
+            - generic "903c3bef2d0b…de5cefc8 Show full value":
+              - code: 903c3bef2d0b…de5cefc8
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "07"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "e55b4906-125…391a75e7 Show full value":
+            - code: e55b4906-125…391a75e7
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: Can I cancel my subscription? Answer: Open Billing and choose Cancel subscription."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/7
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/7
+          - term: Content SHA256
+          - definition:
+            - generic "b4e635bbf880…b0841c0c Show full value":
+              - code: b4e635bbf880…b0841c0c
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "08"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "bd1c82dc-e48…d2a3d922 Show full value":
+            - code: bd1c82dc-e48…d2a3d922
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: How do I download my invoice? Answer: Open Billing, select the invoice, and choose Download."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/8
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/8
+          - term: Content SHA256
+          - definition:
+            - generic "e96398054f94…ff3be942 Show full value":
+              - code: e96398054f94…ff3be942
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "09"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "80ce6e78-caa…351254b3 Show full value":
+            - code: 80ce6e78-caa…351254b3
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: How do I change my email? Answer: Open Profile, enter the new email, and verify it."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/9
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/9
+          - term: Content SHA256
+          - definition:
+            - generic "d698a8dc385b…6001149a Show full value":
+              - code: d698a8dc385b…6001149a
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "10"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "ab901fea-2a2…5c820944 Show full value":
+            - code: ab901fea-2a2…5c820944
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: Where can I see my order? Answer: Open Orders and select your order to see its status."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/10
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/10
+          - term: Content SHA256
+          - definition:
+            - generic "0c703ee6d208…fb0f1e05 Show full value":
+              - code: 0c703ee6d208…fb0f1e05
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "11"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "a93b60c5-241…183a811c Show full value":
+            - code: a93b60c5-241…183a811c
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: How do I reset my password? Answer: Open Settings, choose Security, then Reset password."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/11
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/11
+          - term: Content SHA256
+          - definition:
+            - generic "903c3bef2d0b…de5cefc8 Show full value":
+              - code: 903c3bef2d0b…de5cefc8
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "12"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "88bd1fb2-d09…77549026 Show full value":
+            - code: 88bd1fb2-d09…77549026
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: Can I cancel my subscription? Answer: Open Billing and choose Cancel subscription."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/12
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/12
+          - term: Content SHA256
+          - definition:
+            - generic "b4e635bbf880…b0841c0c Show full value":
+              - code: b4e635bbf880…b0841c0c
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "13"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "15248abf-016…9fbf9099 Show full value":
+            - code: 15248abf-016…9fbf9099
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: How do I download my invoice? Answer: Open Billing, select the invoice, and choose Download."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/13
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/13
+          - term: Content SHA256
+          - definition:
+            - generic "e96398054f94…ff3be942 Show full value":
+              - code: e96398054f94…ff3be942
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "14"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "eb8eaf06-5bb…e0fef6e6 Show full value":
+            - code: eb8eaf06-5bb…e0fef6e6
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: How do I change my email? Answer: Open Profile, enter the new email, and verify it."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/14
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/14
+          - term: Content SHA256
+          - definition:
+            - generic "d698a8dc385b…6001149a Show full value":
+              - code: d698a8dc385b…6001149a
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "15"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "dd257b8f-697…4dfbdd86 Show full value":
+            - code: dd257b8f-697…4dfbdd86
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: Where can I see my order? Answer: Open Orders and select your order to see its status."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/15
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/15
+          - term: Content SHA256
+          - definition:
+            - generic "0c703ee6d208…fb0f1e05 Show full value":
+              - code: 0c703ee6d208…fb0f1e05
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "16"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "0be10882-f04…d77bbda4 Show full value":
+            - code: 0be10882-f04…d77bbda4
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: How do I reset my password? Answer: Open Settings, choose Security, then Reset password."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/16
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/16
+          - term: Content SHA256
+          - definition:
+            - generic "903c3bef2d0b…de5cefc8 Show full value":
+              - code: 903c3bef2d0b…de5cefc8
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "17"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "54533bf4-5eb…4bb74af6 Show full value":
+            - code: 54533bf4-5eb…4bb74af6
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: Can I cancel my subscription? Answer: Open Billing and choose Cancel subscription."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/17
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/17
+          - term: Content SHA256
+          - definition:
+            - generic "b4e635bbf880…b0841c0c Show full value":
+              - code: b4e635bbf880…b0841c0c
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "18"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "9880dc83-0c8…9c148033 Show full value":
+            - code: 9880dc83-0c8…9c148033
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: How do I download my invoice? Answer: Open Billing, select the invoice, and choose Download."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/18
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/18
+          - term: Content SHA256
+          - definition:
+            - generic "e96398054f94…ff3be942 Show full value":
+              - code: e96398054f94…ff3be942
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "19"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "07cceefe-124…52216fac Show full value":
+            - code: 07cceefe-124…52216fac
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: How do I change my email? Answer: Open Profile, enter the new email, and verify it."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/19
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/19
+          - term: Content SHA256
+          - definition:
+            - generic "d698a8dc385b…6001149a Show full value":
+              - code: d698a8dc385b…6001149a
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+        - generic: "20"
+        - term: Schema version
+        - definition: "1.0"
+        - term: Sample ID
+        - definition:
+          - generic "aee9c482-16f…cfef681d Show full value":
+            - code: aee9c482-16f…cfef681d
+            - generic: Show full value
+        - term: Source group ID
+        - definition: source-sha256:693cdecf507e44014b9dfae218d2ff59f3622f2e2f4cdeaab45b45bc5d317524
+        - term: Assigned split
+        - definition: train
+        - region "Blocks":
+          - generic "blocks":
+            - strong: Blocks
+            - generic: 1 item
+          - list:
+            - generic: "01"
+            - term: Block ID
+            - definition: text
+            - term: Type
+            - definition: text
+            - term: Text
+            - definition: "Question: Where can I see my order? Answer: Open Orders and select your order to see its status."
+            - region "Location":
+              - generic "location":
+                - strong: Location
+              - term: Source path
+              - definition: record/20
+        - region "Provenance":
+          - generic "provenance":
+            - strong: Provenance
+          - term: Source snapshot ref
+          - definition:
+            - generic "sha256:693cd…5d317524 Show full value":
+              - code: sha256:693cd…5d317524
+              - generic: Show full value
+          - term: Source record key
+          - definition: record/20
+          - term: Content SHA256
+          - definition:
+            - generic "0c703ee6d208…fb0f1e05 Show full value":
+              - code: 0c703ee6d208…fb0f1e05
+              - generic: Show full value
+          - term: Transformation revision ref
+          - definition: modelanvil.source-extraction.v1
+        - region "Metadata":
+          - generic "metadata":
+            - strong: Metadata
+          - term: Source format
+          - definition: csv
+    - region "Dropped":
+      - generic "dropped":
+        - strong: Dropped
+        - generic: 0 items
+      - text: No items recorded
+    - heading "Split configuration" [level=3]
+    - paragraph: Preview of requested percentages, before preparation.
+    - generic: Total percent
+    - strong: "100"
+    - 'img "Train: 80 percent, Validation: 10 percent, Test: 10 percent"':
+      - 'generic "Train: 80 percent"'
+      - 'generic "Validation: 10 percent"'
+      - 'generic "Test: 10 percent"'
+    - term: Train
+    - definition:
+      - text: "80"
+      - generic: percent · 80.0%
+    - term: Validation
+    - definition:
+      - text: "10"
+      - generic: percent · 10.0%
+    - term: Test
+    - definition:
+      - text: "10"
+      - generic: percent · 10.0%
+    - paragraph: These are configuration targets. Source groups stay together, so actual sample counts can differ. Inspect the published revision for recorded allocation.
+    - heading "Publication flow" [level=3]
+    - paragraph: Verified input becomes an immutable dataset revision.
+    - list:
+      - strong: Select source file
+      - generic: support-text.csv · 2,202 bytes
+      - generic: ready
+      - strong: Verify & prepare
+      - generic: SHA-256 verification, schema validation, and source-group splits
+      - generic: pending
+      - strong: Publish immutable revision
+      - generic: Confirmation requires a published server revision.
+      - generic: pending
+  - region "Dataset and revision lists":
+    - heading "Dataset and revision lists" [level=2]
+    - paragraph: Showing the first page of datasets and immutable revisions.
+    - button "Refresh lists"
+    - heading "Revision size" [level=3]
+    - paragraph: Recorded row counts in the loaded first page; revisions can overlap.
+    - strong: Waiting for recorded data
+    - paragraph: No recorded revision row counts in this page.
+    - heading "Revision states" [level=3]
+    - paragraph: Counts for the loaded revision first page.
+    - strong: Waiting for recorded data
+    - paragraph: No measurements recorded yet.
+    - text: Search loaded datasets and revisions
+    - textbox "Search loaded datasets and revisions"
+    - region "Dataset first-page table":
+      - table "Datasets · loaded pages · 0 rows shown":
+        - caption: Datasets · loaded pages · 0 rows shown
+        - rowgroup:
+          - row "Dataset Current revision record Created at":
+            - columnheader "Dataset"
+            - columnheader "Current revision record"
+            - columnheader "Created at"
+        - rowgroup:
+          - row "No datasets returned on this first page.":
+            - cell "No datasets returned on this first page."
+    - paragraph: Revision records are listed separately. Inspect a revision to see its schema, source references, and verified manifest.
+    - region "Revision first-page table":
+      - table "Dataset revisions · loaded pages · 0 rows shown":
+        - caption: Dataset revisions · loaded pages · 0 rows shown
+        - rowgroup:
+          - row "Revision UUID / number Dataset record Rows State Published at Inspect":
+            - columnheader "Revision UUID / number"
+            - columnheader "Dataset record"
+            - columnheader "Rows"
+            - columnheader "State"
+            - columnheader "Published at"
+            - columnheader "Inspect"
+        - rowgroup:
+          - row "No revisions returned on this first page.":
+            - cell "No revisions returned on this first page."
+  - text: ModelAnvil · c39a2e95 · 28838a1d
+  - generic: "· API build matches · Imports: JSONL, CSV, DOCX, JSON, PDF"
+  - text: Control plane

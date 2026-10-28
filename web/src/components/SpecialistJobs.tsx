@@ -1,3 +1,5 @@
+import { Identifier } from './Identifier';
+import { Button } from './ui';
 import { useEffect, useRef, useState } from 'react';
 import { apiRequest, errorMessage } from '../api/client';
 import type { SpecialistJob, SpecialistResult } from '../api/specialists';
@@ -46,15 +48,15 @@ export function SpecialistJobs({ token, selected, onSelect, onResult }: {
     {error && <p role="alert" className="error-box">{error}</p>}
     <label>Recent requests<select value={selected} onChange={e => onSelect(e.target.value)}>
       <option value="">Select a request</option>
-      {recent.map(r => <option key={r.request_id} value={r.request_id}>{r.kind?.toUpperCase()} · {r.status} · {r.request_id.slice(0,8)}</option>)}
+      {recent.map((r, index) => <option key={r.request_id} value={r.request_id}>{r.kind?.toUpperCase()} · request {index + 1} · {r.status}</option>)}
     </select></label>
     {job && <div><p role="status">{job.status} · attempt {job.attempt_count} of {job.max_attempts}{job.desired_action === 'cancel' ? ' · cancellation requested' : ''}</p>
-      <small>Job {job.job_id}</small>
+      <span>Request <Identifier value={job.request_id} label="Specialist request ID" /> Job <Identifier value={job.job_id} label="Job ID" /></span>
       {job.page_count && <p>{job.completed_pages?.length || 0} of {job.page_count} pages saved for resume.</p>}
       {job.error && <p role="alert">{job.error}</p>}
       <div className="specialist-actions">
-        <button disabled={mutating || !['queued','running','interrupted'].includes(job.status) || job.desired_action === 'cancel'} onClick={() => void action('cancel')}>Cancel request</button>
-        <button disabled={mutating || !['failed','interrupted'].includes(job.status) || job.desired_action === 'cancel' || job.attempt_count >= job.max_attempts} onClick={() => void action('retry')}>Retry request</button>
+        <Button disabled={mutating || !['queued','running','interrupted'].includes(job.status) || job.desired_action === 'cancel'} onClick={() => void action('cancel')}>Cancel request</Button>
+        <Button disabled={mutating || !['failed','interrupted'].includes(job.status) || job.desired_action === 'cancel' || job.attempt_count >= job.max_attempts} onClick={() => void action('retry')}>Retry request</Button>
       </div>
     </div>}
   </section>;

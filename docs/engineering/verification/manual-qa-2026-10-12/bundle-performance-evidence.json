@@ -1,0 +1,322 @@
+{
+  "bundle": {
+    "before_entry_kb": 693.45,
+    "before_entry_gzip_kb": 189.27,
+    "after_entry": {
+      "file": "index-ByHP9iVc.js",
+      "bytes": 280762,
+      "gzip_bytes": 85928
+    },
+    "chunk_count": 37,
+    "largest_chunk_bytes": 280762,
+    "warning_threshold_raised": false,
+    "production_warning_present": false,
+    "entry_reduction_percent": 59.5,
+    "cold_overview_bytes": 333946
+  },
+  "source": {
+    "frontend_sha256": "7a28241ce534341222e61fe72fa6263e0d0f5b1050b9d1f12e76bd66c8135510",
+    "current_checkout_differences": []
+  },
+  "browser": {
+    "checks": [
+      {
+        "name": "Cold startup loads Overview without unopened screens",
+        "pass": true,
+        "detail": {
+          "bytes": 333946,
+          "chunks": [
+            {
+              "url": "/assets/client-CGG4s8sx.js",
+              "bytes": 12164
+            },
+            {
+              "url": "/assets/DataInspector-Cl5uEXx9.js",
+              "bytes": 8709
+            },
+            {
+              "url": "/assets/index-RGo8hlIi.js",
+              "bytes": 280646
+            },
+            {
+              "url": "/assets/arrow-right-TWcumLGZ.js",
+              "bytes": 202
+            },
+            {
+              "url": "/assets/circle-check-DbjQTshv.js",
+              "bytes": 247
+            },
+            {
+              "url": "/assets/ResourceState-BfBZtogw.js",
+              "bytes": 337
+            },
+            {
+              "url": "/assets/Charts-BR4x4sWB.js",
+              "bytes": 10802
+            },
+            {
+              "url": "/assets/OverviewPage-Lgza3h8j.js",
+              "bytes": 20839
+            }
+          ]
+        }
+      },
+      {
+        "name": "Slow screen download shows accessible loading status and retains navigation",
+        "pass": true
+      },
+      {
+        "name": "Desktop Overview",
+        "pass": true
+      },
+      {
+        "name": "Desktop Dataset Bank",
+        "pass": true
+      },
+      {
+        "name": "Desktop Datasets",
+        "pass": true
+      },
+      {
+        "name": "Desktop Annotation",
+        "pass": true
+      },
+      {
+        "name": "Desktop Models",
+        "pass": true
+      },
+      {
+        "name": "Desktop Chat",
+        "pass": true
+      },
+      {
+        "name": "Desktop Specialists",
+        "pass": true
+      },
+      {
+        "name": "Desktop Recipes",
+        "pass": true
+      },
+      {
+        "name": "Desktop Training",
+        "pass": true
+      },
+      {
+        "name": "Desktop Alignment",
+        "pass": true
+      },
+      {
+        "name": "Desktop Evaluation",
+        "pass": true
+      },
+      {
+        "name": "Desktop Workflows",
+        "pass": true
+      },
+      {
+        "name": "Desktop RAG",
+        "pass": true
+      },
+      {
+        "name": "Desktop Context Lab",
+        "pass": true
+      },
+      {
+        "name": "Desktop Releases",
+        "pass": true
+      },
+      {
+        "name": "Desktop Infrastructure",
+        "pass": true
+      },
+      {
+        "name": "Desktop Budgets",
+        "pass": true
+      },
+      {
+        "name": "Desktop Audit",
+        "pass": true
+      },
+      {
+        "name": "Unsaved draft survives screen navigation and stays scoped to its project",
+        "pass": true
+      },
+      {
+        "name": "Mobile Overview",
+        "pass": true
+      },
+      {
+        "name": "Mobile Dataset Bank",
+        "pass": true
+      },
+      {
+        "name": "Mobile Datasets",
+        "pass": true
+      },
+      {
+        "name": "Mobile Annotation",
+        "pass": true
+      },
+      {
+        "name": "Mobile Models",
+        "pass": true
+      },
+      {
+        "name": "Mobile Chat",
+        "pass": true
+      },
+      {
+        "name": "Mobile Specialists",
+        "pass": true
+      },
+      {
+        "name": "Mobile Recipes",
+        "pass": true
+      },
+      {
+        "name": "Mobile Training",
+        "pass": true
+      },
+      {
+        "name": "Mobile Alignment",
+        "pass": true
+      },
+      {
+        "name": "Mobile Evaluation",
+        "pass": true
+      },
+      {
+        "name": "Mobile Workflows",
+        "pass": true
+      },
+      {
+        "name": "Mobile RAG",
+        "pass": true
+      },
+      {
+        "name": "Mobile Context Lab",
+        "pass": true
+      },
+      {
+        "name": "Mobile Releases",
+        "pass": true
+      },
+      {
+        "name": "Mobile Infrastructure",
+        "pass": true
+      },
+      {
+        "name": "Mobile Budgets",
+        "pass": true
+      },
+      {
+        "name": "Mobile Audit",
+        "pass": true
+      },
+      {
+        "name": "Production mobile screen passes WCAG axe checks",
+        "pass": true
+      },
+      {
+        "name": "No unexpected browser errors in normal navigation",
+        "pass": true
+      },
+      {
+        "name": "Aborted chunk is contained; navigation works; explicit reload recovers same deep link",
+        "pass": true,
+        "detail": {
+          "expectedErrors": [
+            "Failed to load resource: net::ERR_FAILED",
+            "TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5202/assets/AuditPage-d7Il1I9K.js",
+            "TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5202/assets/AuditPage-d7Il1I9K.js"
+          ]
+        }
+      }
+    ],
+    "errors": []
+  },
+  "deep_link": {
+    "pass": true,
+    "resource": "dataset-revision",
+    "reload": true,
+    "browser_back": true,
+    "errors": []
+  },
+  "storybook": {
+    "checks": [
+      {
+        "story": "overview",
+        "pass": true
+      },
+      {
+        "story": "dataset-bank",
+        "pass": true
+      },
+      {
+        "story": "datasets",
+        "pass": true
+      },
+      {
+        "story": "run-detail",
+        "pass": true
+      },
+      {
+        "story": "context-lab",
+        "pass": true
+      }
+    ],
+    "errors": []
+  },
+  "production_workflow": {
+    "scope": "packaged_browser_local_beta",
+    "tasks": [
+      "PM001",
+      "PM002",
+      "PM003",
+      "PM004",
+      "PM005",
+      "PM006",
+      "PM007",
+      "PM009"
+    ],
+    "elapsed_seconds": 63.491,
+    "project": "Final QA 1791826307001",
+    "training_run": "c46b3084-43ef-4e87-95d5-9aabd6983d53",
+    "candidate": "56b9d209-76e1-4f08-93e8-f5421c1db6d3",
+    "evaluation_run": "255b6c1e-769b-4c88-81f8-646e645c4b06",
+    "release_version": "f03af930-373e-4b59-b2b0-e2cc16e7a129",
+    "local_serving_verified": true,
+    "local_deployment": "792561f2-8ba8-476b-bf7e-4437b3d4b497",
+    "local_acceptance_accuracy_threshold": 0,
+    "committed_steps": 2,
+    "known_overlap_check": "known_lineage_checked",
+    "failed_cases": 1,
+    "missing_cases": 0,
+    "review_state": "failing",
+    "production_qualified": false,
+    "reload_preserved": true,
+    "narrow_layout_passed": true,
+    "manual_api_requests": false
+  },
+  "independent_consumer": {
+    "completion": "  ",
+    "generated_token_ids": [
+      36,
+      36
+    ],
+    "runtime": "independent_stdlib_transformer_consumer",
+    "weights_sha256": "3b55f30aa34cc1de3a9cf9bfecc654312abce32de21314c898e461ff67a1cdb5"
+  },
+  "frontend_tests": {
+    "passed": 159,
+    "failed": 0,
+    "skipped": 0
+  },
+  "backend_suite_rerun": false,
+  "qa_cleanup": {
+    "servers_stopped": true,
+    "workers_stopped": true,
+    "isolated_keys_disabled": true,
+    "isolated_worker_credentials_revoked": true
+  }
+}

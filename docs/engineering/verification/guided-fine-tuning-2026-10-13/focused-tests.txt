@@ -1,0 +1,14 @@
+Creating test database for alias 'default'...
+{"timestamp": "2026-10-13T13:11:00+0000", "level": "WARNING", "logger": "django.security.csrf", "message": "Forbidden (CSRF cookie not set.): /api/v1/accounts/signup/", "request_id": "30e8275c-4af2-41aa-9937-e714c1a0a6b9"}
+{"timestamp": "2026-10-13T13:11:00+0000", "level": "WARNING", "logger": "django.request", "message": "Forbidden: /api/v1/projects/", "request_id": "186acca7-2573-41cd-bddc-cb0e2f2253a5"}
+.{"timestamp": "2026-10-13T13:11:00+0000", "level": "WARNING", "logger": "django.request", "message": "Unauthorized: /api/v1/projects/", "request_id": "05a709f2-11a8-499b-8d0c-3e2cbf7649c0"}
+.{"timestamp": "2026-10-13T13:11:00+0000", "level": "WARNING", "logger": "django.request", "message": "Forbidden: /api/v1/accounts/signup/", "request_id": "7a2a2582-4d3c-47f2-818f-31c40f091110"}
+.{"timestamp": "2026-10-13T13:11:00+0000", "level": "WARNING", "logger": "django.request", "message": "Unauthorized: /api/v1/projects/", "request_id": "f5fe3023-f708-4b4f-b7d5-763eccc923d6"}
+...............
+----------------------------------------------------------------------
+Ran 18 tests in 0.613s
+
+OK
+Destroying test database for alias 'default'...
+Found 18 test(s).
+System check identified no issues (0 silenced).

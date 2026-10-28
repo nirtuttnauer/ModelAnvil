@@ -1,0 +1,129 @@
+{
+  "date": "2026-10-12",
+  "snapshot": {
+    "revision": "unversioned",
+    "source_digest": "e390c17f3b6f2880b451fd42935611972578573b70601c788d98ddd2a81d8b25",
+    "protocol": "modelanvil.local-beta.v1",
+    "dataset_formats": [
+      "jsonl",
+      "csv",
+      "docx",
+      "json",
+      "pdf"
+    ],
+    "production_qualified": false
+  },
+  "browser_checks": [
+    {
+      "name": "Completed full run restores its recipe name",
+      "pass": true
+    },
+    {
+      "name": "Completed full run restores sampler",
+      "pass": true
+    },
+    {
+      "name": "Completed full run restores generator",
+      "pass": true
+    },
+    {
+      "name": "Full run restoration keeps review gate",
+      "pass": true
+    },
+    {
+      "name": "Bank registered through Infrastructure",
+      "pass": true
+    },
+    {
+      "name": "Bank profile connects with credential",
+      "pass": true
+    },
+    {
+      "name": "Bank acquisition through new profile",
+      "pass": true
+    },
+    {
+      "name": "CPU recipes provisioned through Infrastructure",
+      "pass": true
+    },
+    {
+      "name": "Recipe profile connects with credential",
+      "pass": true
+    },
+    {
+      "name": "Recipe preview through new profile",
+      "pass": true
+    },
+    {
+      "name": "Recipe publication review required",
+      "pass": true
+    },
+    {
+      "name": "Recipe full publication through new profile",
+      "pass": true
+    },
+    {
+      "name": "Recipe full run restored actual name",
+      "pass": true
+    },
+    {
+      "name": "Recipe profile publication accessibility",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "Published recipe exact revision opens",
+      "pass": true
+    },
+    {
+      "name": "Stopped recipe worker rejects queueing",
+      "pass": true
+    },
+    {
+      "name": "Worker refusal is readable",
+      "pass": true
+    },
+    {
+      "name": "Final build identity matches",
+      "pass": true
+    },
+    {
+      "name": "Recipe refusal mobile has no page overflow",
+      "pass": true
+    },
+    {
+      "name": "Readable refusal accessibility",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "New profiles keep form accessible",
+      "pass": true
+    }
+  ],
+  "page_errors": [],
+  "worker_refusal_side_effects": {
+    "before": {
+      "jobs": 37,
+      "reservations": 37
+    },
+    "after": {
+      "jobs": 37,
+      "reservations": 37
+    }
+  },
+  "backend": {
+    "tests": 829,
+    "skipped": 9,
+    "failures": 0
+  },
+  "frontend": {
+    "tests": 156,
+    "failures": 0
+  },
+  "build": "passed",
+  "cleanup": {
+    "qa_api_keys_active": 0,
+    "qa_profiles_offline": true
+  }
+}

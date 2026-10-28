@@ -43,3 +43,10 @@ credentials*
 
 # Storybook generated output
 storybook-static/
+
+# Local business planning and prospect research
+/business/
+
+# Private hosted-service implementation
+/private-saas/
+

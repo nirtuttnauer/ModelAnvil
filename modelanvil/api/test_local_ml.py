@@ -68,6 +68,23 @@ class LocalMlApiTests(TestCase):
         self.assertEqual(Model.all_objects.count(), 1)
         self.assertEqual(TokenizerVersion.all_objects.count(), 1)
 
+    def test_model_eligibility_requires_verified_bytes_and_supports_installed_transformer_base(self):
+        data = self.client.get(f'/api/v1/model-versions/{self.base.model_version_id}/').data
+        self.assertTrue(data['capabilities']['train']['eligible'])
+        self.assertTrue(data['capabilities']['evaluate']['eligible'])
+        self.assertFalse(data['capabilities']['production_qualified'])
+        self.assertTrue(data['capabilities']['chat']['eligible'])
+        artifact = Artifact.all_objects.get(artifact_id=self.base.artifact_manifest_id)
+        Artifact.all_objects.filter(pk=artifact.pk).update(state='staging')
+        self.assertFalse(self.client.get(f'/api/v1/model-versions/{self.base.model_version_id}/').data['capabilities']['train']['eligible'])
+        response = self.client.post('/api/v1/model-versions/initialize-cpu/',
+            {'name': 'Verified byte transformer', 'profile': 'cpu-transformer', 'seed': 0}, format='json')
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertTrue(response.data['model_version']['capabilities']['train']['eligible'])
+        version = ModelVersion.all_objects.get(pk=response.data['model_version']['id'])
+        self.assertEqual(version.tokenizer.vocabulary_size, 260)
+        self.assertEqual(version.metadata['initialization_seed'], 0)
+
     def test_actual_evaluation_scores_inference_not_expected_answers_and_is_repeat_safe(self):
         run_id = self.pending_eval(baseline=self.base)
         response = self.client.post(f'/api/v1/evaluation-runs/{run_id}/execute/', {'max_tokens': 4}, format='json')
@@ -135,11 +152,46 @@ class LocalMlApiTests(TestCase):
         from modelanvil.runners.models import EvaluationSuite, EvaluationSuiteVersion
         invalid = self.client.post('/api/v1/evaluation-suites/register-cpu/', {'name': 'Invalid', 'cases': []}, format='json')
         self.assertEqual(invalid.status_code, 400); self.assertEqual(EvaluationSuite.all_objects.count(), 0)
-        payload = {'name': 'Registered', 'cases': [{'case_id': 'one', 'input_prompt': '', 'expected_output': ''}]}
+        payload = {'name': 'Registered', 'protected_role': 'protected_eval', 'cases': [{'case_id': 'one', 'input_prompt': '', 'expected_output': '', 'source_group_id': 'held-out'}]}
         response = self.client.post('/api/v1/evaluation-suites/register-cpu/', payload, format='json')
         self.assertEqual(response.status_code, 201, response.data); self.assertEqual(response.data['cases_count'], 1)
         duplicate = self.client.post('/api/v1/evaluation-suites/register-cpu/', payload, format='json')
         self.assertEqual(duplicate.status_code, 400); self.assertEqual(EvaluationSuite.all_objects.count(), 1); self.assertEqual(EvaluationSuiteVersion.all_objects.count(), 1)
+
+    def test_browser_suite_import_versions_role_and_source_groups(self):
+        from modelanvil.runners.models import EvaluationSuite, EvaluationSuiteVersion
+        missing = self.client.post('/api/v1/evaluation-suites/register-cpu/', {
+            'name': 'Held out', 'protected_role': 'protected_eval',
+            'cases': [{'case_id': 'one', 'input_prompt': 'a', 'expected_output': 'b'}]}, format='json')
+        self.assertEqual(missing.status_code, 400)
+        self.assertEqual(EvaluationSuite.all_objects.count(), 0)
+        wrong_role = self.client.post('/api/v1/evaluation-suites/register-cpu/', {
+            'name': 'Held out', 'protected_role': 'training',
+            'cases': [{'case_id': 'one', 'input_prompt': 'a', 'expected_output': 'b', 'source_group_id': 'g1'}]}, format='json')
+        self.assertEqual(wrong_role.status_code, 400)
+        numeric = self.client.post('/api/v1/evaluation-suites/register-cpu/', {
+            'name': 'Numbers', 'protected_role': 'protected_eval', 'scorer_type': 'numeric_tolerance',
+            'cases': [{'case_id': 'one', 'input_prompt': 'a', 'expected_output': 'nope', 'source_group_id': 'g1'}]}, format='json')
+        self.assertEqual(numeric.status_code, 400)
+        self.assertIn('numeric', str(numeric.json()).lower())
+        payload = {'name': 'Held out', 'protected_role': 'protected_eval', 'cases': [
+            {'case_id': 'one', 'input_prompt': 'a', 'expected_output': 'b', 'source_group_id': 'group-a', 'slice': 'held-out'}]}
+        first = self.client.post('/api/v1/evaluation-suites/register-cpu/', payload, format='json')
+        self.assertEqual(first.status_code, 201, first.data)
+        self.assertEqual(first.data['protected_role'], 'protected_eval')
+        self.assertEqual(first.data['revision_no'], 1)
+        self.assertEqual(first.data['source_group_count'], 1)
+        same = self.client.post('/api/v1/evaluation-suites/register-cpu/', {**payload, 'suite': first.data['suite']}, format='json')
+        self.assertEqual(same.status_code, 200, same.data)
+        self.assertEqual(same.data['id'], first.data['id'])
+        self.assertEqual(EvaluationSuiteVersion.all_objects.count(), 1)
+        nxt = self.client.post('/api/v1/evaluation-suites/register-cpu/', {**payload, 'suite': first.data['suite'], 'cases': [
+            {'case_id': 'two', 'input_prompt': 'c', 'expected_output': 'd', 'source_group_id': 'group-b'}]}, format='json')
+        self.assertEqual(nxt.status_code, 201, nxt.data)
+        self.assertEqual(nxt.data['revision_no'], 2)
+        self.assertEqual(nxt.data['suite'], first.data['suite'])
+        self.assertEqual(nxt.data['protected_role'], 'protected_eval')
+        self.assertEqual(EvaluationSuite.all_objects.count(), 1)
 
     def test_suite_validation_and_pins_remain_immutable(self):
         suite_id = self.suite()

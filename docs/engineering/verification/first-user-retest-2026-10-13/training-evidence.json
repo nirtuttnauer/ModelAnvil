@@ -1,0 +1,20 @@
+{
+  "run_id": "a83fc687-c592-44bf-a7ff-dc114baa4773",
+  "status": "completed",
+  "current_step": 3,
+  "total_steps": 3,
+  "latest_loss": 3.2456259727478027,
+  "job_status": "succeeded",
+  "candidate_id": "de95720a-8387-48c9-9efb-1e05cd06c3cf",
+  "dataset_rows": 12,
+  "splits": {
+    "train": 10,
+    "validation": 1,
+    "test": 1
+  },
+  "checkpoint_count": 3,
+  "device": "mps:0",
+  "chat_sft": true,
+  "gpu_backend": "mps",
+  "trainable_parameters": 134515008
+}

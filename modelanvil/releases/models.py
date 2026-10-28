@@ -1,13 +1,13 @@
 """Durable models for Releases, Frozen Gate Results, Policy Exceptions, Endpoints, and Deployments (WP-15 / TECH-020-021)."""
 from __future__ import annotations
 
-import uuid
 from typing import Any
 
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
+from modelanvil.core.ids import uuid7
 from modelanvil.core.models import TenantContextModel
 from modelanvil.runners.models import EvaluationRun, ModelVersion
 
@@ -15,7 +15,7 @@ from modelanvil.runners.models import EvaluationRun, ModelVersion
 class Release(TenantContextModel):
     """Logical release definition belonging to an organization/tenant."""
 
-    release_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    release_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="releases"
     )
@@ -48,7 +48,7 @@ class ReleaseVersion(TenantContextModel):
         PROMOTED = "promoted", "Promoted"
         ARCHIVED = "archived", "Archived"
 
-    release_version_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    release_version_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="release_versions"
     )
@@ -93,7 +93,7 @@ class ReleaseVersion(TenantContextModel):
 class GateResult(TenantContextModel):
     """Frozen verification result for an individual release gate criterion (TECH-021)."""
 
-    gate_result_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    gate_result_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     release_version = models.ForeignKey(ReleaseVersion, on_delete=models.CASCADE, related_name="gate_results")
     criterion_key = models.CharField(max_length=64)  # min_accuracy, no_regression, license_check, quantization_eval
     evaluation_run = models.ForeignKey(
@@ -116,7 +116,7 @@ class GateResult(TenantContextModel):
 class ReleaseException(TenantContextModel):
     """Authorized, audited policy exception waiving a failing gate result (TECH-021 / PRD Scenario 10)."""
 
-    exception_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    exception_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     gate_result = models.ForeignKey(GateResult, on_delete=models.CASCADE, related_name="exceptions")
     actor_id = models.CharField(max_length=128)
     permitted_policy_id = models.CharField(max_length=128)
@@ -131,7 +131,7 @@ class ReleaseException(TenantContextModel):
 class ServingEndpoint(TenantContextModel):
     """Production serving endpoint with an atomic pointer to the active deployment revision (TECH-021)."""
 
-    endpoint_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    endpoint_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="serving_endpoints"
     )
@@ -161,8 +161,9 @@ class DeploymentRevision(TenantContextModel):
         PENDING = "pending", "Pending"
         READY = "ready", "Ready"
         ROLLED_BACK = "rolled_back", "Rolled Back"
+        FAILED = "failed", "Failed"
 
-    deployment_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    deployment_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     project = models.ForeignKey(
         "identity.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="deployments"
     )
@@ -173,7 +174,7 @@ class DeploymentRevision(TenantContextModel):
         "self", null=True, blank=True, on_delete=models.SET_NULL, related_name="subsequent_deployments"
     )
     serving_config = models.JSONField(default=dict, blank=True)
-    readiness_state = models.CharField(max_length=16, choices=ReadinessState.choices, default=ReadinessState.READY)
+    readiness_state = models.CharField(max_length=16, choices=ReadinessState.choices, default=ReadinessState.PENDING)
 
     class Meta:
         constraints = [

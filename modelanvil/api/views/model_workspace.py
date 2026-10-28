@@ -17,6 +17,7 @@ from modelanvil.jobs.models import WorkerPool
 from modelanvil.runners import model_catalog
 from modelanvil.runners.inference import generate, local_session, validate_messages
 from modelanvil.runners.models import ChatComparison, ChatConversation, InferenceRequest, ModelImport, ModelVersion
+from modelanvil.identity.models import get_accessible_queryset
 
 
 def selected_project():
@@ -55,6 +56,26 @@ class ModelImportViewSet(TenantScopedViewSet):
     serializer_class = ImportSerializer
     lookup_field = 'import_id'
     http_method_names = ['get', 'post', 'head', 'options']
+
+    def _change(self, request, action_name):
+        from modelanvil.runners.import_recovery import change_import
+        from modelanvil.core.models import record_audit
+        try:
+            item = change_import(self.get_object(), action_name)
+        except ValueError as exc:
+            raise serializers.ValidationError(str(exc)) from exc
+        record_audit(f'model_import.{action_name}', 'model_import', item.import_id,
+            actor_id=request.modelanvil_actor_id, actor_kind=request.modelanvil_actor_kind,
+            input_snapshot={'job_id': str(item.job.job_id), 'job_status': item.job.status, 'verified_files': len(item.acquired_files)})
+        return Response(ImportSerializer(item).data)
+
+    @action(detail=True, methods=['post'])
+    def cancel(self, request, import_id=None):
+        return self._change(request, 'cancel')
+
+    @action(detail=True, methods=['post'])
+    def resume(self, request, import_id=None):
+        return self._change(request, 'resume')
 
     @action(detail=False, methods=['get'])
     def search(self, request):
@@ -160,6 +181,7 @@ class ConversationSerializer(serializers.ModelSerializer):
         data.pop('system_prompt', None)
         data.pop('compare_model', None)
         data.pop('compare_device', None)
+        serializers.ChoiceField(choices=['blind', 'base-trained']).run_validation(data.pop('comparison_mode', 'blind'))
         form = CompletionInput(data=data); form.is_valid(raise_exception=True)
         models = [value.get('model'), value.get('compare_model')]
         from modelanvil.identity.models import get_accessible_queryset
@@ -204,23 +226,35 @@ class ComparisonInput(serializers.Serializer):
 
 
 class ComparisonSerializer(serializers.ModelSerializer):
+    review_campaign_id = serializers.UUIDField(source='review_campaign.campaign_id', read_only=True, allow_null=True)
     conversation_id = serializers.UUIDField(source='conversation.conversation_id', read_only=True, allow_null=True)
     sides = serializers.SerializerMethodField()
 
     def get_sides(self, comparison):
+        roles = {}
+        if self.context.get('request') and self.context['request'].query_params.get('view') == 'base-trained':
+            from django.db.models import Q
+            from modelanvil.runners.models import TrainingRun
+            first, second = comparison.first_request.model_version_id, comparison.second_request.model_version_id
+            lineage = get_accessible_queryset(TrainingRun).filter(status='completed', job__status='succeeded').filter(
+                Q(base_model_version_id=first, output_model_version_id=second) | Q(base_model_version_id=second, output_model_version_id=first)).first()
+            if lineage:
+                roles = {lineage.base_model_version_id: 'base', lineage.output_model_version_id: 'trained'}
         sides = []
         for label, first in (('A', comparison.first_is_a), ('B', not comparison.first_is_a)):
             request = comparison.first_request if first else comparison.second_request
             value = {'label': label, 'text': comparison.first_text if first else comparison.second_text}
-            if comparison.vote:
+            if comparison.vote or roles:
                 value.update(model=str(request.model_version.model_version_id), name=request.model_version.model.name,
                     usage=request.usage, elapsed_seconds=request.elapsed_seconds, configuration=request.configuration)
+            if roles:
+                value['role'] = roles[request.model_version_id]
             sides.append(value)
         return sides
 
     class Meta:
         model = ChatComparison
-        fields = ['comparison_id', 'conversation_id', 'messages', 'sides', 'vote', 'created_at', 'voted_at']
+        fields = ['comparison_id', 'conversation_id', 'messages', 'sides', 'vote', 'created_at', 'voted_at', 'review_campaign_id']
         read_only_fields = fields
 
 
@@ -232,7 +266,9 @@ class ComparisonViewSet(TenantScopedViewSet):
 
     def get_queryset(self):
         selected_project()
-        return super().get_queryset()
+        versions = get_accessible_queryset(ModelVersion).values('pk')
+        return super().get_queryset().filter(first_request__model_version_id__in=versions,
+            second_request__model_version_id__in=versions)
 
     def create(self, request):
         import hashlib
@@ -254,7 +290,8 @@ class ComparisonViewSet(TenantScopedViewSet):
                     raise ValueError('Each response needs its request ID and bounded actual output text.')
                 identifier = serializers.UUIDField().run_validation(response['request_id'])
                 record = InferenceRequest.all_objects.filter(request_id=identifier, tenant_id=get_active_tenant(),
-                    project=project, principal_id=str(request.user.pk), status='completed').first()
+                    project=project, principal_id=str(request.user.pk), status='completed',
+                    model_version__in=get_accessible_queryset(ModelVersion)).first()
                 if record is None or record.input_digest != digest(messages):
                     raise ValueError('Use your completed requests for exactly the same comparison input.')
                 expected = hashlib.sha256(response['text'].encode()).hexdigest() if response['text'] else ''
@@ -276,6 +313,18 @@ class ComparisonViewSet(TenantScopedViewSet):
             return Response(self.get_serializer(comparison).data, status=201 if created else 200)
         except ValueError as exc:
             raise serializers.ValidationError(str(exc)) from exc
+
+    @action(detail=True, methods=['post'], url_path='review-batch')
+    def review_batch(self, request, comparison_id=None):
+        from modelanvil.annotation.arena_review import review_comparison
+        from modelanvil.core.models import record_audit
+        try: campaign, created = review_comparison(self.get_object())
+        except ValueError as exc: raise serializers.ValidationError(str(exc)) from exc
+        if created:
+            record_audit('comparison.review', 'chat_comparison', self.get_object().comparison_id,
+                actor_id=request.modelanvil_actor_id, actor_kind=request.modelanvil_actor_kind,
+                input_snapshot={'campaign_id': str(campaign.campaign_id), 'qualification': 'awaiting_independent_human_review'})
+        return Response({'campaign_id': str(campaign.campaign_id), 'status': 'awaiting_independent_human_review'}, status=201 if created else 200)
 
     @action(detail=True, methods=['post'])
     def vote(self, request, *args, **kwargs):
@@ -332,14 +381,26 @@ class InferenceViewSet(TenantScopedViewSet):
         selected_project()
         from django.db.models import Q
         from modelanvil.runners.models import TrainingRun
-        from modelanvil.runners.training import hf_runtime, mlx_runtime
-        trained = TrainingRun.objects.filter(status='completed', job__status='succeeded',
-            base_model_version__architecture_ref__in=[hf_runtime.RUNTIME_ID, mlx_runtime.RUNTIME_ID]).values_list('output_model_version_id', flat=True)
-        rows = self.get_queryset().filter(Q(metadata__imported=True) | Q(pk__in=trained)).exclude(architecture_ref__in=['modelanvil.ocr.v1', 'modelanvil.laya.v1'])
+        from modelanvil.runners.training import hf_runtime, mlx_runtime, runtime, general_runtime
+        trained_runs = get_accessible_queryset(TrainingRun).filter(status='completed', job__status='succeeded',
+            base_model_version__architecture_ref__in=[hf_runtime.RUNTIME_ID, mlx_runtime.RUNTIME_ID, runtime.RUNTIME_ID, general_runtime.RUNTIME_ID]).select_related('base_model_version').order_by('-created_at', '-pk')
+        lineage = {}
+        for run in trained_runs:
+            if run.output_model_version_id:
+                lineage.setdefault(run.output_model_version_id, run)
+        rows = self.get_queryset().filter(Q(metadata__imported=True) | Q(metadata__managed_local=True) | Q(pk__in=lineage) | Q(architecture_ref__in=[runtime.RUNTIME_ID, general_runtime.RUNTIME_ID])).exclude(architecture_ref__in=['modelanvil.ocr.v1', 'modelanvil.laya.v1'])
+        from modelanvil.runners.capabilities import model_capabilities
+        from modelanvil.runners.inference import model_chat_template
+        eligible = [(v, model_capabilities(v)['chat']) for v in rows]
+        eligible_ids = {str(v.model_version_id) for v, capability in eligible if capability['eligible']}
         return Response({'object': 'list', 'data': [{'id': str(v.model_version_id), 'object': 'model',
             'created': int(v.created_at.timestamp()), 'owned_by': 'modelanvil', 'name': v.model.name,
-            'format': v.metadata.get('format', 'mlx' if v.architecture_ref == mlx_runtime.RUNTIME_ID else 'safetensors'), 'load_tested': v.inference_requests.filter(status='completed').exists(),
-            'has_chat_template': bool(v.tokenizer.chat_template), 'chat_template': v.tokenizer.chat_template} for v in rows]})
+            'format': capability.get('format', v.metadata.get('format', 'safetensors')), 'load_tested': v.inference_requests.filter(status='completed').exists(),
+            'devices': capability['devices'], 'max_tokens': capability['max_tokens'], 'context_limit': capability['context_limit'],
+            'tokenizer_kind': capability.get('tokenizer_kind'),
+            'training_run_id': str(lineage[v.pk].run_id) if v.pk in lineage else None,
+            'base_model_id': str(lineage[v.pk].base_model_version.model_version_id) if v.pk in lineage and str(lineage[v.pk].base_model_version.model_version_id) in eligible_ids else None,
+            'has_chat_template': bool(model_chat_template(v)), 'chat_template': model_chat_template(v)} for v, capability in eligible if capability['eligible']]})
 
     @action(detail=False, methods=['post'], url_path='chat/completions')
     def completions(self, request):

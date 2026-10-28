@@ -1,0 +1,258 @@
+{
+  "run_id": "429554912fe24d3aa3e09d14c38cb584",
+  "status": "completed",
+  "recipe_type": "lora_adapter",
+  "current_step": 288,
+  "total_steps": 288,
+  "hyperparameters": {},
+  "hardware_config": {
+    "execution_mode": "worker",
+    "purpose": "experiment",
+    "pins": {
+      "runtime": "modelanvil.smollm2-gpu-sft.v1",
+      "contract_digest": "1cf024962f7b293343087422f1a03d4ddb674f31b853772b9a0f015222cae5e8",
+      "build_digest": "40f0a31888f7e81b69f401355dbcfb4508deaa67ec87ccd6f9ba92f1ba51320e",
+      "dataset_id": "9fd87f0b-49c2-46b0-ba7e-a6cbe59e60d3",
+      "dataset_digest": "cc0692b15d95af03e27ff7bc39d737e4a386ce3fa8fa58ba5fa77f5708c3e97c",
+      "base_id": "5312e4d0-6bb5-42a0-a263-2a14fe25464b",
+      "base_artifact_id": "4b070f46-f062-4f32-9bd4-32654fb983cf",
+      "base_digest": "c5dc7516381d9426d6bd5684f2943ff7ed9fa2bb2d3c4c0d1b0a5b5aebab3595",
+      "tokenizer_id": "3c00e398-abf8-4925-a3c0-fd7125fda66b",
+      "tokenizer_digest": "24d441938f87d5a58d3134dce7fb5b5727ebc26d6f465b2e58bc12af6902c50d",
+      "runner_id": "ca9a2272-3679-4298-a3c0-e0e943b255c3",
+      "runner_digest": "ca2ef0d768f1b35546b49eec11ee994141761176c4ac66c583df9f04766227d8",
+      "pool_id": 9,
+      "steps": 288,
+      "config": {
+        "architectures": [
+          "LlamaForCausalLM"
+        ],
+        "attention_bias": false,
+        "attention_dropout": 0.0,
+        "bos_token_id": 1,
+        "eos_token_id": 2,
+        "hidden_act": "silu",
+        "hidden_size": 2048,
+        "initializer_range": 0.02,
+        "intermediate_size": 8192,
+        "max_position_embeddings": 8192,
+        "mlp_bias": false,
+        "model_type": "llama",
+        "num_attention_heads": 32,
+        "num_hidden_layers": 24,
+        "num_key_value_heads": 32,
+        "pad_token_id": 2,
+        "pretraining_tp": 1,
+        "rms_norm_eps": 1e-05,
+        "rope_scaling": null,
+        "rope_theta": 130000,
+        "tie_word_embeddings": true,
+        "torch_dtype": "bfloat16",
+        "transformers_version": "4.42.3",
+        "transformers.js_config": {
+          "dtype": "q4",
+          "kv_cache_dtype": {
+            "q4f16": "float16",
+            "fp16": "float16"
+          },
+          "use_external_data_format": {
+            "model.onnx": true,
+            "model_fp16.onnx": true
+          }
+        },
+        "use_cache": true,
+        "vocab_size": 49152,
+        "runtime": "modelanvil.smollm2-gpu-sft.v1"
+      },
+      "optimizer": {
+        "algorithm": "adamw",
+        "learning_rate": 0.0002,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "weight_decay": 0.0
+      },
+      "sample_digest": "dc94ad484e838de7d523492a2f8fdc6292a8d706fb14ff2e8a177a27bbdfb8c7",
+      "splits": {
+        "consumed": "train",
+        "train_rows": 48,
+        "excluded_rows": {
+          "test": 6,
+          "validation": 6
+        },
+        "excluded_digest": "89ceecaa6e72b0b8ca9ec6b29f3b605156dbc635d2bec351024b9408deef1c09"
+      },
+      "accelerator": {
+        "device": {
+          "id": "mps:0",
+          "backend": "mps",
+          "torch_device": "mps:0",
+          "name": "Metal Performance Shaders device",
+          "vendor": "Apple",
+          "total_memory_bytes": null,
+          "memory_scope": "shared_unified",
+          "runtime_recommended_memory_bytes": 40200896512
+        },
+        "framework": {
+          "name": "torch",
+          "version": "2.9.0",
+          "cuda_version": null,
+          "hip_version": null
+        },
+        "packages": {
+          "torch": "2.9.0",
+          "transformers": "4.57.1",
+          "safetensors": "0.6.2",
+          "tokenizers": "0.22.2"
+        },
+        "capacity_source": "MPS recommended shared-memory budget"
+      },
+      "worker_id": 9,
+      "chat_sft": true,
+      "recipe": "lora_adapter",
+      "source": {
+        "repo_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+        "revision": "31b70e2e869a7173562077fd711b654946d38674",
+        "license": "Apache-2.0"
+      },
+      "checkpoint_interval": 96,
+      "validation_digest": "38091cc8852e4b6611c96b5dbb806c8276ffb92069ce7a86a5e41304d6dfd81d",
+      "sample_order": "seeded_epoch_shuffle_v1",
+      "initialization_seed": 42,
+      "adapter": {
+        "r": 16,
+        "lora_alpha": 32,
+        "target_modules": [
+          "q_proj",
+          "k_proj",
+          "v_proj",
+          "o_proj",
+          "gate_proj",
+          "up_proj",
+          "down_proj"
+        ],
+        "lora_dropout": 0.0,
+        "bias": "none",
+        "task_type": "CAUSAL_LM"
+      },
+      "adapter_package": {
+        "peft": "0.17.1"
+      },
+      "trainable_parameters": 18087936
+    }
+  },
+  "metrics_log": [
+    {
+      "step": 96,
+      "loss": 0.0003801556013058871,
+      "post_update_loss": 0.000362175254849717,
+      "sample_id": "c0e135f8-9da9-5cbb-95fd-53aa40238427",
+      "training_pairs": 2114,
+      "cpu_seconds": 31.403596000000107,
+      "engine_wall_seconds": 61.88269108138047,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "device_residency_checked": true,
+      "gradient_norm": 0.011896828189492226,
+      "trainable_parameters": 18087936,
+      "total_parameters": 1729464320,
+      "measured_at": "2026-10-16T20:44:35.773596+00:00",
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "gpu_allocated_bytes": 7203738112,
+      "tokens_per_second": 34.1614102919333,
+      "gpu_utilization_percent": null,
+      "unified_memory": {
+        "recommended_bytes": 40200896512,
+        "process_limit_bytes": 36180806860,
+        "driver_allocated_bytes": 8282406912,
+        "process_headroom_bytes": 27898399948,
+        "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+      },
+      "updates_since_checkpoint": 96,
+      "validation_loss_before_update": 3.8380950357093186,
+      "validation_loss_before_training": 3.8380950357093186,
+      "validation_loss": 0.004030558492484518,
+      "validation_prediction_tokens": 122,
+      "validation_samples": 6,
+      "validation_wall_seconds": 0.6866417919518426,
+      "cumulative_training_prediction_tokens": 2114
+    },
+    {
+      "step": 192,
+      "loss": 6.427049811463803e-05,
+      "post_update_loss": 6.349581235554069e-05,
+      "sample_id": "2030177d-26ad-514b-9f44-9a4c0b76a9dd",
+      "training_pairs": 2114,
+      "cpu_seconds": 34.04418599999917,
+      "engine_wall_seconds": 64.63522512011696,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "device_residency_checked": true,
+      "gradient_norm": 0.0016215724172070622,
+      "trainable_parameters": 18087936,
+      "total_parameters": 1729464320,
+      "measured_at": "2026-10-16T20:45:41.971167+00:00",
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "gpu_allocated_bytes": 7202587648,
+      "tokens_per_second": 32.70662392018253,
+      "gpu_utilization_percent": null,
+      "unified_memory": {
+        "recommended_bytes": 40200896512,
+        "process_limit_bytes": 36180806860,
+        "driver_allocated_bytes": 8278212608,
+        "process_headroom_bytes": 27902594252,
+        "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+      },
+      "updates_since_checkpoint": 96,
+      "validation_loss_before_update": 0.004030558492484518,
+      "validation_loss_before_training": 3.8380950357093186,
+      "validation_loss": 0.00048397396909183684,
+      "validation_prediction_tokens": 122,
+      "validation_samples": 6,
+      "validation_wall_seconds": 0.8027551249833778,
+      "cumulative_training_prediction_tokens": 4228
+    },
+    {
+      "step": 288,
+      "loss": 0.00011637465649982914,
+      "post_update_loss": 0.0001149327727034688,
+      "sample_id": "a061a4e2-3dc4-5de7-8dd3-6e599a49065a",
+      "training_pairs": 2114,
+      "cpu_seconds": 80.73253399999908,
+      "engine_wall_seconds": 116.37508966668975,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "device_residency_checked": true,
+      "gradient_norm": 0.0022076270543038845,
+      "trainable_parameters": 18087936,
+      "total_parameters": 1729464320,
+      "measured_at": "2026-10-16T20:47:40.621828+00:00",
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "gpu_allocated_bytes": 7202587648,
+      "tokens_per_second": 18.165399537432915,
+      "gpu_utilization_percent": null,
+      "unified_memory": {
+        "recommended_bytes": 40200896512,
+        "process_limit_bytes": 36180806860,
+        "driver_allocated_bytes": 8278212608,
+        "process_headroom_bytes": 27902594252,
+        "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+      },
+      "updates_since_checkpoint": 96,
+      "validation_loss_before_update": 0.00048397396909183684,
+      "validation_loss_before_training": 3.8380950357093186,
+      "validation_loss": 0.00035324407687513767,
+      "validation_prediction_tokens": 122,
+      "validation_samples": 6,
+      "validation_wall_seconds": 1.1506406249245629,
+      "cumulative_training_prediction_tokens": 6342
+    }
+  ],
+  "started_at": "2026-10-16 20:43:26.325898",
+  "completed_at": "2026-10-16 20:47:46.071474",
+  "output_model_version_id": 19,
+  "duration_seconds": 259.745576
+}

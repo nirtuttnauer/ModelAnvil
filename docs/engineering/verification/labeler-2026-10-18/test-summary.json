@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-18",
+  "frontend": {
+    "command": "npm --prefix web test",
+    "passed": 219,
+    "failed": 0
+  },
+  "backend": {
+    "command": ".venv/bin/python manage.py test modelanvil.api.test_annotation modelanvil.api.test_annotation_sources --noinput",
+    "passed": 23,
+    "failed": 0
+  },
+  "production_build": {
+    "command": "npm --prefix web run build",
+    "result": "passed"
+  },
+  "browser_stories": {
+    "result": "passed",
+    "stories": [
+      "queue-keyboard-and-drafts",
+      "conflict-recovery",
+      "independent-review-and-escalation",
+      "create-and-import-files"
+    ],
+    "expected_failure": "Conflict recovery intentionally injects one HTTP 409."
+  },
+  "visual_checks": "visual-checks.json",
+  "limits": [
+    "Browser scenarios use isolated synthetic Storybook API fixtures.",
+    "Concurrent database races were not stress-tested.",
+    "Automatic model drafting, retraining, qualification and preference training publication remain outside this release."
+  ]
+}

@@ -1,0 +1,79 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- main:
+  - button "Toggle navigation":
+  - combobox "Organization":
+    - option "Mobile Tool Library Test workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - link "ModelAnvil overview":
+    - /url: "#overview"
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Active jobs":
+  - button "Refresh workspace":
+  - button "Sign out":
+  - heading "Chat" [level=1]:
+    - text: Chat
+  - group "Chat view":
+    - button "Chat"
+    - button "Base vs trained" [pressed]
+  - text: Trained model
+  - combobox "Trained model":
+    - option "Select a model"
+    - option "SmolLM2 fine-tune · c67e2e82" [selected]
+  - button "New conversation":
+  - button "Export":
+  - generic "Saved conversations"
+  - option "New conversation"
+  - option "How can I extend a loan from Juniper Tool Library?" [selected]
+  - generic "Generation settings"
+  - option "CPU" [selected]
+  - option "Apple Silicon GPU (PyTorch)"
+  - option "CPU" [selected]
+  - option "Apple Silicon GPU (PyTorch)"
+  - option "Imported model template" [selected]
+  - option "Plain text (one user prompt)"
+  - option "ChatML override"
+  - generic "Paired base model"
+  - region "Base and trained model responses":
+    - heading "Base vs trained responses" [level=3]
+    - paragraph: Same prompt and settings · fresh context. Answers generate one at a time.
+    - group "Shared comparison input":
+      - article:
+        - strong: Shared prompt
+        - paragraph: In one sentence, where should I park my bicycle at Juniper Tool Library?
+    - text: Saved prompt comparison
+    - combobox "Saved prompt comparison":
+      - option "10/16/2026, 11:18:29 PM" [selected]
+      - option "10/16/2026, 11:17:25 PM"
+    - region "Model responses":
+      - article "Base model response":
+        - generic: BASE MODEL
+        - heading "SmolLM2-1.7B Instruct" [level=3]
+        - paragraph: You should park your bicycle at the designated bicycle parking area located near the entrance of the Juniper Tool Library.
+        - button "Copy response":
+          - text: Copy response
+        - status: completed · 5.05 seconds including model load · 46 input / 23 output tokens
+      - article "Trained model response":
+        - generic: TRAINED MODEL
+        - heading "SmolLM2 fine-tune · c67e2e82" [level=3]
+        - paragraph: Use the bicycle racks beside the Juniper west entrance and bring your own lock.
+        - button "Copy response":
+          - text: Copy response
+        - status: completed · 4.57 seconds including model load · 46 input / 17 output tokens
+  - text: Message
+  - textbox "Message":
+    - /placeholder: Ask both models the same question…
+  - button "Regenerate":
+    - text: Regenerate
+  - button "Send message" [disabled]:
+    - text: Send
+  - generic "Message draft"
+  - generic "App information"
+  - text: Control plane

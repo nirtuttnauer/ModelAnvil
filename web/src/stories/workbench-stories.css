@@ -1,0 +1,12 @@
+.workbench-story-canvas { padding: 32px; max-width: 1400px; margin: 0 auto; min-width: 0; }
+.workbench-story-canvas > h1 { margin: 0 0 8px; font-size: 28px; }
+.workbench-story-canvas > h2 { margin: 0 0 28px; font-size: 16px; color: var(--text-secondary); }
+.workbench-story-canvas > form, .workbench-tile > form { display: grid; gap: 20px; }
+.workbench-story-canvas > form > button, .workbench-tile > form > button { justify-self: start; }
+.workbench-board { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 24px; }
+.workbench-tile { padding: 20px; border: 1px solid var(--border); background: var(--surface); border-radius: 8px; min-width: 0; }
+.workbench-tile > h2 { font-size: 16px; margin: 0 0 20px; }
+.workbench-narrow { width: 320px; max-width: 100%; grid-template-columns: minmax(0, 1fr); }
+.workbench-story-canvas > .inspector-panel { max-width: 420px; margin-top: 20px; }
+@media (max-width: 900px) { .workbench-board { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 600px) { .workbench-story-canvas { padding: 18px; }.workbench-tile { padding: 14px; } }

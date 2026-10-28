@@ -1,0 +1,1095 @@
+- log
+- log
+- banner "Storybook":
+  - heading "Storybook" [level=1]
+  - link "Skip to content":
+    - /url: "#storybook-preview-wrapper"
+  - link "Storybook":
+    - /url: ./
+    - img "Storybook"
+  - switch "Settings":
+  - button "Open onboarding guide":
+    - strong: Get started
+  - button "Collapse onboarding guide" [expanded]:
+  - button "37% completed":
+    - generic: 37%
+  - list:
+    - button "Open onboarding guide for Change a story with Controls":
+      - generic: Change a story with Controls
+    - button "Open onboarding guide for Publish your Storybook for feedback":
+      - generic: Publish your Storybook for feedback
+    - button "Open onboarding guide for Install Vitest addon":
+      - generic: Install Vitest addon
+  - generic: Search for components
+  - search:
+    - combobox "Search for components":
+      - searchbox "Search for components"
+      - code:
+        - generic: ⌘
+        - text: K
+      - button "Tag filters":
+    - button "Create a new story":
+  - switch "Show new and modified stories since last commit":
+    - text: Show new and modified stories
+  - navigation "Stories":
+    - heading "Stories" [level=2]
+    - button "Collapse" [expanded]:
+      - text: ModelAnvil
+    - button "Expand all":
+    - button "Screens":
+      - text: Screens
+    - button "States":
+      - text: States
+    - button "Actions" [expanded]:
+      - text: Actions
+    - 'button "Change status: New"':
+    - button "Base chat comparison":
+      - text: Base chat comparison
+    - 'button "Change status: New"':
+    - button "Chat":
+      - text: Chat
+    - 'button "Change status: New"':
+    - button "Input forms":
+      - text: Input forms
+    - 'button "Change status: New"':
+    - button "Model hardware":
+      - text: Model hardware
+    - 'button "Change status: New"':
+    - button "ML":
+      - text: ML
+    - button "Model export":
+      - text: Model export
+    - 'button "Change status: New"':
+    - button "Training dataset preview":
+      - text: Training dataset preview
+    - 'button "Change status: New"':
+    - button "Dataset validation":
+      - text: Dataset validation
+    - 'button "Change status: New"':
+    - button "Training progress":
+      - text: Training progress
+    - 'button "Change status: New"':
+    - button "Engineering components" [expanded]:
+      - text: Engineering components
+    - 'button "Change status: New"':
+    - link "Training Launch":
+      - /url: /?path=/story/modelanvil-actions-engineering-components--training-launch
+      - text: Training Launch
+    - 'button "Change status: New"':
+    - link "Evaluation Comparison":
+      - /url: /?path=/story/modelanvil-actions-engineering-components--evaluation-comparison
+      - text: Evaluation Comparison
+    - 'button "Change status: New"':
+    - link "Model Lineage":
+      - /url: /?path=/story/modelanvil-actions-engineering-components--model-lineage
+      - text: Model Lineage
+    - 'button "Change status: New"':
+    - link "Dataset Lineage":
+      - /url: /?path=/story/modelanvil-actions-engineering-components--dataset-lineage
+      - text: Dataset Lineage
+    - 'button "Change status: New"':
+    - link "Release Review":
+      - /url: /?path=/story/modelanvil-actions-engineering-components--release-review
+      - text: Release Review
+    - 'button "Change status: New"':
+    - link "Worker Inspector":
+      - /url: /?path=/story/modelanvil-actions-engineering-components--worker-inspector
+      - text: Worker Inspector
+    - 'button "Change status: New"':
+    - link "Audit Inspector":
+      - /url: /?path=/story/modelanvil-actions-engineering-components--audit-inspector
+      - text: Audit Inspector
+    - 'button "Change status: New"':
+    - link "Training Modes And Tabs":
+      - /url: /?path=/story/modelanvil-actions-engineering-components--training-modes-and-tabs
+      - text: Training Modes And Tabs
+    - link "Skip to content":
+      - /url: "#storybook-preview-wrapper"
+    - 'button "Change status: New"':
+    - link "Training Draft Migration":
+      - /url: /?path=/story/modelanvil-actions-engineering-components--training-draft-migration
+      - text: Training Draft Migration
+    - 'button "Change status: New"':
+    - link "Training Current Run And History":
+      - /url: /?path=/story/modelanvil-actions-engineering-components--training-current-run-and-history
+      - text: Training Current Run And History
+    - 'button "Change status: New"':
+    - button "Components":
+      - text: Components
+    - 'button "Change status: New"':
+- separator "Sidebar resize handle"
+- region "Toolbar":
+  - heading "Toolbar" [level=2]
+  - toolbar:
+    - button "Reload story":
+    - switch "Grid visibility":
+    - button "Preview background":
+    - switch "Measure tool":
+    - switch "Outline tool":
+    - button "Viewport size":
+    - button "Vision filter":
+    - button "Open in isolation mode":
+    - switch "Change zoom level": 100%
+    - button "Enter full screen":
+    - button "Open in editor":
+- main "Main preview area":
+  - heading "Main preview area" [level=2]
+  - link "Skip to sidebar":
+    - /url: "#modelanvil-actions-engineering-components--training-modes-and-tabs"
+  - iframe [id="storybook-preview-iframe"]:
+    - note: DEMO WORKSPACE · Synthetic data · Actions stay in this Storybook session
+    - link "Skip to content":
+      - /url: "#workspace-content"
+    - main:
+      - button "Toggle navigation":
+      - combobox "Organization":
+        - option "Anvil Research · Demo" [selected]
+        - option "Connect organization…"
+      - combobox "Project":
+        - option "Assistant Research · Demo" [selected]
+        - option "+ New project…"
+      - link "ModelAnvil overview":
+        - /url: "#overview"
+      - button "Go to a workspace screen… ⌘ / Ctrl K":
+      - combobox "Color theme":
+        - option "Light" [selected]
+        - option "Dark"
+        - option "System"
+      - button "Refresh workspace":
+      - button "Connection":
+      - text: Develop
+      - heading "Training" [level=1]
+      - paragraph: Fine-tune a pretrained model with your own examples.
+      - heading "Training studio" [level=2]
+      - paragraph: Choose your model and data, review your training plan, and follow the results in one workspace.
+      - button "Tokenizer":
+        - text: Tokenizer
+      - button "Model Version":
+        - text: Model Version
+      - button "Configure a run"
+      - tablist "Training workspace":
+        - tab "Configure" [selected]
+        - tab "Current run Training active":
+          - text: Current run
+          - generic "Training active"
+        - tab "History"
+      - generic "Loaded training summary":
+        - generic: Training runs
+        - strong: "3"
+        - generic: All accessible recorded runs
+        - generic: Active runs
+        - strong: "1"
+        - generic: Pending or running
+        - generic: Saved checkpoints
+        - strong: "6"
+        - generic: Recorded checkpoint artifacts
+        - generic: Latest selected loss
+        - strong: "1.8870"
+        - generic: Run 30000000
+      - tabpanel "Configure":
+        - heading "Configure your training run" [level=3]
+        - paragraph: Simple and advanced settings share the same saved configuration.
+        - button "Hide advanced settings" [expanded]
+        - heading "Model, data and compute" [level=3]
+        - text: Execution
+        - combobox "Execution":
+          - option "Worker text fine-tuning" [selected]
+          - option "Synthetic training fixture"
+        - text: Recipe type
+        - combobox "Recipe type":
+          - option "Full parameter SFT" [selected]
+          - option "GPU LoRA · pinned SmolLM2 profile"
+          - option "Apple GPU QLoRA · four-bit SmolLM2 profile"
+          - option "GPU continued pretraining · pinned text corpus"
+        - text: Tokenizer version
+        - combobox "Tokenizer version":
+          - option "Select a tokenizer"
+          - 'option "Anvil Character · r1 (vocab: 128)" [selected]'
+          - 'option "Anvil Character Extended · r2 (vocab: 192)"'
+        - button "+ New"
+        - generic: Base model version
+        - searchbox "Search base model version"
+        - combobox "Base model version":
+          - option "Select an exact revision"
+          - option "Anvil Assistant · r8 · candidate" [selected]
+          - option "Anvil Assistant · r7 · candidate"
+          - option "Anvil Verifier · r2 · draft"
+        - button "+ New"
+        - paragraph: 3 resources in the loaded inventory.
+        - link "Anvil Assistant":
+          - /url: "#resources/model-version/10000000-0000-4000-8000-000000000002"
+        - generic: r8
+        - generic: candidate
+        - generic "Exact resource ID"
+        - paragraph: Fictional Storybook compatibility; no real execution.
+        - paragraph:
+          - link "Initialize a CPU base in Models":
+            - /url: "#models"
+          - text: or select a GPU base registered on your worker host. Choose its matching tokenizer.
+        - paragraph: Fictional Storybook compatibility; no real execution.
+        - region "Model hardware fit":
+          - heading "Hardware & memory" [level=4]
+          - status:
+            - text: Hardware fit unknown
+          - paragraph: Training memory requirements have not been reported for this model.
+          - paragraph: Quantization, context, activations and optimizer state can change runtime memory. No estimate is inferred from file size.
+        - generic: Prepared dataset revision
+        - searchbox "Search prepared dataset revision"
+        - combobox "Prepared dataset revision":
+          - option "Select an exact revision"
+          - option "Assistant instruction corpus · r1 · published" [selected]
+          - option "Lucide SVG instructions · r2 · published"
+        - paragraph: 2 resources in the loaded inventory.
+        - link "Assistant instruction corpus":
+          - /url: "#resources/dataset-revision/20000000-0000-4000-8000-000000000002"
+        - generic: r1
+        - generic: published
+        - generic "Exact resource ID"
+        - paragraph: 1200 rows · manifest aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        - region "Selected dataset preview":
+          - heading "Selected dataset · sample rows" [level=4]
+          - paragraph: 1 prepared rows. This published revision uses a fixed mapping; create a new revision to change it.
+          - region "Prepared sample rows":
+            - table "Sample rows from the prepared training data.":
+              - caption: Sample rows from the prepared training data.
+              - rowgroup:
+                - row "Example Input / context Target response / training text Split":
+                  - columnheader "Example"
+                  - columnheader "Input / context"
+                  - columnheader "Target response / training text"
+                  - columnheader "Split"
+              - rowgroup:
+                - row "1 No prompt · plain text No target text reported train":
+                  - rowheader "1"
+                  - cell "No prompt · plain text"
+                  - cell "No target text reported"
+                  - cell "train"
+        - text: Worker execution pool
+        - combobox "Worker execution pool":
+          - option "Select a durable worker pool"
+          - option "Research CPU pool (research-cpu)" [selected]
+          - option "Evaluation pool (evaluation-cpu)"
+        - text: Budget policy & limit
+        - combobox "Budget policy & limit":
+          - option "Select a training step budget"
+          - 'option "Training steps · Demo (remaining: 790 · limit: 1000 training_steps)" [selected]'
+        - text: Registered training runner
+        - combobox "Registered training runner":
+          - option "Select a runtime manifest"
+          - option "Character SFT runner" [selected]
+        - text: Initialization seed
+        - spinbutton "Initialization seed" [disabled]
+        - heading "Training plan" [level=3]
+        - text: Training plan
+        - combobox "Training plan":
+          - option "Recommended · 3 passes"
+          - option "Quick setup check · 3 steps"
+          - option "Custom step count" [selected]
+        - text: Total steps
+        - spinbutton "Total steps"
+        - paragraph: 73 training updates.
+        - paragraph: 120 validation and 120 test examples remain held out.
+        - generic "Measured pilot (optional)"
+        - generic "Saved configuration"
+        - complementary "Run summary":
+          - generic: RUN SUMMARY
+          - heading "Your training run" [level=3]
+          - term: Model
+          - definition: SmolLM2-135M Instruct
+          - term: Dataset
+          - definition: Assistant instruction corpus
+          - term: Method
+          - definition: full sft
+          - term: Compute
+          - definition: Research CPU pool
+          - term: Training steps
+          - definition: "73"
+          - paragraph: Reserves 73 training steps. Preflight checks compatibility, hardware, storage and allowance before launch.
+          - button "Preview preflight"
+        - region "Training preflight":
+          - heading "Training preflight" [level=3]
+          - status: Ready to launch
+          - generic "Compatibility, capacity and budget details"
+          - region "Inputs checks":
+            - heading "Inputs" [level=4]
+            - list:
+              - strong: Demo dataset pin
+              - generic: Passed
+              - paragraph: Published demo revision is pinned by SHA-256.
+              - generic "Check details and units"
+          - region "Capacity checks":
+            - heading "Capacity" [level=4]
+            - list:
+              - strong: Demo worker capacity
+              - generic: Passed
+              - paragraph: Storybook provides fictional CPU capacity.
+              - generic "Check details and units"
+          - region "Budget checks":
+            - heading "Budget" [level=4]
+            - list:
+              - strong: Demo budget
+              - generic: Passed
+              - paragraph: Storybook provides a fictional training step allowance.
+          - heading "Resolved requirements" [level=4]
+          - term: Runtime
+          - definition: Storybook demo CPU runtime
+          - term: Worker slots
+          - definition: "1"
+          - term: Host memory
+          - definition: 256 MiB
+          - term: Projected storage
+          - definition: 1.00 MiB
+          - paragraph: Illustrative fixture artifact sizes.
+          - generic "Resolved recipe parameters"
+          - heading "Estimate and budget" [level=4]
+          - term: Engine time
+          - definition: 18.4 seconds
+          - term: Next-token pairs
+          - definition: 18,432
+          - term: Estimated cost
+          - definition: Unknown — No monetary rates in the demo fixture.
+          - term: Requested
+          - definition: 73 training_steps
+          - term: Remaining / limit
+          - definition: 790 / 1000 training_steps
+          - term: Already committed
+          - definition: 210 training_steps
+          - paragraph: "Storybook fictional pilot estimate; not a measured runtime. · uncertainty: Illustrative only"
+          - generic "Estimate assumptions"
+          - generic "Encoded training samples · 960 total, showing 2"
+          - generic "Pinned input revisions and digests"
+          - paragraph: "Demo only: no worker or budget is contacted."
+          - paragraph: Preview expires in 14 minutes.
+          - button "Refresh preflight"
+          - button "Launch fine-tuning"
+      - generic "App information"
+      - text: Control plane
+- separator "Addon panel resize handle"
+- region "Addon panel":
+  - heading "Addon panel" [level=2]
+  - button "Move addon panel to right":
+  - button "Hide addon panel":
+  - tablist "Available addons":
+    - tab "Actions":
+      - generic: Actions
+    - tab "Interactions 47" [active] [selected]:
+      - generic: Interactions
+      - generic: "47"
+    - tab "Accessibility 2":
+      - generic: Accessibility
+      - generic: "2"
+  - tabpanel "Interactions 47":
+    - toolbar "Component test playback controls":
+      - 'generic "Story status: Pass"': Pass
+      - button "Scroll to end"
+      - button "Go to start":
+      - button "Go back":
+      - button "Go forward" [disabled]:
+      - button "Go to end" [disabled]:
+      - button "Rerun":
+      - button "Open in editor": WorkbenchActions.stories.tsx
+    - heading "Interaction steps" [level=3]
+    - list:
+      - 'button "Go to interaction row: findByText. Status: passed."':
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: findByText
+        - text: (
+        - text: "\"Assistant Research · Demo\","
+        - text: "{"
+        - generic: "selector:"
+        - text: "\"option\" }"
+        - text: )
+      - 'button "Go to interaction row: toBeInTheDocument. Status: passed."':
+        - text: expect
+        - text: (
+        - text: Promise
+        - text: )
+        - text: .
+        - text: toBeInTheDocument
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: waitFor. Status: passed."':
+        - text: waitFor
+        - text: (
+        - text: anonymous
+        - text: )
+      - button "Collapse nested interaction steps for waitFor" [expanded]:
+      - 'button "Interaction row: toBeInTheDocument. Status: passed." [disabled]':
+        - text: expect
+        - text: (
+        - text: "null"
+        - text: )
+        - text: .not
+        - text: .
+        - text: toBeInTheDocument
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: findByRole. Status: passed."':
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: findByRole
+        - text: (
+        - text: "\"button\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Use this model\" }"
+        - text: )
+      - 'button "Go to interaction row: click. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: click
+        - text: (
+        - generic: <button.primary>
+        - text: )
+      - 'button "Go to interaction row: findByRole. Status: passed."':
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: findByRole
+        - text: (
+        - text: "\"heading\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Add your training examples\" }"
+        - text: )
+      - 'button "Go to interaction row: toBeVisible. Status: passed."':
+        - text: expect
+        - text: (
+        - text: Promise
+        - text: )
+        - text: .
+        - text: toBeVisible
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: click. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: click
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"button\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Advanced settings\" }"
+        - text: )
+        - text: )
+      - 'button "Go to interaction row: waitFor. Status: passed."':
+        - text: waitFor
+        - text: (
+        - text: anonymous
+        - text: )
+      - button "Collapse nested interaction steps for waitFor" [expanded]:
+      - 'button "Interaction row: toHaveValue. Status: passed." [disabled]':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByLabelText
+        - text: (
+        - text: "\"Base model version\","
+        - text: "{"
+        - generic: "exact:"
+        - text: "true }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toHaveValue
+        - text: (
+        - text: "\"1\""
+        - text: )
+      - 'button "Go to interaction row: toHaveValue. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByLabelText
+        - text: (
+        - text: "\"Tokenizer version\","
+        - text: "{"
+        - generic: "exact:"
+        - text: "true }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toHaveValue
+        - text: (
+        - text: "\"1\""
+        - text: )
+      - 'button "Go to interaction row: selectOptions. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: selectOptions
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByLabelText
+        - text: (
+        - text: "\"Prepared dataset revision\","
+        - text: "{"
+        - generic: "exact:"
+        - text: "true }"
+        - text: )
+        - text: ","
+        - text: "\"1\""
+        - text: )
+      - 'button "Go to interaction row: selectOptions. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: selectOptions
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByLabelText
+        - text: (
+        - text: "\"Training plan\","
+        - text: "{"
+        - generic: "exact:"
+        - text: "true }"
+        - text: )
+        - text: ","
+        - text: "\"custom\""
+        - text: )
+      - 'button "Go to interaction row: clear. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: clear
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByLabelText
+        - text: (
+        - text: "\"Total steps\""
+        - text: )
+        - text: )
+      - 'button "Go to interaction row: type. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: type
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByLabelText
+        - text: (
+        - text: "\"Total steps\""
+        - text: )
+        - text: ","
+        - text: "\"72\""
+        - text: )
+      - 'button "Go to interaction row: click. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: click
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"button\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Preview preflight\" }"
+        - text: )
+        - text: )
+      - 'button "Go to interaction row: findByRole. Status: passed."':
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: findByRole
+        - text: (
+        - text: "\"region\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Training preflight\" }"
+        - text: )
+      - 'button "Go to interaction row: toBeVisible. Status: passed."':
+        - text: expect
+        - text: (
+        - text: Promise
+        - text: )
+        - text: .
+        - text: toBeVisible
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: clear. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: clear
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByLabelText
+        - text: (
+        - text: "\"Total steps\""
+        - text: )
+        - text: )
+      - 'button "Go to interaction row: type. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: type
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByLabelText
+        - text: (
+        - text: "\"Total steps\""
+        - text: )
+        - text: ","
+        - text: "\"73\""
+        - text: )
+      - 'button "Go to interaction row: waitFor. Status: passed."':
+        - text: waitFor
+        - text: (
+        - text: anonymous
+        - text: )
+      - button "Collapse nested interaction steps for waitFor" [expanded]:
+      - 'button "Interaction row: toBeInTheDocument. Status: passed." [disabled]':
+        - text: expect
+        - text: (
+        - text: "null"
+        - text: )
+        - text: .not
+        - text: .
+        - text: toBeInTheDocument
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: click. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: click
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"button\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Hide advanced settings\" }"
+        - text: )
+        - text: )
+      - 'button "Go to interaction row: toBeVisible. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"heading\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Model and dataset selected\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toBeVisible
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: toHaveValue. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByLabelText
+        - text: (
+        - text: "\"Total steps\""
+        - text: )
+        - text: )
+        - text: .
+        - text: toHaveValue
+        - text: (
+        - text: "73"
+        - text: )
+      - 'button "Go to interaction row: click. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: click
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"button\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Preview preflight\" }"
+        - text: )
+        - text: )
+      - 'button "Go to interaction row: findByRole. Status: passed."':
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: findByRole
+        - text: (
+        - text: "\"region\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Training preflight\" }"
+        - text: )
+      - 'button "Go to interaction row: toBeEnabled. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - generic: <section.preflight-checklist.detail-box>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"button\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Launch fine-tuning\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toBeEnabled
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: toHaveAttribute. Status: passed."':
+        - text: expect
+        - text: (
+        - text: <details
+        - text: ">Compatibility, capacity and budget details<"
+        - generic: /details
+        - text: ">"
+        - text: )
+        - text: .not
+        - text: .
+        - text: toHaveAttribute
+        - text: (
+        - text: "\"open\""
+        - text: )
+      - 'button "Go to interaction row: click. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: click
+        - text: (
+        - text: within
+        - text: (
+        - generic: <section.preflight-checklist.detail-box>
+        - text: )
+        - text: .
+        - text: getByText
+        - text: (
+        - text: "\"Compatibility, capacity and budget details\""
+        - text: )
+        - text: )
+      - 'button "Go to interaction row: toHaveAttribute. Status: passed."':
+        - text: expect
+        - text: (
+        - text: <details
+        - text: ">Compatibility, capacity and budget details Inputs Demo dataset pin Passed Published demo revision is pinned by SHA-256. Check details and units Capacity Demo worker capacity Passed Storybook provides fictional CPU capacity. Check details and units Budget Demo budget Passed Storybook provides a fictional training step allowance. Resolved requirements Runtime Storybook demo CPU runtime Worker slots 1 Host memory 256 MiB Projected storage 1.00 MiB Illustrative fixture artifact sizes. Resolved recipe parameters Estimate and budget Engine time 18.4 seconds Next-token pairs 18,432 Estimated cost Unknown — No monetary rates in the demo fixture. Requested 73 training_steps Remaining / limit 790 / 1000 training_steps Already committed 210 training_steps Storybook fictional pilot estimate; not a measured runtime. · uncertainty: Illustrative only Estimate assumptions Encoded training samples · 960 total, showing 2 Pinned input revisions and digests<"
+        - generic: /details
+        - text: ">"
+        - text: )
+        - text: .
+        - text: toHaveAttribute
+        - text: (
+        - text: "\"open\""
+        - text: )
+      - 'button "Go to interaction row: click. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: click
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"tab\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"History\" }"
+        - text: )
+        - text: )
+      - 'button "Go to interaction row: toBeVisible. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"tabpanel\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"History\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toBeVisible
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: click. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: click
+        - text: (
+        - generic: <button.text-button>
+        - text: )
+      - 'button "Go to interaction row: toHaveAttribute. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"tab\","
+        - text: "{"
+        - generic: "name:"
+        - generic: /Current run/
+        - text: "}"
+        - text: )
+        - text: )
+        - text: .
+        - text: toHaveAttribute
+        - text: (
+        - text: "\"aria-selected\","
+        - text: "\"true\""
+        - text: )
+      - 'button "Go to interaction row: toBeVisible. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"heading\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Loss & checkpoint activity\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toBeVisible
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: click. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: click
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"tab\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Configure\" }"
+        - text: )
+        - text: )
+      - 'button "Go to interaction row: keyboard. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: keyboard
+        - text: (
+        - text: "\"{End}\""
+        - text: )
+      - 'button "Go to interaction row: toHaveFocus. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"tab\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"History\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toHaveFocus
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: keyboard. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: keyboard
+        - text: (
+        - text: "\"{Home}\""
+        - text: )
+      - 'button "Go to interaction row: toHaveFocus. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"tab\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Configure\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toHaveFocus
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: toHaveValue. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByLabelText
+        - text: (
+        - text: "\"Total steps\""
+        - text: )
+        - text: )
+        - text: .
+        - text: toHaveValue
+        - text: (
+        - text: "73"
+        - text: )
+      - 'button "Go to interaction row: click. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: click
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"button\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Advanced settings\" }"
+        - text: )
+        - text: )
+      - 'button "Go to interaction row: toHaveValue. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByLabelText
+        - text: (
+        - text: "\"Prepared dataset revision\","
+        - text: "{"
+        - generic: "exact:"
+        - text: "true }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toHaveValue
+        - text: (
+        - text: "\"1\""
+        - text: )
+      - 'button "Go to interaction row: toHaveValue. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByLabelText
+        - text: (
+        - text: "\"Base model version\","
+        - text: "{"
+        - generic: "exact:"
+        - text: "true }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toHaveValue
+        - text: (
+        - text: "\"1\""
+        - text: )
+      - 'button "Go to interaction row: toHaveLength. Status: passed."':
+        - text: expect
+        - text: (
+        - generic: "[]"
+        - text: )
+        - text: .
+        - text: toHaveLength
+        - text: (
+        - text: "0"
+        - text: )

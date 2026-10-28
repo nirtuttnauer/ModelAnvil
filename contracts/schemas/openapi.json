@@ -18,6 +18,9 @@
   "security": [
     {
       "BearerAuth": []
+    },
+    {
+      "BrowserSession": []
     }
   ],
   "tags": [
@@ -728,6 +731,34 @@
                 "schema": {
                   "$ref": "#/components/schemas/BudgetPolicyPage"
                 }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Budgets"
+        ],
+        "summary": "Create an administrator-managed budget policy",
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetPolicy"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BudgetPolicy"
               }
             }
           }
@@ -3404,6 +3435,14 @@
                     "minimum": 0,
                     "maximum": 2147483647,
                     "default": 42
+                  },
+                  "profile": {
+                    "type": "string",
+                    "enum": [
+                      "cpu-character",
+                      "cpu-transformer"
+                    ],
+                    "default": "cpu-character"
                   }
                 }
               }
@@ -3447,23 +3486,23 @@
     },
     "/evaluation-runs/{run_id}/execute/": {
       "post": {
-        "summary": "Evaluate checksum-verified committed CPU character weights and optional baseline",
         "tags": [
-          "Evaluations"
+          "Evaluation"
         ],
-        "operationId": "executeCpuEvaluation",
+        "summary": "Execute legacy CPU character evaluation or queue a pinned durable CPU evaluation",
         "responses": {
+          "202": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationRun"
+                }
+              }
+            }
+          },
           "200": {
-            "description": "Successful operation"
-          },
-          "400": {
-            "description": "Invalid request or unsupported executor"
-          },
-          "403": {
-            "description": "Insufficient role"
-          },
-          "404": {
-            "description": "Resource unavailable in this scope"
+            "description": "Legacy synchronous execution or idempotent queue replay"
           }
         },
         "requestBody": {
@@ -3471,30 +3510,11 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "max_tokens": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "maximum": 32,
-                    "default": 8
-                  }
-                }
+                "$ref": "#/components/schemas/LocalEvaluationExecution"
               }
             }
           }
-        },
-        "parameters": [
-          {
-            "name": "run_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ]
+        }
       }
     },
     "/alignment-runs/{run_id}/execute/": {
@@ -3887,7 +3907,48 @@
         ],
         "responses": {
           "200": {
-            "description": "Scoped result"
+            "description": "Scoped chat-capable models. training_run_id identifies completed training lineage; base_model_id is reported only when the exact base is also available for chat in this scope.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true,
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "base_model_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "uuid",
+                            "readOnly": true
+                          },
+                          "training_run_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "uuid",
+                            "readOnly": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "Unsupported or invalid inputs"
@@ -4106,7 +4167,7 @@
     },
     "/training-runs/{run_id}/download/": {
       "get": {
-        "summary": "Download verified Safetensors or LoRA candidate files with provenance",
+        "summary": "Download a verified native snapshot, LoRA adapter archive or JSON export",
         "tags": [
           "Training"
         ],
@@ -4119,16 +4180,107 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          {
+            "name": "export_format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "native",
+                "adapter",
+                "json"
+              ],
+              "default": "native"
+            },
+            "description": "Select a format listed in the run\u2019s export_options. JSON contains embedded reference weights for CPU runs and artifact references for transformer snapshots."
+          },
+          {
+            "name": "evaluation_run",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Bind a native or adapter ZIP to the immutable decision and verified complete comparison for this exact candidate. JSON does not support reviewed export."
           }
         ],
         "responses": {
           "200": {
-            "description": "ZIP of actual verified weights, model/tokenizer files and ModelAnvil provenance; optimizer state stays in checkpoints",
+            "description": "Verified ZIP archive or JSON bundle/manifest. Native ZIP includes base weights and separate adapters; adapter ZIP requires the recorded base model. Optimizer state remains in checkpoints. With evaluation_run, includes checksums, frozen comparison evidence, immutable decision, base identity, tokenizer/template and an independent loader.",
             "content": {
               "application/zip": {
                 "schema": {
                   "type": "string",
                   "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Incomplete or incompatible run, corrupt/missing bytes"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "404": {
+            "description": "Run unavailable in this project"
+          }
+        }
+      },
+      "post": {
+        "summary": "Export and download a synthetic fixture candidate (requires write permission)",
+        "tags": [
+          "Training"
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "export_format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "native",
+                "adapter",
+                "json"
+              ],
+              "default": "native"
+            },
+            "description": "Select a format listed in the run\u2019s export_options. JSON contains embedded reference weights for CPU runs and artifact references for transformer snapshots."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified ZIP archive or JSON bundle/manifest. Native ZIP includes base weights and separate adapters; adapter ZIP requires the recorded base model. Optimizer state remains in checkpoints.",
+            "content": {
+              "application/zip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
                 }
               }
             }
@@ -4153,9 +4305,23 @@
         "summary": "List project-scoped saved arena comparisons",
         "responses": {
           "200": {
-            "description": "Paired text with stable A/B assignment; model identity hidden until preference is recorded"
+            "description": "Saved measured response pair. Default view keeps identities blind until a vote. view=base-trained exposes role, model, name, usage and elapsed_seconds only for a recorded accessible base/trained lineage."
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "view",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "base-trained"
+              ]
+            },
+            "description": "Opt into named base/trained responses when a completed accessible training run records the exact model pair. Default responses retain blind A/B identities until a vote; unrelated pairs remain blind."
+          }
+        ]
       },
       "post": {
         "tags": [
@@ -4213,15 +4379,29 @@
         },
         "responses": {
           "201": {
-            "description": "Comparison saved"
+            "description": "Saved measured response pair. Default view keeps identities blind until a vote. view=base-trained exposes role, model, name, usage and elapsed_seconds only for a recorded accessible base/trained lineage."
           },
           "200": {
-            "description": "Existing response pair returned"
+            "description": "Saved measured response pair. Default view keeps identities blind until a vote. view=base-trained exposes role, model, name, usage and elapsed_seconds only for a recorded accessible base/trained lineage."
           },
           "400": {
             "description": "Unverified output, mismatched input/settings or inaccessible requests"
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "view",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "base-trained"
+              ]
+            },
+            "description": "Opt into named base/trained responses when a completed accessible training run records the exact model pair. Default responses retain blind A/B identities until a vote; unrelated pairs remain blind."
+          }
+        ]
       }
     },
     "/api/v1/chat-comparisons/{comparison_id}/": {
@@ -4239,11 +4419,23 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          {
+            "name": "view",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "base-trained"
+              ]
+            },
+            "description": "Opt into named base/trained responses when a completed accessible training run records the exact model pair. Default responses retain blind A/B identities until a vote; unrelated pairs remain blind."
           }
         ],
         "responses": {
           "200": {
-            "description": "Saved comparison"
+            "description": "Saved measured response pair. Default view keeps identities blind until a vote. view=base-trained exposes role, model, name, usage and elapsed_seconds only for a recorded accessible base/trained lineage."
           },
           "404": {
             "description": "Comparison unavailable"
@@ -4505,6 +4697,139 @@
         }
       }
     },
+    "/workers/setup/": {
+      "get": {
+        "tags": [
+          "Infrastructure"
+        ],
+        "summary": "List installed local worker setup profiles and caller administration permission",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkerSetupOptions"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Infrastructure"
+        ],
+        "summary": "Register a shipped local worker profile and return a one-time credential",
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkerSetupResult"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Administrator role required"
+          },
+          "409": {
+            "description": "Existing name or incompatible installed resources"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkerSetupInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/budget-policies/permissions/": {
+      "get": {
+        "tags": [
+          "Budgets"
+        ],
+        "summary": "Read budget administration permission and tenant scope",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetAdministration"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/budget-policies/{policy_id}/": {
+      "parameters": [
+        {
+          "name": "policy_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Budgets"
+        ],
+        "summary": "Inspect current budget allowance",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetPolicy"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Budgets"
+        ],
+        "summary": "Update policy without invalidating committed usage or historical units",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetPolicy"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BudgetPolicy"
+              }
+            }
+          }
+        }
+      }
+    },
     "/specialists/": {
       "get": {
         "summary": "List project-scoped OCR and typed-decision models and immutable catalog pins",
@@ -4709,6 +5034,241 @@
                     "format": "binary"
                   }
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/build/": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Inspect running API revision, source digest, protocol and import formats",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildIdentity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/evaluation-runs/{run_id}/cancel/": {
+      "parameters": [
+        {
+          "name": "run_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "Evaluation"
+        ],
+        "summary": "Request cancellation; running work remains running until observed",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationRun"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/release-versions/create-candidate/": {
+      "post": {
+        "tags": [
+          "Releases"
+        ],
+        "summary": "Freeze local candidate review with exact complete evaluation and provenance",
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleaseVersion"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CandidateReviewInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/release-versions/{release_version_id}/download/": {
+      "parameters": [
+        {
+          "name": "release_version_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Releases"
+        ],
+        "summary": "Download reviewed actual CPU weights, hashes, notices and standalone consumer",
+        "responses": {
+          "200": {
+            "description": "Authenticated verified candidate archive",
+            "content": {
+              "application/zip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/serving-endpoints/{endpoint_id}/deploy-local/": {
+      "parameters": [
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "Serving"
+        ],
+        "summary": "Probe actual CPU weights and switch endpoint only after readiness",
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocalDeployment"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "release_version_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "release_version_id"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/serving-endpoints/{endpoint_id}/local-health/": {
+      "parameters": [
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Serving"
+        ],
+        "summary": "Run an actual authenticated local readiness request",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocalServingResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/serving-endpoints/{endpoint_id}/completions/": {
+      "parameters": [
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "Serving"
+        ],
+        "summary": "Run bounded authenticated local CPU serving",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocalServingResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocalServingInput"
               }
             }
           }
@@ -5321,6 +5881,690 @@
           }
         ]
       }
+    },
+    "/accounts/signup/": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Create an isolated account and first project",
+        "operationId": "browserAccountSignup",
+        "security": [
+          {
+            "CSRFToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrowserAccountInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Browser session created; credential is set as an HttpOnly cookie.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrowserAccountSession"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid account input"
+          },
+          "401": {
+            "description": "Sign-in refused"
+          },
+          "403": {
+            "description": "CSRF refused or sign-up disabled"
+          },
+          "429": {
+            "description": "Account attempt rate limit exceeded"
+          }
+        }
+      }
+    },
+    "/accounts/signin/": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Sign in to an account",
+        "operationId": "browserAccountSignin",
+        "security": [
+          {
+            "CSRFToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrowserAccountInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Browser session created; credential is set as an HttpOnly cookie.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrowserAccountSession"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid account input"
+          },
+          "401": {
+            "description": "Sign-in refused"
+          },
+          "403": {
+            "description": "CSRF refused or sign-up disabled"
+          },
+          "429": {
+            "description": "Account attempt rate limit exceeded"
+          }
+        }
+      }
+    },
+    "/accounts/status/": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Check account creation and browser session status; issue CSRF cookie",
+        "operationId": "browserAccountStatus",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Status only; no credential is disclosed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "signup_enabled": {
+                      "type": "boolean"
+                    },
+                    "authenticated": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/signout/": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Revoke the current browser session and clear its cookie",
+        "operationId": "browserAccountSignout",
+        "security": [
+          {
+            "BrowserSession": [],
+            "CSRFToken": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Signed out"
+          }
+        }
+      }
+    },
+    "/fine-tuning/options/": {
+      "get": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Get the pinned pretrained model and observed managed host availability",
+        "operationId": "guidedFineTuningOptions",
+        "responses": {
+          "200": {
+            "description": "Model, limits and current managed service status"
+          }
+        },
+        "description": "Verified instruction model selected for observed compute: 1.7B rank-16 attention/feed-forward LoRA on Apple computers with at least 32 GiB memory; 135M full SFT otherwise. Six passes for adapter datasets under 100 train examples, three otherwise; 3,000-step bound."
+      }
+    },
+    "/fine-tuning/setup/": {
+      "post": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Prepare scoped pretrained weights, tokenizer, runner, managed pool and training allowance",
+        "operationId": "guidedFineTuningSetup",
+        "description": "Engineer or higher. Active project required. Replays reuse resources and never launch training. Model paths, executors and devices cannot be selected by the browser.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "string",
+                    "enum": [
+                      "smollm2-135m-instruct",
+                      "smollm2-1.7b-instruct",
+                      "smollm2-135m"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pinned training resource IDs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "inputs": {
+                      "$ref": "#/components/schemas/GuidedTrainingInputs"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unsupported model, invalid project or local compute unavailable"
+          }
+        }
+      }
+    },
+    "/fine-tuning/preview/": {
+      "post": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Review training records, actual splits and model-token limits without publishing",
+        "operationId": "guidedFineTuningPreview",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "source_mapping": {
+                    "type": "string",
+                    "description": "JSON-encoded TrainingSourceMapping. Use exactly the same mapping when publishing the training source."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Counts, role-preserving examples, first five normalized sample rows with assigned splits, training objective, duplicate exclusions and reproducible recipe digest."
+          },
+          "400": {
+            "description": "Malformed or oversized input, with example/turn repair guidance where available"
+          }
+        }
+      }
+    },
+    "/fine-tuning/inspect-source/": {
+      "post": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Inspect all source rows, column mapping and dataset validation issues before training",
+        "operationId": "guidedTrainingInspectSource",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "source_mapping": {
+                    "type": "string",
+                    "description": "JSON-encoded TrainingSourceMapping; omitted uses the recommended mapping. Revalidate after changing columns."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Source count, columns, first five abbreviated rows, digest, recommended mapping and DatasetValidationReport. Every source row is checked without a tokenizer or publication. Invalid records return a repair report; malformed files or mappings return 400.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "validation"
+                  ],
+                  "properties": {
+                    "validation": {
+                      "$ref": "#/components/schemas/DatasetValidationReport"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed or oversized input, with example/turn repair guidance where available"
+          }
+        }
+      }
+    },
+    "/activation/events/": {
+      "post": {
+        "tags": [
+          "Activation"
+        ],
+        "summary": "Store content-free local interaction timing in the selected project",
+        "description": "Requires X-Project-ID. Retries with the same event ID are idempotent. No external analytics transport exists.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivationEventInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Measurement stored"
+          },
+          "200": {
+            "description": "Identical replay"
+          },
+          "400": {
+            "description": "Unknown or invalid fields"
+          },
+          "409": {
+            "description": "Event ID conflicts with an earlier measurement"
+          }
+        }
+      }
+    },
+    "/activation/report/": {
+      "get": {
+        "tags": [
+          "Activation"
+        ],
+        "summary": "Inspect local weekly decision counts and separate workload timings",
+        "description": "Project-scoped by X-Project-ID. Tenant totals require an administrator without a project scope. Counts revalidate complete durable execution and current evidence.",
+        "parameters": [
+          {
+            "name": "week",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Any ISO date in the requested Monday-to-Monday UTC week."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivationReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/evaluation-runs/{run_id}/record-decision/": {
+      "post": {
+        "tags": [
+          "Evaluation"
+        ],
+        "summary": "Record an immutable explicit decision on a verified trained candidate and baseline",
+        "description": "Requires the selected project and engineer role. Does not deploy a model or grant production qualification.",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "outcome"
+                ],
+                "properties": {
+                  "outcome": {
+                    "enum": [
+                      "accept",
+                      "reject"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImprovementDecision"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Identical replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImprovementDecision"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Incomplete/unverified evidence or conflicting immutable decision"
+          }
+        }
+      }
+    },
+    "/privacy/": {
+      "get": {
+        "tags": [
+          "Privacy"
+        ],
+        "summary": "Review current project restrictions and installation acquisition destinations",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectPrivacyPolicy"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Privacy"
+        ],
+        "summary": "Restrict acquisition and measurement retention for the selected project",
+        "description": "Administrator role and X-Project-ID are required. Project origins must be a subset of the installation allowlist. Installation offline mode cannot be overridden.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "offline",
+                  "acquisition_origins",
+                  "measurement_retention_days"
+                ],
+                "properties": {
+                  "offline": {
+                    "type": "boolean"
+                  },
+                  "acquisition_origins": {
+                    "type": "array",
+                    "maxItems": 30,
+                    "items": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  },
+                  "measurement_retention_days": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 365
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectPrivacyPolicy"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Administrator role required"
+          }
+        }
+      }
+    },
+    "/privacy/diagnostics/": {
+      "get": {
+        "tags": [
+          "Privacy"
+        ],
+        "summary": "Download content-free local diagnostics; no upload or server-side bundle retention",
+        "description": "Only build identity, policy and job counts are exported. Content parameters are refused. Responses are no-store.",
+        "responses": {
+          "200": {
+            "description": "Local JSON attachment"
+          }
+        }
+      }
+    },
+    "/privacy/purge-measurements/": {
+      "post": {
+        "tags": [
+          "Privacy"
+        ],
+        "summary": "Explicitly delete only expired interaction events in the selected project",
+        "description": "Administrator role required. Product data and immutable decisions are retained.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "confirm"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "confirm": {
+                    "const": "delete_expired_measurements"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Counts of expired events removed"
+          },
+          "400": {
+            "description": "Explicit deletion confirmation required"
+          }
+        }
+      }
+    },
+    "/deployment-capabilities/": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "operationId": "getDeploymentCapabilities",
+        "summary": "Describe authenticated deployment operations, bounds, readiness and role restrictions",
+        "description": "Availability guides the client. Each operation continues to enforce its existing authorization and admission checks. Response is private and must not be cached.",
+        "responses": {
+          "200": {
+            "description": "Local deployment capabilities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeploymentCapabilities"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/training-runs/{run_id}/prepare-evaluation/": {
+      "post": {
+        "tags": [
+          "Training",
+          "Evaluations"
+        ],
+        "operationId": "prepareGuidedEvaluation",
+        "summary": "Prepare an exact guided Apple candidate-versus-base classification comparison",
+        "description": "Uses the validation-selected SmolLM2-1.7B adapter and its exact parent. Reuses the protected test split unless a compatible protected suite is selected. Pins template, tokenizer, weights, decoding, suite and runtime. Returns a prepared evaluation and managed launch fields; execution is explicit. Bounds remain 64 cases and 32 output tokens.",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "suite_version": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Prepared comparison, protected suite, launch fields, labels, cases and warnings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "evaluation": {
+                      "$ref": "#/components/schemas/EvaluationRun"
+                    },
+                    "suite": {
+                      "type": "object",
+                      "additionalProperties": true
+                    },
+                    "launch": {
+                      "type": "object",
+                      "additionalProperties": true
+                    },
+                    "labels": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "cases": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    },
+                    "warnings": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Incompatible candidate, split leakage, unsupported labels or unavailable managed capacity"
+          },
+          "403": {
+            "description": "Launch role or existing local allowance required"
+          },
+          "404": {
+            "description": "Run unavailable in this project"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -5330,6 +6574,18 @@
         "scheme": "bearer",
         "bearerFormat": "mkv_token",
         "description": "Tenant API key prefixed with mkv_"
+      },
+      "BrowserSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "modelanvil_session",
+        "description": "HttpOnly, SameSite=Lax, 24-hour browser credential. Unsafe requests additionally require X-CSRFToken."
+      },
+      "CSRFToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-CSRFToken",
+        "description": "Required with browser cookies on unsafe methods, including sign-up and sign-in."
       }
     },
     "parameters": {
@@ -6279,9 +7535,11 @@
               "csv",
               "json",
               "docx",
-              "pdf"
+              "pdf",
+              "training"
             ],
-            "default": "jsonl"
+            "default": "jsonl",
+            "description": "training automatically reads role-preserving messages, prompt/response pairs or text from JSONL, JSON or CSV. It allocates whole source groups proportionally."
           },
           "text_field": {
             "type": "string",
@@ -6344,6 +7602,9 @@
             "maximum": 4096,
             "default": null,
             "description": "Optional deterministic character-bound chunking of single plain text blocks. Source-level privacy/protected checks run before chunking; tokenizer bounds remain preflight checks."
+          },
+          "source_mapping": {
+            "$ref": "#/components/schemas/TrainingSourceMapping"
           }
         },
         "required": [
@@ -6567,6 +7828,27 @@
           },
           "max_storage_bytes": {
             "type": "integer"
+          },
+          "allowance": {
+            "type": "object",
+            "properties": {
+              "scope": {
+                "const": "tenant"
+              },
+              "period_start": {
+                "type": "string",
+                "format": "date"
+              },
+              "reserved_amount": {
+                "type": "string"
+              },
+              "settled_amount": {
+                "type": "string"
+              },
+              "remaining_amount": {
+                "type": "string"
+              }
+            }
           }
         },
         "required": [
@@ -6769,6 +8051,14 @@
             "minimum": 1,
             "readOnly": true,
             "description": "Tenant-scoped relation record ID for training inputs; resource URLs use model_version_id."
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/ModelCapabilities"
+          },
+          "chat_template": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Imported template or the exported role template of a completed chat SFT candidate."
           }
         }
       },
@@ -6801,10 +8091,111 @@
             "type": "integer"
           },
           "total_steps": {
-            "type": "integer"
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3000,
+            "description": "Runtime-specific limits are checked during preflight."
           },
           "latest_loss": {
             "type": "number"
+          },
+          "output_model_version_uuid": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "readOnly": true
+          },
+          "progress_step": {
+            "type": "integer",
+            "readOnly": true,
+            "description": "Observed optimizer progress; current_step remains the durable checkpoint cursor."
+          },
+          "quality_summary": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "readOnly": true,
+            "description": "Validation loss does not establish answer accuracy.",
+            "properties": {
+              "selected_step": {
+                "type": "integer"
+              },
+              "baseline_loss": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "validation_loss": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "validation_examples": {
+                "type": "integer"
+              }
+            }
+          },
+          "export_options": {
+            "type": "array",
+            "readOnly": true,
+            "description": "Supported download formats for this completed run; empty before completion. No format conversion is implied.",
+            "items": {
+              "type": "object",
+              "required": [
+                "format",
+                "label",
+                "extension",
+                "description"
+              ],
+              "properties": {
+                "format": {
+                  "type": "string",
+                  "enum": [
+                    "native",
+                    "adapter",
+                    "json"
+                  ]
+                },
+                "label": {
+                  "type": "string"
+                },
+                "extension": {
+                  "type": "string",
+                  "enum": [
+                    "zip",
+                    "json"
+                  ]
+                },
+                "description": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string",
+                  "enum": [
+                    "GET",
+                    "POST"
+                  ],
+                  "description": "Defaults to GET. Synthetic candidate registration requires POST."
+                }
+              }
+            }
+          },
+          "guided_evaluation": {
+            "type": "object",
+            "readOnly": true,
+            "properties": {
+              "eligible": {
+                "type": "boolean"
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
           }
         }
       },
@@ -7240,6 +8631,16 @@
           },
           "created_at": {
             "type": "string"
+          },
+          "connection_state": {
+            "type": "string",
+            "enum": [
+              "not_connected",
+              "connected",
+              "stale",
+              "offline",
+              "credential_unavailable"
+            ]
           }
         }
       },
@@ -7813,6 +9214,7 @@
         "type": "object",
         "required": [
           "name",
+          "protected_role",
           "cases"
         ],
         "properties": {
@@ -7830,7 +9232,8 @@
               "required": [
                 "case_id",
                 "input_prompt",
-                "expected_output"
+                "expected_output",
+                "source_group_id"
               ],
               "properties": {
                 "case_id": {
@@ -7851,9 +9254,25 @@
                   "minLength": 1,
                   "maxLength": 64,
                   "default": "all"
+                },
+                "source_group_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128,
+                  "description": "Protected source group. Cases that share a source stay together and must not overlap known training groups."
                 }
               }
             }
+          },
+          "protected_role": {
+            "type": "string",
+            "const": "protected_eval",
+            "description": "Declares the suite version as protected evaluation, held out from training."
+          },
+          "suite": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Existing suite to version. Omit to pin the first revision of a new suite."
           },
           "scorer_type": {
             "type": "string",
@@ -8428,6 +9847,122 @@
           }
         }
       },
+      "WorkerSetupInput": {
+        "type": "object",
+        "properties": {
+          "worker_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "pool": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "profile": {
+            "type": "string",
+            "enum": [
+              "cpu-character",
+              "cpu-transformer",
+              "model-import",
+              "cpu-evaluation",
+              "dataset-bank",
+              "cpu-recipes"
+            ]
+          }
+        },
+        "required": [
+          "worker_name",
+          "pool",
+          "profile"
+        ]
+      },
+      "WorkerSetupResult": {
+        "type": "object",
+        "properties": {
+          "worker_id": {
+            "type": "integer"
+          },
+          "pool_id": {
+            "type": "integer"
+          },
+          "runner_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "worker_token": {
+            "type": "string",
+            "description": "Shown once in an administrator no-store response; never in inventory."
+          },
+          "worker_token_expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "startup_command": {
+            "type": "string"
+          },
+          "connection_state": {
+            "const": "not_connected"
+          }
+        },
+        "required": [
+          "worker_id",
+          "worker_token",
+          "startup_command"
+        ]
+      },
+      "WorkerSetupOptions": {
+        "type": "object",
+        "properties": {
+          "can_administer": {
+            "type": "boolean"
+          },
+          "profiles": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "memory_bytes": {
+                  "type": "integer"
+                },
+                "limitations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "available": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "can_administer",
+          "profiles"
+        ]
+      },
+      "BudgetAdministration": {
+        "type": "object",
+        "properties": {
+          "can_administer": {
+            "type": "boolean"
+          },
+          "scope": {
+            "const": "tenant"
+          }
+        }
+      },
       "SpecialistDecisionInput": {
         "type": "object",
         "additionalProperties": false,
@@ -8636,6 +10171,335 @@
           }
         }
       },
+      "ModelCapabilities": {
+        "type": "object",
+        "properties": {
+          "train": {
+            "type": "object",
+            "properties": {
+              "eligible": {
+                "type": "boolean"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "devices": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "recipes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "max_tokens": {
+                "type": "integer"
+              },
+              "context_limit": {
+                "type": "integer"
+              }
+            }
+          },
+          "evaluate": {
+            "type": "object",
+            "properties": {
+              "eligible": {
+                "type": "boolean"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "devices": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "recipes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "max_tokens": {
+                "type": "integer"
+              },
+              "context_limit": {
+                "type": "integer"
+              }
+            }
+          },
+          "chat": {
+            "type": "object",
+            "properties": {
+              "eligible": {
+                "type": "boolean"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "devices": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "recipes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "max_tokens": {
+                "type": "integer"
+              },
+              "context_limit": {
+                "type": "integer"
+              }
+            }
+          },
+          "production_qualified": {
+            "const": false
+          }
+        }
+      },
+      "LocalEvaluationExecution": {
+        "type": "object",
+        "properties": {
+          "pool": {
+            "type": "integer"
+          },
+          "budget_policy_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "max_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 32
+          }
+        }
+      },
+      "EvaluationRun": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "job": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "running",
+              "completed",
+              "failed",
+              "cancelled"
+            ]
+          },
+          "protocol_ref": {
+            "type": "object"
+          },
+          "metrics": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "improvement_decision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ImprovementDecision"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "readOnly": true
+          },
+          "decision_report": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "readOnly": true,
+            "description": "Guided classification metrics, complete paired coverage, changed cases, regressions, uncertainty and measured environment. Null for historical CPU profiles. available is false until the paired comparison is complete.",
+            "additionalProperties": true
+          }
+        }
+      },
+      "CandidateReviewInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "candidate_model_version": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "evaluation_run": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "min_accuracy": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "license_record": {
+            "type": "object",
+            "properties": {
+              "spdx": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "notice": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "spdx",
+              "source",
+              "notice"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "candidate_model_version",
+          "evaluation_run"
+        ]
+      },
+      "ReleaseVersion": {
+        "type": "object",
+        "properties": {
+          "release_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "manifest_digest": {
+            "type": "string"
+          },
+          "local_review": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "readOnly": true
+          },
+          "bundle_manifest": {
+            "type": "object",
+            "readOnly": true
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "LocalDeployment": {
+        "type": "object",
+        "properties": {
+          "release_version": {
+            "type": "integer",
+            "description": "Internal release version record number."
+          },
+          "release_version_id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true,
+            "description": "Exact public identity of the deployed release version."
+          },
+          "deployment_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "readiness_state": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "ready",
+              "failed",
+              "rolled_back"
+            ]
+          },
+          "serving_config": {
+            "type": "object"
+          },
+          "revision_no": {
+            "type": "integer"
+          }
+        }
+      },
+      "LocalServingInput": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string"
+          },
+          "max_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 32
+          }
+        }
+      },
+      "LocalServingResult": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "usage": {
+            "type": "object"
+          },
+          "deployment_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "backend": {
+            "const": "modelanvil.local-on-demand-cpu.v1"
+          },
+          "production_qualified": {
+            "const": false
+          }
+        }
+      },
+      "BuildIdentity": {
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "string"
+          },
+          "source_digest": {
+            "type": "string"
+          },
+          "protocol": {
+            "const": "modelanvil.local-beta.v1"
+          },
+          "dataset_formats": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "production_qualified": {
+            "const": false
+          }
+        }
+      },
       "SpecialistJobInput": {
         "type": "object",
         "additionalProperties": false,
@@ -8799,6 +10663,511 @@
           }
         },
         "description": "Full runs require reviewed_preview and a completed preview with exactly matching recipe/source/model/runtime/protected bindings. Generation uses a registered pinned local worker."
+      },
+      "BrowserAccountInput": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "writeOnly": true,
+            "description": "Sign-up requires at least 10 characters and Django password validation."
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          }
+        }
+      },
+      "BrowserAccountSession": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "const": "session",
+            "description": "Client mode marker, not a credential. The credential is set only in the HttpOnly cookie."
+          },
+          "name": {
+            "type": "string"
+          },
+          "organization": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "GuidedTrainingInputs": {
+        "type": "object",
+        "properties": {
+          "project": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "execution_mode": {
+            "const": "worker"
+          },
+          "recipe_type": {
+            "enum": [
+              "full_sft",
+              "lora_adapter"
+            ]
+          },
+          "base_model_version": {
+            "type": "integer"
+          },
+          "tokenizer_version": {
+            "type": "integer"
+          },
+          "runner_manifest": {
+            "type": "integer"
+          },
+          "pool": {
+            "type": "integer"
+          },
+          "budget_policy_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "initialization_seed": {
+            "type": "integer"
+          }
+        }
+      },
+      "TrainingSourceMapping": {
+        "description": "Maps source columns to training roles. The normalized mapping is recorded in the immutable preparation recipe; full source bytes remain unchanged.",
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "mode"
+            ],
+            "properties": {
+              "mode": {
+                "const": "auto"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "mode",
+              "prompt_field",
+              "response_field"
+            ],
+            "properties": {
+              "mode": {
+                "const": "prompt_response"
+              },
+              "prompt_field": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "response_field": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "context_field": {
+                "type": "string",
+                "maxLength": 128
+              },
+              "system_field": {
+                "type": "string",
+                "maxLength": 128
+              },
+              "group_field": {
+                "type": "string",
+                "maxLength": 128
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "mode",
+              "messages_field"
+            ],
+            "properties": {
+              "mode": {
+                "const": "messages"
+              },
+              "messages_field": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "group_field": {
+                "type": "string",
+                "maxLength": 128
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "mode",
+              "text_field"
+            ],
+            "properties": {
+              "mode": {
+                "const": "text"
+              },
+              "text_field": {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              "group_field": {
+                "type": "string",
+                "maxLength": 128
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "DatasetValidationReport": {
+        "type": "object",
+        "required": [
+          "checked_rows",
+          "invalid_rows",
+          "missing_value_rows",
+          "duplicate_rows",
+          "formatting_error_rows",
+          "can_prepare",
+          "mapping",
+          "issues"
+        ],
+        "properties": {
+          "checked_rows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "invalid_rows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "missing_value_rows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "duplicate_rows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "formatting_error_rows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "can_prepare": {
+            "type": "boolean",
+            "description": "False when any record requires repair. Warnings do not block preparation. Model token limits are checked separately in the tokenizer preview."
+          },
+          "mapping": {
+            "$ref": "#/components/schemas/TrainingSourceMapping"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "code",
+                "severity",
+                "message",
+                "count",
+                "rows"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "missing_values",
+                    "formatting",
+                    "duplicate_rows",
+                    "whitespace"
+                  ]
+                },
+                "severity": {
+                  "type": "string",
+                  "enum": [
+                    "warning",
+                    "error"
+                  ]
+                },
+                "message": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "rows": {
+                  "type": "array",
+                  "maxItems": 5,
+                  "items": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "description": "One-based source record indices, excluding CSV headers. Full-file counts; at most five row references per issue."
+                },
+                "examples": {
+                  "type": "array",
+                  "maxItems": 5,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "row": {
+                        "type": "integer"
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "duplicate_of": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ActivationEventInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "session_id",
+          "kind"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "session_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "workspace_opened",
+              "activity"
+            ]
+          },
+          "active_milliseconds": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 60000,
+            "default": 0
+          }
+        }
+      },
+      "ImprovementDecision": {
+        "type": "object",
+        "required": [
+          "decision_id",
+          "outcome"
+        ],
+        "properties": {
+          "decision_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "accept",
+              "reject"
+            ]
+          },
+          "accepted_improvement": {
+            "type": "boolean"
+          },
+          "production_qualified": {
+            "const": false
+          }
+        }
+      },
+      "ActivationReport": {
+        "type": "object",
+        "required": [
+          "scope",
+          "week_start",
+          "week_end",
+          "weekly_improvement_cycles",
+          "weekly_teams_with_decisions",
+          "weekly_accepted_improvements",
+          "external_analytics"
+        ],
+        "properties": {
+          "scope": {
+            "enum": [
+              "project",
+              "tenant"
+            ]
+          },
+          "week_start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "week_end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "weekly_improvement_cycles": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "weekly_teams_with_decisions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "weekly_accepted_improvements": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "weekly_rejected_candidates": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reported_active_seconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "time_to_first_decision_seconds": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "external_analytics": {
+            "const": "disabled"
+          },
+          "storage": {
+            "const": "installation_database"
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "model_acquisition": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "ProjectPrivacyPolicy": {
+        "type": "object",
+        "required": [
+          "offline",
+          "acquisition_origins",
+          "measurement_retention_days"
+        ],
+        "properties": {
+          "offline": {
+            "type": "boolean"
+          },
+          "acquisition_origins": {
+            "type": "array",
+            "maxItems": 30,
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "measurement_retention_days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 365
+          },
+          "installation_origins": {
+            "type": "array",
+            "readOnly": true,
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "external_judges": {
+            "const": false
+          },
+          "external_generation": {
+            "const": false
+          },
+          "external_analytics": {
+            "const": false
+          },
+          "support_upload": {
+            "const": false
+          },
+          "diagnostic_content_collection": {
+            "const": false
+          }
+        }
+      },
+      "DeploymentCapabilities": {
+        "type": "object",
+        "required": [
+          "mode",
+          "role",
+          "operations",
+          "readiness"
+        ],
+        "properties": {
+          "mode": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "operations": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "required": [
+                "enabled",
+                "reason"
+              ],
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "limits": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "readiness": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
       }
     }
   }

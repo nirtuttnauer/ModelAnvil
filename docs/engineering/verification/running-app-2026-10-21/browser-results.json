@@ -1,0 +1,130 @@
+{
+  "results": [
+    {
+      "slug": "overview",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "slug": "dataset-bank",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "slug": "datasets",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "slug": "annotation",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "slug": "models",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "slug": "training",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "slug": "alignment",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "slug": "evaluation",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "slug": "workflows",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "slug": "rag",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "slug": "context-lab",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "slug": "releases",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "slug": "infrastructure",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "slug": "budgets",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "slug": "audit",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "slug": "recipes",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "slug": "specialists",
+      "result": "PASS",
+      "apiErrors": [],
+      "alerts": [],
+      "overflow": false
+    },
+    {
+      "feature": "real-model-id-tooltip-and-native-clipboard",
+      "result": "PASS",
+      "exactValueMatches": true
+    }
+  ],
+  "pageErrors": [],
+  "allApiErrors": []
+}

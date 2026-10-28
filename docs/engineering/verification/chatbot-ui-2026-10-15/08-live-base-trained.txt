@@ -1,0 +1,144 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+    - generic: MODEL WORKSPACE
+  - generic "Workspace is scoped to the connected API key and active project":
+    - generic: H
+    - strong: Harbor Defaults Test workspace
+    - generic: My first fine-tune
+  - navigation "Main navigation":
+    - paragraph: Workspace
+    - button "Overview":
+      - generic: Overview
+    - paragraph: Data
+    - button "Dataset Bank":
+      - generic: Dataset Bank
+    - button "Datasets":
+      - generic: Datasets
+    - button "Annotation":
+      - generic: Annotation
+    - button "Recipes":
+      - generic: Recipes
+    - paragraph: Develop
+    - button "Models":
+      - generic: Models
+    - button "Chat":
+      - generic: Chat
+    - button "Specialists":
+      - generic: Specialists
+    - button "Training":
+      - generic: Training
+    - button "Alignment":
+      - generic: Alignment
+    - button "Evaluation":
+      - generic: Evaluation
+    - paragraph: Context & release
+    - button "RAG":
+      - generic: RAG
+    - button "Context Lab":
+      - generic: Context Lab
+    - button "Releases":
+      - generic: Releases
+    - paragraph: Operations
+    - button "Workflows":
+      - generic: Workflows
+    - button "Infrastructure":
+      - generic: Infrastructure
+    - button "Budgets":
+      - generic: Budgets
+    - button "Audit":
+      - generic: Audit
+  - text: API connected
+  - generic: Control plane
+- main:
+  - combobox "Organization":
+    - option "Harbor Defaults Test workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Chat
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+    - generic: Go to a workspace screen…
+    - generic: ⌘ / Ctrl K
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Active jobs":
+    - generic: Active jobs
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - heading "Chat with your model" [level=2]:
+    - text: Chat with your model
+  - paragraph: In one sentence, how do I book a room at Harbor Hub?
+  - group "Chat view":
+    - button "Chat"
+    - button "Base vs trained" [pressed]
+  - text: Trained model
+  - combobox "Trained model":
+    - option "Select a model"
+    - option "SmolLM2 fine-tune · a1856b64" [selected]
+  - button "New conversation":
+    - text: New conversation
+  - button "Export":
+    - text: Export
+  - status: Base and trained responses saved with the same prompt and generation settings.
+  - generic "Saved conversations"
+  - option "New conversation"
+  - option "In one sentence, how do I book a room at Harbor Hub?" [selected]
+  - option "When could I work at Harbor Hub on a weekday?"
+  - option "hello"
+  - option "hello"
+  - option "Where should I leave my bicycle at Harbor Hub?"
+  - option "What should I do if my Harbor Hub entry card has gone missing?"
+  - option "Where can I download a PDF of my Harbor Hub invoice?"
+  - option "How can I undo my Harbor Hub room booking?"
+  - option "How can I reserve a room for my Harbor Hub team meeting?"
+  - generic "Generation settings"
+  - option "CPU" [selected]
+  - option "Apple Silicon GPU (PyTorch)"
+  - option "CPU" [selected]
+  - option "Apple Silicon GPU (PyTorch)"
+  - option "Imported model template" [selected]
+  - option "Plain text (one user prompt)"
+  - option "ChatML override"
+  - text: Base model
+  - textbox "Base model": SmolLM2-1.7B Instruct
+  - paragraph: Both models receive the same prompt and settings in a fresh context.
+  - region "Base and trained model responses":
+    - heading "Base vs trained responses" [level=3]
+    - paragraph: Same prompt · fresh context. Compare how your training changed the answer.
+    - group "Shared comparison input":
+      - article:
+        - strong: Shared prompt
+        - paragraph: In one sentence, how do I book a room at Harbor Hub?
+    - region "Side-by-side responses":
+      - article "Base model response":
+        - generic: BASE MODEL
+        - heading "SmolLM2-1.7B Instruct" [level=3]
+        - paragraph: To book a room at Harbor Hub, visit their official website, select your preferred room type, and follow the prompts to complete your booking.
+        - button "Copy response":
+          - text: Copy response
+        - status: completed · 8.28 seconds including model load · 44 input / 29 output tokens
+      - article "Trained model response":
+        - generic: TRAINED MODEL
+        - heading "SmolLM2 fine-tune · a1856b64" [level=3]
+        - paragraph: Open Rooms in your Harbor Hub dashboard, choose an available room and confirm the booking.
+        - button "Copy response":
+          - text: Copy response
+        - status: completed · 9.80 seconds including model load · 44 input / 19 output tokens
+  - text: Message
+  - textbox "Message":
+    - /placeholder: Ask both models the same question…
+  - generic: Enter to send · Shift + Enter for a new line
+  - button "Regenerate":
+    - text: Regenerate
+  - button "Send message" [disabled]:
+    - text: Send
+  - generic "Message draft"
+  - generic "App information"
+  - text: Control plane

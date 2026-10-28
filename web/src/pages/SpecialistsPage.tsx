@@ -1,3 +1,6 @@
+import { Identifier } from '../components/Identifier';
+import { Button, Card, MultilineField } from '../components/ui';
+import { DataInspector, TextContent } from '../components/DataInspector';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { apiPage, apiRequest, errorMessage } from '../api/client';
 import { questionInput, queueSpecialist, uploadOcrImage, type SpecialistCatalog, type SpecialistKind, type SpecialistResult } from '../api/specialists';
@@ -113,7 +116,7 @@ export function SpecialistsPage({ token, refreshKey }: { token: string; refreshK
     {error && <div className="error-box" role="alert">{error}</div>}
     {notice && <div className="success-box" role="status">{notice}</div>}
     {busy && <p role="status">{busy}… Local inference allows up to 120 seconds.</p>}
-    <section className="panel ml-main-panel">
+    <Card className="panel ml-main-panel">
       <div className="panel-title"><div><h2>Local OCR &amp; typed decisions</h2><p>Read image text with GLM-OCR and ask Laya structured questions. Every run records its pinned model, device, input digest and measured usage.</p></div></div>
       <div className="panel-body">
         <details><summary>Acquire a pinned specialist model</summary>
@@ -129,9 +132,9 @@ export function SpecialistsPage({ token, refreshKey }: { token: string; refreshK
             <fieldset disabled={disabled} className="specialist-fields">
             <label>Specialist<select value={kind} onChange={e => { setKind(e.target.value as SpecialistKind); setLicenseAccepted(false); }}><option value="ocr">GLM-OCR</option><option value="laya">Laya</option><option value="layout">PP-DocLayoutV3</option></select></label>
             <label>Model-import pool<select required value={pool} onChange={e => setPool(e.target.value)}><option value="">Select a pool</option>{pools.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
-            {catalog && <p className="full-width muted">{catalog.catalog[kind].repo_id} · {(catalog.catalog[kind].byte_size / 1024**3).toFixed(2)} GiB · {catalog.catalog[kind].license}<br /><code>{catalog.catalog[kind].revision}</code></p>}
+            {catalog && <p className="full-width muted">{catalog.catalog[kind].repo_id} · {(catalog.catalog[kind].byte_size / 1024**3).toFixed(2)} GiB · {catalog.catalog[kind].license}<br /><Identifier value={catalog.catalog[kind].revision} label="Pinned repository revision" /></p>}
             <label className="checkbox-label full-width"><input type="checkbox" checked={licenseAccepted} onChange={e => setLicenseAccepted(e.target.checked)} />I accept the displayed model license.</label>
-            <button disabled={disabled || !catalog || !pool || !licenseAccepted}>Download through worker</button>
+            <Button disabled={disabled || !catalog || !pool || !licenseAccepted}>Download through worker</Button>
             </fieldset>
           </form>
         </details>
@@ -141,9 +144,9 @@ export function SpecialistsPage({ token, refreshKey }: { token: string; refreshK
             <label>Attempt quota<select value={budget} onChange={e => setBudget(e.target.value)}><option value="">Select a specialist attempt quota</option>{policies.map(p => <option key={p.policy_id} value={p.policy_id}>{p.name}</option>)}</select></label>
             <p className="full-width muted">Reserve 3 attempts. Each execution starts one quota unit; recovery of a completed checkpoint consumes no new unit. Create a specialist_attempts policy in Budgets and start a specialist worker for the selected device.</p></>}
         </fieldset>
-        <SpecialistJobs token={token} selected={selectedJob} onSelect={setSelectedJob} onResult={(result, resultKind) => {
+        <details className="workspace-details" open={!!selectedJob}><summary>Recent specialist jobs</summary><SpecialistJobs token={token} selected={selectedJob} onSelect={setSelectedJob} onResult={(result, resultKind) => {
           if (resultKind === 'laya') setLayaResult(result); else { setOcrResult(result); setReviewed(false); }
-        }} />
+        }} /></details>
         <div className="specialist-grid">
           <section className="detail-box"><h3>Document text recognition</h3><p className="muted">PNG, JPEG or a scanned PDF of up to 5 pages and 8 MiB. Images allow 2 million pixels; PDF pages share a 6-million-pixel limit. Apple Metal is required.</p>
             <form onSubmit={recognize}>
@@ -152,19 +155,19 @@ export function SpecialistsPage({ token, refreshKey }: { token: string; refreshK
               <label>Document source<input type="file" accept="image/png,image/jpeg,application/pdf" required onChange={e => { setFile(e.target.files?.[0] || null); setOcrResult(null); setReviewed(false); }} /></label>
               <label>Layout extraction<select value={layoutModel} onChange={e => { setLayoutModel(e.target.value); setOcrResult(null); setReviewed(false); }}><option value="">Whole page text</option>{catalog?.models.filter(m => m.kind === 'layout').map(m => <option key={m.id} value={m.id}>{m.name} · ordered regions</option>)}</select></label>
               <label>Maximum output tokens per page or region<select value={maxTokens} onChange={e => { setMaxTokens(Number(e.target.value)); setOcrResult(null); setReviewed(false); }}><option value={256}>256</option><option value={512}>512</option><option value={1024}>1024</option></select></label>
-              <button disabled={disabled || missingAdmission || !file || !ocrModel}>{durable ? 'Queue document job' : 'Recognize text'}</button>
+              <Button disabled={disabled || missingAdmission || !file || !ocrModel}>{durable ? 'Queue document job' : 'Recognize text'}</Button>
               </fieldset>
             </form>
-            {ocrResult && <div className="specialist-result"><h4>Extracted text</h4><pre>{ocrResult.text}</pre><LayoutRegions result={ocrResult} /><p>{ocrResult.elapsed_seconds.toFixed(2)} seconds · {ocrResult.device}</p>
+            {ocrResult && <div className="specialist-result"><h4>Extracted text</h4><TextContent text={ocrResult.text} label="Extracted text" /><LayoutRegions result={ocrResult} /><p>{ocrResult.elapsed_seconds.toFixed(2)} seconds · {ocrResult.device}</p>
               <label>Publish to dataset<select disabled={disabled} value={dataset} onChange={e => setDataset(e.target.value)}><option value="">Select an existing dataset</option>{datasets.map(d => <option key={d.dataset_id} value={d.dataset_id}>{d.name}</option>)}</select></label>
               <label className="checkbox-label"><input disabled={disabled} type="checkbox" checked={reviewed} onChange={e => setReviewed(e.target.checked)} />I have reviewed the extracted text.</label>
-              <button disabled={disabled || !reviewed || !dataset} onClick={() => void run('Publishing reviewed OCR text', async signal => {
+              <Button disabled={disabled || !reviewed || !dataset} onClick={() => void run('Publishing reviewed OCR text', async signal => {
                 const r = await apiRequest<{ revision_id: string; row_count: number }>(`/api/v1/datasets/${dataset}/prepare/`, token, { method: 'POST', signal,
                   body: JSON.stringify({ input_artifact_id: ocrResult.output_artifact?.artifact_id,
                     chunk_characters: ocrResult.pages?.some(p => p.regions?.length) ? null : 128, detect: true, dedup: true }) });
                 if (!signal.aborted) setNotice(`Published revision ${r.revision_id} with ${r.row_count} rows. Source privacy and deduplication checks completed.`);
-              })}>Publish with source checks</button>
-              <details><summary>Request, usage &amp; source evidence</summary><pre>{JSON.stringify(ocrResult, null, 2)}</pre></details>
+              })}>Publish with source checks</Button>
+              <details><summary>Request, usage &amp; source evidence</summary><DataInspector value={ocrResult} /></details>
             </div>}
           </section>
           <section className="detail-box"><h3>Laya decisions</h3><p className="muted">Choice, ordered score or yes/no over English text. Probabilities need domain calibration. Results are suggestions for review.</p>
@@ -172,17 +175,17 @@ export function SpecialistsPage({ token, refreshKey }: { token: string; refreshK
               <fieldset disabled={disabled} className="specialist-fields">
               <label>Laya model<select required value={layaModel} onChange={e => { setLayaModel(e.target.value); setLayaResult(null); }}><option value="">Select an acquired model</option>{catalog?.models.filter(m => m.kind === 'laya').map(m => <option key={m.id} value={m.id}>{m.name}</option>)}</select></label>
               <label>Decision device<select value={device} onChange={e => { setDevice(e.target.value); setLayaResult(null); }}><option value="mps:0">Apple GPU</option><option value="cpu">CPU</option></select></label>
-              <label>State text<textarea required rows={4} value={state} onChange={e => { setState(e.target.value); setLayaResult(null); }} /></label>
+              <label>State text<MultilineField required rows={4} value={state} onChange={e => { setState(e.target.value); setLayaResult(null); }} /></label>
               <label>Answer type<select value={questionType} onChange={e => { setQuestionType(e.target.value as typeof questionType); setLayaResult(null); }}><option value="choice">Choice</option><option value="score">Ordered score</option><option value="noul">Yes/no probability</option></select></label>
-              <label>Question<textarea required rows={2} value={instructions} onChange={e => { setInstructions(e.target.value); setLayaResult(null); }} /></label>
-              {questionType !== 'noul' && <label>{questionType === 'score' ? 'Ordered levels, lowest first' : 'Options, label: description'}<textarea required rows={4} value={options} onChange={e => { setOptions(e.target.value); setLayaResult(null); }} /><small>2–8 options, one per line.</small></label>}
-              <button disabled={disabled || missingAdmission || !layaModel}>{durable ? 'Queue decision job' : 'Evaluate decision'}</button>
+              <label>Question<MultilineField required rows={2} value={instructions} onChange={e => { setInstructions(e.target.value); setLayaResult(null); }} /></label>
+              {questionType !== 'noul' && <label>{questionType === 'score' ? 'Ordered levels, lowest first' : 'Options, label: description'}<MultilineField required rows={4} value={options} onChange={e => { setOptions(e.target.value); setLayaResult(null); }} /><small>2–8 options, one per line.</small></label>}
+              <Button disabled={disabled || missingAdmission || !layaModel}>{durable ? 'Queue decision job' : 'Evaluate decision'}</Button>
               </fieldset>
             </form>
-            {layaResult && <div className="specialist-result"><h4>Typed answer</h4><pre>{JSON.stringify(layaResult.answers, null, 2)}</pre><p>{layaResult.elapsed_seconds.toFixed(2)} seconds · {layaResult.device} · No text generation</p><details><summary>Request, usage &amp; model evidence</summary><pre>{JSON.stringify(layaResult, null, 2)}</pre></details></div>}
+            {layaResult && <div className="specialist-result"><h4>Typed answer</h4><DataInspector value={layaResult.answers} /><p>{layaResult.elapsed_seconds.toFixed(2)} seconds · {layaResult.device} · No text generation</p><details><summary>Request, usage &amp; model evidence</summary><DataInspector value={layaResult} /></details></div>}
           </section>
         </div>
       </div>
-    </section>
+    </Card>
   </div>;
 }

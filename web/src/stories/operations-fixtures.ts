@@ -16,6 +16,8 @@ const updated = '2026-10-11T10:00:00Z';
 
 // List values stay as arrays; the Storybook API adapter supplies the pagination envelope.
 export const operationsResponses: Record<string, unknown> = {
+  '/api/v1/workers/setup/': { can_administer: false, profiles: [] },
+  '/api/v1/budget-policies/permissions/': { can_administer: false, scope: 'tenant' },
   '/api/v1/jobs/': [
     {
       job_id: '40000000-0000-4000-8000-000000000001', name: 'Anvil Assistant · SFT demo', pool: 1,
@@ -105,6 +107,7 @@ export const operationsResponses: Record<string, unknown> = {
     },
   ],
   '/api/v1/budget-policies/': [
+    { policy_id: '50000000-0000-4000-8000-000000000005', name: 'Evaluation cases · Demo', period: 'monthly', unit: 'evaluation_cases', limit_amount: '1000', currency: '', enabled: true, stop_behavior: 'stop', allowance: { remaining_amount: '1000' }, created_at: created, updated_at: updated },
     { policy_id: '50000000-0000-4000-8000-000000000001', name: 'Research CPU hours', period: 'monthly', unit: 'cpu_hour', limit_amount: '2400.000000', currency: 'USD', enabled: true, stop_behavior: 'stop', created_at: created, updated_at: updated },
     { policy_id: '50000000-0000-4000-8000-000000000002', name: 'Evaluation input tokens', period: 'monthly', unit: 'input_token', limit_amount: '100000000.000000', currency: 'USD', enabled: true, stop_behavior: 'stop', created_at: created, updated_at: updated },
     { policy_id: '50000000-0000-4000-8000-000000000003', name: 'Archived GPU allowance', period: 'monthly', unit: 'gpu_hour_eu', limit_amount: '100.000000', currency: 'EUR', enabled: false, stop_behavior: 'stop', created_at: created, updated_at: updated },
@@ -115,6 +118,7 @@ export const operationsResponses: Record<string, unknown> = {
     { id: 2, name: 'Evaluation pool', status: 'active', queue_name: 'evaluation-cpu', result_egress: 'metadata_only', created_at: created },
     { id: 3, name: 'Archive GPU pool', status: 'draining', queue_name: 'archive-gpu', result_egress: 'envelope', created_at: created },
   ],
+  '/api/v1/worker-inventory/queue-diagnosis/': { rows: [] },
   '/api/v1/worker-inventory/': [
     { id: 1, name: 'research-worker-01', pool: 1, pool_name: 'Research CPU pool', status: 'busy', slots: 4, capabilities: { accelerator: 'cpu', memory_gb: 32, tasks: ['training', 'dataset_prepare'], fixture: 'Storybook synthetic registration' }, last_heartbeat_at: '2026-10-11T09:56:00Z', created_at: created },
     { id: 2, name: 'research-worker-02', pool: 1, pool_name: 'Research CPU pool', status: 'busy', slots: 4, capabilities: { accelerator: 'cpu', memory_gb: 32, tasks: ['training', 'dataset_prepare'], fixture: 'Storybook synthetic registration' }, last_heartbeat_at: '2026-10-11T09:55:00Z', created_at: created },
@@ -127,6 +131,8 @@ export const operationsResponses: Record<string, unknown> = {
     { id: 2, manifest_id: '51000000-0000-4000-8000-000000000002', name: 'Slice evaluation runner', version: '2.1.0', digest: 'b'.repeat(64), manifest: { runtime_id: 'slice-eval-demo', execution_evidence: demoEvidence }, enabled: true, compatibility: { accelerator: ['cpu'], tasks: ['evaluation'], metrics: ['accuracy', 'latency_ms'], fixture: 'Synthetic manifest' }, created_at: created, updated_at: updated },
     { id: 3, manifest_id: '51000000-0000-4000-8000-000000000003', name: 'Legacy indexing runner', version: '0.8.0', digest: 'c'.repeat(64), manifest: { runtime_id: 'legacy-index-demo', execution_evidence: demoEvidence }, enabled: false, compatibility: { accelerator: ['cpu'], tasks: ['index'], fixture: 'Synthetic disabled manifest' }, created_at: created, updated_at: updated },
   ],
+  '/api/v1/usage-events/': [],
+  '/api/v1/budget-reservations/': [],
   '/api/v1/usage-events/summary/': {
     tenant_id: '90000000-0000-4000-8000-000000000001',
     usage_by_unit: [
@@ -194,7 +200,7 @@ export const operationsResponses: Record<string, unknown> = {
     {
       endpoint_id: '61000000-0000-4000-8000-000000000001', project: 1,
       endpoint_key: 'atlas-staging', name: 'Atlas staging metadata', created_at: '2026-10-07T09:20:00Z', updated_at: '2026-10-11T09:40:00Z',
-      active_deployment: { deployment_id: '63000000-0000-4000-8000-000000000001', release_version: '60000000-0000-4000-8000-000000000003', revision_no: 3, readiness_state: 'pending', recorded_readiness_state: 'ready', execution_evidence: demoEvidence, created_at: '2026-10-11T09:40:00Z' },
+      active_deployment: { deployment_id: '63000000-0000-4000-8000-000000000001', release_version: 3, release_version_id: '60000000-0000-4000-8000-000000000003', revision_no: 3, readiness_state: 'pending', recorded_readiness_state: 'ready', execution_evidence: demoEvidence, created_at: '2026-10-11T09:40:00Z' },
     },
     {
       endpoint_id: '61000000-0000-4000-8000-000000000002', project: 1,

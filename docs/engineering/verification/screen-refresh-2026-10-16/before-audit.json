@@ -1,0 +1,420 @@
+[
+  {
+    "screen": "overview",
+    "client": 360,
+    "headings": [
+      {
+        "text": "Project overview",
+        "y": 212
+      },
+      {
+        "text": "Fine-tune an LLM with your own dataset",
+        "y": 412
+      },
+      {
+        "text": "Workspace Setup & Prerequisites",
+        "y": 631
+      },
+      {
+        "text": "Move your project forward",
+        "y": 2241
+      }
+    ],
+    "overflow": [],
+    "scroll": 360,
+    "width": 375
+  },
+  {
+    "screen": "dataset-bank",
+    "client": 360,
+    "headings": [
+      {
+        "text": "Dataset Bank",
+        "y": 212
+      },
+      {
+        "text": "Source catalog",
+        "y": 496
+      },
+      {
+        "text": "Source details",
+        "y": 1862
+      }
+    ],
+    "overflow": [],
+    "scroll": 360,
+    "width": 375
+  },
+  {
+    "screen": "datasets",
+    "client": 360,
+    "headings": [
+      {
+        "text": "Datasets",
+        "y": 212
+      },
+      {
+        "text": "Supported upload formats",
+        "y": 337
+      },
+      {
+        "text": "Upload and prepare",
+        "y": 504
+      },
+      {
+        "text": "Dataset and revision lists",
+        "y": 3532
+      }
+    ],
+    "overflow": [
+      {
+        "class": "",
+        "right": 574,
+        "tag": "TABLE"
+      },
+      {
+        "class": "",
+        "right": 574,
+        "tag": "CAPTION"
+      },
+      {
+        "class": "",
+        "right": 574,
+        "tag": "THEAD"
+      },
+      {
+        "class": "",
+        "right": 574,
+        "tag": "TR"
+      },
+      {
+        "class": "",
+        "right": 371,
+        "tag": "TH"
+      },
+      {
+        "class": "",
+        "right": 468,
+        "tag": "TH"
+      }
+    ],
+    "scroll": 360,
+    "width": 375
+  },
+  {
+    "screen": "annotation",
+    "client": 360,
+    "headings": [
+      {
+        "text": "Annotation",
+        "y": 212
+      },
+      {
+        "text": "Annotation review",
+        "y": 339
+      }
+    ],
+    "overflow": [
+      {
+        "class": "",
+        "right": 374,
+        "tag": "SELECT"
+      }
+    ],
+    "scroll": 360,
+    "width": 375
+  },
+  {
+    "screen": "models",
+    "client": 360,
+    "headings": [
+      {
+        "text": "Models",
+        "y": 212
+      },
+      {
+        "text": "Acquire a model",
+        "y": 346
+      },
+      {
+        "text": "Model runtime compatibility",
+        "y": 1606
+      },
+      {
+        "text": "Models & checkpoints",
+        "y": 1955
+      }
+    ],
+    "overflow": [],
+    "scroll": 360,
+    "width": 375
+  },
+  {
+    "screen": "training",
+    "client": 360,
+    "headings": [
+      {
+        "text": "Training",
+        "y": -724
+      },
+      {
+        "text": "Training studio",
+        "y": -611
+      },
+      {
+        "text": "Choose your model and data",
+        "y": 171
+      }
+    ],
+    "overflow": [
+      {
+        "class": "",
+        "right": 366,
+        "tag": "H3"
+      },
+      {
+        "class": "",
+        "right": 366,
+        "tag": "LABEL"
+      },
+      {
+        "class": "",
+        "right": 366,
+        "tag": "SELECT"
+      },
+      {
+        "class": "",
+        "right": 366,
+        "tag": "P"
+      }
+    ],
+    "scroll": 360,
+    "width": 375
+  },
+  {
+    "screen": "alignment",
+    "client": 360,
+    "headings": [
+      {
+        "text": "Alignment",
+        "y": 212
+      },
+      {
+        "text": "Alignment lab",
+        "y": 346
+      }
+    ],
+    "overflow": [],
+    "scroll": 360,
+    "width": 375
+  },
+  {
+    "screen": "evaluation",
+    "client": 360,
+    "headings": [
+      {
+        "text": "Evaluation",
+        "y": 212
+      },
+      {
+        "text": "Evaluation & qualification",
+        "y": 346
+      }
+    ],
+    "overflow": [],
+    "scroll": 360,
+    "width": 375
+  },
+  {
+    "screen": "workflows",
+    "client": 360,
+    "headings": [
+      {
+        "text": "Workflows",
+        "y": 212
+      },
+      {
+        "text": "Durable execution",
+        "y": 346
+      },
+      {
+        "text": "Job pool",
+        "y": 1706
+      }
+    ],
+    "overflow": [],
+    "scroll": 360,
+    "width": 375
+  },
+  {
+    "screen": "rag",
+    "client": 360,
+    "headings": [
+      {
+        "text": "Retrieval workbench",
+        "y": -523
+      },
+      {
+        "text": "Retrieval workbench",
+        "y": -396
+      },
+      {
+        "text": "Retrieved chunks",
+        "y": 1025
+      },
+      {
+        "text": "Chunk inspector",
+        "y": 1581
+      }
+    ],
+    "overflow": [],
+    "scroll": 360,
+    "width": 375
+  },
+  {
+    "screen": "context-lab",
+    "client": 360,
+    "headings": [
+      {
+        "text": "Context Lab",
+        "y": -1889
+      },
+      {
+        "text": "Context recipe compiler",
+        "y": -1762
+      },
+      {
+        "text": "Compilation evidence",
+        "y": 1761
+      },
+      {
+        "text": "Exact compiled input",
+        "y": 2148
+      }
+    ],
+    "overflow": [],
+    "scroll": 360,
+    "width": 375
+  },
+  {
+    "screen": "releases",
+    "client": 360,
+    "headings": [
+      {
+        "text": "Releases",
+        "y": 212
+      },
+      {
+        "text": "Candidate review",
+        "y": 346
+      },
+      {
+        "text": "Create reviewed candidate",
+        "y": 694
+      },
+      {
+        "text": "Release versions",
+        "y": 1570
+      }
+    ],
+    "overflow": [],
+    "scroll": 360,
+    "width": 375
+  },
+  {
+    "screen": "infrastructure",
+    "client": 360,
+    "headings": [
+      {
+        "text": "Infrastructure",
+        "y": 212
+      },
+      {
+        "text": "Compute inventory",
+        "y": 346
+      },
+      {
+        "text": "Set up local compute",
+        "y": 528
+      },
+      {
+        "text": "Workers",
+        "y": 2103
+      }
+    ],
+    "overflow": [],
+    "scroll": 360,
+    "width": 375
+  },
+  {
+    "screen": "budgets",
+    "client": 360,
+    "headings": [
+      {
+        "text": "Budgets",
+        "y": 212
+      },
+      {
+        "text": "Resource accounting",
+        "y": 346
+      },
+      {
+        "text": "Budget policies",
+        "y": 1052
+      },
+      {
+        "text": "Usage and reservation attribution",
+        "y": 1802
+      }
+    ],
+    "overflow": [],
+    "scroll": 360,
+    "width": 375
+  },
+  {
+    "screen": "audit",
+    "client": 360,
+    "headings": [
+      {
+        "text": "Audit",
+        "y": 212
+      },
+      {
+        "text": "Activity records",
+        "y": 346
+      },
+      {
+        "text": "Events",
+        "y": 2286
+      }
+    ],
+    "overflow": [],
+    "scroll": 360,
+    "width": 375
+  },
+  {
+    "screen": "run-detail",
+    "client": 360,
+    "headings": [
+      {
+        "text": "Run Detail",
+        "y": 212
+      },
+      {
+        "text": "Anvil Assistant · SFT demo",
+        "y": 339
+      },
+      {
+        "text": "Next actions and blockers",
+        "y": 2461
+      },
+      {
+        "text": "Linked records",
+        "y": 2773
+      }
+    ],
+    "overflow": [],
+    "scroll": 360,
+    "width": 375
+  }
+]

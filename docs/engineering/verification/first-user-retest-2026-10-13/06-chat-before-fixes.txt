@@ -1,0 +1,87 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Fresh User Retest workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Chat
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Chat" [level=1]
+  - paragraph: Run local models, save conversations and compare actual responses.
+  - heading "Local chat & model arena" [level=2]:
+    - text: Local chat & model arena
+  - paragraph: Run imported snapshots or completed transformer candidates and compare two versions using the same input and settings.
+  - button "New conversation"
+  - button "Export" [disabled]:
+    - text: Export
+  - status: Exact model selected. Review runtime and generation settings.
+  - text: Search saved conversations
+  - textbox "Search saved conversations"
+  - text: Saved conversation
+  - combobox "Saved conversation":
+    - option "New conversation" [selected]
+  - text: Model
+  - combobox "Model":
+    - option "Select a model snapshot"
+    - option "smollm2-gpu-sft-a83fc687-c592-44bf-a7ff-dc114baa4773 · safetensors" [selected]
+  - text: Compare with
+  - combobox "Compare with":
+    - option "Single model" [selected]
+  - text: Device
+  - combobox "Device":
+    - option "CPU" [selected]
+    - option "Apple Silicon GPU (PyTorch)"
+  - generic "Generation settings"
+  - option "Imported model template" [selected]
+  - option "Plain text (one user prompt)"
+  - option "ChatML override"
+  - paragraph: "Supported context: 2048 tokens · output limit: 256 tokens. Actual device capacity is checked before generation."
+  - log "Conversation"
+  - complementary "Local draft":
+    - status: Draft saved in this tab.
+    - paragraph: Drafts use this tab’s session storage and expire 8 hours after an edit. Browsers may retain session storage when restoring tabs; expired backups are removed when the app checks them. Discard removes the draft. Credentials and execution approvals are excluded. Avoid entering secrets in content.
+    - button "Restore saved draft"
+    - button "Discard draft"
+  - text: Message
+  - textbox "Message"
+  - button "Generate" [disabled]
+  - button "Stop" [disabled]:
+    - text: Stop
+  - button "Regenerate" [disabled]:
+    - text: Regenerate
+  - paragraph: Base models without a chat template accept one user prompt. Arena runs share the same conversation input; scores do not qualify a model for release.
+  - generic "App information"
+  - text: Control plane

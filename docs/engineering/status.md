@@ -1,5 +1,7 @@
 # ModelAnvil implementation status
 
+Current operation-specific support and the later local evidence are indexed in the [21 October capability baseline](supported-capabilities.md). The entries below preserve the 11 October review history and are not a current cross-operation support matrix.
+
 11 October 2026 · TASK-1 evidence audit
 
 The former ledger used DONE for domain fixtures and described all 17 scenarios as delivered. Those completion/qualification claims are withdrawn. The [capability evidence audit](capability-evidence.md) is the current capability matrix, including evidence environment, artifacts and gaps for each scenario. Passing a fixture is not hardware, external-loader, operational or product-journey qualification.

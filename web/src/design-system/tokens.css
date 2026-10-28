@@ -1,0 +1,133 @@
+/* Generated from design/figcraft/variables.json. Run npm run tokens:sync. */
+/* Theme · Light */
+:root {
+  --color-canvas: #f6f8fb;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f8fafc;
+  --color-text-primary: #172033;
+  --color-text-secondary: #475569;
+  --color-text-muted: #58677c;
+  --color-border: #e2e8f0;
+  --color-control-border: #8190a6;
+  --color-action: #d65a31;
+  --color-on-action: #111111;
+  --color-action-text: #b84623;
+  --color-accent-surface: #fff4ef;
+  --color-accent-border: #edb19d;
+  --color-success: #166534;
+  --color-success-surface: #eef9f1;
+  --color-success-border: #b8ddc1;
+  --color-caution: #92400e;
+  --color-caution-surface: #fffbeb;
+  --color-caution-border: #f2da9a;
+  --color-error: #b91c1c;
+  --color-error-surface: #fef2f2;
+  --color-error-border: #fecaca;
+  --color-rail: #171c24;
+  --color-rail-text: #dce4ef;
+  --color-rail-secondary: #b7c5d8;
+  --color-rail-muted: #a9b8cc;
+  --color-chart-track: #f1f5f9;
+  --color-rail-success: #9ce0b2;
+  --color-action-hover: #e16b43;
+  --color-action-pressed: #cc603c;
+}
+
+/* Theme · Dark */
+:root[data-theme="dark"] {
+  --color-canvas: #10151e;
+  --color-surface: #171f2b;
+  --color-surface-subtle: #1b2432;
+  --color-text-primary: #ecf0f7;
+  --color-text-secondary: #c0ccdc;
+  --color-text-muted: #a3b2c7;
+  --color-border: #2c394d;
+  --color-control-border: #6e8099;
+  --color-action: #ed8057;
+  --color-on-action: #111111;
+  --color-action-text: #ed8057;
+  --color-accent-surface: #3a261f;
+  --color-accent-border: #885342;
+  --color-success: #9ce0b2;
+  --color-success-surface: #19372b;
+  --color-success-border: #35654d;
+  --color-caution: #f3cf87;
+  --color-caution-surface: #392e1c;
+  --color-caution-border: #705b33;
+  --color-error: #ffb6b6;
+  --color-error-surface: #40252d;
+  --color-error-border: #7a424d;
+  --color-rail: #0e131d;
+  --color-rail-text: #dce4ef;
+  --color-rail-secondary: #b7c5d8;
+  --color-rail-muted: #a9b8cc;
+  --color-chart-track: #253144;
+  --color-rail-success: #9ce0b2;
+  --color-action-hover: #f29370;
+  --color-action-pressed: #d96d48;
+}
+
+/* Density · Compact */
+:root {
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-18: 18px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --radius-6: 6px;
+  --radius-7: 7px;
+  --radius-8: 8px;
+  --radius-10: 10px;
+  --radius-12: 12px;
+  --type-12: 12px;
+  --type-13: 13px;
+  --type-14: 14px;
+  --type-16: 16px;
+  --type-17: 17px;
+  --type-20: 20px;
+  --type-24: 24px;
+  --type-28: 28px;
+  --type-30: 30px;
+  --type-32: 32px;
+}
+
+/* Density · Comfortable */
+:root[data-density="comfortable"] {
+  --space-4: 6px;
+  --space-6: 8px;
+  --space-8: 12px;
+  --space-10: 12px;
+  --space-12: 16px;
+  --space-16: 20px;
+  --space-18: 24px;
+  --space-20: 24px;
+  --space-24: 32px;
+  --space-32: 40px;
+  --radius-6: 8px;
+  --radius-7: 9px;
+  --radius-8: 10px;
+  --radius-10: 12px;
+  --radius-12: 14px;
+  --type-12: 13px;
+  --type-13: 14px;
+  --type-14: 16px;
+  --type-16: 18px;
+  --type-17: 19px;
+  --type-20: 22px;
+  --type-24: 26px;
+  --type-28: 30px;
+  --type-30: 32px;
+  --type-32: 34px;
+}
+
+/* Workspace · Default */
+:root {
+  --workspace-product: "ModelAnvil";
+  --workspace-project: "Assistant Research · Demo";
+  --workspace-organization: "Anvil Research · Demo";
+}

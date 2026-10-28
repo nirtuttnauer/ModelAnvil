@@ -1,0 +1,120 @@
+{
+  "recovery": {
+    "snapshot_id": "2b3bfa20-0297-41ee-b4aa-8ea7fd100318",
+    "queued_cancel_released_quota": true,
+    "verified_before_fault": 1,
+    "reused_verified_record": true,
+    "fetched_on_resume": [
+      "icons/cloud-off.svg",
+      "icons/layout-freeform.svg",
+      "icons/search-check.svg",
+      "LICENSE"
+    ],
+    "published": {
+      "snapshot_id": "2b3bfa20-0297-41ee-b4aa-8ea7fd100318",
+      "download_scope": "sample",
+      "source_files": [],
+      "source_id": "svg-lucide",
+      "source_revision": "70562c1ee1c4fdcf736fe97bc893fb8511927934",
+      "state": "ready",
+      "connector": "git_tree_blob_snapshot",
+      "record_selection": "deterministic evenly spaced slice of the sorted icons/*.svg inventory at the pinned commit",
+      "planned_records": 4,
+      "verified_records": 4,
+      "remaining_records": 0,
+      "planned_bytes": 1399,
+      "transferred_bytes": 1399,
+      "progress": 1.0,
+      "manifest_digest": "8d9f0a6eefbf73084a9af698626eb3e1e5a8eb8081d2010a7158934e7bc929d0",
+      "failures": [
+        {
+          "at": "2026-10-12T01:37:24.803514+00:00",
+          "reason": "Injected QA interruption after one verified real record."
+        }
+      ],
+      "job": {
+        "job_id": "29a5c667-b082-461e-8bce-32a8f98f6870",
+        "status": "succeeded",
+        "desired_action": "run",
+        "attempt_count": 1,
+        "pool": "QA local workflows"
+      },
+      "budget_reservation": {
+        "reservation_id": "7244edc9-7baf-4112-973d-5d3eee194582",
+        "state": "settled",
+        "unit": "bank_acquisition_records",
+        "estimated_amount": "3.000000",
+        "settled_amount": "3.000000"
+      },
+      "dataset_id": "906f8581-0e24-4dd1-a3e0-4735400ce060",
+      "revision_id": "2f108ab8-00ba-43cc-aa67-d84e70686d9b",
+      "revision_no": 1,
+      "manifest_artifact_id": "190",
+      "row_count": 4,
+      "recipe_digest": "eff5bdc591abaf7fcef0be6d5cd9248b0950ff9e194582cfd712640012081ff7",
+      "rejection_report": {
+        "input_rows": 4,
+        "kept": 4,
+        "dropped": 0,
+        "drop_reason_counts": {}
+      },
+      "updated_at": "2026-10-12T01:37:26.404197+00:00"
+    }
+  },
+  "connectors": [
+    {
+      "source": "text-smol-magpie-ultra",
+      "verified_records": 3,
+      "revision_id": "e8adbf86-76ca-4ccc-b319-fc51b5545fc6",
+      "transferred_bytes": 21612
+    },
+    {
+      "source": "text-ultrachat-200k",
+      "verified_records": 3,
+      "revision_id": "5fa10163-23a0-4a99-9113-fcbfba6b898b",
+      "transferred_bytes": 22824
+    },
+    {
+      "source": "text-squad",
+      "verified_records": 3,
+      "revision_id": "a81023d4-a3d5-42cf-a144-90279fd7453c",
+      "transferred_bytes": 2714
+    },
+    {
+      "source": "preference-ultrafeedback-binarized",
+      "verified_records": 3,
+      "revision_id": "350555cc-28db-4360-96ea-1d679cbce02f",
+      "transferred_bytes": 16983
+    },
+    {
+      "source": "tools-glaive-v2",
+      "verified_records": 3,
+      "revision_id": "09e316cf-5d08-4d9c-99a5-4e2e4b74bc04",
+      "transferred_bytes": 5682
+    },
+    {
+      "source": "image-clevr",
+      "verified_records": 3,
+      "revision_id": "e51d28b5-f2e1-461c-8a54-eaa38cd56b52",
+      "transferred_bytes": 1180504
+    },
+    {
+      "source": "audio-vctk",
+      "verified_records": 3,
+      "revision_id": "4a9407d5-e22d-485b-a030-a9ea9afe78ae",
+      "transferred_bytes": 709636
+    },
+    {
+      "source": "audio-libritts-r",
+      "verified_records": 3,
+      "revision_id": "78f744f8-a91b-4338-8fc0-21600ae452aa",
+      "transferred_bytes": 1183261
+    },
+    {
+      "source": "numeric-wine-quality",
+      "verified_records": 3,
+      "revision_id": "f23f4463-7bf1-4463-8f4e-683aa9463d86",
+      "transferred_bytes": 690
+    }
+  ]
+}

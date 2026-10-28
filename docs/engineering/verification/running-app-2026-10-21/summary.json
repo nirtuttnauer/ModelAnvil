@@ -1,0 +1,20 @@
+{
+  "verified_at": "2026-10-21T14:43:55.238828+00:00",
+  "app_url": "http://127.0.0.1:5173/#models",
+  "api_url": "http://127.0.0.1:8000",
+  "database": "modelanvil.db",
+  "backup": ".local-backups/2026-10-21/before-migrations.sqlite3",
+  "applied_migrations": 20,
+  "pending_migrations": 0,
+  "recorded_migrations": 82,
+  "existing_identity_rows_preserved": 524,
+  "workspace_screens_checked": 18,
+  "native_clipboard_copy": "passed",
+  "live_labeler_checks": 31,
+  "temporary_qa_data": "removed",
+  "managed_training_service": "ready on mps:0",
+  "model_training_jobs_launched": 0,
+  "build": "passed",
+  "services": "Detached API, Vite, and managed training processes; PIDs and logs in output/local-runtime.",
+  "obsolete_compose_services": "Stopped the two previously crash-looping ModelAnvil outbox/reconciler containers; no data or volumes removed."
+}

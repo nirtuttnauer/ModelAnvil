@@ -38,7 +38,7 @@ test('run detail and attempts paths stay under the read-only projection', () => 
 
 test('the shell mounts the run view and keeps it on the address for reload and back', () => {
   const source = readFileSync(new URL('../src/main.tsx', import.meta.url), 'utf8');
-  assert.match(source, /import\s+\{\s*RunDetailPage\s*\}\s+from\s+['"]\.\/pages\/RunDetailPage['"]/);
+  assert.match(source, /import\(['"]\.\/pages\/RunDetailPage['"]\)/);
   assert.match(source, /<RunDetailPage[\s\S]*?refreshKey=\{refreshKey\}/);
   assert.match(source, /setRunRoute\(parseRunRoute\(window\.location\.hash\)\)/);
   assert.match(source, /onHashChange/);
@@ -82,7 +82,7 @@ test('the run view keeps polling bounded, visible and non-destructive', () => {
   assert.match(source, /TERMINAL\.includes\(state/);
   assert.match(source, /setPollMs\(\(value\) => Math\.min\(value \* 2, MAX_POLL_MS\)\)/);
   // Drafts and the selected run survive a failed refresh.
-  assert.match(source, /sessionStorage\.setItem\(noteKey\(kind, runId\), value\)/);
+  assert.match(source, /useDraft\('run-note'/);
   assert.match(source, /if \(quiet && hasDetail\.current\)/);
   assert.match(source, /Last successful update/);
 });
@@ -105,3 +105,7 @@ test('the run view stays usable at narrow widths and exposes attempt history', (
   assert.match(source, /nextPagePath\(attemptsNext, attemptsPath\(kind, runId\)\)/);
   assert.match(source, /aria-live="polite"/);
 });
+ test('run return routes preserve source filters and reject non-workspace destinations', () => {
+  assert.equal(runHash('training', id, '#training?selected=abc'), `#runs/training/${id}?from=%23training%3Fselected%3Dabc`);
+  assert.equal(runHash('job', id, 'javascript:alert(1)'), `#runs/job/${id}`);
+ });

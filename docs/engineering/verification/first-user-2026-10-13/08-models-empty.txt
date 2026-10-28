@@ -1,0 +1,115 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "First-time user review" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "Custom support assistant" [selected]
+    - option "+ New project…"
+  - strong: Models
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Connection":
+    - generic: Connection
+  - text: Develop
+  - heading "Models" [level=1]
+  - paragraph: Keep model versions and their evaluation evidence together.
+  - heading "Acquire a model" [level=2]
+  - paragraph: Search the Hub or import local model files into this project.
+  - complementary "Local draft":
+    - status: No unfinished draft.
+    - paragraph: Drafts use this tab’s session storage and expire 8 hours after an edit. Browsers may retain session storage when restoring tabs; expired backups are removed when the app checks them. Discard removes the draft. Credentials and execution approvals are excluded. Avoid entering secrets in content.
+    - button "Restore saved draft" [disabled]
+    - button "Discard draft" [disabled]
+  - button "Hugging Face"
+  - button "Local files" [pressed]
+  - text: Model name
+  - textbox "Model name"
+  - text: Local runtime
+  - combobox "Local runtime":
+    - option "Safetensors / GGUF (automatic)" [selected]
+    - option "MLX"
+  - text: Snapshot files
+  - button "Snapshot files"
+  - paragraph: Up to 64 files, 8 GiB per file. Uploads restart a partial file; completed verified files are retained in this tab for retry. Clear the file picker to use saved references, or select only remaining files. Registration revalidates hashes and loadable files.
+  - text: Model license
+  - textbox "Model license":
+    - /placeholder: apache-2.0
+  - checkbox "I have reviewed and accept the model’s license and access terms."
+  - text: I have reviewed and accept the model’s license and access terms.
+  - button "Import snapshot" [disabled]
+  - heading "Model runtime compatibility" [level=2]
+  - paragraph: Eligibility is checked from pinned inputs. Launch and generation still validate actual runtime and capacity.
+  - paragraph: Import or initialize a model to inspect its supported operations.
+  - heading "Models & checkpoints" [level=2]
+  - paragraph: Registered models, checkpoints, and their intended tasks.
+  - button "Tokenizer":
+    - text: Tokenizer
+  - button "Version Checkpoint":
+    - text: Version Checkpoint
+  - button "Initialize CPU base"
+  - button "Register Base Model"
+  - generic "Loaded model registry summary":
+    - generic: Registered models
+    - strong: "0"
+    - generic: In the loaded registry page
+    - generic: Intended tasks
+    - strong: "0"
+    - generic: Declared in model metadata
+    - generic: Completed evaluations
+    - strong: "0"
+    - generic: In the loaded evaluation page
+    - generic: Evidence scope
+    - strong: Recorded
+    - generic: Qualification requires independent evidence
+  - paragraph: Registry state is a recorded label. Metadata registration and fixture results do not establish production model qualification.
+  - generic: RECORDED PERFORMANCE
+  - heading "Evaluation evidence" [level=3]
+  - paragraph: Explore one recorded run at a time. Different suites are not treated as comparable.
+  - text: Evaluation run
+  - combobox "Evaluation run to visualize":
+    - option "Select a completed evaluation" [disabled] [selected]
+  - heading "Performance by slice" [level=3]
+  - paragraph: Values, sample counts, and uncertainty as recorded.
+  - strong: Waiting for recorded data
+  - paragraph: Select an evaluation with recorded slice metrics. Missing evidence is not shown as zero.
+  - heading "Task coverage" [level=3]
+  - paragraph: Models tagged for each task in the loaded registry.
+  - strong: Waiting for recorded data
+  - paragraph: Register model metadata to inspect declared task coverage.
+  - heading "Model registry" [level=3]
+  - paragraph: Base models and their declared tasks.
+  - textbox "Search models":
+    - /placeholder: Search by model name, description, or task
+  - generic: 0 of 0 loaded models
+  - paragraph: No registered models yet.
+  - text: ModelAnvil · c39a2e95 · 28838a1d
+  - generic: "· API build matches · Imports: JSONL, CSV, DOCX, JSON, PDF"
+  - text: Control plane

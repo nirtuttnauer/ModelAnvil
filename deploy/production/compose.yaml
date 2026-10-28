@@ -1,0 +1,92 @@
+x-api: &api
+  image: modelanvil-api:${MODELANVIL_IMAGE_TAG:?Set an immutable release tag}
+  build:
+    context: ../..
+    dockerfile: deploy/production/Dockerfile
+    target: api
+    args:
+      MODELANVIL_BUILD_REVISION: ${MODELANVIL_BUILD_REVISION:?Set the source revision}
+  environment: &environment
+    DJANGO_SETTINGS_MODULE: modelanvil.production
+    DJANGO_DEBUG: "0"
+    DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Set a strong production secret}
+    DJANGO_ALLOWED_HOSTS: ${MODELANVIL_DOMAIN:?Set the hostname}
+    MODELANVIL_PUBLIC_ORIGIN: ${MODELANVIL_PUBLIC_ORIGIN:?Set the HTTPS origin}
+    DATABASE_ENGINE: postgresql
+    DATABASE_NAME: modelanvil
+    DATABASE_USER: modelanvil
+    DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?Set the database password}
+    DATABASE_HOST: db
+    MODELANVIL_ARTIFACT_BACKEND: filesystem
+    MODELANVIL_ARTIFACT_ROOT: /app/storage/artifacts
+  volumes:
+    - artifacts:/app/storage/artifacts
+  networks: [backend]
+  read_only: true
+  tmpfs: [/tmp]
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: modelanvil
+      POSTGRES_USER: modelanvil
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set the database password}
+    volumes:
+      - database:/var/lib/postgresql/data
+    networks: [backend]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U modelanvil -d modelanvil"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  migrate:
+    <<: *api
+    command: [python, manage.py, migrate, --noinput]
+    profiles: [tools]
+    healthcheck:
+      disable: true
+    depends_on:
+      db:
+        condition: service_healthy
+  api:
+    <<: *api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+  web:
+    image: modelanvil-web:${MODELANVIL_IMAGE_TAG:?Set an immutable release tag}
+    build:
+      context: ../..
+      dockerfile: deploy/production/Dockerfile
+      target: web
+      args:
+        MODELANVIL_BUILD_REVISION: ${MODELANVIL_BUILD_REVISION:?Set the source revision}
+    environment:
+      MODELANVIL_DOMAIN: ${MODELANVIL_DOMAIN:?Set the hostname}
+      MODELANVIL_HTTPS_PORT: ${MODELANVIL_HTTPS_PORT:-8443}
+    ports:
+      - "${MODELANVIL_BIND_ADDRESS:-127.0.0.1}:${MODELANVIL_HTTP_PORT:-8080}:80"
+      - "${MODELANVIL_BIND_ADDRESS:-127.0.0.1}:${MODELANVIL_HTTPS_PORT:-8443}:443"
+    volumes:
+      - certificates:/data
+      - caddy_config:/config
+    networks: [edge, backend]
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+
+networks:
+  edge:
+  backend:
+    internal: true
+volumes:
+  database:
+  artifacts:
+  certificates:
+  caddy_config:

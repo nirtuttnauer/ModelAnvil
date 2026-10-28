@@ -17,12 +17,14 @@ The active tenant is resolved per-request from the authenticated principal
 from __future__ import annotations
 
 import uuid
+
 from typing import Any
 
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
+from modelanvil.core.ids import uuid7
 from modelanvil.core.tenancy import get_active_tenant
 
 
@@ -110,7 +112,8 @@ class AuditEvent(TenantContextModel):
         BUDGET = "budget"
         TENANCY = "tenancy"
 
-    event_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    event_id = models.UUIDField(default=uuid7, unique=True, editable=False)
+    project_id = models.UUIDField(null=True, blank=True, db_index=True)
     actor_id = models.UUIDField(null=True, blank=True, db_index=True)
     actor_kind = models.CharField(
         max_length=16,
@@ -147,18 +150,65 @@ def record_audit(
     """Write an audit event, inheriting the active tenant/actor context."""
     if tenant_id is None:
         tenant_id = get_active_tenant()
+    from modelanvil.core.tenancy import get_active_project
+    snapshot = dict(input_snapshot or {})
+    if actor_id is not None:
+        try: actor_id = uuid.UUID(str(actor_id))
+        except (ValueError, TypeError):
+            snapshot['actor_reference'] = f'{actor_kind}:{actor_id}'
+            actor_id = None
     event = AuditEvent(
-        tenant_id=tenant_id or uuid.uuid4(),
+        tenant_id=tenant_id or uuid7(),
+        project_id=get_active_project(),
         actor_id=actor_id,
         actor_kind=actor_kind,
         action=action,
         resource_type=resource_type,
         resource_id=resource_id,
-        input_snapshot=input_snapshot or {},
+        input_snapshot=snapshot,
         result=result,
     )
     event.save()
     return event
+
+
+class ProjectPrivacyPolicy(TenantContextModel):
+    """An administrator's restriction on the installation's acquisition destinations."""
+
+    project = models.OneToOneField('identity.Project', on_delete=models.CASCADE)
+    offline = models.BooleanField(default=False)
+    acquisition_origins = models.JSONField(default=list)
+    measurement_retention_days = models.PositiveSmallIntegerField(default=30)
+
+
+class ActivationEvent(TenantContextModel):
+    """Content-free measurements stored only in this installation."""
+
+    event_id = models.UUIDField()
+    session_id = models.UUIDField(db_index=True)
+    project = models.ForeignKey('identity.Project', on_delete=models.CASCADE)
+    kind = models.CharField(max_length=24, choices=[('workspace_opened', 'Workspace opened'), ('activity', 'Activity')])
+    active_milliseconds = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=('tenant_id', 'project', 'event_id'), name='activation_event_unique')]
+
+
+class ImprovementDecision(TenantContextModel):
+    """An explicit decision about one verified candidate/baseline comparison."""
+
+    decision_id = models.UUIDField(default=uuid7, unique=True, editable=False)
+    project = models.ForeignKey('identity.Project', on_delete=models.PROTECT)
+    evaluation = models.ForeignKey('runners.EvaluationRun', on_delete=models.PROTECT)
+    training = models.ForeignKey('runners.TrainingRun', on_delete=models.PROTECT)
+    outcome = models.CharField(max_length=8, choices=[('accept', 'Accept'), ('reject', 'Reject')])
+    evidence_digest = models.CharField(max_length=64)
+    candidate_accuracy = models.FloatField()
+    baseline_accuracy = models.FloatField()
+    accepted_improvement = models.BooleanField(default=False)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=('tenant_id', 'project', 'evaluation'), name='improvement_decision_unique')]
 
 
 class IdempotencyKey(TenantContextModel):

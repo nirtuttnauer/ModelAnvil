@@ -1,0 +1,84 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Local Training Test workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Training
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Fine-tune a pretrained model with your own examples.
+  - region "Train a model on your data":
+    - text: YOUR FIRST FINE-TUNE
+    - heading "Train a model on your data" [level=2]
+    - paragraph: Everything you need, in four steps. Training runs on this computer.
+    - list "Fine-tuning progress":
+      - text: Model
+      - text: Dataset
+      - generic: "3"
+      - text: Review
+      - generic: "4"
+      - text: Train
+    - heading "Review your fine-tune" [active] [level=3]
+    - term: Starting model
+    - definition: SmolLM2-1.7B Instruct
+    - term: Your dataset
+    - definition: library-policy-calibrated · 60 examples
+    - term: Training computer
+    - definition: This Mac · Apple GPU
+    - term: Training
+    - definition: "48"
+    - term: Validation
+    - definition: "6"
+    - term: Test
+    - definition: "6"
+    - strong: Recommended training plan
+    - paragraph: 6 complete passes through 48 training examples (288 updates). The model learns from your examples and keeps the checkpoint with the best validation loss.
+    - paragraph: "Estimated time: about 3–25 minutes for the recommended plan. This is an initial estimate; example length and other apps affect speed."
+    - paragraph: "Small dataset: this can personalize a narrow task, but broader, varied examples are needed for reliable answers to new questions."
+    - generic "Training settings (optional)"
+    - option "Recommended · 6 passes" [selected]
+    - option "Quick setup check · 3 steps"
+    - option "Custom step count"
+    - paragraph: This uses your computer’s GPU and disk space. No external compute service is charged.
+    - status: Ready to train. The model, data, compute and allowance have passed their checks.
+    - button "Change dataset"
+    - button "Refresh checks"
+    - button "Start fine-tuning":
+      - text: Start fine-tuning
+  - button "Advanced training workspace"
+  - generic "App information"
+  - text: Control plane

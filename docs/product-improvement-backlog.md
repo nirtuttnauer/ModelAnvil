@@ -1,5 +1,7 @@
 # ModelAnvil product improvement backlog
 
+The current screen review is translated into the [prioritized implementation backlog](product-implementation-backlog.md), dated 12 October 2026. This document preserves the earlier task mappings and planning history.
+
 11 October 2026 · Product review of the current workspace
 
 Drafted from repository evidence. No implementation authorization or delivery dates are implied. P0 protects trust and boundaries; P1 makes the first text-model journey usable; P2 expands qualified workflows. Effort is relative (M/L), not a delivery estimate.

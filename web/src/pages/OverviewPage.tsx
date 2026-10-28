@@ -1,3 +1,7 @@
+import { Identifier } from '../components/Identifier';
+import { LocalMeasurements } from '../components/LocalMeasurements';
+import { PrivacySettings } from '../components/PrivacySettings';
+import { Badge, Button, Card, MetricSummary } from '../components/ui';
 import { useCallback, useEffect, useState } from 'react';
 import {
   ArrowRight,
@@ -18,6 +22,9 @@ import { OnboardingChecklist } from '../components/OnboardingChecklist';
 import { BarChart, ChartPanel, LineChart } from '../components/Charts';
 import type { UsageSummaryResponse } from './BudgetsPage';
 import type { Project } from '../api/resources';
+import { runHash } from '../api/runs';
+import { nextExperimentAction, type ImprovementTraining, type ImprovementEvaluation } from '../api/improvement';
+import './improvement.css';
 
 interface RecentJob {
   job_id: string;
@@ -26,14 +33,15 @@ interface RecentJob {
   updated_at: string;
 }
 
-interface Evaluation {
+interface Evaluation extends ImprovementEvaluation {
+  execution_evidence?: { level: string; source: string };
   run_id: string;
   status: string;
   candidate_model_version: number;
   metrics: { key: string; value: number; sample_count: number; slice_name: string }[];
 }
 
-interface TrainingSummary {
+interface TrainingSummary extends ImprovementTraining {
   run_id: string;
   status: string;
   metrics_log?: { step: number; loss: number }[];
@@ -66,8 +74,8 @@ const workflows = [
   },
   {
     title: 'Run an experiment',
-    description: 'Pin your inputs, configure a recipe, and inspect training progress.',
-    prerequisite: 'Requires a tokenizer and compatible model version.',
+    description: 'Choose a pretrained model and fine-tune it on your examples.',
+    prerequisite: 'Guided setup supplies the matching model and local training resources.',
     page: 'Training',
     action: 'Open training',
     icon: FlaskConical,
@@ -160,7 +168,7 @@ export function OverviewPage({
     apiPage<Evaluation>('/api/v1/evaluation-runs/', token, c.signal)
       .then((p) => {
         if (!c.signal.aborted)
-          setEvaluations(p.results.filter((r) => r.status === 'completed').slice(0, 3));
+          setEvaluations(p.results);
       })
       .catch((e) => {
         if (!c.signal.aborted) setEvidenceError(errorMessage(e));
@@ -191,9 +199,15 @@ export function OverviewPage({
 
   const selectedTraining = training.find(r => r.run_id === trainingId) ?? training.find(r => r.metrics_log?.length) ?? training[0];
   const jobStates = [...new Set(jobs.map(j => j.status))].map(label => ({ label: label.replaceAll('_', ' '), value: jobs.filter(j => j.status === label).length }));
+  const nextAction = nextExperimentAction(training, evaluations);
 
   return (
     <>
+      <Card className="panel"><section className="panel-body experiment-next" aria-labelledby="experiment-next-title">
+        <div><h2 id="experiment-next-title">{loading || evidenceLoading ? 'Finding your next step…' : nextAction.title}</h2><p>{loading || evidenceLoading ? 'Checking saved training and comparison records.' : nextAction.description}</p></div>
+        <ol className="experiment-stages" aria-label="Improvement journey">{['Prepare', 'Train', 'Compare', 'Decide', 'Export'].map(stage => <li key={stage} aria-current={nextAction.stage === stage ? 'step' : undefined}>{stage}</li>)}</ol>
+        {error || evidenceError ? <p role="status">Your latest experiment could not be verified. Retry the unavailable data below before continuing.</p> : !loading && !evidenceLoading && <div className="actions"><a className="primary" href={nextAction.href}>{nextAction.label} <ArrowRight size={16} aria-hidden="true" /></a>{training.length > 0 && <Button onClick={() => onNavigate('Training')}>New experiment</Button>}</div>}
+      </section></Card>
       <OnboardingChecklist
         token={token}
         refreshKey={refreshKey}
@@ -205,12 +219,13 @@ export function OverviewPage({
       />
 
       <div className="visualization-grid">
-        <ChartPanel title="Experiment performance" description={selectedTraining ? `Run ${selectedTraining.run_id.slice(0, 8)} · ${selectedTraining.execution_evidence?.level || 'Evidence not reported'} · recorded measurements` : 'Training loss from your recorded experiments.'} action={training.length > 0 && <select aria-label="Overview training run" value={selectedTraining?.run_id || ''} onChange={e => setTrainingId(e.target.value)}>{training.map(r => <option key={r.run_id} value={r.run_id}>Run {r.run_id.slice(0, 8)} · {r.status}</option>)}</select>}>
+        <ChartPanel title="Experiment performance" description={selectedTraining ? `Training run ${training.indexOf(selectedTraining) + 1} · ${selectedTraining.execution_evidence?.level || 'Evidence not reported'} · recorded measurements` : 'Training loss from your recorded experiments.'} action={training.length > 0 && <select aria-label="Overview training run" value={selectedTraining?.run_id || ''} onChange={e => setTrainingId(e.target.value)}>{training.map((r, index) => <option key={r.run_id} value={r.run_id}>Training run {index + 1} · {r.status}</option>)}</select>}>
+          {selectedTraining && <Identifier value={selectedTraining.run_id} label="Run ID" />}
           <LineChart series={[{ name: 'Recorded training loss', points: (selectedTraining?.metrics_log ?? []).map(m => ({ x: m.step, y: m.loss })) }]} xLabel="Training step" yLabel="Loss" />
         </ChartPanel>
         <ChartPanel title="Active work" description="Status distribution of the recent jobs shown below; up to 5 loaded records.">
           <BarChart data={jobStates} unit="Jobs" emptyMessage="Create a workflow to track its observed execution state here." />
-          <button className="text-button" onClick={() => onNavigate('Workflows')}>Inspect execution <ArrowRight size={14} aria-hidden="true" /></button>
+          <Button className="text-button" onClick={() => onNavigate('Workflows')}>Inspect execution <ArrowRight size={14} aria-hidden="true" /></Button>
         </ChartPanel>
       </div>
 
@@ -220,7 +235,7 @@ export function OverviewPage({
       </div>
       <div className="workflow-grid">
         {workflows.map(({ icon: Icon, ...w }) => (
-          <button className="workflow-card" key={w.page} onClick={() => onNavigate(w.page)}>
+          <Button className="workflow-card" key={w.page} onClick={() => onNavigate(w.page)}>
             <span className="workflow-icon">
               <Icon size={19} aria-hidden="true" />
             </span>
@@ -233,7 +248,7 @@ export function OverviewPage({
               {w.action}
               <ArrowRight size={15} aria-hidden="true" />
             </span>
-          </button>
+          </Button>
         ))}
       </div>
       <div className="section-heading">
@@ -245,42 +260,35 @@ export function OverviewPage({
         {counts.map((c) => {
           const Icon = resourceIcons[c.page as keyof typeof resourceIcons];
           return (
-            <button
-              className="summary-card"
+            <MetricSummary
               key={c.name}
               onClick={() => onNavigate(c.page)}
-            >
-              <span className="summary-top">
-                <span>{c.name}</span>
-                <Icon size={16} aria-hidden="true" />
-              </span>
-              <b>
-                {c.value}
-                {c.more ? '+' : ''}
-              </b>
-              <small>
+              label={c.name}
+              icon={<Icon size={16} aria-hidden="true" />}
+              value={<>{c.value}{c.more ? '+' : ''}</>}
+              detail={<>
                 {c.total
                   ? 'Total resources'
                   : c.more
                   ? 'Loaded page · more available'
                   : 'Resources in loaded page'}{' '}
                 <ArrowUpRight size={12} aria-hidden="true" />
-              </small>
-            </button>
+              </>}
+            />
           );
         })}
       </div>
       <div className="overview-columns">
-        <section className="panel">
+        <Card className="panel">
           <div className="panel-title">
             <div>
               <h2>Recent activity</h2>
               <p>Observed states from the loaded jobs page.</p>
             </div>
-            <button className="text-button" onClick={() => onNavigate('Workflows')}>
+            <Button className="text-button" onClick={() => onNavigate('Workflows')}>
               All jobs
               <ArrowUpRight size={14} aria-hidden="true" />
-            </button>
+            </Button>
           </div>
           <div className="panel-body">
             {loading && <ResourceState loading />}
@@ -292,27 +300,27 @@ export function OverviewPage({
                 <Activity size={24} aria-hidden="true" />
                 <h3>Your work will appear here</h3>
                 <p>Create a workflow to follow its execution and recorded attempts.</p>
-                <button onClick={() => onNavigate('Workflows')}>Open workflows</button>
+                <Button onClick={() => onNavigate('Workflows')}>Open workflows</Button>
               </div>
             )}
             {jobs.map((j) => (
               <div className="activity-row" key={j.job_id}>
                 <div>
-                  <button className="text-button" onClick={() => onNavigate('Workflows')}>
+                  <a className="text-button" href={runHash('job', j.job_id)}>
                     {j.name}
-                  </button>
+                  </a>
                   <small className="id-text">
                     Updated {new Date(j.updated_at).toLocaleString()}
                   </small>
                 </div>
-                <span className={`state state-${j.status}`}>
+                <Badge className={`state state-${j.status}`}>
                   {j.status.replaceAll('_', ' ')}
-                </span>
+                </Badge>
               </div>
             ))}
           </div>
-        </section>
-        <section className="panel">
+        </Card>
+        <Card className="panel">
           <div className="panel-title">
             <div>
               <h2>Evaluation evidence</h2>
@@ -331,11 +339,13 @@ export function OverviewPage({
                 </p>
               </div>
             )}
-            {evaluations.map((e) => (
+            {evaluations.filter(e => e.status === 'completed').slice(0, 3).map((e) => (
               <div className="activity-row" key={e.run_id}>
                 <div>
-                  <strong>Model version record #{e.candidate_model_version}</strong>
-                  <small className="id-text">Run {e.run_id.slice(0, 8)}</small>
+                  <strong>Candidate model</strong> <Identifier value={String(e.candidate_model_version)} label="Candidate model record ID" />
+                  <Identifier value={e.run_id} label="Evaluation run ID" />
+                  <small className="id-text">{e.execution_evidence?.level || 'Unknown execution evidence'} · {e.execution_evidence?.source || 'Execution provenance not recorded'}</small>
+                  <a href={runHash('evaluation', e.run_id)}>Inspect this evaluation</a>
                   {e.metrics.length ? (
                     e.metrics.slice(0, 2).map((m, i) => (
                       <p className="muted" key={i}>
@@ -349,13 +359,13 @@ export function OverviewPage({
                 </div>
               </div>
             ))}
-            <button className="text-button" onClick={() => onNavigate('Evaluation')}>
+            <Button className="text-button" onClick={() => onNavigate('Evaluation')}>
               Review evaluations
               <ArrowRight size={14} aria-hidden="true" />
-            </button>
+            </Button>
             <p className="muted">Completion alone does not qualify a release.</p>
           </div>
-        </section>
+        </Card>
       </div>
       <div className="usage-link">
         <CircleDollarSign size={21} aria-hidden="true" />
@@ -373,11 +383,13 @@ export function OverviewPage({
             </p>
           )}
         </div>
-        <button className="text-button" onClick={() => onNavigate('Budgets')}>
+        <Button className="text-button" onClick={() => onNavigate('Budgets')}>
           Inspect usage
           <ArrowUpRight size={14} aria-hidden="true" />
-        </button>
+        </Button>
       </div>
+      <LocalMeasurements token={token} />
+      <PrivacySettings token={token} />
     </>
   );
 }

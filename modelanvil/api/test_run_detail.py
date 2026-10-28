@@ -219,8 +219,8 @@ class RunDetailProjectionTests(TestCase):
         self.assertFalse(resume["budget"]["reservable"])
         self.assertEqual(resume["budget"]["state"], BudgetReservation.State.SETTLED)
         self.assertTrue(resume["permission"]["satisfied"])
-        self.assertTrue(any("read-only" in reason for reason in resume["blocked_by"]))
-        self.assertIn("append-only", resume["preserves_history"])
+        self.assertTrue(any("CPU character and CPU transformer" in reason for reason in resume["blocked_by"]))
+        self.assertIn("immutable", resume["preserves_history"])
 
     def test_evaluation_detail_links_its_candidate_model(self):
         run = EvaluationRun.objects.create(

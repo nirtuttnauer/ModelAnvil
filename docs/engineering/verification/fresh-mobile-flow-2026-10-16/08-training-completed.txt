@@ -1,0 +1,206 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- main:
+  - button "Toggle navigation":
+  - combobox "Organization":
+    - option "Mobile Tool Library Test workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - link "ModelAnvil overview":
+    - /url: "#overview"
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Active jobs":
+  - button "Refresh workspace":
+  - button "Sign out":
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Fine-tune a pretrained model with your own examples.
+  - heading "Training studio" [level=2]
+  - paragraph: Choose your model and data, review your training plan, and follow the results in one workspace.
+  - button "Tokenizer":
+    - text: Tokenizer
+  - button "Model Version":
+    - text: Model Version
+  - button "Configure a run"
+  - tablist "Training workspace":
+    - tab "Configure"
+    - tab "Current run" [selected]
+    - tab "History"
+  - generic "Loaded training summary":
+    - generic: Training runs
+    - strong: "1"
+    - generic: All accessible recorded runs
+    - generic: Active runs
+    - strong: "0"
+    - generic: Pending or running
+    - generic: Saved checkpoints
+    - strong: "3"
+    - generic: Recorded checkpoint artifacts
+    - generic: Latest selected loss
+    - strong: "0.0002"
+    - generic: Run c67e2e82
+  - tabpanel "Current run" [active]:
+    - heading "Current run" [level=3]
+    - paragraph: Live progress, recorded metrics and checkpoints.
+    - text: Inspect run
+    - combobox "Current training run":
+      - option "Select a run"
+      - option "c67e2e82 · lora_adapter · completed" [selected]
+    - region "Live training progress":
+      - heading "Training progress" [level=3]
+      - generic: completed
+      - status: Final recorded state
+      - button "Refresh progress"
+      - strong: 100% complete
+      - generic: 288 / 288 steps reported
+      - progressbar "Training completion"
+      - paragraph: 288 steps saved in checkpoints.
+      - term: Elapsed time
+      - definition: 7m
+      - term: Estimated time remaining
+      - definition: Finished
+      - term: Latest training loss
+      - definition: "0.0002"
+      - term: Latest validation loss
+      - definition: "0.0347"
+      - paragraph: Last refreshed 11:18:53 PM. Progress changes only when the server reports it.
+    - paragraph: Your model is ready. Try it with a new question.
+    - link "Try your model":
+      - /url: "#chat?model_version=712ab9ec-61e5-4a62-8753-ba3819c62a24"
+    - link "Compare with base model":
+      - /url: "#chat?model_version=712ab9ec-61e5-4a62-8753-ba3819c62a24&compare_base=1"
+    - region "Model export":
+      - heading "Export your trained model" [level=3]
+      - paragraph: Exports selected candidate checkpoint · step 288.
+      - text: Export format
+      - combobox "Export format":
+        - option "Safetensors snapshot (ZIP)" [selected]
+        - option "LoRA adapter only (ZIP)"
+        - option "Snapshot manifest (JSON)"
+      - button "Download export":
+        - text: Download export
+      - paragraph: Includes model weights, tokenizer files and provenance. Adapter runs include the base and separate adapters; weights are not merged or converted.
+      - paragraph: GGUF conversion and merging adapter weights are not available here.
+    - generic: EXPERIMENT MONITOR
+    - heading "Loss & checkpoint activity" [level=3]
+    - paragraph: Recorded training loss at committed steps, alongside saved checkpoint artifacts.
+    - heading "Training & validation loss" [level=3]
+    - paragraph: c67e2e82 · integrated_execution · exact recorded values
+    - button "Training loss" [pressed]: Training loss
+    - button "Validation loss" [pressed]: Validation loss
+    - group "Loss by Committed step. Focus a point to inspect its value. Use the legend to toggle series.":
+      - generic: "0"
+      - generic: "96"
+      - generic: "0.027"
+      - generic: "144"
+      - generic: "0.054"
+      - generic: "192"
+      - generic: "0.081"
+      - generic: "240"
+      - generic: "0.108"
+      - generic: "288"
+      - generic: Committed step
+      - generic: Loss
+      - 'button "Training loss: Committed step 96, Loss 0.001"'
+      - 'button "Training loss: Committed step 192, Loss 0.001"'
+      - 'button "Training loss: Committed step 288, Loss 0"'
+      - 'button "Validation loss: Committed step 96, Loss 0.108"'
+      - 'button "Validation loss: Committed step 192, Loss 0.047"'
+      - 'button "Validation loss: Committed step 288, Loss 0.035"'
+    - generic: Hover or focus a point to inspect the recorded value.
+    - generic "View data":
+      - text: View data
+    - heading "Checkpoint timeline" [level=3]
+    - paragraph: Saved artifacts from the selected run.
+    - generic: Committed steps
+    - strong: 288 / 288
+    - progressbar "Selected run committed steps"
+    - list:
+      - strong: Checkpoint · step 96
+      - generic: 25e2cef185d8a57977…
+      - generic: completed
+      - strong: Checkpoint · step 192
+      - generic: aac269ffcec401f12c…
+      - generic: completed
+      - strong: Checkpoint · step 288
+      - generic: 71f076dabdfae10ded…
+      - generic: completed
+    - table "Measured GPU optimizer steps; throughput includes the post-update loss pass. Missing metrics are not estimated.":
+      - caption: Measured GPU optimizer steps; throughput includes the post-update loss pass. Missing metrics are not estimated.
+      - rowgroup:
+        - row "Step / timestamp Protected validation loss Gradient norm Prediction tokens/sec Allocated / peak MiB GPU utilization Trainable / total parameters":
+          - columnheader "Step / timestamp"
+          - columnheader "Protected validation loss"
+          - columnheader "Gradient norm"
+          - columnheader "Prediction tokens/sec"
+          - columnheader "Allocated / peak MiB"
+          - columnheader "GPU utilization"
+          - columnheader "Trainable / total parameters"
+      - rowgroup:
+        - row "96 2026-10-16T20:12:05.545417+00:00 0.108317 137 prediction tokens 0.0200 14.45 6888.2 / Not reported Not reported 18,087,936 / 1,729,464,320":
+          - cell "96 2026-10-16T20:12:05.545417+00:00":
+            - text: "96"
+            - text: 2026-10-16T20:12:05.545417+00:00
+          - cell "0.108317 137 prediction tokens":
+            - text: "0.108317"
+            - text: 137 prediction tokens
+          - cell "0.0200"
+          - cell "14.45"
+          - cell "6888.2 / Not reported"
+          - cell "Not reported"
+          - cell "18,087,936 / 1,729,464,320"
+        - row "192 2026-10-16T20:13:36.692967+00:00 0.046874 137 prediction tokens 0.0181 24.99 6889.0 / Not reported Not reported 18,087,936 / 1,729,464,320":
+          - cell "192 2026-10-16T20:13:36.692967+00:00":
+            - text: "192"
+            - text: 2026-10-16T20:13:36.692967+00:00
+          - cell "0.046874 137 prediction tokens":
+            - text: "0.046874"
+            - text: 137 prediction tokens
+          - cell "0.0181"
+          - cell "24.99"
+          - cell "6889.0 / Not reported"
+          - cell "Not reported"
+          - cell "18,087,936 / 1,729,464,320"
+        - row "288 2026-10-16T20:16:14.443562+00:00 0.034675 137 prediction tokens 0.0038 14.27 6888.2 / Not reported Not reported 18,087,936 / 1,729,464,320":
+          - cell "288 2026-10-16T20:16:14.443562+00:00":
+            - text: "288"
+            - text: 2026-10-16T20:16:14.443562+00:00
+          - cell "0.034675 137 prediction tokens":
+            - text: "0.034675"
+            - text: 137 prediction tokens
+          - cell "0.0038"
+          - cell "14.27"
+          - cell "6888.2 / Not reported"
+          - cell "Not reported"
+          - cell "18,087,936 / 1,729,464,320"
+    - heading "Run c67e2e82-4a2d-425f-8524-f42c9d841be3" [level=3]
+    - generic: completed
+    - link "Open run":
+      - /url: "#runs/training/c67e2e82-4a2d-425f-8524-f42c9d841be3?from=%23training%3Ftab%3Dcurrent-run%26run%3Dc67e2e82-4a2d-425f-8524-f42c9d841be3"
+    - paragraph: "Tokenizer #6 · Pinned base weights · Base model #16 · Dataset digest: c307736491bf49a8… · Job: f931612b"
+    - heading "Training result" [level=4]
+    - paragraph: "Selected checkpoint: step 288 of 288."
+    - paragraph: "Validation loss: 2.889 before training → 0.035 for the selected model. Lower is better."
+    - paragraph: Validation improved. Based on 6 validation examples; check actual answers too.
+    - heading "Saved checkpoints (3)" [level=4]
+    - strong: Step 96
+    - text: Valid Safetensors
+    - text: "Digest:"
+    - code: 25e2cef185d8a579779b1fc146f7f454764986e777aeefbe0d14c7b77ef310c5
+    - strong: Step 192
+    - text: Valid Safetensors
+    - text: "Digest:"
+    - code: aac269ffcec401f12c4ba5899f3a4e74cb7690e834a656938d21a67f9796477a
+    - strong: Step 288
+    - text: Valid Safetensors
+    - text: "Digest:"
+    - code: 71f076dabdfae10ded9d2fe4360c09d74b66aa7b6162bf4c0b5e2974cb8659c2
+    - generic "Advanced inference check"
+  - generic "App information"
+  - text: Control plane

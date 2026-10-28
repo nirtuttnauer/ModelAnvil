@@ -1,0 +1,68 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Fresh User Retest workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Training
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Fine-tune a pretrained model with your own examples.
+  - region "Train a model on your data":
+    - text: YOUR FIRST FINE-TUNE
+    - heading "Train a model on your data" [level=2]
+    - paragraph: Everything you need, in four steps. Training runs on this computer.
+    - list "Fine-tuning progress":
+      - text: Model
+      - text: Dataset
+      - text: Review
+      - generic: "4"
+      - text: Train
+    - heading "Your training run" [active] [level=3]
+    - status: Training completed. Your model is ready to test.
+    - text: 3 of 3 steps
+    - progressbar
+    - paragraph: "Latest recorded loss: 3.2456"
+    - paragraph: This short run checks that your setup works. Useful answers usually need more examples and training steps. Test the model on held-out examples before using it for real work.
+    - link "Try your model":
+      - /url: "#chat?model_version=5d71fc64-c0ca-4d19-8d68-a0562bcee415"
+    - button "Download trained model"
+    - link "Open run details":
+      - /url: "#runs/training/d0f76f3d-028c-45ef-a979-87de0a8632f4?from=%23training"
+    - button "Start another fine-tune"
+  - button "Advanced training workspace"
+  - generic "App information"
+  - text: Control plane

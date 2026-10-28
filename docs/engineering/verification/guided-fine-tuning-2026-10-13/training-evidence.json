@@ -1,0 +1,134 @@
+{
+  "run_id": "b7806bb0-711a-4fbb-aeed-8bfb1d099665",
+  "candidate_id": "083a2cd0-c4d7-4971-929e-4be066377201",
+  "status": "completed",
+  "optimizer_steps": 3,
+  "checkpoints": 3,
+  "source": "mps",
+  "chat_sft": true,
+  "base_source": {
+    "repo_id": "HuggingFaceTB/SmolLM2-135M",
+    "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+    "license": "Apache-2.0"
+  },
+  "dataset_rows": 8,
+  "split_counts": {
+    "train": 6,
+    "validation": 1,
+    "test": 1
+  },
+  "metrics": [
+    {
+      "step": 1,
+      "loss": 2.792344331741333,
+      "post_update_loss": 2.401684522628784,
+      "sample_id": "d4bc878f-3f61-52b7-a859-b1d293382239",
+      "training_pairs": 12,
+      "cpu_seconds": 0.8114209999999997,
+      "engine_wall_seconds": 1.3207298330380581,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "device_residency_checked": true,
+      "gradient_norm": 17.632768630981445,
+      "trainable_parameters": 134515008,
+      "total_parameters": 134515008,
+      "measured_at": "2026-10-13T12:17:59.194630+00:00",
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "gpu_allocated_bytes": 2245587200,
+      "tokens_per_second": 9.085885470154446,
+      "gpu_utilization_percent": null,
+      "unified_memory": {
+        "recommended_bytes": 40200896512,
+        "process_limit_bytes": 36180806860,
+        "driver_allocated_bytes": 3772940288,
+        "process_headroom_bytes": 32407866572,
+        "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+      }
+    },
+    {
+      "step": 2,
+      "loss": 2.959672689437866,
+      "post_update_loss": 2.6447558403015137,
+      "sample_id": "cfd91d3f-ca43-5422-806d-029153c9898d",
+      "training_pairs": 13,
+      "cpu_seconds": 0.4814090000000002,
+      "engine_wall_seconds": 0.6066002079751343,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "device_residency_checked": true,
+      "gradient_norm": 24.064706802368164,
+      "trainable_parameters": 134515008,
+      "total_parameters": 134515008,
+      "measured_at": "2026-10-13T12:18:02.339399+00:00",
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "gpu_allocated_bytes": 2241525504,
+      "tokens_per_second": 21.430919127764124,
+      "gpu_utilization_percent": null,
+      "unified_memory": {
+        "recommended_bytes": 40200896512,
+        "process_limit_bytes": 36180806860,
+        "driver_allocated_bytes": 3929227264,
+        "process_headroom_bytes": 32251579596,
+        "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+      }
+    },
+    {
+      "step": 3,
+      "loss": 3.2036519050598145,
+      "post_update_loss": 3.020899534225464,
+      "sample_id": "768a085d-c193-54da-aeeb-084b15c5d289",
+      "training_pairs": 14,
+      "cpu_seconds": 0.4797159999999998,
+      "engine_wall_seconds": 0.6065957500250079,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "device_residency_checked": true,
+      "gradient_norm": 16.93131446838379,
+      "trainable_parameters": 134515008,
+      "total_parameters": 134515008,
+      "measured_at": "2026-10-13T12:18:05.457046+00:00",
+      "peak_allocated_bytes": null,
+      "peak_reserved_bytes": null,
+      "gpu_allocated_bytes": 2241525504,
+      "tokens_per_second": 23.07962098221563,
+      "gpu_utilization_percent": null,
+      "unified_memory": {
+        "recommended_bytes": 40200896512,
+        "process_limit_bytes": 36180806860,
+        "driver_allocated_bytes": 4064935936,
+        "process_headroom_bytes": 32115870924,
+        "scope": "Process allowance including driver/cache allocations; not system-wide free memory or a reservation."
+      }
+    }
+  ],
+  "job_status": "succeeded",
+  "host": {
+    "available": true,
+    "busy": false,
+    "device": "mps:0",
+    "message": "Training runs on this computer. No server commands or cloud account needed."
+  },
+  "inference": [
+    {
+      "status": "completed",
+      "configuration": {
+        "max_tokens": 8,
+        "temperature": 0.0,
+        "seed": 42,
+        "device": "cpu",
+        "stream": true,
+        "prompt_format": "model",
+        "stream_options": {
+          "include_usage": true
+        }
+      },
+      "usage": {
+        "prompt_tokens": 14,
+        "completion_tokens": 8,
+        "total_tokens": 22
+      }
+    }
+  ]
+}

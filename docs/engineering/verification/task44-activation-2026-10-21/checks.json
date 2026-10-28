@@ -1,0 +1,40 @@
+{
+  "task": "TASK-44",
+  "build": {
+    "revision": "c39a2e9554efdd6c5c644fb012580298f4bc78ca",
+    "source_digest": "778158e46b524bc63794d7e12f848340349634b0d5b6e21815c93f3c0f9c657b",
+    "protocol": "modelanvil.local-beta.v1",
+    "dataset_formats": [
+      "jsonl",
+      "csv",
+      "docx",
+      "json",
+      "pdf",
+      "training"
+    ],
+    "production_qualified": false
+  },
+  "backend_full": {
+    "tests": 902,
+    "skipped": 9,
+    "result": "passed"
+  },
+  "activation_followup": {
+    "tests": 7,
+    "result": "passed",
+    "note": "Includes the cross-project team/candidate/evaluation deduplication check added after the broad run."
+  },
+  "frontend": {
+    "tests": 225,
+    "result": "passed"
+  },
+  "production_build": "passed",
+  "django_check": "passed",
+  "migration_drift": "none",
+  "design_detector_findings": [],
+  "evidence_index_checksums": "passed",
+  "openapi_mirrors": "identical",
+  "working_database_migration": "applied after private SQLite backup",
+  "browser_evidence": "browser-checks.json",
+  "scope": "Local CPU and browser workflow; archived Apple evidence indexed; no new GPU, customer, production or retention qualification."
+}

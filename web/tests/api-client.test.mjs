@@ -39,6 +39,16 @@ test('validation errors preserve useful field detail', async () => {
   });
 });
 
+test('general validation errors show repair guidance without internal root paths', async () => {
+  await withFetch(async () => json({ error: { message: 'Validation failed.', details: [{ path: '(root)', message: 'Example 1: response must contain nonempty text.' }] } }, 400), async () => {
+    await assert.rejects(apiRequest('/api/v1/fine-tuning/preview/', token), error => {
+      assert.match(error.message, /Example 1: response must contain nonempty text/);
+      assert.doesNotMatch(error.message, /\(root\)/);
+      return true;
+    });
+  });
+});
+
 test('invalid credentials or non-API paths never send a request', async () => {
   let calls = 0;
   await withFetch(async () => { calls++; return json({}); }, async () => {

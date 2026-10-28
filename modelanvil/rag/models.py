@@ -1,19 +1,20 @@
 """Durable models for Knowledge Bases, Chunks, Embeddings, Indices, Retrieval Metrics, Projections, and Traces (WP-12 / TECH-022-025)."""
 from __future__ import annotations
 
-import uuid
 from typing import Any
 
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from modelanvil.core.ids import uuid7
 from modelanvil.core.models import TenantContextModel
 
 
 class KnowledgeBase(TenantContextModel):
     """Logical knowledge base corpus belonging to a tenant."""
 
-    kb_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    kb_id = models.UUIDField(default=uuid7, unique=True, editable=False)
+    project = models.ForeignKey('identity.Project', on_delete=models.PROTECT, null=True, blank=True)
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
 
@@ -29,7 +30,7 @@ class KnowledgeBase(TenantContextModel):
 class SourceDocument(TenantContextModel):
     """Source document with versioned revisions, hashes, and access revocation (TECH-024)."""
 
-    doc_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    doc_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     knowledge_base = models.ForeignKey(KnowledgeBase, on_delete=models.CASCADE, related_name="documents")
     title = models.CharField(max_length=255)
     source_uri = models.CharField(max_length=512)
@@ -53,7 +54,7 @@ class SourceDocument(TenantContextModel):
 class DocumentChunk(TenantContextModel):
     """Source-linked chunk with text, span positions, token count, and embedding (TECH-022)."""
 
-    chunk_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    chunk_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     document = models.ForeignKey(SourceDocument, on_delete=models.CASCADE, related_name="chunks")
     chunk_index = models.PositiveIntegerField()
     text = models.TextField()
@@ -76,7 +77,7 @@ class DocumentChunk(TenantContextModel):
 class EmbeddingSpace(TenantContextModel):
     """Declared embedding space with model, dimension, and distance function (TECH-022)."""
 
-    space_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    space_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     name = models.CharField(max_length=200)
     model_name = models.CharField(max_length=200)
     dimension = models.PositiveIntegerField(default=384)
@@ -107,7 +108,7 @@ class IndexVersion(TenantContextModel):
         DENSE = "dense", "Dense (pgvector / Cosine)"
         HYBRID = "hybrid", "Hybrid (RRF Fusion)"
 
-    index_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    index_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     knowledge_base = models.ForeignKey(KnowledgeBase, on_delete=models.CASCADE, related_name="indexes")
     embedding_space = models.ForeignKey(EmbeddingSpace, on_delete=models.PROTECT, related_name="indexes")
     revision_no = models.PositiveIntegerField(default=1)
@@ -129,7 +130,7 @@ class IndexVersion(TenantContextModel):
 class RetrievalCase(TenantContextModel):
     """Evaluation test case for retrieval benchmark suites (TECH-023)."""
 
-    case_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    case_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     query = models.TextField()
     expected_chunk_ids = models.JSONField(default=list)  # Ground-truth relevant chunk IDs
     graded_relevance = models.JSONField(default=dict, blank=True)  # {chunk_id: grade}
@@ -150,7 +151,7 @@ class RetrievalRun(TenantContextModel):
         COMPLETED = "completed", "Completed"
         FAILED = "failed", "Failed"
 
-    run_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    run_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     index_version = models.ForeignKey(IndexVersion, on_delete=models.PROTECT, related_name="eval_runs")
     mode = models.CharField(max_length=32, default="hybrid")
     top_k = models.PositiveIntegerField(default=5)
@@ -165,7 +166,7 @@ class RetrievalRun(TenantContextModel):
 class RetrievalMetric(TenantContextModel):
     """Fine-grained retrieval score (Recall, Precision, Hit, MRR, nDCG) with N/A support (TECH-023)."""
 
-    metric_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    metric_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     run = models.ForeignKey(RetrievalRun, on_delete=models.CASCADE, related_name="metrics")
     key = models.CharField(max_length=64)  # recall@k, precision@k, hit@k, mrr@k, ndcg@k
     k = models.PositiveIntegerField(default=5)
@@ -182,7 +183,7 @@ class RetrievalMetric(TenantContextModel):
 class ProjectionArtifact(TenantContextModel):
     """Saved 2D UMAP/PCA projection, cluster labels, and original embedding neighbors (TECH-025)."""
 
-    artifact_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    artifact_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     index_version = models.ForeignKey(IndexVersion, on_delete=models.CASCADE, related_name="projections")
     method = models.CharField(max_length=16, default="umap")  # umap, pca
     coordinates = models.JSONField(default=list)  # [{"chunk_id": ..., "x": ..., "y": ..., "cluster_id": ...}]
@@ -198,7 +199,7 @@ class ProjectionArtifact(TenantContextModel):
 class QueryTrace(TenantContextModel):
     """End-to-end query trace with candidates, reranking, citations, and redaction (TECH-022, TECH-024)."""
 
-    trace_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    trace_id = models.UUIDField(default=uuid7, unique=True, editable=False)
     index_version = models.ForeignKey(IndexVersion, on_delete=models.CASCADE, related_name="traces")
     query = models.TextField()
     mode = models.CharField(max_length=32, default="hybrid")

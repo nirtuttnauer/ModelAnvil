@@ -1,0 +1,84 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- main:
+  - button "Toggle navigation":
+  - combobox "Organization":
+    - option "Mobile Tool Library Test workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - link "ModelAnvil overview":
+    - /url: "#overview"
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Active jobs":
+  - button "Refresh workspace":
+  - button "Sign out":
+  - heading "Chat" [level=1]:
+    - text: Chat
+  - group "Chat view":
+    - button "Chat"
+    - button "Base vs trained" [pressed]
+  - text: Trained model
+  - combobox "Trained model":
+    - option "Select a model"
+    - option "SmolLM2 fine-tune · c67e2e82" [selected]
+  - button "New conversation":
+  - button "Export":
+  - status: Base and trained responses saved with the same prompt and generation settings.
+  - generic "Saved conversations"
+  - option "New conversation"
+  - option "How can I extend a loan from Juniper Tool Library?" [selected]
+  - generic "Generation settings"
+  - option "CPU" [selected]
+  - option "Apple Silicon GPU (PyTorch)"
+  - option "CPU" [selected]
+  - option "Apple Silicon GPU (PyTorch)"
+  - option "Imported model template" [selected]
+  - option "Plain text (one user prompt)"
+  - option "ChatML override"
+  - generic "Paired base model"
+  - region "Base and trained model responses":
+    - heading "Base vs trained responses" [level=3]
+    - paragraph: Same prompt · fresh context. Compare how your training changed the answer.
+    - group "Shared comparison input":
+      - article:
+        - strong: Shared prompt
+        - paragraph: How can I extend a loan from Juniper Tool Library?
+    - region "Model responses":
+      - article "Base model response":
+        - generic: BASE MODEL
+        - heading "SmolLM2-1.7B Instruct" [level=3]
+        - paragraph: "As an AI, I don't have real-time access to specific databases or databases that contain information about individual loan extensions. However, I can provide you with general steps that are typically involved in extending a loan from a tool library:"
+        - list:
+          - paragraph:
+            - strong: Check the Library's Policies
+            - text: ": First, you should check the library's policies regarding loan extensions. Some libraries may have specific rules or procedures for extending loans."
+          - paragraph:
+            - strong: Contact the Library
+            - text: ": If the library's policies allow for loan extensions, you should contact the library to inquire about the process. They may have specific forms or procedures you need to follow."
+          - paragraph: "**Provide"
+        - button "Copy response":
+          - text: Copy response
+        - status: completed · 31.29 seconds including model load · 42 input / 128 output tokens
+      - article "Trained model response":
+        - generic: TRAINED MODEL
+        - heading "SmolLM2 fine-tune · c67e2e82" [level=3]
+        - paragraph: Open My Loans in your Juniper member portal and select Renew. One seven-day renewal is allowed if nobody is waiting.
+        - button "Copy response":
+          - text: Copy response
+        - status: completed · 18.90 seconds including model load · 42 input / 27 output tokens
+  - text: Message
+  - textbox "Message":
+    - /placeholder: Ask both models the same question…
+  - button "Regenerate":
+    - text: Regenerate
+  - button "Send message" [disabled]:
+    - text: Send
+  - generic "Message draft"
+  - generic "App information"
+  - text: Control plane

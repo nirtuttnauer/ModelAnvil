@@ -1,0 +1,21 @@
+- main:
+  - img "ModelAnvil"
+  - heading "Fine-tune an LLM with your own data." [level=1]
+  - paragraph: Choose a pretrained model, upload your examples, and train on this computer. ModelAnvil handles the setup.
+  - list:
+    - listitem: Choose your model
+    - listitem: Add your dataset
+    - listitem: Review and train
+  - region "Create your workspace":
+    - heading "Create your workspace" [level=2]
+    - paragraph: Your account includes a project for your first fine-tune.
+    - text: Your name
+    - textbox "Your name"
+    - text: Email
+    - textbox "Email"
+    - text: Password
+    - textbox "Password Use at least 10 characters."
+    - generic: Use at least 10 characters.
+    - button "Create account"
+    - button "Already have an account? Sign in"
+    - generic "Connect an existing workspace with an API key"

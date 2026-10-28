@@ -1,0 +1,10 @@
+{
+  "task": "PM001",
+  "worker_id": 1,
+  "connected": true,
+  "credential_masked": true,
+  "inventory_excludes_secret": true,
+  "revocation_observed": true,
+  "credential_dismissed": true,
+  "mobile_overflow": false
+}

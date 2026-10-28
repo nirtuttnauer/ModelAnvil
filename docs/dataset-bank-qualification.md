@@ -2,6 +2,30 @@
 
 Complete releases have separate evidence and download scope; see [full-download qualification](dataset-bank-full-downloads.md). This page records the sample qualification.
 
+## Expansion on 17 October 2026
+
+Three existing candidates now support verified preview, queued acquisition, canonical publication and authenticated downloads. This brings the bank to fourteen qualified sources: Lucide and thirteen HTTP sample inventories totaling 320 records.
+
+| Source | Qualified samples | Upstream selection | Pinned range bytes |
+| --- | ---: | --- | ---: |
+| GSM8K | 80 | Twenty evenly spaced problems from each of four row groups in the `main` training shard | 1,124,262 |
+| MBPP | 20 | Twenty evenly spaced tasks from the `full` training shard | 148,922 |
+| Dolly 15k | 20 | First twenty complete JSONL instructions in a bounded 256 KiB prefix | 283,836 |
+
+The qualifier fetched the publisher data and license cards at immutable Hugging Face commits, validated the source fields, then independently refetched every admitted sample through the production range reader. Manifests and archived cards are in `catalog/qualified-datasets/`. GSM8K question/answer fields, MBPP code and test lists, and Dolly instruction/context/response/category fields remain intact. Code and tests are stored without execution. Group identities use GSM8K questions, MBPP task IDs and Dolly instruction/context pairs, keeping alternative answers together. Only upstream training records are admitted; official benchmark test, validation and prompt splits remain outside these inventories.
+
+Dolly requires explicit share-alike consent (`project_policy.allow_share_alike: true`). These three sources support sample scope only; complete releases and training adapters are not qualified. Unknown upstream coverage is not inferred from sample counts.
+
+Reproduce this expansion with:
+
+```sh
+python -m scripts.qualify_bank_subsets \
+  --source math-gsm8k --source code-mbpp --source text-dolly15k \
+  --date 2026-10-17 --report /tmp/dataset-bank-expansion.json
+```
+
+## Original qualification on 11 October 2026
+
 Qualified on 11 October 2026. The ten additions have frozen, tested inventories totaling 200 samples. They now support actual previews, queued acquisition, verified publication, and authenticated artifact downloads. The existing Lucide connector remains available.
 
 | Source | Qualified samples | Upstream selection | Pinned range bytes |
@@ -29,9 +53,9 @@ Records retain original fields as JSON/table blocks. Image/audio bytes become co
 
 ## Run a download
 
-Install the pinned requirements, including PyArrow, on the API/worker environment. An administrator registers a worker with `POST /api/v1/workers/register/`, using `{"worker_name":"bank-worker","pool":"dataset-acquisition","slots":1,"capabilities":{"dataset_acquisition":true}}`. Run `python manage.py run_worker --worker-id WORKER_ID --executor modelanvil.data.bank.acquisition.bank_acquisition_executor` on the trusted local API/storage host, replacing `WORKER_ID` with the returned integer. In Dataset Bank, inspect the source's qualified scope and transfer size, select any required acquisition budget, and choose **Acquire to workspace**. Refresh to inspect the published revision; cancelled or failed imports can resume from verified record checkpoints.
+Install the pinned requirements, including PyArrow, on the API/worker environment. In Infrastructure, choose **Register local worker**, select **Dataset Bank acquisition**, and choose an active pool that allows verified dataset output. Save the one-time credential and run the displayed `python manage.py run_worker --worker-id WORKER_ID --profile dataset-bank` command on the trusted API/storage host; paste the credential at its hidden prompt. Registration stays offline until the worker connects. Existing operator-installed workers can still use the documented `dataset_acquisition` capability and `--executor modelanvil.data.bank.acquisition.bank_acquisition_executor` command. In Dataset Bank, inspect the source's qualified scope and transfer size, select any required acquisition budget, and choose **Review acquisition**, inspect the real samples and frozen plan, then **Confirm and acquire**. Refresh to inspect the published revision; cancelled or failed imports can resume from verified record checkpoints.
 
-SQuAD requires the unchecked share-alike consent control to be selected explicitly. The API requires the literal boolean `project_policy.allow_share_alike: true`; strings and numeric substitutes are refused. Other source notices and attribution obligations remain applicable.
+SQuAD and Dolly require the unchecked share-alike consent control to be selected explicitly. The API requires the literal boolean `project_policy.allow_share_alike: true`; strings and numeric substitutes are refused. Other source notices and attribution obligations remain applicable.
 
 Use `GET /api/v1/artifacts/{artifact_id}/download/` with current tenant/project authorization for canonical JSONL and media artifacts. Media artifact IDs are recorded in canonical blocks. Failed integrity checks never publish a ready dataset.
 
@@ -46,3 +70,5 @@ python -m scripts.qualify_bank_subsets --source numeric-iris --date 2026-10-11
 ```
 
 This command makes real HTTPS requests and updates manifests, license evidence and catalog metadata for review. It never executes remote dataset loading scripts or writes extracted archive members. Keep optional measurement reports, pilot databases and dataset payloads in temporary/ignored storage. Re-run the application publication/download checks and repository checks before accepting newly captured evidence. Mutable publisher pages or upstream revisions can produce a new manifest digest; existing qualified revisions must not be silently relabeled.
+
+Lucide carries a SHA-256-pinned inventory for its qualified immutable commit. If the public GitHub tree API returns HTTP 403 or 429, the worker verifies that inventory checksum and revision, then downloads raw files and recomputes their Git blob digests. It never substitutes another upstream revision. A saved acquisition keeps its original subset and split seed; restore or resume it, or use another project for a different subset.

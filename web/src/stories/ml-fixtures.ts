@@ -35,6 +35,11 @@ const versions = [
   { id: 2, model_version_id: '10000000-0000-4000-8000-000000000007', model: 1, model_name: 'Anvil Assistant', revision_no: 7, architecture_ref: 'demo/anvil-character-16', tokenizer: 1, state: 'candidate', parameters_count: 4096, license_evidence: 'Fictional demo record · MIT', created_at: createdAt },
   { id: 3, model_version_id: '10000000-0000-4000-8000-000000000008', model: 3, model_name: 'Anvil Verifier', revision_no: 2, architecture_ref: 'demo/anvil-character-8', tokenizer: 2, state: 'draft', parameters_count: 2048, metadata: { model_role: 'reward_model', fixture_only: true }, license_evidence: 'Fictional demo record · MIT', created_at: createdAt },
 ];
+for (const version of versions) Object.assign(version, { capabilities: {
+  train: { eligible: true, recipes: ['full_sft', 'lora_adapter', 'continued_pretraining'], reason: 'Fictional Storybook compatibility; no real execution.' },
+  evaluate: { eligible: true, reason: 'Fictional Storybook evaluator.' },
+  chat: { eligible: false, devices: [], reason: 'Demo registration does not provide real weights.' },
+} });
 const revisions = [
   { id: 1, revision_id: ids.revision, dataset: 1, dataset_name: 'Assistant instruction corpus', revision_no: 1, schema_version: '1.0', manifest_digest: digest('a'), manifest_artifact: 11, recipe_digest: digest('b'), row_count: 1200, state: 'published', created_at: createdAt, published_at: '2026-10-11T08:30:00Z', metadata: { preparation_kind: 'bounded_local_jsonl_v1', input_sha256: digest('c'), split_counts: { train: 960, validation: 120, test: 120 } } },
   { id: 2, revision_id: '20000000-0000-4000-8000-000000000004', dataset: 2, dataset_name: 'Lucide SVG instructions', revision_no: 2, schema_version: '1.0', manifest_digest: digest('d'), manifest_artifact: 12, recipe_digest: digest('e'), row_count: 480, state: 'published', created_at: createdAt, published_at: '2026-10-10T14:20:00Z', metadata: { preparation_kind: 'bounded_local_jsonl_v1', input_sha256: digest('f'), split_counts: { train: 384, validation: 48, test: 48 } } },
@@ -63,6 +68,7 @@ const completedTraining = {
   dataset_revision: 1, dataset_manifest_digest: digest('a'), pool: 1, job: ids.job,
   checkpoints, tokenizer_version: 1, base_model_version: 2, output_model_version: 1,
   runtime: { execution_mode: 'worker' }, execution_evidence: fixtureEvidence,
+  export_options: [{ format: 'json', label: 'Reference bundle (JSON)', extension: 'json', description: 'Synthetic reference bundle for the Storybook preview.' }],
   metrics_log: [4.852, 3.731, 2.943, 2.401, 2.122, 1.887, 1.716, 1.598, 1.486, 1.421, 1.372].map((loss, index) => ({ step: index * 5, loss })),
   created_at: createdAt, completed_at: '2026-10-11T09:24:00Z',
 };
@@ -72,18 +78,29 @@ const trainingRuns = [
   { ...completedTraining, run_id: '30000000-0000-4000-8000-000000000005', recipe_type: 'lora_adapter', status: 'cancelled', current_step: 10, total_steps: 40, latest_loss: 2.943, checkpoints: checkpoints.slice(0, 1), metrics_log: completedTraining.metrics_log.slice(0, 3), output_model_version: null, runtime: { execution_mode: 'simulation' }, pool: null, job: null, created_at: '2026-10-10T15:40:00Z', completed_at: '2026-10-10T15:43:00Z' },
 ];
 const suites = [
-  { id: 1, suite_version_id: '80000000-0000-4000-8000-000000000001', suite_name: 'Support quality · Demo', revision_no: 3, cases_count: 640, scorer_type: 'exact_match', protected_role: 'qualification' },
-  { id: 2, suite_version_id: '80000000-0000-4000-8000-000000000002', suite_name: 'Grounded answers · Demo', revision_no: 2, cases_count: 240, scorer_type: 'exact_match', protected_role: 'regression' },
+  { id: 1, suite: 11, suite_version_id: '80000000-0000-4000-8000-000000000001', suite_name: 'Support quality · Demo', revision_no: 3, cases_count: 640, source_group_count: 40, scorer_type: 'exact_match', protected_role: 'protected_eval' },
+  { id: 2, suite: 12, suite_version_id: '80000000-0000-4000-8000-000000000002', suite_name: 'Grounded answers · Demo', revision_no: 2, cases_count: 240, source_group_count: 18, scorer_type: 'exact_match', protected_role: 'protected_eval' },
 ];
 const slices = ['General QA', 'Long context', 'Tool use', 'Safety', 'Multilingual'];
+const round2 = (value: number) => Math.round(value * 100) / 100;
 const metrics = [0.78, 0.61, 0.67, 0.92, 0.76].map((value, index) => ({
   key: 'pass_rate', slice_name: slices[index], value, sample_count: [200, 120, 80, 120, 120][index],
-  uncertainty_interval: { lower: Math.max(0, value - 0.06), upper: Math.min(1, value + 0.06) },
+  uncertainty_interval: { lower: round2(Math.max(0, value - 0.06)), upper: round2(Math.min(1, value + 0.06)) },
 }));
+const evaluationPins = {
+  scorer_version: 'modelanvil.deterministic-text-scorer.v1',
+  decoding: 'greedy',
+  prompt_format: 'plain',
+  device: 'cpu',
+  training_overlap: 'known_lineage_checked',
+  environment: { runtime: 'modelanvil.local-cpu-character', device: 'cpu', prompt_format: 'plain', decoding: 'greedy' },
+  candidate: { tokenizer: 1 },
+  baseline: { tokenizer: 1 },
+};
 const evaluationRuns = [
-  { run_id: ids.evaluation, suite_version: 1, candidate_model_version: 1, baseline_model_version: 2, status: 'completed', metrics: [...metrics, ...metrics.map(m => ({ ...m, key: 'mean_score', value: m.value - 0.04, uncertainty_interval: null }))], execution_evidence: fixtureEvidence, created_at: createdAt, completed_at: '2026-10-11T09:42:00Z' },
-  { run_id: '30000000-0000-4000-8000-000000000006', suite_version: 2, candidate_model_version: 2, baseline_model_version: null, status: 'completed', metrics: [{ key: 'pass_rate', slice_name: 'Grounded QA', value: 0.83, sample_count: 160, uncertainty_interval: { lower: 0.77, upper: 0.89 } }, { key: 'pass_rate', slice_name: 'Citation coverage', value: 0.71, sample_count: 80, uncertainty_interval: { lower: 0.62, upper: 0.8 } }], execution_evidence: fixtureEvidence, created_at: '2026-10-10T14:10:00Z', completed_at: '2026-10-10T14:18:00Z' },
-  { run_id: '30000000-0000-4000-8000-000000000007', suite_version: 1, candidate_model_version: 3, baseline_model_version: 1, status: 'pending', metrics: [], execution_evidence: fixtureEvidence, created_at: '2026-10-11T09:45:00Z', completed_at: null },
+  { run_id: ids.evaluation, suite_version: 1, candidate_model_version: 1, baseline_model_version: 2, status: 'completed', metrics: [...metrics, ...metrics.map(m => ({ ...m, key: 'mean_score', value: round2(m.value - 0.04), uncertainty_interval: null }))], baseline_metrics: metrics.map(m => ({ ...m, value: round2(m.value - 0.03) })), case_coverage: { completed: 6, missing: 634, failed: 2, total: 640 }, comparison: { compatible: true, reason: 'Same frozen suite, scorer version, tokenizer, template and decoding.' }, protocol_ref: { completed_cases: 6, total_cases: 640, decoding: 'greedy', pins: evaluationPins }, execution_evidence: fixtureEvidence, created_at: createdAt, completed_at: '2026-10-11T09:42:00Z' },
+  { run_id: '30000000-0000-4000-8000-000000000006', suite_version: 2, candidate_model_version: 2, baseline_model_version: null, status: 'completed', metrics: [{ key: 'pass_rate', slice_name: 'Grounded QA', value: 0.83, sample_count: 160, uncertainty_interval: { lower: 0.77, upper: 0.89 } }, { key: 'pass_rate', slice_name: 'Citation coverage', value: 0.71, sample_count: 80, uncertainty_interval: { lower: 0.62, upper: 0.8 } }], baseline_metrics: [], case_coverage: { completed: 3, missing: 237, failed: 1, total: 240 }, comparison: { compatible: false, reason: 'No baseline was frozen with this evaluation.' }, protocol_ref: { completed_cases: 3, total_cases: 240, decoding: 'greedy', pins: { ...evaluationPins, baseline: undefined, training_overlap: 'external_training_history_unknown' } }, execution_evidence: fixtureEvidence, created_at: '2026-10-10T14:10:00Z', completed_at: '2026-10-10T14:18:00Z' },
+  { run_id: '30000000-0000-4000-8000-000000000007', suite_version: 1, candidate_model_version: 3, baseline_model_version: 1, status: 'pending', metrics: [], baseline_metrics: [], case_coverage: { completed: 0, missing: 640, failed: 0, total: 640 }, comparison: { compatible: false, reason: 'Baseline scores stay unavailable until this same frozen run completes. Missing cases are not passes.' }, protocol_ref: { completed_cases: 0, total_cases: 640, decoding: 'greedy', pins: evaluationPins }, execution_evidence: fixtureEvidence, created_at: '2026-10-11T09:45:00Z', completed_at: null },
 ];
 const cases = [
   { result_id: 'demo-result-01', case_id: 'SUPPORT-001', input_prompt: 'How can I reset my account password?', candidate_output: 'Open account settings and choose Reset password.', expected_output: 'Open account settings and choose Reset password.', score: 1, passed: true, failure_reason: '', slice_name: 'General QA' },
@@ -157,7 +174,9 @@ export const mlActions: Record<string, (body: Record<string, unknown>) => unknow
   },
   '/api/v1/evaluation-suites/register-cpu/': body => {
     const caseList = Array.isArray(body.cases) ? body.cases : [];
-    const created = { ...suites[0], id: suites.length + 1, suite_version_id: demoUuid(), suite_name: String(body.name || 'CPU checks · Demo'), revision_no: 1, cases_count: caseList.length, scorer_type: String(body.scorer_type || 'exact_match'), protected_role: 'protected_eval' };
+    const groups = new Set(caseList.map(item => item && typeof item === 'object' ? (item as { source_group_id?: unknown }).source_group_id : undefined).filter(group => typeof group === 'string' && group.trim()));
+    const existing = typeof body.suite === 'number' ? suites.find(item => item.suite === body.suite) : undefined;
+    const created = { ...suites[0], id: suites.length + 1, suite: existing?.suite || suites.length + 100, suite_version_id: demoUuid(), suite_name: existing?.suite_name || String(body.name || 'CPU checks · Demo'), revision_no: existing ? existing.revision_no + 1 : 1, cases_count: caseList.length, source_group_count: groups.size, scorer_type: String(body.scorer_type || 'exact_match'), protected_role: String(body.protected_role || 'protected_eval') };
     suites.unshift(created);
     registeredCaseSets[String(created.id)] = structuredClone(caseList) as Array<Record<string, unknown>>;
     return created;
@@ -252,6 +271,34 @@ function installAlignmentAction(runId: string) {
   };
 }
 for (const run of alignmentRuns) installAlignmentAction(run.run_id);
+
+mlActions[`/api/v1/training-runs/${ids.training}/prepare-evaluation/`] = body => {
+  const runId = '30000000-0000-4000-8000-000000000099';
+  const suite = suites.find(item => item.suite_version_id === body.suite_version) || { id: 99, suite: 99, suite_version_id: '80000000-0000-4000-8000-000000000099', suite_name: 'Support classification · Demo', revision_no: 1, cases_count: 3, scorer_type: 'exact_match', protected_role: 'protected_eval', source_group_count: 3 };
+  const caseSet = ['billing', 'access', 'technical'].map((label, index) => ({ case_id: `CLASS-${index + 1}`, input_prompt: ['I was charged twice.', 'I forgot my password.', 'The app crashes.'][index], expected_output: label, source_group_id: `held-out-${index}`, slice: label }));
+  const report = { available: false, reason: 'Synthetic preview: comparison has not run.', candidate: { accuracy: null, macro_f1: null }, baseline: { accuracy: null, macro_f1: null }, complete_cases: 0, total_cases: 3, labels: ['billing', 'access', 'technical'], accuracy_delta: null, accuracy_delta_interval: null, training_run_id: ids.training, export_available: false };
+  const current = mlResponses['/api/v1/evaluation-runs/'] as Array<Record<string, unknown> & { run_id: string }>;
+  const evaluation = current.find(item => item.run_id === runId) || { ...evaluationRuns[0], run_id: runId, suite_version: suite.id, status: 'pending', job: null, metrics: [], baseline_metrics: [], candidate_name: 'Trained support model · Demo', baseline_name: 'Starting model · Demo', decision_report: report, case_coverage: { completed: 0, total: 3, failed: 0, missing: 3 } };
+  if (!current.some(item => item.run_id === runId)) current.unshift(evaluation);
+  if (!suites.some(item => item.id === suite.id)) suites.push(suite);
+  mlResponses[`/api/v1/evaluation-runs/${runId}/cases/`] ||= [];
+  mlActions[`/api/v1/evaluation-runs/${runId}/execute/`] = () => {
+    const completed = { ...evaluation, status: 'completed', job: ids.job, execution_evidence: fixtureEvidence,
+      metrics: [{ key: 'accuracy', slice_name: 'all', value: 1, sample_count: 3, uncertainty_interval: null }],
+      baseline_metrics: [{ key: 'accuracy', slice_name: 'all', value: 1 / 3, sample_count: 3, uncertainty_interval: null }],
+      case_coverage: { completed: 3, total: 3, failed: 0, missing: 0 },
+      decision_report: { ...report, available: true, reason: '', complete_cases: 3,
+        candidate: { accuracy: 1, macro_f1: 1, confusion_matrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0]] },
+        baseline: { accuracy: 1 / 3, macro_f1: 1 / 6, confusion_matrix: [[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0]] },
+        accuracy_delta: 2 / 3, accuracy_delta_interval: [0, 1], case_changes: { improved: 2, regressed: 0, unchanged: 1, changed_cases: [] } },
+    };
+    mlResponses['/api/v1/evaluation-runs/'] = (mlResponses['/api/v1/evaluation-runs/'] as Array<{ run_id: string }>).map(item => item.run_id === runId ? completed : item);
+    mlResponses[`/api/v1/evaluation-runs/${runId}/`] = completed;
+    mlResponses[`/api/v1/evaluation-runs/${runId}/cases/`] = caseSet.map((item, index) => ({ ...item, result_id: `${runId}-${index}`, candidate_output: item.expected_output, baseline_output: 'billing', score: 1, passed: true, baseline_score: index === 0 ? 1 : 0, failure_reason: '', slice_name: 'all' }));
+    return completed;
+  };
+  return { evaluation, suite, cases: caseSet, labels: report.labels, warnings: ['Synthetic preview only. No model is executed or qualified.'], launch: { pool: 1, budget_policy_id: '50000000-0000-4000-8000-000000000005', max_tokens: 32, profile: 'guided-native' } };
+};
 
 const initialResponses = structuredClone(mlResponses);
 const initialActions = { ...mlActions };

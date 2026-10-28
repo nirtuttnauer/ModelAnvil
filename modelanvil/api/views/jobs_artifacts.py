@@ -10,11 +10,13 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
 from django.db import transaction
 from django.http import FileResponse
 from pathlib import PurePosixPath
 from contracts import ApiError, ErrorCode
 
+from modelanvil.core.ids import uuid7
 from modelanvil.artifacts.models import Artifact, Dataset, DatasetRevision, TransferSession
 from modelanvil.artifacts.storage import (
     S3ArtifactStorage,
@@ -41,7 +43,7 @@ class ScopedViewSet(viewsets.ModelViewSet):
     write_role = Role.ENGINEER
 
     def initial(self, request, *args, **kwargs):
-        self.required_role = Role.VIEWER if self.action in ("list", "retrieve", "download") else self.write_role
+        self.required_role = Role.VIEWER if self.action in ("list", "retrieve", "download", "inspect") else self.write_role
         return super().initial(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -77,12 +79,14 @@ class JobSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Job
-        fields = ("job_id", "name", "pool", "status", "desired_action", "cancel_endpoint", "requirements", "payload", "attempt_count", "max_attempts", "priority", "depends_on", "budget_policy_id", "estimated_amount", "created_at", "updated_at")
-        read_only_fields = ("job_id", "status", "desired_action", "attempt_count", "created_at", "updated_at")
+        fields = ("job_id", "project", "name", "pool", "status", "desired_action", "cancel_endpoint", "requirements", "payload", "attempt_count", "max_attempts", "priority", "depends_on", "budget_policy_id", "estimated_amount", "created_at", "updated_at")
+        read_only_fields = ("job_id", "project", "status", "desired_action", "attempt_count", "created_at", "updated_at")
 
     def validate(self, attrs):
         if attrs.get('payload', {}).get('type') in {'specialist_inference','recipe_execution'} or (self.instance and self.instance.payload.get('type') in {'specialist_inference','recipe_execution'}):
             raise serializers.ValidationError('Manage this job through its specialist request or recipe run.')
+        if attrs.get('payload', {}).get('type') == 'qualified_evaluation' or (self.instance and self.instance.evaluation_runs.exists()):
+            raise serializers.ValidationError('Manage evaluation jobs through their evaluation run.')
         if (attrs.get('payload', {}).get('type') == 'model_import' or
                 (self.instance and self.instance.payload.get('type') == 'model_import')):
             raise serializers.ValidationError('Manage model acquisition through the model-imports API.')
@@ -107,7 +111,7 @@ class JobSerializer(serializers.ModelSerializer):
         has_enabled_policies = BudgetPolicy.all_objects.filter(tenant_id=tenant_id, enabled=True).exists()
         if has_enabled_policies and policy_id is None:
             raise serializers.ValidationError({"budget_policy_id": "A budget reservation is required for this tenant."})
-        job_id = uuid.uuid4()
+        job_id = uuid7()
         if policy_id is not None:
             policy = BudgetPolicy.all_objects.filter(
                 tenant_id=tenant_id, policy_id=policy_id, enabled=True
@@ -134,6 +138,8 @@ class JobViewSet(ScopedViewSet):
 
     def destroy(self, request, *args, **kwargs):
         job = self.get_object()
+        if job.evaluation_runs.exists():
+            raise serializers.ValidationError('Manage this job through its evaluation run.')
         if isinstance(job.payload, dict) and job.payload.get('type') == 'dataset_acquisition':
             raise serializers.ValidationError('Dataset acquisition jobs retain provenance; cancel the acquisition.')
         if self.get_object().training_runs.filter(hardware_config__execution_mode='worker').exists():
@@ -201,7 +207,7 @@ class JobViewSet(ScopedViewSet):
             else:
                 response = super().create(request, *args, **kwargs)
                 record.response_status = response.status_code
-                record.response_body = response.data
+                record.response_body = json.loads(JSONRenderer().render(response.data))
                 record.completed_at = timezone.now()
                 record.save(update_fields=("response_status", "response_body", "completed_at", "updated_at"))
 
@@ -211,7 +217,8 @@ class JobViewSet(ScopedViewSet):
     def perform_create(self, serializer):
         if serializer.validated_data["pool"].tenant_id != get_active_tenant():
             raise NotFound()
-        job = serializer.save(tenant_id=get_active_tenant())
+        from modelanvil.core.tenancy import get_active_project
+        job = serializer.save(tenant_id=get_active_tenant(), project_id=get_active_project())
         record_audit("create", "job", job.job_id, tenant_id=job.tenant_id,
             actor_id=getattr(self.request, "modelanvil_actor_id", None),
             actor_kind=getattr(self.request, "modelanvil_actor_kind", "principal"),
@@ -224,6 +231,8 @@ class JobViewSet(ScopedViewSet):
         serializer.save()
 
     def perform_destroy(self, instance):
+        if instance.payload.get('type') == 'model_import':
+            raise serializers.ValidationError('Model import jobs retain their acquisition history.')
         if instance.payload.get('type') in {'specialist_inference','recipe_execution'}:
             raise serializers.ValidationError('Execution jobs retain durable request and accounting history.')
         super().perform_destroy(instance)
@@ -231,8 +240,12 @@ class JobViewSet(ScopedViewSet):
     @action(detail=True, methods=("post",))
     def cancel(self, request, job_id=None):
         job = self.get_object()
+        if job.payload.get('type') == 'model_import':
+            raise serializers.ValidationError('Cancel this job through its model import.')
         if job.payload.get('type') in {'specialist_inference','recipe_execution'}:
             raise serializers.ValidationError('Cancel this job through its specialist request or recipe run.')
+        if job.evaluation_runs.exists():
+            raise serializers.ValidationError('Manage this job through its evaluation run.')
         if isinstance(job.payload, dict) and job.payload.get('type') == 'dataset_acquisition':
             raise serializers.ValidationError('Cancel this job through its dataset acquisition.')
         if job.training_runs.filter(hardware_config__execution_mode='worker').exists():
@@ -494,6 +507,14 @@ class ArtifactViewSet(ScopedViewSet):
 
 
 class DatasetSerializer(serializers.ModelSerializer):
+    def validate_name(self, value):
+        matches = Dataset.all_objects.filter(tenant_id=get_active_tenant(), name=value)
+        if self.instance:
+            matches = matches.exclude(pk=self.instance.pk)
+        if matches.exists():
+            raise ValidationError('A dataset already uses this name in your workspace. Choose a different dataset name.')
+        return value
+
     class Meta:
         model = Dataset
         fields = ("dataset_id", "project", "name", "description", "current_revision", "metadata", "created_at", "updated_at")
@@ -505,8 +526,40 @@ class DatasetViewSet(ScopedViewSet):
     serializer_class = DatasetSerializer
     lookup_field = "dataset_id"
 
+    def create(self, request, *args, **kwargs):
+        from modelanvil.api.idempotence import idempotent_write
+        return idempotent_write(request, lambda: super(DatasetViewSet, self).create(request, *args, **kwargs))
+
+    @action(detail=False, methods=['post'], url_path='preview')
+    def preview(self, request):
+        from modelanvil.data.publication import prepare_source, DatasetPreparationError, MAX_INPUT_BYTES
+        file = request.data.get('file')
+        if file is None or not hasattr(file, 'read') or not 0 < file.size <= MAX_INPUT_BYTES:
+            raise ValidationError('Choose a nonempty source file of at most 16 MiB.')
+        try:
+            configuration = json.loads(request.data.get('configuration', '{}'))
+        except (TypeError, ValueError):
+            raise ValidationError('Preview configuration must be a JSON object.') from None
+        serializer = DatasetPreparationOptionsSerializer(data=configuration)
+        serializer.is_valid(raise_exception=True)
+        try:
+            prepared, _ = prepare_source(file.read(MAX_INPUT_BYTES+1), **serializer.validated_data)
+        except DatasetPreparationError as exc:
+            raise ValidationError({'preview': str(exc)}) from None
+        splits = {sample_id: split for split, ids in prepared['split_manifest'].items() for sample_id in ids}
+        return Response({'recipe': prepared['recipe'], 'recipe_digest': prepared['recipe_digest'],
+            'row_count': prepared['row_count'], 'source_group_count': prepared['source_group_count'],
+            'split_counts': {split: len(ids) for split, ids in prepared['split_manifest'].items()},
+            'rows': [{**row, 'assigned_split': splits.get(row['sample_id'])} for row in prepared['rows'][:25]],
+            'dropped': prepared.get('dropped', [])[:25], 'report': prepared.get('report'),
+            'limits': 'Preview shows at most 25 parsed samples and 25 exclusions. Publication repeats this exact recipe on verified source bytes; no resources were created by preview.'})
+
     @action(detail=True, methods=("post",))
     def prepare(self, request, dataset_id=None):
+        from modelanvil.api.idempotence import idempotent_write
+        return idempotent_write(request, lambda: self._prepare(request, dataset_id))
+
+    def _prepare(self, request, dataset_id=None):
         from modelanvil.data.publication import DatasetPreparationError, publish_prepared_dataset
 
         dataset = self.get_object()
@@ -529,9 +582,9 @@ class DatasetViewSet(ScopedViewSet):
         return Response(DatasetRevisionSerializer(revision).data, status=status.HTTP_201_CREATED)
 
 
-class DatasetPreparationSerializer(serializers.Serializer):
-    input_artifact_id = serializers.UUIDField()
-    source_format = serializers.ChoiceField(choices=("jsonl", "csv", "json", "docx", "pdf"), required=False, default="jsonl")
+class DatasetPreparationOptionsSerializer(serializers.Serializer):
+    source_format = serializers.ChoiceField(choices=("jsonl", "csv", "json", "docx", "pdf", "training"), required=False, default="jsonl")
+    source_mapping = serializers.JSONField(required=False)
     text_field = serializers.CharField(required=False, default="text", max_length=128, trim_whitespace=False)
     group_field = serializers.CharField(required=False, default=None, allow_null=True, max_length=128, trim_whitespace=False)
     chunk_characters = serializers.JSONField(required=False, default=None, allow_null=True)
@@ -565,6 +618,10 @@ class DatasetPreparationSerializer(serializers.Serializer):
         return attrs
 
 
+class DatasetPreparationSerializer(DatasetPreparationOptionsSerializer):
+    input_artifact_id = serializers.UUIDField()
+
+
 class DatasetRevisionSerializer(serializers.ModelSerializer):
     dataset_name = serializers.CharField(source='dataset.name', read_only=True)
     def __init__(self, *args, **kwargs):
@@ -585,6 +642,16 @@ class DatasetRevisionViewSet(ScopedViewSet):
     queryset = DatasetRevision.objects.select_related("dataset", "manifest_artifact")
     serializer_class = DatasetRevisionSerializer
     lookup_field = "revision_id"
+
+    @action(detail=True, methods=['get'], url_path='inspect')
+    def inspect(self, request, revision_id=None):
+        from modelanvil.api.resource_inspection import inspect_dataset
+        cursor = serializers.IntegerField(min_value=0, max_value=10000).run_validation(request.query_params.get('cursor', 0))
+        query = serializers.CharField(max_length=200, allow_blank=True).run_validation(request.query_params.get('query', ''))
+        try:
+            return Response(inspect_dataset(self.get_object(), cursor, query))
+        except (ValueError, OSError) as exc:
+            raise ValidationError({'inspection': str(exc) if isinstance(exc, ValueError) else 'Manifest bytes are unavailable.'}) from exc
 
     def perform_create(self, serializer):
         dataset = serializer.validated_data["dataset"]

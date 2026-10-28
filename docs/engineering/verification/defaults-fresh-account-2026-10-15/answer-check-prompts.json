@@ -1,0 +1,44 @@
+[
+  {
+    "question": "When could I work at Harbor Hub on a weekday?",
+    "expected_details": [
+      "8 am",
+      "6 pm"
+    ]
+  },
+  {
+    "question": "How can I reserve a room for my Harbor Hub team meeting?",
+    "expected_details": [
+      "Rooms",
+      "dashboard"
+    ]
+  },
+  {
+    "question": "How can I undo my Harbor Hub room booking?",
+    "expected_details": [
+      "Bookings",
+      "Cancel"
+    ]
+  },
+  {
+    "question": "Where can I download a PDF of my Harbor Hub invoice?",
+    "expected_details": [
+      "Billing",
+      "Download PDF"
+    ]
+  },
+  {
+    "question": "What should I do if my Harbor Hub entry card has gone missing?",
+    "expected_details": [
+      "reception",
+      "deactivate"
+    ]
+  },
+  {
+    "question": "Where should I leave my bicycle at Harbor Hub?",
+    "expected_details": [
+      "courtyard",
+      "lock"
+    ]
+  }
+]

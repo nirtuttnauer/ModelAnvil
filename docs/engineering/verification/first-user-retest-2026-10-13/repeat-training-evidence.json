@@ -1,0 +1,10 @@
+{
+  "run_id": "d0f76f3d-028c-45ef-a979-87de0a8632f4",
+  "status": "completed",
+  "job_status": "succeeded",
+  "steps": 3,
+  "candidate_id": "5d71fc64-c0ca-4d19-8d68-a0562bcee415",
+  "checkpoint_count": 3,
+  "chat_sft": true,
+  "gpu_device": "mps:0"
+}

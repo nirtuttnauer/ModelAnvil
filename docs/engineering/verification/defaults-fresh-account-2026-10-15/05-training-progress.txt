@@ -1,0 +1,121 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Harbor Defaults Test workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Training
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Fine-tune a pretrained model with your own examples.
+  - heading "Training studio" [level=2]
+  - paragraph: Choose your model and data, review your training plan, and follow the results in one workspace.
+  - button "Tokenizer":
+    - text: Tokenizer
+  - button "Model Version":
+    - text: Model Version
+  - button "Configure a run"
+  - tablist "Training workspace":
+    - tab "Configure"
+    - tab "Current run Training active" [selected]:
+      - text: Current run
+      - generic "Training active"
+    - tab "History"
+  - generic "Loaded training summary":
+    - generic: Training runs
+    - strong: "1"
+    - generic: All accessible recorded runs
+    - generic: Active runs
+    - strong: "1"
+    - generic: Pending or running
+    - generic: Saved checkpoints
+    - strong: "0"
+    - generic: Recorded checkpoint artifacts
+    - generic: Latest selected loss
+    - strong: —
+    - generic: Run a1856b64
+  - status: "Training run dispatched successfully. State: pending."
+  - tabpanel "Current run Training active":
+    - heading "Current run" [level=3]
+    - paragraph: Live progress, recorded metrics and checkpoints.
+    - text: Inspect run
+    - combobox "Current training run":
+      - option "Select a run"
+      - option "a1856b64 · lora_adapter · running" [selected]
+    - region "Live training progress":
+      - heading "Training progress" [level=3]
+      - generic: running
+      - status: Live · refreshes every 3 seconds
+      - button "Refresh progress"
+      - strong: 31% complete
+      - generic: 90 / 288 steps reported
+      - progressbar "Training completion"
+      - paragraph: 0 steps saved in checkpoints · 90 additional steps reported by the worker.
+      - term: Elapsed time
+      - definition: 1m 5s
+      - term: Estimated time remaining
+      - definition: Waiting for measured step timings
+      - term: Latest training loss
+      - definition: Not reported
+      - term: Latest validation loss
+      - definition: Not reported
+      - paragraph: Last refreshed 5:51:54 PM. Progress changes only when the server reports it.
+    - generic: EXPERIMENT MONITOR
+    - heading "Loss & checkpoint activity" [level=3]
+    - paragraph: Recorded training loss at committed steps, alongside saved checkpoint artifacts.
+    - heading "Training & validation loss" [level=3]
+    - paragraph: a1856b64 · configuration_only · exact recorded values
+    - strong: Waiting for recorded data
+    - paragraph: No loss measurements have been recorded for this run.
+    - heading "Checkpoint timeline" [level=3]
+    - paragraph: Saved artifacts from the selected run.
+    - generic: Committed steps
+    - strong: 0 / 288
+    - progressbar "Selected run committed steps"
+    - strong: Waiting for recorded data
+    - paragraph: No checkpoint artifacts have been recorded for this run.
+    - heading "Run a1856b64-9f39-4ef4-9374-bc1f5339cc5a" [level=3]
+    - generic: running
+    - button "Cancel run":
+      - text: Cancel run
+    - link "Open run":
+      - /url: "#runs/training/a1856b64-9f39-4ef4-9374-bc1f5339cc5a?from=%23training%3Ftab%3Dcurrent-run%26run%3Da1856b64-9f39-4ef4-9374-bc1f5339cc5a"
+    - paragraph: "Tokenizer #5 · Pinned base weights · Base model #14 · Dataset digest: 915bab6653be9e79… · Job: f95d0f6e"
+    - heading "Saved checkpoints (0)" [level=4]
+    - paragraph: No checkpoints recorded yet.
+    - generic "Advanced inference check"
+  - generic "App information"
+  - text: Control plane

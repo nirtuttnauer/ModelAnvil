@@ -1,0 +1,79 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat" [active]:
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Fresh User Retest workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Chat
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Chat" [level=1]
+  - paragraph: Run local models, save conversations and compare actual responses.
+  - heading "Chat with your model" [level=2]:
+    - text: Chat with your model
+  - paragraph: Send a message to try your model. Conversations are saved automatically.
+  - button "New conversation"
+  - button "Export" [disabled]:
+    - text: Export
+  - status: Your model is selected and ready. Ask a question from your dataset, then try a new example.
+  - generic "Saved conversations"
+  - option "New conversation" [selected]
+  - option "How do I get a library card?"
+  - option "Where can I return books?"
+  - option "How do I renew a loan?"
+  - text: Model
+  - combobox "Model":
+    - option "Select a model"
+    - option "SmolLM2 fine-tune · a83fc687"
+    - option "SmolLM2 fine-tune · d0f76f3d" [selected]
+  - generic "Generation settings"
+  - option "Single model" [selected]
+  - option "SmolLM2 fine-tune · a83fc687"
+  - option "CPU" [selected]
+  - option "Apple Silicon GPU (PyTorch)"
+  - option "Imported model template" [selected]
+  - option "Plain text (one user prompt)"
+  - option "ChatML override"
+  - log "Conversation"
+  - text: Message
+  - textbox "Message"
+  - button "Generate" [disabled]
+  - button "Stop" [disabled]:
+    - text: Stop
+  - button "Regenerate" [disabled]:
+    - text: Regenerate
+  - generic "Message draft"
+  - generic "App information"
+  - text: Control plane

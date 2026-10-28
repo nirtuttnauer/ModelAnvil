@@ -10,6 +10,10 @@ from __future__ import annotations
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
+from modelanvil.api.views import accounts, guided_training
+from modelanvil.api.views import activation
+from modelanvil.api.views.deployment import DeploymentCapabilities
+from modelanvil.api.views import privacy
 from modelanvil.api.views import audit as audit_views
 from modelanvil.api.views import annotation_views
 from modelanvil.api.views import infrastructure_views
@@ -97,6 +101,21 @@ router.register("release-versions", release_views.ReleaseVersionViewSet, basenam
 router.register("serving-endpoints", release_views.ServingEndpointViewSet, basename="serving-endpoint")
 
 urlpatterns = [
+    path('deployment-capabilities/', DeploymentCapabilities.as_view()),
+    path('privacy/', privacy.ProjectPrivacy.as_view()),
+    path('privacy/diagnostics/', privacy.Diagnostics.as_view()),
+    path('privacy/purge-measurements/', privacy.PurgeMeasurements.as_view()),
+    path('activation/events/', activation.ActivationEvents.as_view()),
+    path('activation/report/', activation.ActivationReport.as_view()),
+    path("accounts/status/", accounts.AccountStatus.as_view()),
+    path("accounts/signup/", accounts.AccountSignUp.as_view()),
+    path("accounts/signin/", accounts.AccountSignIn.as_view()),
+    path("accounts/signout/", accounts.AccountSignOut.as_view()),
+    path("fine-tuning/options/", guided_training.GuidedOptions.as_view()),
+    path("fine-tuning/setup/", guided_training.GuidedSetup.as_view()),
+    path("fine-tuning/preview/", guided_training.GuidedPreview.as_view()),
+    path("fine-tuning/inspect-source/", guided_training.GuidedSourceInspect.as_view()),
+    path('build/', api_health.build, name='api-build'),
     path("inference/models", model_workspace.InferenceViewSet.as_view({'get': 'list'}), name="local-inference-models"),
     path("inference/chat/completions", model_workspace.InferenceViewSet.as_view({'post': 'completions'}), name="local-chat-completions"),
     path("health/", api_health.health, name="api-health"),

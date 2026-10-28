@@ -4,20 +4,19 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-import uuid
 
 from django.db import transaction
 from django.db.models import Max
 from rest_framework.exceptions import ValidationError
 
+from modelanvil.core.ids import uuid7
 from modelanvil.rag.models import DocumentChunk, EmbeddingSpace, IndexVersion, KnowledgeBase, SourceDocument
-
 
 @transaction.atomic
 def index_documents(knowledge_base: KnowledgeBase, documents: list[dict], chunk_size: int, chunk_overlap: int) -> IndexVersion:
     base = KnowledgeBase.objects.select_for_update().get(pk=knowledge_base.pk)
     for item in documents:
-        source_uri = item.get("source_uri") or f"local:{uuid.uuid4()}"
+        source_uri = item.get("source_uri") or f"local:{uuid7()}"
         previous = SourceDocument.objects.filter(knowledge_base=base, source_uri=source_uri).order_by("-revision_no").first()
         digest = hashlib.sha256(item["content"].encode("utf-8")).hexdigest()
         if previous and previous.content_hash == digest and not previous.is_deleted and not previous.is_revoked:

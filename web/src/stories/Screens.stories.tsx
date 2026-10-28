@@ -6,6 +6,7 @@ import { resetMlFixtures } from './ml-fixtures';
 import { resetWorkspaceFixtures } from './workspace-fixtures';
 import { resetDataFixtures } from './data-fixtures';
 import { resetOperationsFixtures } from './operations-fixtures';
+import { resetDraftMemory } from '../components/Draft';
 import './storybook.css';
 
 const meta = {
@@ -13,11 +14,13 @@ const meta = {
   component: App,
   parameters: { demoRoute: '#overview' },
   beforeEach({ msw, parameters }) {
+    resetDraftMemory();
     resetDemoRequests();
     resetWorkspaceFixtures();
     resetMlFixtures();
     resetOperationsFixtures();
     resetDataFixtures();
+    for (const key of Object.keys(sessionStorage)) if (key.startsWith('modelanvil.draft.v1:')) sessionStorage.removeItem(key);
     localStorage.setItem('modelanvil_token', 'storybook-demo-only');
     localStorage.setItem('modelanvil_active_project', '1');
     localStorage.setItem('modelanvil_onboarding_collapsed', 'true');
@@ -26,7 +29,7 @@ const meta = {
     delete document.getElementById('storybook-root')?.dataset.demoVerified;
     msw.use(...demoHandlers(parameters.demoState as DemoState));
   },
-  decorators: [(Story) => <><div className="storybook-demo-banner" role="note">DEMO WORKSPACE · Synthetic data · Actions stay in this Storybook session</div><Story /></>],
+  decorators: [(Story, context) => <><div className="storybook-demo-banner" role="note">DEMO WORKSPACE · Synthetic data · Actions stay in this Storybook session</div><Story key={context.id} /></>],
   play: async ({ canvasElement, parameters }) => {
     const canvas = within(canvasElement);
     await expect(canvas.findByRole('heading', { name: parameters.demoHeading, level: 1 })).resolves.toBeVisible();
@@ -41,7 +44,7 @@ const meta = {
 } satisfies Meta<typeof App>;
 export default meta;
 type Story = StoryObj<typeof meta>;
-const apiPaths: Record<string, string> = { Overview: 'training-runs', 'Dataset Bank': 'dataset-bank/sources', Datasets: 'datasets', Annotation: 'labeling-campaigns', Models: 'models', Training: 'training-runs', Alignment: 'alignment-runs', Evaluation: 'evaluation-runs', Workflows: 'jobs', RAG: 'index-versions', 'Context Lab': 'context-recipe-versions', Releases: 'release-versions', Infrastructure: 'worker-inventory', Budgets: 'usage-events/summary', Audit: 'audit', 'Run Detail': 'run-details/training/30000000-0000-4000-8000-000000000001' };
+const apiPaths: Record<string, string> = { Overview: 'training-runs', 'Dataset Bank': 'dataset-bank/sources', Datasets: 'datasets', Annotation: 'labeling-campaigns', Models: 'models', Training: 'fine-tuning/options', Alignment: 'alignment-runs', Evaluation: 'evaluation-runs', Workflows: 'jobs', RAG: 'index-versions', 'Context Lab': 'context-recipe-versions', Releases: 'release-versions', Infrastructure: 'worker-inventory', Budgets: 'usage-events/summary', Audit: 'audit', 'Run Detail': 'run-details/training/30000000-0000-4000-8000-000000000001' };
 const route = (name: string, hash?: string) => ({ demoHeading: name === 'Overview' ? 'Project overview' : name === 'RAG' ? 'Retrieval workbench' : name, demoApiPath: `/api/v1/${apiPaths[name]}/`, demoRoute: hash ?? `#${name.toLowerCase().replaceAll(' ', '-')}` });
 export const Overview: Story = { name: '01 · Overview', parameters: route('Overview') };
 export const DatasetBank: Story = { name: '02 · Dataset Bank', parameters: route('Dataset Bank') };
@@ -61,7 +64,7 @@ export const Rag: Story = {
     await userEvent.selectOptions(index, '60000000-0000-4000-8000-000000000061');
     await userEvent.type(canvas.getByPlaceholderText('Search indexed knowledge chunks…'), 'dataset split integrity');
     await userEvent.click(canvas.getByRole('button', { name: 'Run query' }));
-    await waitFor(() => expect(canvas.getAllByRole('button', { name: /Chunk .*score/ }).length).toBeGreaterThan(0));
+    await waitFor(() => expect(canvas.getAllByRole('button', { name: /Inspect source/ }).length).toBeGreaterThan(0));
     await expect(canvas.getByRole('heading', { name: 'Retrieval ranking' })).toBeVisible();
     canvasElement.dataset.demoVerified = 'passed';
     canvasElement.dataset.demoRoute = parameters.demoRoute;
@@ -86,6 +89,8 @@ export const Infrastructure: Story = { name: '13 · Infrastructure', parameters:
 export const Budgets: Story = { name: '14 · Budgets', parameters: route('Budgets') };
 export const Audit: Story = { name: '15 · Audit', parameters: route('Audit') };
 export const RunDetail: Story = { name: '16 · Run Detail', parameters: route('Run Detail', '#runs/training/30000000-0000-4000-8000-000000000001') };
+export const Recipes: Story = { name: '17 · Recipes', parameters: { demoRoute: '#recipes', demoHeading: 'Recipes', demoApiPath: '/api/v1/recipes/' } };
+export const Specialists: Story = { name: '18 · Specialists', parameters: { demoRoute: '#specialists', demoHeading: 'Specialists', demoApiPath: '/api/v1/specialists/' } };
 export const RagAuthoring: Story = {
   name: '17 · RAG authoring', parameters: route('RAG'),
   play: async ({ canvasElement, parameters }) => {

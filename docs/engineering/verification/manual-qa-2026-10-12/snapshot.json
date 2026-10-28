@@ -1,0 +1,7 @@
+{
+  "revision": "4c551354d0db11fbe730040237d9394dd62b0233",
+  "api_source_digest": "d0ed1d9965aee31585fc462f40032203e7e0293fe2b8af50d6fdb0a15399e468",
+  "source_manifest_sha256": "180a87dcdfd6ae098da7b847a20c84a30258c61ca3220a879d23163901f15be9",
+  "connection_queue_size": 128,
+  "scope": "Final isolated source snapshot; later concurrent edits excluded."
+}

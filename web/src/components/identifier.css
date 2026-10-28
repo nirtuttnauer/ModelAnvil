@@ -1,0 +1,24 @@
+.identifier { position: relative; display: inline-flex; vertical-align: middle; align-items: center; flex: 0 0 auto; }
+.identifier > .identifier-trigger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; min-height: 32px; min-width: 32px;
+  padding: 0; margin: 0; border: 0; border-radius: 50%; background: transparent;
+  color: var(--text-secondary); cursor: pointer; flex: 0 0 auto;
+}
+.identifier > .identifier-trigger:hover { background: var(--surface-subtle); color: var(--primary-text); }
+.identifier > .identifier-trigger:active { background: var(--primary-surface); }
+.identifier > .identifier-trigger:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.identifier-tooltip {
+  position: fixed; inset: auto; margin: 0; z-index: 10000; width: max-content; max-width: min(440px, calc(100vw - 16px));
+  max-height: calc(100dvh - 16px); overflow: auto; padding: 12px 14px;
+  border: 1px solid var(--control-border); border-radius: 8px;
+  background: var(--surface); color: var(--text); font-size: 12px; line-height: 1.5;
+  user-select: text; overflow-wrap: anywhere;
+}
+.identifier-tooltip > span { display: block; color: var(--text-secondary); font-weight: 600; margin-bottom: 4px; }
+.identifier-tooltip > code { display: block; white-space: pre-wrap; color: var(--text); font-size: 12px; }
+.identifier-tooltip > small { display: block; color: var(--text-secondary); margin-top: 6px; }
+.identifier-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (pointer: coarse) { .identifier > .identifier-trigger { width: 44px; height: 44px; min-height: 44px; min-width: 44px; } }
+
+.identifier-label { display: inline-flex; align-items: center; gap: 4px; }

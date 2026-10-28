@@ -1,0 +1,140 @@
+[
+  {
+    "question": "When could I work at Harbor Hub on a weekday?",
+    "expected_details": [
+      "8 am",
+      "6 pm"
+    ],
+    "answer": "Harbor Hub is open Monday to Friday from 8 am to 6 pm.",
+    "contains_expected_details": true,
+    "configuration": {
+      "model": "27ec73ce-fb75-45ee-a83d-83bbbbdc3bdd",
+      "compare_model": null,
+      "comparison_mode": "blind",
+      "compare_device": "cpu",
+      "device": "cpu",
+      "temperature": 0,
+      "max_tokens": 128,
+      "seed": 42,
+      "system_prompt": "",
+      "prompt_format": "model"
+    },
+    "saved": true,
+    "revision_no": 1
+  },
+  {
+    "question": "How can I reserve a room for my Harbor Hub team meeting?",
+    "expected_details": [
+      "Rooms",
+      "dashboard"
+    ],
+    "answer": "Open Rooms in your Harbor Hub dashboard, choose an available room and confirm the booking.",
+    "contains_expected_details": true,
+    "configuration": {
+      "model": "27ec73ce-fb75-45ee-a83d-83bbbbdc3bdd",
+      "compare_model": null,
+      "comparison_mode": "blind",
+      "compare_device": "cpu",
+      "device": "cpu",
+      "temperature": 0,
+      "max_tokens": 128,
+      "seed": 42,
+      "system_prompt": "",
+      "prompt_format": "model"
+    },
+    "saved": true,
+    "revision_no": 1
+  },
+  {
+    "question": "How can I undo my Harbor Hub room booking?",
+    "expected_details": [
+      "Bookings",
+      "Cancel"
+    ],
+    "answer": "Open Bookings in your Harbor Hub dashboard and choose Cancel beside the booking.",
+    "contains_expected_details": true,
+    "configuration": {
+      "model": "27ec73ce-fb75-45ee-a83d-83bbbbdc3bdd",
+      "compare_model": null,
+      "comparison_mode": "blind",
+      "compare_device": "cpu",
+      "device": "cpu",
+      "temperature": 0,
+      "max_tokens": 128,
+      "seed": 42,
+      "system_prompt": "",
+      "prompt_format": "model"
+    },
+    "saved": true,
+    "revision_no": 1
+  },
+  {
+    "question": "Where can I download a PDF of my Harbor Hub invoice?",
+    "expected_details": [
+      "Billing",
+      "Download PDF"
+    ],
+    "answer": "Open Billing in your Harbor Hub dashboard and choose Download PDF beside the invoice.",
+    "contains_expected_details": true,
+    "configuration": {
+      "model": "27ec73ce-fb75-45ee-a83d-83bbbbdc3bdd",
+      "compare_model": null,
+      "comparison_mode": "blind",
+      "compare_device": "cpu",
+      "device": "cpu",
+      "temperature": 0,
+      "max_tokens": 128,
+      "seed": 42,
+      "system_prompt": "",
+      "prompt_format": "model"
+    },
+    "saved": true,
+    "revision_no": 1
+  },
+  {
+    "question": "What should I do if my Harbor Hub entry card has gone missing?",
+    "expected_details": [
+      "reception",
+      "deactivate"
+    ],
+    "answer": "Tell reception immediately so they can deactivate your lost Harbor Hub access card and arrange a replacement.",
+    "contains_expected_details": true,
+    "configuration": {
+      "model": "27ec73ce-fb75-45ee-a83d-83bbbbdc3bdd",
+      "compare_model": null,
+      "comparison_mode": "blind",
+      "compare_device": "cpu",
+      "device": "cpu",
+      "temperature": 0,
+      "max_tokens": 128,
+      "seed": 42,
+      "system_prompt": "",
+      "prompt_format": "model"
+    },
+    "saved": true,
+    "revision_no": 1
+  },
+  {
+    "question": "Where should I leave my bicycle at Harbor Hub?",
+    "expected_details": [
+      "courtyard",
+      "lock"
+    ],
+    "answer": "Use the bike racks in the Harbor Hub courtyard and bring your own lock.",
+    "contains_expected_details": true,
+    "configuration": {
+      "model": "27ec73ce-fb75-45ee-a83d-83bbbbdc3bdd",
+      "compare_model": null,
+      "comparison_mode": "blind",
+      "compare_device": "cpu",
+      "device": "cpu",
+      "temperature": 0,
+      "max_tokens": 128,
+      "seed": 42,
+      "system_prompt": "",
+      "prompt_format": "model"
+    },
+    "saved": true,
+    "revision_no": 1
+  }
+]

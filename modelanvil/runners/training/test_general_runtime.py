@@ -153,6 +153,25 @@ class GeneralRuntimeTests(TestCase):
         self.assertEqual(len(report['samples']), 2)
         self.assertGreater(report['samples'][0]['token_count'], 0)
 
+    def test_preflight_checks_training_against_pinned_context_before_allocation(self):
+        for length, approved in ((14, True), (15, False), (30, False)):
+            with self.subTest(text_bytes=length):
+                dataset = Dataset.objects.create(tenant_id=self.tenant.pk, name=f'Context boundary {length}')
+                row = self.envelope(length, 'a' * length)
+                source = self.artifact(f'context-{length}.jsonl', json.dumps(row).encode() + b'\n', 'application/x-ndjson')
+                self.dataset = publish_prepared_dataset(dataset, source, validation_percent=0, test_percent=0)
+                report = self.client.post('/api/v1/training-runs/preflight/', self.payload(), format='json')
+                self.assertEqual(report.status_code, 200, report.data)
+                self.assertEqual(report.data['status'], 'approved' if approved else 'blocked', report.data)
+                if not approved:
+                    self.assertIsNone(report.data['preflight_token'])
+                    check = next(check for check in report.data['checks'] if check['check'] == 'pinned-inputs')
+                    self.assertIn('pinned model context of 16', check['reason'])
+                    launched = self.client.post('/api/v1/training-runs/', self.payload(), format='json', HTTP_IDEMPOTENCY_KEY=f'context-{length}')
+                    self.assertEqual(launched.status_code, 400, launched.json())
+                self.assertEqual(Job.all_objects.count(), 0)
+                self.assertEqual(BudgetReservation.all_objects.count(), 0)
+
     def test_operator_reference_setup_produces_browser_selectable_inputs(self):
         from django.core.management import call_command
         from modelanvil.identity.models import Project, Team

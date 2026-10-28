@@ -1,9 +1,14 @@
+import { Identifier } from '../components/Identifier';
+import { Badge, Button, MultilineField, Notice, RecordTable } from '../components/ui';
+import { resourceHash } from '../api/resource-routes';
+import { useDraft, DraftStatus } from '../components/Draft';
+import { DataInspector, DataValue } from '../components/DataInspector';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { RefreshCw, XCircle } from 'lucide-react';
 import { apiPage, apiRequest, errorMessage, nextPagePath, type ApiPage } from '../api/client';
-import { attemptsPath, detailPath, runHash, type RunKind } from '../api/runs';
+import { attemptsPath, detailPath, runHash, sourceHash, type RunKind } from '../api/runs';
 import { ResourceState } from '../components/ResourceState';
-import { ChartPanel, EventTimeline, LineChart } from '../components/Charts';
+import { BarChart, ChartPanel, EventTimeline, LineChart } from '../components/Charts';
 import './runs.css';
 
 interface Bounded<T> {
@@ -99,6 +104,8 @@ interface RunDetail {
     };
     resume: {
       available: boolean;
+      endpoint?: string;
+      recovery_run_id?: string | null;
       blocked_by: string[];
       permission: { role: string | null; required: string; satisfied: boolean };
       checkpoint?: ResumeCandidate;
@@ -114,9 +121,6 @@ const POLL_MS = 5000;
 const MAX_POLL_MS = 30000;
 const TERMINAL = ['completed', 'failed', 'cancelled', 'succeeded'];
 
-function noteKey(kind: RunKind, id: string) {
-  return `modelanvil_run_note_${kind}_${id}`;
-}
 
 function age(from: number | null, now: number) {
   if (from === null) return 'never';
@@ -152,10 +156,14 @@ export function RunDetailPage({
   const [attemptsNext, setAttemptsNext] = useState<string | null>(null);
   const [attemptsError, setAttemptsError] = useState<string | null>(null);
   const [attemptsLoading, setAttemptsLoading] = useState(false);
+  const [fullMetrics, setFullMetrics] = useState<Record<string, unknown>[] | null>(null);
+  const [historyError, setHistoryError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [recoveryReview, setRecoveryReview] = useState<{ available: boolean; blocked_by: string[]; checkpoint_id: string; step: number; remaining_steps: number; policy_id: string; pins: Record<string, unknown>; replay_limits: string } | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [cancelRequested, setCancelRequested] = useState(false);
-  const [note, setNote] = useState('');
+  const noteDraft = useDraft('run-note', { note: '' }, `${kind}:${runId}`);
+  const [note, setNote] = noteDraft.field('note');
   const hasDetail = useRef(false);
 
   const load = useCallback(
@@ -199,7 +207,6 @@ export function RunDetailPage({
     setAttemptsNext(null);
     setAttemptsError(null);
     setCancelRequested(false);
-    setNote(sessionStorage.getItem(noteKey(kind, runId)) ?? '');
     void load(controller.signal);
     return () => controller.abort();
   }, [load, kind, runId]);
@@ -257,7 +264,7 @@ export function RunDetailPage({
   const attemptFingerprint = `${detail?.observed.updated_at ?? ''}|${detail?.observed.attempts ?? ''}`;
 
   useEffect(() => {
-    if (!detail || kind === 'evaluation') return;
+    if (!detail?.links.job) return;
     const controller = new AbortController();
     void loadAttempts(attemptsPath(kind, runId), false, controller.signal);
     return () => controller.abort();
@@ -273,7 +280,7 @@ export function RunDetailPage({
       await apiRequest(endpoint, token, { method: 'POST', body: '{}' });
       setCancelRequested(true);
       await load(undefined, true);
-      await loadAttempts(attemptsPath(kind, runId), false);
+      if (detail?.links.job) await loadAttempts(attemptsPath(kind, runId), false);
     } catch (failure) {
       setActionError(errorMessage(failure));
     } finally {
@@ -281,9 +288,24 @@ export function RunDetailPage({
     }
   }
 
+  async function reviewRecovery() {
+    if (!detail?.actions.resume.endpoint) return;
+    setBusy(true); setActionError(null);
+    try { setRecoveryReview(await apiRequest(detail.actions.resume.endpoint, token)); }
+    catch (e) { setActionError(errorMessage(e)); } finally { setBusy(false); }
+  }
+  async function resumeRecovery() {
+    if (!recoveryReview || !detail?.actions.resume.endpoint) return;
+    setBusy(true); setActionError(null);
+    try {
+      const child = await apiRequest<{ run_id: string }>(detail.actions.resume.endpoint, token, { method: 'POST', body: JSON.stringify({ checkpoint_id: recoveryReview.checkpoint_id, budget_policy_id: recoveryReview.policy_id }) });
+      window.location.hash = runHash('training', child.run_id);
+    } catch (e) { setActionError(errorMessage(e)); setRecoveryReview(null); await load(undefined, true); }
+    finally { setBusy(false); }
+  }
+
   function updateNote(value: string) {
     setNote(value);
-    sessionStorage.setItem(noteKey(kind, runId), value);
   }
 
   const cancel = detail?.actions.cancel;
@@ -293,53 +315,54 @@ export function RunDetailPage({
   const live = Boolean(detail) && !TERMINAL.includes(state ?? '');
   const stale = updatedAt !== null && now - updatedAt > pollMs * 2;
   const links = detail?.links ?? {};
+  const displayName = detail?.name?.replace(/^(Training run|Evaluation) [a-f0-9]{8}$/i, kind === 'training' ? 'Training run' : 'Evaluation run');
 
   return (
     <div className="runs-page">
       <section className="runs-panel">
         <div className="runs-heading">
           <div>
-            <h2>{detail?.name ?? 'Run detail'}</h2>
+            <h2>{displayName ?? 'Run detail'}</h2>
             <p className="runs-hint">
               {kind === 'training'
                 ? 'Training run'
                 : kind === 'evaluation'
                 ? 'Evaluation run'
                 : 'Durable job'}{' '}
-              <code>{runId}</code>
+              <Identifier value={runId} label="Run ID" />
               {detail?.project && (
                 <>
                   {' '}
-                  · project <code>{detail.project}</code>
+                  · project <Identifier value={detail.project} label="Project ID" />
                 </>
               )}
             </p>
           </div>
           <div className="actions">
-            <button type="button" onClick={() => void load()}>
+            <Button type="button" onClick={() => void load()}>
               <RefreshCw size={15} aria-hidden="true" /> Refresh
-            </button>
-            <a href="#workflows">Back to workflows</a>
+            </Button>
+            <a href={sourceHash(window.location.hash, kind === 'training' ? '#training' : kind === 'evaluation' ? '#evaluation' : '#workflows')}>Back to {kind === 'training' ? 'training' : kind === 'evaluation' ? 'evaluation' : 'workflows'}</a>
           </div>
         </div>
 
         <ResourceState loading={loading} error={error} onRetry={() => void load()} />
 
-        <div className={`runs-freshness ${connectionError ? 'offline' : stale ? 'stale' : ''}`}>
+        <div className={`runs-freshness ${connectionError ? 'offline' : live && stale ? 'stale' : ''}`}>
           <span>
             {connectionError
               ? 'Live updates interrupted'
               : `Last successful update ${age(updatedAt, now)}`}
           </span>
           <span className="muted">Polling every {Math.round(pollMs / 1000)}s</span>
-          <span className={`state state-${live ? 'running' : 'paused'}`}>
+          <Badge className={`state state-${live ? 'running' : 'paused'}`}>
             {!detail ? 'Waiting for run data' : live ? 'Live updates on' : 'Terminal state — polling stopped'}
-          </span>
+          </Badge>
         </div>
         <p className="runs-note-status" role="status" aria-live="polite">
           {connectionError
             ? `Live updates interrupted: ${connectionError} The last recorded values stay on screen.`
-            : stale
+            : live && stale
             ? 'The last successful update is older than two poll intervals.'
             : !detail
             ? 'Load a durable run record to inspect its execution state.'
@@ -354,7 +377,7 @@ export function RunDetailPage({
               <div className="runs-state-card">
                 <h3>
                   Observed state{' '}
-                  <span className={`state state-${detail.observed.state}`}>{detail.observed.state}</span>
+                  <Badge className={`state state-${detail.observed.state}`}>{detail.observed.state}</Badge>
                 </h3>
                 <dl className="runs-kv">
                   <div>
@@ -374,11 +397,11 @@ export function RunDetailPage({
                       <div>
                         <dt>Linked job state (differs from this record)</dt>
                         <dd>
-                          <span
+                          <Badge
                             className={`state state-${detail.observed.job_state}`}
                           >
                             {detail.observed.job_state}
-                          </span>
+                          </Badge>
                         </dd>
                       </div>
                     )}
@@ -391,9 +414,9 @@ export function RunDetailPage({
               <div className="runs-state-card">
                 <h3>
                   Desired state{' '}
-                  <span className={`state state-${requested ? 'pending' : 'ready'}`}>
+                  <Badge className={`state state-${requested ? 'pending' : 'ready'}`}>
                     {detail.desired.action}
-                  </span>
+                  </Badge>
                 </h3>
                 <p className="muted">{detail.desired.note}</p>
                 <dl className="runs-kv">
@@ -432,28 +455,24 @@ export function RunDetailPage({
             </div>
 
             {actionError && (
-              <div className="notice error" role="alert">
+              <Notice tone="error" className="notice error" role="alert">
                 {actionError}
-              </div>
+              </Notice>
             )}
 
             <div className="runs-actions">
-              {kind === 'evaluation' ? (
-                <p className="runs-hint">Evaluations are recorded by the API; there is nothing to cancel.</p>
-              ) : (
-                <button
-                  type="button"
-                  disabled={!cancel?.available || busy || requested}
-                  onClick={() => void requestCancellation()}
-                >
-                  <XCircle size={15} aria-hidden="true" />
-                  {acknowledged
-                    ? 'Cancellation acknowledged'
-                    : requested
-                    ? 'Cancellation requested'
-                    : 'Request cancellation'}
-                </button>
-              )}
+              <Button
+                type="button"
+                disabled={!cancel?.available || busy || requested}
+                onClick={() => void requestCancellation()}
+              >
+                <XCircle size={15} aria-hidden="true" />
+                {acknowledged
+                  ? 'Cancellation acknowledged'
+                  : requested
+                  ? 'Cancellation requested'
+                  : 'Request cancellation'}
+              </Button>
               {(cancel?.blocked_by ?? []).map((reason) => (
                 <span key={reason} className="runs-hint">
                   {reason}
@@ -468,14 +487,17 @@ export function RunDetailPage({
 
       {detail && (
         <>
-          <div className="visualization-grid">
-            <ChartPanel title="Recorded loss" description={`Exact metric steps · evidence: ${detail.evidence?.level ?? 'not reported'}`}>
+          <details className="workspace-details"><summary>Run charts and timeline</summary><div className="visualization-grid">
+            {kind === 'training' && <ChartPanel title="Recorded loss" description={`Exact metric steps · evidence: ${detail.evidence?.level ?? 'not reported'}`}>
               <LineChart series={[
                 { name: 'Training loss', points: detail.metrics.rows.flatMap(row => typeof row.step === 'number' && typeof row.loss === 'number' ? [{ x: row.step, y: row.loss }] : []) },
                 { name: 'Validation loss', points: detail.metrics.rows.flatMap(row => typeof row.step === 'number' && typeof row.validation_loss === 'number' ? [{ x: row.step, y: row.validation_loss }] : []) },
               ].filter(series => series.points.length)} yLabel="Loss" />
               {detail.metrics.truncated && <p className="runs-hint">The API returned a bounded metric window. Inspect recorded metrics below for its total.</p>}
-            </ChartPanel>
+            </ChartPanel>}
+            {kind === 'evaluation' && <ChartPanel title="Evaluation measurements" description="Frozen scoring metrics and case coverage; inspect sample counts and uncertainty below.">
+              <BarChart data={detail.metrics.rows.filter(row => typeof row.value === 'number').map(row => ({ label: String(row.key || 'Metric'), value: Number(row.value) }))} />
+            </ChartPanel>}
             <ChartPanel title="Execution record" description="Recorded timestamps and the current observed state.">
               <EventTimeline events={[
                 { label: 'Created', detail: new Date(detail.observed.created_at).toLocaleString() },
@@ -486,8 +508,17 @@ export function RunDetailPage({
               <p className="runs-hint">Execution mode: {detail.execution_mode}. Worker: {detail.ownership.worker ?? 'not assigned'}.</p>
             </ChartPanel>
           </div>
+          </details>
           <section className="runs-panel runs-recovery">
             <h2>Next actions and blockers</h2>
+            {resume?.available && <Button type="button" disabled={busy || stale || !!connectionError} onClick={() => void reviewRecovery()}>Review checkpoint recovery</Button>}
+            {resume?.recovery_run_id && <a href={runHash('training', resume.recovery_run_id)}>Open linked recovery execution</a>}
+            {recoveryReview && <div className="detail-box" aria-label="Recovery review">
+              <h3>Resume from step {recoveryReview.step}</h3><p>Reserve {recoveryReview.remaining_steps} remaining training steps. Prior committed usage stays on the parent execution.</p>
+              <p>{recoveryReview.replay_limits}</p><DataInspector value={recoveryReview.pins} />
+              {recoveryReview.blocked_by.map(reason => <p key={reason} role="alert">{reason}</p>)}
+              <div className="actions"><Button className="primary" disabled={busy || !recoveryReview.available} onClick={() => void resumeRecovery()}>Resume from verified checkpoint</Button><Button disabled={busy} onClick={() => setRecoveryReview(null)}>Close recovery review</Button></div>
+            </div>}
             <p className="runs-hint">
               Resume and retry eligibility is re-evaluated from recorded evidence on every load: the caller role,
               the committed checkpoint's runtime contract and cursor, and the budget state. Nothing here restarts
@@ -522,13 +553,14 @@ export function RunDetailPage({
               {links.training_run && (
                 <a href={runHash('training', linkId(links.training_run))}>Training run</a>
               )}
-              {links.model_version && <a href="#models">Model version</a>}
-              {links.dataset_revision && <a href="#datasets">Dataset revision</a>}
+              {links.output_model_version && <a href={resourceHash('model-version', linkId(links.output_model_version))}>Trained candidate</a>}
+              {links.base_model_version && <a href={resourceHash('model-version', linkId(links.base_model_version))}>Pinned base version</a>}
+              {links.recovery_parent && <a href={runHash('training', linkId(links.recovery_parent))}>Parent execution</a>}
+              {links.model_version && <a href={resourceHash('model-version', linkId(links.model_version))}>Model version</a>}
+              {links.dataset_revision && <a href={resourceHash('dataset-revision', linkId(links.dataset_revision))}>Dataset revision</a>}
               {Array.isArray(links.evaluation_runs) &&
-                links.evaluation_runs.map((id) => (
-                  <a key={id} href={runHash('evaluation', id)}>
-                    Evaluation {id.slice(0, 8)}
-                  </a>
+                links.evaluation_runs.map((id, index) => (
+                  <span key={id}><a href={runHash('evaluation', id)}>Evaluation run {index + 1}</a> <Identifier value={id} label="Evaluation run ID" /></span>
                 ))}
               <a href="#infrastructure">Worker pools</a>
               <a href="#budgets">Budgets</a>
@@ -539,25 +571,7 @@ export function RunDetailPage({
           <div className="runs-columns">
             <section className="runs-panel">
               <h2>Pinned inputs</h2>
-              <dl className="runs-kv">
-                {Object.entries(detail.inputs)
-                  .filter(([, value]) => value !== null && value !== undefined && value !== '')
-                  .map(([key, value]) => (
-                    <div key={key}>
-                      <dt>{key.replace(/_/g, ' ')}</dt>
-                      <dd>
-                        {typeof value === 'object' ? (
-                          <details>
-                            <summary>Inspect {key.replace(/_/g, ' ')}</summary>
-                            <pre>{JSON.stringify(value, null, 2)}</pre>
-                          </details>
-                        ) : (
-                          String(value)
-                        )}
-                      </dd>
-                    </div>
-                  ))}
-              </dl>
+              <DataInspector value={detail.inputs} />
             </section>
 
             <section className="runs-panel">
@@ -620,7 +634,7 @@ export function RunDetailPage({
             </section>
           </div>
 
-          {kind !== 'evaluation' && (
+          {Boolean(detail.links.job) && (
             <section className="runs-panel">
               <h2>Worker attempts ({attempts.length} loaded)</h2>
               <p className="runs-hint">
@@ -635,7 +649,7 @@ export function RunDetailPage({
               )}
               {attempts.length > 0 && (
                 <div className="table-scroll" tabIndex={0}>
-                  <table className="resource-table runs-attempts">
+                  <RecordTable className="resource-table runs-attempts">
                     <thead>
                       <tr>
                         <th scope="col">Attempt</th>
@@ -647,10 +661,10 @@ export function RunDetailPage({
                       </tr>
                     </thead>
                     <tbody>
-                      {attempts.map((attempt) => (
+                      {attempts.map((attempt, index) => (
                         <tr key={attempt.attempt_id}>
                           <td>
-                            {attempt.attempt_id.slice(0, 8)}
+                            Attempt {index + 1} <Identifier value={attempt.attempt_id} label="Attempt ID" />
                             <small className="id-text">
                               {attempt.lease_expires_at
                                 ? `lease until ${new Date(attempt.lease_expires_at).toLocaleTimeString()}`
@@ -658,7 +672,7 @@ export function RunDetailPage({
                             </small>
                           </td>
                           <td>
-                            <span className={`state state-${attempt.status}`}>{attempt.status}</span>
+                            <Badge className={`state state-${attempt.status}`}>{attempt.status}</Badge>
                           </td>
                           <td>
                             {attempt.worker ?? 'Unassigned'}
@@ -675,11 +689,11 @@ export function RunDetailPage({
                         </tr>
                       ))}
                     </tbody>
-                  </table>
+                  </RecordTable>
                 </div>
               )}
               {attemptsNext && (
-                <button
+                <Button
                   type="button"
                   disabled={attemptsLoading}
                   onClick={() =>
@@ -687,7 +701,7 @@ export function RunDetailPage({
                   }
                 >
                   {attemptsLoading ? 'Loading…' : 'Load more attempts'}
-                </button>
+                </Button>
               )}
             </section>
           )}
@@ -702,7 +716,7 @@ export function RunDetailPage({
               </p>
               {detail.checkpoints.rows.length > 0 && (
                 <div className="table-scroll" tabIndex={0}>
-                  <table className="resource-table">
+                  <RecordTable className="resource-table">
                     <thead>
                       <tr>
                         <th scope="col">Step</th>
@@ -717,25 +731,23 @@ export function RunDetailPage({
                         <tr key={checkpoint.checkpoint_id}>
                           <td>{checkpoint.step}</td>
                           <td>
-                            <code>{checkpoint.state_digest.slice(0, 16)}…</code>
+                            <Identifier value={checkpoint.state_digest} label="Checkpoint state digest" />
                           </td>
                           <td>
-                            <span className={`state state-${checkpoint.is_valid ? 'completed' : 'failed'}`}>
+                            <Badge className={`state state-${checkpoint.is_valid ? 'completed' : 'failed'}`}>
                               {checkpoint.is_valid ? 'valid' : 'invalid'}
-                            </span>
+                            </Badge>
                           </td>
                           <td>
-                            <code>
-                              {checkpoint.contract_digest
-                                ? `${checkpoint.contract_digest.slice(0, 16)}…`
-                                : 'not recorded'}
-                            </code>
+                            {checkpoint.contract_digest
+                              ? <Identifier value={checkpoint.contract_digest} label="Runtime contract digest" />
+                              : 'not recorded'}
                           </td>
                           <td>{new Date(checkpoint.created_at).toLocaleString()}</td>
                         </tr>
                       ))}
                     </tbody>
-                  </table>
+                  </RecordTable>
                 </div>
               )}
             </section>
@@ -743,6 +755,13 @@ export function RunDetailPage({
 
           <section className="runs-panel">
             <h2>Recorded metrics ({detail.metrics.total})</h2>
+            {kind === 'training' && detail.metrics.truncated && <Button disabled={busy} onClick={async () => {
+              setBusy(true); setHistoryError('');
+              try { const record = await apiRequest<{ metrics_log: Record<string, unknown>[] }>(`/api/v1/training-runs/${runId}/`, token); setFullMetrics(record.metrics_log); }
+              catch (e) { setHistoryError(errorMessage(e)); } finally { setBusy(false); }
+            }}>Inspect complete training history</Button>}
+            {historyError && <p role="alert">{historyError}</p>}
+            {fullMetrics && <details open><summary>Complete recorded training history ({fullMetrics.length} points)</summary><DataInspector value={fullMetrics} /></details>}
             {detail.metrics.total === 0 ? (
               <p className="runs-empty">No metrics have been recorded for this run.</p>
             ) : (
@@ -751,11 +770,11 @@ export function RunDetailPage({
                   Showing the {detail.metrics.rows.length} most recent of {detail.metrics.total} recorded points.
                 </p>
                 <div className="table-scroll" tabIndex={0}>
-                  <table className="resource-table">
+                  <RecordTable className="resource-table">
                     <thead>
                       <tr>
-                        <th scope="col">Step</th>
-                        <th scope="col">Loss</th>
+                        <th scope="col">{kind === 'training' ? 'Step' : 'Metric'}</th>
+                        <th scope="col">{kind === 'training' ? 'Loss' : 'Value'}</th>
                         <th scope="col">Other recorded values</th>
                       </tr>
                     </thead>
@@ -764,27 +783,27 @@ export function RunDetailPage({
                         const rest = Object.entries(row).filter(([key]) => key !== 'step' && key !== 'loss');
                         return (
                           <tr key={`${String(row.step ?? index)}-${index}`}>
-                            <td>{row.step === undefined ? '—' : String(row.step)}</td>
+                            <td><DataValue value={kind === 'training' ? row.step ?? '—' : row.key ?? '—'} /></td>
                             <td>
-                              {typeof row.loss === 'number' ? row.loss.toFixed(6) : 'Not reported'}
+                              {kind === 'training' ? typeof row.loss === 'number' ? row.loss.toFixed(6) : 'Not reported' : <DataValue value={row.value ?? 'Not reported'} />}
                             </td>
                             <td>
                               {rest.length === 0
                                 ? '—'
-                                : rest.map(([key, value]) => `${key}: ${String(value)}`).join(' · ')}
+                                : <DataValue value={Object.fromEntries(rest)} />}
                             </td>
                           </tr>
                         );
                       })}
                     </tbody>
-                  </table>
+                  </RecordTable>
                 </div>
               </>
             )}
           </section>
 
           <section className="runs-panel">
-            <h2>Recovery note</h2>
+            <h2>Recovery note</h2><DraftStatus draft={noteDraft} />
             <p className="runs-hint">
               A private draft kept in this browser tab. Live updates never clear it and it is never sent to the
               API.
@@ -792,7 +811,7 @@ export function RunDetailPage({
             <label className="runs-hint" htmlFor="run-recovery-note">
               What you observed and what you tried
             </label>
-            <textarea
+            <MultilineField
               id="run-recovery-note"
               className="runs-note"
               value={note}

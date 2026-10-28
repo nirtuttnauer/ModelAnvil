@@ -1,0 +1,13 @@
+{
+  "browser-checks.json": "8c6000caafaea975e1b0406beeb7592eff0e548c2a325423be117ddda2ac11dc",
+  "privacy-mobile.png": "8b5292893ea98420d01ff377ee6678ec42239d6e51e1c87bbf171ab1e051872e",
+  "offline-baseline.json": "a39da11f59ba0b0784ab86499508e0948f40ff6c7efebc63730ffaafde2cdd0c",
+  "frontend-tests.txt": "010574b21e9511d7f0898bd0df343ffbc7cba758c03ccf62b6647dade87a0ede",
+  "report.md": "12ffb290dc362d4a98520889861cb62d612c4a9bab890e87ad93ad26fd869373",
+  "comparison-tests.txt": "84e52d45bf485e838927bee975849340157145678d2569db7266726b1d312e66",
+  "final-policy-tests.txt": "10bf15e85e91beddcc16c83c4ee91ea74f9a4ea8d18bf74cf1ea99bdf2f10a35",
+  "checks.json": "0b1923c0debea142042b79ca933b431b2d2ccfcbcaffc4c483b4ea727cd1b08c",
+  "privacy-tests.txt": "b38db2603baea60ae7cbad84e81e8ea72244e892925fc7cab08edb6e81c251b2",
+  "privacy-desktop.png": "21f834e856b41f1e4877ecb75b331de850b96e74fe5dd76d358fc06c4946d14c",
+  "backend-tests.txt": "0c2ec21ef21dc490e9e95a0563c749969fb548ab0d63494a402f1163888cb041"
+}

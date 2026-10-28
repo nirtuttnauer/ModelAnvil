@@ -1,0 +1,92 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Fresh User Retest workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Chat
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Chat" [level=1]
+  - paragraph: Run local models, save conversations and compare actual responses.
+  - heading "Chat with your model" [level=2]:
+    - text: Chat with your model
+  - paragraph: Send a message to try your model. Conversations are saved automatically.
+  - button "New conversation"
+  - button "Export":
+    - text: Export
+  - status: Conversation saved.
+  - generic "Saved conversations · How do I get a library card?"
+  - text: Search saved conversations
+  - textbox "Search saved conversations"
+  - text: Saved conversation
+  - combobox "Saved conversation":
+    - option "New conversation"
+    - option "How do I get a library card?" [selected]
+    - option "Where can I return books?"
+    - option "How do I renew a loan?"
+  - text: New conversation title
+  - textbox "New conversation title"
+  - button "Rename conversation" [disabled]
+  - button "Delete conversation…"
+  - text: Model
+  - combobox "Model":
+    - option "Select a model"
+    - option "SmolLM2 fine-tune · a83fc687" [selected]
+  - generic "Generation settings"
+  - option "Single model" [selected]
+  - option "CPU" [selected]
+  - option "Apple Silicon GPU (PyTorch)"
+  - option "Imported model template" [selected]
+  - option "Plain text (one user prompt)"
+  - option "ChatML override"
+  - log "Conversation":
+    - article:
+      - strong: user
+      - paragraph: How do I get a library card?
+  - article:
+    - heading "SmolLM2 fine-tune · a83fc687" [level=3]
+    - paragraph: 1. Go to the library. 2. Select the library card. 3. Select the library card. 4. Select the library card. 5. Select the library card. 6. Select the library card. 7. Select the library card. 8. Select the library card. 9. Select the library card. 10. Select the library card. 11. Select the library card. 12. Select the library card. 13. Select the library card. 14. Select the library card. 15. Select the library card. 16
+    - status: completed · 2.49 seconds including model load · 15 input / 128 output tokens
+  - text: Message
+  - textbox "Message"
+  - button "Generate" [disabled]
+  - button "Stop" [disabled]:
+    - text: Stop
+  - button "Regenerate":
+    - text: Regenerate
+  - generic "Message draft"
+  - generic "App information"
+  - text: Control plane

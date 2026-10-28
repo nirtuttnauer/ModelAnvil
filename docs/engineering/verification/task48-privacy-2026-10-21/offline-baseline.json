@@ -1,0 +1,104 @@
+{
+  "observed_at": "2026-10-21T20:33:50.790189+00:00",
+  "scope": "automated_fresh_database_cpu_reference",
+  "build": {
+    "revision": "c39a2e9554efdd6c5c644fb012580298f4bc78ca",
+    "source_digest": "adebeb5962bf9a4c0b2916fbcce1d8f85b799c75aa5fe174ee7230a66ea7a390",
+    "protocol": "modelanvil.local-beta.v1",
+    "dataset_formats": [
+      "jsonl",
+      "csv",
+      "docx",
+      "json",
+      "pdf",
+      "training"
+    ],
+    "production_qualified": false
+  },
+  "python": "3.12.15",
+  "machine": "arm64",
+  "hardware": {
+    "os": "macOS-27.0.1-arm64-arm-64bit",
+    "architecture": "arm64",
+    "cpu_model": "Apple M5 Pro",
+    "physical_memory_bytes": 51539607552
+  },
+  "fresh_database": true,
+  "fresh_artifacts": true,
+  "dependency_installation_seconds": null,
+  "model_download_seconds": null,
+  "human_active_seconds": null,
+  "missing_timing_reason": "Existing Python dependencies and initialized local reference weights; no model download or human onboarding observed.",
+  "migration_seconds": 1.7354189581237733,
+  "resource_training_evaluation_seconds": 1.2193014998920262,
+  "inference_seconds": 0.13324283296242356,
+  "fresh_database_to_decision_seconds": 3.371119541116059,
+  "candidate_pins": {
+    "version": "01a1602b-8f06-7c9c-93ff-3389acdd2754",
+    "artifact_id": "01a1602b-8f04-74fe-a9ed-33177d78db8d",
+    "sha256": "751131f40184d07f47700be9e03bf3a6cb7be4db8e40b8d5a87bedff403f2e56",
+    "tokenizer": "01a1602b-8c7f-734e-b4d3-66c4676bb4c2"
+  },
+  "evaluation_pins": {
+    "runtime": "modelanvil.local-cpu-evaluation.v1",
+    "build_digest": "dd6579a6900362b92161bb958cdf1bc2ef0c7e6bfa43327f8373fc612ec29d06",
+    "candidate": {
+      "version": "01a1602b-8f06-7c9c-93ff-3389acdd2754",
+      "artifact_id": "01a1602b-8f04-74fe-a9ed-33177d78db8d",
+      "sha256": "751131f40184d07f47700be9e03bf3a6cb7be4db8e40b8d5a87bedff403f2e56",
+      "tokenizer": "01a1602b-8c7f-734e-b4d3-66c4676bb4c2"
+    },
+    "baseline": {
+      "version": "01a1602b-8ca8-7e7d-8981-d9e15259a980",
+      "artifact_id": "01a1602b-8c82-7f2b-bda0-83189009cfcb",
+      "sha256": "6ea5ba2454cd232a1c3620cec7ff62497fad4fafc8102e96ce0536fad873a682",
+      "tokenizer": "01a1602b-8c7f-734e-b4d3-66c4676bb4c2"
+    },
+    "suite_digest": "32c2639fa0468a9e0f787b5987642b176d7f2b2cd0cd20ab9207a1aacf4ebb97",
+    "max_tokens": 2,
+    "decoding": "greedy",
+    "prompt_format": "plain",
+    "device": "cpu",
+    "training_overlap": "known_lineage_checked"
+  },
+  "committed_steps": 2,
+  "evaluation_cases": 1,
+  "decision": "reject",
+  "report": {
+    "scope": "project",
+    "week_start": "2026-10-19T00:00:00+00:00",
+    "week_end": "2026-10-26T00:00:00+00:00",
+    "storage": "installation_database",
+    "external_analytics": "disabled",
+    "weekly_teams_with_decisions": 1,
+    "weekly_improvement_cycles": 1,
+    "weekly_accepted_improvements": 0,
+    "weekly_rejected_candidates": 1,
+    "workspace_sessions": 1,
+    "reported_active_seconds": 0.0,
+    "time_to_first_decision_seconds": 0.10737,
+    "timing_basis": "Browser-reported interaction time; server attempt wall time includes loading and checkpointing. Missing timings stay null.",
+    "decisions": [
+      {
+        "decision_id": "01a1602b-9233-782c-ae36-38521289fcf2",
+        "evaluation_run": "01a1602b-8f19-7072-8c94-ec36cd03615f",
+        "candidate": "01a1602b-8f06-7c9c-93ff-3389acdd2754",
+        "outcome": "reject",
+        "accepted_improvement": false,
+        "training": {
+          "queue_seconds": 0.006029,
+          "execution_seconds": 0.533224
+        },
+        "evaluation": {
+          "queue_seconds": 0.004732,
+          "execution_seconds": 0.355969
+        }
+      }
+    ],
+    "model_acquisition": []
+  },
+  "quality_claim": "None. This is a one-case workflow baseline with a deliberately failing candidate, not useful-model qualification.",
+  "offline_policy": true,
+  "outbound_connection_attempts": 0,
+  "verification": "Actual CPU training, durable evaluation, authenticated chat and a recorded decision with Python socket connections refused."
+}

@@ -1,0 +1,128 @@
+/* Theme · Light */
+:root {
+  --color-canvas: #F6F8FB;
+  --color-surface: #FFFFFF;
+  --color-surface-subtle: #F8FAFC;
+  --color-text-primary: #172033;
+  --color-text-secondary: #475569;
+  --color-text-muted: #58677C;
+  --color-border: #E2E8F0;
+  --color-control-border: #8190A6;
+  --color-action: #D65A31;
+  --color-on-action: #111111;
+  --color-action-text: #B84623;
+  --color-accent-surface: #FFF4EF;
+  --color-accent-border: #EDB19D;
+  --color-success: #166534;
+  --color-success-surface: #EEF9F1;
+  --color-success-border: #B8DDC1;
+  --color-caution: #92400E;
+  --color-caution-surface: #FFFBEB;
+  --color-caution-border: #F2DA9A;
+  --color-error: #B91C1C;
+  --color-error-surface: #FEF2F2;
+  --color-error-border: #FECACA;
+  --color-rail: #171C24;
+  --color-rail-text: #DCE4EF;
+  --color-rail-secondary: #B7C5D8;
+  --color-rail-muted: #A9B8CC;
+  --color-chart-track: #F1F5F9;
+  --color-rail-success: #9CE0B2;
+  --color-action-hover: #E16B43;
+  --color-action-pressed: #CC603C;
+}
+/* Theme · Dark */
+[data-theme="Dark"] {
+  --color-canvas: #10151E;
+  --color-surface: #171F2B;
+  --color-surface-subtle: #1B2432;
+  --color-text-primary: #ECF0F7;
+  --color-text-secondary: #C0CCDC;
+  --color-text-muted: #A3B2C7;
+  --color-border: #2C394D;
+  --color-control-border: #6E8099;
+  --color-action: #ED8057;
+  --color-on-action: #111111;
+  --color-action-text: #ED8057;
+  --color-accent-surface: #3A261F;
+  --color-accent-border: #885342;
+  --color-success: #9CE0B2;
+  --color-success-surface: #19372B;
+  --color-success-border: #35654D;
+  --color-caution: #F3CF87;
+  --color-caution-surface: #392E1C;
+  --color-caution-border: #705B33;
+  --color-error: #FFB6B6;
+  --color-error-surface: #40252D;
+  --color-error-border: #7A424D;
+  --color-rail: #0E131D;
+  --color-rail-text: #DCE4EF;
+  --color-rail-secondary: #B7C5D8;
+  --color-rail-muted: #A9B8CC;
+  --color-chart-track: #253144;
+  --color-rail-success: #9CE0B2;
+  --color-action-hover: #F29370;
+  --color-action-pressed: #D96D48;
+}
+/* Density · Compact */
+:root {
+  --space-4: 4;
+  --space-6: 6;
+  --space-8: 8;
+  --space-10: 10;
+  --space-12: 12;
+  --space-16: 16;
+  --space-18: 18;
+  --space-20: 20;
+  --space-24: 24;
+  --space-32: 32;
+  --radius-6: 6;
+  --radius-7: 7;
+  --radius-8: 8;
+  --radius-10: 10;
+  --radius-12: 12;
+  --type-12: 12;
+  --type-13: 13;
+  --type-14: 14;
+  --type-16: 16;
+  --type-17: 17;
+  --type-20: 20;
+  --type-24: 24;
+  --type-28: 28;
+  --type-30: 30;
+  --type-32: 32;
+}
+/* Density · Comfortable */
+[data-density="Comfortable"] {
+  --space-4: 6;
+  --space-6: 8;
+  --space-8: 12;
+  --space-10: 12;
+  --space-12: 16;
+  --space-16: 20;
+  --space-18: 24;
+  --space-20: 24;
+  --space-24: 32;
+  --space-32: 40;
+  --radius-6: 8;
+  --radius-7: 9;
+  --radius-8: 10;
+  --radius-10: 12;
+  --radius-12: 14;
+  --type-12: 13;
+  --type-13: 14;
+  --type-14: 16;
+  --type-16: 18;
+  --type-17: 19;
+  --type-20: 22;
+  --type-24: 26;
+  --type-28: 30;
+  --type-30: 32;
+  --type-32: 34;
+}
+/* Workspace · Default */
+:root {
+  --workspace-product: "ModelAnvil";
+  --workspace-project: "Assistant Research · Demo";
+  --workspace-organization: "Anvil Research · Demo";
+}

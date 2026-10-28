@@ -1,0 +1,137 @@
+[
+  {
+    "id": "modelanvil-components-identifier--hover-and-copy",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-components-identifier--keyboard-focus-and-copy",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-components-identifier--clipboard-failure",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-components-identifier--viewport-edges-and-overflow",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-components-identifier--empty-and-numeric-values",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-components-identifier--native-modal",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-components-data-presentation--evidence",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-components-engineering-components--resource-selection",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-components-engineering-components--saved-resource-unavailable",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--overview",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--dataset-bank",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--datasets",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--annotation",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--models",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--training",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--alignment",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--evaluation",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--workflows",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--rag",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--context-lab",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--releases",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--infrastructure",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--budgets",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--audit",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--run-detail",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--recipes",
+    "result": "passed",
+    "errors": []
+  },
+  {
+    "id": "modelanvil-screens--specialists",
+    "result": "passed",
+    "errors": []
+  }
+]

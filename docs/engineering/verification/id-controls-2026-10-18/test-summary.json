@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-18",
+  "frontend": {
+    "passed": 223,
+    "failed": 0
+  },
+  "backend": {
+    "targeted_cases_executed": 213,
+    "skipped": 2,
+    "result": "passed",
+    "skips": "PostgreSQL-only concurrency tests"
+  },
+  "build": "passed",
+  "migration_consistency": "passed",
+  "generated_uuid_defaults": 77,
+  "state_only_migrations": 11,
+  "browser_workspace_screens": 18,
+  "identifier_interaction_scenarios": 6,
+  "shared_inspector_picker_scenarios": 3,
+  "labeler_review_scenarios": 5,
+  "opaque_source_test": "passed; source UUID and internal task UUID copy separately; ordinal search includes page two",
+  "compatibility": "Existing/imported UUIDs, source references, UUID5 derived samples and UUID4 security nonces remain unchanged.",
+  "database": "State-only migrations generated; persistent local database not migrated."
+}

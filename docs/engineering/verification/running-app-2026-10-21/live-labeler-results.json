@@ -1,0 +1,186 @@
+{
+  "started_at": "2026-10-21T14:41:46.902436+00:00",
+  "status": "passed",
+  "checks": [
+    {
+      "check": "POST /api/v1/labeling-campaigns/",
+      "passed": true,
+      "http_status": 201
+    },
+    {
+      "check": "POST /api/v1/labeling-campaigns/01a15ee9-3faa-7c63-91f5-3a8bfab82c89/batches/",
+      "passed": true,
+      "http_status": 201
+    },
+    {
+      "check": "GET /api/v1/labeling-batches/01a15ee9-3fb4-748d-b5e3-0d0b1cdfc1b3/tasks/",
+      "passed": true,
+      "http_status": 200
+    },
+    {
+      "check": "both source references preserved",
+      "passed": true
+    },
+    {
+      "check": "POST /api/v1/annotation-tasks/01a15ee9-3fb5-79ea-ba7c-13c70ca143ac/review/",
+      "passed": true,
+      "http_status": 201
+    },
+    {
+      "check": "POST /api/v1/annotation-tasks/01a15ee9-3fb5-79ea-ba7c-13c70ca143ac/review/",
+      "passed": true,
+      "http_status": 409
+    },
+    {
+      "check": "stale revision rejected with conflict code",
+      "passed": true
+    },
+    {
+      "check": "GET /api/v1/annotation-tasks/01a15ee9-3fb5-79ea-ba7c-13c70ca143ac/",
+      "passed": true,
+      "http_status": 200
+    },
+    {
+      "check": "stale write did not replace stored label",
+      "passed": true
+    },
+    {
+      "check": "GET /api/v1/annotation-tasks/01a15ee9-3fb5-79ea-ba7c-13c70ca143ac/?blind=1",
+      "passed": true,
+      "http_status": 200
+    },
+    {
+      "check": "blind task redacts historical labels and comparison metadata",
+      "passed": true
+    },
+    {
+      "check": "POST /api/v1/annotation-tasks/01a15ee9-3fb5-79ea-ba7c-13c70ca143ac/review/?blind=1",
+      "passed": true,
+      "http_status": 201
+    },
+    {
+      "check": "blind review response remains redacted",
+      "passed": true
+    },
+    {
+      "check": "GET /api/v1/annotation-tasks/01a15ee9-3fb5-79ea-ba7c-13c70ca143ac/",
+      "passed": true,
+      "http_status": 200
+    },
+    {
+      "check": "independent correction persisted exactly",
+      "passed": true
+    },
+    {
+      "check": "GET /api/v1/annotation-tasks/01a15ee9-3fb5-79ea-ba7c-13c70ca143ac/history/",
+      "passed": true,
+      "http_status": 200
+    },
+    {
+      "check": "immutable review history includes both revisions",
+      "passed": true
+    },
+    {
+      "check": "POST /api/v1/annotation-tasks/01a15ee9-3fb5-7f1a-9539-a5f3a2c0faf7/review/",
+      "passed": true,
+      "http_status": 201
+    },
+    {
+      "check": "POST /api/v1/labeling-batches/01a15ee9-3fb4-748d-b5e3-0d0b1cdfc1b3/close/",
+      "passed": true,
+      "http_status": 200
+    },
+    {
+      "check": "closed snapshot includes only approved source",
+      "passed": true
+    },
+    {
+      "check": "POST /api/v1/labeling-batches/01a15ee9-3fb4-748d-b5e3-0d0b1cdfc1b3/close/",
+      "passed": true,
+      "http_status": 200
+    },
+    {
+      "check": "batch closure is idempotent",
+      "passed": true
+    },
+    {
+      "check": "POST /api/v1/annotation-tasks/01a15ee9-3fb5-79ea-ba7c-13c70ca143ac/review/",
+      "passed": true,
+      "http_status": 409
+    },
+    {
+      "check": "GET /api/v1/annotation-snapshots/01a15ee9-3ff4-7598-90fb-4f8dc9032b0e/export/",
+      "passed": true,
+      "http_status": 200
+    },
+    {
+      "check": "snapshot exports exact approved label and original reference",
+      "passed": true
+    },
+    {
+      "check": "snapshot manifest digest matches exported data",
+      "passed": true
+    },
+    {
+      "check": "GET /api/v1/dataset-revisions/01a15ee9-3ffc-76ea-8f5a-5c941f371671/inspect/",
+      "passed": true,
+      "http_status": 200
+    },
+    {
+      "check": "published dataset is readable and preserves deterministic UUID5 sample IDs",
+      "passed": true
+    },
+    {
+      "check": "all newly returned public resource IDs are UUIDv7",
+      "passed": true,
+      "public_id_count": 11
+    },
+    {
+      "check": "GET /api/v1/labeling-campaigns/01a15ee9-3faa-7c63-91f5-3a8bfab82c89/",
+      "passed": true,
+      "http_status": 200
+    },
+    {
+      "check": "campaign completed after final batch closure",
+      "passed": true
+    }
+  ],
+  "cleanup": {
+    "before": {
+      "core.AuditEvent": 6,
+      "identity.Tenant": 1,
+      "identity.ApiKey": 1,
+      "identity.Team": 1,
+      "identity.Project": 1,
+      "artifacts.Artifact": 2,
+      "artifacts.Dataset": 1,
+      "artifacts.DatasetRevision": 1,
+      "artifacts.LineageEdge": 1,
+      "annotation.LabelSchema": 1,
+      "annotation.RubricRevision": 1,
+      "annotation.LabelingCampaign": 1,
+      "annotation.CampaignBatch": 1,
+      "annotation.AnnotationTask": 2,
+      "annotation.AnnotationRecord": 3,
+      "annotation.CumulativeSnapshot": 1
+    },
+    "remaining": {},
+    "artifact_files_deleted": 2,
+    "artifact_prefix_removed": true,
+    "passed": true
+  },
+  "public_ids": {
+    "campaign": "01a15ee9-3faa-7c63-91f5-3a8bfab82c89",
+    "label_schema": "01a15ee9-3fa9-7bef-b286-13fdab5b52b5",
+    "rubric": "01a15ee9-3faa-72a8-bc79-3b9cb63efb7d",
+    "batch": "01a15ee9-3fb4-748d-b5e3-0d0b1cdfc1b3",
+    "first_task": "01a15ee9-3fb5-79ea-ba7c-13c70ca143ac",
+    "second_task": "01a15ee9-3fb5-7f1a-9539-a5f3a2c0faf7",
+    "first_review": "01a15ee9-3fc1-79c3-b3cc-c16dd8600f37",
+    "blind_review": "01a15ee9-3fda-78c1-98b2-71e9e0327255",
+    "skip_review": "01a15ee9-3fed-7d04-967a-7b54393acdd2",
+    "snapshot": "01a15ee9-3ff4-7598-90fb-4f8dc9032b0e",
+    "published_revision": "01a15ee9-3ffc-76ea-8f5a-5c941f371671"
+  },
+  "finished_at": "2026-10-21T14:41:47.068745+00:00"
+}

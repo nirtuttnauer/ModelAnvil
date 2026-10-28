@@ -1,0 +1,70 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Fresh User Retest workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Training
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Fine-tune a pretrained model with your own examples.
+  - region "Train a model on your data":
+    - text: YOUR FIRST FINE-TUNE
+    - heading "Train a model on your data" [level=2]
+    - paragraph: Everything you need, in four steps. Training runs on this computer.
+    - list "Fine-tuning progress":
+      - generic: "1"
+      - text: Model
+      - generic: "2"
+      - text: Dataset
+      - generic: "3"
+      - text: Review
+      - generic: "4"
+      - text: Train
+    - heading "Choose your pretrained model" [active] [level=3]
+    - strong: SmolLM2-135M
+    - generic: Recommended for this computer
+    - paragraph: A small pretrained language model that fits this computer. Fine-tuning starts from its pretrained weights.
+    - paragraph: 135 million parameters · Apache-2.0 · up to 128 tokens per example
+    - link "Model license":
+      - /url: https://www.apache.org/licenses/LICENSE-2.0
+    - status: Training runs on this computer. No server commands or cloud account needed.
+    - paragraph: The matching tokenizer, training settings and local compute are configured automatically.
+    - button "Use this model":
+      - text: Use this model
+  - button "Advanced training workspace"
+  - generic "App information"
+  - text: Control plane

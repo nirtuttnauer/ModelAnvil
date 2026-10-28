@@ -1,0 +1,18 @@
+{"timestamp": "2026-10-21T20:00:42+0000", "level": "WARNING", "logger": "django.request", "message": "Forbidden: /api/v1/workers/artifact-grants/discover/", "request_id": "01a1600d-3b4f-72d2-b4c2-ce105bf791c2", "tenant_id": "01a1600d-3b42-74c1-973b-8e977d864da4"}
+{"timestamp": "2026-10-21T20:00:42+0000", "level": "WARNING", "logger": "django.request", "message": "Forbidden: /api/v1/workers/heartbeat/", "request_id": "01a1600d-3b52-7038-974c-a45ef4ed8a1c", "tenant_id": "01a1600d-3b42-74c1-973b-8e977d864da4"}
+{"timestamp": "2026-10-21T20:00:42+0000", "level": "WARNING", "logger": "django.request", "message": "Forbidden: /api/v1/workers/result/", "request_id": "01a1600d-3b54-7c8f-bece-809dc9ec257f", "tenant_id": "01a1600d-3b42-74c1-973b-8e977d864da4"}
+.s............{"timestamp": "2026-10-21T20:00:43+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/dataset-bank/sources/svg-lucide/acquisitions/", "request_id": "01a1600d-3fdd-7595-b741-aa4388f5d8c9", "tenant_id": "01a1600d-3f64-79c2-ae97-51f2dfb1c4e9"}
+.{"timestamp": "2026-10-21T20:00:43+0000", "level": "WARNING", "logger": "django.request", "message": "Bad Request: /api/v1/labeling-campaigns/01a1600d-407c-719e-9f23-8b865301e417/batches/", "request_id": "01a1600d-4082-7b3b-bb6d-147c811b0f17", "tenant_id": "01a1600d-4003-78d6-8dc2-d231f2b8389b"}
+{"timestamp": "2026-10-21T20:00:43+0000", "level": "WARNING", "logger": "django.request", "message": "Conflict: /api/v1/annotation-tasks/01a1600d-408b-7cbe-9fcb-c822c959e9e4/review/", "request_id": "01a1600d-4097-7824-bfdf-f2b2412a21ef", "tenant_id": "01a1600d-4003-78d6-8dc2-d231f2b8389b"}
+{"timestamp": "2026-10-21T20:00:43+0000", "level": "WARNING", "logger": "django.request", "message": "Conflict: /api/v1/annotation-tasks/01a1600d-408b-7ccd-8078-345d41fafc07/review/", "request_id": "01a1600d-40a1-781f-91f1-1828f59514f1", "tenant_id": "01a1600d-4003-78d6-8dc2-d231f2b8389b"}
+..........................................................................s.......................{"timestamp": "2026-10-21T20:00:54+0000", "level": "WARNING", "logger": "django.request", "message": "Forbidden: /api/v1/workers/heartbeat/", "request_id": "01a1600d-6b31-7cae-ad4a-72bc99b20283", "tenant_id": "01a1600d-6b24-7cf7-8900-a6fcf40be7fd"}
+...........{"timestamp": "2026-10-21T20:00:54+0000", "level": "WARNING", "logger": "django.request", "message": "Unauthorized: /api/v1/workers/claim/", "request_id": "01a1600d-6ca8-7b92-a40f-294f5b40a688"}
+............................s..............................ssss...................
+----------------------------------------------------------------------
+Ran 902 tests in 135.293s
+
+OK (skipped=9)
+Destroying test database for alias 'default'...
+Found 902 test(s).
+System check identified no issues (0 silenced).
+Purged parts for 1 transfer sessions (1 part objects).

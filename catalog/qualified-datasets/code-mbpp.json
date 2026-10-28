@@ -1,0 +1,382 @@
+{
+  "schema_version": "1.0",
+  "source_id": "code-mbpp",
+  "upstream": {
+    "repository": "google-research-datasets/mbpp",
+    "commit": "4bb6404fdc6cacfda99d4ac4205087b89d32030c",
+    "file": "full/train-00000-of-00001.parquet",
+    "file_size": 87223,
+    "publisher_lfs_sha256": "09d125ca31edacb7800be8c67c45abff618faf0214ff551291817d06bdb914ae",
+    "full_file_checksum_verified": false
+  },
+  "containers": {
+    "data": {
+      "url": "https://huggingface.co/datasets/google-research-datasets/mbpp/resolve/4bb6404fdc6cacfda99d4ac4205087b89d32030c/full/train-00000-of-00001.parquet",
+      "size": 87223,
+      "segments": [
+        {
+          "start": 21687,
+          "length": 65536,
+          "sha256": "12babdbcf46d767a4a07ad7bec97ef467899afcc9858deaaa4620cd9b838a53f"
+        },
+        {
+          "start": 4,
+          "length": 83386,
+          "sha256": "449863c531cde51e10b0f224a61841868400e783f7a7288103364146ebe2c103"
+        }
+      ]
+    }
+  },
+  "records": [
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=0",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 0
+      },
+      "source_group_id": "mbpp:task:601",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 886,
+      "sha256": "c64df5b06c5a0d32c71d94c1c9ea34fb5421a2d8e53320c37fc5a16b61773170",
+      "blob_sha1": "1a1600f6689306c74232c765b4171ae3506146e3"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=19",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 19
+      },
+      "source_group_id": "mbpp:task:620",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 621,
+      "sha256": "0135b9e2355041684476a28fa52f7df1b99f5bcc588cecba2bcf8dc930e7b5b8",
+      "blob_sha1": "bae729e9b09fac341b05d5386e2ed2b9b8eda058"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=39",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 39
+      },
+      "source_group_id": "mbpp:task:640",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 462,
+      "sha256": "59ba0781e577c21ad6886cd5ccabda87254d3dcc4c631c207a0fab5b7bd7ec46",
+      "blob_sha1": "472fbb2dd399fb928610f56269bf688e05eff468"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=58",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 58
+      },
+      "source_group_id": "mbpp:task:659",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 615,
+      "sha256": "59dbe8b64727b8cc92f019a6a58ab3b338f22589722be988ab4f2315be3af2e7",
+      "blob_sha1": "e82e9d0f7f64430b521336ac3c1a7faf2c633dfe"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=78",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 78
+      },
+      "source_group_id": "mbpp:task:679",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 433,
+      "sha256": "c92f3484bef7e8615a5deededc9ec5de63cb0d4a9fdbcd3047ee3afe9203d834",
+      "blob_sha1": "686632ae98a57c38e3de25ebc36677fafd184677"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=98",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 98
+      },
+      "source_group_id": "mbpp:task:699",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 609,
+      "sha256": "acf7357919cfb4dcd8aeb02f6183bdf2cb51c921d61fa27c6ab3103872c8c0ad",
+      "blob_sha1": "2c69cf92c3bbc38bcd4059da5a3126298b50dbc6"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=117",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 117
+      },
+      "source_group_id": "mbpp:task:718",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 573,
+      "sha256": "b75b5df2d19d0cb2e52fb84db37496e64327b08108bfbab0afda9ddc7e8e2668",
+      "blob_sha1": "04c73c10454cca72a7a394aa993163f75d2a6b75"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=137",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 137
+      },
+      "source_group_id": "mbpp:task:738",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 381,
+      "sha256": "ca4715f013856106a339e840706ff9aea6ca35fd59874a345107b806fec22913",
+      "blob_sha1": "67c297929b919b31cd4f8ba48b932152cc6a33b6"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=157",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 157
+      },
+      "source_group_id": "mbpp:task:758",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 798,
+      "sha256": "0bbbc74517eb059d50012607bc97e50a549510aa9c3b8f4d207fab4d0fafc92d",
+      "blob_sha1": "29b775b767a4c217f1aebc4a2c51bb2eb5c81d88"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=176",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 176
+      },
+      "source_group_id": "mbpp:task:777",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 513,
+      "sha256": "bc7443246db4743ca745335c8bd20416640ee00c5406753e068d279e266f1077",
+      "blob_sha1": "7ff92803e9ddc5d60bbd12d0b97373387462e82b"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=196",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 196
+      },
+      "source_group_id": "mbpp:task:797",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 447,
+      "sha256": "06e725686556c2350f4f245cafa814d385732089c37686b2e5e2dfa52980202a",
+      "blob_sha1": "cd3334709c9158cf72564baceec4a403c7d00df7"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=215",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 215
+      },
+      "source_group_id": "mbpp:task:816",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 407,
+      "sha256": "29b167833eea79fdacc79322e788c11a7222de12efc9635c7ce600a99f57978b",
+      "blob_sha1": "75841f3546385db27a3d39b2fdf77700d8bf9d72"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=235",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 235
+      },
+      "source_group_id": "mbpp:task:836",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 778,
+      "sha256": "113640f1d3b0f257979545c1471c4f33e0c1d915d324332e431cf7cee3b410e5",
+      "blob_sha1": "742c199a37acef4566acc1880237224f87f45ab6"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=255",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 255
+      },
+      "source_group_id": "mbpp:task:856",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 714,
+      "sha256": "0e73dc8d70854980982433121ef68277adaef357fbf847b1bdcf7318016a0d07",
+      "blob_sha1": "f26c1799ff342ca7d77d62467dcc1872cccd8949"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=274",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 274
+      },
+      "source_group_id": "mbpp:task:875",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 491,
+      "sha256": "c59ff12ccd16fa802c15a2cf535852a953272817540b34f6196eb2d73411d617",
+      "blob_sha1": "ae025881e6066ac293dcd3244ebd042d4a45f812"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=294",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 294
+      },
+      "source_group_id": "mbpp:task:895",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 716,
+      "sha256": "e61986799a9bd9db4c972128f87a3008bc7c7100f560d1d8cf42fd9c5fbbebfc",
+      "blob_sha1": "16f905cca9f848331b7e1d2f854b3528d79d1f79"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=314",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 314
+      },
+      "source_group_id": "mbpp:task:915",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 566,
+      "sha256": "a1ff7b229f0041252f37200b6f84f89253c9a7536afff4bdda7d2b9140e02088",
+      "blob_sha1": "a07205918db1d57cf1cdfd16bbf0a9fbe43f3ae9"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=333",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 333
+      },
+      "source_group_id": "mbpp:task:934",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 407,
+      "sha256": "ddc7e1485821b9076bd39f2e804ed912b4395ac4b82807d4770d016eee9f3cda",
+      "blob_sha1": "db471de091bedc38990032d516a2ecfbdcfe9435"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=353",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 353
+      },
+      "source_group_id": "mbpp:task:954",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 473,
+      "sha256": "89d127f069b9d7b237e2ea02f9225212d3c6d7dc3d874e5bb8ef4fdab4fa195b",
+      "blob_sha1": "c14a065e93a3881ee517768d24a0ef6f6f2e4720"
+    },
+    {
+      "path": "full/train-00000-of-00001.parquet#group=0&row=373",
+      "reader": {
+        "kind": "parquet_row",
+        "container": "data",
+        "row_group": 0,
+        "row_index": 373
+      },
+      "source_group_id": "mbpp:task:974",
+      "metadata": {
+        "upstream_split": "train",
+        "configuration": "full"
+      },
+      "size": 646,
+      "sha256": "f7cbb593ef77f9cdea2ff2621ea54f1e20bcacbe3f6f93c18b7e00badd18b048",
+      "blob_sha1": "a7a1e6cf8c771ec131a47a618108ec12d34b9bc8"
+    }
+  ],
+  "licenses": [
+    {
+      "path": "notice/publisher-card",
+      "archive_name": "code-mbpp-publisher-card.txt",
+      "upstream_url": "https://huggingface.co/datasets/google-research-datasets/mbpp/resolve/4bb6404fdc6cacfda99d4ac4205087b89d32030c/README.md",
+      "size": 9058,
+      "sha256": "6377d5c76ba46b9e650daa6d5eb592e671c9b15586e39f23f50ed9bf2ac54cf6",
+      "blob_sha1": "476c2286e2ef2713058cade8be49c2f9c1514055"
+    }
+  ]
+}

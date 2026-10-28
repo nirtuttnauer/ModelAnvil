@@ -29,7 +29,7 @@ from __future__ import annotations
 from typing import Any
 
 from django.core.exceptions import ValidationError
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.urls import path
 from django.utils import timezone
 from rest_framework import serializers, status
@@ -53,6 +53,7 @@ from modelanvil.jobs.models import (
     generate_worker_credential,
     renew_lease,
 )
+from modelanvil.jobs.setup import PROFILES
 
 
 # ---------------------------------------------------------------------------
@@ -64,6 +65,82 @@ class WorkerRegisterSerializer(serializers.Serializer):
     capabilities = serializers.DictField(default=dict)
     slots = serializers.IntegerField(default=1, min_value=1, max_value=1024)
     runner_manifest = serializers.DictField(required=False)
+
+
+class WorkerSetupSerializer(serializers.Serializer):
+    worker_name = serializers.CharField(max_length=200)
+    pool = serializers.CharField(max_length=100)
+    profile = serializers.ChoiceField(choices=list(PROFILES))
+
+
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+@transaction.atomic
+def setup(request):
+    """Provision only shipped trusted local profiles, without starting compute."""
+    from django.core.exceptions import ValidationError as ModelValidationError
+    from modelanvil.jobs.setup import PROFILES, profile_details, profile_runtime
+    from modelanvil.runners.models import RunnerManifest
+    tenant = get_active_tenant()
+    if tenant is None:
+        return _error(ErrorCode.FORBIDDEN, "An active tenant is required.", 403)
+    if request.method == "GET":
+        return Response({"can_administer": role_at_least(getattr(request, "modelanvil_role", None), Role.ADMIN),
+            "profiles": [profile_details(key) for key in PROFILES]})
+    denied = _require_worker_admin(request)
+    if denied is not None:
+        return denied
+    ser = WorkerSetupSerializer(data=request.data)
+    ser.is_valid(raise_exception=True)
+    data = ser.validated_data
+    if Worker.all_objects.filter(tenant_id=tenant, name=data["worker_name"]).exists():
+        return _error(ErrorCode.CONFLICT, "This worker name is already registered. Inspect its connection or use a new name; credentials are shown only once.", 409)
+    if not profile_details(data['profile'])['available']:
+        return _error(ErrorCode.VALIDATION_FAILED, 'Install requirements.inference.txt in the service environment before registering model acquisition.', 400)
+    runner = None
+    caps = {"setup_profile": data["profile"], "accelerator": "cpu", "memory_bytes": 0}
+    if data['profile'] == 'dataset-bank':
+        caps['dataset_acquisition'] = True
+    elif data['profile'] == 'cpu-recipes':
+        runtime = profile_runtime(data['profile'])
+        caps.update(recipe_runtime=runtime.runtime_digest(), recipe_device='cpu', recipe_generation=False)
+    elif data['profile'] == 'model-import':
+        caps['model_import'] = True
+    elif data['profile'] == 'cpu-evaluation':
+        runtime = profile_runtime(data['profile'])
+        caps.update(evaluation_runtime=runtime.CONTRACT_DIGEST, evaluation_build=runtime.BUILD_DIGEST)
+    else:
+        runtime = profile_runtime(data["profile"])
+        manifest = runtime.runner_manifest()
+        runner, _ = RunnerManifest.all_objects.get_or_create(tenant_id=tenant,
+            name=f"Installed {PROFILES[data['profile']][0]}", version="1",
+            defaults={"manifest": manifest, "digest": runtime.digest(manifest),
+                      "compatibility": {"contract_digest": runtime.CONTRACT_DIGEST}})
+        if (not runner.enabled or runner.manifest != manifest or runner.digest != runtime.digest(manifest)
+                or runner.compatibility.get('contract_digest') != runtime.CONTRACT_DIGEST):
+            return _error(ErrorCode.CONFLICT, "The installed runner record is disabled or changed; restore its trusted contract first.", 409)
+        caps['training_runtime'] = runtime.CONTRACT_DIGEST
+    pool, _ = WorkerPool.all_objects.get_or_create(tenant_id=tenant, name=data["pool"])
+    if pool.status != "active":
+        return _error(ErrorCode.CONFLICT, "Select an active pool.", 409)
+    if data['profile'] in ('dataset-bank', 'cpu-recipes') and pool.result_egress != 'envelope':
+        return _error(ErrorCode.CONFLICT, 'Choose a pool that allows verified dataset output.', 409)
+    try:
+        with transaction.atomic():
+            worker = Worker.all_objects.create(tenant_id=tenant, name=data["worker_name"], pool=pool,
+                slots=1, status=Worker.Status.OFFLINE,
+                capabilities=caps)
+    except (ModelValidationError, IntegrityError):
+        return _error(ErrorCode.CONFLICT, "Worker registration conflicted. Refresh inventory before retrying.", 409)
+    secret, hashed = generate_worker_credential()
+    credential = WorkerCredential.all_objects.create(tenant_id=tenant, worker=worker, secret_hash=hashed)
+    record_audit("create", "worker", worker.pk, input_snapshot={"pool_id": pool.pk, "profile": data["profile"]})
+    response = Response({"worker_id": worker.pk, "pool_id": pool.pk, "runner_id": runner.pk if runner else None,
+        "worker_token": secret, "worker_token_expires_at": credential.expires_at.isoformat(),
+        "startup_command": f"python manage.py run_worker --worker-id {worker.pk} --profile {data['profile']}",
+        "connection_state": "not_connected"}, status=201)
+    response["Cache-Control"] = "no-store"
+    return response
 
 
 class WorkerClaimSerializer(serializers.Serializer):
@@ -464,6 +541,7 @@ def activate_pool(request, pool_id: int) -> Response:
 
 
 urls = [
+    path("setup/", setup, name="worker-setup"),
     path("register/", register, name="worker-register"),
     path("claim/", claim, name="worker-claim"),
     path("heartbeat/", heartbeat, name="worker-heartbeat"),

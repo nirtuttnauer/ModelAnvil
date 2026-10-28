@@ -1,0 +1,15 @@
+{"timestamp": "2026-10-21T20:26:09+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a16024-8925-7d0c-b61b-bb428e36791e", "tenant_id": "01a16024-88ce-72ea-8675-c51ad7e145ad", "http_status": 400}
+{"timestamp": "2026-10-21T20:26:09+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a16024-8927-7735-a707-bbc6307571bd", "tenant_id": "01a16024-88ce-72ea-8675-c51ad7e145ad", "http_status": 405}
+{"timestamp": "2026-10-21T20:26:09+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a16024-8928-7991-866a-689932ec7082", "tenant_id": "01a16024-88ce-72ea-8675-c51ad7e145ad", "http_status": 400}
+.{"timestamp": "2026-10-21T20:26:09+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a16024-892e-70c0-8eb3-a83e5f618ba8", "tenant_id": "01a16024-892b-7730-83f6-ecdc5799bb50", "http_status": 400}
+{"timestamp": "2026-10-21T20:26:09+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a16024-8930-73f6-966b-78b4a3c42274", "tenant_id": "01a16024-892b-7730-83f6-ecdc5799bb50", "http_status": 403}
+{"timestamp": "2026-10-21T20:26:09+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a16024-8930-7ec7-a678-7b0fd890384c", "http_status": 401}
+.{"timestamp": "2026-10-21T20:26:09+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a16024-8936-76d2-ab7f-6598e3b897ae", "tenant_id": "01a16024-8931-7799-9a47-a1203ceaabde", "http_status": 404}
+......
+----------------------------------------------------------------------
+Ran 8 tests in 2.334s
+
+OK
+Destroying test database for alias 'default'...
+Found 8 test(s).
+System check identified no issues (0 silenced).

@@ -1,0 +1,33 @@
+[
+  {
+    "width": 320,
+    "height": 568,
+    "passed": true
+  },
+  {
+    "width": 430,
+    "height": 932,
+    "passed": true
+  },
+  {
+    "width": 700,
+    "height": 900,
+    "passed": true
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "passed": true
+  },
+  {
+    "width": 1440,
+    "height": 900,
+    "passed": true
+  },
+  {
+    "width": 375,
+    "height": 812,
+    "theme": "dark",
+    "passed": true
+  }
+]
