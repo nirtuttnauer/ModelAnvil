@@ -50,3 +50,6 @@ storybook-static/
 # Private hosted-service implementation
 /private-saas/
 
+# Storybook screenshot harness output
+web/.screenshots/
+design/figcraft/.figcraft-backups/

@@ -12,7 +12,8 @@
     "storybook": "storybook dev --host 127.0.0.1 -p 6006 --no-open --ci",
     "build-storybook": "storybook build",
     "tokens:sync": "node scripts/sync-figcraft-tokens.mjs",
-    "tokens:check": "node scripts/sync-figcraft-tokens.mjs --check"
+    "tokens:check": "node scripts/sync-figcraft-tokens.mjs --check",
+    "screenshots": "node scripts/screenshot-stories.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
