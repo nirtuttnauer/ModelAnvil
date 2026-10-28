@@ -40,13 +40,20 @@ for (const width of widths) {
     for (const id of ids) {
       const file = `${id}--${width}-${theme}.png`;
       let verified = true;
-      await page.goto(`${origin}/iframe.html?id=${id}&viewMode=story`, { waitUntil: 'networkidle', timeout: 45000 });
-      await page.evaluate((value) => { document.documentElement.dataset.theme = value; }, theme);
-      await page.waitForSelector('#storybook-root[data-demo-verified="passed"]', { timeout: 20000 }).catch(() => { verified = false; });
-      await page.waitForTimeout(400);
-      await page.screenshot({ path: join(out, file), fullPage: true });
-      rows.push({ id, width, theme, file, verified });
-      console.log(`${verified ? 'ok     ' : 'unverif'} ${id} ${width} ${theme}`);
+      try {
+        for (let attempt = 0; ; attempt += 1) {
+          try { await page.goto(`${origin}/iframe.html?id=${id}&viewMode=story`, { waitUntil: 'networkidle', timeout: 45000 }); break; }
+          catch (error) { if (attempt >= 2) throw error; await page.waitForTimeout(1500); }
+        }
+        await page.evaluate((value) => { document.documentElement.dataset.theme = value; }, theme);
+        await page.waitForSelector('#storybook-root[data-demo-verified="passed"]', { timeout: 20000 }).catch(() => { verified = false; });
+        await page.waitForTimeout(400);
+        await page.screenshot({ path: join(out, file), fullPage: true });
+        rows.push({ id, width, theme, file, verified });
+        console.log(`${verified ? 'ok     ' : 'unverif'} ${id} ${width} ${theme}`);
+      } catch (error) {
+        console.log(`FAILED  ${id} ${width} ${theme}: ${String(error.message).split('\n')[0]}`);
+      }
     }
     await context.close();
   }

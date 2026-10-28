@@ -1,0 +1,86 @@
+/* Semantic aliases and derived tokens over the generated tokens.css.
+   Besides tokens.css, this is the only stylesheet that may contain a color literal. */
+@layer tokens, base, primitives, shell, pages;
+
+:root {
+  color-scheme: light;
+  /* Surfaces and text */
+  --canvas: var(--color-canvas);
+  --surface: var(--color-surface);
+  --surface-subtle: var(--color-surface-subtle);
+  --surface-hover: var(--color-surface-subtle);
+  --text: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-muted);
+  --border: var(--color-border);
+  --control-border: var(--color-control-border);
+  /* Action */
+  --primary: var(--color-action);
+  --on-primary: var(--color-on-action);
+  --primary-text: var(--color-action-text);
+  --primary-hover: var(--color-action-hover);
+  --primary-pressed: var(--color-action-pressed);
+  --primary-surface: var(--color-accent-surface);
+  --primary-border: var(--color-accent-border);
+  --focus: var(--color-action);
+  /* Status tones; information uses the primary orange per the design brief */
+  --info: var(--color-action-text);
+  --info-surface: var(--color-accent-surface);
+  --info-border: var(--color-accent-border);
+  --success: var(--color-success);
+  --success-surface: var(--color-success-surface);
+  --success-border: var(--color-success-border);
+  --caution: var(--color-caution);
+  --caution-surface: var(--color-caution-surface);
+  --caution-border: var(--color-caution-border);
+  --error: var(--color-error);
+  --error-surface: var(--color-error-surface);
+  --error-border: var(--color-error-border);
+  --code-surface: var(--color-surface-subtle);
+  /* Typography */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  /* Shape, size and elevation */
+  --radius-control: var(--radius-6);
+  --radius-panel: var(--radius-8);
+  --control-height: 40px;
+  --control-height-sm: 32px;
+  --shadow-overlay: 0 12px 32px rgb(15 23 42 / .16), 0 1px 2px rgb(15 23 42 / .08);
+  --backdrop: rgb(15 23 42 / .45);
+  --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2358677c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  /* Charts */
+  --chart-1: var(--color-action);
+  --chart-2: #0f766e;
+  --chart-3: #5b6abf;
+  --chart-4: #b45309;
+  --chart-neutral: var(--color-text-muted);
+  --chart-grid: var(--color-border);
+  /* Layout */
+  --rail-width: 240px;
+  --header-height: 56px;
+  --inspector-width: 360px;
+  --content-max: 1440px;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --shadow-overlay: 0 12px 32px rgb(0 0 0 / .5), 0 1px 2px rgb(0 0 0 / .4);
+  --backdrop: rgb(0 0 0 / .6);
+  --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a3b2c7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  --chart-2: #5eead4;
+  --chart-3: #a5b4fc;
+  --chart-4: #fbbf24;
+}
+
+@media (pointer: coarse), (max-width: 768px) {
+  :root { --control-height: 44px; }
+}
+
+/* Legacy chart names, kept until every chart reads --chart-1..4. Remove in the cleanup phase. */
+:root {
+  --chart-primary: var(--chart-1);
+  --chart-teal: var(--chart-2);
+  --chart-violet: var(--chart-3);
+  --chart-amber: var(--chart-4);
+  --chart-gray: var(--chart-neutral);
+}
