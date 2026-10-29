@@ -36,6 +36,8 @@ const rows = [];
 for (const width of widths) {
   for (const theme of themes) {
     const context = await browser.newContext({ viewport: { width, height: 900 }, colorScheme: theme === 'dark' ? 'dark' : 'light', reducedMotion: 'reduce' });
+    // Seed the app's own theme preference so its mount-time effect keeps the requested theme.
+    await context.addInitScript((value) => { try { localStorage.setItem('modelanvil_theme', value); } catch { /* storage unavailable */ } }, theme);
     const page = await context.newPage();
     for (const id of ids) {
       const file = `${id}--${width}-${theme}.png`;
@@ -45,8 +47,8 @@ for (const width of widths) {
           try { await page.goto(`${origin}/iframe.html?id=${id}&viewMode=story`, { waitUntil: 'load', timeout: 45000 }); break; }
           catch (error) { if (attempt >= 2) throw error; await page.waitForTimeout(1500); }
         }
-        await page.evaluate((value) => { document.documentElement.dataset.theme = value; }, theme);
         await page.waitForSelector('#storybook-root[data-demo-verified="passed"]', { timeout: 20000 }).catch(() => { verified = false; });
+        await page.evaluate((value) => { document.documentElement.dataset.theme = value; }, theme);
         await page.waitForTimeout(400);
         await page.screenshot({ path: join(out, file), fullPage: true });
         rows.push({ id, width, theme, file, verified });
