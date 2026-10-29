@@ -69,12 +69,15 @@ export const HubSnapshotMemory: Story = {
   parameters: { demoRoute: '#models', demoHeading: 'Models', demoApiPath: '/api/v1/model-versions/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(await canvas.findByText('Add or import a model', { selector: 'summary' }));
-    await userEvent.click(await canvas.findByRole('button', { name: 'Hugging Face' }));
-    await userEvent.type(canvas.getByLabelText('Repository'), 'storybook/model');
-    await userEvent.type(canvas.getByLabelText('Commit revision'), 'f'.repeat(40));
-    await userEvent.click(canvas.getByRole('button', { name: 'Inspect snapshot' }));
-    const card = within(await canvas.findByRole('region', { name: 'Model hardware fit' }));
+    const add = await canvas.findByRole('button', { name: 'Add model' });
+    await waitFor(() => expect(add).toBeEnabled());
+    await userEvent.click(add);
+    const dialog = within(await canvas.findByRole('dialog', { name: 'Add a model' }));
+    await userEvent.click(dialog.getByRole('button', { name: 'Hugging Face' }));
+    await userEvent.type(dialog.getByLabelText('Repository'), 'storybook/model');
+    await userEvent.type(dialog.getByLabelText('Commit revision'), 'f'.repeat(40));
+    await userEvent.click(dialog.getByRole('button', { name: 'Check repository' }));
+    const card = within(await dialog.findByRole('region', { name: 'Model hardware fit' }));
     await waitFor(() => expect(card.getByText('Meets declared memory minimum')).toBeVisible());
     await expect(card.getByText('1 GiB')).toBeVisible();
     await expect(card.getByText(/storage measurement, not runtime RAM or VRAM/)).toBeVisible();

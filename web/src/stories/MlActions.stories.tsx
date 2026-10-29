@@ -12,7 +12,10 @@ export const InitializeCpuBase: Story = {
   parameters: { demoRoute: '#models', demoHeading: 'Models', demoApiPath: '/api/v1/models/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(await canvas.findByRole('button', { name: 'Initialize CPU base' }));
+    await userEvent.click(await canvas.findByText('Advanced', { selector: 'summary' }));
+    const open = canvas.getByRole('button', { name: 'Initialize CPU base' });
+    await waitFor(() => expect(open).toBeEnabled());
+    await userEvent.click(open);
     await userEvent.type(canvas.getByLabelText('CPU base model name'), 'Storybook CPU base');
     await userEvent.click(canvas.getByRole('button', { name: 'Create pinned CPU base' }));
     await expect(canvas.findByText('Demo CPU base “Storybook CPU base” registered in this Storybook session.')).resolves.toBeVisible();

@@ -92,11 +92,14 @@ export const TokenizerSymbols: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await readyWorkspace(canvasElement);
-    await userEvent.click(await canvas.findByRole('button', { name: 'Tokenizer' }));
-    const dialog = within(canvas.getByRole('dialog', { name: 'Register Tokenizer' }));
+    await userEvent.click(await canvas.findByText('Advanced', { selector: 'summary' }));
+    const open = canvas.getByRole('button', { name: 'Register tokenizer' });
+    await waitFor(() => expect(open).toBeEnabled());
+    await userEvent.click(open);
+    const dialog = within(canvas.getByRole('dialog', { name: 'Register tokenizer' }));
     await userEvent.click(dialog.getByRole('button', { name: 'Mistral' }));
     await expect(dialog.getAllByLabelText('Token symbol')[0]).toHaveValue('<s>');
-    await userEvent.click(dialog.getByRole('button', { name: 'Register Tokenizer' }));
+    await userEvent.click(dialog.getByRole('button', { name: 'Register tokenizer' }));
     await waitFor(() => expect(submitted('/api/v1/tokenizers/')).toMatchObject({ name: 'Mistral-Tokenizer', special_tokens: { bos_token: '<s>', eos_token: '</s>' } }));
     await expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
     await expect(demoRequests.filter(request => request.status >= 400)).toHaveLength(0);

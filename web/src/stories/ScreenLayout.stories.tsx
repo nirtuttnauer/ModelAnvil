@@ -43,12 +43,19 @@ export const DatasetUpload: Story = { parameters: { demoRoute: '#datasets' }, pl
 
 export const ModelCatalog: Story = { parameters: { demoRoute: '#models' }, play: async ({ canvasElement }) => {
   const canvas = within(canvasElement);
-  await expect(canvas.findByRole('heading', { name: 'Models & checkpoints' })).resolves.toBeVisible();
-  await expect(canvas.getByText('Acquire a model', { selector: 'h2' })).not.toBeVisible();
-  await userEvent.click(canvas.getByText('Add or import a model', { selector: 'summary' }));
-  await expect(canvas.findByRole('heading', { name: 'Acquire a model' })).resolves.toBeVisible();
+  await expect(canvas.findByRole('heading', { name: 'Models', level: 1 })).resolves.toBeVisible();
+  await expect(canvas.queryByRole('dialog', { name: 'Add a model' })).not.toBeInTheDocument();
+  const add = await canvas.findByRole('button', { name: 'Add model' });
+  await waitFor(() => expect(add).toBeEnabled());
+  await userEvent.click(add);
+  const dialog = await canvas.findByRole('dialog', { name: 'Add a model' });
+  await expect(within(dialog).getByRole('button', { name: 'Hugging Face' })).toBeVisible();
+  await userEvent.keyboard('{Escape}');
+  await waitFor(() => expect(canvas.queryByRole('dialog', { name: 'Add a model' })).not.toBeInTheDocument());
+  await expect(canvas.getByText('Model runtime compatibility', { selector: 'summary' })).not.toBeVisible();
+  await userEvent.click(canvas.getByText('Advanced', { selector: 'summary' }));
   await userEvent.click(canvas.getByText('Model runtime compatibility', { selector: 'summary' }));
-  await expect(canvas.findByRole('heading', { name: 'Model runtime compatibility' })).resolves.toBeVisible();
+  await expect(canvas.findByText('Anvil Assistant · r8')).resolves.toBeVisible();
   passed(canvasElement);
 } };
 
