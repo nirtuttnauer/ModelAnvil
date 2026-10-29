@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "8ae141a173d1f6f4f2a814895cfd629f366ed7c7",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-10-29T05:59:36+00:00",
+  "machine": {
+    "hostname": "cursor",
+    "os": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "python": "3.12.3",
+    "node": "v22.23.4"
+  },
+  "command": "bash -c 'set +e; status=0; for f in requirements*.txt; do echo \"=== $f ===\"; /workspace/.venv/bin/pip-audit -r \"$f\"; code=$?; echo \"EXIT $code\"; if [ \"$code\" -ne 0 ]; then status=$code; fi; done; exit $status'",
+  "exit_code": 0,
+  "stdout": "=== requirements.audio.txt ===\nEXIT 0\n=== requirements.documents.txt ===\nEXIT 0\n=== requirements.embeddings.txt ===\nEXIT 0\n=== requirements.gpu.txt ===\nEXIT 0\n=== requirements.inference.txt ===\nEXIT 0\n=== requirements.production.txt ===\nEXIT 0\n=== requirements.selfhost.lock.txt ===\nEXIT 0\n=== requirements.specialists.txt ===\nEXIT 0\n=== requirements.tools.txt ===\nEXIT 0\n=== requirements.txt ===\nEXIT 0\n=== requirements.vision.txt ===\nEXIT 0\n",
+  "stderr": "No known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\n",
+  "runs": [
+    {
+      "name": "command",
+      "command": "bash -c 'set +e; status=0; for f in requirements*.txt; do echo \"=== $f ===\"; /workspace/.venv/bin/pip-audit -r \"$f\"; code=$?; echo \"EXIT $code\"; if [ \"$code\" -ne 0 ]; then status=$code; fi; done; exit $status'",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}

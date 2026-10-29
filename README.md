@@ -81,6 +81,27 @@ make migrate
 make check
 ```
 
+### Bounded CPU SmolLM2 checkout
+
+`scripts/golden_path.sh <sha>` clones that 40-character commit into a temporary directory, runs only the install commands below, and trains 3 CPU LoRA steps on the pinned SmolLM2-135M base (`--steps` may be 1–10). The Apple MPS path is separate. This is a small execution check of a few optimizer updates, not a quality measurement. A failed or tampered model download exits non-zero and does not skip the training. The public snapshot is fetched only when `MODELANVIL_PUBLIC_MODEL_DOWNLOADS=1`, with no Hub token.
+
+<!-- golden-path-install:start -->
+```sh
+python3.12 -m venv .venv
+.venv/bin/python -m pip install torch==2.13.0 --index-url https://download.pytorch.org/whl/cpu
+.venv/bin/python -m pip install -r requirements.txt -r requirements.gpu.txt
+make migrate
+.venv/bin/python manage.py bootstrap_dev
+make check
+```
+<!-- golden-path-install:end -->
+
+<!-- golden-path-train:start -->
+```sh
+MODELANVIL_PUBLIC_MODEL_DOWNLOADS=1 OMP_NUM_THREADS=1 TOKENIZERS_PARALLELISM=false .venv/bin/python scripts/golden_path.py --train --steps 3
+```
+<!-- golden-path-train:end -->
+
 `bootstrap_dev` creates a local tenant, an admin user, an empty project and a development API key for optional API-key connections. The guided browser flow starts with account creation instead. Run bootstrap only against a local development database; its shared defaults are deliberately insecure for public hosting. It does not create datasets, trained models or execution evidence. Use Storybook for populated demo screens.
 
 Start the API in one terminal, from the repository root:
