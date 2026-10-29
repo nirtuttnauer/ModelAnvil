@@ -109,7 +109,7 @@ Those two are the pre-existing MLX and GGUF fixture tests. They were not runtime
 Stock gitleaks 8.30.1. No `--config`, no baseline, no allowlist, and no `.gitleaks.toml`.
 
 - `gitleaks dir . --redact` on the working tree: 404 findings, all rule `generic-api-key`, exit 1. Console: [gitleaks-dir.summary.txt](gitleaks-dir.summary.txt). Fingerprints match [the ANVIL-002 dir report](../anvil-002-2026-10-29/gitleaks-dir.txt).
-- `gitleaks detect --redact` scanned 167 commits: 411 findings, all rule `generic-api-key`, exit 1. Console: [gitleaks-detect.summary.txt](gitleaks-detect.summary.txt). Fingerprints match [the ANVIL-002 history report](../anvil-002-2026-10-29/gitleaks-detect.txt).
+- `gitleaks detect --redact` after this evidence directory was committed scanned 168 commits: 411 findings, all rule `generic-api-key`, exit 1. Console: [gitleaks-detect.summary.txt](gitleaks-detect.summary.txt). Fingerprints match [the ANVIL-002 history report](../anvil-002-2026-10-29/gitleaks-detect.txt).
 
 A gitignored `web/storybook-static/` bundle from `build-storybook` added one extra `generic-api-key` hit while it was on disk. That directory is build output. It was removed before the recorded `gitleaks dir` scan. It is not in the commit.
 
