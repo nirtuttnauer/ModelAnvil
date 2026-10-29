@@ -1,27 +1,31 @@
 # ANVIL-011 local evidence, 29 October 2026
 
-Label: `local`. Machine: `cursor`, Linux 6.12.94+ x86_64, Python 3.12.3, Node v22.23.4. Records use `docs/engineering/schemas/local-evidence.v1.json` and were written by `.venv/bin/python scripts/local_evidence.py` from a clean `git status --porcelain`.
+Label: `local`. Machine: `cursor`, Linux-6.12.94+-x86_64-with-glibc2.39, Python 3.12.3, Node v22.23.4. Records use `docs/engineering/schemas/local-evidence.v1.json` and were written by `.venv/bin/python scripts/local_evidence.py` from a clean `git status --porcelain`.
 
-The measured tree is `d22a46af751a7f692aa2cdf67361fa9ef85676bc`, the merge of the golden-path implementation with `origin/main` (`aaec53bb3c30d92ce7230991c24542bcfa1a4265`, ANVIL-009). This report is the following docs-only commit. The branch was already pushed, so latest `main` was merged in rather than rewritten.
+The measured tree is `8ae141a173d1f6f4f2a814895cfd629f366ed7c7`, the merge of the golden-path implementation with `origin/main` `e56d6f33614bc2765d89bf406b1923fd3a7aff6a` (ANVIL-021). The branch was already pushed, so latest `main` was merged in rather than rewritten. This report is the following docs-only commit. The commands below ran at `8ae141a173d1f6f4f2a814895cfd629f366ed7c7`.
 
 ## Records
 
-| File | SHA | Command | Exit | Collected | Excluded by tag | Passed | Skipped / xfail / timeout |
+| File | Recorded at | Command | Exit | Collected | Excluded by tag | Passed | Skipped / xfail / timeout |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `golden-path.json` | `d22a46af751a7f692aa2cdf67361fa9ef85676bc` | `scripts/golden_path.sh d22a46af751a7f692aa2cdf67361fa9ef85676bc --steps 3` | 0 | 0 | 0 | 0 | 0 |
-| `make-check.json` | `d22a46af751a7f692aa2cdf67361fa9ef85676bc` | `make check` | 0 | 0 | 0 | 0 | 0 |
-| `backend-sqlite.json` | `d22a46af751a7f692aa2cdf67361fa9ef85676bc` | `manage.py test --noinput --exclude-tag=pg` | 0 | 1266 | 28 | 1266 | 0 |
-| `frontend-npm-test.json` | `d22a46af751a7f692aa2cdf67361fa9ef85676bc` | `npm --prefix web test` | 0 | 249 | 0 | 249 | 0 |
-| `backend-pg.json` | `d22a46af751a7f692aa2cdf67361fa9ef85676bc` | `manage.py test --noinput --tag=pg` | 0 | 28 | 0 | 28 | 0 |
-| `pip-audit.json` | `d22a46af751a7f692aa2cdf67361fa9ef85676bc` | `pip-audit -r` on every `requirements*.txt` | 1 | 0 | 0 | 0 | 0 |
+| `golden-path.json` | 2026-10-29T05:59:24+00:00 | `scripts/golden_path.sh 8ae141a173d1f6f4f2a814895cfd629f366ed7c7 --steps 3` | 0 | 0 | 0 | 0 | 0 |
+| `make-check.json` | 2026-10-29T05:58:35+00:00 | `make check` | 0 | 0 | 0 | 0 | 0 |
+| `backend-sqlite.json` | 2026-10-29T06:04:17+00:00 | `manage.py test --noinput --exclude-tag=pg -v 1` | 0 | 1276 | 28 | 1276 | 0 |
+| `frontend-npm-test.json` | 2026-10-29T05:58:34+00:00 | `npm --prefix web test` | 0 | 249 | 0 | 249 | 0 |
+| `backend-pg.json` | 2026-10-29T06:06:43+00:00 | `manage.py test --noinput --tag=pg -v 1` | 0 | 28 | 0 | 28 | 0 |
+| `pip-audit.json` | 2026-10-29T05:59:36+00:00 | `pip-audit -r` on every `requirements*.txt` | 0 | 0 | 0 | 0 | 0 |
 
-`backend-sqlite.json` lists the 28 excluded test IDs. They are the same 28 IDs the PostgreSQL command executed. SQLite used `DATABASE_ENGINE=sqlite` and `DATABASE_TEST_NAME=/tmp/anvil011-sqlite.sqlite3`. PostgreSQL used `DATABASE_ENGINE=postgresql`, local database `modelanvil` on `127.0.0.1`, pgvector 0.8.1, RabbitMQ at `127.0.0.1:5672`, `HF_HUB_OFFLINE=1`, and the pinned MiniLM, SciFact, and SmolLM2 caches. The database password was supplied in the environment and is not in the record.
+SQLite result line: `Ran 1276 tests in 336.392s` then `OK`. The command was `DATABASE_ENGINE=sqlite DATABASE_NAME=/tmp/anvil011-dev.db DATABASE_TEST_NAME=/tmp/anvil011-sqlite.sqlite3 RABBITMQ_URL=amqp://guest:guest@127.0.0.1:5672/%2F` with `DATABASE_PASSWORD`, `DATABASE_HOST`, `DATABASE_USER`, and `DATABASE_PORT` unset. `backend-sqlite.json` lists the 28 excluded test IDs.
 
-The golden-path stdout redacts one line from `bootstrap_dev`. That command prints the local development key that already lives in `modelanvil/identity/management/commands/bootstrap_dev.py`. No Hub token was set. The run logged Hugging Face's unauthenticated-request warning.
+PostgreSQL result line: `Ran 28 tests in 112.373s` then `OK`. The recorded command is `/workspace/.venv/bin/python manage.py test --noinput --tag=pg -v 1`. The process environment was `DATABASE_ENGINE=postgresql`, database `modelanvil`, user `modelanvil`, host `127.0.0.1`, port `5432`, pgvector 0.8.1, RabbitMQ at `127.0.0.1:5672`, and `HF_HUB_OFFLINE=1` with `TRANSFORMERS_OFFLINE=1`. The database password was supplied in the environment and is not in the record. Those 28 IDs are the same 28 the SQLite command excluded.
+
+Frontend result: `tests 249`, `pass 249`, `fail 0`, `skipped 0`.
+
+`make check` printed `System check identified no issues (0 silenced).`
 
 ## Golden path
 
-`scripts/golden_path.sh d22a46af751a7f692aa2cdf67361fa9ef85676bc --steps 3` cloned that commit from `https://github.com/nirtuttnauer/ModelAnvil.git` into a temporary directory, ran only the README install block, and trained 3 CPU LoRA steps on the pinned SmolLM2-135M base. Exit 0. The log ends with `completed 3 SmolLM2-135M CPU LoRA steps` and `golden path completed 3 SmolLM2-135M CPU steps at d22a46af751a7f692aa2cdf67361fa9ef85676bc`. Duration 60414 ms. The temporary directory was removed after success.
+`scripts/golden_path.sh 8ae141a173d1f6f4f2a814895cfd629f366ed7c7 --steps 3` cloned that commit from `https://github.com/nirtuttnauer/ModelAnvil.git` into a temporary directory, ran only the README install block, and trained 3 CPU LoRA steps on the pinned SmolLM2-135M base. Exit 0. The log ends with `completed 3 SmolLM2-135M CPU LoRA steps` and `golden path completed 3 SmolLM2-135M CPU steps at 8ae141a173d1f6f4f2a814895cfd629f366ed7c7`. The temporary directory was removed after success. No Hub token was set. The run logged Hugging Face's unauthenticated-request warning. One `bootstrap_dev` line in `golden-path.json` is replaced with a note: that command prints the local development key already stored in `modelanvil/identity/management/commands/bootstrap_dev.py`.
 
 ## Counts against baseline `3200915`
 
@@ -33,42 +37,42 @@ Baseline `3200915506331979c712c17ffd0b1817f95fda75`, from the [ANVIL-002 record]
 
 This run:
 
-- SQLite: 1266 passed. That is 35 more executed tests than the baseline's 1231. ANVIL-002 accounts for 25 of them. ANVIL-009's premerge record at `c12d6f1` collected 1260, which is those 1256 plus the four `PaidDefaultsTests` from `d39751a` (`#72`). This ticket adds the six `GoldenPathCommandTests` and `GoldenPathDownloadTests` methods. 1260 + 6 = 1266.
-- PostgreSQL: 28 passed. That is the baseline 24 `pg` tests plus the four tests ANVIL-002 retagged. Same count as ANVIL-009. This ticket adds no `pg` test.
-- Frontend: 249 passed, 0 skipped. That is 15 above the baseline. ANVIL-002 records those 15. This ticket does not change the frontend tests.
+- SQLite: 1276 passed, 0 skipped. That is 1231 + 25 (ANVIL-002) + 4 `PaidDefaultsTests` (`d39751a`, counted in ANVIL-009's 1260) + 3 `DeploySecretKeyCheckTests` (ANVIL-017) + 7 CPU character-eval envelope tests (ANVIL-021, 1270 on `origin/main`) + 6 `GoldenPathCommandTests` and `GoldenPathDownloadTests` methods from this ticket. 1270 + 6 = 1276.
+- PostgreSQL: 28 passed, 0 skipped. That is the baseline 24 plus the four tests ANVIL-002 retagged. This ticket adds no `pg` test.
+- Frontend: 249 passed, 0 skipped. That is the baseline 234 plus the 15 tests recorded by ANVIL-002. This ticket adds no frontend test.
 
 ## Gate G-skip
 
-A skip, xfail, or timeout at runtime is a failure. The three test records above have zero of each. The default command excludes `pg` before the run and lists those IDs. The PostgreSQL command runs that tag. Every ID collected on this host is in one of those two runs.
+A skip, xfail, or timeout at runtime is a failure. The SQLite, PostgreSQL, and frontend records have zero of each. The default command excludes `pg` before the run and lists those 28 IDs. The PostgreSQL command runs that tag. Every collected ID is in one of those two runs.
 
 Two IDs were not collected, because this host has neither `MODELANVIL_MLX_TEST_MODEL_DIR` nor `MODELANVIL_GGUF_TEST_MODEL`:
 
 - `modelanvil.runners.training.test_mlx_runtime.NativeAdapterModelTests.test_frozen_four_bit_base_actual_update_exact_resume_and_corruption`
 - `modelanvil.runners.test_gguf_runtime.GGUFNative.test_actual_cpu_generation_cancellation_and_unload`
 
-They are listed on the test records as `fixture_tests_not_collected`. Their bodies are unchanged.
+They are listed on the test records as `fixture_tests_not_collected`. Their bodies are unchanged. The same two IDs are absent on `main`.
 
-`tests/test_premerge.py` is not collected by Django. On this tree, `python3.12 tests/test_premerge.py` runs 12 tests and fails `test_node_20_process_fails_before_any_suite`, because that test asserts `docs/engineering/verification/anvil-009-2026-10-29/premerge.json` is absent and ANVIL-009 committed that file. The same assertion fails on `origin/main` before this ticket. This ticket does not change that test.
+`tests/test_premerge.py` is not collected by Django. On this tree and on `origin/main`, `python3.12 tests/test_premerge.py` fails `test_node_20_process_fails_before_any_suite`, because that test asserts `docs/engineering/verification/anvil-009-2026-10-29/premerge.json` is absent and ANVIL-009 committed that file. This ticket does not change that test.
 
 ## Gate G-audit
 
-`pip-audit` 2.10.1, `pip-audit -r <file>` for every `requirements*.txt`, with no `--ignore-vuln`. Log: `pip-audit.json`. Ten files reported no known vulnerabilities and exited 0. `requirements.specialists.txt` exited 1 because `mlx-metal==0.32.3` has no matching distribution on this Linux host. No ignore was added. This is the same pre-existing Linux result recorded by ANVIL-002 and ANVIL-009.
+`pip-audit` 2.10.1, `pip-audit -r <file>` for every root `requirements*.txt`, with no `--ignore-vuln`. All 11 files exited 0 with `No known vulnerabilities found`: `requirements.audio.txt`, `requirements.documents.txt`, `requirements.embeddings.txt`, `requirements.gpu.txt`, `requirements.inference.txt`, `requirements.production.txt`, `requirements.selfhost.lock.txt`, `requirements.specialists.txt`, `requirements.tools.txt`, `requirements.txt`, `requirements.vision.txt`. Log: `pip-audit.json`. ANVIL-017's Darwin markers make `requirements.specialists.txt` resolve on this Linux host. No ignore was added.
 
 ## Gate G-secrets
 
-`gitleaks` 8.30.1, stock config. No `--config`, no baseline, no allowlist, and no `.gitleaks.toml`.
+`gitleaks` 8.30.1, stock config. No `--config`, no baseline, no allowlist, and no `.gitleaks.toml`. The raw reports are not committed.
 
-- `gitleaks dir --redact` on the working tree at `d22a46af751a7f692aa2cdf67361fa9ef85676bc`, before this evidence directory was added, exited 1 with 404 findings, all rule `generic-api-key`. The `(rule, file, line)` set matches `../anvil-002-2026-10-29/gitleaks-dir.txt` with nothing added and nothing removed. Console: `gitleaks-dir.summary.txt`.
-- `gitleaks detect --redact` scanned 170 commits and exited 1 with 411 findings, all rule `generic-api-key`. The `(rule, file, commit)` set matches `../anvil-002-2026-10-29/gitleaks-detect.txt` with nothing added and nothing removed. Console: `gitleaks-detect.summary.txt`.
+- `gitleaks dir --redact` on the working tree at `8ae141a173d1f6f4f2a814895cfd629f366ed7c7`, before this evidence update, exited 1 with 370 findings, all rule `generic-api-key`. None are under `anvil-011` or `golden_path`. Console: `gitleaks-dir.summary.txt`.
+- `gitleaks detect --redact` scanned 181 commits and exited 1 with 781 findings. Findings in commits after `e56d6f33614bc2765d89bf406b1923fd3a7aff6a`: 0. Console: `gitleaks-detect.summary.txt`.
 
-A second `gitleaks dir --redact` of this evidence directory, after the records were written, exited 0 with 0 findings. A full-tree `gitleaks dir --redact` with those files on disk was still 404 findings, and the `(rule, file, line)` set was still identical to ANVIL-002. The committed files do not add a finding.
+`reviews/ANVIL-017-gitleaks-history.md` is the QA triage list. ANVIL-021 recorded `gitleaks` 8.28.0 on this history as `dir` exit 0 and `detect` 411 findings, every fingerprint on that list, and recorded `gitleaks` 8.30.1 on `origin/main` as `dir` 370 and `detect` 781. The 370 fingerprints absent from the ANVIL-017 list are all on main commit `75e2565a83b4b0cf96aebe793a9da6823e67d165`. This ticket's commits add 0 findings.
 
-There is no QA-signed ANVIL-017 triage list in the repository. These are the same 404 working-tree and 411 history findings already on `main`. One local training artifact under gitignored `/storage/` produced three extra `dir` hits during an earlier scan; that directory is not part of the tree and was removed before the scan above.
+After these evidence files were written, `gitleaks dir --redact` on `docs/engineering/verification/anvil-011-golden-path` exited 0 with no leaks. The same command on the working tree still found 370, all rule `generic-api-key`, and none of those files are under this directory or `golden_path`.
 
 ## Gate G-rag
 
-`backend-pg.json` stdout includes one retrieval measurement, `TASK69_CONTROLS`: held-out nDCG@5 real 1.0 next to seeded random 0.021535, on 20 queries and 200 SciFact documents. That is the existing small correctness check. This change does not claim a new RAG number.
+`backend-pg.json` stdout includes the existing control `TASK69_CONTROLS`: held-out nDCG real `1.0` next to seeded random `0.021535000000000002`, on 200 documents and 412 chunks. Development nDCG real in that same object is `0.982545`. That is a small correctness check. The documented baseline next to it, from `README.md`, is MiniLM nDCG@5 `1.0000` next to seeded random `0.0215` on 20 judged queries and a closed 200-document SciFact subset. This change does not claim a new RAG number.
 
 ## Merge
 
-The golden path, `make check`, the SQLite suite, the PostgreSQL suite, and the frontend suite exited 0 with no runtime skip, xfail, or timeout. The remaining non-zero results are the pre-existing `mlx-metal` pip-audit failure on Linux, the pre-existing 404/411 gitleaks findings, and the two fixture tests that are not collected without their model directories. `make premerge` was not re-run: it refuses this host's Node v22.23.4 and requires the Docker images named in ANVIL-009. The suites it wraps were run directly and are the records above.
+The golden path, `make check`, the SQLite suite, the PostgreSQL suite, the frontend suite, and `pip-audit` exited 0. The three test records have no runtime skip, xfail, or timeout. The two fixture tests that are not collected are the same two absent on `main`. The `gitleaks` 8.30.1 counts match the counts ANVIL-021 recorded on `main`, and this ticket adds no finding. `make premerge` was not re-run: it refuses this host's Node v22.23.4 and requires the Docker images named in ANVIL-009. The suites it wraps were run directly and are the records above.

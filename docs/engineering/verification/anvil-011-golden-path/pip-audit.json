@@ -1,9 +1,9 @@
 {
   "schema_version": "1",
   "label": "local",
-  "sha": "d22a46af751a7f692aa2cdf67361fa9ef85676bc",
+  "sha": "8ae141a173d1f6f4f2a814895cfd629f366ed7c7",
   "git_status_porcelain": "",
-  "recorded_at": "2026-10-29T05:30:25+00:00",
+  "recorded_at": "2026-10-29T05:59:36+00:00",
   "machine": {
     "hostname": "cursor",
     "os": "Linux-6.12.94+-x86_64-with-glibc2.39",
@@ -12,9 +12,9 @@
     "node": "v22.23.4"
   },
   "command": "bash -c 'set +e; status=0; for f in requirements*.txt; do echo \"=== $f ===\"; /workspace/.venv/bin/pip-audit -r \"$f\"; code=$?; echo \"EXIT $code\"; if [ \"$code\" -ne 0 ]; then status=$code; fi; done; exit $status'",
-  "exit_code": 1,
-  "stdout": "=== requirements.audio.txt ===\nEXIT 0\n=== requirements.documents.txt ===\nEXIT 0\n=== requirements.embeddings.txt ===\nEXIT 0\n=== requirements.gpu.txt ===\nEXIT 0\n=== requirements.inference.txt ===\nEXIT 0\n=== requirements.production.txt ===\nEXIT 0\n=== requirements.selfhost.lock.txt ===\nEXIT 0\n=== requirements.specialists.txt ===\nEXIT 1\n=== requirements.tools.txt ===\nEXIT 0\n=== requirements.txt ===\nEXIT 0\n=== requirements.vision.txt ===\nEXIT 0\n",
-  "stderr": "No known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nERROR:pip_audit._virtual_env:internal pip failure: ERROR: Could not find a version that satisfies the requirement mlx-metal==0.32.3 (from versions: none)\nERROR: No matching distribution found for mlx-metal==0.32.3\n\nERROR:pip_audit._cli:Failed to install packages: ['/tmp/tmpm86o_wt3/bin/python3.12', '-m', 'pip', 'install', '--no-input', '--keyring-provider=subprocess', '--dry-run', '--report', '/tmp/tmp4wr5yccs/tmpzmwvgjdi', '-r', 'requirements.specialists.txt']\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\n",
+  "exit_code": 0,
+  "stdout": "=== requirements.audio.txt ===\nEXIT 0\n=== requirements.documents.txt ===\nEXIT 0\n=== requirements.embeddings.txt ===\nEXIT 0\n=== requirements.gpu.txt ===\nEXIT 0\n=== requirements.inference.txt ===\nEXIT 0\n=== requirements.production.txt ===\nEXIT 0\n=== requirements.selfhost.lock.txt ===\nEXIT 0\n=== requirements.specialists.txt ===\nEXIT 0\n=== requirements.tools.txt ===\nEXIT 0\n=== requirements.txt ===\nEXIT 0\n=== requirements.vision.txt ===\nEXIT 0\n",
+  "stderr": "No known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\n",
   "runs": [
     {
       "name": "command",
