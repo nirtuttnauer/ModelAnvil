@@ -5,7 +5,7 @@ import { ConfigFields, ObjectFields, RecordListEditor, VerifierFields } from '..
 import { DataInspector } from '../components/DataInspector';
 import { alignmentFields, evaluationFields, objectInput, preferenceFields, recordsInput, sampleFields, spanFields, structuredInput, type FormField } from '../components/form-data';
 import { preferencePairs } from '../api/alignment';
-import '../style.css';
+import '../design-system/index.css';
 import './form-editor-stories.css';
 
 const meta = {

@@ -10,7 +10,7 @@ import { InspectorPanel } from '../components/InspectorPanel';
 import { ContextBlockEditor, ContextBlockInputs } from '../components/ContextBlockEditor';
 import { RetrievalEvidenceCard } from '../components/RetrievalEvidenceCard';
 import { objectInput } from '../components/form-data';
-import '../style.css';
+import '../design-system/index.css';
 import './workbench-stories.css';
 
 const meta = {

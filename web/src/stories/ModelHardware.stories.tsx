@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { ModelHardwareFit } from '../components/ModelHardwareFit';
 import type { HardwareTarget, ModelMemory } from '../api/model-hardware';
-import '../style.css';
+import '../design-system/index.css';
 import './data-inspector-stories.css';
 
 const gib = 1024**3;

@@ -8,7 +8,7 @@ export function isOpaqueIdentifier(value: string): boolean {
 }
 
 /** Keep technical identity available without making it the visible name. */
-export function Identifier({ value, label = 'ID' }: { value: string | number | null | undefined; label?: string }) {
+export function Identifier({ value, label = 'ID', display = 'icon' }: { value: string | number | null | undefined; label?: string; display?: 'icon' | 'code' }) {
   const text = value == null ? '' : String(value);
   const tooltipId = useId();
   const trigger = useRef<HTMLButtonElement>(null), tooltip = useRef<HTMLDivElement>(null);
@@ -42,10 +42,11 @@ export function Identifier({ value, label = 'ID' }: { value: string | number | n
   }
   if (!text) return null;
   const Icon = state === 'copied' ? CircleCheck : state === 'failed' ? CircleAlert : Info;
-  return <span className="identifier">
+  return <span className="identifier" data-display={display}>
+    {display === 'code' && <code className="identifier-code">{text}</code>}
     <button ref={trigger} type="button" className="identifier-trigger" aria-label={`Copy ${label}`} aria-describedby={open ? tooltipId : undefined}
       onPointerEnter={show} onPointerLeave={hide} onFocus={show} onBlur={hide}
-      onClick={event => { event.preventDefault(); event.stopPropagation(); void copy(); }}><Icon size={17} aria-hidden="true" /></button>
+      onClick={event => { event.preventDefault(); event.stopPropagation(); void copy(); }}><Icon size={16} aria-hidden="true" /></button>
     <span className="identifier-status" role="status">{state === 'copied' ? `${label} copied.` : state === 'failed' ? `Could not copy ${label}. Select the value in the tooltip to copy it manually.` : ''}</span>
     {open && createPortal(<div ref={tooltip} id={tooltipId} popover="manual" role="tooltip" className="identifier-tooltip" data-side={position.side}
       style={{ left: position.left, top: position.top }} onPointerEnter={show} onPointerLeave={hide}>

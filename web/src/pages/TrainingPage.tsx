@@ -571,7 +571,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
               </div>
 
               {inferError && (
-                <Notice className="notice danger" style={{ marginTop: 'var(--space-8)' }}>
+                <Notice tone="error" className="notice error" style={{ marginTop: 'var(--space-8)' }}>
                   {inferError}
                 </Notice>
               )}

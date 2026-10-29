@@ -80,7 +80,8 @@
     .scope-org { display: none; }
     .scope > svg { display: none; }
     .workspace-search { width: var(--control-height); padding: 0; justify-content: center; }
-    .workspace-search span, .workspace-search kbd { display: none; }
+    .workspace-search kbd { display: none; }
+    .workspace-search span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
     .page-content { padding: var(--space-16) var(--space-16) var(--space-24); }
   }
   @media (max-width: 768px) {

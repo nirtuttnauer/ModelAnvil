@@ -16,8 +16,8 @@ export function InspectorPanel({ title, eyebrow, closeLabel = 'Close details', o
       if (trigger?.isConnected && (element?.contains(document.activeElement) || document.activeElement === document.body)) trigger.focus();
     };
   }, [focusOnOpen]);
-  return <Card as="aside" ref={panel} tabIndex={-1} className="panel ops-inspector inspector-panel" aria-labelledby={id} onKeyDown={e => { if (e.key === 'Escape' && !e.defaultPrevented) { e.preventDefault(); e.stopPropagation(); onClose(); } }}>
-    <div className="panel-title"><div>{eyebrow && <span className="eyebrow">{eyebrow}</span>}<h2 id={id}>{title}</h2></div><Button type="button" className="icon-button" aria-label={closeLabel} onClick={onClose}><X size={17} aria-hidden="true" /></Button></div>
+  return <Card as="aside" ref={panel} tabIndex={-1} data-ui="inspector" className="panel ops-inspector inspector-panel" aria-labelledby={id} onKeyDown={e => { if (e.key === 'Escape' && !e.defaultPrevented) { e.preventDefault(); e.stopPropagation(); onClose(); } }}>
+    <div className="panel-title"><div>{eyebrow && <p data-ui="kicker">{eyebrow}</p>}<h2 id={id}>{title}</h2></div><Button type="button" variant="quiet" icon aria-label={closeLabel} onClick={onClose}><X size={18} aria-hidden="true" /></Button></div>
     <div className="panel-body">{children}</div>{footer && <div className="inspector-footer">{footer}</div>}
   </Card>;
 }

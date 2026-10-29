@@ -5,7 +5,7 @@ export type Tone = 'neutral' | 'info' | 'success' | 'caution' | 'error' | 'runni
 type BoxProps = HTMLAttributes<HTMLElement> & { as?: 'section' | 'div' | 'article' | 'aside' | 'p'; ref?: Ref<HTMLElement> };
 
 export function Card({ as: Element = 'section', tone = 'surface', padded, className, ...props }: BoxProps & { tone?: 'surface' | 'subtle' | 'accent'; padded?: boolean }) {
-  return createElement(Element, { ...props, 'data-ui': 'card', 'data-tone': tone, 'data-padded': padded || undefined, className: join('panel', className) });
+  return createElement(Element, { 'data-ui': 'card', 'data-tone': tone, 'data-padded': padded || undefined, ...props, className: join('panel', className) });
 }
 
 export function Notice({ as: Element = 'div', tone = 'neutral', className, ...props }: BoxProps & { tone?: Tone }) {

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { DataInspector, EvaluationCase, ResponseContent, TextContent } from '../components/DataInspector';
 import { dataResponses } from './data-fixtures';
-import '../style.css';
+import '../design-system/index.css';
 import './data-inspector-stories.css';
 
 const digest = 'a3f1c2de'.repeat(8);

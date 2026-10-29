@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within, waitFor, fn } from 'storybook/test';
 import { ChatResponseContent } from '../components/MarkdownResponse';
-import '../style.css';
+import '../design-system/index.css';
 import '../pages/model-workspace.css';
 import './data-inspector-stories.css';
 

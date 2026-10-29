@@ -42,7 +42,7 @@ for (const width of widths) {
       let verified = true;
       try {
         for (let attempt = 0; ; attempt += 1) {
-          try { await page.goto(`${origin}/iframe.html?id=${id}&viewMode=story`, { waitUntil: 'networkidle', timeout: 45000 }); break; }
+          try { await page.goto(`${origin}/iframe.html?id=${id}&viewMode=story`, { waitUntil: 'load', timeout: 45000 }); break; }
           catch (error) { if (attempt >= 2) throw error; await page.waitForTimeout(1500); }
         }
         await page.evaluate((value) => { document.documentElement.dataset.theme = value; }, theme);

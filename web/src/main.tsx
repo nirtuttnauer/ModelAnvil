@@ -1,21 +1,17 @@
-import { Button, Field, NavigationItem, Notice, WorkspaceHeader } from './components/ui';
+import { Button, Field, Notice, PageHeader, WorkspaceHeader } from './components/ui';
 import { Welcome } from './components/Welcome';
 import { parseResourceRoute } from './api/resource-routes';
 import { DraftScope } from './components/Draft';
 import { ScreenBoundary } from './components/ScreenBoundary';
+import { NavigationRail } from './components/NavigationRail';
+import { SettingsMenu } from './components/SettingsMenu';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   Activity,
-  Bot,
-  Building2,
-  FolderGit2,
+  BookOpen,
+  CheckCheck,
   ChevronRight,
-  ArrowUpRight,
-  RefreshCw,
-  KeyRound,
-  Settings2,
-  X,
   CircleDollarSign,
   Compass,
   Database,
@@ -23,23 +19,23 @@ import {
   Flame,
   Layers3,
   Library,
+  Menu as MenuIcon,
+  MessageSquare,
+  Package,
   Rocket,
-  Workflow,
-  Tags,
-  CheckCheck,
-  Server,
   Scale,
+  ScanText,
+  Server,
+  Tags,
+  Workflow,
+  X,
 } from 'lucide-react';
-import './design-system/tokens.css';
-import './style.css';
-import './premium.css';
-import './workspace-ui.css';
-import './design-system/components.css';
+import './design-system/index.css';
+import './app.css';
 import { WorkspaceSearch } from './components/WorkspaceSearch';
 import { ActiveJobs } from './components/ActiveJobs';
 import { startActivation } from './api/activation';
 import { BuildIdentity } from './components/BuildIdentity';
-import { ThemeControl } from './components/ThemeControl';
 import { apiPage, apiRequest, errorMessage, setActiveProjectId } from './api/client';
 import { CreateProjectModal } from './components/PrerequisiteModals';
 import { allResources } from './api/resources';
@@ -96,10 +92,10 @@ const pages: { name: Page; icon: React.ElementType; endpoint: string; slug?: str
   { name: 'Dataset Bank', icon: Library, endpoint: '/api/v1/dataset-bank/sources/' },
   { name: 'Datasets', icon: Database, endpoint: '/api/v1/datasets/' },
   { name: 'Annotation', icon: Tags, endpoint: '/api/v1/labeling-campaigns/' },
-  { name: 'Models', icon: Bot, endpoint: '/api/v1/models/' },
-  { name: 'Chat', icon: Bot, endpoint: '/api/v1/inference/models/' },
-  { name: 'Specialists', icon: FileCode, endpoint: '/api/v1/specialists/' },
-  { name: 'Recipes', icon: Workflow, endpoint: '/api/v1/recipes/' },
+  { name: 'Models', icon: Package, endpoint: '/api/v1/models/' },
+  { name: 'Chat', icon: MessageSquare, endpoint: '/api/v1/inference/models/' },
+  { name: 'Specialists', icon: ScanText, endpoint: '/api/v1/specialists/' },
+  { name: 'Recipes', icon: BookOpen, endpoint: '/api/v1/recipes/' },
   { name: 'Training', icon: Flame, endpoint: '/api/v1/training-runs/' },
   { name: 'Alignment', icon: Scale, endpoint: '/api/v1/alignment-runs/' },
   { name: 'Evaluation', icon: CheckCheck, endpoint: '/api/v1/evaluation-runs/' },
@@ -120,36 +116,42 @@ function slugFor(name: Page): string {
 }
 
 const navigationGroups = [
-  { label: 'Workspace', names: ['Overview', 'Datasets', 'Models', 'Training', 'Evaluation'] },
+  { label: 'Workspace', names: ['Overview', 'Datasets', 'Models', 'Training', 'Evaluation', 'Chat'] },
   { label: 'Data tools', names: ['Dataset Bank', 'Recipes', 'Annotation'] },
-  { label: 'Develop', names: ['Chat', 'Specialists', 'Alignment'] },
+  { label: 'Develop', names: ['Specialists', 'Alignment'] },
   { label: 'Context & release', names: ['RAG', 'Context Lab', 'Releases'] },
   { label: 'Operations', names: ['Workflows', 'Infrastructure', 'Budgets', 'Audit'] },
 ];
 
 const descriptions: Record<Page, string> = {
-  Overview: 'Your data, experiments, and next decisions. All in one workspace.',
-  'Dataset Bank': 'Find source data and inspect its license and readiness.',
-  Datasets: 'Prepare reproducible data, inspect splits, and publish immutable versions.',
-  Annotation: 'Review samples, refine labels, and build approved training snapshots.',
-  Models: 'Keep model versions and their evaluation evidence together.',
-  Chat: 'Run local models, save conversations and compare actual responses.',
-  Specialists: 'Read image text and evaluate structured decisions with pinned local models.',
-  Recipes: 'Compose typed transformations, preview actual generation and publish recoverable dataset runs.',
-  Training: 'Fine-tune a pretrained model with your own examples.',
-  Alignment: 'Configure preference learning and inspect recorded outcomes.',
-  Evaluation: 'Compare pinned versions, inspect failures, and review the evidence.',
-  Workflows: 'Follow execution, inspect attempts, and recover interrupted work.',
-  RAG: 'Explore knowledge sources and inspect retrieved evidence.',
-  'Context Lab': 'Compile exact inputs and inspect how your token budget is allocated.',
-  Releases: 'Inspect release versions, serving endpoints, and software provenance.',
-  Infrastructure: 'Inspect worker pools, capabilities, and recorded availability.',
-  Budgets: 'Understand measured usage, reservations, and spending policies.',
-  Audit: 'Trace changes and inspect the events behind your workspace.',
-  'Resource Detail': 'Inspect an exact authorized revision, its evidence and compatible next actions.',
-  'Run Detail':
-    'Follow one run end to end: observed state, desired state, attempts, evidence and recovery blockers.',
+  Overview: 'Your next step, active work and latest results.',
+  'Dataset Bank': 'Find source data and check its license and readiness.',
+  Datasets: 'Prepare and publish dataset versions.',
+  Annotation: 'Review samples and build approved label snapshots.',
+  Models: 'Model versions and what they can do.',
+  Chat: 'Run local models and compare responses.',
+  Specialists: 'Read documents and make typed decisions with local models.',
+  Recipes: 'Compose data recipes, preview them and publish runs.',
+  Training: 'Fine-tune a model on your examples.',
+  Alignment: 'Configure preference learning and inspect outcomes.',
+  Evaluation: 'Compare model versions on held-out examples.',
+  Workflows: 'Follow jobs from queue to outcome.',
+  RAG: 'Explore knowledge sources and retrieved evidence.',
+  'Context Lab': 'Compile exact inputs and see the token budget.',
+  Releases: 'Release versions, serving endpoints and provenance.',
+  Infrastructure: 'Worker pools, capabilities and availability.',
+  Budgets: 'Usage, reservations and spending policies.',
+  Audit: 'Trace the events behind your workspace.',
+  'Resource Detail': 'One exact version, its evidence and next actions.',
+  'Run Detail': 'One run end to end: state, attempts, evidence and recovery.',
 };
+
+/** The rail item that represents a route, including the URL-only detail routes. */
+function navigationTarget(active: Page, runRoute: ReturnType<typeof parseRunRoute>, resourceRoute: ReturnType<typeof parseResourceRoute>): Page {
+  if (active === 'Resource Detail') return resourceRoute?.kind === 'model-version' ? 'Models' : 'Datasets';
+  if (active === 'Run Detail') return runRoute?.kind === 'training' ? 'Training' : runRoute?.kind === 'evaluation' ? 'Evaluation' : 'Workflows';
+  return active;
+}
 
 function currentPage(): Page {
   const slug = window.location.hash.slice(1).split('?')[0].split('/')[0];
@@ -168,10 +170,12 @@ interface OrganizationConnection {
 
 export function App() {
   const [active, setActive] = React.useState<Page>(currentPage);
-  const [advancedNavigation, setAdvancedNavigation] = React.useState(() => !navigationGroups[0].names.includes(currentPage()));
-  React.useEffect(() => { if (!navigationGroups[0].names.includes(active)) setAdvancedNavigation(true); }, [active]);
   const [resourceRoute, setResourceRoute] = React.useState(() => parseResourceRoute(window.location.hash));
   const [runRoute, setRunRoute] = React.useState(() => parseRunRoute(window.location.hash));
+  const selectedNavigation = navigationTarget(active, runRoute, resourceRoute);
+  const [advancedNavigation, setAdvancedNavigation] = React.useState(() => !navigationGroups[0].names.includes(selectedNavigation));
+  // The advanced groups open for their own pages and close again when the user returns to the workspace group.
+  React.useEffect(() => { setAdvancedNavigation(!navigationGroups[0].names.includes(selectedNavigation)); }, [selectedNavigation]);
   const [token, setTokenState] = React.useState<string>(
     () => localStorage.getItem('modelanvil_token') ?? ''
   );
@@ -206,7 +210,6 @@ export function App() {
   const activeProject = projects.find((p) => p.id === activeProjectId) || null;
 
   const [navigationOpen, setNavigationOpen] = React.useState(false);
-  const [headerOptionsOpen, setHeaderOptionsOpen] = React.useState(false);
   const menuButton = React.useRef<HTMLButtonElement>(null);
   const connectionDialog = React.useRef<HTMLDialogElement>(null);
   const connectionRequest = React.useRef<AbortController | null>(null);
@@ -433,10 +436,6 @@ export function App() {
 
   if (!token || (!organizationLoading && !currentOrganization)) return <Welcome onConnected={welcomeConnected} />;
 
-  const selectedNavigation = active === 'Resource Detail' ? resourceRoute?.kind === 'model-version' ? 'Models' : 'Datasets' : active === 'Run Detail'
-    ? runRoute?.kind === 'training' ? 'Training' : runRoute?.kind === 'evaluation' ? 'Evaluation' : 'Workflows'
-    : active;
-
   return (
     <div className={`layout ${navigationOpen ? 'navigation-open' : ''}`}>
       <a
@@ -449,101 +448,26 @@ export function App() {
       >
         Skip to content
       </a>
-      <aside className="navigation-rail" id="workspace-navigation" aria-label="Workspace navigation">
-        <a className="brand" href="#overview" aria-label="ModelAnvil Model Workspace overview">
-          <img className="brand-logo" src={`${import.meta.env.BASE_URL}brand/modelanvil-logo-reversed.svg`} alt="" width="1088" height="240" />
-          <img className="brand-icon" src={`${import.meta.env.BASE_URL}brand/modelanvil-icon.svg`} alt="" width="256" height="256" />
-          <span className="brand-subtitle">MODEL WORKSPACE</span>
-        </a>
-        <div
-          className="workspace"
-          title="Workspace is scoped to the connected API key and active project"
-        >
-          <span className="workspace-avatar">{tenantName.charAt(0).toUpperCase()}</span>
-          <div>
-            <strong>{tenantName}</strong>
-            <small>{activeProject ? activeProject.name : 'Tenant workspace'}</small>
-          </div>
-        </div>
-        <nav aria-label="Main navigation">
-          {navigationGroups.slice(0, 1).map((group) => (
-            <div className="nav-group" key={group.label}>
-              <p className="nav-label">{group.label}</p>
-              {pages
-                .filter((page) => group.names.includes(page.name))
-                .map(({ name, icon: Icon }) => (
-                  <NavigationItem
-                    key={name}
-                    title={name}
-                    selected={selectedNavigation === name}
-                    icon={<Icon size={18} aria-hidden="true" />}
-                    aria-label={name}
-                    onClick={() => load(name)}
-                  >
-                    {name}
-                  </NavigationItem>
-                ))}
-            </div>
-          ))}
-          <details className="advanced-navigation" open={advancedNavigation} onToggle={event => setAdvancedNavigation(event.currentTarget.open)}>
-            <summary>Advanced workspace</summary>
-            {navigationGroups.slice(1).map(group => <div className="nav-group" key={group.label}>
-              <p className="nav-label">{group.label}</p>
-              {pages.filter(page => group.names.includes(page.name)).map(({ name, icon: Icon }) => <NavigationItem key={name} title={name} selected={selectedNavigation === name} icon={<Icon size={18} aria-hidden="true" />} aria-label={name} onClick={() => load(name)}>{name}</NavigationItem>)}
-            </div>)}
-          </details>
-        </nav>
-        <div className="sidebar-bottom">
-          <span
-            className={`status-dot ${
-              apiStatus === 'API unavailable'
-                ? 'offline'
-                : apiStatus === 'Checking API'
-                ? 'checking'
-                : ''
-            }`}
-          />
-          <span>
-            {apiStatus}
-            <small>Control plane</small>
-          </span>
-        </div>
-      </aside>
+      <NavigationRail
+        groups={navigationGroups}
+        pages={pages.filter((page) => !page.slug)}
+        selected={selectedNavigation}
+        advancedOpen={advancedNavigation}
+        onAdvancedToggle={setAdvancedNavigation}
+        onNavigate={(name) => load(name as Page)}
+      />
       <main>
-        <WorkspaceHeader className={headerOptionsOpen ? 'options-open' : undefined}>
-          <div className="compact-title">
-            <a className="compact-product" href="#overview">ModelAnvil</a>
-            <span className="compact-page">{active}</span>
-            <Button type="button" className="icon-button" aria-label="Workspace options" aria-expanded={headerOptionsOpen} aria-controls="workspace-context workspace-actions" onClick={() => setHeaderOptionsOpen(value => !value)}>
-              <Settings2 size={17} aria-hidden="true" />
-            </Button>
-            <Button type="button" ref={menuButton} variant="quiet" aria-label="Menu — toggle navigation" aria-expanded={navigationOpen} aria-controls="workspace-navigation" onClick={() => setNavigationOpen(value => !value)}>Menu</Button>
-          </div>
-          <div className="breadcrumbs" id="workspace-context">
+        <WorkspaceHeader>
+          <Button type="button" ref={menuButton} variant="quiet" icon className="menu-button" aria-label="Menu — toggle navigation" aria-expanded={navigationOpen} aria-controls="workspace-navigation" onClick={() => setNavigationOpen((value) => !value)}>
+            <MenuIcon size={20} aria-hidden="true" />
+          </Button>
+          <a className="brand-compact" href="#overview" aria-label="ModelAnvil overview">
+            <img src={`${import.meta.env.BASE_URL}brand/modelanvil-icon.svg`} alt="" width="28" height="28" />
+          </a>
+          <div className="scope" id="workspace-context">
+            <span className="scope-org" title={tenantName}>{tenantName}</span>
+            <ChevronRight size={14} aria-hidden="true" />
             <label className="organization-select">
-              <Building2 size={16} aria-hidden="true" />
-              <select
-                aria-label="Organization"
-                value={currentOrganization?.tenant_id || ''}
-                disabled={organizationLoading || connectionBusy}
-                onChange={(e) => selectOrganization(e.target.value)}
-              >
-                {!currentOrganization && (
-                  <option value="" disabled>
-                    {tenantName}
-                  </option>
-                )}
-                {organizationConnections.map(({ organization }) => (
-                  <option key={organization.tenant_id} value={organization.tenant_id}>
-                    {organization.name}
-                  </option>
-                ))}
-                <option value="connect-organization">Connect organization…</option>
-              </select>
-            </label>
-            <ChevronRight className="breadcrumb-divider" size={14} aria-hidden="true" />
-            <label className="organization-select">
-              <FolderGit2 size={16} aria-hidden="true" />
               <select
                 aria-label="Project"
                 value={activeProjectId || ''}
@@ -563,76 +487,65 @@ export function App() {
                 <option value="create-project">+ New project…</option>
               </select>
             </label>
-            <ChevronRight className="breadcrumb-divider" size={14} aria-hidden="true" />
-            <strong className="breadcrumb-page">{active}</strong>
           </div>
           <div className="header-actions" id="workspace-actions">
-            <a className="mobile-brand" href="#overview" aria-label="ModelAnvil overview">
-              <img src={`${import.meta.env.BASE_URL}brand/modelanvil-icon.svg`} alt="" width="32" height="32" />
-            </a>
-            <WorkspaceSearch pages={pages.filter(p => p.name !== 'Run Detail').map(p => p.name)} onNavigate={name => load(name as Page)} />
-            <ThemeControl />
+            <WorkspaceSearch pages={navigationGroups.flatMap((group) => group.names)} onNavigate={(name) => load(name as Page)} />
             {!projectLoading && !organizationLoading && token && <ActiveJobs key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />}
-            <Button
-              className="icon-button"
-              title="Refresh workspace"
-              aria-label="Refresh workspace"
-              onClick={refresh}
-            >
-              <RefreshCw size={16} />
-            </Button>
-            <Button
-              className="connection-button"
-              aria-label={token === 'session' ? 'Sign out' : 'Connection'}
-              disabled={connectionBusy}
-              onClick={() => token === 'session' ? void signOut() : openConnection()}
-            >
-              <KeyRound size={15} aria-hidden="true" />
-              <span>{token === 'session' ? 'Sign out' : 'Connection'}</span>
-            </Button>
+            <SettingsMenu
+              tenantName={tenantName}
+              organizations={organizationConnections.map((connection) => connection.organization)}
+              currentOrganization={currentOrganization}
+              organizationDisabled={organizationLoading || connectionBusy}
+              onSelectOrganization={selectOrganization}
+              onRefresh={refresh}
+              isSession={token === 'session'}
+              connectionBusy={connectionBusy}
+              onConnection={() => openConnection()}
+              onSignOut={() => void signOut()}
+              apiStatus={apiStatus}
+              about={<BuildIdentity token={token} refreshKey={refreshKey} />}
+            />
           </div>
         </WorkspaceHeader>
         <dialog
           ref={connectionDialog}
           className="connection-dialog"
+          data-ui="dialog"
           aria-labelledby="connection-title"
           onCancel={cancelConnectionRequest}
           onClose={cancelConnectionRequest}
         >
-          <div className="dialog-title">
-            <h2 id="connection-title">Connect organization</h2>
-            <Button
-              className="icon-button"
-              aria-label="Close connection settings"
-              onClick={() => connectionDialog.current?.close()}
-            >
-              <X size={18} />
+          <header>
+            <div>
+              <h2 id="connection-title">Connect organization</h2>
+              <p>Enter an organization’s API key to verify access. Connected organizations stay available in this browser session.</p>
+            </div>
+            <Button type="button" variant="quiet" icon aria-label="Close connection settings" onClick={() => connectionDialog.current?.close()}>
+              <X size={18} aria-hidden="true" />
             </Button>
+          </header>
+          <div data-ui="dialog-body">
+            <form className="api-key" onSubmit={connect} aria-busy={connectionBusy}>
+              {connectionError && (
+                <Notice as="p" tone="error" className="notice error" role="alert">
+                  {connectionError}
+                </Notice>
+              )}
+              <label htmlFor="api-key">API key</label>
+              <Field
+                id="api-key"
+                required
+                disabled={connectionBusy}
+                type="password"
+                placeholder="Bearer API key"
+                value={draftToken}
+                onChange={(e) => setDraftToken(e.target.value)}
+              />
+              <Button variant="primary" type="submit" disabled={connectionBusy}>
+                {connectionBusy ? 'Verifying access…' : 'Connect'}
+              </Button>
+            </form>
           </div>
-          <p className="muted">
-            Enter an organization’s API key to verify access and connect its workspace. Connected
-            organizations appear in the dropdown for this browser session.
-          </p>
-          <form className="api-key" onSubmit={connect} aria-busy={connectionBusy}>
-            {connectionError && (
-              <Notice as="p" tone="error" className="notice error" role="alert">
-                {connectionError}
-              </Notice>
-            )}
-            <label htmlFor="api-key">API key</label>
-            <Field
-              id="api-key"
-              required
-              disabled={connectionBusy}
-              type="password"
-              placeholder="Bearer API key"
-              value={draftToken}
-              onChange={(e) => setDraftToken(e.target.value)}
-            />
-            <Button className="primary" type="submit" disabled={connectionBusy}>
-              {connectionBusy ? 'Verifying access…' : 'Connect'}
-            </Button>
-          </form>
         </dialog>
 
         <CreateProjectModal
@@ -652,21 +565,11 @@ export function App() {
               <Button onClick={() => openConnection()}>Review connection</Button>
             </Notice>
           )}
-          <div className="page-heading">
-            <div>
-              <span className="eyebrow">
-                {navigationGroups.find((group) => group.names.includes(active))?.label ?? 'Run'}
-              </span>
-              <h1>{active === 'Overview' ? 'Project overview' : active === 'RAG' ? 'Retrieval workbench' : active}</h1>
-              <p>{descriptions[active]}</p>
-            </div>
-            {active === 'Overview' && (
-              <Button onClick={() => load('Workflows')}>
-                Open workflows
-                <ArrowUpRight size={16} aria-hidden="true" />
-              </Button>
-            )}
-          </div>
+          <PageHeader
+            title={active === 'Overview' ? 'Project overview' : active === 'RAG' ? 'Retrieval workbench' : active}
+            description={descriptions[active]}
+            actions={<div id="page-actions" data-ui="actions" />}
+          />
 
           <DraftScope.Provider value={currentOrganization ? { organization: currentOrganization.tenant_id, project: activeProjectId } : null}>
           <ScreenBoundary key={`${token}-${activeProjectId}-${active}`}>
@@ -788,12 +691,6 @@ export function App() {
 
           </ScreenBoundary>
           </DraftScope.Provider>
-          <footer>
-            <BuildIdentity token={token} refreshKey={refreshKey} />
-            <span>
-              <Activity size={14} /> Control plane
-            </span>
-          </footer>
         </div>
       </main>
     </div>

@@ -14,6 +14,7 @@ export function Dialog({ title, description, open, onClose, footer, size, closeL
   }, [open]);
   return <dialog ref={ref} data-ui="dialog" data-size={size} aria-labelledby={`${id}-title`} aria-describedby={description ? `${id}-description` : undefined}
     onCancel={event => { event.preventDefault(); onClose(); }} onClose={() => { if (open) onClose(); }}
+    onKeyDown={event => { if (event.key === 'Escape' && !event.defaultPrevented) { event.preventDefault(); event.stopPropagation(); onClose(); } }}
     onClick={event => { if (event.target === event.currentTarget) onClose(); }} {...props}>
     <header><div><h2 id={`${id}-title`}>{title}</h2>{description && <p id={`${id}-description`}>{description}</p>}</div>
       <Button type="button" variant="quiet" icon aria-label={closeLabel} onClick={onClose}><X size={18} aria-hidden="true" /></Button></header>
