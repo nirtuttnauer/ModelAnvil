@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "64829d2eb12015be841151dd2cebc0d53e602aed",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-10-29T04:33:53+00:00",
+  "machine": {
+    "hostname": "cursor",
+    "os": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "python": "3.12.3",
+    "node": "v22.23.4"
+  },
+  "command": "make check",
+  "exit_code": 0,
+  "stdout": "DJANGO_SETTINGS_MODULE=modelanvil.settings PYTHONPATH=. .venv/bin/python manage.py check\nSystem check identified no issues (0 silenced).\n",
+  "stderr": "",
+  "runs": [
+    {
+      "name": "command",
+      "command": "make check",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}
