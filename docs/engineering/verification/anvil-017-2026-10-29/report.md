@@ -109,3 +109,11 @@ Digest hits in the tree were removed by storage: JSON unicode escapes for JSON v
 ## Gate G-rag
 
 `backend-pg.json` stdout includes the existing retrieval control `TASK69_CONTROLS`: held-out nDCG real 1.0 next to seeded random 0.021535, on 200 documents. That is a small correctness check. The documented baseline next to it is MiniLM nDCG@5 1.0000 next to seeded random 0.0215 on 20 queries / 200 SciFact docs (`README.md`). The same record's development nDCG real 0.982545 is the development half of that same check. This change does not claim a new RAG number.
+
+## Rebase onto current main
+
+The commands above ran at `dcb76d642eb622b34bf9d55bdef879540ec353cf`. Rebase onto `aaec53bb3c30d92ce7230991c24542bcfa1a4265` replayed that commit as `75e2565a83b4b0cf96aebe793a9da6823e67d165`. Discovery at the rebased tree collects the same 1263 SQLite IDs and the same 28 PostgreSQL IDs.
+
+`gitleaks detect --source . --log-opts=--all` on the rebased history scanned 167 commits, exited 1, and found 411 findings (391 unique fingerprints), all rule `generic-api-key`. Every fingerprint is still on `reviews/ANVIL-017-gitleaks-history.md`.
+
+`tests.test_premerge.PremergeTests.test_node_20_process_fails_before_any_suite` fails on `origin/main` at `aaec53bb3c30d92ce7230991c24542bcfa1a4265` and on this branch. The assertion expects `docs/engineering/verification/anvil-009-2026-10-29/premerge.json` to be absent, and that file is already committed on main. `manage.py test` does not collect `tests/test_premerge.py`. This ticket leaves that test unchanged.
