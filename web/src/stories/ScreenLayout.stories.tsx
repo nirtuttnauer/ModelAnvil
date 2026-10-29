@@ -90,8 +90,9 @@ export const AuditFilters: Story = { parameters: { demoRoute: '#audit' }, play: 
 export const SourceInspector: Story = { parameters: { demoRoute: '#dataset-bank' }, play: async ({ canvasElement }) => {
   const canvas = within(canvasElement);
   const inspect = (await canvas.findAllByRole('button', { name: /^Inspect / }))[0];
+  const name = inspect.getAttribute('aria-label')!.replace(/^Inspect /, '');
   await userEvent.click(inspect);
-  await waitFor(() => expect(canvas.getByRole('region', { name: 'Source details' })).toHaveFocus());
+  await waitFor(() => expect(canvas.getByRole('complementary', { name })).toHaveFocus());
   passed(canvasElement);
 } };
 
