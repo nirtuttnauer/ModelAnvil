@@ -8,3 +8,4 @@ class CoreConfig(AppConfig):
     def ready(self) -> None:
         # Import signal registrations so they are wired at startup.
         from modelanvil.core import signals  # noqa: F401
+        from modelanvil.core import checks  # noqa: F401

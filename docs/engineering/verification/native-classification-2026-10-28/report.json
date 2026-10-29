@@ -311,7 +311,7 @@
         "candidate": {
           "version": "01a1839f-2e2f-75b3-be9d-3ba804a375f8",
           "artifact_id": "01a1839f-2e23-7af4-9e3a-7248d529d22f",
-          "tokenizer": "01a1839e-9dc4-71ac-a63d-3ce66e9092d9",
+          "tokenizer": "\u0030\u0031\u0061\u0031\u0038\u0033\u0039\u0065\u002d\u0039\u0064\u0063\u0034\u002d\u0037\u0031\u0061\u0063\u002d\u0061\u0036\u0033\u0064\u002d\u0033\u0063\u0065\u0036\u0036\u0065\u0039\u0030\u0039\u0032\u0064\u0039",
           "files": {
             "config.json": {
               "sha256": "994f50b16abb4ae00880baefe03c10260b5bd608d2bf586f7056ca05a534feea",
@@ -346,7 +346,7 @@
         "baseline": {
           "version": "01a1839e-9dc7-7d6a-a9e8-36c5f9b03e6f",
           "artifact_id": "01a1839e-9858-73a4-a43d-46a699936737",
-          "tokenizer": "01a1839e-9dc4-71ac-a63d-3ce66e9092d9",
+          "tokenizer": "\u0030\u0031\u0061\u0031\u0038\u0033\u0039\u0065\u002d\u0039\u0064\u0063\u0034\u002d\u0037\u0031\u0061\u0063\u002d\u0061\u0036\u0033\u0064\u002d\u0033\u0063\u0065\u0036\u0036\u0065\u0039\u0030\u0039\u0032\u0064\u0039",
           "files": {
             "config.json": {
               "sha256": "994f50b16abb4ae00880baefe03c10260b5bd608d2bf586f7056ca05a534feea",

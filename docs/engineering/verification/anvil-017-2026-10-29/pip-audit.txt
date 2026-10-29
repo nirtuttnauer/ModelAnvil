@@ -1,0 +1,18 @@
+# pip-audit -r, label local
+
+SHA: dcb76d642eb622b34bf9d55bdef879540ec353cf
+Date: 2026-10-29
+Tool: pip-audit 2.10.1
+Command pattern: pip-audit -r <file> from the repository root. No --ignore-vuln and no exception file.
+
+- `requirements.audio.txt` exit 0: No known vulnerabilities found
+- `requirements.documents.txt` exit 0: No known vulnerabilities found
+- `requirements.embeddings.txt` exit 0: No known vulnerabilities found
+- `requirements.gpu.txt` exit 0: No known vulnerabilities found
+- `requirements.inference.txt` exit 0: No known vulnerabilities found
+- `requirements.production.txt` exit 0: No known vulnerabilities found
+- `requirements.selfhost.lock.txt` exit 0: No known vulnerabilities found
+- `requirements.specialists.txt` exit 0: No known vulnerabilities found
+- `requirements.tools.txt` exit 0: No known vulnerabilities found
+- `requirements.txt` exit 0: No known vulnerabilities found
+- `requirements.vision.txt` exit 0: No known vulnerabilities found

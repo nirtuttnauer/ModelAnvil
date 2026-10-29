@@ -70,7 +70,7 @@
       "task_id": "01a169bc-f1ba-7ae6-8fdf-c1e2e741abd1",
       "record_id": "01a169bd-2ed5-7a90-9ac1-d3914b5b96aa",
       "revision_no": 3,
-      "reviewer_id": "api_key:01a169b8-cdc1-7969-ac8b-620e57a2899a",
+      "reviewer_id": "api_key:\u0030\u0031\u0061\u0031\u0036\u0039\u0062\u0038\u002d\u0063\u0064\u0063\u0031\u002d\u0037\u0039\u0036\u0039\u002d\u0061\u0063\u0038\u0062\u002d\u0036\u0032\u0030\u0065\u0035\u0037\u0061\u0032\u0038\u0039\u0039\u0061",
       "original_prediction": {},
       "human_label": {
         "label": "candidate_a",
@@ -86,7 +86,7 @@
       "task_id": "01a169bc-f1ba-7ae6-8fdf-c1e2e741abd1",
       "record_id": "01a169bd-19a4-782b-bd56-86c637d32f2a",
       "revision_no": 2,
-      "reviewer_id": "api_key:01a169b8-cdc2-7cbf-b118-ba564628cb12",
+      "reviewer_id": "api_key:\u0030\u0031\u0061\u0031\u0036\u0039\u0062\u0038\u002d\u0063\u0064\u0063\u0032\u002d\u0037\u0063\u0062\u0066\u002d\u0062\u0031\u0031\u0038\u002d\u0062\u0061\u0035\u0036\u0034\u0036\u0032\u0038\u0063\u0062\u0031\u0032",
       "original_prediction": {},
       "human_label": {
         "label": "candidate_b",
@@ -102,7 +102,7 @@
       "task_id": "01a169bc-f1ba-7ae6-8fdf-c1e2e741abd1",
       "record_id": "01a169bc-ff6c-7583-9c1c-8cc40ff4c560",
       "revision_no": 1,
-      "reviewer_id": "api_key:01a169b8-cdc1-79c4-8b2e-7ff73183ad14",
+      "reviewer_id": "api_key:\u0030\u0031\u0061\u0031\u0036\u0039\u0062\u0038\u002d\u0063\u0064\u0063\u0031\u002d\u0037\u0039\u0063\u0034\u002d\u0038\u0062\u0032\u0065\u002d\u0037\u0066\u0066\u0037\u0033\u0031\u0038\u0033\u0061\u0064\u0031\u0034",
       "original_prediction": {},
       "human_label": {
         "label": "candidate_a",
@@ -118,7 +118,7 @@
       "task_id": "01a169bc-f1ba-776e-b992-404f07b967f4",
       "record_id": "01a169bd-1d06-7437-b004-420783269f5d",
       "revision_no": 2,
-      "reviewer_id": "api_key:01a169b8-cdc2-7cbf-b118-ba564628cb12",
+      "reviewer_id": "api_key:\u0030\u0031\u0061\u0031\u0036\u0039\u0062\u0038\u002d\u0063\u0064\u0063\u0032\u002d\u0037\u0063\u0062\u0066\u002d\u0062\u0031\u0031\u0038\u002d\u0062\u0061\u0035\u0036\u0034\u0036\u0032\u0038\u0063\u0062\u0031\u0032",
       "original_prediction": {},
       "human_label": {
         "label": "tie",
@@ -134,7 +134,7 @@
       "task_id": "01a169bc-f1ba-776e-b992-404f07b967f4",
       "record_id": "01a169bd-021e-7b2f-94df-b8e62edf9629",
       "revision_no": 1,
-      "reviewer_id": "api_key:01a169b8-cdc1-79c4-8b2e-7ff73183ad14",
+      "reviewer_id": "api_key:\u0030\u0031\u0061\u0031\u0036\u0039\u0062\u0038\u002d\u0063\u0064\u0063\u0031\u002d\u0037\u0039\u0063\u0034\u002d\u0038\u0062\u0032\u0065\u002d\u0037\u0066\u0066\u0037\u0033\u0031\u0038\u0033\u0061\u0064\u0031\u0034",
       "original_prediction": {},
       "human_label": {
         "label": "tie",
@@ -150,7 +150,7 @@
       "task_id": "01a169bc-f1b9-72b5-b7b2-cb0f3c9f3db1",
       "record_id": "01a169bd-21eb-7e5b-8d02-ad9949fceb5a",
       "revision_no": 2,
-      "reviewer_id": "api_key:01a169b8-cdc2-7cbf-b118-ba564628cb12",
+      "reviewer_id": "api_key:\u0030\u0031\u0061\u0031\u0036\u0039\u0062\u0038\u002d\u0063\u0064\u0063\u0032\u002d\u0037\u0063\u0062\u0066\u002d\u0062\u0031\u0031\u0038\u002d\u0062\u0061\u0035\u0036\u0034\u0036\u0032\u0038\u0063\u0062\u0031\u0032",
       "original_prediction": {},
       "human_label": {
         "label": "abstain",
@@ -166,7 +166,7 @@
       "task_id": "01a169bc-f1b9-72b5-b7b2-cb0f3c9f3db1",
       "record_id": "01a169bd-0731-7d14-bba8-ae509733324e",
       "revision_no": 1,
-      "reviewer_id": "api_key:01a169b8-cdc1-79c4-8b2e-7ff73183ad14",
+      "reviewer_id": "api_key:\u0030\u0031\u0061\u0031\u0036\u0039\u0062\u0038\u002d\u0063\u0064\u0063\u0031\u002d\u0037\u0039\u0063\u0034\u002d\u0038\u0062\u0032\u0065\u002d\u0037\u0066\u0066\u0037\u0033\u0031\u0038\u0033\u0061\u0064\u0031\u0034",
       "original_prediction": {},
       "human_label": {
         "label": "abstain",
@@ -205,7 +205,7 @@
                   "sha256": "686a199837df6d68a7d0cf4c9a918511941074984ac55391d85a501839b548ea"
                 },
                 "model_version": "01a169b8-cdc7-7eaf-83ac-686a6d918051",
-                "tokenizer": "01a169b8-cdc2-741c-b903-20f76ee50bcf"
+                "tokenizer": "\u0030\u0031\u0061\u0031\u0036\u0039\u0062\u0038\u002d\u0063\u0064\u0063\u0032\u002d\u0037\u0034\u0031\u0063\u002d\u0062\u0039\u0030\u0033\u002d\u0032\u0030\u0066\u0037\u0036\u0065\u0065\u0035\u0030\u0062\u0063\u0066"
               },
               {
                 "identity": "6325326c158d518f27ed09b21fa270e49f3dbb6538732073ae530387073d5a3d",
@@ -215,7 +215,7 @@
                   "sha256": "7cf47b4a4b90e77751d7696b83057416f3ccc710934bea5dadd001a795c4d6b4"
                 },
                 "model_version": "01a169b8-cdca-75f1-8fc0-60de39b2955c",
-                "tokenizer": "01a169b8-cdc2-741c-b903-20f76ee50bcf"
+                "tokenizer": "\u0030\u0031\u0061\u0031\u0036\u0039\u0062\u0038\u002d\u0063\u0064\u0063\u0032\u002d\u0037\u0034\u0031\u0063\u002d\u0062\u0039\u0030\u0033\u002d\u0032\u0030\u0066\u0037\u0036\u0065\u0065\u0035\u0030\u0062\u0063\u0066"
               }
             ],
             "raw_single_user_prompt": true,
@@ -263,7 +263,7 @@
                 "reason": "Authored reviewer_one fixture: candidate_a under the pinned guidelines; mechanics only."
               },
               "record": "01a169bc-ff6c-7583-9c1c-8cc40ff4c560",
-              "reviewer": "api_key:01a169b8-cdc1-79c4-8b2e-7ff73183ad14",
+              "reviewer": "api_key:\u0030\u0031\u0061\u0031\u0036\u0039\u0062\u0038\u002d\u0063\u0064\u0063\u0031\u002d\u0037\u0039\u0063\u0034\u002d\u0038\u0062\u0032\u0065\u002d\u0037\u0066\u0066\u0037\u0033\u0031\u0038\u0033\u0061\u0064\u0031\u0034",
               "revision": 1
             },
             {
@@ -273,7 +273,7 @@
                 "reason": "Authored reviewer_two fixture: candidate_b under the pinned guidelines; mechanics only."
               },
               "record": "01a169bd-19a4-782b-bd56-86c637d32f2a",
-              "reviewer": "api_key:01a169b8-cdc2-7cbf-b118-ba564628cb12",
+              "reviewer": "api_key:\u0030\u0031\u0061\u0031\u0036\u0039\u0062\u0038\u002d\u0063\u0064\u0063\u0032\u002d\u0037\u0063\u0062\u0066\u002d\u0062\u0031\u0031\u0038\u002d\u0062\u0061\u0035\u0036\u0034\u0036\u0032\u0038\u0063\u0062\u0031\u0032",
               "revision": 2
             },
             {
@@ -283,7 +283,7 @@
                 "reason": "Authored manager fixture inspected both conflicting reviews; explicit adjudication tests mechanics, not domain quality."
               },
               "record": "01a169bd-2ed5-7a90-9ac1-d3914b5b96aa",
-              "reviewer": "api_key:01a169b8-cdc1-7969-ac8b-620e57a2899a",
+              "reviewer": "api_key:\u0030\u0031\u0061\u0031\u0036\u0039\u0062\u0038\u002d\u0063\u0064\u0063\u0031\u002d\u0037\u0039\u0036\u0039\u002d\u0061\u0063\u0038\u0062\u002d\u0036\u0032\u0030\u0065\u0035\u0037\u0061\u0032\u0038\u0039\u0039\u0061",
               "revision": 3
             }
           ],
