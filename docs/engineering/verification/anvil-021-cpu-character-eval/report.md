@@ -83,8 +83,8 @@ No `--config`, no baseline, no allowlist, and no `.gitleaks.toml`.
 
 `gitleaks` 8.28.0, the version recorded by ANVIL-017:
 
-- `gitleaks dir .` on the working tree that contains these records scanned 24.74 MB and exited 0. Console: `gitleaks-8.28-dir.summary.txt` (`no leaks found`).
-- `gitleaks detect --source . --log-opts=--all` scanned 175 commits and exited 1 with 411 findings, 391 unique fingerprints, all rule `generic-api-key`. Every fingerprint is on `reviews/ANVIL-017-gitleaks-history.md`. Console: `gitleaks-8.28-detect.summary.txt`. The raw report is not committed.
+- `gitleaks dir .` at `09f4991efa039ea0d1c1fb5361c8143cba22ab94` scanned 24.75 MB and exited 0 (`no leaks found`). Console: `gitleaks-8.28-dir.summary.txt`. The same command on the working tree before that commit scanned 24.74 MB and also exited 0.
+- `gitleaks detect --source . --log-opts=--all` after that commit scanned 176 commits and exited 1 with 411 findings, 391 unique fingerprints, all rule `generic-api-key`. Every fingerprint is on `reviews/ANVIL-017-gitleaks-history.md`. None are on this branch's commits. The same command at `1435757d03c45b6fccb0741565e5f43122d90202` scanned 175 commits and also found 411. Console: `gitleaks-8.28-detect.summary.txt`. The raw report is not committed.
 
 `gitleaks` 8.30.1 is the binary on `PATH`. `gitleaks dir .` exited 1 with 370 findings, all rule `generic-api-key`, and none under `anvil-021`. The same command on `origin/main` `16a9be95921f0d99566cd24c1e4e491123f0d0a1` also found 370. `gitleaks detect --source . --log-opts=--all` found 781. The 370 fingerprints that are absent from the ANVIL-017 list are all on main commit `75e2565a83b4b0cf96aebe793a9da6823e67d165`. None are on this branch's commits.
 
