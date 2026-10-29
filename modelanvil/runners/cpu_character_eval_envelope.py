@@ -4,9 +4,15 @@ The policy stores a rule, not a tolerance. The tolerance is the maximum
 absolute difference of each numeric field across three repeat runs. Text
 and boolean fields have no tolerance. A failing check does not change the
 policy id.
+
+``compare`` mirrors ``scripts/rag_report.py``. It raises when the policy
+hash changes or a numeric field leaves the spread of the three frozen
+repeats. A pass reproduces that envelope. It is not a quality pass: the
+held-out completion does not match ``not-the-model-output``.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -16,6 +22,7 @@ REFERENCE_PATH = (
     ROOT / "docs" / "engineering" / "verification" / "anvil-021-cpu-character-eval" / "reference-report.json"
 )
 POLICY_ID = "cpu-character-eval-reproduction-v1"
+REPEAT_DIR = ROOT / "docs" / "engineering" / "verification" / "anvil-021-cpu-character-eval"
 
 _STORED_TOLERANCE_KEYS = {"tolerance", "absolute_tolerance", "numeric_tolerance", "tolerances"}
 _MEASUREMENT_KEYS = {
@@ -59,6 +66,38 @@ def load_policy(path: Path = POLICY_PATH) -> dict:
 
 def load_reference(path: Path = REFERENCE_PATH) -> dict:
     return load_json(path)
+
+
+def policy_hash(policy: dict) -> str:
+    """sha256 of the policy's canonical JSON. Same bytes as ``scripts.rag_report.digest``."""
+    payload = json.dumps(policy, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+    return hashlib.sha256(payload).hexdigest()
+
+
+def load_repeat_report(index: int) -> dict:
+    """One committed repeat. These three runs are the frozen spread, not a quality result."""
+    if index not in (1, 2, 3):
+        raise ValueError("The spread rule uses exactly three repeat runs.")
+    record = load_json(REPEAT_DIR / f"repeat-{index}.json")
+    report = json.loads(record["stdout"])
+    if report.get("contains_measurement") is not True:
+        raise ValueError("Repeat report is not a measurement.")
+    return report
+
+
+def _require(ok: bool, message: str) -> None:
+    if not ok:
+        raise ValueError(message)
+
+
+def _report_policy_hash(report: dict, policy: dict) -> str:
+    if "reproduction_policy" in report:
+        return policy_hash(report["reproduction_policy"])
+    if "policy_hash" in report:
+        return report["policy_hash"]
+    if report.get("policy_id") != policy.get("id"):
+        return ""
+    return policy_hash(policy)
 
 
 def _forbidden_keys(document, forbidden: set[str], prefix: str = "") -> list[str]:
@@ -241,4 +280,72 @@ def check_run(policy: dict, reference: dict, repeats: list[dict], candidate: dic
         "tolerances": spread["tolerances"],
         "exact_disagreements": spread["exact_disagreements"],
         "failures": failures,
+    }
+
+
+def _frozen_repeats() -> list[dict]:
+    return [load_repeat_report(index) for index in (1, 2, 3)]
+
+
+def _check_exact(report: dict, baseline: dict, label: str) -> None:
+    observed = exact_values(report)
+    _require(list(observed) == list(baseline), f"Exact fields left the frozen envelope: {label}")
+    for key, expected in baseline.items():
+        _require(observed[key] == expected, f"Exact field left the frozen envelope: {label} {key}")
+
+
+def _check_numeric(report: dict, baseline: dict[str, float], tolerances: dict[str, float], label: str) -> None:
+    observed = numeric_values(report)
+    missing = [key for key in tolerances if key not in observed]
+    _require(not missing, "Numeric field left the frozen envelope: " + ", ".join(missing))
+    extra = [key for key in observed if key not in tolerances]
+    _require(not extra, "Numeric field left the frozen envelope: " + ", ".join(extra))
+    for key, tolerance in tolerances.items():
+        difference = abs(observed[key] - baseline[key])
+        _require(difference <= tolerance, f"Field outside tolerance: {label} {key}")
+
+
+def compare(reference: dict, current: dict, *, policy: dict | None = None) -> dict:
+    """Fail when ``current`` leaves the frozen envelope or the policy hash changes.
+
+    Mirrors ``scripts.rag_report.compare``: a miss raises ``ValueError`` and a
+    match returns ``passed`` True. ``passed`` means the run reproduced the
+    three frozen repeats. ``quality_pass`` stays false. The pinned held-out
+    text is ``not-the-model-output`` and the reference completion is ``ab``.
+    """
+    frozen = load_policy()
+    supplied = frozen if policy is None else policy
+    pinned = policy_hash(frozen)
+    _require(policy_hash(supplied) == pinned, "Reproduction policy hash changed.")
+    _require(
+        _report_policy_hash(reference, frozen) == _report_policy_hash(current, frozen) == pinned,
+        "Reproduction policy hash changed.",
+    )
+    _require(
+        reference.get("policy_id") == current.get("policy_id") == frozen["id"] == supplied["id"],
+        "Reproduction policy changed.",
+    )
+    repeats = _frozen_repeats()
+    spread = measured_spread(repeats)
+    _require(not spread["exact_disagreements"], "Frozen repeats disagree on an exact field.")
+    exact_baseline = exact_values(repeats[0])
+    numeric_baseline = numeric_values(repeats[0])
+    _check_exact(reference, exact_baseline, "reference")
+    _check_exact(current, exact_baseline, "current")
+    _check_numeric(reference, numeric_baseline, spread["tolerances"], "reference")
+    _check_numeric(current, numeric_baseline, spread["tolerances"], "current")
+    case_passed = all(bool(case["passed"]) for case in current["cases"])
+    matched = all(case["candidate_output"] == case["expected_output"] for case in current["cases"])
+    return {
+        "passed": True,
+        "quality_pass": bool(frozen.get("quality_claim")) and case_passed and matched,
+        "case_passed": case_passed,
+        "policy": frozen["id"],
+        "policy_hash": pinned,
+        "tolerances": spread["tolerances"],
+        "limits": (
+            "Reproduction of the pinned CPU character evaluation only. "
+            "The reference completion is ab and the held-out expected text is not-the-model-output. "
+            "A passing compare is not a quality pass and is not production or hardware qualification."
+        ),
     }
