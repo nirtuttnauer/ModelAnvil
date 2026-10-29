@@ -1,0 +1,10 @@
+label: local
+sha: dcb76d642eb622b34bf9d55bdef879540ec353cf
+date: 2026-10-29T05:16:00+00:00
+machine: cursor, Linux 6.12.94+ x86_64
+tool: gitleaks 8.28.0
+command: gitleaks dir .
+config: stock (no --config, no baseline, no allowlist, no .gitleaks.toml)
+exit: 0
+findings: 0
+console: no leaks found
