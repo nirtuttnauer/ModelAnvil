@@ -1,0 +1,38 @@
+FROM python:3.12-slim-bookworm
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl ca-certificates libsndfile1 libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt requirements.embeddings.txt requirements.documents.txt \
+     requirements.audio.txt requirements.gpu.txt requirements.inference.txt \
+     requirements.tools.txt requirements.vision.txt ./
+
+# CPU wheels first so a later pin does not replace them with a CUDA build.
+RUN pip install --no-cache-dir torch==2.13.0 torchvision==0.28.0 \
+        --index-url https://download.pytorch.org/whl/cpu \
+    && pip install --no-cache-dir \
+        -r requirements.txt \
+        -r requirements.embeddings.txt \
+        -r requirements.documents.txt \
+        -r requirements.audio.txt \
+        -r requirements.gpu.txt \
+        -r requirements.inference.txt \
+        -r requirements.tools.txt \
+        -r requirements.vision.txt \
+        pypdfium2==5.14.0
+
+# Frontend-client HTTP tests call node. Missing node is a runtime skip, which fails the gate.
+# Version matches .nvmrc (Node.js 24).
+ARG NODE_VERSION=24.22.2
+RUN curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz" \
+    | tar -xz -C /usr/local --strip-components=1 \
+    && node --version
+
+CMD ["python", "manage.py", "test", "--noinput", "--tag=pg", "-v", "1"]

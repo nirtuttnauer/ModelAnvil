@@ -1,0 +1,34 @@
+===== requirements.audio.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.documents.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.embeddings.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.gpu.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.inference.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.production.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.selfhost.lock.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.specialists.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.tools.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.vision.txt =====
+No known vulnerabilities found
+EXIT:0
+ALL_EXIT:0
