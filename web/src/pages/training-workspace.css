@@ -1,3 +1,4 @@
+@layer tokens, base, primitives, shell, pages;
 @layer pages {
   .training-page { display: grid; gap: var(--space-16); }
   .training-page [hidden] { display: none; }

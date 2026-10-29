@@ -1,3 +1,4 @@
+@layer tokens, base, primitives, shell, pages;
 @layer pages {
   .active-jobs-trigger[aria-expanded="true"] { background: var(--primary-surface); color: var(--primary-text); }
   .active-jobs-drawer { position: fixed; top: calc(var(--header-height) + 8px); right: 8px; bottom: 8px; left: auto; width: var(--inspector-width); height: auto; max-height: none; max-width: calc(100% - 16px); margin: 0; padding: 0; border: 0; background: transparent; color: var(--text); overflow: visible; z-index: 40; }

@@ -1,3 +1,4 @@
+@layer tokens, base, primitives, shell, pages;
 @layer pages {
   .chart-panel { min-width: 0; }
   .chart-panel[data-bordered] { padding: var(--space-16) var(--space-20); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-panel); }

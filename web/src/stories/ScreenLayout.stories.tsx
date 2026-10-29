@@ -25,16 +25,19 @@ export const FirstTrainingSetup: Story = { parameters: { demoRoute: '#training' 
 
 export const DatasetUpload: Story = { parameters: { demoRoute: '#datasets' }, play: async ({ canvasElement }) => {
   const canvas = within(canvasElement);
-  await expect(canvas.findByRole('heading', { name: 'Dataset and revision lists' })).resolves.toBeVisible();
-  await expect(canvas.getByLabelText('Dataset name')).not.toBeVisible();
-  const toggle = canvas.getByText('Upload and prepare a dataset', { selector: 'summary' });
-  await userEvent.click(toggle);
+  await expect(canvas.findByRole('heading', { name: 'Upload and prepare a dataset', level: 2 })).resolves.toBeVisible();
+  await expect(canvas.findByText('Assistant Research · Demo', { selector: 'option' })).resolves.toBeInTheDocument();
   const name = canvas.getByLabelText('Dataset name');
   await expect(name).toBeVisible();
+  await waitFor(() => expect(name).toBeEnabled());
   await userEvent.type(name, 'My custom examples');
-  await userEvent.click(toggle); await userEvent.click(toggle);
+  await expect(canvas.findByText('Draft saved in this tab')).resolves.toBeVisible();
+  await expect(canvas.getByLabelText('Validation percentage')).not.toBeVisible();
+  await userEvent.click(canvas.getByText('Split and cleanup options', { selector: 'summary' }));
+  await expect(canvas.getByLabelText('Validation percentage')).toBeVisible();
   await expect(name).toHaveValue('My custom examples');
-  await expect(canvas.getByLabelText('Source file')).toBeVisible();
+  await expect(canvas.getByLabelText('Source file')).toBeEnabled();
+  await expect(canvas.getByText('Choose file')).toBeVisible();
   passed(canvasElement);
 } };
 

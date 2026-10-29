@@ -1,3 +1,4 @@
+@layer tokens, base, primitives, shell, pages;
 /* Application shell: layout, navigation rail, header, page chrome and the three breakpoints. */
 @layer shell {
   .layout { min-height: 100dvh; display: grid; grid-template-columns: var(--rail-width) minmax(0, 1fr); }

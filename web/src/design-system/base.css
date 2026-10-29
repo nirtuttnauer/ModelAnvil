@@ -1,3 +1,4 @@
+@layer tokens, base, primitives, shell, pages;
 /* Element defaults. Raw elements look like the primitives so unmigrated pages stay coherent. */
 @layer base {
   * { box-sizing: border-box; }
