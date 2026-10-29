@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "05d0f967b3ffb83d4b9630e55bc8a12754568c40",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-10-29T05:36:11+00:00",
+  "machine": {
+    "hostname": "cursor",
+    "os": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "python": "3.12.3",
+    "node": "v22.23.4"
+  },
+  "command": "/workspace/.venv/bin/python scripts/cpu_character_eval_repeat.py",
+  "exit_code": 0,
+  "stdout": "{\n  \"baseline_metrics\": [\n    {\n      \"key\": \"accuracy\",\n      \"method\": \"wilson\",\n      \"sample_count\": 1,\n      \"slice_name\": \"all\",\n      \"uncertainty\": {\n        \"lower\": 0,\n        \"method\": \"wilson\",\n        \"upper\": 0.7935\n      },\n      \"value\": 0.0\n    },\n    {\n      \"key\": \"accuracy\",\n      \"method\": \"wilson\",\n      \"sample_count\": 1,\n      \"slice_name\": \"held-out\",\n      \"uncertainty\": {\n        \"lower\": 0,\n        \"method\": \"wilson\",\n        \"upper\": 0.7935\n      },\n      \"value\": 0.0\n    }\n  ],\n  \"baseline_weights_sha256\": \"904541009852d589e759e2e3538fe22948be35bb4604ef51cb79e79500c66e34\",\n  \"candidate_weights_sha256\": \"fe523dc37d67948ff1dd54eecf6ae05aa58d550c1501dca1456115a6d19af434\",\n  \"cases\": [\n    {\n      \"baseline_output\": \"\",\n      \"baseline_passed\": false,\n      \"baseline_score\": 0.0,\n      \"candidate_output\": \"ab\",\n      \"case_id\": \"held-out\",\n      \"expected_output\": \"not-the-model-output\",\n      \"input_prompt\": \"zz\",\n      \"passed\": false,\n      \"score\": 0.0,\n      \"slice\": \"held-out\"\n    }\n  ],\n  \"contains_measurement\": true,\n  \"evidence_level\": \"integrated_execution\",\n  \"hostname\": \"cursor\",\n  \"metrics\": [\n    {\n      \"key\": \"accuracy\",\n      \"method\": \"wilson\",\n      \"sample_count\": 1,\n      \"slice_name\": \"all\",\n      \"uncertainty\": {\n        \"lower\": 0,\n        \"method\": \"wilson\",\n        \"upper\": 0.7935\n      },\n      \"value\": 0.0\n    },\n    {\n      \"key\": \"accuracy\",\n      \"method\": \"wilson\",\n      \"sample_count\": 1,\n      \"slice_name\": \"held-out\",\n      \"uncertainty\": {\n        \"lower\": 0,\n        \"method\": \"wilson\",\n        \"upper\": 0.7935\n      },\n      \"value\": 0.0\n    }\n  ],\n  \"platform\": \"Linux-6.12.94+-x86_64-with-glibc2.39\",\n  \"policy_id\": \"cpu-character-eval-reproduction-v1\",\n  \"protocol\": {\n    \"cases\": [\n      {\n        \"case_id\": \"held-out\",\n        \"expected_output\": \"not-the-model-output\",\n        \"input_prompt\": \"zz\",\n        \"slice\": \"held-out\",\n        \"source_group_id\": \"held-out-group\"\n      }\n    ],\n    \"decoding\": \"greedy\",\n    \"device\": \"cpu\",\n    \"executor\": \"modelanvil.runners.eval_worker.evaluation_worker_executor\",\n    \"initialization_seed\": 42,\n    \"max_tokens\": 2,\n    \"optimizer\": {\n      \"algorithm\": \"sgd\",\n      \"learning_rate\": 0.05,\n      \"momentum\": 0\n    },\n    \"profile\": \"cpu-character\",\n    \"prompt_format\": \"plain\",\n    \"runtime_id\": \"modelanvil.cpu-character-sft.v1\",\n    \"scorer_config\": {},\n    \"scorer_type\": \"exact_match\",\n    \"training_samples\": [\n      {\n        \"content_sha256\": \"92094126d52fc25d22a35e0a135087b4ca1edd7bec5c489a32d7fc9b6849a662\",\n        \"sample_id\": \"11111111-1111-4111-8111-111111111111\",\n        \"source_group_id\": \"train-ab\",\n        \"text\": \"ab ab\"\n      }\n    ],\n    \"training_steps\": 2\n  },\n  \"python\": \"3.12.3\",\n  \"wall_seconds\": 0.03109438899991801\n}\n",
+  "stderr": "",
+  "runs": [
+    {
+      "name": "command",
+      "command": "/workspace/.venv/bin/python scripts/cpu_character_eval_repeat.py",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "05d0f967b3ffb83d4b9630e55bc8a12754568c40",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-10-29T05:36:25+00:00",
+  "machine": {
+    "hostname": "cursor",
+    "os": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "python": "3.12.3",
+    "node": "v22.23.4"
+  },
+  "command": "/workspace/.venv/bin/python -c '\nimport json\nfrom pathlib import Path\nfrom modelanvil.runners.cpu_character_eval_envelope import measured_spread, check_run, load_policy, load_reference\nreports = []\nfor n in (1, 2, 3):\n    record = json.loads(Path(f\"/tmp/anvil021/repeats2/repeat-{n}.json\").read_text())\n    reports.append(json.loads(record[\"stdout\"]))\npolicy = load_policy()\nreference = load_reference()\nspread = measured_spread(reports)\nchecks = [check_run(policy, reference, reports, item) for item in reports]\nprint(json.dumps({\n    \"policy_id\": policy[\"id\"],\n    \"repeat_sha\": json.loads(Path(\"/tmp/anvil021/repeats2/repeat-1.json\").read_text())[\"sha\"],\n    \"exact_disagreements\": spread[\"exact_disagreements\"],\n    \"tolerances\": spread[\"tolerances\"],\n    \"checks_ok\": [item[\"ok\"] for item in checks],\n    \"wall_seconds\": [item[\"wall_seconds\"] for item in reports],\n    \"candidate_output\": reports[0][\"cases\"][0][\"candidate_output\"],\n    \"baseline_output\": reports[0][\"cases\"][0][\"baseline_output\"],\n    \"candidate_weights_sha256\": reports[0][\"candidate_weights_sha256\"],\n    \"baseline_weights_sha256\": reports[0][\"baseline_weights_sha256\"],\n    \"score\": reports[0][\"cases\"][0][\"score\"],\n    \"passed\": reports[0][\"cases\"][0][\"passed\"],\n    \"accuracy_value\": reports[0][\"metrics\"][0][\"value\"],\n    \"accuracy_upper\": reports[0][\"metrics\"][0][\"uncertainty\"][\"upper\"],\n}, indent=2, sort_keys=True))\n'",
+  "exit_code": 0,
+  "stdout": "{\n  \"accuracy_upper\": 0.7935,\n  \"accuracy_value\": 0.0,\n  \"baseline_output\": \"\",\n  \"baseline_weights_sha256\": \"904541009852d589e759e2e3538fe22948be35bb4604ef51cb79e79500c66e34\",\n  \"candidate_output\": \"ab\",\n  \"candidate_weights_sha256\": \"fe523dc37d67948ff1dd54eecf6ae05aa58d550c1501dca1456115a6d19af434\",\n  \"checks_ok\": [\n    true,\n    true,\n    true\n  ],\n  \"exact_disagreements\": [],\n  \"passed\": false,\n  \"policy_id\": \"cpu-character-eval-reproduction-v1\",\n  \"repeat_sha\": \"05d0f967b3ffb83d4b9630e55bc8a12754568c40\",\n  \"score\": 0.0,\n  \"tolerances\": {\n    \"baseline_metrics[0].lower\": 0.0,\n    \"baseline_metrics[0].sample_count\": 0.0,\n    \"baseline_metrics[0].upper\": 0.0,\n    \"baseline_metrics[0].value\": 0.0,\n    \"baseline_metrics[1].lower\": 0.0,\n    \"baseline_metrics[1].sample_count\": 0.0,\n    \"baseline_metrics[1].upper\": 0.0,\n    \"baseline_metrics[1].value\": 0.0,\n    \"cases[0].baseline_score\": 0.0,\n    \"cases[0].score\": 0.0,\n    \"metrics[0].lower\": 0.0,\n    \"metrics[0].sample_count\": 0.0,\n    \"metrics[0].upper\": 0.0,\n    \"metrics[0].value\": 0.0,\n    \"metrics[1].lower\": 0.0,\n    \"metrics[1].sample_count\": 0.0,\n    \"metrics[1].upper\": 0.0,\n    \"metrics[1].value\": 0.0\n  },\n  \"wall_seconds\": [\n    0.04171950099998867,\n    0.030515171000388364,\n    0.03109438899991801\n  ]\n}\n",
+  "stderr": "",
+  "runs": [
+    {
+      "name": "command",
+      "command": "/workspace/.venv/bin/python -c '\nimport json\nfrom pathlib import Path\nfrom modelanvil.runners.cpu_character_eval_envelope import measured_spread, check_run, load_policy, load_reference\nreports = []\nfor n in (1, 2, 3):\n    record = json.loads(Path(f\"/tmp/anvil021/repeats2/repeat-{n}.json\").read_text())\n    reports.append(json.loads(record[\"stdout\"]))\npolicy = load_policy()\nreference = load_reference()\nspread = measured_spread(reports)\nchecks = [check_run(policy, reference, reports, item) for item in reports]\nprint(json.dumps({\n    \"policy_id\": policy[\"id\"],\n    \"repeat_sha\": json.loads(Path(\"/tmp/anvil021/repeats2/repeat-1.json\").read_text())[\"sha\"],\n    \"exact_disagreements\": spread[\"exact_disagreements\"],\n    \"tolerances\": spread[\"tolerances\"],\n    \"checks_ok\": [item[\"ok\"] for item in checks],\n    \"wall_seconds\": [item[\"wall_seconds\"] for item in reports],\n    \"candidate_output\": reports[0][\"cases\"][0][\"candidate_output\"],\n    \"baseline_output\": reports[0][\"cases\"][0][\"baseline_output\"],\n    \"candidate_weights_sha256\": reports[0][\"candidate_weights_sha256\"],\n    \"baseline_weights_sha256\": reports[0][\"baseline_weights_sha256\"],\n    \"score\": reports[0][\"cases\"][0][\"score\"],\n    \"passed\": reports[0][\"cases\"][0][\"passed\"],\n    \"accuracy_value\": reports[0][\"metrics\"][0][\"value\"],\n    \"accuracy_upper\": reports[0][\"metrics\"][0][\"uncertainty\"][\"upper\"],\n}, indent=2, sort_keys=True))\n'",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}
