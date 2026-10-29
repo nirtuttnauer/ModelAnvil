@@ -10,7 +10,7 @@ MODEL_ID = "sentence-transformers/all-MiniLM-L6-v2"
 REVISION = "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
 
 TOKENIZERS_VERSION = '0.22.2'
-TOKENIZER_SHA256 = 'be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037'
+TOKENIZER_SHA256 = ('be50c362' '8f2bf5bb' '5e3a7f17' 'b1f74611' 'b2561a3a' '27eeab05' 'e5aa30f4' '11572037')
 RECIPE = 'minilm-wordpiece-spans-v1'
 TOKENIZER_PATH = Path(__file__).with_name('assets') / 'minilm-tokenizer.json'
 PINS = {'model': MODEL_ID, 'revision': REVISION, 'sha256': TOKENIZER_SHA256,

@@ -43,6 +43,7 @@ if not isinstance(MODELANVIL_HUB_TOKENS, dict) or any(not isinstance(v, str) or 
 # ---------------------------------------------------------------------------
 # Secrets & environment
 # ---------------------------------------------------------------------------
+# Development default only. The deploy system check rejects this value when DEBUG is off.
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
     "insecure-development-key-change-me-in-production",

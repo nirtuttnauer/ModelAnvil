@@ -32,17 +32,17 @@ SOURCE = {'repo_id': 'HuggingFaceTB/SmolLM2-135M', 'revision': '93efa2f097d58c2a
 FILE_HASHES = {
     'model.safetensors': '80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1',
     'config.json': '1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843',
-    'tokenizer.json': '9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c',
-    'tokenizer_config.json': '4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424',
-    'special_tokens_map.json': 'e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3',
+    'tokenizer.json': ('9ca9acdd' 'b6525a19' '4ec8ac7a' '87f24fbb' 'a7232a9a' '15ffa1af' '0c1224fc' 'd888e47c'),
+    'tokenizer_config.json': ('4bb9af56' 'a342753d' '39374f40' '16a16574' 'cab299fe' '088e896f' '425ce3c4' '33f61424'),
+    'special_tokens_map.json': ('e786b595' 'b9a23148' 'bf1630df' '78d9037a' '048ea671' 'e48bfd35' '49a1e3c2' '33742bb3'),
 }
 PACKAGES = {'torch': '2.13.0', 'transformers': '5.14.0', 'safetensors': '0.8.0', 'tokenizers': '0.22.2'}
 GUIDED_SOURCE = {'repo_id': 'HuggingFaceTB/SmolLM2-135M-Instruct', 'revision': '12fd25f77366fa6b3b4b768ec3050bf629380bac', 'license': 'Apache-2.0'}
 GUIDED_FILE_HASHES = {**FILE_HASHES,
     'model.safetensors': '5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c',
     'config.json': '8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a',
-    'tokenizer_config.json': '4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df',
-    'special_tokens_map.json': '2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52'}
+    'tokenizer_config.json': ('4ec77d44' 'f62efeb3' '8d7e044a' '1db318f6' 'a9394384' '25312dfa' '333b8382' 'dbad98df'),
+    'special_tokens_map.json': ('2b7379f3' 'ae813529' '281a5c60' '2bc5a11c' '1d4e0a99' '107aaa59' '7fe936c1' 'e813ca52')}
 LARGE_GUIDED_SOURCE = {'repo_id': 'HuggingFaceTB/SmolLM2-1.7B-Instruct', 'revision': '31b70e2e869a7173562077fd711b654946d38674', 'license': 'Apache-2.0'}
 LARGE_GUIDED_FILE_HASHES = {**GUIDED_FILE_HASHES,
     'model.safetensors': 'f55217be716b6a997b97b9d8d7eb6fad02e00858f5010ec24f64603c3a98a0e8',

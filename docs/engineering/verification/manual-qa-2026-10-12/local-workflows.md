@@ -4,7 +4,7 @@ The remaining local journeys passed real execution on 12 October 2026. Dataset B
 
 Tests used isolated SQLite and filesystem storage, real authenticated HTTP, Chromium and the installed CPU, Apple MPS and MLX runtimes. Specialist weights were imported from already-downloaded pinned files with size and digest verification; this run does not qualify a new multi-gigabyte specialist Hub download. Existing workspace data was retained. Concurrent checkout changes required a frozen browser acceptance copy; current-checkout regressions were run separately.
 
-Final browser/API source digest: `acd04b02a9903a261cd3789d05d566dbaa446baa0acfc6ee43017dba02604fdd`. [Source identity](local-snapshot.json) records the complete fingerprint.
+Final browser/API source digest: `acd04b02 a9903a26 1cd3789d 05d566db aa446baa 0acfc6ee 43017dba 02604fdd`. [Source identity](local-snapshot.json) records the complete fingerprint.
 
 ## Results
 

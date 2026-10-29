@@ -102,6 +102,10 @@ Open [localhost:5173](http://localhost:5173) and create an account for the brows
 curl --fail http://127.0.0.1:8000/api/v1/health/
 ```
 
+### Development-only container
+
+The root [Dockerfile](Dockerfile) is a development-only image. It installs the base requirements, applies migrations, runs `bootstrap_dev`, and serves the API with Django's `runserver` on `0.0.0.0`. Those defaults are for local development and are not a production deployment. Production uses [deploy/production/Dockerfile](deploy/production/Dockerfile). Self-hosting uses [deploy/selfhost/Dockerfile](deploy/selfhost/Dockerfile). Both of those stacks require real secrets.
+
 SQLite is the local default. `DATABASE_ENGINE`, `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_HOST` and `DATABASE_PORT` select a PostgreSQL connection; `MODELANVIL_ARTIFACT_ROOT` selects local artifact storage. Configuration is read in [settings.py](modelanvil/settings.py). Keep credentials and private data out of source control.
 
 ### Explore the UI with fixtures

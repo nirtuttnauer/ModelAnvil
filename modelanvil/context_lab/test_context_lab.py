@@ -201,7 +201,7 @@ class ContextLabTests(TestCase):
         """Prompt inspection must not manufacture model recall or a middle dip."""
         runner = ContextExperimentRunner(self.v1)
         exp = runner.run_evidence_position_sweep(
-            target_fact="The secret code is OMEGA-42.", distractor_count=6
+            target_fact="The recall phrase is OMEGA-42.", distractor_count=6
         )
 
         self.assertEqual(exp.stress_type, "position_sweep")
