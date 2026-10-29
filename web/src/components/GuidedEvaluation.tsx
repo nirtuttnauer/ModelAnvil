@@ -68,7 +68,7 @@ export function GuidedEvaluation({ token, trainingRun, currentRun, suites = [], 
       </select></label>
       <p className="muted">Use the dataset’s held-out test split, or select a protected exact-label suite with 1–64 cases. Register a suite above if your dataset has no usable test split.</p>
       {missingSuite && !suitesLoading && <Notice as="p" tone="error" role="alert">The saved suite is unavailable or incompatible. Choose a protected exact-label suite.</Notice>}
-      <Button className="primary" type="button" disabled={busy || suitesLoading || missingSuite} onClick={() => void prepare()}>{busy ? 'Preparing comparison…' : error ? 'Retry preparation' : 'Prepare comparison'}</Button></> : <>
+      <Button variant="primary" type="button" disabled={busy || suitesLoading || missingSuite} onClick={() => void prepare()}>{busy ? 'Preparing comparison…' : error ? 'Retry preparation' : 'Prepare comparison'}</Button></> : <>
       <dl className="guided-review"><div><dt>Candidate</dt><dd>{prepared.evaluation.candidate_name || 'Selected trained checkpoint'}</dd></div>
         <div><dt>Baseline</dt><dd>{prepared.evaluation.baseline_name || 'Pinned starting model'}</dd></div>
         <div><dt>Protected cases</dt><dd>{prepared.suite.cases_count} · {prepared.suite.suite_name} · r{prepared.suite.revision_no}</dd></div>
@@ -76,7 +76,7 @@ export function GuidedEvaluation({ token, trainingRun, currentRun, suites = [], 
       {prepared.warnings.map(warning => <Notice as="p" key={warning}>{warning}</Notice>)}
       <details><summary>Inspect held-out cases and labels</summary><p>Allowed labels: {prepared.labels.join(', ') || 'Not reported'}. Keep these source groups out of training.</p>
         {prepared.cases.map(item => <div className="evaluation-preview-case" key={item.case_id}><strong>{item.case_id}</strong><p>{item.input_prompt}</p><p>Expected label: <strong>{item.expected_output}</strong></p></div>)}</details>
-      {!evaluation?.job && evaluation?.status === 'pending' ? <div className="actions"><Button className="primary" type="button" disabled={busy} onClick={() => void queue()}>{busy ? 'Queueing comparison…' : 'Run comparison'}</Button><p className="muted">Uses managed local compute and an evaluation case allowance. No manual worker setup is needed.</p></div>
+      {!evaluation?.job && evaluation?.status === 'pending' ? <div data-ui="actions"><Button variant="primary" type="button" disabled={busy} onClick={() => void queue()}>{busy ? 'Queueing comparison…' : 'Run comparison'}</Button><p className="muted">Uses managed local compute and an evaluation case allowance. No manual worker setup is needed.</p></div>
         : <p role="status">Comparison {evaluation?.status}. <a href={runHash('evaluation', prepared.evaluation.run_id)}>Open evaluation progress</a></p>}
     </>}
   </section>;

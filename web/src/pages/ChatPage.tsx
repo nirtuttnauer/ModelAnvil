@@ -1,4 +1,6 @@
-import { Button, Dialog, Disclosure, Field, Menu, MenuSection, MultilineField, SegmentedControl, Select, TextControl } from '../components/ui';
+import { Button, Disclosure, Field, Menu, MenuSection, MultilineField, SegmentedControl, Select, TextControl } from '../components/ui';
+import { ConversationDialogs } from '../components/chat/ConversationDialogs';
+import { SavedConversations } from '../components/chat/SavedConversations';
 import { modelDisplayName, referenceInputError } from '../api/chat-input';
 import { comparisonInput, matchedBaseModel, sharedOutputLimit, trainedChatModels } from '../api/chat-comparison';
 import { allResources } from '../api/resources';
@@ -52,12 +54,11 @@ export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refre
   const [maxTokens, setMaxTokens] = draft.field('maxTokens');
   const [seed, setSeed] = draft.field('seed');
   const [renameTitle, setRenameTitle] = draft.field('renameTitle');
-  const [conversationQuery, setConversationQuery] = useState('');
   const [historyOpen, setHistoryOpen] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [renameOpen, setRenameOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const optionsId = useId(), systemId = useId(), templateId = useId(), renameFormId = useId();
+  const optionsId = useId(), systemId = useId(), templateId = useId();
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [answerInput, setAnswerInput] = useState<ChatMessage[]>([]);
   const [comparisons, setComparisons] = useState<Comparison[]>([]);
@@ -304,15 +305,8 @@ export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refre
       </div>
     </div>
     <div className="chat-options" id={optionsId}>
-      <Disclosure summary="Saved conversations" variant="quiet" open={historyOpen} onToggle={event => setHistoryOpen(event.currentTarget.open)}>
-        <div data-ui="field-grid" className="chat-settings-grid">
-          <TextControl label="Search saved conversations" value={conversationQuery} onChange={event => setConversationQuery(event.target.value)} disabled={locked} />
-          <Select label="Saved conversation" value={conversation?.conversation_id || ''} disabled={locked} onChange={event => { select(conversations.find(c => c.conversation_id === event.target.value) || null); setHistoryOpen(false); }}>
-            <option value="">New conversation</option>
-            {conversations.filter(c => c.title.toLowerCase().includes(conversationQuery.toLowerCase())).map(c => <option key={c.conversation_id} value={c.conversation_id}>{c.title}</option>)}
-          </Select>
-        </div>
-      </Disclosure>
+      <SavedConversations conversations={conversations} selectedId={conversation?.conversation_id || ''} locked={locked} open={historyOpen} onToggle={setHistoryOpen}
+        onSelect={id => { select(conversations.find(c => c.conversation_id === id) || null); setHistoryOpen(false); }} />
       <Disclosure summary="Generation settings" variant="quiet">
         <div data-ui="field-grid" className="chat-settings-grid">
           {!baseComparison && <Select label="Compare with" value={compare} disabled={busy} onChange={event => { setCompare(event.target.value); setCompareDevice(models.find(m => m.id === event.target.value)?.format === 'mlx' ? 'mlx:0' : 'cpu'); }}>
@@ -399,13 +393,7 @@ export function ChatPage({ token = '', refreshKey = 0 }: { token?: string; refre
       </div>
     </form>
     {draftUnsaved && <DraftIndicator draft={draft} disabled={locked} />}
-    <Dialog title="Rename conversation" open={renameOpen} onClose={() => setRenameOpen(false)}
-      footer={<><Button type="button" disabled={busy} onClick={() => setRenameOpen(false)}>Cancel</Button><Button form={renameFormId} type="submit" variant="primary" disabled={busy || !renameTitle.trim()}>Rename</Button></>}>
-      <form id={renameFormId} data-ui="form" onSubmit={renameConversation}><TextControl label="New conversation title" maxLength={180} value={renameTitle} onChange={event => setRenameTitle(event.target.value)} disabled={busy} required autoFocus /></form>
-    </Dialog>
-    <Dialog title="Delete conversation" description={conversation ? `Delete “${conversation.title}” from saved conversations? Review and accounting records keep their own history.` : undefined} open={deleteOpen} onClose={() => setDeleteOpen(false)}
-      footer={<><Button type="button" disabled={busy} onClick={() => setDeleteOpen(false)}>Keep conversation</Button><Button type="button" variant="primary" disabled={busy} onClick={() => { setDeleteOpen(false); void deleteConversation(); }}>Delete conversation</Button></>}>
-      <p className="muted">The transcript and its comparisons are removed from this project.</p>
-    </Dialog>
+    <ConversationDialogs title={conversation?.title} busy={busy} renameOpen={renameOpen} renameTitle={renameTitle} deleteOpen={deleteOpen}
+      onRenameTitle={setRenameTitle} onRename={renameConversation} onCloseRename={() => setRenameOpen(false)} onDelete={() => { setDeleteOpen(false); void deleteConversation(); }} onCloseDelete={() => setDeleteOpen(false)} />
   </div>;
 }

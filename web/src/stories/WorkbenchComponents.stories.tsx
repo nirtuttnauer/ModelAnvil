@@ -68,7 +68,7 @@ const chunk = { chunk_id: '60000000-0000-4000-8000-000000000071', score: 0, text
 function verified(canvas: HTMLElement) { canvas.dataset.demoVerified = 'passed'; }
 function PickerDemo({ initial = '', disabled = false }: { initial?: string; disabled?: boolean }) {
   const [value, setValue] = useState(initial), [saved, setSaved] = useState('');
-  return <form aria-label="Resource selection" onSubmit={e => { e.preventDefault(); setSaved(value); }}><ResourcePicker label="Candidate model" required disabled={disabled} value={value} onChange={setValue} options={resources} /><button className="primary" disabled={disabled}>Use selected revision</button>{saved && <p role="status">Selected resource value: {saved}</p>}</form>;
+  return <form aria-label="Resource selection" onSubmit={e => { e.preventDefault(); setSaved(value); }}><ResourcePicker label="Candidate model" required disabled={disabled} value={value} onChange={setValue} options={resources} /><button data-ui="button" data-variant="primary" disabled={disabled}>Use selected revision</button>{saved && <p role="status">Selected resource value: {saved}</p>}</form>;
 }
 function InspectorDemo() {
   const [open, setOpen] = useState(false);
@@ -76,11 +76,11 @@ function InspectorDemo() {
 }
 function ContextDemo() {
   const [current, setCurrent] = useState(blocks), [saved, setSaved] = useState(false);
-  return <form aria-label="Context editor" onSubmit={e => { e.preventDefault(); setSaved(true); }}><ContextBlockEditor blocks={current} onChange={(key, content) => { setCurrent(current.map(block => block.key === key ? { ...block, content } : block)); setSaved(false); }} /><button className="primary">Save context</button>{saved && <p role="status">Context saved.</p>}</form>;
+  return <form aria-label="Context editor" onSubmit={e => { e.preventDefault(); setSaved(true); }}><ContextBlockEditor blocks={current} onChange={(key, content) => { setCurrent(current.map(block => block.key === key ? { ...block, content } : block)); setSaved(false); }} /><button data-ui="button" data-variant="primary">Save context</button>{saved && <p role="status">Context saved.</p>}</form>;
 }
 function OverridesDemo({ initial = '{}' }: { initial?: string }) {
   const [value, setValue] = useState(initial), [saved, setSaved] = useState('');
-  return <form aria-label="Context override editor" onSubmit={e => { e.preventDefault(); setSaved(String(objectInput(value).question ?? 'Default question retained')); }}><ContextBlockInputs blocks={blocks} value={value} onChange={setValue} /><button className="primary">Compile overrides</button>{saved && <p role="status">{saved}</p>}</form>;
+  return <form aria-label="Context override editor" onSubmit={e => { e.preventDefault(); setSaved(String(objectInput(value).question ?? 'Default question retained')); }}><ContextBlockInputs blocks={blocks} value={value} onChange={setValue} /><button data-ui="button" data-variant="primary">Compile overrides</button>{saved && <p role="status">{saved}</p>}</form>;
 }
 function Board({ narrow = false }: { narrow?: boolean }) {
   const [inspectorOpen, setInspectorOpen] = useState(true);

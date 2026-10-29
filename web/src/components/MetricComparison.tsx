@@ -23,7 +23,7 @@ export function MetricComparison({ metrics, baseline = [], candidateName = 'Cand
   if (!rows.length) return <p className="wb-empty">No metrics recorded.</p>;
   return <div className="metric-comparison">
     <p className="wb-muted">Delta is candidate minus baseline for the same metric and slice. Its sign alone does not establish improvement. Intervals are shown only as recorded.</p>
-    <div className="table-scroll" tabIndex={0} role="region" aria-label="Metric comparison table"><RecordTable className="resource-table">
+    <div className="table-scroll" tabIndex={0} role="region" aria-label="Metric comparison table"><RecordTable>
       <caption className="wb-sr-only">Recorded candidate and baseline measurements by metric and slice</caption>
       <thead><tr><th scope="col">Metric / slice</th><th scope="col">{candidateName}</th><th scope="col">{baselineName}</th><th scope="col">Delta</th><th scope="col">Samples<br /><small>Candidate / baseline</small></th><th scope="col">Recorded uncertainty<br /><small>Candidate / baseline</small></th></tr></thead>
       <tbody>{rows.map(row => <tr key={JSON.stringify([row.key, row.slice])}><th scope="row"><strong title={row.key}>{dataLabel(row.key)}</strong><small>{row.slice}</small></th>

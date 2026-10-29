@@ -54,17 +54,17 @@ export function ObjectFields({ value, onChange, title, description, disabled, te
   textOnly?: boolean; nameLabel?: string; valueLabel?: string; suggestions?: string[]; rootKind?: 'object' | 'array'; defaultKind?: FieldNode['kind'];
 }) {
   let state: FieldState;
-  try { state = readFieldState(value, rootKind); } catch { return <fieldset className="structured-form full-width" disabled={disabled}><legend>{title}</legend><RestoreError onReset={() => onChange(rootKind === 'array' ? '[]' : '{}')} /></fieldset>; }
-  return <fieldset className="structured-form full-width" disabled={disabled}><legend>{title}</legend>{description && <p className="editor-help">{description}</p>}
+  try { state = readFieldState(value, rootKind); } catch { return <fieldset className="structured-form" disabled={disabled}><legend>{title}</legend><RestoreError onReset={() => onChange(rootKind === 'array' ? '[]' : '{}')} /></fieldset>; }
+  return <fieldset className="structured-form" disabled={disabled}><legend>{title}</legend>{description && <p className="editor-help">{description}</p>}
     <Fields state={state} onChange={next => onChange(writeFieldState(next))} textOnly={textOnly} nameLabel={nameLabel} valueLabel={valueLabel} suggestions={suggestions} defaultKind={defaultKind} />
   </fieldset>;
 }
 
 export function ConfigFields({ value, onChange, fields, title, disabled }: { value: string; onChange(value: string): void; fields: FormField[]; title: string; disabled?: boolean }) {
   let state: FieldState;
-  try { state = readFieldState(value); if (state.kind !== 'object') throw new Error(); } catch { return <fieldset className="structured-form full-width" disabled={disabled}><legend>{title}</legend><RestoreError onReset={() => onChange('{}')} /></fieldset>; }
+  try { state = readFieldState(value); if (state.kind !== 'object') throw new Error(); } catch { return <fieldset className="structured-form" disabled={disabled}><legend>{title}</legend><RestoreError onReset={() => onChange('{}')} /></fieldset>; }
   const extra = state.fields.filter(node => !fields.some(field => field.key === node.name) && node.name !== 'budget_policy_id');
-  return <fieldset className="structured-form full-width" disabled={disabled}><legend>{title}</legend><div className="editor-grid">
+  return <fieldset className="structured-form" disabled={disabled}><legend>{title}</legend><div className="editor-grid">
     {fields.map(field => {
       const existing = state.fields.find(node => node.name === field.key);
       return <FormInput key={field.key} label={field.label} type={field.kind === 'number' ? 'number' : 'text'} step={field.step ?? 'any'} min={field.min} max={field.max} value={existing?.text ?? ''} placeholder={field.defaultValue} required={field.required} help={field.help || (field.defaultValue ? `Default: ${field.defaultValue}. Leave blank to use it.` : undefined)} onChange={e => {
@@ -81,7 +81,7 @@ export function VerifierFields({ value, onChange, disabled }: { value: string; o
   const type = state.fields.find(field => field.name === 'type')?.text || 'exact_match';
   const tolerance = state.fields.find(field => field.name === 'tolerance');
   const extra = state.fields.filter(field => !['type', 'tolerance'].includes(field.name));
-  return <fieldset className="structured-form full-width" disabled={disabled}><legend>Verifier settings</legend><div className="editor-grid">
+  return <fieldset className="structured-form" disabled={disabled}><legend>Verifier settings</legend><div className="editor-grid">
     <label className="editor-input"><span>Verification method</span><select value={type} onChange={e => onChange(writeFieldState({ ...state, fields: [...state.fields.filter(field => field.name !== 'type'), { ...newField('type'), text: e.target.value }] }))}><option value="exact_match">Exact match</option><option value="substring">Expected text appears in the response</option><option value="numeric_tolerance">Numeric tolerance</option>{!['exact_match', 'substring', 'numeric_tolerance'].includes(type) && <option value={type}>Unsupported saved method: {type}</option>}</select></label>
     <FormInput label="Numeric tolerance" type="number" min={0} max={1000000} step="any" value={tolerance?.text || ''} placeholder="0.0001" help="Used for numeric scoring. Leave blank to use 0.0001." onChange={e => onChange(writeFieldState({ ...state, fields: [...state.fields.filter(field => field.name !== 'tolerance'), ...(e.target.value === '' ? [] : [{ ...newField('tolerance'), kind: 'number' as const, text: e.target.value }])] }))} />
   </div>{extra.length > 0 && <div className="editor-nested"><p className="editor-help">Remove unsupported saved verifier fields before submitting.</p><Fields state={{ kind: 'object', fields: extra }} onChange={next => onChange(writeFieldState({ ...state, fields: [...state.fields.filter(field => !extra.includes(field)), ...next.fields] }))} nameLabel="Setting name" valueLabel="Value" /></div>}</fieldset>;
@@ -92,7 +92,7 @@ export function RecordListEditor({ value, onChange, fields, title, itemName, max
   maximum?: number; uniqueKey?: string; disabled?: boolean; description?: string;
 }) {
   let rows: Record<string, unknown>[];
-  try { rows = readRecords(value); } catch { return <fieldset className="structured-form full-width" disabled={disabled}><legend>{title}</legend><RestoreError onReset={() => onChange('[]')} /></fieldset>; }
+  try { rows = readRecords(value); } catch { return <fieldset className="structured-form" disabled={disabled}><legend>{title}</legend><RestoreError onReset={() => onChange('[]')} /></fieldset>; }
   function change(index: number, key: string, next: unknown) {
     onChange(JSON.stringify(rows.map((row, i) => {
       if (i !== index) return row;
@@ -101,7 +101,7 @@ export function RecordListEditor({ value, onChange, fields, title, itemName, max
       return updated;
     })));
   }
-  return <fieldset className="structured-form full-width" disabled={disabled}><legend>{title} <span className="editor-count">{rows.length}{Number.isFinite(maximum) ? ` / ${maximum}` : ' added'}</span></legend>{description && <p className="editor-help">{description}</p>}
+  return <fieldset className="structured-form" disabled={disabled}><legend>{title} <span className="editor-count">{rows.length}{Number.isFinite(maximum) ? ` / ${maximum}` : ' added'}</span></legend>{description && <p className="editor-help">{description}</p>}
     <div className="editor-record-list">{rows.map((row, index) => <fieldset className="editor-record" key={index}><legend>{itemName} {index + 1}</legend>
       <div className="editor-record-heading"><span className="editor-help">{uniqueKey ? String(row[uniqueKey] || 'New record') : `${itemName} ${index + 1}`}</span><Button type="button" className="editor-remove" aria-label={`Remove ${itemName.toLowerCase()} ${index + 1}`} onClick={() => onChange(JSON.stringify(rows.filter((_, i) => i !== index)))}><Trash2 size={16} aria-hidden="true" /></Button></div>
       <div className="editor-grid">{fields.map(field => {

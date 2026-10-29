@@ -79,7 +79,7 @@ export function ContextLabPage({ token = '', refreshKey = 0 }: { token?: string;
         <TextContent text={result.serialized_prompt} label="Exact compiled prompt" />
         <KeyValueList columns={2} items={[{ label: 'Included blocks', value: result.included_blocks.join(', ') || 'None' }, { label: 'Omitted blocks', value: result.dropped_blocks.join(', ') || 'None' }]} />
       </div>}
-      <ChartPanel title={result ? 'Estimated token allocation' : 'Configured token budget'} description={selected ? `Model limit ${selected.model_limit_tokens.toLocaleString()} tokens · policy ${selected.budget_policy}` : 'Select a saved recipe to inspect its budget.'}>
+      <ChartPanel bordered title={result ? 'Estimated token allocation' : 'Configured token budget'} description={selected ? `Model limit ${selected.model_limit_tokens.toLocaleString()} tokens · policy ${selected.budget_policy}` : 'Select a saved recipe to inspect its budget.'}>
         {selected ? <SegmentBar data={allocation} unit="tokens" /> : <ChartEmpty message="Token capacity and output reserve come from the selected recipe version." />}
       </ChartPanel>
       {selected && <Disclosure summary="Saved context blocks" variant="quiet">

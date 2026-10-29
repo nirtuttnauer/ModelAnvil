@@ -10,7 +10,7 @@ export function ModelCapabilities({ versions }: { versions: ModelVersion[] }) {
   return <div data-ui="form">
     <p className="muted">Eligibility is checked from pinned inputs. Launch and generation still validate the runtime and capacity.</p>
     {!versions.length && <p className="muted">Import or initialize a model to inspect its supported operations.</p>}
-    {versions.length > 0 && <div className="table-scroll" tabIndex={0}><RecordTable className="resource-table">
+    {versions.length > 0 && <div className="table-scroll" tabIndex={0}><RecordTable>
       <thead><tr><th>Version</th><th>Train</th><th>Evaluate</th><th>Chat</th></tr></thead>
       <tbody>{versions.map(version => <tr key={version.model_version_id}>
         <td><a href={resourceHash('model-version', version.model_version_id)}>{version.model_name} · r{version.revision_no}</a></td>

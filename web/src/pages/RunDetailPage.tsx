@@ -1,121 +1,18 @@
 import { Identifier } from '../components/Identifier';
 import { Button, Disclosure, KeyValueList, LinkButton, MultilineControl, Notice, RecordTable, StatusBadge } from '../components/ui';
-import { resourceHash } from '../api/resource-routes';
+import { RunMetrics } from '../components/run-detail/RunMetrics';
+import { RunCheckpoints } from '../components/run-detail/RunCheckpoints';
+import { RunLinks } from '../components/run-detail/RunLinks';
+import type { Attempt, RunDetail } from '../api/run-detail';
 import { useDraft, DraftIndicator } from '../components/Draft';
-import { DataInspector, DataValue } from '../components/DataInspector';
+import { DataInspector } from '../components/DataInspector';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { apiPage, apiRequest, errorMessage, nextPagePath, type ApiPage } from '../api/client';
 import { attemptsPath, detailPath, runHash, sourceHash, type RunKind } from '../api/runs';
 import { ResourceState } from '../components/ResourceState';
 import { statusLabel } from '../api/status';
-import { BarChart, ChartPanel, EventTimeline, LineChart } from '../components/Charts';
+import { EventTimeline } from '../components/Charts';
 import './runs.css';
-
-interface Bounded<T> {
-  total: number;
-  truncated: boolean;
-  rows: T[];
-}
-
-interface Checkpoint {
-  checkpoint_id: string;
-  step: number;
-  state_digest: string;
-  is_valid: boolean;
-  contract_digest: string | null;
-  weights_sha256: string | null;
-  created_at: string;
-}
-
-interface ResumeCandidate {
-  available: boolean;
-  reason: string;
-  checkpoint_id: string | null;
-  step: number | null;
-  state_digest: string | null;
-  contract_digest: string | null;
-}
-
-interface Attempt {
-  attempt_id: string;
-  job_id: string;
-  worker: string | null;
-  worker_status: string | null;
-  status: string;
-  progress: number;
-  error: string;
-  lease_expires_at: string | null;
-  started_at: string;
-  completed_at: string | null;
-  has_result: boolean;
-}
-
-interface RunDetail {
-  kind: RunKind;
-  id: string;
-  name: string;
-  project: string | null;
-  execution_mode: string;
-  observed: {
-    state: string;
-    job_state: string | null;
-    current_step: number | null;
-    total_steps: number | null;
-    progress: number | null;
-    latest_loss: number | null;
-    attempts: string | null;
-    created_at: string;
-    started_at: string | null;
-    completed_at: string | null;
-    updated_at: string;
-  };
-  desired: { action: string; acknowledged: boolean; note: string };
-  ownership: {
-    state: string;
-    worker: string | null;
-    worker_status: string | null;
-    lease_expires_at: string | null;
-    reason: string;
-  };
-  inputs: Record<string, unknown>;
-  metrics: Bounded<Record<string, unknown>> & { latest_loss: number | null };
-  checkpoints: (Bounded<Checkpoint> & { resume_candidate: ResumeCandidate }) | null;
-  usage: {
-    reservations: Array<{
-      reservation_id: string;
-      policy_name: string;
-      unit: string;
-      state: string;
-      estimated_amount: string;
-      settled_amount: string | null;
-    }>;
-    events: Array<{ usage_id: string; quantity: string; unit: string; occurred_at: string }>;
-    events_truncated: boolean;
-  };
-  links: Record<string, string | string[] | null>;
-  evidence: { level: string; source: string } | null;
-  actions: {
-    cancel: {
-      available: boolean;
-      requested: boolean;
-      acknowledged: boolean;
-      endpoint: string | null;
-      blocked_by: string[];
-    };
-    resume: {
-      available: boolean;
-      endpoint?: string;
-      recovery_run_id?: string | null;
-      blocked_by: string[];
-      permission: { role: string | null; required: string; satisfied: boolean };
-      checkpoint?: ResumeCandidate;
-      budget?: { state: string; reservable: boolean; reason: string };
-      operator_path?: string;
-      preserves_history: string;
-    };
-  };
-  generated_at: string;
-}
 
 const POLL_MS = 5000;
 const MAX_POLL_MS = 30000;
@@ -129,10 +26,6 @@ function age(from: number | null, now: number) {
   if (seconds < 60) return `${seconds}s ago`;
   const minutes = Math.round(seconds / 60);
   return minutes < 60 ? `${minutes}m ago` : `${Math.round(minutes / 60)}h ago`;
-}
-
-function linkId(value: string | string[] | null | undefined) {
-  return Array.isArray(value) ? value[0] ?? '' : (value ?? '');
 }
 
 /** Relative time that ticks on its own, so the rest of the page does not re-render every second. */
@@ -440,64 +333,9 @@ export function RunDetailPage({
             </Disclosure>
           )}
 
-          {detail.checkpoints && (
-            <Disclosure summary={`Checkpoints (${detail.checkpoints.total})`} variant="card">
-              <p className="runs-hint">{detail.checkpoints.total === 0 ? 'No checkpoint has been committed for this run.' : `${detail.checkpoints.rows.length} of ${detail.checkpoints.total} loaded.`}</p>
-              {detail.checkpoints.rows.length > 0 && (
-                <div className="table-scroll" tabIndex={0}>
-                  <RecordTable>
-                    <thead><tr><th scope="col">Step</th><th scope="col">State digest</th><th scope="col">Validity</th><th scope="col">Runtime contract</th><th scope="col">Committed</th></tr></thead>
-                    <tbody>
-                      {detail.checkpoints.rows.map((checkpoint) => (
-                        <tr key={checkpoint.checkpoint_id}>
-                          <td>{checkpoint.step}</td>
-                          <td><Identifier value={checkpoint.state_digest} label="Checkpoint state digest" display="code" /></td>
-                          <td><StatusBadge status={checkpoint.is_valid ? 'valid' : 'invalid'} /></td>
-                          <td>{checkpoint.contract_digest ? <Identifier value={checkpoint.contract_digest} label="Runtime contract digest" display="code" /> : 'Not recorded'}</td>
-                          <td>{new Date(checkpoint.created_at).toLocaleString()}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </RecordTable>
-                </div>
-              )}
-            </Disclosure>
-          )}
+          {detail.checkpoints && <RunCheckpoints checkpoints={detail.checkpoints} />}
 
-          <Disclosure summary={`Metrics (${detail.metrics.total})`} variant="card" open={kind === 'training' && detail.metrics.total > 0}>
-            {kind === 'training' && detail.metrics.rows.length > 0 && <ChartPanel title="Recorded loss" description={`Exact metric steps · evidence: ${detail.evidence?.level ?? 'not reported'}`} bordered={false}>
-              <LineChart series={[
-                { name: 'Training loss', points: detail.metrics.rows.flatMap(row => typeof row.step === 'number' && typeof row.loss === 'number' ? [{ x: row.step, y: row.loss }] : []) },
-                { name: 'Validation loss', points: detail.metrics.rows.flatMap(row => typeof row.step === 'number' && typeof row.validation_loss === 'number' ? [{ x: row.step, y: row.validation_loss }] : []) },
-              ].filter(series => series.points.length)} yLabel="Loss" />
-            </ChartPanel>}
-            {kind === 'evaluation' && detail.metrics.rows.length > 0 && <ChartPanel title="Evaluation measurements" description="Frozen scoring metrics; sample counts and uncertainty are in the table." bordered={false}>
-              <BarChart data={detail.metrics.rows.filter(row => typeof row.value === 'number').map(row => ({ label: String(row.key || 'Metric'), value: Number(row.value) }))} />
-            </ChartPanel>}
-            {detail.metrics.truncated && <p className="runs-hint">Showing the {detail.metrics.rows.length} most recent of {detail.metrics.total} recorded points.</p>}
-            {kind === 'training' && detail.metrics.truncated && <div data-ui="actions"><Button type="button" disabled={busy} onClick={() => void loadHistory()}>Inspect complete training history</Button></div>}
-            {historyError && <p role="alert" className="error-text">{historyError}</p>}
-            {fullMetrics && <Disclosure summary={`Complete recorded training history (${fullMetrics.length} points)`} variant="quiet" open><DataInspector value={fullMetrics} /></Disclosure>}
-            {detail.metrics.total === 0 ? <p className="muted">No metrics have been recorded for this run.</p> : (
-              <div className="table-scroll" tabIndex={0}>
-                <RecordTable>
-                  <thead><tr><th scope="col">{kind === 'training' ? 'Step' : 'Metric'}</th><th scope="col">{kind === 'training' ? 'Loss' : 'Value'}</th><th scope="col">Other recorded values</th></tr></thead>
-                  <tbody>
-                    {detail.metrics.rows.map((row, index) => {
-                      const rest = Object.entries(row).filter(([key]) => key !== 'step' && key !== 'loss');
-                      return (
-                        <tr key={`${String(row.step ?? index)}-${index}`}>
-                          <td><DataValue value={kind === 'training' ? row.step ?? '—' : row.key ?? '—'} /></td>
-                          <td>{kind === 'training' ? typeof row.loss === 'number' ? row.loss.toFixed(6) : 'Not reported' : <DataValue value={row.value ?? 'Not reported'} />}</td>
-                          <td>{rest.length === 0 ? '—' : <DataValue value={Object.fromEntries(rest)} />}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </RecordTable>
-              </div>
-            )}
-          </Disclosure>
+          <RunMetrics kind={kind} detail={detail} busy={busy} fullMetrics={fullMetrics} historyError={historyError} onLoadHistory={() => void loadHistory()} />
 
           <Disclosure summary="Evidence and usage" variant="card">
             <div className="runs-columns">
@@ -536,21 +374,7 @@ export function RunDetailPage({
             <DataInspector value={detail.inputs} />
           </Disclosure>
 
-          <Disclosure summary="Links" variant="card">
-            <div data-ui="actions">
-              {links.job && <LinkButton href={runHash('job', linkId(links.job))}>Job</LinkButton>}
-              {links.training_run && <LinkButton href={runHash('training', linkId(links.training_run))}>Training run</LinkButton>}
-              {links.output_model_version && <LinkButton href={resourceHash('model-version', linkId(links.output_model_version))}>Trained model</LinkButton>}
-              {links.base_model_version && <LinkButton href={resourceHash('model-version', linkId(links.base_model_version))}>Base model version</LinkButton>}
-              {links.recovery_parent && <LinkButton href={runHash('training', linkId(links.recovery_parent))}>Parent run</LinkButton>}
-              {links.model_version && <LinkButton href={resourceHash('model-version', linkId(links.model_version))}>Model version</LinkButton>}
-              {links.dataset_revision && <LinkButton href={resourceHash('dataset-revision', linkId(links.dataset_revision))}>Dataset version</LinkButton>}
-              {Array.isArray(links.evaluation_runs) && links.evaluation_runs.map((id, index) => <LinkButton key={id} href={runHash('evaluation', id)}>Evaluation run {index + 1}</LinkButton>)}
-              <LinkButton variant="quiet" href="#infrastructure">Infrastructure</LinkButton>
-              <LinkButton variant="quiet" href="#budgets">Budgets</LinkButton>
-              <LinkButton variant="quiet" href="#audit">Audit</LinkButton>
-            </div>
-          </Disclosure>
+          <RunLinks links={links} />
 
           <Disclosure summary="Recovery note" variant="card">
             <DraftIndicator draft={noteDraft} />

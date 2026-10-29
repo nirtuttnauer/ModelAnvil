@@ -1,15 +1,14 @@
 import { createElement, useId, type ComponentPropsWithRef, type HTMLAttributes, type ReactNode, type Ref } from 'react';
-import { join } from './Button';
 
 export type Tone = 'neutral' | 'info' | 'success' | 'caution' | 'error' | 'running';
 type BoxProps = HTMLAttributes<HTMLElement> & { as?: 'section' | 'div' | 'article' | 'aside' | 'p'; ref?: Ref<HTMLElement> };
 
 export function Card({ as: Element = 'section', tone = 'surface', padded, className, ...props }: BoxProps & { tone?: 'surface' | 'subtle' | 'accent'; padded?: boolean }) {
-  return createElement(Element, { 'data-ui': 'card', 'data-tone': tone, 'data-padded': padded || undefined, ...props, className: join('panel', className) });
+  return createElement(Element, { 'data-ui': 'card', 'data-tone': tone, 'data-padded': padded || undefined, ...props, className });
 }
 
 export function Notice({ as: Element = 'div', tone = 'neutral', className, ...props }: BoxProps & { tone?: Tone }) {
-  return createElement(Element, { ...props, 'data-ui': 'notice', 'data-tone': tone, className: join('notice', tone, className) });
+  return createElement(Element, { ...props, 'data-ui': 'notice', 'data-tone': tone, className });
 }
 
 export function Badge({ tone = 'neutral', className, ...props }: ComponentPropsWithRef<'span'> & { tone?: Tone }) {

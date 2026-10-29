@@ -21,8 +21,7 @@ export function Button({ variant, size, icon, className, ...props }: ButtonProps
   const resolved = resolveVariant(variant, className);
   const iconOnly = icon ?? className?.split(/\s+/).includes('icon-button');
   // Keep the native type default: existing forms intentionally rely on submit.
-  return <button data-ui="button" data-variant={resolved} data-size={size} data-icon={iconOnly || undefined} {...props}
-    className={join(className, resolved === 'primary' && 'primary', resolved === 'quiet' && 'text-button')} />;
+  return <button data-ui="button" data-variant={resolved} data-size={size} data-icon={iconOnly || undefined} {...props} className={className} />;
 }
 
 export function LinkButton({ variant = 'secondary', size, icon, className, ...props }: ComponentPropsWithRef<'a'> & { variant?: ButtonVariant; size?: 'sm' | 'lg'; icon?: boolean }) {

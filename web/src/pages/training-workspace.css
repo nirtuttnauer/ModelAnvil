@@ -45,7 +45,7 @@
   .training-inference-controls input:nth-child(2) { width: 96px; }
   .training-inference-result { display: grid; gap: var(--space-12); }
   .training-run-cell { display: flex; align-items: center; gap: var(--space-4); }
-  .training-run-cell + [data-ui="actions"] { margin-top: var(--space-4); }
+  .training-run-cell + div { margin-top: var(--space-4); }
   .training-selected-row { background: var(--primary-surface); }
   @media (max-width: 1100px) { .training-config-layout { grid-template-columns: minmax(0, 1fr); } .training-run-preview { position: static; } }
   @media (max-width: 768px) { .training-advanced { grid-template-columns: minmax(0, 1fr); padding: var(--space-16); } .training-progress { padding: var(--space-16); } }

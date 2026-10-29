@@ -32,7 +32,7 @@ export function PreflightChecklist({ report, busy, form, onLaunch, onRefresh, ti
   const groups = [...new Set(report.checks.map(check => check.category))];
   const duration = report.estimate.estimated_duration_seconds;
   const finite = (value: unknown, transform?: (value: number) => ReactNode) => typeof value === 'number' && Number.isFinite(value) ? transform ? transform(value) : value.toLocaleString() : 'Unknown';
-  return <section ref={panel} tabIndex={-1} className="preflight-checklist detail-box" aria-label={title}>
+  return <section ref={panel} tabIndex={-1} className="preflight-checklist" aria-label={title}>
     <div className="wb-row"><h2>{title}</h2><StatusBadge role="status" status={ready ? 'ready' : expired || expiryUnknown ? 'expired' : 'blocked'} label={expiryUnknown ? 'Expiry not reported' : expired ? 'Preview expired' : ready ? 'Ready to launch' : report.status === 'approved' && !report.preflight_token ? 'Launch token unavailable' : 'Blocked'} /></div>
     {report.blocking_checks.length > 0 && <p className="wb-error">Blocking checks: {report.blocking_checks.map(dataLabel).join(', ')}</p>}
     {compact && ready && <p>All checks passed. You can start training.</p>}
@@ -64,6 +64,6 @@ export function PreflightChecklist({ report, busy, form, onLaunch, onRefresh, ti
     <details><summary>Pinned input revisions and digests</summary><DataInspector value={report.pins} /></details>
     </Disclosure>
     <p className="wb-muted">{report.capacity_note} {expired || expiryUnknown ? 'Run preflight again to refresh the launch approval.' : `Expires in ${Math.max(1, Math.ceil((deadline - now) / 60000))} min.`}</p>
-    <div className="actions">{onRefresh && <Button type="button" disabled={busy} onClick={onRefresh}>Run preflight again</Button>}{(form || onLaunch) && <Button form={form} type={form ? 'submit' : 'button'} variant="primary" disabled={busy || !ready} onClick={onLaunch}>{busy ? 'Launching…' : launchLabel}</Button>}</div>
+    <div data-ui="actions">{onRefresh && <Button type="button" disabled={busy} onClick={onRefresh}>Run preflight again</Button>}{(form || onLaunch) && <Button form={form} type={form ? 'submit' : 'button'} variant="primary" disabled={busy || !ready} onClick={onLaunch}>{busy ? 'Launching…' : launchLabel}</Button>}</div>
   </section>;
 }

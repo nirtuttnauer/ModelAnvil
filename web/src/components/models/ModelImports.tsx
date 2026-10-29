@@ -8,7 +8,7 @@ export function ModelImports({ imports, busy, error, onChange }: { imports: Mode
   if (!imports.length && !error) return null;
   return <Section title="Imports" description="Downloads and verified uploads for this project.">
     {error && <p className="error-text" role="alert">{error}</p>}
-    {imports.length > 0 && <div className="table-scroll" tabIndex={0}><RecordTable className="resource-table">
+    {imports.length > 0 && <div className="table-scroll" tabIndex={0}><RecordTable>
       <thead><tr><th>Import</th><th>Files verified</th><th>Status</th><th>Model</th><th>Actions</th></tr></thead>
       <tbody>{imports.map(item => { const job = item.job_status || ''; return <tr key={item.import_id}>
         <td>{item.name}</td>

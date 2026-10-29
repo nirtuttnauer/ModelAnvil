@@ -1,4 +1,4 @@
-import { MultilineField } from './ui';
+import { Checkbox, MultilineField } from './ui';
 import { useId } from 'react';
 import { dataLabel, TextContent } from './DataInspector';
 import { ObjectFields } from './FormEditors';
@@ -15,12 +15,12 @@ export function ContextBlockEditor({ blocks, onChange, onOverride, disabled, tit
   onOverride?: (key: string, enabled: boolean) => void;
 }) {
   const id = useId();
-  return <fieldset className="context-block-editor full-width" disabled={disabled}><legend>{title}</legend>
+  return <fieldset className="context-block-editor" disabled={disabled}><legend>{title}</legend>
     {!blocks.length && <p className="wb-empty">No context blocks recorded.</p>}
     <div className="context-editor-grid">{blocks.map((block, index) => <section className={`context-editor-card ${block.status === 'Omitted' ? 'context-omitted' : ''}`} key={block.key} aria-label={`${block.label || dataLabel(block.key)} block`}>
       <div className="wb-row"><strong>{block.label || dataLabel(block.key)}</strong>{block.status && <span className="wb-status">{block.status}</span>}</div>
       <p className="wb-muted">{block.role && <>Role: {block.role} · </>}{block.essential == null ? 'Retention priority not reported' : block.essential ? 'Essential · retained on overflow' : 'Optional · eligible for omission on overflow'}</p>
-      {onOverride && <label className="checkbox-label"><input type="checkbox" checked={!!block.override} onChange={e => onOverride(block.key, e.target.checked)} />Override {block.label || dataLabel(block.key)}</label>}
+      {onOverride && <Checkbox label={`Override ${block.label || dataLabel(block.key)}`} checked={!!block.override} onChange={e => onOverride(block.key, e.target.checked)} />}
       {onChange ? <><label htmlFor={`${id}-${index}`}>{block.label || dataLabel(block.key)}{onOverride ? ' override' : ''}</label><MultilineField id={`${id}-${index}`} aria-label={`${block.label || dataLabel(block.key)}${onOverride ? ' override' : ''}`} rows={4} disabled={onOverride && !block.override} required={!onOverride && block.essential} value={block.content} onChange={e => onChange(block.key, e.target.value)} /></> : <TextContent text={block.content} />}
       {block.tokenCount != null && <p className="wb-muted wb-number">Estimated tokens: {block.tokenCount.toLocaleString()}</p>}
       {block.status === 'Omitted' && <p className="wb-warning">This block was omitted by the compiler.</p>}
@@ -37,7 +37,7 @@ export function ContextBlockInputs({ blocks, value, onChange, disabled }: { bloc
     if (text !== undefined) fields.push({ id: crypto.randomUUID(), name: key, kind: 'text', text, children: [] });
     onChange(writeFieldState({ ...state, fields }));
   }
-  return <div className="full-width">
+  return <div>
     {unsupported ? <p className="wb-warning">A saved block override uses a structured value. Edit it in the runtime inputs below; its value is retained.</p> : <ContextBlockEditor title="Runtime block overrides" disabled={disabled}
       blocks={blocks.map(block => { const field = state.fields.find(field => field.name === block.key); return { ...block, override: !!field, content: field?.text ?? block.content }; })}
       onOverride={(key, enabled) => setOverride(key, enabled ? blocks.find(block => block.key === key)?.content || '' : undefined)}

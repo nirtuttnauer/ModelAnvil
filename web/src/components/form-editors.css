@@ -2,7 +2,7 @@
 .structured-form > legend { padding: 0 var(--space-8); color: var(--text); font-size: var(--type-14); font-weight: 650; }
 .editor-count { margin-left: var(--space-12); color: var(--text-muted); font-size: var(--type-12); font-weight: 400; font-variant-numeric: tabular-nums; }
 .editor-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-12) var(--space-18); }
-.editor-input { display: flex !important; flex-direction: column; min-width: 0; gap: var(--space-6); color: var(--text-secondary); font-size: var(--type-13); }
+.editor-input { display: flex; flex-direction: column; min-width: 0; gap: var(--space-6); color: var(--text-secondary); font-size: var(--type-13); }
 .editor-input > input, .editor-input > textarea, .editor-input > select { width: 100%; min-width: 0; min-height: 44px; }
 .editor-input > span { font-weight: 550; }
 .editor-wide { grid-column: 1 / -1; }

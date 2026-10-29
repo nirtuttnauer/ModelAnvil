@@ -48,12 +48,6 @@
 .preflight-samples > li { padding: var(--space-12) 0; }
 .wb-token-ids { display: flex; flex-wrap: wrap; gap: var(--space-6); }
 .wb-token-ids code { padding: 3px var(--space-6); background: var(--code-surface); border: 1px solid var(--border); border-radius: 4px; }
-.inspector-panel { min-width: 0; height: fit-content; overflow-wrap: anywhere; }
-.inspector-panel:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
-.inspector-panel .panel-title { align-items: flex-start; }
-.inspector-panel .panel-title > div { flex: 1; min-width: 0; }
-.inspector-panel .panel-title > button { min-width: 44px; min-height: 44px; }
-.inspector-footer { border-top: 1px solid var(--border); padding: var(--space-16) var(--space-20); display: flex; flex-wrap: wrap; gap: var(--space-10); }
 .lineage-path h4 { font-size: var(--type-13); margin: var(--space-18) 0 var(--space-10); color: var(--text-secondary); }
 .lineage-path ol { display: flex; flex-wrap: wrap; list-style: none; padding: 0; margin: 0; gap: var(--space-12); }
 .lineage-path li { display: flex; align-items: center; gap: var(--space-12); flex: 1 1 180px; min-width: 0; }

@@ -55,12 +55,12 @@ export function Welcome({ onConnected }: { onConnected: (token: string) => void 
   </div><section className="welcome-card" aria-labelledby="welcome-title">
     <h2 id="welcome-title">{mode === 'signup' ? 'Create your workspace' : 'Welcome back'}</h2>
     <p>{mode === 'signup' ? 'Your account includes a project for your first fine-tune.' : 'Sign in to continue your training and saved models.'}</p>
-    {error && <Notice tone="error" role="alert" className="notice error">{error}{signup === null && <Button onClick={() => { setReady(false); setError(''); setRetry(v => v + 1); }}>Retry connection</Button>}</Notice>}
+    {error && <Notice tone="error" role="alert">{error}{signup === null && <Button onClick={() => { setReady(false); setError(''); setRetry(v => v + 1); }}>Retry connection</Button>}</Notice>}
     <form onSubmit={submit} className="guided-form">
       {mode === 'signup' && <label>Your name<Field autoComplete="name" value={name} onChange={e => setName(e.target.value)} maxLength={100} required disabled={busy} /></label>}
       <label>Email<Field type="email" autoComplete="username" value={email} onChange={e => setEmail(e.target.value)} maxLength={254} required disabled={busy} /></label>
       <label>Password<Field type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} value={password} onChange={e => setPassword(e.target.value)} minLength={mode === 'signup' ? 10 : 1} maxLength={256} required disabled={busy} />{mode === 'signup' && <small>Use at least 10 characters.</small>}</label>
-      <Button className="primary" disabled={busy || !ready || (mode === 'signup' && signup !== true)}>{busy ? 'Connecting…' : mode === 'signup' ? 'Create account' : 'Sign in'}</Button>
+      <Button variant="primary" disabled={busy || !ready || (mode === 'signup' && signup !== true)}>{busy ? 'Connecting…' : mode === 'signup' ? 'Create account' : 'Sign in'}</Button>
     </form>
     {(signup || mode === 'signup') && <Button className="welcome-switch" disabled={busy} onClick={() => { setMode(mode === 'signup' ? 'signin' : 'signup'); setError(''); }}>{mode === 'signup' ? 'Already have an account? Sign in' : 'Create a new account'}</Button>}
     {signup === false && ready && <p>Account creation is disabled here. Ask the installation owner for an account.</p>}

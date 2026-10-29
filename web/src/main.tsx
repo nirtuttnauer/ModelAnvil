@@ -513,7 +513,6 @@ export function App() {
         </WorkspaceHeader>
         <dialog
           ref={connectionDialog}
-          className="connection-dialog"
           data-ui="dialog"
           aria-labelledby="connection-title"
           onCancel={cancelConnectionRequest}
@@ -529,13 +528,13 @@ export function App() {
             </Button>
           </header>
           <div data-ui="dialog-body">
-            <form className="api-key" onSubmit={connect} aria-busy={connectionBusy}>
+            <form data-ui="form" onSubmit={connect} aria-busy={connectionBusy}>
               {connectionError && (
                 <Notice as="p" tone="error" className="notice error" role="alert">
                   {connectionError}
                 </Notice>
               )}
-              <label htmlFor="api-key">API key</label>
+              <div data-ui="control"><label data-ui="control-label" htmlFor="api-key">API key</label>
               <Field
                 id="api-key"
                 required
@@ -544,10 +543,10 @@ export function App() {
                 placeholder="Bearer API key"
                 value={draftToken}
                 onChange={(e) => setDraftToken(e.target.value)}
-              />
-              <Button variant="primary" type="submit" disabled={connectionBusy}>
+              /></div>
+              <div data-ui="actions"><Button variant="primary" type="submit" disabled={connectionBusy}>
                 {connectionBusy ? 'Verifying access…' : 'Connect'}
-              </Button>
+              </Button></div>
             </form>
           </div>
         </dialog>

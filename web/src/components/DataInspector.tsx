@@ -1,5 +1,5 @@
 import { Identifier, isOpaqueIdentifier } from './Identifier';
-import { Badge } from './ui';
+import { StatusBadge } from './ui';
 import { Check, Minus, FileText } from 'lucide-react';
 import { structuredResponse } from '../api/response-content';
 import './data-inspector.css';
@@ -83,7 +83,7 @@ interface EvaluationResult {
 
 export function EvaluationCase({ result }: { result: EvaluationResult }) {
   return <details className="evaluation-case">
-    <summary><strong>{result.case_id}</strong><Badge className={`state state-${result.passed ? 'completed' : 'failed'}`}>{result.passed ? 'Pass' : 'Fail'}</Badge><span className="evaluation-case-slice">{result.slice_name}</span><span className="evaluation-case-score">Score {result.score ?? 'not reported'}</span></summary>
+    <summary><strong>{result.case_id}</strong><StatusBadge status={result.passed ? 'pass' : 'fail'} /><span className="evaluation-case-slice">{result.slice_name}</span><span className="evaluation-case-score">Score {result.score ?? 'not reported'}</span></summary>
     <div className="evaluation-case-body">
       <section className="response-card response-input"><h3>Input prompt</h3><TextContent text={result.input_prompt} /></section>
       <div className="response-comparison">

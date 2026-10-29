@@ -17,7 +17,7 @@ import { trainingDefaults, legacyGuidedDefaults, preparedTrainingFields, migrate
 import { comparisonBlockers } from '../api/run-comparison';
 import { allResources } from '../api/resources';
 import { useResourceHandoff } from '../components/ResourceHandoff';
-import { useDraft, DraftStatus } from '../components/Draft';
+import { useDraft, DraftIndicator } from '../components/Draft';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { ApiRequestError, apiRequest, errorMessage } from '../api/client';
 import { ResourceState } from '../components/ResourceState';
@@ -318,7 +318,7 @@ export function TrainingPage({ token = '', refreshKey = 0 }: { token?: string; r
             <div data-ui="actions"><Button type="button" disabled={locked || !canReview} onClick={() => void previewPilot()}>Run pilot preflight</Button></div>
             {pilotReport && <PreflightChecklist report={pilotReport} busy={locked} title="Pilot preflight" launchLabel="Start pilot run" onLaunch={() => void launchPilot()} onRefresh={() => void previewPilot()} />}
           </Disclosure>}
-          <Disclosure summary="Saved configuration" variant="quiet"><DraftStatus draft={draft} disabled={locked || preflightBusy} /></Disclosure>
+          <Disclosure summary="Saved configuration" variant="quiet"><DraftIndicator draft={draft} disabled={locked || preflightBusy} /></Disclosure>
         </div>
         {showSummary && <RunSummary model={base ? modelLabel || `Model #${base}` : recipe === 'scratch_pretraining' ? 'Random initialization' : 'Choose a model'}
           dataset={selectedDataset ? datasetLabel || `Version #${selectedDataset}` : 'Choose a dataset'} recipe={recipe}

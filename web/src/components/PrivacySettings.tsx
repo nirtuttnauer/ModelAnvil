@@ -51,6 +51,6 @@ export function PrivacySettings({ token }: { token: string }) {
         <Button disabled={busy || !Number.isInteger(Number(days)) || Number(days)<1 || Number(days)>365}>Save privacy settings</Button>
       </fieldset>
     </form>}
-    <div className="actions"><Button disabled={busy} onClick={() => void load()}>Reload privacy settings</Button><Button disabled={busy || !policy} onClick={() => void diagnostics()}>Download safe diagnostics</Button></div>
+    <div data-ui="actions"><Button disabled={busy} onClick={() => void load()}>Reload privacy settings</Button><Button disabled={busy || !policy} onClick={() => void diagnostics()}>Download safe diagnostics</Button></div>
   </Disclosure>;
 }

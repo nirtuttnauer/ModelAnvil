@@ -13,7 +13,7 @@
 .data-fields > .data-facts dd { margin: 0; min-width: 0; color: var(--text); }
 .data-group { min-width: 0; margin-top: var(--space-18); padding: 14px var(--space-16); border: 1px solid var(--border); border-radius: var(--radius-7); background: var(--surface-subtle); }
 .data-group .data-group { background: var(--surface); }
-.data-group > .data-group-heading { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-12); flex-wrap: wrap; margin: 0 0 14px !important; font-size: var(--type-13); font-weight: 650; overflow-wrap: anywhere; }
+.data-group > .data-group-heading { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-12); flex-wrap: wrap; margin: 0 0 14px; font-size: var(--type-13); font-weight: 650; overflow-wrap: anywhere; }
 .data-count { color: var(--text-muted); font-size: var(--type-12); font-weight: 400; }
 .data-empty { color: var(--text-muted); font-size: var(--type-13); }
 .data-number { font-variant-numeric: tabular-nums; }
@@ -27,7 +27,7 @@
 .data-records { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-12); }
 .data-records > li { display: flex; align-items: flex-start; gap: var(--space-12); padding: var(--space-12); border: 1px solid var(--border); border-radius: var(--radius-7); background: var(--surface); }
 .data-records > li > div { flex: 1; min-width: 0; }
-.data-record-index { color: var(--text-muted); font-size: 11px; font-variant-numeric: tabular-nums; min-width: 24px; padding-top: 3px; }
+.data-record-index { color: var(--text-muted); font-size: var(--type-12); font-variant-numeric: tabular-nums; min-width: 24px; padding-top: 3px; }
 .readable-text { min-width: 0; color: var(--text); font-size: var(--type-14); }
 .readable-text > p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.8; }
 .evaluation-case { container-type: inline-size; margin: var(--space-12) 0; border: 1px solid var(--border); border-radius: var(--radius-8); overflow: hidden; background: var(--surface); }

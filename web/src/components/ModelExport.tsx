@@ -33,7 +33,7 @@ export function ModelExport({ runId, options, token, checkpointStep, synthetic =
     <header><Download size={20} aria-hidden="true" /><div><h2>Export your trained model</h2><p>{checkpointStep == null ? 'Download the selected candidate checkpoint.' : `Exports selected candidate checkpoint · step ${checkpointStep}.`}</p></div></header>
     {synthetic && <p className="muted">This is a synthetic run. Its reference export is fixture data.</p>}
     <div className="model-export-controls"><label>Export format<select value={choice?.format || ''} disabled={busy || !options.length} onChange={event => { setFormat(event.target.value as ModelExportOption['format']); setProgress(null); setError(''); setNotice(''); }}>{options.length ? options.map(option => <option key={option.format} value={option.format}>{option.label}</option>) : <option value="">No supported formats reported</option>}</select></label>
-      <Button className="primary" type="button" disabled={busy || !choice} onClick={() => void download()}><Download size={16} aria-hidden="true" />{busy ? 'Exporting…' : error ? 'Retry export' : 'Download export'}</Button>
+      <Button variant="primary" type="button" disabled={busy || !choice} onClick={() => void download()}><Download size={16} aria-hidden="true" />{busy ? 'Exporting…' : error ? 'Retry export' : 'Download export'}</Button>
       {busy && <Button type="button" onClick={() => request.current?.abort()}><XCircle size={16} aria-hidden="true" />Cancel download</Button>}
     </div>
     {choice && <p>{choice.description}</p>}

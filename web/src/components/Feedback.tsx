@@ -12,7 +12,7 @@ type FeedbackProps = Omit<ComponentPropsWithRef<'div'>, 'title'> & {
 
 export function Feedback({ state, title, description, action, layout, className, role, ...props }: FeedbackProps) {
   const Icon = state === 'loading' ? LoaderCircle : state === 'error' ? CircleAlert : Inbox;
-  return <div {...props} className={`workspace-feedback ${className || ''}`.trim()} data-ui="feedback" data-state={state} data-layout={layout} role={role ?? (state === 'error' ? 'alert' : state === 'loading' ? 'status' : undefined)}>
+  return <div {...props} className={className} data-ui="feedback" data-state={state} data-layout={layout} role={role ?? (state === 'error' ? 'alert' : state === 'loading' ? 'status' : undefined)}>
     <Icon className={`feedback-icon${state === 'loading' ? ' feedback-spinner' : ''}`} size={20} aria-hidden="true" />
     <div className="feedback-content">
       <strong className="feedback-title">{title}</strong>

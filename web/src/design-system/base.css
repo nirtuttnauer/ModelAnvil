@@ -3,6 +3,8 @@
 @layer base {
   * { box-sizing: border-box; }
   [hidden]:not([hidden="until-found"]) { display: none !important; }
+  .muted { color: var(--text-muted); font-size: var(--type-13); }
+  .error-text { color: var(--error); font-size: var(--type-13); }
   :root {
     font-family: var(--font-sans);
     font-synthesis: none;

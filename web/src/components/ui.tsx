@@ -10,7 +10,7 @@ export function NavigationItem({ selected, icon, children, className, ...props }
 }
 
 export function WorkspaceHeader(props: ComponentPropsWithRef<'header'>) {
-  return <header {...props} className={join('topbar', props.className)} />;
+  return <header data-ui="topbar" {...props} />;
 }
 
 type MetricSummaryContent = { label: ReactNode; value: ReactNode; detail?: ReactNode; icon?: ReactNode };
@@ -23,10 +23,10 @@ export function MetricSummary({ label, value, detail, icon, ...props }: MetricSu
   const content = <><span className="summary-top"><span>{label}</span>{icon}</span><b>{value}</b>{detail != null && <small>{detail}</small>}</>;
   if (props.as === 'article') {
     const { as: _, ...native } = props;
-    return <article {...native} data-ui="metric-summary" className={join('summary-card', native.className)}>{content}</article>;
+    return <article {...native} data-ui="metric-summary" className={native.className}>{content}</article>;
   }
   const { as: _, ...native } = props;
-  return <Button type="button" {...native} data-ui="metric-summary" className={join('summary-card', native.className)}>{content}</Button>;
+  return <Button type="button" {...native} data-ui="metric-summary" className={native.className}>{content}</Button>;
 }
 
 type NativeProps = { children?: ReactNode; colSpan?: number; rowSpan?: number; role?: string; scope?: string; 'data-label'?: string };
@@ -44,7 +44,7 @@ export function RecordTable({ children, className, ...props }: ComponentPropsWit
   const responsive = headers.length > 0 && elements(head?.props.children).length === 1 && rows.every(row => row.type === 'tr') &&
     [...headers, ...rows.flatMap(row => elements(row.props.children))].every(cell => !cell.props.colSpan && !cell.props.rowSpan && !cell.props['data-label']) &&
     rows.every(row => elements(row.props.children).every(cell => cell.type === 'td'));
-  return <table {...props} data-ui="table" role="table" className={join('resource-table', responsive ? 'record-table' : undefined, className)}>
+  return <table {...props} data-ui="table" role="table" className={join(responsive ? 'record-table' : undefined, className)}>
     {sections.map(section => {
       if (!responsive || section.type !== 'tbody') return section;
       return cloneElement(section, { role: 'rowgroup' }, elements(section.props.children).map(row => cloneElement(row, { role: 'row' },

@@ -16,7 +16,7 @@
 .training-validation-counts { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: var(--space-12); }
 .training-validation-counts div { padding: var(--space-12); background: var(--surface-subtle); border: 1px solid var(--border); border-radius: var(--radius-8); }
 .training-validation-counts dd { margin: var(--space-4) 0 0; font-size: 22px; font-weight: 600; }
-.training-dataset-validation .notice { display: block; margin-top: var(--space-12); }
+.training-dataset-validation [data-ui="notice"] { display: block; margin-top: var(--space-12); }
 .training-dataset-validation ul { padding-inline-start: 24px; }
 @media (max-width: 540px) { .training-column-mapping { grid-template-columns: minmax(0, 1fr); } }
 .training-mapping-options { margin-top: var(--space-16); }

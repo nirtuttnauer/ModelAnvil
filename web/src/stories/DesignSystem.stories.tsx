@@ -18,7 +18,7 @@ function Components() {
   const [mode, setMode] = useState<'guided' | 'advanced'>('guided');
   const [dialog, setDialog] = useState(false);
   return <main id="workspace-content" className="page-content" style={{ maxWidth: 960 }}>
-    <PageHeader title="FigCraft components" description="Shared variants and native form behavior." actions={<div className="actions"><ThemeControl /></div>} />
+    <PageHeader title="FigCraft components" description="Shared variants and native form behavior." actions={<div data-ui="actions"><ThemeControl /></div>} />
     <Section title="Actions and fields" description="Buttons, fields and the labelled controls pages compose.">
       <form onSubmit={event => { event.preventDefault(); setSaved(value => value + 1); }} style={{ display: 'grid', gap: 'var(--space-16)' }}>
         <label>Project label<Field name="project" defaultValue="Research workspace" required /></label>
@@ -27,15 +27,15 @@ function Components() {
         <Checkbox label="Detect duplicate examples" hint="Exact duplicates are dropped before training." defaultChecked />
         <FileInput label="Training file" hint="JSONL, JSON or CSV · up to 16 MiB." />
         <SegmentedControl label="Configuration mode" value={mode} onChange={value => setMode(value as typeof mode)} options={[{ value: 'guided', label: 'Guided' }, { value: 'advanced', label: 'Advanced' }]} />
-        <div className="actions"><Button variant="primary">Save configuration <ArrowRight size={16} aria-hidden="true" /></Button><Button type="button">Secondary</Button><Button type="button" variant="quiet">Quiet</Button><Button disabled>Unavailable</Button><Button type="button" onClick={() => setDialog(true)}>Open dialog</Button></div>
+        <div data-ui="actions"><Button variant="primary">Save configuration <ArrowRight size={16} aria-hidden="true" /></Button><Button type="button">Secondary</Button><Button type="button" variant="quiet">Quiet</Button><Button disabled>Unavailable</Button><Button type="button" onClick={() => setDialog(true)}>Open dialog</Button></div>
         <output aria-live="polite">Saved {saved} times</output>
       </form>
     </Section>
     <Section title="Tabs, status and feedback">
       <TabList label="Example view">{['configure', 'history'].map(value => <Tab key={value} id={`example-tab-${value}`} aria-controls="example-panel" aria-selected={tab === value} onClick={() => setTab(value)}>{value}</Tab>)}</TabList>
       <div id="example-panel" role="tabpanel" aria-labelledby={`example-tab-${tab}`}><p>{tab === 'configure' ? 'Saved configuration' : 'Recorded runs'}</p></div>
-      <div className="actions"><Badge>Neutral</Badge><Badge tone="success">Ready</Badge><Badge tone="caution">Pending</Badge><Badge tone="error">Failed</Badge></div>
-      <div className="actions">{['queued', 'running', 'succeeded', 'interrupted', 'failed', 'accepted_without_edit', ''].map(status => <StatusBadge key={status} status={status} />)}</div>
+      <div data-ui="actions"><Badge>Neutral</Badge><Badge tone="success">Ready</Badge><Badge tone="caution">Pending</Badge><Badge tone="error">Failed</Badge></div>
+      <div data-ui="actions">{['queued', 'running', 'succeeded', 'interrupted', 'failed', 'accepted_without_edit', ''].map(status => <StatusBadge key={status} status={status} />)}</div>
       <Notice tone="info">Information uses the primary accent.</Notice><Notice tone="success">Configuration saved.</Notice><Notice tone="caution">Review the recorded evidence.</Notice><Notice tone="error">A retry is available.</Notice>
       <Feedback state="loading" title="Loading workspace data…" />
       <EmptyState title="No training runs yet" description="Start a run to see progress here." action={<Button type="button">Start training</Button>} layout="centered" />
@@ -93,10 +93,10 @@ function InteractionExamples() {
   const [name, setName] = useState('');
   const invalid = name.trim().length < 3;
   return <main id="workspace-content" className="page-content" style={{ maxWidth: 700 }}>
-    <PageHeader title="Interactive component states" actions={<div className="actions"><ThemeControl /></div>} />
+    <PageHeader title="Interactive component states" actions={<div data-ui="actions"><ThemeControl /></div>} />
     <Card padded><div style={{ display: 'grid', gap: 'var(--space-16)' }}>
       <h2>Pointer and keyboard feedback</h2>
-      <div className="actions"><Button type="button" variant="primary">Primary action</Button><Button type="button">Secondary action</Button><Button type="button" variant="quiet">Quiet action</Button><Button disabled>Disabled action</Button></div>
+      <div data-ui="actions"><Button type="button" variant="primary">Primary action</Button><Button type="button">Secondary action</Button><Button type="button" variant="quiet">Quiet action</Button><Button disabled>Disabled action</Button></div>
       <label>Workspace name<Field value={name} onChange={event => setName(event.target.value)} aria-invalid={invalid} aria-describedby={invalid ? 'interaction-name-error' : undefined} /></label>
       {invalid && <p id="interaction-name-error" className="error-text">Use at least three characters.</p>}
       <label>Disabled field<Field disabled value="Read-only example" /></label>
@@ -127,7 +127,7 @@ function FeedbackExamples() {
   const [failed, setFailed] = useState(true);
   const [submits, setSubmits] = useState(0);
   return <main id="workspace-content" className="page-content" style={{ maxWidth: 800 }}>
-    <PageHeader title="Loading and recovery" actions={<div className="actions"><ThemeControl /></div>} />
+    <PageHeader title="Loading and recovery" actions={<div data-ui="actions"><ThemeControl /></div>} />
     <Feedback state="loading" title="Loading workspace data…" description="Waiting for workspace data." />
     <Feedback state="empty" title="No matching sources" description="Try another search or clear your filters." />
     <form aria-label="Recovery example" onSubmit={event => { event.preventDefault(); setSubmits(value => value + 1); }}>
@@ -166,9 +166,9 @@ function MetricExamples() {
   const [inspected, setInspected] = useState(0);
   const [submits, setSubmits] = useState(0);
   return <main id="workspace-content" className="page-content" style={{ maxWidth: 960 }}>
-    <PageHeader title="Resource summaries" description="Demo values demonstrate actions, read-only metrics, and long content." actions={<div className="actions"><ThemeControl /></div>} />
+    <PageHeader title="Resource summaries" description="Demo values demonstrate actions, read-only metrics, and long content." actions={<div data-ui="actions"><ThemeControl /></div>} />
     <form aria-label="Metric actions" onSubmit={event => { event.preventDefault(); setSubmits(value => value + 1); }}>
-      <div className="cards">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
         <MetricSummary label="Datasets" value="2" detail={<>Total resources <ArrowUpRight size={12} aria-hidden="true" /></>} onClick={() => setInspected(value => value + 1)} />
         <MetricSummary as="article" label="Active reservations" value={0} detail="Awaiting completion or release" />
         <MetricSummary as="article" label="Resource units with recorded usage" value="12345678901234567890" detail="Each resource unit kept separate" />

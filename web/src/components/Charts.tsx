@@ -23,7 +23,7 @@ function usePlotWidth() {
 const colors = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-neutral)'];
 
 /** A chart with its heading. Pass `bordered={false}` when the chart already sits inside a card or section. */
-export function ChartPanel({ title, description, children, action, bordered = true }: { title: string; description?: string; children: ReactNode; action?: ReactNode; bordered?: boolean }) {
+export function ChartPanel({ title, description, children, action, bordered = false }: { title: string; description?: string; children: ReactNode; action?: ReactNode; bordered?: boolean }) {
   return <section className="chart-panel" data-ui="chart-panel" data-bordered={bordered || undefined}><div className="chart-heading"><div><h3>{title}</h3>{description && <p>{description}</p>}</div>{action}</div>{children}</section>;
 }
 
@@ -32,7 +32,7 @@ export function ChartEmpty({ message = 'No measurements recorded yet.' }: { mess
 }
 
 function DataTable({ children }: { children: ReactNode }) {
-  return <details className="chart-data" data-ui="disclosure" data-variant="quiet"><summary>View data <ChevronDown size={14} aria-hidden="true" /></summary><div className="table-scroll" tabIndex={0}><RecordTable className="resource-table">{children}</RecordTable></div></details>;
+  return <details className="chart-data" data-ui="disclosure" data-variant="quiet"><summary>View data <ChevronDown size={14} aria-hidden="true" /></summary><div className="table-scroll" tabIndex={0}><RecordTable>{children}</RecordTable></div></details>;
 }
 
 export interface Series { name: string; points: Point[] }

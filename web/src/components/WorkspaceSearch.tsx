@@ -20,7 +20,7 @@ export function WorkspaceSearch({ pages, onNavigate }: { pages: string[]; onNavi
   const matches = pages.filter(p => p.toLowerCase().includes(query.toLowerCase()));
   function choose(page: string) { onNavigate(page); dialog.current?.close(); }
   return <><Button type="button" className="workspace-search" title="Go to a page (⌘ or Ctrl K)" onClick={openSearch}><Search size={16} aria-hidden="true" /><span>Go to…</span><kbd aria-hidden="true">⌘K</kbd></Button>
-    <dialog className="workspace-search-dialog" data-ui="dialog" ref={dialog} aria-labelledby="workspace-search-title">
+    <dialog data-ui="dialog" ref={dialog} aria-labelledby="workspace-search-title">
       <header><div><h2 id="workspace-search-title">Go to a page</h2></div><Button type="button" variant="quiet" icon aria-label="Close page search" onClick={() => dialog.current?.close()}><X size={18} aria-hidden="true" /></Button></header>
       <div data-ui="dialog-body">
         <label className="search-input"><Search size={18} aria-hidden="true" /><Field ref={input} autoFocus aria-label="Find a page" value={query} onChange={e => setQuery(e.target.value)} placeholder="Type a page name" onKeyDown={e => { if (e.key === 'Enter' && matches.length) { e.preventDefault(); choose(matches[0]); } }} /></label>

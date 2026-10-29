@@ -117,7 +117,7 @@ export function ClusterExplorerPage({ token = '', refreshKey = 0 }: { token?: st
           {queried && <p className="muted">{results.length} returned · requested top {topK}</p>}
           {results.map((chunk, rank) => <RetrievalEvidenceCard key={chunk.chunk_id} chunk={chunk} rank={rank + 1} query={query} selected={selected?.chunk_id === chunk.chunk_id} onSelect={() => setSelectedId(chunk.chunk_id)} />)}
           {!results.length && <EmptyState title={busy ? 'Retrieving chunks…' : queried ? 'No matches found' : 'Explore your knowledge'} description={queried ? 'Try more specific terms or choose a different index.' : 'Run a lexical query to inspect its ranked source evidence.'} />}
-          <ChartPanel title="Retrieval ranking" description="Exact lexical scores returned by the index, not embedding similarities." bordered={false}>
+          <ChartPanel title="Retrieval ranking" description="Exact lexical scores returned by the index, not embedding similarities.">
             <BarChart data={results.map((chunk, rank) => ({ label: `Chunk ${rank + 1}`, value: chunk.score, color: selected?.chunk_id === chunk.chunk_id ? 0 : 4 }))} unit="Lexical score" emptyMessage={queried ? 'No document chunks matched this query.' : 'Select an index and run a query to compare retrieved chunk scores.'} />
           </ChartPanel>
         </div>

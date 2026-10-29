@@ -1,7 +1,7 @@
 import type { StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import screens from './Screens.stories';
-import { DraftStatus } from '../components/Draft';
+import { DraftIndicator } from '../components/Draft';
 import { http, HttpResponse } from 'msw';
 
 const meta = { ...screens, title: 'ModelAnvil/Actions/Compact screens' };
@@ -126,10 +126,11 @@ export const ContextOverrides: Story = { parameters: { demoRoute: '#context-lab'
   passed(canvasElement);
 } };
 
-export const UnsavedDraft: Story = { render: () => <DraftStatus draft={{ status: 'unsaved', restore() {}, discard() {} }} />, play: async ({ canvasElement }) => {
+export const UnsavedDraft: Story = { render: () => <DraftIndicator draft={{ status: 'unsaved', restore() {}, discard() {} }} />, play: async ({ canvasElement }) => {
   const canvas = within(canvasElement);
-  await expect(canvas.getByRole('status')).toHaveTextContent('Draft is unsaved');
+  await expect(canvas.getByRole('status')).toHaveTextContent('Draft unsaved');
   await expect(canvas.getByRole('button', { name: 'Discard draft' })).toBeVisible();
+  await userEvent.click(canvas.getByText('About drafts', { selector: 'summary' }));
   await expect(canvas.getByText(/Drafts use this tab’s session storage/)).toBeVisible();
   passed(canvasElement);
 } };

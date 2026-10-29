@@ -1,26 +1,26 @@
-.guided-evaluation,
-.improvement-report {
-  display: grid;
-  gap: var(--space-16);
+@layer tokens, base, primitives, shell, pages;
+@layer pages {
+  .guided-evaluation,
+  .improvement-report {
+    display: grid;
+    gap: var(--space-16);
+  }
+  .guided-evaluation p,
+  .improvement-report p { max-width: 72ch; }
+  .guided-evaluation h3,
+  .improvement-report h3 { margin: 0; }
+  .guided-evaluation,
+  .improvement-report { padding-block: var(--space-16) var(--space-24); border-bottom: 1px solid var(--border); }
+  .guided-evaluation details,
+  .improvement-report details { min-width: 0; }
+  .guided-evaluation summary,
+  .improvement-report summary { cursor: pointer; padding-block: var(--space-8); }
+  .evaluation-preview-case { padding-block: var(--space-16); border-top: 1px solid var(--border); overflow-wrap: anywhere; }
+  .evaluation-preview-case p { white-space: pre-wrap; }
+  .improvement-report table { font-variant-numeric: tabular-nums; }
+  .improvement-report caption { padding-bottom: var(--space-12); text-align: left; }
+  .comparison-resources { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-16); margin: 0; }
+  .comparison-resources dt { color: var(--text-secondary); font-size: var(--type-12); }
+  .comparison-resources dd { margin: var(--space-8) 0 0; font-weight: 600; overflow-wrap: anywhere; }
+  @media (max-width: 600px) { .comparison-resources { grid-template-columns: 1fr; } }
 }
-.guided-evaluation p,
-.improvement-report p { max-width: 72ch; }
-.guided-evaluation h3,
-.improvement-report h3 { margin: 0; }
-.guided-evaluation,
-.improvement-report { padding-block: var(--space-16) var(--space-24); border-bottom: 1px solid var(--border); }
-.guided-evaluation details,
-.improvement-report details { min-width: 0; }
-.guided-evaluation summary,
-.improvement-report summary { cursor: pointer; padding-block: var(--space-8); }
-.evaluation-preview-case { padding-block: var(--space-16); border-top: 1px solid var(--border); overflow-wrap: anywhere; }
-.evaluation-preview-case p { white-space: pre-wrap; }
-.improvement-report table { font-variant-numeric: tabular-nums; }
-.improvement-report caption { padding-bottom: var(--space-12); text-align: left; }
-.comparison-resources { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-16); margin: 0; }
-.comparison-resources dt { color: var(--text-secondary); font-size: var(--type-12); }
-.comparison-resources dd { margin: var(--space-8) 0 0; font-weight: 600; overflow-wrap: anywhere; }
-@media (max-width: 600px) { .comparison-resources { grid-template-columns: 1fr; } }
-.starter-guidance { padding-block: var(--space-16); }
-.starter-guidance .actions { margin-top: var(--space-12); }
-.evaluation-full-evidence > summary { cursor: pointer; padding-block: var(--space-16); font-weight: 600; }

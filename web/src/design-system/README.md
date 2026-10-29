@@ -6,9 +6,9 @@ The React UI implements the native [FigCraft project](../../../design/figcraft/M
 
 ## Stylesheet layers
 
-`index.css` imports, in order, `tokens.css` → `semantic.css` → `base.css` → `primitives.css`; `src/app.css` holds the shell. `semantic.css` declares the cascade order `@layer tokens, base, primitives, shell, pages;` so a stylesheet's import order can no longer change the result. Page stylesheets wrap their rules in `@layer pages { … }` and contain layout only: grids, sticky regions, page-specific spacing. They never restyle elements, `[data-ui]` primitives or legacy classes, and they contain no `!important` and no color literals.
+`index.css` imports, in order, `tokens.css` → `semantic.css` → `base.css` → `primitives.css`; `src/app.css` holds the shell. `semantic.css` declares the cascade order `@layer tokens, base, primitives, shell, pages;` so a stylesheet's import order can no longer change the result. Page stylesheets wrap their rules in `@layer pages { … }` and contain layout only: grids, sticky regions, page-specific spacing. They never restyle elements or `[data-ui]` primitives, and they contain no `!important` and no color literals. `tests/css-policy.test.mjs` enforces this for every page and component stylesheet and checks that the shell imports nothing but `design-system/index.css` and `app.css`.
 
-The end of `primitives.css` is a fenced block of legacy class names (`.panel`, `.notice`, `.state`, `.form-grid`, …) restyled onto the system so unmigrated pages stay coherent. It is deleted once every page uses the primitives.
+Two text utilities live in `base.css` because every page needs them: `.muted` for secondary lines and `.error-text` for inline errors. Everything else is keyed on `data-ui`.
 
 Type scale: page title `--type-24`, section `--type-20`, subsection `--type-16`, body and controls `--type-14`, labels `--type-13`, captions and badges `--type-12` (the minimum). Weights 400/500/600 only, no letter-spacing, no uppercase. Spacing uses `--space-4/8/12/16/24/32`; controls use `--radius-control` (6 px) and panels `--radius-panel` (8 px); only floating surfaces carry `--shadow-overlay`. A bordered container never holds another bordered box: nested cards, form grids and feedback lose their border inside cards, inspectors, dialogs and card sections.
 
@@ -25,7 +25,7 @@ Type scale: page title `--type-24`, section `--type-20`, subsection `--type-16`,
 | `StatRow` / `Stat` | one row of figures with hairline dividers; `tone` tints the value |
 | `StatusBadge` | text plus icon for any lifecycle string, toned by `api/status.ts` (`statusTone`, `statusLabel`); keeps the `state` class |
 | `Badge`, `Notice` | tones `neutral\|info\|success\|caution\|error` (`Notice` defaults to neutral) |
-| `Field`, `MultilineField`, `TextControl`, `Select`, `Checkbox`, `Radio`, `FileInput` | labelled controls with hint and error slots; `FileInput` keeps the native input focusable |
+| `Field`, `MultilineField`, `TextControl`, `MultilineControl`, `Select`, `Checkbox`, `Radio`, `FileInput` | labelled controls with hint and error slots; `FileInput` keeps the native input focusable |
 | `SegmentedControl`, `TabList` + `Tab` | pressed-state group and underline tabs |
 | `Disclosure` | real `<details>/<summary>`; `variant="plain\|card\|quiet"` |
 | `KeyValueList` | `<dl>` of facts, one or two columns |
@@ -33,8 +33,12 @@ Type scale: page title `--type-24`, section `--type-20`, subsection `--type-16`,
 | `Dialog`, `Menu`, `MenuSection` | native `<dialog>` rendered in place; disclosure-based popover menu |
 | `JourneySteps` | numbered steps for the shared fine-tuning journey in `api/journey.ts` |
 | `Feedback`, `EmptyState` | loading / empty / error with `layout="inline\|centered"` |
+| `InspectorPanel` | `<aside data-ui="inspector">` for one selected record: eyebrow, title, close button, body and `footer`; Escape closes it and focus returns to the trigger |
+| `DraftIndicator` | one line of draft state (saved, restore, discard) with an "About drafts" disclosure |
 
-Charts: `ChartPanel` takes `bordered={false}` when it already sits inside a card or section; colors come from `--chart-1..4` and `--chart-neutral`; "View data" is a quiet disclosure and the selected point is announced through a live region instead of a permanent readout bar.
+Layout attributes, used directly in JSX: `data-ui="form"` stacks controls 16 px apart; `data-ui="field-grid"` lays controls out in two columns (`data-span="full"` spans both; one column under 768 px); `data-ui="split"` with `data-open` places a list beside an inspector and stacks them under 1000 px; `data-ui="actions"` is a wrapping row of buttons; `data-ui="table"` styles any table, with `tbody tr[aria-selected="true"]` highlighting the inspected row.
+
+Charts: `ChartPanel` is unbordered by default and takes `bordered` only when it stands alone on a page; colors come from `--chart-1..4` and `--chart-neutral`; "View data" is a quiet disclosure and the selected point is announced through a live region instead of a permanent readout bar.
 
 ### Technical identifiers
 

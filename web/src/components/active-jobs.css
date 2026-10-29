@@ -4,9 +4,8 @@
   .active-jobs-drawer { position: fixed; top: calc(var(--header-height) + 8px); right: 8px; bottom: 8px; left: auto; width: var(--inspector-width); height: auto; max-height: none; max-width: calc(100% - 16px); margin: 0; padding: 0; border: 0; background: transparent; color: var(--text); overflow: visible; z-index: 40; }
   .active-jobs-drawer::backdrop { background: var(--backdrop); }
   html:has(.active-jobs-drawer:modal) { overflow: hidden; }
-  .active-jobs-drawer .inspector-panel { height: 100%; margin: 0; overflow-y: auto; overscroll-behavior: contain; box-shadow: var(--shadow-overlay); background: var(--surface); }
-  .active-jobs-drawer .panel-title { position: sticky; top: 0; z-index: 1; background: var(--surface); padding: var(--space-16); }
-  .active-jobs-drawer .panel-body { padding: var(--space-16); }
+  .active-jobs-drawer [data-ui="inspector"] { height: 100%; margin: 0; overflow-y: auto; overscroll-behavior: contain; box-shadow: var(--shadow-overlay); background: var(--surface); }
+  .active-jobs-drawer [data-ui="inspector"] > header { position: sticky; top: 0; z-index: 1; background: var(--surface); padding: var(--space-16); }
   .active-jobs-summary, .active-job-heading, .active-job-progress { display: flex; justify-content: space-between; align-items: center; gap: var(--space-12); }
   .active-jobs-summary p { font-weight: 600; margin: 0; }
   .active-jobs-muted { color: var(--text-muted); font-size: var(--type-12); line-height: 1.5; margin: var(--space-4) 0 0; }

@@ -66,16 +66,6 @@ export function useDraft<T extends DraftValues>(form: string, defaults: T, resou
   return { field, discard, restore, status: current.status };
 }
 
-export function DraftStatus({ draft, disabled = false }: { draft: { status: string; restore(): void; discard(): void }; disabled?: boolean }) {
-  return <aside className="notice draft-status full-width" aria-label="Local draft">
-    <p role="status">{({ saved: 'Draft saved in this tab.', restored: 'Draft restored. Review inputs before submitting.', empty: 'No unfinished draft.', unsaved: 'Draft is unsaved: browser storage is unavailable or full. Edits remain in memory for navigation in this tab.', expired: 'Draft backup expired. Edit to save a fresh backup before leaving this page.', unavailable: 'Browser draft storage is unavailable.' }[draft.status] || 'Draft is unsaved.')}</p>
-    <details open={['unsaved', 'expired', 'unavailable'].includes(draft.status)}><summary>Draft options and storage</summary>
-    <p className="muted">Drafts use this tab’s session storage and expire 8 hours after an edit. Browsers may retain session storage when restoring tabs; expired backups are removed when the app checks them. Discard removes the draft. Credentials and execution approvals are excluded. Avoid entering secrets in content.</p>
-    <div className="actions"><Button type="button" disabled={disabled || !['saved', 'restored'].includes(draft.status)} onClick={draft.restore}>Restore saved draft</Button><Button type="button" disabled={disabled || draft.status === 'empty'} onClick={draft.discard}>Discard draft</Button></div>
-    </details>
-  </aside>;
-}
-
 /** One-line draft state with Restore/Discard; the storage explanation folds away. */
 export function DraftIndicator({ draft, disabled = false }: { draft: { status: string; restore(): void; discard(): void }; disabled?: boolean }) {
   const text = ({ saved: 'Draft saved in this tab', restored: 'Draft restored', empty: 'No draft', unsaved: 'Draft unsaved · browser storage unavailable', expired: 'Draft expired', unavailable: 'Draft storage unavailable' } as Record<string, string>)[draft.status] ?? 'Draft unsaved';
