@@ -12,6 +12,7 @@ import { ResourceState } from '../components/ResourceState';
 import { statusLabel } from '../api/status';
 import { ChartPanel, ChartEmpty, SegmentBar } from '../components/Charts';
 import './operations.css';
+import { EvidenceLabel } from '../components/EvidenceLabel';
 
 interface ReleaseVersion {
   release_version_id: string; revision_no: number; release: number; status: string; recorded_status?: string;
@@ -176,6 +177,7 @@ export function ReleasesPage({ token, refreshKey = 0 }: ReleasesPageProps) {
             <Button type="button" size="sm" disabled={sbomDisabled} onClick={() => void handleGenerateSbom(true)}>Save SPDX artifact</Button>
             <Button type="button" size="sm" disabled={sbomDisabled} onClick={downloadReleaseBundle}>Download release bundle</Button>
           </div>
+          <EvidenceLabel evidence={selected.execution_evidence as { level?: string; source?: string; production_qualified?: boolean } | undefined} />
           <Disclosure summary="Recorded execution evidence" variant="quiet" open>{selected.execution_evidence ? <DataInspector value={selected.execution_evidence} /> : <p className="muted">No execution evidence was returned.</p>}</Disclosure>
           <Disclosure summary="Recorded gate results" variant="quiet"><DataInspector value={selected.gate_results ?? []} /></Disclosure>
           <Disclosure summary="Model card" variant="quiet"><DataInspector value={selected.model_card ?? {}} /></Disclosure>

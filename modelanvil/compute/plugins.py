@@ -13,6 +13,15 @@ class PluginError(ValueError):
     pass
 
 
+# These ids stay deferred until a recorded human pilot asks for one provider.
+# Runpod's control plane is already implemented and is the only expansion candidate.
+DEFERRED_UNTIL_PILOT = frozenset({
+    'runpod-serverless', 'vast', 'lambda', 'paperspace', 'coreweave', 'nebius', 'crusoe',
+    'scaleway', 'aws', 'gce', 'azure', 'modal', 'together', 'fireworks',
+    'huggingface-endpoints', 'baseten', 'replicate', 'customer-kubernetes', 'customer-slurm',
+})
+
+
 class ProviderError(Exception):
     def __init__(self, code="provider_unavailable", *, uncertain=True):
         self.code = code if isinstance(code, str) and re.fullmatch(r"[a-z][a-z0-9_]{0,63}", code) else "provider_unavailable"
@@ -25,9 +34,19 @@ def installed_plugins(tenant_id, kind=None):
             if str(tenant_id) in value.get("tenant_ids", []) and (kind is None or value.get("kind") == kind)}
 
 
+def provider_claim(plugin_id):
+    if plugin_id == 'runpod':
+        return 'implemented_unqualified'
+    if plugin_id in DEFERRED_UNTIL_PILOT:
+        return 'deferred'
+    return 'operator_installed'
+
+
 def definition(plugin_id, tenant_id, kind):
     if not isinstance(plugin_id, str):
         raise PluginError("Invalid installed plugin ID.")
+    if plugin_id in DEFERRED_UNTIL_PILOT:
+        raise PluginError(f'{plugin_id} stays deferred until a recorded pilot asks for one provider.')
     entry = installed_plugins(tenant_id, kind).get(plugin_id)
     if entry is None:
         raise PluginError("Plugin is not installed for this tenant.")

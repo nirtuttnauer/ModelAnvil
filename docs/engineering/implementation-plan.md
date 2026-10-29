@@ -1,5 +1,7 @@
 # ModelAnvil Implementation Plan
 
+> **Historical work-package plan.** Current support is the [capability ledger](capability-ledger.md). Package exit lines below are not delivery claims.
+
 Version 0.1 | 8 October 2026 | PRD baseline 0.7 | Status proposed dependency and delivery plan
 
 Implement shared platform contracts first, prove both scratch and fine-tuning paths early, then add collaboration/alignment, RAG/context workbenches, and release/operations qualification. The first complete release must satisfy all R1 requirements and all 17 PRD acceptance scenarios. Development increments below are not independent claims of complete product support.

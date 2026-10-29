@@ -30,6 +30,7 @@ export const workspaceResponses: Record<string, unknown> = {
   '/api/v1/build/': typeof __API_BUILD__ === 'undefined' ? { revision: 'storybook-demo', source_digest: 'synthetic-fixture', protocol: 'demo-only', dataset_formats: ['jsonl', 'csv', 'json', 'docx', 'pdf'] } : __API_BUILD__,
   '/api/v1/health/': { status: 'ok' },
   '/api/v1/accounts/access/': { role: 'engineer' },
+  '/api/v1/capability-ledger/': { generated_tokens: 32 },
   '/api/v1/tenants/': [{ tenant_id: 'demo-tenant', name: 'Anvil Research · Demo' }],
   '/api/v1/teams/': [{ id: 'demo-team', slug: 'research', name: 'Research', description: 'Synthetic Storybook team.' }],
   '/api/v1/projects/': [{ id: '1', team: 'demo-team', team_slug: 'research', slug: 'assistant', name: 'Assistant Research · Demo', description: 'Synthetic Storybook workspace.', created_at: time, updated_at: time }],

@@ -50,8 +50,20 @@ def require_live(event):
     if not check_resource_access(event.model_version,event.project_id,event.tenant_id):raise ValueError('The original model version is no longer accessible.')
 
 
+def development_inspected_groups(tenant):
+    groups=set()
+    for suite in EvaluationSuiteVersion.all_objects.filter(tenant_id=tenant, protected_role='development_inspected'):
+        for case in suite.cases or []:
+            group=case.get('source_group_id') if isinstance(case, dict) else None
+            if isinstance(group, str) and group.strip(): groups.add(group.strip())
+    return groups
+
+
 def assert_uninspected_cases(tenant,cases):
     if not isinstance(cases,list) or any(not isinstance(c,dict) for c in cases):raise ValueError('Supply a list of evaluation cases.')
+    inspected=development_inspected_groups(tenant)
+    if any(isinstance(c.get('source_group_id'), str) and c['source_group_id'].strip() in inspected for c in cases):
+        raise ValueError('Development corrections and their source groups cannot be declared clean protected evaluation.')
     exposed=get_accessible_queryset(ApplicationFeedback,tenant_id=tenant)
     groups={fingerprint(tenant,c['source_group_id']) for c in cases if isinstance(c.get('source_group_id'),str) and c['source_group_id']}
     prompts={prompt_fingerprint(tenant,c.get('input_prompt','')) for c in cases if isinstance(c.get('input_prompt'),str) and c['input_prompt']}

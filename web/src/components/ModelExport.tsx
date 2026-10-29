@@ -4,9 +4,10 @@ import { Download, XCircle } from 'lucide-react';
 import { errorMessage } from '../api/client';
 import { downloadModelExport, exportBytes, type ExportProgress, type ModelExportOption } from '../api/model-export';
 import './model-export.css';
+import { EvidenceLabel, type EvidenceRecord } from './EvidenceLabel';
 
-export function ModelExport({ runId, options, token, checkpointStep, synthetic = false, evaluationRun }: {
-  runId: string; options: ModelExportOption[]; token: string; checkpointStep?: number; synthetic?: boolean; evaluationRun?: string;
+export function ModelExport({ runId, options, token, checkpointStep, synthetic = false, evaluationRun, evidence }: {
+  runId: string; options: ModelExportOption[]; token: string; checkpointStep?: number; synthetic?: boolean; evaluationRun?: string; evidence?: EvidenceRecord | null;
 }) {
   const [format, setFormat] = useState(options[0]?.format || 'json');
   const choice = options.find(option => option.format === format) || options[0];
@@ -31,7 +32,7 @@ export function ModelExport({ runId, options, token, checkpointStep, synthetic =
   }
   return <section className="model-export" aria-label="Model export">
     <header><Download size={20} aria-hidden="true" /><div><h2>Export your trained model</h2><p>{checkpointStep == null ? 'Download the selected candidate checkpoint.' : `Exports selected candidate checkpoint · step ${checkpointStep}.`}</p></div></header>
-    {synthetic && <p className="muted">This is a synthetic run. Its reference export is fixture data.</p>}
+    {synthetic ? <p className="muted">This is a synthetic run. Its reference export is fixture data.</p> : evidence ? <EvidenceLabel evidence={evidence} /> : null}
     <div className="model-export-controls"><label>Export format<select value={choice?.format || ''} disabled={busy || !options.length} onChange={event => { setFormat(event.target.value as ModelExportOption['format']); setProgress(null); setError(''); setNotice(''); }}>{options.length ? options.map(option => <option key={option.format} value={option.format}>{option.label}</option>) : <option value="">No supported formats reported</option>}</select></label>
       <Button variant="primary" type="button" disabled={busy || !choice} onClick={() => void download()}><Download size={16} aria-hidden="true" />{busy ? 'Exporting…' : error ? 'Retry export' : 'Download export'}</Button>
       {busy && <Button type="button" onClick={() => request.current?.abort()}><XCircle size={16} aria-hidden="true" />Cancel download</Button>}

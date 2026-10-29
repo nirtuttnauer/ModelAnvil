@@ -1,0 +1,4 @@
+{"messages": [{"role": "user", "content": "Answer yes or no: refunds are allowed within thirty days."}, {"role": "assistant", "content": "yes"}]}
+{"messages": [{"role": "user", "content": "Answer yes or no: the sky invoice is a planet."}, {"role": "assistant", "content": "no"}]}
+{"messages": [{"role": "user", "content": "Answer yes or no: seats can be added by an owner."}, {"role": "assistant", "content": "yes"}]}
+{"messages": [{"role": "user", "content": "Answer yes or no: passwords are stored in the prompt."}, {"role": "assistant", "content": "no"}]}

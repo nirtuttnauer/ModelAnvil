@@ -162,6 +162,8 @@ R1 means the first complete product release. A requirement marked R1 must pass i
 
 ### 5 1 Required in R1
 
+Amended 28 October 2026 by section 5.4. Where this paragraph and section 5.4 differ, section 5.4 is the release scope.
+
 Organization and team isolation; managed and self-hosted operation; hybrid worker attachment; data import and controlled scraping; cleaning and dataset versions; human labeling and ranking; iterative manual/model-assisted labeling with review, labeling-model training, and repeated batches; synthetic-data generation; scratch pretraining; continued pretraining and supervised fine-tuning; preference optimization; reward-model training; a complete RLHF loop with at least one qualified learned-reward policy-optimization recipe; at least one verifiable-reward RL recipe; evaluation and comparison; resumable jobs; usage controls; model export and a supported serving path; custom field mappings and extension SDK; a curated open Dataset Bank with a qualified SVG starter preset and extensible source manifests; a qualified text RAG pipeline with retrieval and answer evaluation; an interactive embedding cluster explorer; context recipe composition, controlled experiments, and regression gates.
 
 ### 5 2 Proposed initial coverage
@@ -172,9 +174,34 @@ Native records for text, image, audio, video, and mixed samples are part of the 
 
 Additional multimodal training recipes, more schedulers and GPU providers, larger qualified cluster configurations, advanced architecture search, richer active learning, distillation, model merging, and broader quantization support can follow through the same interfaces. These additions must preserve provenance and evaluation comparability.
 
+### 5 4 Release scope amendment — 28 October 2026
+
+The [capability ledger](engineering/capability-ledger.md) is the support claim. This amendment does not delete the original R1 list above. It says which lines are still required for the first trustworthy release and which lines are Target until a named envelope exists.
+
+Required for that release:
+
+- Tenant and project isolation.
+- One published SmolLM2 text profile, with the token and row limits printed in the ledger.
+- A durable candidate-versus-baseline comparison, a decision report that refuses a small sample as a win, and an accept or reject that does not deploy the model.
+- A reviewed export and one authenticated serving path on the single-host stack, after the installation qualification gates pass.
+- Development corrections that cannot enter a protected final test.
+- The commercial gate: customer discovery stays open and paid packaging stays closed until observed human pilots are recorded.
+
+Moved from this release to Target:
+
+- Scratch pretraining on a declared architecture. The CPU fixture is not that result.
+- Automatic iterative labeling, including two seed modes and automatic next batches. The explicit CPU review cycle stays available.
+- Complete learned-reward RLHF and verifier RL as release gates. Bounded CPU and Apple paths stay under Advanced. DPO does not stand in for RLHF.
+- Text RAG as a release-quality answer system. Retrieval software stays. Position exact-match of 0 remains a disclosed failure.
+- The interactive cluster explorer beyond the measured PCA table, and long-context claims beyond the published CPU envelope.
+- Kubernetes, Helm, the SwiftUI client, controlled scraping as a supported source, the extension SDK as a supported surface, and hybrid or private remote workers as a supported deployment.
+- Every compute provider except the already implemented Runpod control plane. Those ids stay deferred until a pilot asks for one provider. Live Runpod qualification is not started.
+
+No screen should present a Target line as supported.
+
 ## 6 Functional requirements
 
-All requirements in this section are R1 unless labeled Target. The acceptance statement describes observable evidence, rather than a particular implementation.
+All requirements in this section are R1 unless labeled Target. Section 5.4 moves the listed release claims to Target even where a requirement below was originally marked R1. The acceptance statement describes observable evidence, rather than a particular implementation.
 
 ### 6 1 Projects and reproducibility
 

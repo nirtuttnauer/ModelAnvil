@@ -22,6 +22,9 @@ import { statusLabel } from '../api/status';
 import { BarChart, ChartPanel, ChartEmpty, MetricsChart, SegmentBar } from '../components/Charts';
 import './ml-pages.css';
 import './improvement.css';
+import { DecisionReport as DecisionGateReport, type DecisionReportData } from '../components/DecisionReport';
+import { DevelopmentHandoff } from '../components/DevelopmentHandoff';
+import { evidenceTitle } from '../api/evidence-label';
 
 interface Suite { id: number; suite?: number; suite_version_id: string; suite_name: string; revision_no: number; cases_count: number; source_group_count?: number | null; scorer_type: string; protected_role: string }
 interface Metric { key: string; slice_name: string; value: number; sample_count: number; uncertainty_interval: unknown }
@@ -35,15 +38,25 @@ interface Case { result_id: string; case_id: string; input_prompt: string; candi
 
 export function EvaluationPage({ token, refreshKey }: { token: string; refreshKey: number }) {
   const setupFormId = useId(), suiteFormId = useId();
-  const draft = useDraft('evaluation', { pool: '', budget: '', showSuiteForm: false as boolean, suiteName: '', suiteTarget: '', suiteScorer: 'exact_match', suiteCases: '[{\n  "case_id": "case-1",\n  "input_prompt": "Hello",\n  "expected_output": "hello",\n  "slice": "general",\n  "source_group_id": "held-out"\n}]', maxTokens: '8', setup: false as boolean, suite: '', candidate: '', baseline: '' });
+  const draft = useDraft('evaluation', { pool: '', budget: '', showSuiteForm: false as boolean, suiteName: '', suiteTarget: '', suiteScorer: 'exact_match', suiteRole: 'protected_eval', suiteCases: '[{\n  "case_id": "case-1",\n  "input_prompt": "Hello",\n  "expected_output": "hello",\n  "slice": "general",\n  "source_group_id": "held-out"\n}]', maxTokens: '8', setup: false as boolean, suite: '', candidate: '', baseline: '' });
   const [runs, setRuns] = useState<Run[]>([]); const [models, setModels] = useState<RegisteredModel[]>([]); const [suites, setSuites] = useState<Suite[]>([]);
   const [pools, setPools] = useState<Pool[]>([]); const [budgets, setBudgets] = useState<Budget[]>([]); const [pool, setPool] = draft.field('pool'); const [budget, setBudget] = draft.field('budget');
   const [loading, setLoading] = useState(true); const [error, setError] = useState<string | null>(null); const [retry, setRetry] = useState(0); const [busy, setBusy] = useState(false); const [notice, setNotice] = useState('');
-  const [showSuiteForm, setShowSuiteForm] = draft.field('showSuiteForm'); const [suiteName, setSuiteName] = draft.field('suiteName'); const [suiteTarget, setSuiteTarget] = draft.field('suiteTarget'); const [suiteScorer, setSuiteScorer] = draft.field('suiteScorer'); const [suiteCases, setSuiteCases] = draft.field('suiteCases'); const [maxTokens, setMaxTokens] = draft.field('maxTokens');
+  const [showSuiteForm, setShowSuiteForm] = draft.field('showSuiteForm'); const [suiteName, setSuiteName] = draft.field('suiteName'); const [suiteTarget, setSuiteTarget] = draft.field('suiteTarget'); const [suiteScorer, setSuiteScorer] = draft.field('suiteScorer'); const [suiteRole, setSuiteRole] = draft.field('suiteRole'); const [suiteCases, setSuiteCases] = draft.field('suiteCases'); const [maxTokens, setMaxTokens] = draft.field('maxTokens');
   const [setup, setSetup] = draft.field('setup'); const [suite, setSuite] = draft.field('suite'); const [candidate, setCandidate] = draft.field('candidate'); const [baseline, setBaseline] = draft.field('baseline');
   const [route, setRoute] = useState(() => evaluationSelection(window.location.hash));
   const [selectedId, setSelectedId] = useState(() => route.evaluationRun); const [cases, setCases] = useState<Case[]>([]); const [casesLoading, setCasesLoading] = useState(false); const [next, setNext] = useState<string | null>(null); const [failuresOnly, setFailuresOnly] = useState(false);
   const selected = runs.find(r => r.run_id === selectedId);
+  const [generatedMax, setGeneratedMax] = useState(32);
+  const [gateReport, setGateReport] = useState<DecisionReportData | null>(null);
+  useEffect(() => { const c = new AbortController();
+    apiRequest<{ generated_tokens?: number }>('/api/v1/capability-ledger/', token, { signal: c.signal }).then(result => { if (!c.signal.aborted && Number.isInteger(result.generated_tokens) && (result.generated_tokens || 0) >= 1) setGeneratedMax(result.generated_tokens as number); }).catch(() => {});
+    return () => c.abort();
+  }, [token]);
+  useEffect(() => { const c = new AbortController(); setGateReport(null); if (!selectedId) return () => c.abort();
+    apiRequest<DecisionReportData>(`/api/v1/evaluation-runs/${selectedId}/decision-report/`, token, { signal: c.signal }).then(result => { if (!c.signal.aborted) setGateReport(result); }).catch(() => { if (!c.signal.aborted) setGateReport(null); });
+    return () => c.abort();
+  }, [selectedId, token, refreshKey, retry]);
   const runLabel = (id: string) => `Evaluation run ${runs.findIndex(item => item.run_id === id) + 1}`;
   const modelName = (id: number | null) => models.find(m => m.id === id) ? `${models.find(m => m.id === id)!.model_name} · r${models.find(m => m.id === id)!.revision_no}` : id === null ? 'None' : 'Model unavailable';
   useEffect(() => { const changed = () => { const value = evaluationSelection(window.location.hash); setRoute(value); if (value.evaluationRun) setSelectedId(value.evaluationRun); }; window.addEventListener('hashchange', changed); return () => window.removeEventListener('hashchange', changed); }, []);
@@ -76,10 +89,10 @@ export function EvaluationPage({ token, refreshKey }: { token: string; refreshKe
     e.preventDefault(); setBusy(true); setError(null);
     try {
       const parsed = recordsInput(suiteCases, evaluationFields, 64, 'case_id');
-      const version = await apiRequest<Suite>('/api/v1/evaluation-suites/register-cpu/', token, { method: 'POST', body: JSON.stringify({ name: suiteName.trim(), protected_role: 'protected_eval', scorer_type: suiteScorer, cases: parsed, ...(suiteTarget ? { suite: Number(suiteTarget) } : {}) }) });
+      const version = await apiRequest<Suite>('/api/v1/evaluation-suites/register-cpu/', token, { method: 'POST', body: JSON.stringify({ name: suiteName.trim(), protected_role: suiteRole, scorer_type: suiteScorer, cases: parsed, ...(suiteTarget ? { suite: Number(suiteTarget) } : {}) }) });
       setSuites(current => [version, ...current.filter(item => item.id !== version.id)]); setSuite(String(version.id)); setShowSuiteForm(false); if (!route.trainingRun) setSetup(true); const groupCount = version.source_group_count;
       const groupLabel = groupCount == null ? 'unreported source groups' : `${groupCount} source ${groupCount === 1 ? 'group' : 'groups'}`;
-      setNotice(`Suite r${version.revision_no} pinned as protected evaluation with ${groupLabel}.`);
+      setNotice(`Suite r${version.revision_no} pinned as ${version.protected_role === 'development' ? 'development evaluation' : 'protected evaluation'} with ${groupLabel}.`);
     } catch(e) { setError(errorMessage(e)); } finally { setBusy(false); }
   }
   async function executeSelected() {
@@ -91,6 +104,13 @@ export function EvaluationPage({ token, refreshKey }: { token: string; refreshKe
   }
   async function loadMore() { if (!next) return; setBusy(true); setError(null); try { const p = await apiPage<Case>(nextPagePath(next, `/api/v1/evaluation-runs/${selectedId}/cases/`), token); setCases(current => [...current, ...p.results]); setNext(p.next || null); } catch(e) { setError(errorMessage(e)); } finally { setBusy(false); } }
   const suiteFamilies = [...suites.reduce((map, item) => { if (item.suite == null) return map; const current = map.get(item.suite); if (!current || item.revision_no > current.revision_no) map.set(item.suite, item); return map; }, new Map<number, Suite>()).values()];
+  async function handoff(corrections: { case_id: string; corrected_output: string }[], datasetName: string) {
+    if (!selected) return; setBusy(true); setError(null);
+    try {
+      const result = await apiRequest<{ next_step: string }>(`/api/v1/evaluation-runs/${selected.run_id}/development-handoff/`, token, { method: 'POST', body: JSON.stringify({ corrections, dataset_name: datasetName }) });
+      setNotice(result.next_step); setRetry(value => value + 1);
+    } catch (e) { setError(errorMessage(e)); } finally { setBusy(false); }
+  }
   const selectedSuite = suites.find(s => s.id === selected?.suite_version);
   const pins = selected?.protocol_ref?.pins;
   const environment = pins?.environment;
@@ -116,7 +136,9 @@ export function EvaluationPage({ token, refreshKey }: { token: string; refreshKe
       {route.trainingRun && <GuidedEvaluation key={`${token}-${route.trainingRun}-${route.suiteVersion}`} token={token} trainingRun={route.trainingRun} currentRun={selected} suites={suites} suiteVersion={route.suiteVersion} suitesLoading={loading} onPrepared={prepared} onQueued={queued} />}
       {!route.trainingRun && selected?.status === 'pending' && !selected.job && selected.decision_report?.training_run_id && <p><LinkButton variant="primary" href={`#evaluation?training_run=${encodeURIComponent(selected.decision_report.training_run_id)}${selectedSuite ? `&suite_version=${encodeURIComponent(selectedSuite.suite_version_id)}` : ''}`}>Review and run this comparison</LinkButton></p>}
       {selected?.decision_report && <ImprovementReport report={selected.decision_report} runId={selected.run_id} candidateName={selected.candidate_name || modelName(selected.candidate_model_version)} baselineName={selected.baseline_name || modelName(selected.baseline_model_version)} />}
-      {selected && <ImprovementDecision key={selected.run_id} token={token} run={selected.run_id} decision={selected.improvement_decision} eligible={selected.status === 'completed' && !!selected.job && !!selected.baseline_model_version && selected.baseline_model_version !== selected.candidate_model_version && selected.execution_evidence?.level === 'integrated_execution'} onRecorded={decision => setRuns(current => current.map(item => item.run_id === selected.run_id ? { ...item, improvement_decision: decision } : item))} />}
+      {selected && gateReport && <Disclosure summary="Decision gate" variant="quiet"><DecisionGateReport report={gateReport} /></Disclosure>}
+      {selected && selectedSuite?.protected_role === 'development' && <DevelopmentHandoff key={`handoff-${selected.run_id}`} cases={cases} busy={busy} onSubmit={(corrections, datasetName) => void handoff(corrections, datasetName)} />}
+      {selected && <ImprovementDecision key={selected.run_id} token={token} run={selected.run_id} acceptBlockedReason={gateReport && gateReport.eligible && gateReport.recommended_outcome !== 'accept' ? gateReport.gate.reason : ''} decision={selected.improvement_decision} eligible={selected.status === 'completed' && !!selected.job && !!selected.baseline_model_version && selected.baseline_model_version !== selected.candidate_model_version && selected.execution_evidence?.level === 'integrated_execution'} onRecorded={decision => setRuns(current => current.map(item => item.run_id === selected.run_id ? { ...item, improvement_decision: decision } : item))} />}
       {selected?.decision_report?.export_available && selected.decision_report.training_run_id && <ReviewedModelExport key={selected.run_id} token={token} trainingRun={selected.decision_report.training_run_id} candidate={selected.candidate_model_version} decision={selected.improvement_decision} evaluationRun={selected.run_id} />}
       {handoffError && <p role="alert" className="error-text">{handoffError}</p>}
       <ResourceState loading={loading && !runs.length} error={error} onRetry={() => setRetry(v => v + 1)} />
@@ -129,13 +151,13 @@ export function EvaluationPage({ token, refreshKey }: { token: string; refreshKe
           { label: 'Baseline model', value: modelName(selected.baseline_model_version) },
           { label: 'Evaluation suite', value: selectedSuite ? `${selectedSuite.suite_name} · r${selectedSuite.revision_no}` : 'Suite unavailable' },
           { label: 'Scorer', value: selectedSuite?.scorer_type || 'Not reported' },
-          { label: 'Evidence', value: `${selected.execution_evidence?.level || 'Unknown'} · ${selected.execution_evidence?.source || 'No execution source reported'}` },
+          { label: 'Evidence', value: `${evidenceTitle(selected.execution_evidence?.level)} · ${selected.execution_evidence?.source || 'No execution source reported'}` },
           { label: 'Cases', value: `${recordedCases ?? 'Not reported'} recorded${typeof totalCases === 'number' ? ` of ${totalCases}` : ''} · missing ${missingCases ?? 'not reported'} · failed ${coverage?.failed ?? 'not reported'}` },
           { label: 'Created', value: new Date(selected.created_at).toLocaleString() },
         ]} />
         {canQueue && <form data-ui="form" onSubmit={e => { e.preventDefault(); void executeSelected(); }}>
           <div data-ui="field-grid">
-            <TextControl label="Maximum generated tokens" required type="number" min="1" max="32" value={maxTokens} onChange={e => setMaxTokens(e.target.value)} />
+            <TextControl label="Maximum generated tokens" required type="number" min="1" max={generatedMax} value={maxTokens} onChange={e => setMaxTokens(e.target.value)} />
             <Select label="Evaluation worker pool" required value={pool} onChange={e => setPool(e.target.value)}><option value="">Select an active pool</option>{pools.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</Select>
             <Select label="Evaluation case budget" required value={budget} onChange={e => setBudget(e.target.value)}><option value="">Select an enabled case policy</option>{budgets.map(b => <option key={b.policy_id} value={b.policy_id}>{b.name} · {b.allowance?.remaining_amount ?? 'Unknown'} cases remaining</option>)}</Select>
           </div>
@@ -174,7 +196,7 @@ export function EvaluationPage({ token, refreshKey }: { token: string; refreshKe
           <td><a href={runHash('evaluation', r.run_id)}>{runLabel(r.run_id)}</a><div className="ops-row-actions"><Button type="button" variant="quiet" size="sm" disabled={busy} onClick={() => selectRun(r.run_id)}>Inline details</Button></div></td>
           <td>{modelName(r.candidate_model_version)}</td><td>{modelName(r.baseline_model_version)}</td>
           <td>{suites.find(s => s.id === r.suite_version)?.suite_name || 'Suite unavailable'}</td>
-          <td><StatusBadge status={r.status} /><small title={r.execution_evidence?.source}>{r.execution_evidence?.level || 'unknown evidence'}</small></td>
+          <td><StatusBadge status={r.status} /><small title={r.execution_evidence?.source}>{evidenceTitle(r.execution_evidence?.level)}</small></td>
         </tr>)}</tbody>
       </RecordTable></div>}
       {!loading && !error && !runs.length && <p className="muted">No evaluation runs yet.</p>}
@@ -203,6 +225,7 @@ export function EvaluationPage({ token, refreshKey }: { token: string; refreshKe
           <TextControl label="Suite name" required maxLength={200} readOnly={Boolean(suiteTarget)} value={suiteName} onChange={e => setSuiteName(e.target.value)} />
           <Select label="Protected evaluation role" required value="protected_eval" onChange={() => undefined} options={[{ value: 'protected_eval', label: 'Protected evaluation — held out from training' }]} />
           <Select label="Scoring method" value={suiteScorer} onChange={e => setSuiteScorer(e.target.value)} options={[{ value: 'exact_match', label: 'Exact match' }, { value: 'substring', label: 'Expected text appears in output' }, { value: 'numeric_tolerance', label: 'Numeric tolerance (0.0001)' }]} />
+          <Select label="Suite role" value={suiteRole} onChange={e => setSuiteRole(e.target.value)} options={[{ value: 'protected_eval', label: 'Protected evaluation' }, { value: 'development', label: 'Development (corrections can hand off to training data)' }]} />
         </div>
         <RecordListEditor title="Evaluation cases" itemName="Case" fields={evaluationFields} maximum={64} uniqueKey="case_id" value={suiteCases} onChange={setSuiteCases} disabled={busy} description="Write the prompt, expected response and source group for each case. IDs must be unique; slices group related cases." />
         <p className="muted">Pin 1–64 held-out cases. A new version keeps the protected role and does not rewrite earlier revisions.</p>

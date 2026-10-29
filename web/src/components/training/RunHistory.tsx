@@ -4,6 +4,7 @@ import { Identifier } from '../Identifier';
 import { LineChart } from '../Charts';
 import { DataInspector } from '../DataInspector';
 import { trainingMethodLabel, type TrainingRun } from '../../api/training';
+import { evidenceTitle } from '../../api/evidence-label';
 
 export function RunHistory({ runs, selectedId, comparisonIds, onComparisonChange, compared, compareBlocked, runLabel, runHref, onInspect, onMonitor }: {
   runs: TrainingRun[]; selectedId?: string; comparisonIds: string; onComparisonChange(value: string): void; compared: TrainingRun[]; compareBlocked: string[];
@@ -22,7 +23,7 @@ export function RunHistory({ runs, selectedId, comparisonIds, onComparisonChange
               <Checkbox label="Compare this run" checked={chosen.includes(r.run_id)} onChange={e => onComparisonChange(e.target.checked ? [...chosen.slice(-1), r.run_id].join(',') : chosen.filter(id => id !== r.run_id).join(','))} /></div>
           </td>
           <td>{trainingMethodLabel(r.recipe_type)}</td>
-          <td><StatusBadge status={r.status} /><small className="muted" title={r.execution_evidence?.source}>{r.execution_evidence?.level || 'unknown evidence'}</small></td>
+          <td><StatusBadge status={r.status} /><small className="muted" title={r.execution_evidence?.source}>{evidenceTitle(r.execution_evidence?.level)}</small></td>
           <td><progress value={r.current_step} max={r.total_steps || 1} aria-label={`${runLabel(r.run_id)} progress`} /> <small>{r.current_step} / {r.total_steps}</small></td>
           <td>{r.latest_loss === null ? 'Not reported' : r.latest_loss.toFixed(4)}</td>
           <td>{r.checkpoints.length}</td>

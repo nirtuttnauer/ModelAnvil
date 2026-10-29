@@ -1,5 +1,7 @@
 # ModelAnvil supported capability baseline
 
+> **Supporting evidence, not the status page.** Use the [capability ledger](capability-ledger.md) for the current envelope. This file keeps the operation notes and activation contract.
+
 23 October 2026 · TASK-44 · Small teams building private AI products
 
 ModelAnvil executes real local data preparation, bounded training, inference, evaluation, export and CPU serving. Support is specific to each operation, recipe and tested environment. The archived guided Apple GPU journey and the current CPU evaluation/release journey have different support envelopes. Archived GPU reports predate the current dependency upgrade. New [bounded MPS FP32 full-SFT/LoRA evidence](verification/task40-current-mps-2026-10-23/report.md) records current pins for that exact operation/device envelope; other GPU profiles require separate qualification. Complete R1 and production model qualification remain open.

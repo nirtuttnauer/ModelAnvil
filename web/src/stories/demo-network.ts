@@ -52,6 +52,10 @@ export function demoHandlers(state: DemoState = 'populated') {
       const revision = revisions?.find(row => row.revision_id === inspectedRevision[1]);
       return revision ? respond({ rows: [], total: revision.row_count || 0, next_cursor: null, recipe: {} }) : respond({ detail: 'Synthetic revision unavailable.' }, 404);
     }
+    const decisionGate = path.match(/^\/api\/v1\/evaluation-runs\/([^/]+)\/decision-report\/$/);
+    if (request.method === 'GET' && decisionGate) {
+      return respond({ eligible: false, decisive: false, recommended_outcome: 'undecided', sample_count: 0, candidate_accuracy: null, baseline_accuracy: null, minimum_decisive_cases: 20, production_qualified: false, slices: [], gate: { passed: false, reason: 'Synthetic demo: no decision gate was evaluated.' } });
+    }
     const retrievalEvidence = path.match(/^\/api\/v1\/index-versions\/[^/]+\/(judgment-pool|traces|comparisons|projection)\/$/);
     if (request.method === 'GET' && retrievalEvidence) {
       return respond(retrievalEvidence[1] === 'projection'

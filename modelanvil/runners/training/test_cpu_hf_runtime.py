@@ -10,9 +10,10 @@ from modelanvil.runners.training.registry import runtime_for_architecture
 
 class PretrainedCPUGuards(SimpleTestCase):
     def test_missing_or_small_host_memory_never_admits(self):
-        for value in (None, 0, 8 * 1024**3):
+        required = cpu.LIMITS['memory_bytes']
+        for value in (None, 0, required - 1):
             with self.subTest(memory=value), patch('modelanvil.runners.training.hardware.total_memory_bytes', return_value=value):
-                with self.assertRaisesRegex(ValueError, '16 GiB'):
+                with self.assertRaisesRegex(ValueError, str(required)):
                     cpu.observed_device('cpu')
         with self.assertRaisesRegex(ValueError, 'explicit cpu'):
             cpu.observed_device('mps:0')
@@ -31,7 +32,7 @@ class PretrainedCPUGuards(SimpleTestCase):
                 'gpu_packages': cpu.PACKAGES, 'memory_bytes': 16 * 1024**3}
         self.assertTrue(cpu.capable_worker(SimpleNamespace(capabilities=caps, slots=1)))
         for change in ({'training_runtime': gpu.CONTRACT_DIGEST}, {'gpu_backend': 'mps'},
-                       {'gpu_device': 'mps:0'}, {'gpu_packages': {}}, {'memory_bytes': 8 * 1024**3}):
+                       {'gpu_device': 'mps:0'}, {'gpu_packages': {}}, {'memory_bytes': cpu.LIMITS['memory_bytes'] - 1}):
             with self.subTest(change=change):
                 self.assertFalse(cpu.capable_worker(SimpleNamespace(capabilities={**caps, **change}, slots=1)))
         self.assertFalse(cpu.capable_worker(SimpleNamespace(capabilities=caps, slots=2)))
@@ -50,5 +51,5 @@ class PretrainedCPUGuards(SimpleTestCase):
     def test_cpu_memory_report_never_invents_free_memory(self):
         with patch('modelanvil.runners.training.hardware.total_memory_bytes', return_value=32 * 1024**3):
             report = cpu.memory_observation('cpu')
-        self.assertEqual(report['required_bytes'], 16 * 1024**3)
+        self.assertEqual(report['required_bytes'], cpu.LIMITS['memory_bytes'])
         self.assertNotIn('free_bytes', report)

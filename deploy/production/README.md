@@ -28,7 +28,7 @@ the intended public host; the default binds only to loopback. Use ports 80 and
 control and retain a secure recovery copy.
 
 Production settings reject missing secrets, debug mode, wildcard hosts, HTTP
-origins and SQLite. Signup is disabled. The API runs as a non-root user with a
+origins and SQLite. Signup is disabled. Set `MODELANVIL_SEND_RESET_EMAIL=1` and `EMAIL_HOST` when password reset should send mail; the API never returns the reset code while debug is off. The API runs as a non-root user with a
 read-only image and a writable artifact volume; development bootstrap is
 removed from the image. Gunicorn access logging is disabled to avoid recording
 artifact grants. Caddy owns the trusted proxy boundary and overwrites the

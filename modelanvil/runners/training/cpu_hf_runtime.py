@@ -8,11 +8,12 @@ import sys
 
 from modelanvil.runners.training import hf_runtime as hf
 from modelanvil.runners.training.runtime import digest, _finalize_worker_job
+from modelanvil.runners.training.sequence_envelope import apply_cpu_measurement
 
 RUNTIME_ID = 'modelanvil.smollm2-cpu-sft.v1'
 SOURCE, FILE_HASHES, PACKAGES = hf.SOURCE, hf.FILE_HASHES, hf.PACKAGES
 OPTIMIZER, LORA = hf.OPTIMIZER, hf.LORA
-LIMITS = {**hf.LIMITS, 'steps': 20, 'memory_bytes': 16 * 1024**3, 'gpu_memory_bytes': 0}
+LIMITS = apply_cpu_measurement({**hf.LIMITS, 'steps': 20, 'memory_bytes': 16 * 1024**3, 'gpu_memory_bytes': 0})
 CONTRACT = {**copy.deepcopy(hf.CONTRACT), 'runtime': RUNTIME_ID, 'limits': LIMITS,
             'recipes': ['full_sft', 'lora_adapter', 'continued_pretraining'], 'placement': 'one_trusted_local_cpu_worker',
             'cpu_threads': 1, 'guided_source': None, 'large_guided_source': None}
@@ -38,7 +39,7 @@ def runner_manifest():
     value['capabilities'][0]['architectures'] = [RUNTIME_ID]
     value['resources'].update(gpu_count=0, memory_bytes=LIMITS['memory_bytes'])
     value['limitations'] = ['Exact pinned pretrained SmolLM2-135M, FP32 full SFT, rank-8 q/v LoRA or continued pretraining on CPU.',
-        'One thread and one dedicated local worker; 1–20 updates, at most 1000 examples and 128 tokens per example.',
+        f'One thread and one dedicated local worker; 1–{LIMITS["steps"]} updates, at most {LIMITS["rows"]} examples and {LIMITS["sequence_tokens"]} tokens per example.',
         'No QLoRA, guided large model, GPU, distributed, remote, customer quality or production qualification.']
     return value
 
@@ -67,7 +68,7 @@ def observed_device(selector):
         raise ValueError('The bounded pretrained CPU profile requires the explicit cpu device.')
     memory = total_memory_bytes()
     if type(memory) is not int or memory < LIMITS['memory_bytes']:
-        raise ValueError('Pretrained CPU training requires at least 16 GiB observed host memory.')
+        raise ValueError(f'Pretrained CPU training requires at least {LIMITS["memory_bytes"]} observed host bytes.')
     return {'host_key': host_key(), 'device': {'id': 'cpu', 'backend': 'cpu', 'torch_device': 'cpu',
             'name': cpu_brand(), 'total_memory_bytes': memory}, 'packages': PACKAGES,
             'capacity_source': 'Observed physical host memory; bounded tensors, not a free-memory reservation.'}

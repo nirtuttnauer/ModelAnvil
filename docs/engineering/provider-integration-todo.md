@@ -2,6 +2,10 @@
 
 12 October 2026. Runpod Pods and operator-installed custom plugins are the first implementation. Other providers remain explicit backlog items until implemented and qualified.
 
+## Deferred until a recorded pilot
+
+28 October 2026. No second device or provider is in progress. Runpod's control plane is implemented and is not live-qualified; it is the only expansion candidate after a human pilot asks. The ids below are refused by `provider_claim` even if an operator configuration uses them: Runpod Serverless, Vast, Lambda, Paperspace, CoreWeave, Nebius, Crusoe, Scaleway, AWS, GCE, Azure, Modal, Together, Fireworks, Hugging Face Inference Endpoints, Baseten, Replicate, customer Kubernetes, and customer Slurm. A custom plugin id that is not in that set can still be installed by an operator. That installation is not a support claim.
+
 ## This pull request
 
 - [x] Add Runpod REST v2 GPU discovery and authenticated pod lifecycle.

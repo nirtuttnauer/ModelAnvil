@@ -1,5 +1,7 @@
 # ModelAnvil implementation status
 
+> **Historical ledger.** The current support surface is the [capability ledger](capability-ledger.md). Counts and dates below are the observations from those reviews.
+
 23 October 2026 · Current merged-code baseline `2bf35ec61fa163c98706b9f5b2452d2385b98739`. The [final integration inventory](integration-inventory.md) maps scoped deliveries, every retained local/remote ref and original uncommitted scope. Saved workflow state, executed software, model quality, hardware qualification and production readiness remain separate.
 
 | Path | Current merged execution evidence | Remaining boundary |

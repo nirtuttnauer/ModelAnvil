@@ -10,7 +10,7 @@
 
 A self-hosted workspace for dataset preparation, team labeling, and bounded model post-training and evaluation. A Django API records the data, runs, permissions and artifacts; a React app lets you inspect and operate those workflows.
 
-ModelAnvil is a work in progress. Several local execution paths run real computations, while other screens and domain tests use explicit fixtures. Execution evidence, model quality, hardware support and production readiness are separate questions. The [capability audit](docs/engineering/capability-evidence.md) and [status ledger](docs/engineering/status.md) record the evidence and remaining gaps.
+ModelAnvil is a work in progress. Several local execution paths run real computations, while other screens and domain tests use explicit fixtures. Execution evidence, model quality, hardware support and production readiness are separate questions. The [capability ledger](docs/engineering/capability-ledger.md) is the current support surface. The [capability audit](docs/engineering/capability-evidence.md) and [status ledger](docs/engineering/status.md) keep their historical reviews.
 
 See the [supported capability baseline](docs/engineering/supported-capabilities.md) for current operation-specific evidence and limits. Overview exposes local workflow measurements; Evaluation records explicit accept/reject decisions after verified candidate/baseline comparisons. These measurements stay in the installation and exclude prompts and credentials.
 

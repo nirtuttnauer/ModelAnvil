@@ -37,7 +37,7 @@ export function CurrentRun({ run, label, refreshedAt, progressError, onRefresh, 
         {run.base_model_version && <LinkButton href={`#chat?model_version=${encodeURIComponent(run.output_model_version_uuid!)}&compare_base=1`}>Try base vs trained</LinkButton>}
       </div>}
     </Notice>}
-    {run.status === 'completed' && <ModelExport key={`export-${run.run_id}`} runId={run.run_id} options={run.export_options || []} token={token} checkpointStep={summary?.selected_step ?? run.total_steps} synthetic={run.runtime?.execution_mode === 'simulation'} />}
+    {run.status === 'completed' && <ModelExport key={`export-${run.run_id}`} runId={run.run_id} options={run.export_options || []} token={token} evidence={run.execution_evidence} checkpointStep={summary?.selected_step ?? run.total_steps} synthetic={run.runtime?.execution_mode === 'simulation'} />}
     {run.status === 'completed' && !/^modelanvil\.(smolvlm-|speecht5-)/.test(runtimePin) && <Disclosure summary="Compare and decide" variant="card" open={decisionOpen} onToggle={event => setDecisionOpen(event.currentTarget.open)}>{decisionOpen && <GuidedDecision key={`${token}:${run.run_id}`} token={token} runId={run.run_id} />}</Disclosure>}
     <Section title="Loss & checkpoint activity" level={2} description={`${label} · ${run.execution_evidence?.level || 'unknown evidence'} · recorded values`}>
       {series.length ? <LineChart key={run.run_id} series={series} xLabel="Committed step" yLabel="Loss" /> : <ChartEmpty message={run.status === 'pending' ? 'This run is queued. Loss appears after the first measured checkpoint.' : 'No loss measurements have been recorded for this run.'} />}

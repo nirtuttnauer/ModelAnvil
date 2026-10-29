@@ -1,0 +1,4 @@
+{"messages": [{"role": "user", "content": "Invoice 14 is due Friday."}, {"role": "assistant", "content": "{\"id\": \"14\", \"due\": \"Friday\"}"}]}
+{"messages": [{"role": "user", "content": "Ticket 8 is urgent."}, {"role": "assistant", "content": "{\"id\": \"8\", \"priority\": \"urgent\"}"}]}
+{"messages": [{"role": "user", "content": "Order 3 ships Monday."}, {"role": "assistant", "content": "{\"id\": \"3\", \"ships\": \"Monday\"}"}]}
+{"messages": [{"role": "user", "content": "Account 2 is paused."}, {"role": "assistant", "content": "{\"id\": \"2\", \"status\": \"paused\"}"}]}

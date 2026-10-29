@@ -1,10 +1,20 @@
 # ModelAnvil delivery roadmap
 
-The current release is the [two classification betas](two-beta-release.md): local Apple adapter training and the separate private hosted CPU product. That document records the implemented workflow, preserved baseline, reproducible checks and outstanding launch gates. Existing accounts, storage, entitlements and CPU training are integration foundations. The broader PRD milestones below remain future product scope; they are not all requirements for these bounded betas.
+> **Historical plan below the current section.** The support claim is the [capability ledger](engineering/capability-ledger.md). Release scope is [PRD section 5.4](PRD.md).
 
-For the small-team product strategy, proposed delivery sequence, success measures, and Aftur execution map, see the [category leadership roadmap](category-leadership-roadmap.md), dated 21 October 2026. The milestones below retain the full PRD release scope.
+## Current release sequence
 
-This is a dependency-based planning outline. Dates, owners, staffing, and budgets are not assigned. Both scratch training and fine-tuning remain required for the broader PRD release, beyond the classification betas.
+1. Keep one ledger and make browser evidence labels use it.
+2. Raise a SmolLM2 token envelope only after `scripts/measure_sequence_envelope.py` writes a valid report. The guided GPU wall stays 128 tokens until a GPU measurement exists.
+3. Ship the decision report, three playbooks, and development-case exclusion.
+4. Qualify the single-host install named in [installation qualification](engineering/installation-qualification.md). Do not claim a recovery time.
+5. Leave customer discovery and paid packaging gated on observed human pilots.
+6. For each older R1 line, the ledger names an envelope or section 5.4 moves it to Target.
+7. Add no second device or provider until a pilot asks. Runpod is the only implemented control plane, and it is not live-qualified.
+
+## Historical outline
+
+This is a dependency-based planning outline. Dates, owners, staffing, and budgets are not assigned. Both scratch training and fine-tuning are required for the first complete release.
 
 ## Milestone 1 — Foundation and feasibility
 

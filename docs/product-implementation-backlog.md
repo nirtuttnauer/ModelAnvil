@@ -1,5 +1,7 @@
 # ModelAnvil prioritized implementation backlog
 
+> **Historical.** The current support surface is the [capability ledger](engineering/capability-ledger.md). Tasks below are not open work orders.
+
 Historical planning snapshot. Delivery status is tracked in Aftur and the [current integration inventory](engineering/integration-inventory.md); proposed goals here are not measured results.
 
 12 October 2026 · Proposed work from the screen review · Source baseline `4b90517`

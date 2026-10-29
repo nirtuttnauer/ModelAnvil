@@ -14,13 +14,14 @@ export function Welcome({ onConnected }: { onConnected: (token: string) => void 
   const [signup, setSignup] = useState<boolean | null>(null);
   const [retry, setRetry] = useState(0);
   const [error, setError] = useState('');
+  const [commercial, setCommercial] = useState('');
   useEffect(() => {
     const controller = new AbortController();
     fetch('/api/v1/accounts/status/', { signal: controller.signal }).then(async response => {
       if (!response.ok) throw new Error('Could not connect to ModelAnvil. Try again when the app is running.');
       const result = await response.json();
       if (controller.signal.aborted) return;
-      setSignup(result.signup_enabled); setMode(result.signup_enabled ? 'signup' : 'signin'); setReady(true);
+      setSignup(result.signup_enabled); setCommercial(result.paid_packaging === 'closed' && typeof result.commercial_reason === 'string' ? result.commercial_reason : ''); setMode(result.signup_enabled ? 'signup' : 'signin'); setReady(true);
       if (result.authenticated) onConnected('session');
     }).catch(e => { if (!controller.signal.aborted) { setError(errorMessage(e)); setReady(true); } });
     return () => controller.abort();
@@ -55,6 +56,7 @@ export function Welcome({ onConnected }: { onConnected: (token: string) => void 
   </div><section className="welcome-card" aria-labelledby="welcome-title">
     <h2 id="welcome-title">{mode === 'signup' ? 'Create your workspace' : 'Welcome back'}</h2>
     <p>{mode === 'signup' ? 'Your account includes a project for your first fine-tune.' : 'Sign in to continue your training and saved models.'}</p>
+    {commercial && <p className="muted">{commercial}</p>}
     {error && <Notice tone="error" role="alert">{error}{signup === null && <Button onClick={() => { setReady(false); setError(''); setRetry(v => v + 1); }}>Retry connection</Button>}</Notice>}
     <form onSubmit={submit} className="guided-form">
       {mode === 'signup' && <label>Your name<Field autoComplete="name" value={name} onChange={e => setName(e.target.value)} maxLength={100} required disabled={busy} /></label>}

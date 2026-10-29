@@ -1,0 +1,1 @@
+{"note": "Protocol fixture for the decision report. These rows are not SmolLM2 outputs.", "cases": 30, "slice": "label", "candidate_passed": false, "baseline_passed": true, "production_qualified": false}
