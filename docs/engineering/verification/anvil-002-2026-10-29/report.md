@@ -49,8 +49,8 @@ They are listed on the test records as `fixture_tests_not_collected`. The skip g
 
 `gitleaks` 8.30.1, stock config. No `--config`, no baseline, no allowlist, and no `.gitleaks.toml` in the repo.
 
-- `gitleaks dir --redact` on the working tree exited 1 with 404 findings, all rule `generic-api-key`. Console: `gitleaks-dir.summary.txt`. Findings: `gitleaks-dir.txt`.
-- `gitleaks detect --redact` over 163 commits exited 1 with 411 findings, all rule `generic-api-key`. Console: `gitleaks-detect.summary.txt`. Findings: `gitleaks-detect.txt`.
+- `gitleaks dir --redact` on the working tree at `b383764d495faa5ba5bb65d108ee33b46e1ed5fd` exited 1 with 404 findings, all rule `generic-api-key`. Console: `gitleaks-dir.summary.txt`. Findings: `gitleaks-dir.txt`.
+- `gitleaks detect --redact` at that SHA scanned 164 commits and exited 1 with 411 findings, all rule `generic-api-key`. Console: `gitleaks-detect.summary.txt`. Findings: `gitleaks-detect.txt`.
 
 The saved reports redact match text (`Secret` is `REDACTED`). The finding identity is the rule, file, line, and commit. There is no QA-signed ANVIL-017 triage list anywhere in the repository, so none of the 411 history findings can be matched to one. This gate is unmet.
 
