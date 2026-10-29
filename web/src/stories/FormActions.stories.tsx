@@ -50,7 +50,7 @@ export const ContextOverrides: Story = {
     const question = canvas.getByLabelText('Question override');
     await userEvent.clear(question);
     await userEvent.type(question, 'What is the source?\n');
-    await userEvent.click(canvas.getByRole('button', { name: 'Compile Context Recipe' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Compile context recipe' }));
     await expect(canvas.findByLabelText('Exact compiled prompt')).resolves.toHaveTextContent('What is the source?');
     await expect([...demoRequests].reverse().find(request => request.method === 'POST' && request.path.endsWith('/compile/'))?.body).toEqual({ variables: { question: 'What is the source?\n' } });
     await userEvent.click(canvas.getByRole('button', { name: 'Overview' }));

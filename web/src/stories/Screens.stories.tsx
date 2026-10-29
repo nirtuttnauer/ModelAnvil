@@ -77,7 +77,7 @@ export const ContextLab: Story = {
     const recipe = await canvas.findByLabelText('Recipe version');
     await waitFor(() => expect(within(recipe).getAllByRole('option').length).toBeGreaterThan(1));
     await userEvent.selectOptions(recipe, 'a0000000-0000-4000-8000-000000000001');
-    await userEvent.click(canvas.getByRole('button', { name: 'Compile Context Recipe' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Compile context recipe' }));
     await expect(canvas.findByLabelText('Exact compiled prompt')).resolves.toBeVisible();
     await expect(canvas.getByText('Estimated token allocation')).toBeVisible();
     canvasElement.dataset.demoVerified = 'passed';
@@ -119,8 +119,8 @@ export const ContextAuthoring: Story = {
     await userEvent.type(canvas.getByLabelText('Evidence template'), 'This recipe exists only in the demo session.');
     await userEvent.type(canvas.getByLabelText('Question template'), 'What is the source?');
     await userEvent.click(canvas.getByRole('button', { name: 'Save context recipe' }));
-    await waitFor(() => expect(canvas.getByRole('button', { name: 'Compile Context Recipe' })).toBeEnabled());
-    await userEvent.click(canvas.getByRole('button', { name: 'Compile Context Recipe' }));
+    await waitFor(() => expect(canvas.getByRole('button', { name: 'Compile context recipe' })).toBeEnabled());
+    await userEvent.click(canvas.getByRole('button', { name: 'Compile context recipe' }));
     await expect(canvas.findByLabelText('Exact compiled prompt')).resolves.toHaveTextContent('This recipe exists only in the demo session.');
     await expect(demoRequests.filter(request => request.status >= 400)).toHaveLength(0);
     canvasElement.dataset.demoVerified = 'passed'; canvasElement.dataset.demoRoute = parameters.demoRoute;

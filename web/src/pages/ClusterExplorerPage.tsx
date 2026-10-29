@@ -1,19 +1,23 @@
 import { Identifier } from '../components/Identifier';
-import { Badge, Button, Card, Field, MultilineField, Notice } from '../components/ui';
+import { Button, Dialog, Disclosure, FileInput, KeyValueList, MultilineControl, Notice, Section, Select, StatusBadge, TextControl } from '../components/ui';
+import { EmptyState } from '../components/Feedback';
 import { RetrievalEvidenceCard } from '../components/RetrievalEvidenceCard';
-import { useDraft, DraftStatus } from '../components/Draft';
+import { InspectorPanel } from '../components/InspectorPanel';
+import { useDraft, DraftIndicator } from '../components/Draft';
 import { DataInspector } from '../components/DataInspector';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { apiPage, apiRequest, errorMessage } from '../api/client';
 import { ResourceState } from '../components/ResourceState';
-import { BarChart, ChartEmpty, ChartPanel, EventTimeline } from '../components/Charts';
-import { Database, FileText, Search, Plus } from 'lucide-react';
-import './data-workspace.css';
+import { statusLabel } from '../api/status';
+import { BarChart, ChartPanel } from '../components/Charts';
+import './ml-pages.css';
+
 interface KB { knowledge_base_id: string; name: string; description: string }
 interface Index { index_id: string; knowledge_base: number; revision_no: number; status: string; chunk_count: number }
 interface Chunk { chunk_id: string; text: string; score: number; metadata: Record<string, unknown> }
 
 export function ClusterExplorerPage({ token = '', refreshKey = 0 }: { token?: string; refreshKey?: number }) {
+  const createFormId = useId(), importFormId = useId();
   const draft = useDraft('rag-author', { showForm: false as boolean, name: '', description: '', showImport: false as boolean, baseId: '', documentTitle: '', documentContent: '', sourceUri: '', index: '', query: '', topK: '5' });
   const [bases, setBases] = useState<KB[]>([]);
   const [indexes, setIndexes] = useState<Index[]>([]);
@@ -38,7 +42,8 @@ export function ClusterExplorerPage({ token = '', refreshKey = 0 }: { token?: st
   const [retry, setRetry] = useState(0);
   const [moreAvailable, setMoreAvailable] = useState(false);
   const searchGeneration = useRef(0);
-  const selected = results.find(chunk => chunk.chunk_id === selectedId) || results[0];
+  const selected = results.find(chunk => chunk.chunk_id === selectedId);
+  const selectedRank = results.findIndex(chunk => chunk.chunk_id === selectedId) + 1;
   const selectedIndex = indexes.find(item => item.index_id === index);
 
   useEffect(() => { setNotice(''); }, [token]);
@@ -56,7 +61,7 @@ export function ClusterExplorerPage({ token = '', refreshKey = 0 }: { token?: st
     event.preventDefault(); setBusy(true); setError(null);
     try {
       const created = await apiRequest<KB>('/api/v1/knowledge-bases/', token, { method: 'POST', body: JSON.stringify({ name: name.trim(), description: description.trim() }) });
-      setBaseId(created.knowledge_base_id); setShowImport(true); setName(''); setDescription(''); setShowForm(false); setRetry(value => value + 1); setNotice(`Knowledge base “${name.trim()}” created.`);
+      setBaseId(created.knowledge_base_id); setShowForm(false); setShowImport(true); setName(''); setDescription(''); setRetry(value => value + 1); setNotice(`Knowledge base “${name.trim()}” created.`);
     } catch(e) { setError(errorMessage(e)); } finally { setBusy(false); }
   }
   async function importDocument(event: React.FormEvent) {
@@ -79,33 +84,76 @@ export function ClusterExplorerPage({ token = '', refreshKey = 0 }: { token?: st
     const generation = searchGeneration.current;
     try {
       const body = await apiRequest<{ results: Chunk[] }>(`/api/v1/index-versions/${index}/query/`, token, { method: 'POST', body: JSON.stringify({ query: query.trim(), mode: 'lexical', top_k: Number(topK) }) });
-      if (generation === searchGeneration.current) { setResults(body.results); setQueried(true); }
+      if (generation === searchGeneration.current) { setResults(body.results); setSelectedId(body.results[0]?.chunk_id || ''); setQueried(true); }
     } catch(e) { if (generation === searchGeneration.current) setError(errorMessage(e)); } finally { setBusy(false); }
   }
+  const ready = !!token.trim();
 
-  return <div className="data-workspace rag-workspace">
-    <Card className="panel"><div className="panel-title"><div><h2>Retrieval workbench</h2><p>Explore the document chunks returned by your query.</p></div><Button className="primary" disabled={!token.trim() || busy} onClick={() => setShowForm(value => !value)}><Plus size={16} aria-hidden="true" />{showForm ? 'Close setup' : 'New knowledge base'}</Button></div><div className="panel-body">
-      <ResourceState loading={loading} error={error} onRetry={() => setRetry(value => value + 1)} />
-      {notice && <Notice tone="success" className="notice success" role="status">{notice}</Notice>}
-      {showForm && <form className="form-grid" onSubmit={create}><DraftStatus draft={draft} disabled={busy} /><label>Knowledge base name<Field required value={name} onChange={event => setName(event.target.value)} maxLength={200} /></label><label>Description<Field value={description} onChange={event => setDescription(event.target.value)} /></label><Button className="primary" disabled={busy || !name.trim()}>Create knowledge base</Button></form>}
-      <Button className="secondary" disabled={!token.trim() || busy || !bases.length} onClick={() => setShowImport(value => !value)}>{showImport ? 'Close document import' : 'Import documents & build index'}</Button>
-      {showImport && <form className="form-grid" onSubmit={importDocument}><DraftStatus draft={draft} disabled={busy} />
-        <label>Knowledge base<select required value={baseId} onChange={event => setBaseId(event.target.value)}><option value="">Choose a collection</option>{bases.map(base => <option key={base.knowledge_base_id} value={base.knowledge_base_id}>{base.name}</option>)}</select></label>
-        <label>Text file (optional)<input type="file" accept=".txt,.md,.csv,text/plain,text/markdown,text/csv" onChange={event => { void readDocument(event.target.files?.[0]); }} /></label>
-        <label>Document title<Field required maxLength={255} value={documentTitle} onChange={event => setDocumentTitle(event.target.value)} /></label>
-        <label>Source identifier (optional)<Field maxLength={512} value={sourceUri} onChange={event => setSourceUri(event.target.value)} placeholder="Stable identifier for future revisions" /></label>
-        <label className="full-width">Document text<MultilineField required rows={8} maxLength={500000} value={documentContent} onChange={event => setDocumentContent(event.target.value)} /></label>
-        <p className="muted full-width">Text is indexed locally with exact source spans and content hashes. Reusing a source identifier creates a document revision. Each index keeps its original chunk membership.</p>
-        <Button className="primary" disabled={busy || !baseId || !documentTitle.trim() || !documentContent.trim()}>{busy ? 'Building index…' : 'Build lexical index'}</Button>
-      </form>}
-      <form className="rag-query-form" onSubmit={search}><DraftStatus draft={draft} disabled={busy} /><label className="rag-query">Query<div className="data-search"><Search size={17} aria-hidden="true" /><Field required value={query} onChange={event => { setQuery(event.target.value); clearResults(); }} placeholder="Search indexed knowledge chunks…" /></div></label><label>Results to retrieve<select value={topK} onChange={event => { setTopK(event.target.value); clearResults(); }}>{[5, 10, 20].map(count => <option value={count} key={count}>{count} chunks</option>)}</select></label><label className="rag-index">Index version<select required value={index} onChange={event => { setIndex(event.target.value); clearResults(); }}><option value="">Choose a registered index</option>{indexes.map(item => <option key={item.index_id} value={item.index_id}>KB record #{item.knowledge_base} · r{item.revision_no} · {item.status} · {item.chunk_count} chunks</option>)}</select></label><Button className="primary" disabled={busy || loading || !index || !query.trim()}>{busy ? 'Querying…' : 'Run query'}</Button></form>
-      {selectedIndex && <div className="data-query-context"><Badge className="badge">LEXICAL SEARCH</Badge><span>Revision {selectedIndex.revision_no}</span><span>{selectedIndex.chunk_count.toLocaleString()} indexed chunks</span><Badge className={`state state-${selectedIndex.status}`}>{selectedIndex.status}</Badge></div>}
+  return <div className="ml-page">
+    <Section title="Retrieval" description="Query a registered index and inspect the ranked source chunks." actions={<>
+      <Button type="button" variant="primary" disabled={!ready || busy || !bases.length} onClick={() => setShowImport(true)}>Import documents & build index</Button>
+      <Button type="button" disabled={!ready || busy} onClick={() => setShowForm(true)}>New knowledge base</Button>
+    </>}>
+      <ResourceState loading={loading && !indexes.length && !bases.length} error={error} onRetry={() => setRetry(value => value + 1)} />
+      {notice && <Notice tone="success" role="status">{notice}</Notice>}
+      <form data-ui="form" onSubmit={search}>
+        <DraftIndicator draft={draft} disabled={busy} />
+        <div data-ui="field-grid">
+          <Select label="Index version" required value={index} onChange={event => { setIndex(event.target.value); clearResults(); }}>
+            <option value="">Choose a registered index</option>{indexes.map(item => <option key={item.index_id} value={item.index_id}>KB record #{item.knowledge_base} · r{item.revision_no} · {statusLabel(item.status)} · {item.chunk_count} chunks</option>)}
+          </Select>
+          <Select label="Results to retrieve" value={topK} onChange={event => { setTopK(event.target.value); clearResults(); }} options={[5, 10, 20].map(count => ({ value: String(count), label: `${count} chunks` }))} />
+          <div data-span="full"><TextControl label="Query" required value={query} onChange={event => { setQuery(event.target.value); clearResults(); }} placeholder="Search indexed knowledge chunks…" /></div>
+        </div>
+        <div data-ui="actions">
+          <Button variant="primary" disabled={busy || loading || !index || !query.trim()}>{busy ? 'Querying…' : 'Run query'}</Button>
+          {selectedIndex && <span className="muted">Lexical search · revision {selectedIndex.revision_no} · {selectedIndex.chunk_count.toLocaleString()} indexed chunks</span>}
+          {selectedIndex && <StatusBadge status={selectedIndex.status} />}
+        </div>
+      </form>
       {!loading && !indexes.length && <p className="muted">No registered indexes. Import document text to build your first searchable index.</p>}
-    </div></Card>
-    <div className="visualization-grid equal"><ChartPanel title="Retrieval ranking" description="Exact lexical scores returned by the index. These are not embedding similarities."><BarChart data={results.map((chunk, rank) => ({ label: `Chunk ${rank + 1}`, value: chunk.score, color: selected?.chunk_id === chunk.chunk_id ? 0 : 4 }))} unit="Lexical score" emptyMessage={queried ? 'No document chunks matched this query.' : 'Select an index and run a query to compare retrieved chunk scores.'} /></ChartPanel>
-      <Card className="panel data-result-panel"><div className="panel-title"><div><h2>Retrieved chunks</h2><p>{queried ? `${results.length} returned · requested top ${topK}` : 'Results stay linked to the current query and index.'}</p></div><Badge className="badge">LEXICAL</Badge></div><div className="rag-results">{results.map((chunk, rank) => <RetrievalEvidenceCard key={chunk.chunk_id} chunk={chunk} rank={rank + 1} query={query} selected={selected?.chunk_id === chunk.chunk_id} onSelect={() => setSelectedId(chunk.chunk_id)} />)}{!results.length && <div className="empty-state"><Search size={28} aria-hidden="true" /><h3>{busy ? 'Retrieving chunks…' : queried ? 'No matches found' : 'Explore your knowledge'}</h3><p>{queried ? 'Try more specific terms or choose a different index.' : 'Run a lexical query to inspect its ranked source evidence.'}</p></div>}</div></Card></div>
-    <div className="visualization-grid equal"><Card className="panel"><div className="panel-title"><div><h2>Chunk inspector</h2><p>Full source text and exact metadata.</p></div><FileText size={19} aria-hidden="true" /></div><div className="panel-body">{selected ? <><Identifier value={selected.chunk_id} label="Chunk ID" /><div className="rag-chunk-text preserve-lines">{selected.text}</div><details><summary>Chunk metadata</summary><DataInspector value={selected.metadata} /></details></> : <ChartEmpty message="Retrieved chunks will be available for source inspection after a query." />}</div></Card>
-      <ChartPanel title="Retrieval trace" description="Current query and registered index; only retrieval is connected."><EventTimeline events={[{ label: 'Query', detail: query.trim() || 'Enter your search terms.', status: query.trim() ? 'ready' : 'pending' }, { label: 'Retrieve', detail: selectedIndex ? `Lexical search · index revision ${selectedIndex.revision_no}${queried ? ` · ${results.length} chunks returned` : ''}` : 'Select a registered index.', status: queried ? 'completed' : 'pending' }, { label: 'Assemble context & answer', detail: 'Context assembly and answer generation are not connected in this workbench.', status: 'pending' }]} /><div className="data-evidence-note"><strong>Embedding projection unavailable</strong><p>No projection coordinates are returned by this API. Ranking uses recorded lexical scores.</p></div></ChartPanel></div>
-    <Card className="panel"><div className="panel-title"><div><h2>Knowledge bases</h2><p>Registered collections in the loaded first page.</p></div><Badge className="badge">{bases.length} LOADED</Badge></div><div className="panel-body"><div className="rag-base-grid">{bases.map(base => <article className="rag-base-card" key={base.knowledge_base_id}><Database size={20} aria-hidden="true" /><div><h3>{base.name}</h3><p className="muted">{base.description || 'No description provided.'}</p><Identifier value={base.knowledge_base_id} label="Knowledge base ID" /></div></article>)}</div>{!loading && !error && !bases.length && <p className="muted">No knowledge bases yet. Create a collection to get started.</p>}{moreAvailable && <p className="muted">Additional knowledge base or index pages exist; only the first pages are loaded.</p>}</div></Card>
+      <div data-ui="split" data-open={selected ? '' : undefined}>
+        <div className="ml-list">
+          {queried && <p className="muted">{results.length} returned · requested top {topK}</p>}
+          {results.map((chunk, rank) => <RetrievalEvidenceCard key={chunk.chunk_id} chunk={chunk} rank={rank + 1} query={query} selected={selected?.chunk_id === chunk.chunk_id} onSelect={() => setSelectedId(chunk.chunk_id)} />)}
+          {!results.length && <EmptyState title={busy ? 'Retrieving chunks…' : queried ? 'No matches found' : 'Explore your knowledge'} description={queried ? 'Try more specific terms or choose a different index.' : 'Run a lexical query to inspect its ranked source evidence.'} />}
+          <ChartPanel title="Retrieval ranking" description="Exact lexical scores returned by the index, not embedding similarities." bordered={false}>
+            <BarChart data={results.map((chunk, rank) => ({ label: `Chunk ${rank + 1}`, value: chunk.score, color: selected?.chunk_id === chunk.chunk_id ? 0 : 4 }))} unit="Lexical score" emptyMessage={queried ? 'No document chunks matched this query.' : 'Select an index and run a query to compare retrieved chunk scores.'} />
+          </ChartPanel>
+        </div>
+        {selected && <InspectorPanel key={selected.chunk_id} eyebrow="Source chunk" title={`Chunk ${selectedRank}`} closeLabel="Close chunk details" onClose={() => setSelectedId('')}>
+          <p className="ml-prose">{selected.text}</p>
+          <KeyValueList items={[{ label: 'Lexical score', value: selected.score }, { label: 'Chunk ID', value: <Identifier value={selected.chunk_id} label="Chunk ID" display="code" /> }]} />
+          <Disclosure summary="Chunk metadata" variant="quiet"><DataInspector value={selected.metadata} /></Disclosure>
+          <p className="ml-footnote">Only retrieval is connected. Context assembly and answer generation are not part of this workbench.</p>
+        </InspectorPanel>}
+      </div>
+    </Section>
+    <Disclosure summary="Knowledge bases" variant="card">
+      {!loading && !error && !bases.length && <p className="muted">No knowledge bases yet. Create a collection to get started.</p>}
+      {bases.length > 0 && <div className="ml-cards">{bases.map(base => <article className="ml-card" key={base.knowledge_base_id}><h3>{base.name}</h3><p>{base.description || 'No description provided.'}</p><Identifier value={base.knowledge_base_id} label="Knowledge base ID" display="code" /></article>)}</div>}
+      {moreAvailable && <p className="muted">More knowledge base or index pages exist; only the first pages are loaded.</p>}
+    </Disclosure>
+    <Dialog title="New knowledge base" description="A collection for related documents and their indexes." open={showForm} onClose={() => setShowForm(false)}
+      footer={<><Button type="button" disabled={busy} onClick={() => setShowForm(false)}>Cancel</Button><Button form={createFormId} type="submit" variant="primary" disabled={busy || !name.trim()}>Create knowledge base</Button></>}>
+      <form id={createFormId} data-ui="form" onSubmit={create}>
+        <DraftIndicator draft={draft} disabled={busy} />
+        <TextControl label="Knowledge base name" required value={name} onChange={event => setName(event.target.value)} maxLength={200} />
+        <TextControl label="Description" value={description} onChange={event => setDescription(event.target.value)} />
+      </form>
+    </Dialog>
+    <Dialog title="Import documents" description="Text is indexed locally with exact source spans and content hashes." open={showImport} onClose={() => setShowImport(false)} size="lg"
+      footer={<><Button type="button" disabled={busy} onClick={() => setShowImport(false)}>Cancel</Button><Button form={importFormId} type="submit" variant="primary" disabled={busy || !baseId || !documentTitle.trim() || !documentContent.trim()}>{busy ? 'Building index…' : 'Build lexical index'}</Button></>}>
+      <form id={importFormId} data-ui="form" onSubmit={importDocument}>
+        <DraftIndicator draft={draft} disabled={busy} />
+        <div data-ui="field-grid">
+          <Select label="Knowledge base" required value={baseId} onChange={event => setBaseId(event.target.value)}><option value="">Choose a collection</option>{bases.map(base => <option key={base.knowledge_base_id} value={base.knowledge_base_id}>{base.name}</option>)}</Select>
+          <FileInput label="Text file (optional)" accept=".txt,.md,.csv,text/plain,text/markdown,text/csv" onChange={event => { void readDocument(event.target.files?.[0]); }} />
+          <TextControl label="Document title" required maxLength={255} value={documentTitle} onChange={event => setDocumentTitle(event.target.value)} />
+          <TextControl label="Source identifier (optional)" hint="Reusing an identifier creates a document revision." maxLength={512} value={sourceUri} onChange={event => setSourceUri(event.target.value)} placeholder="Stable identifier for future revisions" />
+          <div data-span="full"><MultilineControl label="Document text" required rows={8} maxLength={500000} value={documentContent} onChange={event => setDocumentContent(event.target.value)} /></div>
+        </div>
+      </form>
+    </Dialog>
   </div>;
 }

@@ -1,12 +1,15 @@
 import { Identifier } from '../components/Identifier';
-import { Button, Card, Field, MultilineField } from '../components/ui';
+import { Button, Checkbox, Disclosure, FileInput, KeyValueList, LinkButton, MultilineControl, Notice, Section, Select, StatusBadge, TextControl } from '../components/ui';
 import { useEffect, useRef, useState } from 'react';
 import { apiRequest, errorMessage } from '../api/client';
 import { allResources } from '../api/resources';
 import { resourceHash } from '../api/resource-routes';
+import { runHash } from '../api/runs';
 import { graphErrors, importRecipe, newStep, starterRecipe, uploadRecipeSource, type RecipeDefinition, type RecipeKind, type RecipeRun, type RecipeStep } from '../api/recipes';
 import './ml-pages.css';
 import './recipes.css';
+
+const STEP_KINDS: RecipeKind[] = ['source', 'sample', 'expression', 'template', 'generate', 'validate', 'merge'];
 
 export function RecipesPage({token,refreshKey}: {token:string;refreshKey?:number}) {
   const [recipe,setRecipe] = useState<RecipeDefinition>(() => starterRecipe());
@@ -99,84 +102,115 @@ export function RecipesPage({token,refreshKey}: {token:string;refreshKey?:number
       setSelected(run.run_id);setNotice(`${isPreview ? 'Preview' : 'Full recipe'} queued as job ${run.job_id}.`);
     });
   }
+  function exportDefinition() {
+    const url=URL.createObjectURL(new Blob([JSON.stringify(recipe,null,2)],{type:'application/json'}));const link=document.createElement('a');link.href=url;link.download='modelanvil-recipe.json';link.click();setTimeout(() => URL.revokeObjectURL(url),1000);
+  }
+  function addStep() {
+    const steps=[...recipe.steps];const next=newStep(addType,`step_${ordinal.current++}`,steps.at(-2)?.id || '');steps.splice(steps.length-1,0,next);steps[steps.length-1]={...steps.at(-1)!,input:next.id};change({...recipe,steps});
+  }
   const canQueue=token.trim() && pool && policy && !errors.length && (!needsModel || model) && recipe.steps.filter(s => s.type==='source').every(s => Object.hasOwn(sources,s.id) || Object.hasOwn(files,s.id));
+  const runLabel = (run: RecipeRun, index: number) => `${run.preview ? 'Preview' : 'Full run'} ${index + 1}`;
+  const selectedIndex = recent.findIndex(r => r.run_id === selected);
 
-  return <div className="ml-page recipe-page">
-    {error && <p role="alert" className="error-box">{error}</p>}{notice && <p role="status" className="success-box">{notice}</p>}
-    <Card className="panel ml-main-panel"><div className="panel-title"><div><h2>Data recipes</h2><p>Compose typed source, transform and generation steps. Preview bounded samples, review rejections, then publish through a recoverable worker job.</p></div></div>
-      <div className="panel-body">
-        <fieldset disabled={busy} className="recipe-toolbar">
-          <Button onClick={() => change(starterRecipe(false))}>Prepare documents</Button><Button onClick={() => change(starterRecipe())}>Generate summaries</Button>
-          <label>Import recipe JSON<input type="file" accept="application/json" onChange={e => {
-            const file=e.target.files?.[0];if (file) void operation(async () => {if (file.size>64000) throw new Error('Recipe import exceeds 64,000 bytes.');change(importRecipe(await file.text()));setSources({});setFiles({});});
-          }} /></label>
-          <Button onClick={() => {
-            const url=URL.createObjectURL(new Blob([JSON.stringify(recipe,null,2)],{type:'application/json'}));const link=document.createElement('a');link.href=url;link.download='modelanvil-recipe.json';link.click();setTimeout(() => URL.revokeObjectURL(url),1000);
-          }}>Export definition</Button>
-          <label>Saved versions<select value={version} onChange={e => void operation(async () => {
+  return <div className="ml-page">
+    <Section title="Recipe" description="Compose typed source, transform and generation steps, preview a sample, then publish through a worker job." actions={<>
+      <Button type="button" disabled={busy} onClick={() => change(starterRecipe(false))}>Prepare documents</Button>
+      <Button type="button" disabled={busy} onClick={() => change(starterRecipe())}>Generate summaries</Button>
+      <Button type="button" variant="quiet" disabled={busy} onClick={exportDefinition}>Export definition</Button>
+    </>}>
+      {error && <Notice tone="error" role="alert">{error}</Notice>}
+      {notice && <Notice tone="success" role="status">{notice}</Notice>}
+      <fieldset disabled={busy} className="recipe-step">
+        <div data-ui="field-grid">
+          <TextControl label="Recipe name" maxLength={100} value={recipe.name} onChange={e => change({...recipe,name:e.target.value})} />
+          <Select label="Saved versions" value={version} onChange={e => void operation(async () => {
             const id=e.target.value;if (!id) return;
             const v=await apiRequest<{definition:RecipeDefinition}>(`/api/v1/recipes/versions/${id}/`,token);change(v.definition);setVersion(id);setSources({});setFiles({});
-          })}><option value="">Select a version</option>{versions.map((v, index) => <option key={v.artifact_id} value={v.artifact_id}>{v.name} · version {index + 1}</option>)}</select></label>
-        </fieldset>
-        <label>Recipe name<Field disabled={busy} maxLength={100} value={recipe.name} onChange={e => change({...recipe,name:e.target.value})} /></label>
-        <div className="recipe-editor">
-          <details className="workspace-details recipe-map"><summary>Recipe dependency map</summary>
-          <svg className="recipe-graph" role="img" aria-label="Recipe dependencies; editable list follows" viewBox={`0 0 480 ${recipe.steps.length*72}`}>
-            {recipe.steps.map((step,i) => <g key={i}>
-              {(step.type==='merge' ? step.inputs || [] : step.input ? [step.input] : []).map(input => {
-                const parent=recipe.steps.findIndex(s => s.id===input);return parent>=0 ? <path key={input} d={`M 240 ${parent*72+48} C 450 ${parent*72+55},450 ${i*72-7},240 ${i*72}`} /> : null;
-              })}
-              <rect x={70} y={i*72} width={340} height={48} rx={8} /><text x={85} y={i*72+29}>{step.id} · {step.type}</text>
-            </g>)}
-          </svg>
-          </details>
-          <ol className="recipe-step-list">{recipe.steps.map((step,index) => <li key={index}>
-            <details open={index === 0}><summary>{index+1}. {step.type} · {step.id}</summary>
-            <fieldset disabled={busy}><legend>{index+1}. {step.type}</legend>
-              <label>Step ID<Field value={step.id} pattern="[a-z][a-z0-9_\-]{0,31}" onChange={e => update(index,{id:e.target.value})} /></label>
-              {step.type!=='source' && step.type!=='merge' && <label>Input step<select value={step.input || ''} onChange={e => update(index,{input:e.target.value})}><option value="">Select an earlier step</option>{recipe.steps.slice(0,index).map((s,i) => <option key={i} value={s.id}>{s.id} · {s.type}</option>)}</select></label>}
-              {step.type==='source' && <>
-                <label>Source format<select value={step.format} onChange={e => {update(index,{format:e.target.value,...(['docx','pdf'].includes(e.target.value) ? {text_field:'text',group_field:null} : {})});setSources(current => {const next={...current};delete next[step.id];return next;});}}>{['json','csv','jsonl','docx','pdf'].map(f => <option key={f}>{f}</option>)}</select></label>
-                {['json','csv'].includes(step.format || '') && <label>Text field<Field value={step.text_field || 'text'} onChange={e => update(index,{text_field:e.target.value})} /></label>}
-                <label>Source file<input type="file" onChange={e => {
-                  const f=e.target.files?.[0];if (f) {setFiles(current => ({...current,[step.id]:f}));setSources(current => {const next={...current};delete next[step.id];return next;});setPreview('');setSelected('');setReviewed(false);}
-                }} /></label>{Object.hasOwn(sources,step.id) && <small>Bound source {sources[step.id]}</small>}
-              </>}
-              {step.type==='sample' && <><label>Sample limit<Field type="number" min={1} max={32} value={step.limit} onChange={e => update(index,{limit:Number(e.target.value)})} /></label><label>Sampler seed<Field type="number" min={0} value={step.seed} onChange={e => update(index,{seed:Number(e.target.value)})} /></label></>}
-              {step.type==='expression' && <><label>Text operation<select value={step.operation} onChange={e => update(index,{operation:e.target.value})}>{['strip','lower','upper','replace'].map(v => <option key={v}>{v}</option>)}</select></label>{step.operation==='replace' && <><label>Find literal<Field value={step.find || ''} onChange={e => update(index,{find:e.target.value})} /></label><label>Replacement<Field value={step.replace || ''} onChange={e => update(index,{replace:e.target.value})} /></label></>}</>}
-              {step.type==='template' && <label>Prompt template<MultilineField rows={3} value={step.template} onChange={e => update(index,{template:e.target.value})} /><small>Literal placeholders: {'{{value}}'} and {'{{source}}'}.</small></label>}
-              {step.type==='generate' && <><label>Generated output<select value={step.output} onChange={e => update(index,{output:e.target.value})}><option value="text">Text</option><option value="json">Finite JSON</option><option value="code">Python code</option></select></label><label>Maximum new tokens<Field type="number" min={1} max={256} value={step.max_tokens} onChange={e => update(index,{max_tokens:Number(e.target.value)})} /></label><label>Generation seed<Field type="number" min={0} value={step.seed} onChange={e => update(index,{seed:Number(e.target.value)})} /></label><small>JSON must parse completely. Python output is checked for syntax and kept as data.</small></>}
-              {step.type==='validate' && <><label>Minimum characters<Field type="number" min={0} value={step.min_characters || 0} onChange={e => update(index,{min_characters:Number(e.target.value)})} /></label><label>Required literals, one per line<MultilineField value={(step.contains || []).join('\n')} onChange={e => update(index,{contains:e.target.value.split('\n').filter(Boolean)})} /></label><label>Required JSON keys, one per line<MultilineField value={(step.required_keys || []).join('\n')} onChange={e => update(index,{required_keys:e.target.value.split('\n').filter(Boolean)})} /></label></>}
-              {step.type==='merge' && <div>Merge inputs{recipe.steps.slice(0,index).map((s,i) => <label key={i} className="checkbox-label"><input type="checkbox" checked={step.inputs?.includes(s.id) || false} onChange={e => update(index,{inputs:e.target.checked ? [...step.inputs || [],s.id] : step.inputs?.filter(v => v!==s.id)})} />{s.id}</label>)}</div>}
-              {step.type!=='output' && <Button onClick={() => change({...recipe,steps:recipe.steps.filter((_,i) => i!==index)})}>Remove step {index+1}</Button>}
-            </fieldset></details>
-          </li>)}</ol>
+          })}><option value="">Select a version</option>{versions.map((v, index) => <option key={v.artifact_id} value={v.artifact_id}>{v.name} · version {index + 1}</option>)}</Select>
+          <FileInput label="Import recipe JSON" accept="application/json" onChange={e => {
+            const file=e.target.files?.[0];if (file) void operation(async () => {if (file.size>64000) throw new Error('Recipe import exceeds 64,000 bytes.');change(importRecipe(await file.text()));setSources({});setFiles({});});
+          }} />
         </div>
-        {errors.length>0 && <ul role="alert">{errors.map((message,i) => <li key={i}>{message}</li>)}</ul>}
-        <fieldset disabled={busy} className="recipe-toolbar"><label>Add a step<select value={addType} onChange={e => setAddType(e.target.value as RecipeKind)}>{['source','sample','expression','template','generate','validate','merge'].map(v => <option key={v}>{v}</option>)}</select></label>
-          <Button disabled={recipe.steps.length>=12} onClick={() => {const steps=[...recipe.steps];const next=newStep(addType,`step_${ordinal.current++}`,steps.at(-2)?.id || '');steps.splice(steps.length-1,0,next);steps[steps.length-1]={...steps.at(-1)!,input:next.id};change({...recipe,steps});}}>Add step</Button>
-          <Button disabled={Boolean(errors.length)} onClick={() => void operation(async () => {await save();setNotice('Saved immutable recipe version.');})}>Save version</Button>
-        </fieldset>
-        <fieldset disabled={busy} className="form-grid recipe-execution">
-          {needsModel && <><label>Local generator<select value={model} onChange={e => {setModel(e.target.value);setPreview('');setReviewed(false);}}><option value="">Select a local model</option>{models.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}</select></label><label>Generation device<select value={device} onChange={e => {setDevice(e.target.value);setPreview('');setReviewed(false);}}><option value="mps:0">Apple GPU</option><option value="cpu">CPU</option><option value="mlx:0">MLX Metal</option></select></label></>}
-          <label>Recipe worker pool<select value={pool} onChange={e => setPool(e.target.value)}><option value="">Select a pool</option>{pools.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
-          <label>Recipe attempt quota<select value={policy} onChange={e => setPolicy(e.target.value)}><option value="">Select a recipe_attempts quota</option>{policies.map(p => <option key={p.policy_id} value={p.policy_id}>{p.name}</option>)}</select></label>
-          <p className="full-width muted">Three attempts are reserved per run. Previews generate at most three rows per step; full generation uses at most 32. Completed step and row checkpoints survive worker interruption. Privacy, deduplication and protected-source checks run before generation and publication.</p>
-          <label className="full-width">Protected sources and held-out manifests<select multiple value={protectedSources} onChange={e => {setProtectedSources([...e.target.selectedOptions].map(o => o.value));setPreview('');setReviewed(false);}}>{protectedOptions.map((a, index) => <option key={a.artifact_id} value={a.artifact_id}>{a.metadata.kind || 'Canonical source'} · source {index + 1}</option>)}</select><small>Canonical sources exclude their complete source groups. Prepared manifests exclude validation/test groups.</small></label>
-          <Button disabled={!canQueue} onClick={() => queue(true)}>Queue preview</Button>
-          <label>Output dataset<select value={dataset} onChange={e => setDataset(e.target.value)}><option value="">Select a dataset</option>{datasets.map(d => <option key={d.dataset_id} value={d.dataset_id}>{d.name}</option>)}</select></label>
-          <label className="checkbox-label"><input type="checkbox" checked={reviewed} disabled={!preview} onChange={e => setReviewed(e.target.checked)} />I reviewed the matching preview and rejections.</label>
-          <Button disabled={!canQueue || !preview || !reviewed || !dataset} onClick={() => queue(false)}>Run and publish recipe</Button>
-        </fieldset>
-        <section className="detail-box"><h3>Recipe executions <Identifier value={selected} label="Recipe run ID" /></h3><label>Recent recipe runs<select value={selected} onChange={e => {setSelected(e.target.value);setReviewed(false);}}><option value="">Select a run</option>{recent.map((r, index) => <option key={r.run_id} value={r.run_id}>{r.preview ? 'Preview' : 'Full run'} {index + 1} · {r.status}</option>)}</select></label>
-          {status && <><p role="status">{status.status} · attempt {status.attempt_count} of {status.max_attempts} · {status.completed_steps.length} steps and {status.saved_rows} row checkpoints saved</p>
-            <span>Job <Identifier value={status.job_id} label="Job ID" /></span>{status.error && <p role="alert">{status.error}</p>}
-            <div className="recipe-toolbar"><Button disabled={busy || !['queued','running','interrupted'].includes(status.status) || status.desired_action==='cancel'} onClick={() => void operation(async () => {await apiRequest(`/api/v1/recipes/runs/${selected}/cancel/`,token,{method:'POST'});})}>Cancel recipe run</Button>
-              <Button disabled={busy || !['failed','interrupted'].includes(status.status) || status.desired_action==='cancel' || status.attempt_count>=status.max_attempts} onClick={() => void operation(async () => {await apiRequest(`/api/v1/recipes/runs/${selected}/retry/`,token,{method:'POST'});})}>Retry recipe run</Button></div>
-            {status.result && <><h4>{status.publication.row_count} accepted · {status.publication.rejected_count} rejected</h4>{status.publication.usage && <p>{status.publication.usage.completed_generation_calls} completed generation calls · {status.publication.usage.total_tokens} measured tokens</p>}{status.publication.revision_id && <p>Published immutable revision {status.publication.revision_id}. <a href={resourceHash('dataset-revision', status.publication.revision_id)}>Inspect published dataset</a></p>}<details open><summary>Accepted rows and origins</summary><pre tabIndex={0} aria-label="Accepted recipe rows and origins">{JSON.stringify(status.result.rows,null,2)}</pre></details><details><summary>Rejections and measured generation usage</summary><pre tabIndex={0} aria-label="Recipe rejections and usage">{JSON.stringify(status.result.rejected,null,2)}</pre></details></>}
-          </>}
-        </section>
+      </fieldset>
+      <Disclosure summary="Recipe dependency map" variant="quiet">
+        <svg className="recipe-graph" role="img" aria-label="Recipe dependencies; editable list follows" viewBox={`0 0 480 ${recipe.steps.length*72}`}>
+          {recipe.steps.map((step,i) => <g key={i}>
+            {(step.type==='merge' ? step.inputs || [] : step.input ? [step.input] : []).map(input => {
+              const parent=recipe.steps.findIndex(s => s.id===input);return parent>=0 ? <path key={input} d={`M 240 ${parent*72+48} C 450 ${parent*72+55},450 ${i*72-7},240 ${i*72}`} /> : null;
+            })}
+            <rect x={70} y={i*72} width={340} height={48} rx={8} /><text x={85} y={i*72+29}>{step.id} · {step.type}</text>
+          </g>)}
+        </svg>
+      </Disclosure>
+      <ol className="recipe-steps">{recipe.steps.map((step,index) => <li key={index}>
+        <Disclosure summary={`${index+1}. ${step.type} · ${step.id}`} variant="card" open={index === 0}>
+          <fieldset disabled={busy} className="recipe-step">
+            <div data-ui="field-grid">
+              <TextControl label="Step ID" value={step.id} pattern="[a-z][a-z0-9_\-]{0,31}" onChange={e => update(index,{id:e.target.value})} />
+              {step.type!=='source' && step.type!=='merge' && <Select label="Input step" value={step.input || ''} onChange={e => update(index,{input:e.target.value})}><option value="">Select an earlier step</option>{recipe.steps.slice(0,index).map((s,i) => <option key={i} value={s.id}>{s.id} · {s.type}</option>)}</Select>}
+              {step.type==='source' && <>
+                <Select label="Source format" value={step.format} onChange={e => {update(index,{format:e.target.value,...(['docx','pdf'].includes(e.target.value) ? {text_field:'text',group_field:null} : {})});setSources(current => {const next={...current};delete next[step.id];return next;});}} options={['json','csv','jsonl','docx','pdf'].map(f => ({ value: f, label: f }))} />
+                {['json','csv'].includes(step.format || '') && <TextControl label="Text field" value={step.text_field || 'text'} onChange={e => update(index,{text_field:e.target.value})} />}
+                <FileInput label="Source file" hint={Object.hasOwn(sources,step.id) ? `Bound source ${sources[step.id]}` : undefined} onChange={e => {
+                  const f=e.target.files?.[0];if (f) {setFiles(current => ({...current,[step.id]:f}));setSources(current => {const next={...current};delete next[step.id];return next;});setPreview('');setSelected('');setReviewed(false);}
+                }} />
+              </>}
+              {step.type==='sample' && <><TextControl label="Sample limit" type="number" min={1} max={32} value={step.limit} onChange={e => update(index,{limit:Number(e.target.value)})} /><TextControl label="Sampler seed" type="number" min={0} value={step.seed} onChange={e => update(index,{seed:Number(e.target.value)})} /></>}
+              {step.type==='expression' && <><Select label="Text operation" value={step.operation} onChange={e => update(index,{operation:e.target.value})} options={['strip','lower','upper','replace'].map(v => ({ value: v, label: v }))} />{step.operation==='replace' && <><TextControl label="Find literal" value={step.find || ''} onChange={e => update(index,{find:e.target.value})} /><TextControl label="Replacement" value={step.replace || ''} onChange={e => update(index,{replace:e.target.value})} /></>}</>}
+              {step.type==='template' && <div data-span="full"><MultilineControl label="Prompt template" hint={`Literal placeholders: {{value}} and {{source}}.`} rows={3} value={step.template} onChange={e => update(index,{template:e.target.value})} /></div>}
+              {step.type==='generate' && <><Select label="Generated output" value={step.output} onChange={e => update(index,{output:e.target.value})} options={[{ value: 'text', label: 'Text' }, { value: 'json', label: 'Finite JSON' }, { value: 'code', label: 'Python code' }]} /><TextControl label="Maximum new tokens" type="number" min={1} max={256} value={step.max_tokens} onChange={e => update(index,{max_tokens:Number(e.target.value)})} /><TextControl label="Generation seed" hint="JSON must parse completely. Python output is checked for syntax and kept as data." type="number" min={0} value={step.seed} onChange={e => update(index,{seed:Number(e.target.value)})} /></>}
+              {step.type==='validate' && <><TextControl label="Minimum characters" type="number" min={0} value={step.min_characters || 0} onChange={e => update(index,{min_characters:Number(e.target.value)})} /><MultilineControl label="Required literals, one per line" rows={3} value={(step.contains || []).join('\n')} onChange={e => update(index,{contains:e.target.value.split('\n').filter(Boolean)})} /><MultilineControl label="Required JSON keys, one per line" rows={3} value={(step.required_keys || []).join('\n')} onChange={e => update(index,{required_keys:e.target.value.split('\n').filter(Boolean)})} /></>}
+              {step.type==='merge' && <div className="recipe-merge" data-span="full"><span data-ui="control-label">Merge inputs</span>{recipe.steps.slice(0,index).map((s,i) => <Checkbox key={i} label={s.id} checked={step.inputs?.includes(s.id) || false} onChange={e => update(index,{inputs:e.target.checked ? [...step.inputs || [],s.id] : step.inputs?.filter(v => v!==s.id)})} />)}</div>}
+            </div>
+            {step.type!=='output' && <div data-ui="actions"><Button type="button" variant="quiet" size="sm" onClick={() => change({...recipe,steps:recipe.steps.filter((_,i) => i!==index)})}>Remove step {index+1}</Button></div>}
+          </fieldset>
+        </Disclosure>
+      </li>)}</ol>
+      {errors.length>0 && <Notice tone="error" role="alert"><ul>{errors.map((message,i) => <li key={i}>{message}</li>)}</ul></Notice>}
+      <div data-ui="actions">
+        <Select aria-label="Add a step" disabled={busy} value={addType} onChange={e => setAddType(e.target.value as RecipeKind)} options={STEP_KINDS.map(v => ({ value: v, label: v }))} />
+        <Button type="button" disabled={busy || recipe.steps.length>=12} onClick={addStep}>Add step</Button>
+        <Button type="button" disabled={busy || Boolean(errors.length)} onClick={() => void operation(async () => {await save();setNotice('Saved immutable recipe version.');})}>Save version</Button>
       </div>
-    </Card>
+      <Disclosure summary="Execution settings" variant="card">
+        <fieldset disabled={busy} className="recipe-step">
+          <div data-ui="field-grid">
+            {needsModel && <><Select label="Local generator" value={model} onChange={e => {setModel(e.target.value);setPreview('');setReviewed(false);}}><option value="">Select a local model</option>{models.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}</Select><Select label="Generation device" value={device} onChange={e => {setDevice(e.target.value);setPreview('');setReviewed(false);}} options={[{ value: 'mps:0', label: 'Apple GPU' }, { value: 'cpu', label: 'CPU' }, { value: 'mlx:0', label: 'MLX Metal' }]} /></>}
+            <Select label="Recipe worker pool" value={pool} onChange={e => setPool(e.target.value)}><option value="">Select a pool</option>{pools.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</Select>
+            <Select label="Recipe attempt quota" value={policy} onChange={e => setPolicy(e.target.value)}><option value="">Select a recipe_attempts quota</option>{policies.map(p => <option key={p.policy_id} value={p.policy_id}>{p.name}</option>)}</Select>
+            <div data-span="full"><Select label="Protected sources and held-out manifests" hint="Canonical sources exclude their complete source groups. Prepared manifests exclude validation and test groups." multiple value={protectedSources} onChange={e => {setProtectedSources([...e.target.selectedOptions].map(o => o.value));setPreview('');setReviewed(false);}}>{protectedOptions.map((a, index) => <option key={a.artifact_id} value={a.artifact_id}>{a.metadata.kind || 'Canonical source'} · source {index + 1}</option>)}</Select></div>
+            <Select label="Output dataset" value={dataset} onChange={e => setDataset(e.target.value)}><option value="">Select a dataset</option>{datasets.map(d => <option key={d.dataset_id} value={d.dataset_id}>{d.name}</option>)}</Select>
+            <div data-span="full"><Checkbox label="I reviewed the matching preview and rejections." checked={reviewed} disabled={!preview} onChange={e => setReviewed(e.target.checked)} /></div>
+          </div>
+          <p className="muted">Three attempts are reserved per run. Previews generate at most three rows per step; full runs at most 32. Completed step and row checkpoints survive worker interruption.</p>
+          <div data-ui="actions">
+            <Button type="button" variant="primary" disabled={!canQueue} onClick={() => queue(true)}>Queue preview</Button>
+            <Button type="button" disabled={!canQueue || !preview || !reviewed || !dataset} onClick={() => queue(false)}>Run and publish recipe</Button>
+          </div>
+        </fieldset>
+      </Disclosure>
+    </Section>
+    <Section title="Runs" description="Preview and full runs with their checkpoints." actions={<Select aria-label="Recent recipe runs" value={selected} onChange={e => {setSelected(e.target.value);setReviewed(false);}}><option value="">Select a run</option>{recent.map((r, index) => <option key={r.run_id} value={r.run_id}>{runLabel(r, index)} · {r.status}</option>)}</Select>}>
+      {status ? <div className="ml-run">
+        <div className="ml-run-head"><h3>{runLabel(status, selectedIndex < 0 ? recent.length : selectedIndex)}</h3><StatusBadge status={status.status} /><span role="status" className="muted">Attempt {status.attempt_count} of {status.max_attempts} · {status.completed_steps.length} steps and {status.saved_rows} row checkpoints saved</span></div>
+        {status.error && <p role="alert" className="error-text">{status.error}</p>}
+        <div data-ui="actions">
+          <Button type="button" size="sm" disabled={busy || !['queued','running','interrupted'].includes(status.status) || status.desired_action==='cancel'} onClick={() => void operation(async () => {await apiRequest(`/api/v1/recipes/runs/${selected}/cancel/`,token,{method:'POST'});})}>Cancel recipe run</Button>
+          <Button type="button" size="sm" disabled={busy || !['failed','interrupted'].includes(status.status) || status.desired_action==='cancel' || status.attempt_count>=status.max_attempts} onClick={() => void operation(async () => {await apiRequest(`/api/v1/recipes/runs/${selected}/retry/`,token,{method:'POST'});})}>Retry recipe run</Button>
+          {status.job_id && <LinkButton size="sm" href={runHash('job', status.job_id)}>Open job</LinkButton>}
+        </div>
+        {status.result && <>
+          <KeyValueList columns={2} items={[
+            { label: 'Accepted rows', value: status.publication.row_count },
+            { label: 'Rejected rows', value: status.publication.rejected_count },
+            ...(status.publication.usage ? [{ label: 'Generation calls', value: status.publication.usage.completed_generation_calls }, { label: 'Measured tokens', value: status.publication.usage.total_tokens }] : []),
+            ...(status.publication.revision_id ? [{ label: 'Published dataset version', value: <a href={resourceHash('dataset-revision', status.publication.revision_id)}>Open dataset version</a> }] : []),
+            { label: 'Run ID', value: <Identifier value={status.run_id} label="Recipe run ID" display="code" /> },
+          ]} />
+          <Disclosure summary="Accepted rows and origins" variant="quiet" open><pre className="recipe-pre" tabIndex={0} aria-label="Accepted recipe rows and origins">{JSON.stringify(status.result.rows,null,2)}</pre></Disclosure>
+          <Disclosure summary="Rejections and measured generation usage" variant="quiet"><pre className="recipe-pre" tabIndex={0} aria-label="Recipe rejections and usage">{JSON.stringify(status.result.rejected,null,2)}</pre></Disclosure>
+        </>}
+      </div> : <p className="muted">{recent.length ? 'Select a run to follow its progress.' : 'Queue a preview to start a run.'}</p>}
+    </Section>
   </div>;
 }

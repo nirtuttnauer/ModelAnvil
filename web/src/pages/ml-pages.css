@@ -11,10 +11,16 @@
   .ml-progress progress { grid-column: 1 / -1; width: 100%; }
   .ml-run-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8) var(--space-12); }
   .ml-run-head h3 { margin: 0; font-size: var(--type-16); }
-  .ml-run { display: grid; gap: var(--space-16); padding: var(--space-20); border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface); min-width: 0; }
+  .ml-run { display: grid; align-content: start; gap: var(--space-16); padding: var(--space-20); border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface); min-width: 0; }
   .ml-run h4 { margin: var(--space-8) 0 0; font-size: var(--type-14); }
   .ml-cases { display: grid; gap: var(--space-12); }
   .ml-page td small { display: block; color: var(--text-muted); }
   .ml-footnote { margin: 0; font-size: var(--type-12); color: var(--text-muted); }
+  .ml-list { display: grid; gap: var(--space-12); min-width: 0; }
+  .ml-prose { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.6; }
+  .ml-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: var(--space-12); }
+  .ml-card { display: grid; gap: var(--space-4); min-width: 0; padding: var(--space-16); border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface); }
+  .ml-card h3 { margin: 0; font-size: var(--type-14); overflow-wrap: anywhere; }
+  .ml-card p { margin: 0; color: var(--text-secondary); font-size: var(--type-13); }
   @media (max-width: 760px) { .ml-charts { grid-template-columns: minmax(0, 1fr); } }
 }

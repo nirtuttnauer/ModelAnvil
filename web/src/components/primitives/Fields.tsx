@@ -18,6 +18,18 @@ export function TextControl({ label, hint, error, id, className, ...props }: Com
   </div>;
 }
 
+/** A labelled multi-line field with the same hint and error slots as TextControl. */
+export function MultilineControl({ label, hint, error, id, className, ...props }: ComponentPropsWithRef<'textarea'> & ControlText) {
+  const generated = useId(); const inputId = id ?? generated;
+  const describedBy = [hint && `${inputId}-hint`, error && `${inputId}-error`].filter(Boolean).join(' ') || undefined;
+  return <div data-ui="control" className={className}>
+    {label && <label data-ui="control-label" htmlFor={inputId}>{label}</label>}
+    <textarea data-ui="field" id={inputId} aria-describedby={describedBy} aria-invalid={error ? true : props['aria-invalid']} {...props} />
+    {hint && <small data-ui="control-hint" id={`${inputId}-hint`}>{hint}</small>}
+    {error && <small data-ui="control-error" id={`${inputId}-error`} role="alert">{error}</small>}
+  </div>;
+}
+
 export type SelectOption = { value: string; label: ReactNode; disabled?: boolean };
 export function Select({ label, hint, error, options, children, id, className, ...props }: Omit<ComponentPropsWithRef<'select'>, 'children'> & ControlText & { options?: SelectOption[]; children?: ReactNode }) {
   const generated = useId(); const selectId = id ?? generated;
