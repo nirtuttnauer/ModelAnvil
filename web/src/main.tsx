@@ -1,4 +1,6 @@
-import { Button, Field, Notice, PageHeader, WorkspaceHeader } from './components/ui';
+import { Button, Dialog, Field, Notice, PageHeader, WorkspaceHeader } from './components/ui';
+import { PrivacySettings } from './components/PrivacySettings';
+import { LocalMeasurements } from './components/LocalMeasurements';
 import { Welcome } from './components/Welcome';
 import { parseResourceRoute } from './api/resource-routes';
 import { DraftScope } from './components/Draft';
@@ -201,6 +203,7 @@ export function App() {
   );
   const [projectLoading, setProjectLoading] = React.useState(true);
   const [showCreateProjectModal, setShowCreateProjectModal] = React.useState(false);
+  const [workspaceSettingsOpen, setWorkspaceSettingsOpen] = React.useState(false);
 
   const currentOrganization =
     organizationConnection?.token === token ? organizationConnection.organization : null;
@@ -503,6 +506,7 @@ export function App() {
               onConnection={() => openConnection()}
               onSignOut={() => void signOut()}
               apiStatus={apiStatus}
+              onWorkspaceSettings={() => setWorkspaceSettingsOpen(true)}
               about={<BuildIdentity token={token} refreshKey={refreshKey} />}
             />
           </div>
@@ -547,6 +551,11 @@ export function App() {
             </form>
           </div>
         </dialog>
+
+        <Dialog title="Workspace settings" description="Privacy policy and local measurements for this project." size="lg" open={workspaceSettingsOpen} onClose={() => setWorkspaceSettingsOpen(false)}>
+          <PrivacySettings token={token} />
+          <LocalMeasurements token={token} />
+        </Dialog>
 
         <CreateProjectModal
           token={token}
@@ -686,6 +695,7 @@ export function App() {
                 selectProject(p.id);
               }}
               onPrerequisiteAdded={() => refresh()}
+              onCreateProject={() => setShowCreateProjectModal(true)}
             />
           )}
 

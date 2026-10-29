@@ -11,6 +11,11 @@ export interface ImprovementEvaluation {
   improvement_decision?: { outcome: 'accept' | 'reject' } | null;
 }
 
+export interface OverviewEvaluation extends ImprovementEvaluation {
+  execution_evidence?: { level: string; source: string };
+  metrics: { key: string; value: number; sample_count: number; slice_name: string }[];
+}
+
 export function evaluationHash(trainingRun: string): string {
   return `#evaluation?training_run=${encodeURIComponent(trainingRun)}`;
 }
@@ -31,14 +36,14 @@ const newest = <T extends { created_at?: string }>(items: T[]) => [...items].sor
 /** Resume the latest experiment using persisted records, never training loss. */
 export function nextExperimentAction(training: ImprovementTraining[], evaluations: ImprovementEvaluation[]): ExperimentAction {
   const run = newest(training)[0];
-  if (!run) return { title: 'Start your first experiment', description: 'Prepare examples, train a candidate, then compare it with the starting model.', label: 'Start guided fine-tuning', href: '#training', stage: 'Prepare' };
-  if (['pending', 'running'].includes(run.status)) return { title: 'Your training is in progress', description: 'Follow actual progress and saved checkpoints. You can leave and return to this run.', label: 'View training progress', href: runHash('training', run.run_id, '#overview'), stage: 'Train' };
+  if (!run) return { title: 'Start your first training run', description: 'Choose a model, add your examples and train on this computer.', label: 'Start training', href: '#training', stage: 'Prepare' };
+  if (['pending', 'running'].includes(run.status)) return { title: 'Your training is in progress', description: 'Follow progress and saved checkpoints. You can leave and return to this run.', label: 'View training progress', href: runHash('training', run.run_id, '#overview'), stage: 'Train' };
   if (['failed', 'cancelled'].includes(run.status)) return { title: 'Continue after an interrupted run', description: 'Inspect the saved progress and available recovery actions before starting again.', label: 'Review recovery options', href: runHash('training', run.run_id, '#overview'), stage: 'Train' };
-  if (run.status !== 'completed' || !run.output_model_version || !run.base_model_version) return { title: 'Continue your experiment', description: 'Inspect this run’s candidate and execution evidence to choose the next step.', label: 'Open training run', href: runHash('training', run.run_id, '#overview'), stage: 'Train' };
+  if (run.status !== 'completed' || !run.output_model_version || !run.base_model_version) return { title: 'Continue your training run', description: 'Inspect this run’s trained model and evidence to choose the next step.', label: 'Open training run', href: runHash('training', run.run_id, '#overview'), stage: 'Train' };
   const evaluation = newest(evaluations.filter(item => item.candidate_model_version === run.output_model_version && item.baseline_model_version === run.base_model_version))[0];
   if (!evaluation) return run.guided_evaluation?.eligible !== true
-    ? { title: 'Review the candidate’s evaluation support', description: run.guided_evaluation?.reason || 'Guided comparison support has not been reported for this candidate. Inspect its supported evaluation profiles.', label: 'Open evaluation workspace', href: '#evaluation', stage: 'Compare' }
-    : { title: 'Find out whether your model improved', description: 'Compare the exact trained candidate and its starting model on held-out examples.', label: 'Evaluate against base', href: evaluationHash(run.run_id), stage: 'Compare' };
+    ? { title: 'Review the candidate’s evaluation support', description: run.guided_evaluation?.reason || 'Guided comparison support has not been reported for this candidate. Inspect its supported evaluation profiles.', label: 'Open Evaluation', href: '#evaluation', stage: 'Compare' }
+    : { title: 'Find out whether your model improved', description: 'Compare the trained model and its base model on held-out examples.', label: 'Compare on held-out examples', href: evaluationHash(run.run_id), stage: 'Compare' };
   const href = `#evaluation?run=${encodeURIComponent(evaluation.run_id)}`;
   if (evaluation.improvement_decision?.outcome === 'accept') return { title: 'Your accepted candidate is ready to inspect', description: 'Review the recorded decision and download the exact candidate with its evidence.', label: 'Review decision and export', href, stage: 'Export' };
   if (evaluation.improvement_decision?.outcome === 'reject') return { title: 'Use what this comparison taught you', description: 'Review the candidate’s failures before preparing a new dataset. Keep protected evaluation examples out of training.', label: 'Review rejected candidate', href, stage: 'Improve' };

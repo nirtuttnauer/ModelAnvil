@@ -7,10 +7,10 @@ import { ThemeControl } from './ThemeControl';
 type OrganizationOption = { tenant_id: string; name: string };
 
 /** Header settings menu: appearance, organization scope, workspace actions, API status and build identity. */
-export function SettingsMenu({ tenantName, organizations, currentOrganization, organizationDisabled, onSelectOrganization, onRefresh, isSession, connectionBusy, onConnection, onSignOut, apiStatus, about }: {
+export function SettingsMenu({ tenantName, organizations, currentOrganization, organizationDisabled, onSelectOrganization, onRefresh, isSession, connectionBusy, onConnection, onSignOut, apiStatus, onWorkspaceSettings, about }: {
   tenantName: string; organizations: OrganizationOption[]; currentOrganization: OrganizationOption | null; organizationDisabled: boolean;
   onSelectOrganization(id: string): void; onRefresh(): void; isSession: boolean; connectionBusy: boolean; onConnection(): void; onSignOut(): void;
-  apiStatus: string; about: ReactNode;
+  apiStatus: string; onWorkspaceSettings(): void; about: ReactNode;
 }) {
   const statusClass = apiStatus === 'API unavailable' ? 'offline' : apiStatus === 'Checking API' ? 'checking' : '';
   return <Menu label="Settings" icon={<Settings2 size={18} aria-hidden="true" />} className="settings-menu">
@@ -24,6 +24,7 @@ export function SettingsMenu({ tenantName, organizations, currentOrganization, o
     </MenuSection>
     <MenuSection label="Workspace">
       <Button type="button" variant="quiet" onClick={onRefresh}><RefreshCw size={16} aria-hidden="true" />Refresh workspace</Button>
+      <Button type="button" variant="quiet" onClick={onWorkspaceSettings}><Settings2 size={16} aria-hidden="true" />Workspace settings</Button>
       {isSession
         ? <Button type="button" variant="quiet" disabled={connectionBusy} onClick={onSignOut}><LogOut size={16} aria-hidden="true" />Sign out</Button>
         : <Button type="button" variant="quiet" disabled={connectionBusy} onClick={onConnection}><KeyRound size={16} aria-hidden="true" />Connection</Button>}
