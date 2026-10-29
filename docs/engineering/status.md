@@ -21,6 +21,20 @@ The [combined CPU RAG report](verification/task73-end-to-end-2026-10-23/report.m
 
 Latest integrated code verification: local backend **1,041 tests, five optional skips**; actual PostgreSQL/model/broker suite **23 passed**; frontend **226 passed**, production and Storybook builds passed. These are the scoped source report's observations; the final documentation PR reruns its required CI rather than treating old counts as new tests. No test fixture or old qualified label certifies an unsupported operation.
 
+QA ruling, 29 October 2026 (ANVIL-002, gate G-skip). A skip, xfail, or timeout at runtime is a failure. The five optional skips above are tag exclusions that run in the required local PostgreSQL run, or they run with their verified fixture. Each local evidence record lists collected, excluded-by-tag, and passed counts for every run, and lists the excluded test IDs.
+
+| Test | Ruling |
+| --- | --- |
+| `modelanvil.api.test_dataset_preparation.DatasetPreparationApiTests.test_concurrent_preparation_allocates_distinct_revisions_and_advances_to_latest` | `pg` tag. Required local PostgreSQL run. |
+| `modelanvil.budgets.test_concurrency.AccountingConcurrencyTests.test_simultaneous_callback_creation_returns_the_same_event` | `pg` tag. Required local PostgreSQL run. |
+| `modelanvil.compute.tests.ConcurrentAllocationTests.test_concurrent_replays_create_one_provider_resource_and_one_reservation` | `pg` tag. Required local PostgreSQL run. |
+| `modelanvil.jobs.test_broker.RabbitMQLoopIntegrationTests.test_consumer_loop_executes_a_dispatch_and_stops_cleanly` | `pg` tag. Required local PostgreSQL run, which also provides RabbitMQ (`RABBITMQ_URL`). |
+| `modelanvil.runners.training.test_mlx_runtime.NativeAdapterModelTests.test_frozen_four_bit_base_actual_update_exact_resume_and_corruption` | Collected when `MODELANVIL_MLX_TEST_MODEL_DIR` points at the verified local model, tagged `pg`, and executed in that PostgreSQL run. |
+
+`modelanvil.runners.test_gguf_runtime.GGUFNative.test_actual_cpu_generation_cancellation_and_unload` is collected when `MODELANVIL_GGUF_TEST_MODEL` is set (tag `gguf`). A missing Metal or GGUF fixture is not a runtime skip. Those IDs still have to run on a host that has the fixtures before the skip gate is closed for them.
+
+The default backend command is `python manage.py test --noinput --exclude-tag=pg`. The required PostgreSQL command is `python manage.py test --noinput --tag=pg` with `DATABASE_ENGINE=postgresql` and `RABBITMQ_URL`. The record schema is [local-evidence.v1.json](schemas/local-evidence.v1.json). `scripts/local_evidence.py` wraps a command and writes one record labeled `local`.
+
 ## Historical reviews
 
 The dated entries below preserve their original observations, counts and acceptance state. They are not current support claims; use the matrix above and operation-specific reports for the merged baseline.

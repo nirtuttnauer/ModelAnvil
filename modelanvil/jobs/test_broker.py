@@ -6,11 +6,10 @@ import os
 import threading
 import uuid
 from types import SimpleNamespace
-from unittest import skipUnless
 from unittest.mock import patch, Mock
 
 from django.core.management import call_command
-from django.test import TransactionTestCase
+from django.test import TransactionTestCase, tag
 import pika
 
 from modelanvil.identity.models import Tenant
@@ -153,7 +152,7 @@ class BrokerConsumerTests(TransactionTestCase):
             consumer._pool.shutdown()
 
 
-@skipUnless(os.environ.get("RABBITMQ_URL"), "requires a live RabbitMQ service")
+@tag("pg")
 class RabbitMQLoopIntegrationTests(TransactionTestCase):
     def test_consumer_loop_executes_a_dispatch_and_stops_cleanly(self):
         from modelanvil.jobs.broker import WorkerBrokerConsumer

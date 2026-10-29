@@ -4,12 +4,15 @@ PYTHON ?= .venv/bin/python
 test-production:
 	$(PYTHON) scripts/production_integration.py
 
-.PHONY: check test test-broker-integration test-accounting-integration test-worker-integration test-dataset-integration test-web migrate migration-check smoke reconcile reconcile-compute prune-transfer-parts web-install web-build up down logs local
+.PHONY: check test test-pg test-broker-integration test-accounting-integration test-worker-integration test-dataset-integration test-web migrate migration-check smoke reconcile reconcile-compute prune-transfer-parts web-install web-build up down logs local
 check:
 	DJANGO_SETTINGS_MODULE=modelanvil.settings PYTHONPATH=. $(PYTHON) manage.py check
 
 test:
-	DJANGO_SETTINGS_MODULE=modelanvil.settings PYTHONPATH=. $(PYTHON) -m django test -v 1
+	DJANGO_SETTINGS_MODULE=modelanvil.settings PYTHONPATH=. $(PYTHON) -m django test -v 1 --exclude-tag=pg
+
+test-pg:
+	DJANGO_SETTINGS_MODULE=modelanvil.settings PYTHONPATH=. $(PYTHON) -m django test -v 1 --tag=pg
 
 test-broker-integration:
 	@set -eu; \
