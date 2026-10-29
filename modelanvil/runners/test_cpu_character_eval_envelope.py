@@ -11,9 +11,12 @@ from modelanvil.runners.cpu_character_eval_envelope import (
     POLICY_ID,
     POLICY_PATH,
     check_run,
+    compare,
     load_policy,
     load_reference,
+    load_repeat_report,
     measured_spread,
+    policy_hash,
     reference_problems,
 )
 from modelanvil.runners.cpu_character_eval_repeat import run_once
@@ -107,6 +110,59 @@ class EnvelopeRuleTests(SimpleTestCase):
         self.assertFalse(check_run(policy, reference, repeats, _report(0.2))["ok"])
 
 
+class CompareEnvelopeTests(SimpleTestCase):
+    """compare() fails closed. A pass on the reference run is not a quality pass."""
+
+    def test_reference_run_reproduces_without_a_quality_pass(self):
+        policy = load_policy()
+        pinned = policy_hash(policy)
+        self.assertEqual(len(pinned), 64)
+        self.assertNotIn("tolerance", policy)
+        reference = load_repeat_report(1)
+        case = reference["cases"][0]
+        self.assertEqual(case["candidate_output"], "ab")
+        self.assertEqual(case["expected_output"], "not-the-model-output")
+        self.assertNotEqual(case["candidate_output"], case["expected_output"])
+        self.assertFalse(case["passed"])
+        self.assertEqual(case["score"], 0.0)
+        for index in (1, 2, 3):
+            result = compare(reference, load_repeat_report(index))
+            self.assertTrue(result["passed"])
+            self.assertFalse(result["quality_pass"])
+            self.assertFalse(result["case_passed"])
+            self.assertEqual(result["policy_hash"], pinned)
+            self.assertIn("not a quality pass", result["limits"])
+
+    def test_policy_hash_change_fails(self):
+        before = POLICY_PATH.read_bytes()
+        reference = load_repeat_report(1)
+        current = copy.deepcopy(reference)
+        mutated = copy.deepcopy(load_policy())
+        mutated["limits"] = mutated["limits"] + " edited"
+        self.assertNotEqual(policy_hash(mutated), policy_hash(load_policy()))
+        with self.assertRaisesRegex(ValueError, "policy hash"):
+            compare(reference, current, policy=mutated)
+        current["policy_hash"] = "f" * 64
+        with self.assertRaisesRegex(ValueError, "policy hash"):
+            compare(reference, current)
+        current = copy.deepcopy(reference)
+        current["reproduction_policy"] = mutated
+        with self.assertRaisesRegex(ValueError, "policy hash"):
+            compare(reference, current)
+        self.assertEqual(POLICY_PATH.read_bytes(), before)
+
+    def test_field_outside_tolerance_fails(self):
+        before = POLICY_PATH.read_bytes()
+        reference = load_repeat_report(1)
+        spread = measured_spread([load_repeat_report(index) for index in (1, 2, 3)])
+        self.assertEqual(spread["tolerances"]["cases[0].score"], 0.0)
+        current = copy.deepcopy(reference)
+        current["cases"][0]["score"] = reference["cases"][0]["score"] + 1e-9
+        with self.assertRaisesRegex(ValueError, "outside tolerance"):
+            compare(reference, current)
+        self.assertEqual(POLICY_PATH.read_bytes(), before)
+
+
 @override_settings(ALLOWED_HOSTS=["testserver"])
 class CpuCharacterEvalRepeatTests(TestCase):
     def setUp(self):
@@ -130,3 +186,8 @@ class CpuCharacterEvalRepeatTests(TestCase):
         self.assertTrue(result["ok"], result["failures"])
         for field, tolerance in result["tolerances"].items():
             self.assertEqual(tolerance, 0.0, field)
+        reproduced = compare(load_repeat_report(1), second)
+        self.assertTrue(reproduced["passed"])
+        self.assertFalse(reproduced["quality_pass"])
+        self.assertFalse(second["cases"][0]["passed"])
+        self.assertNotEqual(second["cases"][0]["candidate_output"], second["cases"][0]["expected_output"])

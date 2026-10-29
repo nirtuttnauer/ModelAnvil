@@ -12,7 +12,7 @@ import socket
 import time
 import uuid
 
-from modelanvil.runners.cpu_character_eval_envelope import POLICY_ID, load_policy, load_reference
+from modelanvil.runners.cpu_character_eval_envelope import POLICY_ID, load_policy, load_reference, policy_hash
 
 
 def _envelope(sample: dict) -> dict:
@@ -290,6 +290,7 @@ def _report(reference, run, training, base, wall_seconds: float) -> dict:
     ]
     return {
         "policy_id": reference["policy_id"],
+        "policy_hash": policy_hash(load_policy()),
         "contains_measurement": True,
         "protocol": actual_protocol,
         "evidence_level": evidence["level"],
