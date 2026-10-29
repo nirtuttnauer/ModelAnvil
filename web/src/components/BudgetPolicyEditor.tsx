@@ -1,5 +1,5 @@
-import { Button, Card, Field, RecordTable } from './ui';
-import { useEffect, useState } from 'react';
+import { Button, Checkbox, Dialog, Notice, RecordTable, Section, Select, StatusBadge, TextControl } from './ui';
+import { useEffect, useId, useState } from 'react';
 import { apiRequest, errorMessage } from '../api/client';
 import { allResources } from '../api/resources';
 
@@ -7,8 +7,11 @@ interface Policy {
   policy_id: string; name: string; period: string; unit: string; currency: string; limit_amount: string; enabled: boolean;
   allowance?: { scope: string; period_start: string; reserved_amount: string; settled_amount: string; remaining_amount: string };
 }
+const UNITS = [{ value: 'training_steps', label: 'Training steps' }, { value: 'bank_acquisition_records', label: 'Dataset Bank records' }, { value: 'evaluation_cases', label: 'Evaluation cases' }];
 
+/** Organization-wide budget policies, edited in a dialog by administrators. */
 export function BudgetPolicyEditor({ token, refreshKey, onChanged }: { token: string; refreshKey: number; onChanged: () => void }) {
+  const formId = useId();
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [allowed, setAllowed] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -45,25 +48,34 @@ export function BudgetPolicyEditor({ token, refreshKey, onChanged }: { token: st
       setOpen(false); setNotice(`Budget policy “${saved.name}” saved.`); onChanged();
     } catch(e) { setError(errorMessage(e)); } finally { setBusy(false); }
   }
-  return <Card className="panel" aria-label="Budget policy management">
-    <div className="panel-title"><div><h2>Budget policies</h2><p>Organization-wide limits shared across projects. Reservations and usage use the policy’s resource unit.</p></div>
-      {allowed && <Button className="primary" disabled={loading || busy} onClick={() => edit(null)}>New budget policy</Button>}</div>
-    <div className="panel-body">
-      {error && <p className="error-text" role="alert">{error}</p>}{notice && <p role="status">{notice}</p>}
-      {!allowed && !loading && <p className="muted">An organization administrator manages these policies.</p>}
-      {open && <form className="form-grid" onSubmit={save}>
-        <label>Policy name<Field required maxLength={200} value={name} disabled={busy} onChange={e => setName(e.target.value)} /></label>
-        <label>Resource unit<select value={unit} disabled={busy || !!editing} onChange={e => setUnit(e.target.value)}><option value="training_steps">Training steps</option><option value="bank_acquisition_records">Dataset Bank records</option><option value="evaluation_cases">Evaluation cases</option>{editing && !['training_steps','bank_acquisition_records','evaluation_cases'].includes(editing.unit) && <option value={editing.unit}>{editing.unit}</option>}</select></label>
-        <label>Budget period<select value={period} disabled={busy || !!editing} onChange={e => setPeriod(e.target.value)}><option value="lifetime">Lifetime</option><option value="monthly">Monthly</option><option value="daily">Daily</option></select></label>
-        <label>Policy limit<Field required type="number" min="0.000001" step="0.000001" value={limit} disabled={busy} onChange={e => setLimit(e.target.value)} /></label>
-        <label className="checkbox-label"><input type="checkbox" checked={enabled} disabled={busy} onChange={e => setEnabled(e.target.checked)} />Enabled</label>
-        <p className="muted full-width">{editing?.currency ? `Existing policy currency: ${editing.currency}.` : 'This is a quantity allowance, not a monetary price. Costs remain unpriced unless measured rates are available.'} Existing reservations retain their units and periods.</p>
-        <div className="actions full-width"><Button className="primary" disabled={busy || !name.trim() || !limit}>{busy ? 'Saving…' : 'Save budget policy'}</Button><Button type="button" disabled={busy} onClick={() => setOpen(false)}>Cancel budget edit</Button></div>
-      </form>}
-      {loading ? <p role="status">Loading budget policies…</p> : !policies.length ? <p className="muted">No policies yet. Create a training-step policy to enable budgeted training.</p> : <div className="table-scroll" tabIndex={0}><RecordTable className="resource-table">
-        <thead><tr><th>Policy</th><th>Unit and period</th><th>Limit</th><th>Settled usage</th><th>Reserved</th><th>Remaining</th><th>State</th>{allowed && <th>Edit</th>}</tr></thead>
-        <tbody>{policies.map(p => <tr key={p.policy_id}><td>{p.name}<small className="id-text">Organization-wide</small></td><td>{p.unit}{p.currency ? ` · ${p.currency}` : ''}<small className="id-text">{p.period} · {p.allowance?.period_start || 'Period not reported'}</small></td><td>{p.limit_amount}</td><td>{p.allowance?.settled_amount ?? 'Not reported'}</td><td>{p.allowance?.reserved_amount ?? 'Not reported'}</td><td>{p.allowance?.remaining_amount ?? 'Not reported'}</td><td>{p.enabled ? 'Enabled' : 'Disabled'}</td>{allowed && <td><Button disabled={busy} onClick={() => edit(p)}>Edit {p.name}</Button></td>}</tr>)}</tbody>
-      </RecordTable></div>}
-    </div>
-  </Card>;
+  const unitOptions = editing && !UNITS.some(u => u.value === editing.unit) ? [...UNITS, { value: editing.unit, label: editing.unit }] : UNITS;
+  return <Section title="Budget policies" description="Organization-wide limits shared across projects." actions={allowed && <Button type="button" variant="primary" disabled={loading || busy} onClick={() => edit(null)}>New policy</Button>}>
+    {error && !open && <p className="error-text" role="alert">{error}</p>}
+    {notice && <p role="status">{notice}</p>}
+    {!allowed && !loading && <p className="muted">An organization administrator manages these policies.</p>}
+    {loading ? <p role="status">Loading budget policies…</p> : !policies.length ? <p className="muted">No policies yet. Create a training-step policy to enable budgeted training.</p> : <div className="table-scroll" tabIndex={0}><RecordTable>
+      <thead><tr><th>Policy</th><th>Unit and period</th><th>Limit</th><th>Settled</th><th>Reserved</th><th>Remaining</th><th>State</th>{allowed && <th>Actions</th>}</tr></thead>
+      <tbody>{policies.map(p => <tr key={p.policy_id}>
+        <td>{p.name}</td>
+        <td>{p.unit}{p.currency ? ` · ${p.currency}` : ''}<small>{p.period} · {p.allowance?.period_start || 'Period not reported'}</small></td>
+        <td>{p.limit_amount}</td><td>{p.allowance?.settled_amount ?? 'Not reported'}</td><td>{p.allowance?.reserved_amount ?? 'Not reported'}</td><td>{p.allowance?.remaining_amount ?? 'Not reported'}</td>
+        <td><StatusBadge status={p.enabled ? 'enabled' : 'disabled'} label={p.enabled ? 'Enabled' : 'Disabled'} /></td>
+        {allowed && <td><Button type="button" size="sm" disabled={busy} aria-label={`Edit ${p.name}`} onClick={() => edit(p)}>Edit</Button></td>}
+      </tr>)}</tbody>
+    </RecordTable></div>}
+    <Dialog title={editing ? 'Edit budget policy' : 'New budget policy'} description="A quantity allowance per period, not a monetary price." open={open} onClose={() => setOpen(false)}
+      footer={<><Button type="button" disabled={busy} onClick={() => setOpen(false)}>Cancel</Button><Button form={formId} type="submit" variant="primary" disabled={busy || !name.trim() || !limit}>{busy ? 'Saving…' : 'Save budget policy'}</Button></>}>
+      <form id={formId} data-ui="form" onSubmit={save}>
+        {error && <Notice tone="error" role="alert">{error}</Notice>}
+        <div data-ui="field-grid">
+          <TextControl label="Policy name" required maxLength={200} value={name} disabled={busy} onChange={e => setName(e.target.value)} />
+          <TextControl label="Policy limit" required type="number" min="0.000001" step="0.000001" value={limit} disabled={busy} onChange={e => setLimit(e.target.value)} />
+          <Select label="Resource unit" value={unit} disabled={busy || !!editing} onChange={e => setUnit(e.target.value)} options={unitOptions} />
+          <Select label="Budget period" value={period} disabled={busy || !!editing} onChange={e => setPeriod(e.target.value)} options={[{ value: 'lifetime', label: 'Lifetime' }, { value: 'monthly', label: 'Monthly' }, { value: 'daily', label: 'Daily' }]} />
+          <div data-span="full"><Checkbox label="Enabled" checked={enabled} disabled={busy} onChange={e => setEnabled(e.target.checked)} /></div>
+        </div>
+        <p className="muted">{editing?.currency ? `Existing policy currency: ${editing.currency}. ` : ''}Existing reservations keep their units and periods.</p>
+      </form>
+    </Dialog>
+  </Section>;
 }

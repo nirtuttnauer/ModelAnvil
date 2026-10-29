@@ -157,6 +157,7 @@
   [data-ui="table"] tr:last-child td { border-bottom: 0; }
   [data-ui="table"] tbody tr:hover { background: var(--surface-subtle); }
   [data-ui="table"] tbody tr:focus-within { background: var(--surface-subtle); }
+  [data-ui="table"] tbody tr[aria-selected="true"], [data-ui="table"] tbody tr[aria-selected="true"]:hover { background: var(--primary-surface); }
   [data-ui="table"] a { font-weight: 500; text-decoration: none; }
   [data-ui="table"] a:hover { text-decoration: underline; }
   [data-ui="table"] progress { max-width: 120px; }
@@ -165,6 +166,15 @@
   .record-label { display: none; }
   .record-value { min-width: 0; overflow-wrap: anywhere; }
   .record-value > small { display: block; }
+
+  /* List beside an inspector */
+  [data-ui="split"] { display: grid; gap: var(--space-16); align-items: start; min-width: 0; }
+  [data-ui="split"] > * { min-width: 0; }
+  [data-ui="split"][data-open] { grid-template-columns: minmax(0, 1.3fr) minmax(320px, 1fr); }
+  @media (max-width: 1000px) {
+    [data-ui="split"][data-open] { grid-template-columns: minmax(0, 1fr); }
+    [data-ui="split"][data-open] > [data-ui="inspector"] { order: -1; }
+  }
 
   /* Inspector */
   [data-ui="inspector"] { display: flex; flex-direction: column; min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-panel); }

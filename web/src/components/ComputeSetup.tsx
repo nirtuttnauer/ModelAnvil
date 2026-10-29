@@ -1,18 +1,18 @@
-import { Identifier } from './Identifier';
-import { Button, Card, Field, Notice } from './ui';
-import { useEffect, useRef, useState } from 'react';
+import { Button, Dialog, Notice, Select, TextControl } from './ui';
+import { useEffect, useId, useRef, useState } from 'react';
 import { apiRequest, errorMessage } from '../api/client';
 import { computeReadiness, type ComputeWorker } from '../api/compute';
 
 interface Profile { id: string; name: string; memory_bytes: number; limitations: string[]; available: boolean }
 interface Registration { worker_id: number; worker_token: string; worker_token_expires_at: string; startup_command: string }
 
-export function ComputeSetup({ token, onRegistered, onPermission }: {
-  token: string; onRegistered: () => void; onPermission: (allowed: boolean) => void;
+/** Registers a local worker in a dialog and shows its one-time connection credential until dismissed. */
+export function ComputeSetup({ token, open, onClose, onRegistered, onPermission }: {
+  token: string; open: boolean; onClose: () => void; onRegistered: () => void; onPermission: (allowed: boolean) => void;
 }) {
+  const formId = useId();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [allowed, setAllowed] = useState(false);
-  const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [pool, setPool] = useState('');
   const [profile, setProfile] = useState('cpu-character');
@@ -49,37 +49,34 @@ export function ComputeSetup({ token, onRegistered, onPermission }: {
     try {
       const data = await apiRequest<Registration>('/api/v1/workers/setup/', token,
         { method: 'POST', body: JSON.stringify({ worker_name: name.trim(), pool: pool.trim(), profile }) });
-      setRegistration(data); setWorker(null); setRevealed(false); setOpen(false); onRegistered();
+      setRegistration(data); setWorker(null); setRevealed(false); onRegistered();
     } catch(e) { setError(errorMessage(e)); }
     finally { setBusy(false); }
   }
+  function dismiss() { setRegistration(null); setWorker(null); setRevealed(false); }
   const selected = profiles.find(p => p.id === profile);
-  return <Card className="panel" aria-label="Compute setup">
-    <div className="panel-title"><div><h2>Set up local compute</h2><p>Register an installed runtime, then connect its worker.</p></div>
-      {allowed && <Button className="primary" disabled={busy || !!registration} onClick={() => setOpen(v => !v)}>{open ? 'Close compute setup' : 'Register local worker'}</Button>}</div>
-    <div className="panel-body">
-      {error && <Notice tone="error" className="notice error" role="alert">{error}<Button disabled={busy} onClick={() => setRetry(v => v + 1)}>Retry setup access</Button></Notice>}
-      {!allowed && !error && <p className="muted">An organization administrator can register compute here.</p>}
-      {open && <form className="form-grid" onSubmit={register}>
-        <label>Worker name<Field required maxLength={200} disabled={busy} value={name} onChange={e => setName(e.target.value)} /></label>
-        <label>Pool name<Field required maxLength={100} disabled={busy} value={pool} onChange={e => setPool(e.target.value)} /><small>Use an active pool name or create a new pool.</small></label>
-        <label>Installed runtime<select disabled={busy} value={profile} onChange={e => setProfile(e.target.value)}>{profiles.map(p => <option key={p.id} value={p.id}>{p.name}{p.available ? '' : ' · packages required'}</option>)}</select></label>
-        {selected && <div className="full-width"><p>One CPU slot · minimum {selected.memory_bytes / 1048576} MiB host memory.</p><ul>{selected.limitations.map(limit => <li key={limit}>{limit}</li>)}</ul></div>}
-        <p className="muted full-width">Registration does not start work. Run the worker in the same trusted service environment as the API, with the same database and artifact storage. Remote HTTP training is not supported by this local profile.</p>
-        <Button className="primary" disabled={busy || !name.trim() || !pool.trim() || !selected?.available}>{busy ? 'Registering…' : 'Register compute'}</Button>
-      </form>}
-      {registration && <div className="detail-box" aria-label="Worker connection instructions">
-        <h3>Connect worker <Identifier value={registration.worker_id} label="Worker record ID" /></h3>
-        <p>Save this credential securely. It is shown once and cleared when you dismiss these instructions or leave the page.</p>
-        <label>One-time worker credential<Field type={revealed ? 'text' : 'password'} readOnly autoComplete="off" value={registration.worker_token} /></label>
-        <Button onClick={() => setRevealed(v => !v)}>{revealed ? 'Hide credential' : 'Reveal credential'}</Button>
-        <p>Expires {new Date(registration.worker_token_expires_at).toLocaleString()}.</p>
-        <p>From the installed application directory, run this command. Paste the credential at its hidden prompt; keep it out of command history.</p>
-        <pre tabIndex={0} style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{registration.startup_command}</pre>
-        <p role="status">{worker ? computeReadiness(worker) : 'Waiting for a worker heartbeat'}</p>
-        <p className="muted">A connected worker still needs compatible inputs and a quota for its workload before launch.</p>
-        <div className="actions"><Button onClick={onRegistered}>Refresh inventory</Button><Button onClick={() => { setRegistration(null); setWorker(null); setRevealed(false); }}>Dismiss connection instructions</Button></div>
-      </div>}
-    </div>
-  </Card>;
+  return <Dialog title="Register local worker" description="Register an installed runtime, then connect its worker." open={open} onClose={onClose}
+    footer={registration
+      ? <><Button type="button" onClick={onRegistered}>Refresh inventory</Button><Button type="button" variant="primary" onClick={() => { dismiss(); onClose(); }}>Done</Button></>
+      : <><Button type="button" disabled={busy} onClick={onClose}>Cancel</Button><Button form={formId} type="submit" variant="primary" disabled={busy || !allowed || !name.trim() || !pool.trim() || !selected?.available}>{busy ? 'Registering…' : 'Register compute'}</Button></>}>
+    {error && <Notice tone="error" role="alert">{error} <Button type="button" size="sm" disabled={busy} onClick={() => setRetry(v => v + 1)}>Retry setup access</Button></Notice>}
+    {!allowed && !error && <p className="muted">An organization administrator can register compute here.</p>}
+    {allowed && !registration && <form id={formId} data-ui="form" onSubmit={register}>
+      <div data-ui="field-grid">
+        <TextControl label="Worker name" required maxLength={200} disabled={busy} value={name} onChange={e => setName(e.target.value)} />
+        <TextControl label="Pool name" hint="Use an active pool name or create a new pool." required maxLength={100} disabled={busy} value={pool} onChange={e => setPool(e.target.value)} />
+        <div data-span="full"><Select label="Installed runtime" disabled={busy} value={profile} onChange={e => setProfile(e.target.value)}>{profiles.map(p => <option key={p.id} value={p.id}>{p.name}{p.available ? '' : ' · packages required'}</option>)}</Select></div>
+      </div>
+      {selected && <p className="muted">One CPU slot · minimum {selected.memory_bytes / 1048576} MiB host memory.{selected.limitations.length ? ` ${selected.limitations.join(' ')}` : ''}</p>}
+      <p className="muted">Registration does not start work. Run the worker next to the API with the same database and artifact storage.</p>
+    </form>}
+    {registration && <div data-ui="form" aria-label="Worker connection instructions">
+      <p>Save this credential securely. It is shown once and cleared when you dismiss these instructions.</p>
+      <TextControl label="One-time worker credential" type={revealed ? 'text' : 'password'} readOnly autoComplete="off" value={registration.worker_token} />
+      <div data-ui="actions"><Button type="button" size="sm" onClick={() => setRevealed(v => !v)}>{revealed ? 'Hide credential' : 'Reveal credential'}</Button><span className="muted">Expires {new Date(registration.worker_token_expires_at).toLocaleString()}.</span></div>
+      <p>From the installed application directory, run this command and paste the credential at its hidden prompt.</p>
+      <pre tabIndex={0} className="ops-command">{registration.startup_command}</pre>
+      <p role="status">{worker ? computeReadiness(worker) : 'Waiting for a worker heartbeat'}</p>
+    </div>}
+  </Dialog>;
 }

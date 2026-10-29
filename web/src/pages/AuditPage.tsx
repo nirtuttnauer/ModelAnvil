@@ -1,5 +1,6 @@
+import { Button, Disclosure, Field, KeyValueList, LinkButton, RecordTable, Section, Select, StatusBadge, TextControl, Toolbar } from '../components/ui';
+import { EmptyState } from '../components/Feedback';
 import { Identifier } from '../components/Identifier';
-import { Badge, Button, Card, Field, RecordTable } from '../components/ui';
 import { InspectorPanel } from '../components/InspectorPanel';
 import { useDraft } from '../components/Draft';
 import { auditResourceHash } from '../api/resource-routes';
@@ -7,11 +8,13 @@ import { DataInspector } from '../components/DataInspector';
 import { useEffect, useRef, useState } from 'react';
 import { apiPage, apiRequest, errorMessage, nextPagePath } from '../api/client';
 import { ResourceState } from '../components/ResourceState';
+import { statusLabel } from '../api/status';
 import { ChartPanel, ChartEmpty, BarChart, SegmentBar, EventTimeline } from '../components/Charts';
-import { Download, ShieldCheck } from 'lucide-react';
 import './operations.css';
+
 interface Event { event_id: string; actor_id: string | null; actor_kind: string; action: string; resource_type: string; resource_id: string | null; result: string; created_at: string; input_snapshot: Record<string, unknown> }
 const endpoint = '/api/v1/audit/';
+
 export function AuditPage({ token, refreshKey }: { token: string; refreshKey: number }) {
   const [events, setEvents] = useState<Event[]>([]);
   const [next, setNext] = useState<string | null>(null);
@@ -40,7 +43,6 @@ export function AuditPage({ token, refreshKey }: { token: string; refreshKey: nu
     try { const p = await apiPage<Event>(nextPagePath(next, endpoint + appliedQuery), token); setEvents(current => [...current, ...p.results.filter(e => !current.some(x => x.event_id === e.event_id))]); setNext(p.next || null); }
     catch(e) { setError(errorMessage(e)); } finally { setLoading(false); }
   }
-  const filtered = events;
   const days = events.reduce<Record<string, number>>((counts, e) => {
     if (Number.isFinite(Date.parse(e.created_at))) {
       const day = new Date(e.created_at).toISOString().slice(0, 10);
@@ -78,24 +80,68 @@ export function AuditPage({ token, refreshKey }: { token: string; refreshKey: nu
       setExportNotice(`${metadata.complete ? 'Complete' : 'Partial'} audit snapshot exported: ${rows.length} events, with period, filters and scope metadata.`);
     } catch (e) { if (!c.signal.aborted) setError(errorMessage(e)); } finally { if (!c.signal.aborted) setExportBusy(false); }
   }
-  return <div className="resource-view operations-page">
-    <div className="ops-heading"><div><span className="eyebrow">Workspace evidence</span><h2>Activity records</h2><p>Inspect recorded actions, actors and outcomes across your tenant.</p></div><Button disabled={loading || exportBusy || !!error} onClick={() => void exportEvents()}><Download size={15} aria-hidden="true" />Export scoped snapshot</Button></div>
-    <details className="workspace-details"><summary>More audit filters</summary><form className="form-grid" onSubmit={applyFilters}><label>Audit scope<select value={scope} onChange={e => setScope(e.target.value)}><option value="project">Current project and shared setup events</option><option value="tenant">Tenant-wide (unrestricted keys only)</option></select></label><label>Actor ID<Field value={actor} onChange={e => setActor(e.target.value)} /></label><label>Exact action<Field value={action} onChange={e => setAction(e.target.value)} /></label><label>Resource type<Field value={resourceType} onChange={e => setResourceType(e.target.value)} /></label><label>Exact resource ID<Field value={resourceId} onChange={e => setResourceId(e.target.value)} /></label><label>Project ID<Field value={project} onChange={e => setProject(e.target.value)} /></label><label>From (UTC)<Field type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} /></label><label>Through (UTC)<Field type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} /></label><Button className="primary" disabled={exportBusy}>Apply audit filters</Button></form></details>
-    {exportNotice && <p role="status">{exportNotice}</p>}
-    <ResourceState loading={loading} error={error} onRetry={() => setRetry(v => v + 1)} />
-    <details className="workspace-details"><summary>Activity overview</summary><div className="ops-chart-grid">
-      <ChartPanel title="Event volume" description={`${events.length} loaded events only · UTC calendar dates · not total tenant activity.`}><BarChart data={Object.entries(days).sort(([a], [b]) => a.localeCompare(b)).map(([label, value]) => ({ label, value, color: 0 }))} unit="loaded events" emptyMessage="Load audit events to display observed event volume." /></ChartPanel>
-      <ChartPanel title="Recorded outcomes" description="Distribution across the loaded events, before search filters.">{events.length ? <SegmentBar data={outcomes} unit="events" /> : <ChartEmpty message="Recorded outcomes will appear when audit events are available." />}</ChartPanel>
-    </div>
-    </details>
-    <div className={`ops-workspace ${selected ? 'with-inspector' : ''}`}>
-      <Card className="panel"><div className="panel-title"><div><h2>Events</h2><p>Exact recorded actions and their resource identities.</p></div><Badge className="badge"><ShieldCheck size={13} aria-hidden="true" />Read only</Badge></div><div className="panel-body">
-        <div className="toolbar"><Field aria-label="Search audit events" placeholder="Search server-side actions or resource types" value={query} onChange={e => setQuery(e.target.value)} /><select aria-label="Filter audit outcome" value={resultFilter} onChange={e => setResultFilter(e.target.value)}><option value="all">All outcomes</option>{['ok', 'denied', 'error'].map(r => <option key={r} value={r}>{r || 'Not reported'}</option>)}</select><Button disabled={exportBusy} onClick={e => applyFilters(e)}>Apply search and outcome</Button><small className="muted">{events.length} matching events loaded from server filters</small></div>
-        {!loading && !error && !filtered.length && <div className="empty-state"><h3>No audit events match</h3><p>Recorded tenant activity will appear here. The server applies your selected filters across all authorized records. Load more matching pages when available.</p></div>}
-        {!!filtered.length && <div className="table-scroll" tabIndex={0}><RecordTable className="resource-table"><thead><tr><th>Time</th><th>Action</th><th>Resource</th><th>Actor</th><th>Outcome</th></tr></thead><tbody>{filtered.map(e => <tr key={e.event_id} className={selected?.event_id === e.event_id ? 'ops-selected-row' : ''}><td>{new Date(e.created_at).toLocaleString()}</td><td><Button className="text-button" onClick={() => { setSelected(e); setSelectedId(e.event_id); }}>{e.action}</Button></td><td>{e.resource_type}<Identifier value={e.resource_id} label="Resource ID" /></td><td>{e.actor_kind}<Identifier value={e.actor_id} label="Actor ID" /></td><td><Badge className={`state state-${e.result}`}>{e.result || 'Not reported'}</Badge></td></tr>)}</tbody></RecordTable></div>}
-        <div className="ops-table-footer"><small>{events.length} events loaded{next ? ' · more events are available' : ''}</small>{next && <Button disabled={loading} onClick={() => void more()}>Load more events</Button>}</div>
-      </div></Card>
-      {selected && <InspectorPanel eyebrow="Event details" title={selected.action} closeLabel="Close event details" onClose={() => { setSelected(null); setSelectedId(''); }}><Badge className={`state state-${selected.result}`}>{selected.result}</Badge><dl className="ops-facts"><div><dt>Time</dt><dd>{new Date(selected.created_at).toLocaleString()}</dd></div><div><dt>Actor</dt><dd>{selected.actor_kind}<Identifier value={selected.actor_id} label="Actor ID" /></dd></div><div><dt>Resource</dt><dd>{selected.resource_type}<Identifier value={selected.resource_id} label="Resource ID" /></dd></div><div><dt>Event ID</dt><dd><Identifier value={selected.event_id} label="Audit event ID" /></dd></div></dl>{auditResourceHash(selected.resource_type, selected.resource_id || '') ? <a href={auditResourceHash(selected.resource_type, selected.resource_id || '')!}>Open exact authorized resource</a> : <p className="muted">Historical record only: this resource type has no browser detail route.</p>}{resourceState && <p role="status">{resourceState.state.replaceAll('_', ' ')}: {resourceState.reason}</p>}<h3>Loaded resource activity</h3><p className="muted">Events for this exact resource identity in the loaded list.</p><EventTimeline events={related.map(e => ({ label: e.action, detail: `${new Date(e.created_at).toLocaleString()} · ${e.actor_kind}`, status: e.result }))} /><details open><summary>Recorded input snapshot</summary><DataInspector value={selected.input_snapshot} /></details><details><summary>Exact event record</summary><DataInspector value={selected} /></details></InspectorPanel>}
-    </div>
+  const resourceHref = selected ? auditResourceHash(selected.resource_type, selected.resource_id || '') : null;
+
+  return <div className="ops-page">
+    <Section title="Events" description="Recorded actions, actors and outcomes for this tenant." actions={<Button type="button" disabled={loading || exportBusy || !!error} onClick={() => void exportEvents()}>Export snapshot</Button>}>
+      <form onSubmit={applyFilters} data-ui="form">
+        <Toolbar label="Audit filters" actions={<Button type="submit" disabled={exportBusy}>Apply filters</Button>}>
+          <Field aria-label="Search audit events" placeholder="Search actions or resource types" value={query} onChange={e => setQuery(e.target.value)} />
+          <Select aria-label="Filter audit outcome" value={resultFilter} onChange={e => setResultFilter(e.target.value)}>
+            <option value="all">All outcomes</option>{['ok', 'denied', 'error'].map(r => <option key={r} value={r}>{statusLabel(r)}</option>)}
+          </Select>
+        </Toolbar>
+        <Disclosure summary="More audit filters" variant="quiet">
+          <div data-ui="field-grid">
+            <Select label="Audit scope" value={scope} onChange={e => setScope(e.target.value)} options={[{ value: 'project', label: 'Current project and shared setup events' }, { value: 'tenant', label: 'Tenant-wide (unrestricted keys only)' }]} />
+            <TextControl label="Actor ID" value={actor} onChange={e => setActor(e.target.value)} />
+            <TextControl label="Exact action" value={action} onChange={e => setAction(e.target.value)} />
+            <TextControl label="Resource type" value={resourceType} onChange={e => setResourceType(e.target.value)} />
+            <TextControl label="Exact resource ID" value={resourceId} onChange={e => setResourceId(e.target.value)} />
+            <TextControl label="Project ID" value={project} onChange={e => setProject(e.target.value)} />
+            <TextControl label="From (UTC)" type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
+            <TextControl label="Through (UTC)" type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} />
+          </div>
+        </Disclosure>
+      </form>
+      {exportNotice && <p role="status">{exportNotice}</p>}
+      <ResourceState loading={loading && !events.length} error={error} onRetry={() => setRetry(v => v + 1)} />
+      <div data-ui="split" data-open={selected ? '' : undefined}>
+        <div className="ops-main">
+          {!loading && !error && <p className="ops-count">{events.length} events loaded{next ? ' · more available' : ''}</p>}
+          {!loading && !error && !events.length && <EmptyState title="No audit events match" description="The server applies your filters across all authorized records." />}
+          {!!events.length && <div className="table-scroll" tabIndex={0}><RecordTable>
+            <thead><tr><th>Time</th><th>Action</th><th>Resource</th><th>Actor</th><th>Outcome</th></tr></thead>
+            <tbody>{events.map(e => <tr key={e.event_id} aria-selected={selected?.event_id === e.event_id || undefined}>
+              <td>{new Date(e.created_at).toLocaleString()}</td>
+              <td><Button type="button" variant="quiet" size="sm" onClick={() => { setSelected(e); setSelectedId(e.event_id); }}>{e.action}</Button></td>
+              <td>{e.resource_type}</td>
+              <td>{e.actor_kind}</td>
+              <td><StatusBadge status={e.result} label={e.result ? statusLabel(e.result) : 'Not reported'} /></td>
+            </tr>)}</tbody>
+          </RecordTable></div>}
+          {next && <Button type="button" disabled={loading} onClick={() => void more()}>Load more events</Button>}
+        </div>
+        {selected && <InspectorPanel key={selected.event_id} eyebrow="Event" title={selected.action} closeLabel="Close event details" onClose={() => { setSelected(null); setSelectedId(''); }}>
+          <div data-ui="actions"><StatusBadge status={selected.result} label={selected.result ? statusLabel(selected.result) : 'Not reported'} /></div>
+          <KeyValueList items={[
+            { label: 'Time', value: new Date(selected.created_at).toLocaleString() },
+            { label: 'Actor', value: <>{selected.actor_kind}{selected.actor_id && <> <Identifier value={selected.actor_id} label="Actor ID" display="code" /></>}</> },
+            { label: 'Resource', value: <>{selected.resource_type}{selected.resource_id && <> <Identifier value={selected.resource_id} label="Resource ID" display="code" /></>}</> },
+            { label: 'Event ID', value: <Identifier value={selected.event_id} label="Audit event ID" display="code" /> },
+          ]} />
+          {resourceHref ? <div data-ui="actions"><LinkButton href={resourceHref}>Open resource</LinkButton></div> : <p className="muted">This resource type has no detail view.</p>}
+          {resourceState && <p role="status">{statusLabel(resourceState.state)}: {resourceState.reason}</p>}
+          <h3>Activity for this resource</h3>
+          <EventTimeline events={related.map(e => ({ label: e.action, detail: `${new Date(e.created_at).toLocaleString()} · ${e.actor_kind}`, status: e.result }))} />
+          <Disclosure summary="Recorded input snapshot" variant="quiet" open><DataInspector value={selected.input_snapshot} /></Disclosure>
+          <Disclosure summary="Exact event record" variant="quiet"><DataInspector value={selected} /></Disclosure>
+        </InspectorPanel>}
+      </div>
+    </Section>
+    <Disclosure summary="Activity overview" variant="card"><div className="ops-charts">
+      <ChartPanel title="Event volume" description={`${events.length} loaded events by UTC date.`}><BarChart data={Object.entries(days).sort(([a], [b]) => a.localeCompare(b)).map(([label, value]) => ({ label, value, color: 0 }))} unit="loaded events" emptyMessage="Load audit events to display observed event volume." /></ChartPanel>
+      <ChartPanel title="Recorded outcomes" description="Distribution across the loaded events.">{events.length ? <SegmentBar data={outcomes} unit="events" /> : <ChartEmpty message="Recorded outcomes will appear when audit events are available." />}</ChartPanel>
+    </div></Disclosure>
   </div>;
 }
