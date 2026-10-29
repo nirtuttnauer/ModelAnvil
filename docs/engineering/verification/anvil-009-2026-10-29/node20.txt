@@ -1,0 +1,4 @@
+.venv/bin/python scripts/premerge.py
+premerge requires Node.js 24; found v20.20.2.
+Node.js 20 fails the frontend suite. Install Node.js 24, run `nvm use` from the repository root (.nvmrc), and run `make premerge` again.
+make: *** [Makefile:20: premerge] Error 1

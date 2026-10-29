@@ -1,0 +1,38 @@
+pip-audit pip-audit 2.10.1
+date 2026-10-29T05:06:04Z
+===== requirements.audio.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.documents.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.embeddings.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.gpu.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.inference.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.production.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.selfhost.lock.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.specialists.txt =====
+ERROR:pip_audit._virtual_env:internal pip failure: ERROR: Could not find a version that satisfies the requirement mlx-metal==0.32.3 (from versions: none)
+ERROR: No matching distribution found for mlx-metal==0.32.3
+
+ERROR:pip_audit._cli:Failed to install packages: ['/tmp/tmps8jlswpu/bin/python3.12', '-m', 'pip', 'install', '--no-input', '--keyring-provider=subprocess', '--dry-run', '--report', '/tmp/tmps6ky7ub5/tmpoolcxggg', '-r', 'requirements.specialists.txt']
+EXIT:1
+===== requirements.tools.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.vision.txt =====
+No known vulnerabilities found
+EXIT:0

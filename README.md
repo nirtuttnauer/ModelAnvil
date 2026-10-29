@@ -193,6 +193,7 @@ The [Runpod and custom plugin guide](docs/engineering/runpod-and-custom-plugins.
 From the repository root, with the Python environment installed:
 
 ```sh
+make premerge
 make check migration-check smoke
 make test
 npm --prefix web ci
@@ -200,6 +201,8 @@ npm --prefix web test
 npm --prefix web run build
 npm --prefix web run build-storybook
 ```
+
+`make premerge` is the local pre-merge command. It requires Python 3.12 and Node.js 24 (`.nvmrc` and `web/package.json` `engines`). On any other Node version, including Node.js 20, it exits immediately and names the version it found. It then runs the backend suite with `--exclude-tag=pg`, `npm test`, the production build, the Storybook build, and `manage.py test --tag=pg` against Docker images `pgvector/pgvector:pg16` and `rabbitmq:4.1-alpine` (the same images as `.github/workflows/ci.yml`). A failure, skip, expected failure, or timeout exits non-zero. A clean run from an empty `git status` writes one ANVIL-002 record labeled `local`. The three jobs in `.github/workflows/ci.yml` stay as they are. Branch protection remains the repository owner's optional setting.
 
 CI uses Python 3.12 and Node.js 24. It also checks fresh migrations/bootstrap and runs the backend suite against file-backed SQLite. To use a file-backed test database locally, set `DATABASE_TEST_NAME` to a separate temporary SQLite path before `make test`; Django manages that test database independently of your development data.
 
