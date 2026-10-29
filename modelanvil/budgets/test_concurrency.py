@@ -1,17 +1,16 @@
 """PostgreSQL concurrent provider callback idempotency."""
 import threading
 from concurrent.futures import ThreadPoolExecutor
-from unittest import skipUnless
 from unittest.mock import patch
 
-from django.db import connection, connections
-from django.test import TransactionTestCase
+from django.db import connections
+from django.test import TransactionTestCase, tag
 
 from modelanvil.budgets.models import UsageEvent
 from modelanvil.identity.models import Tenant
 
 
-@skipUnless(connection.vendor == "postgresql", "Requires PostgreSQL transactions")
+@tag("pg")
 class AccountingConcurrencyTests(TransactionTestCase):
     def test_simultaneous_callback_creation_returns_the_same_event(self):
         tenant = Tenant.objects.create(slug="concurrent-billing", name="Concurrent Billing")

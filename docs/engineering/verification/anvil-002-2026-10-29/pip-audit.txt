@@ -1,0 +1,37 @@
+===== requirements.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.production.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.documents.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.gpu.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.specialists.txt =====
+ERROR:pip_audit._virtual_env:internal pip failure: [31mERROR: Could not find a version that satisfies the requirement mlx-metal==0.32.3 (from versions: none)[0m[31m
+[0m[31mERROR: No matching distribution found for mlx-metal==0.32.3[0m[31m
+[0m
+ERROR:pip_audit._cli:Failed to install packages: ['/tmp/tmp2nvlxhvm/bin/python3.12', '-m', 'pip', 'install', '--no-input', '--keyring-provider=subprocess', '--dry-run', '--report', '/tmp/tmpi6dteybe/tmprs5m1eai', '-r', 'requirements.specialists.txt']
+EXIT:1
+===== requirements.inference.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.embeddings.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.audio.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.vision.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.tools.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.selfhost.lock.txt =====
+No known vulnerabilities found
+EXIT:0
+ALL_EXIT:1

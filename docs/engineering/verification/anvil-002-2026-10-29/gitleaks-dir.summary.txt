@@ -1,0 +1,9 @@
+
+    ○
+    │╲
+    │ ○
+    ○ ░
+    ░    gitleaks
+
+4:49AM INF scanned ~27154598 bytes (27.15 MB) in 714ms
+4:49AM WRN leaks found: 404

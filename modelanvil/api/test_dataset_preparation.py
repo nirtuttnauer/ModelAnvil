@@ -6,12 +6,11 @@ import tempfile
 import uuid
 from concurrent.futures import ThreadPoolExecutor
 from threading import Barrier
-from unittest import skipUnless
 from unittest.mock import patch
 
 from django.conf import settings
-from django.db import close_old_connections, connection, connections
-from django.test import TransactionTestCase, override_settings
+from django.db import close_old_connections, connections
+from django.test import TransactionTestCase, override_settings, tag
 from rest_framework.test import APIClient
 
 from modelanvil.artifacts.models import Artifact, Dataset, DatasetRevision, LineageEdge
@@ -308,7 +307,7 @@ class DatasetPreparationApiTests(TransactionTestCase):
         self.assertEqual(self.client.post(self.url, payload, format="json").status_code, 401)
         self.assert_no_publication(1)
 
-    @skipUnless(connection.vendor == "postgresql", "Publication locking requires PostgreSQL.")
+    @tag("pg")
     def test_concurrent_preparation_allocates_distinct_revisions_and_advances_to_latest(self):
         barrier = Barrier(2)
 

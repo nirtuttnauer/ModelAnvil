@@ -3,14 +3,13 @@ import json
 import os
 import uuid
 from concurrent.futures import ThreadPoolExecutor
-from unittest import skipUnless
 from datetime import timedelta
 from unittest.mock import MagicMock, patch
 from urllib.error import HTTPError, URLError
 
 from django.core.management import call_command
-from django.test import TestCase, SimpleTestCase, TransactionTestCase, override_settings
-from django.db import connection, close_old_connections
+from django.test import TestCase, SimpleTestCase, TransactionTestCase, override_settings, tag
+from django.db import close_old_connections
 from django.utils import timezone
 from rest_framework.test import APIClient
 
@@ -321,7 +320,7 @@ class RunpodTransportTests(SimpleTestCase):
                     executor({"tenant_id": str(uuid.uuid4())}, context)
 
 
-@skipUnless(connection.vendor == "postgresql", "Concurrent allocation qualification requires PostgreSQL.")
+@tag("pg")
 class ConcurrentAllocationTests(TransactionTestCase):
     def test_concurrent_replays_create_one_provider_resource_and_one_reservation(self):
         tenant = Tenant.objects.create(slug="concurrent-compute", name="Concurrent")
