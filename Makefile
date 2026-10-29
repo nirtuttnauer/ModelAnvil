@@ -4,7 +4,7 @@ PYTHON ?= .venv/bin/python
 test-production:
 	$(PYTHON) scripts/production_integration.py
 
-.PHONY: check test test-pg premerge test-broker-integration test-accounting-integration test-worker-integration test-dataset-integration test-web migrate migration-check smoke reconcile reconcile-compute prune-transfer-parts web-install web-build up down logs local
+.PHONY: check test test-pg isolated-eval premerge test-broker-integration test-accounting-integration test-worker-integration test-dataset-integration test-web migrate migration-check smoke reconcile reconcile-compute prune-transfer-parts web-install web-build up down logs local
 check:
 	DJANGO_SETTINGS_MODULE=modelanvil.settings PYTHONPATH=. $(PYTHON) manage.py check
 
@@ -13,6 +13,10 @@ test:
 
 test-pg:
 	DJANGO_SETTINGS_MODULE=modelanvil.settings PYTHONPATH=. $(PYTHON) -m django test -v 1 --tag=pg
+
+# Prefetch, then golden path and eval on a compose network with no egress.
+isolated-eval:
+	DJANGO_SETTINGS_MODULE=modelanvil.settings PYTHONPATH=. $(PYTHON) scripts/isolated_eval.py
 
 # Backend (Python 3.12), frontend test/build/storybook (Node 24), and the
 # --tag=pg suite on the CI pgvector and RabbitMQ images. Writes an ANVIL-002 record.

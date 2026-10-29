@@ -1,0 +1,68 @@
+# Default eval and golden path with no egress.
+# db and rabbitmq are on this network. The public internet is not.
+# HF_HUB_OFFLINE and TRANSFORMERS_OFFLINE are intentionally unset: the network is the proof.
+
+networks:
+  isolated:
+    internal: true
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: modelanvil
+      POSTGRES_USER: modelanvil
+      POSTGRES_PASSWORD: modelanvil
+    networks: [isolated]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U modelanvil -d modelanvil"]
+      interval: 2s
+      timeout: 3s
+      retries: 40
+
+  rabbitmq:
+    image: rabbitmq:3.13-alpine
+    networks: [isolated]
+    volumes:
+      - ./deploy/compose/isolated-eval-rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  eval:
+    image: modelanvil-isolated-eval:local
+    build:
+      context: .
+      dockerfile: Dockerfile.isolated-eval
+    networks: [isolated]
+    working_dir: /app
+    depends_on:
+      db: {condition: service_healthy}
+      rabbitmq: {condition: service_healthy}
+    environment:
+      DJANGO_SETTINGS_MODULE: modelanvil.settings
+      PYTHONPATH: /app
+      PYTHONUNBUFFERED: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      DATABASE_ENGINE: postgresql
+      DATABASE_NAME: modelanvil
+      DATABASE_USER: modelanvil
+      DATABASE_PASSWORD: modelanvil
+      DATABASE_HOST: db
+      DATABASE_PORT: "5432"
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
+      HF_HOME: /cache/huggingface
+      HUGGINGFACE_HUB_CACHE: /cache/huggingface/hub
+      MODELANVIL_BENCHMARK_CACHE: /cache/retrieval
+      MODELANVIL_RAG_DECODER_CACHE: /cache/decoder
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      TOKENIZERS_PARALLELISM: "false"
+    volumes:
+      - ${ISOLATED_SOURCE:?}:/app
+      - ${ISOLATED_HF_HOME:?}:/cache/huggingface
+      - ${ISOLATED_CORPUS:?}:/cache/retrieval
+      - ${ISOLATED_DECODER:?}:/cache/decoder

@@ -1,0 +1,10 @@
+*
+!requirements.txt
+!requirements.embeddings.txt
+!requirements.documents.txt
+!requirements.audio.txt
+!requirements.gpu.txt
+!requirements.inference.txt
+!requirements.tools.txt
+!requirements.vision.txt
+!Dockerfile.isolated-eval
