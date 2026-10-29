@@ -61,7 +61,7 @@ They are listed on the test records as `fixture_tests_not_collected`. Their bodi
 - `gitleaks dir --redact` on the working tree at `d22a46af751a7f692aa2cdf67361fa9ef85676bc`, before this evidence directory was added, exited 1 with 404 findings, all rule `generic-api-key`. The `(rule, file, line)` set matches `../anvil-002-2026-10-29/gitleaks-dir.txt` with nothing added and nothing removed. Console: `gitleaks-dir.summary.txt`.
 - `gitleaks detect --redact` scanned 170 commits and exited 1 with 411 findings, all rule `generic-api-key`. The `(rule, file, commit)` set matches `../anvil-002-2026-10-29/gitleaks-detect.txt` with nothing added and nothing removed. Console: `gitleaks-detect.summary.txt`.
 
-A second `gitleaks dir --redact` of this evidence directory, after the records were written, exited 0 with 0 findings. The committed files do not add a finding.
+A second `gitleaks dir --redact` of this evidence directory, after the records were written, exited 0 with 0 findings. A full-tree `gitleaks dir --redact` with those files on disk was still 404 findings, and the `(rule, file, line)` set was still identical to ANVIL-002. The committed files do not add a finding.
 
 There is no QA-signed ANVIL-017 triage list in the repository. These are the same 404 working-tree and 411 history findings already on `main`. One local training artifact under gitignored `/storage/` produced three extra `dir` hits during an earlier scan; that directory is not part of the tree and was removed before the scan above.
 
