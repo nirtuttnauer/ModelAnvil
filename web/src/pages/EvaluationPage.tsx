@@ -3,21 +3,22 @@ import { ImprovementDecision, type Decision } from '../components/ImprovementDec
 import { GuidedEvaluation, type GuidedEvaluationPreparation, type GuidedEvaluationRun } from '../components/GuidedEvaluation';
 import { ImprovementReport, ReviewedModelExport, type DecisionReport } from '../components/ImprovementReport';
 import { evaluationSelection } from '../api/improvement';
-import { Badge, Button, Card, Field, Notice, RecordTable } from '../components/ui';
-import { Feedback } from '../components/Feedback';
+import { Button, Checkbox, Dialog, Disclosure, KeyValueList, LinkButton, Notice, RecordTable, Section, Select, StatusBadge, TextControl } from '../components/ui';
+import { EmptyState } from '../components/Feedback';
 import { MetricComparison } from '../components/MetricComparison';
 import { ResourcePicker } from '../components/ResourcePicker';
 import { resourceHash } from '../api/resource-routes';
 import { RecordListEditor } from '../components/FormEditors';
 import { evaluationFields, recordsInput } from '../components/form-data';
 import { useResourceHandoff } from '../components/ResourceHandoff';
-import { useDraft, DraftStatus } from '../components/Draft';
+import { useDraft, DraftIndicator } from '../components/Draft';
 import { EvaluationCase } from '../components/DataInspector';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { apiPage, apiRequest, errorMessage, nextPagePath } from '../api/client';
 import { allResources, type RegisteredModel } from '../api/resources';
 import { ResourceState } from '../components/ResourceState';
 import { runHash } from '../api/runs';
+import { statusLabel } from '../api/status';
 import { BarChart, ChartPanel, ChartEmpty, MetricsChart, SegmentBar } from '../components/Charts';
 import './ml-pages.css';
 import './improvement.css';
@@ -31,7 +32,9 @@ interface Pool { id: number; name: string; status: string }
 interface Budget { policy_id: string; name: string; unit: string; enabled: boolean; allowance?: { remaining_amount: string } }
 interface Run { candidate_name?: string; baseline_name?: string; decision_report?: DecisionReport; improvement_decision?: Decision | null; job?: string | null; protocol_ref?: { completed_cases?: number; total_cases?: number; decoding?: string; pins?: Pins }; case_coverage?: Coverage; comparison?: Comparison; execution_evidence?: { level: string; source: string }; run_id: string; suite_version: number; candidate_model_version: number; baseline_model_version: number | null; status: string; metrics: Metric[]; baseline_metrics?: Metric[]; created_at: string }
 interface Case { result_id: string; case_id: string; input_prompt: string; candidate_output: string; expected_output: string; score: number | null; passed: boolean; failure_reason: string; slice_name: string; baseline_output?: string | null; baseline_score?: number | null }
+
 export function EvaluationPage({ token, refreshKey }: { token: string; refreshKey: number }) {
+  const setupFormId = useId(), suiteFormId = useId();
   const draft = useDraft('evaluation', { pool: '', budget: '', showSuiteForm: false as boolean, suiteName: '', suiteTarget: '', suiteScorer: 'exact_match', suiteCases: '[{\n  "case_id": "case-1",\n  "input_prompt": "Hello",\n  "expected_output": "hello",\n  "slice": "general",\n  "source_group_id": "held-out"\n}]', maxTokens: '8', setup: false as boolean, suite: '', candidate: '', baseline: '' });
   const [runs, setRuns] = useState<Run[]>([]); const [models, setModels] = useState<RegisteredModel[]>([]); const [suites, setSuites] = useState<Suite[]>([]);
   const [pools, setPools] = useState<Pool[]>([]); const [budgets, setBudgets] = useState<Budget[]>([]); const [pool, setPool] = draft.field('pool'); const [budget, setBudget] = draft.field('budget');
@@ -74,7 +77,7 @@ export function EvaluationPage({ token, refreshKey }: { token: string; refreshKe
     try {
       const parsed = recordsInput(suiteCases, evaluationFields, 64, 'case_id');
       const version = await apiRequest<Suite>('/api/v1/evaluation-suites/register-cpu/', token, { method: 'POST', body: JSON.stringify({ name: suiteName.trim(), protected_role: 'protected_eval', scorer_type: suiteScorer, cases: parsed, ...(suiteTarget ? { suite: Number(suiteTarget) } : {}) }) });
-      setSuites(current => [version, ...current.filter(item => item.id !== version.id)]); setSuite(String(version.id)); setShowSuiteForm(false); setSetup(true); const groupCount = version.source_group_count;
+      setSuites(current => [version, ...current.filter(item => item.id !== version.id)]); setSuite(String(version.id)); setShowSuiteForm(false); if (!route.trainingRun) setSetup(true); const groupCount = version.source_group_count;
       const groupLabel = groupCount == null ? 'unreported source groups' : `${groupCount} source ${groupCount === 1 ? 'group' : 'groups'}`;
       setNotice(`Suite r${version.revision_no} pinned as protected evaluation with ${groupLabel}.`);
     } catch(e) { setError(errorMessage(e)); } finally { setBusy(false); }
@@ -98,33 +101,112 @@ export function EvaluationPage({ token, refreshKey }: { token: string; refreshKe
   const missingCases = coverage?.missing ?? (typeof recordedCases === 'number' && typeof totalCases === 'number' ? Math.max(0, totalCases - recordedCases) : null);
   const loadedPassing = cases.filter(c => c.passed).length;
   const sliceCases = [...new Set(cases.map(c => c.slice_name || 'All samples'))].map(slice => ({ label: slice, value: cases.filter(c => (c.slice_name || 'All samples') === slice).length, color: 0 }));
+  const canQueue = !!selected && selected.status === 'pending' && !selected.job && !route.trainingRun && !selected.decision_report?.training_run_id;
+  const modelOptions = models.map(m => ({ value: String(m.id), id: m.model_version_id, name: m.model_name, revision: m.revision_no, state: m.state, href: resourceHash('model-version', m.model_version_id), description: m.capabilities?.evaluate.reason, unavailable: m.capabilities?.evaluate.eligible === false ? m.capabilities.evaluate.reason || 'Evaluation unavailable.' : undefined }));
 
   const handoffError = useResourceHandoff(token, (kind, value) => { if (kind === 'model-version') { setCandidate(String(value.id)); setSetup(true); } });
-  return <Card className="panel ml-page ml-main-panel ml-evaluation"><div className="panel-title"><div><h2>Compare and decide</h2><p>Review the same held-out cases for your candidate and its starting model.</p></div><div className="actions"><Button disabled={loading || busy || !token.trim()} onClick={() => setShowSuiteForm(v => !v)}>{showSuiteForm ? 'Close suite setup' : 'Register evaluation suite'}</Button><Button disabled={loading || busy} onClick={() => setSetup(v => !v)}>{setup ? 'Close setup' : 'New evaluation'}</Button></div></div><div className="panel-body">
-    {route.trainingRun && <GuidedEvaluation key={`${token}-${route.trainingRun}-${route.suiteVersion}`} token={token} trainingRun={route.trainingRun} currentRun={selected} suites={suites} suiteVersion={route.suiteVersion} suitesLoading={loading} onPrepared={prepared} onQueued={queued} />}
-    {!route.trainingRun && selected?.status === 'pending' && !selected.job && selected.decision_report?.training_run_id && <p><a className="primary" href={`#evaluation?training_run=${encodeURIComponent(selected.decision_report.training_run_id)}${selectedSuite ? `&suite_version=${encodeURIComponent(selectedSuite.suite_version_id)}` : ''}`}>Review and run this comparison</a></p>}
-    {selected?.decision_report && <ImprovementReport report={selected.decision_report} runId={selected.run_id} candidateName={selected.candidate_name || modelName(selected.candidate_model_version)} baselineName={selected.baseline_name || modelName(selected.baseline_model_version)} />}
-    {selected && <ImprovementDecision key={selected.run_id} token={token} run={selected.run_id} decision={selected.improvement_decision} eligible={selected.status === 'completed' && !!selected.job && !!selected.baseline_model_version && selected.baseline_model_version !== selected.candidate_model_version && selected.execution_evidence?.level === 'integrated_execution'} onRecorded={decision => setRuns(current => current.map(item => item.run_id === selected.run_id ? { ...item, improvement_decision: decision } : item))} />}
-    {selected?.decision_report?.export_available && selected.decision_report.training_run_id && <ReviewedModelExport key={selected.run_id} token={token} trainingRun={selected.decision_report.training_run_id} candidate={selected.candidate_model_version} decision={selected.improvement_decision} evaluationRun={selected.run_id} />}
-    <Notice as="p" className="notice">Guided comparisons evaluate the pinned Apple adapter against its base model. Advanced evaluation retains the supported CPU profiles. Every result keeps its execution scope and held-out source groups.</Notice><>{handoffError && <p role="alert">{handoffError}</p>}</><ResourceState loading={loading} error={error} onRetry={() => setRetry(v => v + 1)} />{notice && <Notice as="p" tone="success" className="notice success" role="status">{notice}</Notice>}
-    {showSuiteForm && <form className="form-grid" onSubmit={registerSuite}><DraftStatus draft={draft} disabled={busy} /><label>Suite version<select value={suiteTarget} onChange={e => { const value = e.target.value; setSuiteTarget(value); const chosen = suiteFamilies.find(item => String(item.suite) === value); if (chosen) setSuiteName(chosen.suite_name); }}><option value="">New suite</option>{suiteFamilies.map(item => <option key={item.suite} value={item.suite}>{item.suite_name} · current r{item.revision_no}</option>)}</select></label><label>Suite name<Field required maxLength={200} readOnly={Boolean(suiteTarget)} value={suiteName} onChange={e => setSuiteName(e.target.value)} /></label><label>Protected evaluation role<select required value="protected_eval" onChange={() => undefined}><option value="protected_eval">Protected evaluation — held out from training</option></select></label><label>Scoring method<select value={suiteScorer} onChange={e => setSuiteScorer(e.target.value)}><option value="exact_match">Exact match</option><option value="substring">Expected text appears in output</option><option value="numeric_tolerance">Numeric tolerance (0.0001)</option></select></label><RecordListEditor title="Evaluation cases" itemName="Case" fields={evaluationFields} maximum={64} uniqueKey="case_id" value={suiteCases} onChange={setSuiteCases} disabled={busy} description="Write the prompt, expected response, and source group for each case. IDs must be unique; slices group related cases." /><p className="muted full-width">Pin 1–64 held-out cases. Each case declares a source group. A new version keeps the protected evaluation role and does not rewrite earlier revisions.</p><Button className="primary" disabled={busy || !suiteName.trim()}>{busy ? 'Registering…' : suiteTarget ? 'Pin next suite version' : 'Pin evaluation suite'}</Button></form>}
-    {setup && <form className="form-grid" onSubmit={create}><DraftStatus draft={draft} disabled={busy} /><label>Evaluation suite version<select required value={suite} onChange={e => setSuite(e.target.value)}><option value="">Select a suite</option>{suites.map(s => <option key={s.id} value={s.id}>{s.suite_name} · r{s.revision_no} · {s.cases_count} cases · {s.protected_role === 'protected_eval' ? 'protected evaluation' : (s.protected_role || 'role not declared')} · {s.source_group_count == null ? 'source groups not declared' : `${s.source_group_count} source groups`}</option>)}</select></label><ResourcePicker label="Candidate model" loading={loading} required disabled={busy} value={candidate} onChange={setCandidate} options={models.map(m => ({ value: String(m.id), id: m.model_version_id, name: m.model_name, revision: m.revision_no, state: m.state, href: resourceHash('model-version', m.model_version_id), description: m.capabilities?.evaluate.reason, unavailable: m.capabilities?.evaluate.eligible === false ? m.capabilities.evaluate.reason || 'Evaluation unavailable.' : undefined }))} /><ResourcePicker label="Baseline model (optional)" loading={loading} disabled={busy} value={baseline} onChange={setBaseline} placeholder="No baseline" options={models.map(m => ({ value: String(m.id), id: m.model_version_id, name: m.model_name, revision: m.revision_no, state: m.state, href: resourceHash('model-version', m.model_version_id), description: m.capabilities?.evaluate.reason, unavailable: m.capabilities?.evaluate.eligible === false ? m.capabilities.evaluate.reason || 'Evaluation unavailable.' : undefined }))} /><p className="muted full-width">Creates a pending evaluation. Queue a durable CPU evaluation from verified candidate and baseline bytes, using the same pinned tokenizer and held-out cases.</p>{!suites.length && <p className="muted full-width">Register an evaluation suite above to pin the cases before creating a run.</p>}<Button className="primary" disabled={busy || !suite || !candidate}>Create evaluation configuration</Button></form>}
-    <details className="evaluation-full-evidence" open={!route.trainingRun && !selected?.decision_report?.training_run_id}><summary>Full evaluation evidence and history</summary>
-    <div className="ml-stat-strip" aria-label="Evaluation summary">
-      <div><span>Evaluation runs</span><strong>{loading ? '—' : runs.length}</strong><small>Recorded in this project</small></div>
-      <div><span>Pinned suites</span><strong>{loading ? '—' : suites.length}</strong><small>Immutable suite revisions</small></div>
-      <div><span>Selected suite cases</span><strong>{selectedSuite?.cases_count ?? '—'}</strong><small>{selectedSuite?.suite_name || 'Select a recorded evaluation'}</small></div>
-      <div><span>Result metrics</span><strong>{selected ? selected.metrics.length : '—'}</strong><small>For the selected run only</small></div>
-    </div>
-    <div className="ml-section-heading"><div><h3>Slice performance & evidence</h3><p>Explore the selected suite. Uncertainty and sample counts remain attached to each measurement.</p></div><label>Inspect evaluation<select disabled={busy} aria-label="Evaluation run to visualize" value={selectedId} onChange={e => selectRun(e.target.value)}><option value="">Select an evaluation</option>{runs.map(r => <option key={r.run_id} value={r.run_id}>{runLabel(r.run_id)} · {modelName(r.candidate_model_version)} · {r.status}</option>)}</select></label></div>
-    <div className="visualization-grid">
-      <MetricsChart key={selected?.run_id || 'none'} metrics={selected?.metrics || []} />
-      <ChartPanel title="Evaluation evidence" description="Exact candidate and suite pins, with recorded execution scope.">{selected ? <><div className="ml-evidence-banner"><Badge className={`state state-${selected.status}`}>{selected.status}</Badge><strong>{selected.execution_evidence?.level || 'Unknown execution evidence'}</strong><small>{selected.execution_evidence?.source || 'No execution source reported'}</small></div><dl className="ml-definition-list"><div><dt>Candidate model</dt><dd>{modelName(selected.candidate_model_version)}</dd></div><div><dt>Baseline model</dt><dd>{modelName(selected.baseline_model_version)}</dd></div><div><dt>Evaluation suite</dt><dd>{selectedSuite ? `${selectedSuite.suite_name} · r${selectedSuite.revision_no}` : 'Suite unavailable'} <Identifier value={selectedSuite?.suite_version_id || selected.suite_version} label="Evaluation suite version ID" /></dd></div><div><dt>Scorer</dt><dd>{selectedSuite?.scorer_type || 'Not reported'}</dd></div><div><dt>Scorer version</dt><dd>{pins?.scorer_version || 'Not reported'}</dd></div><div><dt>Protected role</dt><dd>{selectedSuite?.protected_role === 'protected_eval' ? 'Protected evaluation' : (selectedSuite?.protected_role || 'Not reported')}</dd></div><div><dt>Source groups</dt><dd>{selectedSuite?.source_group_count == null ? 'Not reported' : selectedSuite.source_group_count}</dd></div><div><dt>Run environment</dt><dd>{environment ? `${environment.device || 'device not reported'} · ${environment.prompt_format || 'template not reported'} · ${environment.decoding || 'decoding not reported'}` : 'Not reported'}</dd></div><div><dt>Training overlap</dt><dd>{overlap}</dd></div><div><dt>Created</dt><dd>{new Date(selected.created_at).toLocaleString()}</dd></div><div><dt>Qualification</dt><dd>Production qualification unavailable</dd></div></dl><a href={runHash('evaluation', selected.run_id)}>Open durable evaluation record →</a></> : <ChartEmpty message="Select an evaluation to inspect its pinned suite and execution evidence." />}</ChartPanel>
-    </div>
-    <div className="ml-section-heading"><div><h3>Evaluation history</h3><p>Each run keeps its own suite, candidate, and evidence scope.</p></div></div>
-    {!loading && !error && !runs.length && <Feedback state="empty" title="No evaluation runs yet." />}
-    {!!runs.length && <div className="table-scroll" tabIndex={0}><RecordTable className="resource-table"><thead><tr><th>Run</th><th>Candidate</th><th>Baseline</th><th>Suite</th><th>State</th></tr></thead><tbody>{runs.map(r => <tr key={r.run_id} className={r.run_id === selectedId ? 'ml-selected-row' : undefined}><td><a href={runHash('evaluation', r.run_id)}>{runLabel(r.run_id)}</a> <Identifier value={r.run_id} label="Run ID" /><Button className="text-button" disabled={busy} onClick={() => selectRun(r.run_id)}>Inline details</Button></td><td>{modelName(r.candidate_model_version)}</td><td>{modelName(r.baseline_model_version)}</td><td>{suites.find(s => s.id === r.suite_version)?.suite_name || 'Suite unavailable'}</td><td><Badge className={`state state-${r.status}`}>{r.status}</Badge><small title={r.execution_evidence?.source}> · {r.execution_evidence?.level || "unknown evidence"}</small></td></tr>)}</tbody></RecordTable></div>}
-    {selected && <div className="detail-box"><div className="actions"><h3>{runLabel(selected.run_id)}</h3><Identifier value={selected.run_id} label="Run ID" /><a href={runHash('evaluation', selected.run_id)}>Open run</a><Button disabled={busy} onClick={() => selectRun('')}>Close details</Button></div>{selected.status === 'pending' && !selected.job && !route.trainingRun && !selected.decision_report?.training_run_id && <div className="form-grid"><label>Maximum generated tokens<Field required type="number" min="1" max="32" value={maxTokens} onChange={e => setMaxTokens(e.target.value)} /></label><label>Evaluation worker pool<select required value={pool} onChange={e => setPool(e.target.value)}><option value="">Select an active pool</option>{pools.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label><label>Evaluation case budget<select required value={budget} onChange={e => setBudget(e.target.value)}><option value="">Select an enabled case policy</option>{budgets.map(b => <option key={b.policy_id} value={b.policy_id}>{b.name} · {b.allowance?.remaining_amount ?? 'Unknown'} cases remaining</option>)}</select></label><div className="actions"><Button className="primary" disabled={busy || !pool || !budget || !token.trim() || !Number.isInteger(Number(maxTokens)) || Number(maxTokens) < 1 || Number(maxTokens) > 32} onClick={() => void executeSelected()}>{busy ? 'Queueing…' : 'Queue CPU evaluation'}</Button></div><p className="muted full-width">Reserves one unit per suite case and settles recorded cases only. Known training-source overlap is rejected. Set up a CPU candidate evaluation worker in Infrastructure and an Evaluation cases policy in Budgets.</p></div>}<p className="muted">{recordedCases ?? 'Not reported'} recorded{typeof totalCases === 'number' ? ` of ${totalCases}` : ''}. Missing: {missingCases ?? 'Not reported'}. Failed: {coverage?.failed ?? 'Not reported'}. Missing cases are not passing scores.</p>{selected.comparison && !selected.comparison.compatible && <p className="muted">{selected.comparison.reason}</p>}<h4>Metrics by slice</h4><MetricComparison metrics={selected.metrics} baseline={selected.comparison?.compatible ? selected.baseline_metrics : []} candidateName={modelName(selected.candidate_model_version)} baselineName={modelName(selected.baseline_model_version)} /><div className="visualization-grid equal"><ChartPanel title="Loaded case outcomes" description={`${cases.length} loaded case results. Additional pages may change these totals.`}>{cases.length > 0 ? <SegmentBar data={[{ label: 'Passed', value: loadedPassing, color: 1 }, { label: 'Failed', value: cases.length - loadedPassing, color: 3 }]} unit="cases" /> : <ChartEmpty message="The selected run has no loaded case results." />}</ChartPanel><ChartPanel title="Loaded case coverage" description="Case count by slice in the loaded results, not the full suite."><BarChart data={sliceCases} unit="Loaded cases" emptyMessage="Load case results to inspect slice coverage." /></ChartPanel></div><h4>Case results</h4><label className="checkbox-label"><input type="checkbox" checked={failuresOnly} onChange={e => setFailuresOnly(e.target.checked)} />Show failures only in loaded cases</label><ResourceState loading={casesLoading} />{cases.filter(c => !failuresOnly || !c.passed).map(c => <EvaluationCase key={c.result_id} result={c} />)}{!casesLoading && !cases.length && <p className="muted">No case results recorded.</p>}{next && <Button disabled={busy} onClick={() => void loadMore()}>Load more case results</Button>}</div>}
-    </details>
-  </div></Card>;
+  return <div className="ml-page">
+    <Section title="Comparison" description="Review the same held-out cases for your candidate and its starting model." actions={<>
+      <Select aria-label="Evaluation run to visualize" disabled={busy} value={selectedId} onChange={e => selectRun(e.target.value)}>
+        <option value="">Select an evaluation</option>{runs.map(r => <option key={r.run_id} value={r.run_id}>{runLabel(r.run_id)} · {modelName(r.candidate_model_version)} · {statusLabel(r.status)}</option>)}
+      </Select>
+      <Button type="button" variant="primary" disabled={loading || busy} onClick={() => setSetup(true)}>New evaluation</Button>
+      <Button type="button" disabled={loading || busy || !token.trim()} onClick={() => setShowSuiteForm(true)}>Register evaluation suite</Button>
+    </>}>
+      {route.trainingRun && <GuidedEvaluation key={`${token}-${route.trainingRun}-${route.suiteVersion}`} token={token} trainingRun={route.trainingRun} currentRun={selected} suites={suites} suiteVersion={route.suiteVersion} suitesLoading={loading} onPrepared={prepared} onQueued={queued} />}
+      {!route.trainingRun && selected?.status === 'pending' && !selected.job && selected.decision_report?.training_run_id && <p><LinkButton variant="primary" href={`#evaluation?training_run=${encodeURIComponent(selected.decision_report.training_run_id)}${selectedSuite ? `&suite_version=${encodeURIComponent(selectedSuite.suite_version_id)}` : ''}`}>Review and run this comparison</LinkButton></p>}
+      {selected?.decision_report && <ImprovementReport report={selected.decision_report} runId={selected.run_id} candidateName={selected.candidate_name || modelName(selected.candidate_model_version)} baselineName={selected.baseline_name || modelName(selected.baseline_model_version)} />}
+      {selected && <ImprovementDecision key={selected.run_id} token={token} run={selected.run_id} decision={selected.improvement_decision} eligible={selected.status === 'completed' && !!selected.job && !!selected.baseline_model_version && selected.baseline_model_version !== selected.candidate_model_version && selected.execution_evidence?.level === 'integrated_execution'} onRecorded={decision => setRuns(current => current.map(item => item.run_id === selected.run_id ? { ...item, improvement_decision: decision } : item))} />}
+      {selected?.decision_report?.export_available && selected.decision_report.training_run_id && <ReviewedModelExport key={selected.run_id} token={token} trainingRun={selected.decision_report.training_run_id} candidate={selected.candidate_model_version} decision={selected.improvement_decision} evaluationRun={selected.run_id} />}
+      {handoffError && <p role="alert" className="error-text">{handoffError}</p>}
+      <ResourceState loading={loading && !runs.length} error={error} onRetry={() => setRetry(v => v + 1)} />
+      {notice && <Notice tone="success" role="status">{notice}</Notice>}
+      {!loading && !error && !runs.length && <EmptyState title="No evaluation runs yet" description="Create an evaluation to compare a candidate on held-out cases." />}
+      {selected && <div className="ml-run">
+        <div className="ml-run-head"><h3>{runLabel(selected.run_id)}</h3><StatusBadge status={selected.status} /><LinkButton size="sm" href={runHash('evaluation', selected.run_id)}>Open run</LinkButton><Button type="button" variant="quiet" size="sm" disabled={busy} onClick={() => selectRun('')}>Close details</Button></div>
+        <KeyValueList columns={2} items={[
+          { label: 'Candidate model', value: modelName(selected.candidate_model_version) },
+          { label: 'Baseline model', value: modelName(selected.baseline_model_version) },
+          { label: 'Evaluation suite', value: selectedSuite ? `${selectedSuite.suite_name} · r${selectedSuite.revision_no}` : 'Suite unavailable' },
+          { label: 'Scorer', value: selectedSuite?.scorer_type || 'Not reported' },
+          { label: 'Evidence', value: `${selected.execution_evidence?.level || 'Unknown'} · ${selected.execution_evidence?.source || 'No execution source reported'}` },
+          { label: 'Cases', value: `${recordedCases ?? 'Not reported'} recorded${typeof totalCases === 'number' ? ` of ${totalCases}` : ''} · missing ${missingCases ?? 'not reported'} · failed ${coverage?.failed ?? 'not reported'}` },
+          { label: 'Created', value: new Date(selected.created_at).toLocaleString() },
+        ]} />
+        {canQueue && <form data-ui="form" onSubmit={e => { e.preventDefault(); void executeSelected(); }}>
+          <div data-ui="field-grid">
+            <TextControl label="Maximum generated tokens" required type="number" min="1" max="32" value={maxTokens} onChange={e => setMaxTokens(e.target.value)} />
+            <Select label="Evaluation worker pool" required value={pool} onChange={e => setPool(e.target.value)}><option value="">Select an active pool</option>{pools.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</Select>
+            <Select label="Evaluation case budget" required value={budget} onChange={e => setBudget(e.target.value)}><option value="">Select an enabled case policy</option>{budgets.map(b => <option key={b.policy_id} value={b.policy_id}>{b.name} · {b.allowance?.remaining_amount ?? 'Unknown'} cases remaining</option>)}</Select>
+          </div>
+          <div data-ui="actions"><Button variant="primary" disabled={busy || !pool || !budget || !token.trim() || !Number.isInteger(Number(maxTokens)) || Number(maxTokens) < 1 || Number(maxTokens) > 32}>{busy ? 'Queueing…' : 'Queue CPU evaluation'}</Button><span className="muted">Reserves one unit per suite case and settles recorded cases only.</span></div>
+        </form>}
+        {selected.comparison && !selected.comparison.compatible && <p className="muted">{selected.comparison.reason}</p>}
+        <h4>Metrics by slice</h4>
+        <MetricComparison metrics={selected.metrics} baseline={selected.comparison?.compatible ? selected.baseline_metrics : []} candidateName={modelName(selected.candidate_model_version)} baselineName={modelName(selected.baseline_model_version)} />
+        <h4>Case results</h4>
+        <Checkbox label="Show failures only in loaded cases" checked={failuresOnly} onChange={e => setFailuresOnly(e.target.checked)} />
+        <ResourceState loading={casesLoading} />
+        <div className="ml-cases">{cases.filter(c => !failuresOnly || !c.passed).map(c => <EvaluationCase key={c.result_id} result={c} />)}</div>
+        {!casesLoading && !cases.length && <p className="muted">No case results recorded.</p>}
+        {next && <div data-ui="actions"><Button type="button" disabled={busy} onClick={() => void loadMore()}>Load more case results</Button></div>}
+        <Disclosure summary="Evidence" variant="quiet"><KeyValueList columns={2} items={[
+          { label: 'Scorer version', value: pins?.scorer_version || 'Not reported' },
+          { label: 'Protected role', value: selectedSuite?.protected_role === 'protected_eval' ? 'Protected evaluation' : (selectedSuite?.protected_role || 'Not reported') },
+          { label: 'Source groups', value: selectedSuite?.source_group_count == null ? 'Not reported' : selectedSuite.source_group_count },
+          { label: 'Run environment', value: environment ? `${environment.device || 'device not reported'} · ${environment.prompt_format || 'template not reported'} · ${environment.decoding || 'decoding not reported'}` : 'Not reported' },
+          { label: 'Training overlap', value: overlap },
+          { label: 'Qualification', value: 'Production qualification unavailable' },
+          { label: 'Suite version ID', value: <Identifier value={selectedSuite?.suite_version_id || selected.suite_version} label="Evaluation suite version ID" display="code" /> },
+          { label: 'Run ID', value: <Identifier value={selected.run_id} label="Run ID" display="code" /> },
+        ]} /></Disclosure>
+        <Disclosure summary="Insights" variant="quiet"><div className="ml-charts">
+          <MetricsChart key={selected.run_id} metrics={selected.metrics} />
+          <ChartPanel title="Loaded case outcomes" description={`${cases.length} loaded case results. More pages may change these totals.`}>{cases.length > 0 ? <SegmentBar data={[{ label: 'Passed', value: loadedPassing, color: 1 }, { label: 'Failed', value: cases.length - loadedPassing, color: 3 }]} unit="cases" /> : <ChartEmpty message="The selected run has no loaded case results." />}</ChartPanel>
+          <ChartPanel title="Loaded case coverage" description="Case count by slice in the loaded results, not the full suite."><BarChart data={sliceCases} unit="Loaded cases" emptyMessage="Load case results to inspect slice coverage." /></ChartPanel>
+        </div></Disclosure>
+      </div>}
+    </Section>
+    <Section title="History" description="Each run keeps its own suite, candidate and evidence.">
+      {!!runs.length && <div className="table-scroll" tabIndex={0}><RecordTable>
+        <thead><tr><th>Run</th><th>Candidate</th><th>Baseline</th><th>Suite</th><th>State</th></tr></thead>
+        <tbody>{runs.map(r => <tr key={r.run_id} aria-selected={r.run_id === selectedId || undefined}>
+          <td><a href={runHash('evaluation', r.run_id)}>{runLabel(r.run_id)}</a><div className="ops-row-actions"><Button type="button" variant="quiet" size="sm" disabled={busy} onClick={() => selectRun(r.run_id)}>Inline details</Button></div></td>
+          <td>{modelName(r.candidate_model_version)}</td><td>{modelName(r.baseline_model_version)}</td>
+          <td>{suites.find(s => s.id === r.suite_version)?.suite_name || 'Suite unavailable'}</td>
+          <td><StatusBadge status={r.status} /><small title={r.execution_evidence?.source}>{r.execution_evidence?.level || 'unknown evidence'}</small></td>
+        </tr>)}</tbody>
+      </RecordTable></div>}
+      {!loading && !error && !runs.length && <p className="muted">No evaluation runs yet.</p>}
+    </Section>
+    <Dialog title="New evaluation" description="Compare a candidate on a pinned held-out suite, with an optional baseline." open={setup} onClose={() => setSetup(false)} size="lg"
+      footer={<><Button type="button" disabled={busy} onClick={() => setSetup(false)}>Cancel</Button><Button form={setupFormId} type="submit" variant="primary" disabled={busy || !suite || !candidate}>Create evaluation configuration</Button></>}>
+      <form id={setupFormId} data-ui="form" onSubmit={create}>
+        <DraftIndicator draft={draft} disabled={busy} />
+        <Select label="Evaluation suite version" required value={suite} onChange={e => setSuite(e.target.value)}>
+          <option value="">Select a suite</option>{suites.map(s => <option key={s.id} value={s.id}>{s.suite_name} · r{s.revision_no} · {s.cases_count} cases · {s.protected_role === 'protected_eval' ? 'protected evaluation' : (s.protected_role || 'role not declared')} · {s.source_group_count == null ? 'source groups not declared' : `${s.source_group_count} source groups`}</option>)}
+        </Select>
+        <ResourcePicker label="Candidate model" loading={loading} required disabled={busy} value={candidate} onChange={setCandidate} options={modelOptions} />
+        <ResourcePicker label="Baseline model (optional)" loading={loading} disabled={busy} value={baseline} onChange={setBaseline} placeholder="No baseline" options={modelOptions} />
+        <p className="muted">Creates a pending evaluation. Queue it on a CPU worker from verified candidate and baseline bytes.</p>
+        {!suites.length && <p className="muted">Register an evaluation suite first to pin the cases.</p>}
+      </form>
+    </Dialog>
+    <Dialog title="Register evaluation suite" description="Pin held-out cases as a protected suite version." open={showSuiteForm} onClose={() => setShowSuiteForm(false)} size="lg"
+      footer={<><Button type="button" disabled={busy} onClick={() => setShowSuiteForm(false)}>Cancel</Button><Button form={suiteFormId} type="submit" variant="primary" disabled={busy || !suiteName.trim()}>{busy ? 'Registering…' : suiteTarget ? 'Pin next suite version' : 'Pin evaluation suite'}</Button></>}>
+      <form id={suiteFormId} data-ui="form" onSubmit={registerSuite}>
+        <DraftIndicator draft={draft} disabled={busy} />
+        <div data-ui="field-grid">
+          <Select label="Suite version" value={suiteTarget} onChange={e => { const value = e.target.value; setSuiteTarget(value); const chosen = suiteFamilies.find(item => String(item.suite) === value); if (chosen) setSuiteName(chosen.suite_name); }}>
+            <option value="">New suite</option>{suiteFamilies.map(item => <option key={item.suite} value={item.suite}>{item.suite_name} · current r{item.revision_no}</option>)}
+          </Select>
+          <TextControl label="Suite name" required maxLength={200} readOnly={Boolean(suiteTarget)} value={suiteName} onChange={e => setSuiteName(e.target.value)} />
+          <Select label="Protected evaluation role" required value="protected_eval" onChange={() => undefined} options={[{ value: 'protected_eval', label: 'Protected evaluation — held out from training' }]} />
+          <Select label="Scoring method" value={suiteScorer} onChange={e => setSuiteScorer(e.target.value)} options={[{ value: 'exact_match', label: 'Exact match' }, { value: 'substring', label: 'Expected text appears in output' }, { value: 'numeric_tolerance', label: 'Numeric tolerance (0.0001)' }]} />
+        </div>
+        <RecordListEditor title="Evaluation cases" itemName="Case" fields={evaluationFields} maximum={64} uniqueKey="case_id" value={suiteCases} onChange={setSuiteCases} disabled={busy} description="Write the prompt, expected response and source group for each case. IDs must be unique; slices group related cases." />
+        <p className="muted">Pin 1–64 held-out cases. A new version keeps the protected role and does not rewrite earlier revisions.</p>
+      </form>
+    </Dialog>
+  </div>;
 }
