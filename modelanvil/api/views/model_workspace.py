@@ -17,10 +17,20 @@ from modelanvil.api.views.registries import TenantScopedViewSet
 from modelanvil.core.tenancy import get_active_project, get_active_tenant
 from modelanvil.identity.models import Project
 from modelanvil.jobs.models import WorkerPool
-from modelanvil.runners import model_catalog, external_inference
+from modelanvil.runners import model_catalog
 from modelanvil.runners.inference import generate, local_session, validate_messages
 from modelanvil.runners.models import ChatComparison, ChatConversation, InferenceRequest, ModelImport, ModelVersion
 from modelanvil.identity.models import get_accessible_queryset
+
+
+def _external_inference():
+    """Load the opt-in provider client only when a view calls it.
+
+    Importing the API must not load this module. Operators enable providers
+    with MODELANVIL_EXTERNAL_PROVIDERS, which defaults to empty.
+    """
+    from modelanvil.runners import external_inference
+    return external_inference
 
 
 def selected_project():
@@ -200,7 +210,7 @@ class ConversationSerializer(serializers.ModelSerializer):
                 identifier = serializers.UUIDField().run_validation(identifier)
                 exists = get_accessible_queryset(ModelVersion).filter(model_version_id=identifier).exists()
                 if not exists:
-                    external_inference.resolve(identifier, get_active_tenant(), get_active_project())
+                    _external_inference().resolve(identifier, get_active_tenant(), get_active_project())
                     exists = True
             except (ValueError, TypeError, serializers.ValidationError):
                 exists = False
@@ -303,7 +313,7 @@ class ComparisonViewSet(TenantScopedViewSet):
         selected_project()
         from django.db.models import Q
         versions = get_accessible_queryset(ModelVersion).values('pk')
-        targets = [value['id'] for value in external_inference.catalog(get_active_tenant(), get_active_project())]
+        targets = [value['id'] for value in _external_inference().catalog(get_active_tenant(), get_active_project())]
         queryset = super().get_queryset().filter(
             Q(first_request__model_version_id__in=versions) | Q(first_request__model_version__isnull=True, first_request__provider_snapshot__id__in=targets),
             Q(second_request__model_version_id__in=versions) | Q(second_request__model_version__isnull=True, second_request__provider_snapshot__id__in=targets))
@@ -336,7 +346,7 @@ class ComparisonViewSet(TenantScopedViewSet):
                 identifier = serializers.UUIDField().run_validation(response['request_id'])
                 record = InferenceRequest.all_objects.filter(request_id=identifier, tenant_id=get_active_tenant(),
                     project=project, principal_id=str(request.user.pk), status='completed').first()
-                if record is None or not external_inference.accessible_request(record, get_active_tenant(), project.pk) or record.input_digest != digest(messages):
+                if record is None or not _external_inference().accessible_request(record, get_active_tenant(), project.pk) or record.input_digest != digest(messages):
                     raise ValueError('Use your completed requests for exactly the same comparison input.')
                 if record.configuration.get('image_artifact'):
                     raise ValueError('Image responses require a separate visual review workflow; text comparisons are unsupported.')
@@ -486,7 +496,7 @@ class InferenceViewSet(TenantScopedViewSet):
             'tokenizer_kind': capability.get('tokenizer_kind'), 'modalities': capability.get('modalities', ['text']),
             'training_run_id': str(lineage[v.pk].run_id) if v.pk in lineage else None,
             'base_model_id': str(lineage[v.pk].base_model_version.model_version_id) if v.pk in lineage and str(lineage[v.pk].base_model_version.model_version_id) in eligible_ids else None,
-            'has_chat_template': bool(model_chat_template(v)), 'chat_template': model_chat_template(v)} for v, capability in eligible if capability['eligible']] + external_inference.catalog(get_active_tenant(), get_active_project())})
+            'has_chat_template': bool(model_chat_template(v)), 'chat_template': model_chat_template(v)} for v, capability in eligible if capability['eligible']] + _external_inference().catalog(get_active_tenant(), get_active_project())})
 
     @action(detail=False, methods=['post'], url_path='chat/completions')
     def completions(self, request):
@@ -502,7 +512,7 @@ class InferenceViewSet(TenantScopedViewSet):
         provider = None
         if version is None:
             try:
-                provider = external_inference.resolve(options['model'], get_active_tenant(), project.pk)
+                provider = _external_inference().resolve(options['model'], get_active_tenant(), project.pk)
             except ValueError:
                 from rest_framework.exceptions import NotFound
                 raise NotFound('Model or provider is unavailable in this project.') from None
@@ -514,7 +524,7 @@ class InferenceViewSet(TenantScopedViewSet):
         try:
             if provider is not None:
                 def guard():
-                    if external_inference.resolve(options['model'], tenant, project.pk) != provider:
+                    if _external_inference().resolve(options['model'], tenant, project.pk) != provider:
                         raise ValueError('External provider configuration changed.')
                 guard()
                 guard.identity = digest(provider)
@@ -550,7 +560,7 @@ class InferenceViewSet(TenantScopedViewSet):
                                 'provenance': runtime_provenance(guard.format, options['device'])}
         if not replayed:
             record = InferenceRequest.all_objects.create(tenant_id=tenant, project=project, model_version=version,
-                provider_snapshot=external_inference.public_target(str(options['model']), provider) if provider else {},
+                provider_snapshot=_external_inference().public_target(str(options['model']), provider) if provider else {},
                 principal_id=str(request.user.pk), input_digest=digest(options['messages']),
                 configuration={**{k: v for k, v in options.items() if k not in {'messages', 'model'}},
                                **({'_runtime': runtime_evidence} if runtime_evidence else {})})
@@ -607,7 +617,7 @@ class InferenceViewSet(TenantScopedViewSet):
 
         try:
             if provider is not None:
-                parts = stack.enter_context(external_inference.session(provider, options['messages'], max_tokens=options['max_tokens'],
+                parts = stack.enter_context(_external_inference().session(provider, options['messages'], max_tokens=options['max_tokens'],
                     temperature=options['temperature'], seed=options['seed'], prompt_format=options['prompt_format'], device=options['device']))
             else:
                 session = stack.enter_context(local_session(version, tenant=tenant, project=project.pk, device=options['device'],
