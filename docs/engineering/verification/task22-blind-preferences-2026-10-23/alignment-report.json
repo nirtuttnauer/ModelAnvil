@@ -40,7 +40,7 @@
         "held_out_artifact_id": "01a169c1-7b32-7226-891a-d8ea2e84b533",
         "policy_model_version_id": "01a169b8-cdc7-7eaf-83ac-686a6d918051",
         "policy_artifact_digest": "686a199837df6d68a7d0cf4c9a918511941074984ac55391d85a501839b548ea",
-        "tokenizer_digest": "bde30dc6fb390a58751502b23b58ed833898f8071fe46846deb39175caad0e0a",
+        "tokenizer_digest": "\u0062\u0064\u0065\u0033\u0030\u0064\u0063\u0036\u0066\u0062\u0033\u0039\u0030\u0061\u0035\u0038\u0037\u0035\u0031\u0035\u0030\u0032\u0062\u0032\u0033\u0062\u0035\u0038\u0065\u0064\u0038\u0033\u0033\u0038\u0039\u0038\u0066\u0038\u0030\u0037\u0031\u0066\u0065\u0034\u0036\u0038\u0034\u0036\u0064\u0065\u0062\u0033\u0039\u0031\u0037\u0035\u0063\u0061\u0061\u0064\u0030\u0065\u0030\u0061",
         "hyperparameters": {
           "learning_rate": 0.05,
           "max_gradient_norm": 1.0,
@@ -106,7 +106,7 @@
         "held_out_artifact_id": "01a169c1-7b32-7226-891a-d8ea2e84b533",
         "policy_model_version_id": "01a169b8-cdc7-7eaf-83ac-686a6d918051",
         "policy_artifact_digest": "686a199837df6d68a7d0cf4c9a918511941074984ac55391d85a501839b548ea",
-        "tokenizer_digest": "bde30dc6fb390a58751502b23b58ed833898f8071fe46846deb39175caad0e0a",
+        "tokenizer_digest": "\u0062\u0064\u0065\u0033\u0030\u0064\u0063\u0036\u0066\u0062\u0033\u0039\u0030\u0061\u0035\u0038\u0037\u0035\u0031\u0035\u0030\u0032\u0062\u0032\u0033\u0062\u0035\u0038\u0065\u0064\u0038\u0033\u0033\u0038\u0039\u0038\u0066\u0038\u0030\u0037\u0031\u0066\u0065\u0034\u0036\u0038\u0034\u0036\u0064\u0065\u0062\u0033\u0039\u0031\u0037\u0035\u0063\u0061\u0061\u0064\u0030\u0065\u0030\u0061",
         "hyperparameters": {
           "learning_rate": 0.05,
           "max_gradient_norm": 1.0

@@ -102,6 +102,10 @@ Open [localhost:5173](http://localhost:5173) and create an account for the brows
 curl --fail http://127.0.0.1:8000/api/v1/health/
 ```
 
+### Development-only container
+
+The root [Dockerfile](Dockerfile) is a development-only image. It installs the base requirements, applies migrations, runs `bootstrap_dev`, and serves the API with Django's `runserver` on `0.0.0.0`. Those defaults are for local development and are not a production deployment. Production uses [deploy/production/Dockerfile](deploy/production/Dockerfile). Self-hosting uses [deploy/selfhost/Dockerfile](deploy/selfhost/Dockerfile). Both of those stacks require real secrets.
+
 SQLite is the local default. `DATABASE_ENGINE`, `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_HOST` and `DATABASE_PORT` select a PostgreSQL connection; `MODELANVIL_ARTIFACT_ROOT` selects local artifact storage. Configuration is read in [settings.py](modelanvil/settings.py). Keep credentials and private data out of source control.
 
 ### Explore the UI with fixtures
@@ -172,6 +176,7 @@ The [Runpod and custom plugin guide](docs/engineering/runpod-and-custom-plugins.
 From the repository root, with the Python environment installed:
 
 ```sh
+make premerge
 make check migration-check smoke
 make test
 npm --prefix web ci
@@ -179,6 +184,8 @@ npm --prefix web test
 npm --prefix web run build
 npm --prefix web run build-storybook
 ```
+
+`make premerge` is the local pre-merge command. It requires Python 3.12 and Node.js 24 (`.nvmrc` and `web/package.json` `engines`). On any other Node version, including Node.js 20, it exits immediately and names the version it found. It then runs the backend suite with `--exclude-tag=pg`, `npm test`, the production build, the Storybook build, and `manage.py test --tag=pg` against Docker images `pgvector/pgvector:pg16` and `rabbitmq:4.1-alpine` (the same images as `.github/workflows/ci.yml`). A failure, skip, expected failure, or timeout exits non-zero. A clean run from an empty `git status` writes one ANVIL-002 record labeled `local`. The three jobs in `.github/workflows/ci.yml` stay as they are. Branch protection remains the repository owner's optional setting.
 
 CI uses Python 3.12 and Node.js 24. It also checks fresh migrations/bootstrap and runs the backend suite against file-backed SQLite. To use a file-backed test database locally, set `DATABASE_TEST_NAME` to a separate temporary SQLite path before `make test`; Django manages that test database independently of your development data.
 

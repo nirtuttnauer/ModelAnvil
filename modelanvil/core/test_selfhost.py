@@ -2,6 +2,7 @@
 import base64
 import io
 import json
+import secrets
 from types import SimpleNamespace
 from unittest.mock import patch
 from django.core.management import call_command
@@ -24,14 +25,16 @@ class SelfhostBoundaryTests(TestCase):
         return json.loads(out.getvalue())
 
     def initialize(self):
-        return self.command('initialize_selfhost',{'email':'owner@example.test','password':'private-fixture-passphrase-37','name':'Private workspace'})
+        # Generated at runtime so the suite does not store a fixture password.
+        self.fixture_password=secrets.token_urlsafe(24)
+        return self.command('initialize_selfhost',{'email':'owner@example.test','password':self.fixture_password,'name':'Private workspace'})
 
     def test_initialization_is_empty_private_offline_and_cannot_reset_existing_accounts(self):
         created=self.initialize();self.assertEqual(created['models_created'],0);self.assertEqual(created['api_keys_created'],0)
         self.assertFalse(ModelVersion.all_objects.exists());self.assertFalse(ApiKey.objects.exists())
         self.assertEqual(Membership.objects.get().role,'owner');self.assertTrue(ProjectPrivacyPolicy.all_objects.get().offline)
-        self.assertNotIn('private-fixture-passphrase-37',json.dumps(created))
-        self.assertTrue(User.objects.get().check_password('private-fixture-passphrase-37'))
+        self.assertNotIn(self.fixture_password,json.dumps(created))
+        self.assertTrue(User.objects.get().check_password(self.fixture_password))
         with self.assertRaisesRegex(CommandError,'fresh database'):self.initialize()
         self.assertEqual(Tenant.objects.count(),1)
 

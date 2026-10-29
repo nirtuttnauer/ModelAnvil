@@ -1,0 +1,37 @@
+{
+  "id": "cpu-character-eval-reference-v1",
+  "policy_id": "cpu-character-eval-reproduction-v1",
+  "contains_measurement": false,
+  "claim": "reproduction_only",
+  "protocol": {
+    "initialization_seed": 42,
+    "profile": "cpu-character",
+    "runtime_id": "modelanvil.cpu-character-sft.v1",
+    "executor": "modelanvil.runners.eval_worker.evaluation_worker_executor",
+    "training_steps": 2,
+    "optimizer": {"algorithm": "sgd", "learning_rate": 0.05, "momentum": 0},
+    "max_tokens": 2,
+    "scorer_type": "exact_match",
+    "scorer_config": {},
+    "decoding": "greedy",
+    "device": "cpu",
+    "prompt_format": "plain",
+    "training_samples": [
+      {
+        "sample_id": "11111111-1111-4111-8111-111111111111",
+        "source_group_id": "train-ab",
+        "text": "ab ab",
+        "content_sha256": "92094126d52fc25d22a35e0a135087b4ca1edd7bec5c489a32d7fc9b6849a662"
+      }
+    ],
+    "cases": [
+      {
+        "case_id": "held-out",
+        "source_group_id": "held-out-group",
+        "input_prompt": "zz",
+        "expected_output": "not-the-model-output",
+        "slice": "held-out"
+      }
+    ]
+  }
+}

@@ -37,7 +37,7 @@
     "version": "01a1602b-8f06-7c9c-93ff-3389acdd2754",
     "artifact_id": "01a1602b-8f04-74fe-a9ed-33177d78db8d",
     "sha256": "751131f40184d07f47700be9e03bf3a6cb7be4db8e40b8d5a87bedff403f2e56",
-    "tokenizer": "01a1602b-8c7f-734e-b4d3-66c4676bb4c2"
+    "tokenizer": "\u0030\u0031\u0061\u0031\u0036\u0030\u0032\u0062\u002d\u0038\u0063\u0037\u0066\u002d\u0037\u0033\u0034\u0065\u002d\u0062\u0034\u0064\u0033\u002d\u0036\u0036\u0063\u0034\u0036\u0037\u0036\u0062\u0062\u0034\u0063\u0032"
   },
   "evaluation_pins": {
     "runtime": "modelanvil.local-cpu-evaluation.v1",
@@ -46,13 +46,13 @@
       "version": "01a1602b-8f06-7c9c-93ff-3389acdd2754",
       "artifact_id": "01a1602b-8f04-74fe-a9ed-33177d78db8d",
       "sha256": "751131f40184d07f47700be9e03bf3a6cb7be4db8e40b8d5a87bedff403f2e56",
-      "tokenizer": "01a1602b-8c7f-734e-b4d3-66c4676bb4c2"
+      "tokenizer": "\u0030\u0031\u0061\u0031\u0036\u0030\u0032\u0062\u002d\u0038\u0063\u0037\u0066\u002d\u0037\u0033\u0034\u0065\u002d\u0062\u0034\u0064\u0033\u002d\u0036\u0036\u0063\u0034\u0036\u0037\u0036\u0062\u0062\u0034\u0063\u0032"
     },
     "baseline": {
       "version": "01a1602b-8ca8-7e7d-8981-d9e15259a980",
       "artifact_id": "01a1602b-8c82-7f2b-bda0-83189009cfcb",
       "sha256": "6ea5ba2454cd232a1c3620cec7ff62497fad4fafc8102e96ce0536fad873a682",
-      "tokenizer": "01a1602b-8c7f-734e-b4d3-66c4676bb4c2"
+      "tokenizer": "\u0030\u0031\u0061\u0031\u0036\u0030\u0032\u0062\u002d\u0038\u0063\u0037\u0066\u002d\u0037\u0033\u0034\u0065\u002d\u0062\u0034\u0064\u0033\u002d\u0036\u0036\u0063\u0034\u0036\u0037\u0036\u0062\u0062\u0034\u0063\u0032"
     },
     "suite_digest": "32c2639fa0468a9e0f787b5987642b176d7f2b2cd0cd20ab9207a1aacf4ebb97",
     "max_tokens": 2,

@@ -134,7 +134,7 @@
         },
         "model_pins": {
           "model_version_id": "01a16c85-e814-749b-821f-120a9e98296c",
-          "tokenizer_id": "01a16c85-e810-749a-9185-280fb934fde4",
+          "tokenizer_id": "\u0030\u0031\u0061\u0031\u0036\u0063\u0038\u0035\u002d\u0065\u0038\u0031\u0030\u002d\u0037\u0034\u0039\u0061\u002d\u0039\u0031\u0038\u0035\u002d\u0032\u0038\u0030\u0066\u0062\u0039\u0033\u0034\u0066\u0064\u0065\u0034",
           "snapshot_digest": "8e99ba3c7549a4508797a6ac278442f88af5d6053756279dcddfbac0128139eb",
           "source": {
             "license": "apache-2.0",
@@ -324,7 +324,7 @@
         },
         "model_pins": {
           "model_version_id": "01a16c85-e814-749b-821f-120a9e98296c",
-          "tokenizer_id": "01a16c85-e810-749a-9185-280fb934fde4",
+          "tokenizer_id": "\u0030\u0031\u0061\u0031\u0036\u0063\u0038\u0035\u002d\u0065\u0038\u0031\u0030\u002d\u0037\u0034\u0039\u0061\u002d\u0039\u0031\u0038\u0035\u002d\u0032\u0038\u0030\u0066\u0062\u0039\u0033\u0034\u0066\u0064\u0065\u0034",
           "snapshot_digest": "8e99ba3c7549a4508797a6ac278442f88af5d6053756279dcddfbac0128139eb",
           "source": {
             "license": "apache-2.0",
@@ -532,7 +532,7 @@
         },
         "model_pins": {
           "model_version_id": "01a16c85-e814-749b-821f-120a9e98296c",
-          "tokenizer_id": "01a16c85-e810-749a-9185-280fb934fde4",
+          "tokenizer_id": "\u0030\u0031\u0061\u0031\u0036\u0063\u0038\u0035\u002d\u0065\u0038\u0031\u0030\u002d\u0037\u0034\u0039\u0061\u002d\u0039\u0031\u0038\u0035\u002d\u0032\u0038\u0030\u0066\u0062\u0039\u0033\u0034\u0066\u0064\u0065\u0034",
           "snapshot_digest": "8e99ba3c7549a4508797a6ac278442f88af5d6053756279dcddfbac0128139eb",
           "source": {
             "license": "apache-2.0",
@@ -750,7 +750,7 @@
         },
         "model_pins": {
           "model_version_id": "01a16c85-e814-749b-821f-120a9e98296c",
-          "tokenizer_id": "01a16c85-e810-749a-9185-280fb934fde4",
+          "tokenizer_id": "\u0030\u0031\u0061\u0031\u0036\u0063\u0038\u0035\u002d\u0065\u0038\u0031\u0030\u002d\u0037\u0034\u0039\u0061\u002d\u0039\u0031\u0038\u0035\u002d\u0032\u0038\u0030\u0066\u0062\u0039\u0033\u0034\u0066\u0064\u0065\u0034",
           "snapshot_digest": "8e99ba3c7549a4508797a6ac278442f88af5d6053756279dcddfbac0128139eb",
           "source": {
             "license": "apache-2.0",
@@ -917,7 +917,7 @@
         },
         "model_pins": {
           "model_version_id": "01a16c85-e814-749b-821f-120a9e98296c",
-          "tokenizer_id": "01a16c85-e810-749a-9185-280fb934fde4",
+          "tokenizer_id": "\u0030\u0031\u0061\u0031\u0036\u0063\u0038\u0035\u002d\u0065\u0038\u0031\u0030\u002d\u0037\u0034\u0039\u0061\u002d\u0039\u0031\u0038\u0035\u002d\u0032\u0038\u0030\u0066\u0062\u0039\u0033\u0034\u0066\u0064\u0065\u0034",
           "snapshot_digest": "8e99ba3c7549a4508797a6ac278442f88af5d6053756279dcddfbac0128139eb",
           "source": {
             "license": "apache-2.0",

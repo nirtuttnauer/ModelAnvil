@@ -1,0 +1,14 @@
+{
+  "id": "cpu-character-eval-reproduction-v1",
+  "claim": "reproduction_only",
+  "quality_claim": false,
+  "production_qualified": false,
+  "hardware_qualified": false,
+  "evidence_level": "integrated_execution",
+  "executor": "modelanvil.runners.eval_worker.evaluation_worker_executor",
+  "reference_report": "docs/engineering/verification/anvil-021-cpu-character-eval/reference-report.json",
+  "repeat_runs": 3,
+  "spread_rule": "After three repeat runs of the saved reference, the tolerance for each numeric field is the maximum absolute difference of that field across those three runs. The tolerance is not padded, rounded up, or stored on this policy. Text and boolean fields have no tolerance: they must be identical across the three runs and identical on the run being checked. Timing, host, and identifier fields are recorded and are not compared. A checked run fails when an exact field differs from the first repeat run, or when a numeric field differs from the first repeat run by more than that tolerance.",
+  "widening": "This policy id does not store a tolerance. A failing check does not change this id or this rule. A wider envelope requires a new policy id, committed before a new set of three repeat runs.",
+  "limits": "Frozen before the repeat-run measurement. Reproduction of the pinned CPU character evaluation only. No quality threshold and no production or hardware qualification."
+}
