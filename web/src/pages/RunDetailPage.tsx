@@ -1,13 +1,13 @@
 import { Identifier } from '../components/Identifier';
-import { Badge, Button, MultilineField, Notice, RecordTable } from '../components/ui';
+import { Button, Disclosure, KeyValueList, LinkButton, MultilineControl, Notice, RecordTable, StatusBadge } from '../components/ui';
 import { resourceHash } from '../api/resource-routes';
-import { useDraft, DraftStatus } from '../components/Draft';
+import { useDraft, DraftIndicator } from '../components/Draft';
 import { DataInspector, DataValue } from '../components/DataInspector';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { RefreshCw, XCircle } from 'lucide-react';
 import { apiPage, apiRequest, errorMessage, nextPagePath, type ApiPage } from '../api/client';
 import { attemptsPath, detailPath, runHash, sourceHash, type RunKind } from '../api/runs';
 import { ResourceState } from '../components/ResourceState';
+import { statusLabel } from '../api/status';
 import { BarChart, ChartPanel, EventTimeline, LineChart } from '../components/Charts';
 import './runs.css';
 
@@ -120,7 +120,8 @@ interface RunDetail {
 const POLL_MS = 5000;
 const MAX_POLL_MS = 30000;
 const TERMINAL = ['completed', 'failed', 'cancelled', 'succeeded'];
-
+const KIND_LABEL: Record<RunKind, string> = { training: 'Training run', evaluation: 'Evaluation run', job: 'Job' };
+const BACK: Record<RunKind, { hash: string; label: string }> = { training: { hash: '#training', label: 'Back to training' }, evaluation: { hash: '#evaluation', label: 'Back to evaluation' }, job: { hash: '#workflows', label: 'Back to workflows' } };
 
 function age(from: number | null, now: number) {
   if (from === null) return 'never';
@@ -132,6 +133,16 @@ function age(from: number | null, now: number) {
 
 function linkId(value: string | string[] | null | undefined) {
   return Array.isArray(value) ? value[0] ?? '' : (value ?? '');
+}
+
+/** Relative time that ticks on its own, so the rest of the page does not re-render every second. */
+function RelativeTime({ from, prefix, suffix = '' }: { from: number | null; prefix: string; suffix?: string }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  return <>{prefix} {age(from, now)}{suffix}</>;
 }
 
 export function RunDetailPage({
@@ -150,7 +161,7 @@ export function RunDetailPage({
   const [error, setError] = useState<string | null>(null);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [updatedAt, setUpdatedAt] = useState<number | null>(null);
-  const [now, setNow] = useState(() => Date.now());
+  const [staleNow, setStaleNow] = useState(() => Date.now());
   const [pollMs, setPollMs] = useState(POLL_MS);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [attemptsNext, setAttemptsNext] = useState<string | null>(null);
@@ -207,14 +218,10 @@ export function RunDetailPage({
     setAttemptsNext(null);
     setAttemptsError(null);
     setCancelRequested(false);
+    setRecoveryReview(null);
     void load(controller.signal);
     return () => controller.abort();
   }, [load, kind, runId]);
-
-  useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   const state = detail?.observed.state;
   useEffect(() => {
@@ -224,6 +231,12 @@ export function RunDetailPage({
     }, pollMs);
     return () => clearInterval(timer);
   }, [detail, state, pollMs, load]);
+
+  // Staleness only needs to be re-checked at the poll cadence, not every second.
+  useEffect(() => {
+    const timer = setInterval(() => setStaleNow(Date.now()), pollMs);
+    return () => clearInterval(timer);
+  }, [pollMs]);
 
   useEffect(() => {
     if (!refreshKey) return;
@@ -303,9 +316,10 @@ export function RunDetailPage({
     } catch (e) { setActionError(errorMessage(e)); setRecoveryReview(null); await load(undefined, true); }
     finally { setBusy(false); }
   }
-
-  function updateNote(value: string) {
-    setNote(value);
+  async function loadHistory() {
+    setBusy(true); setHistoryError('');
+    try { const record = await apiRequest<{ metrics_log: Record<string, unknown>[] }>(`/api/v1/training-runs/${runId}/`, token); setFullMetrics(record.metrics_log); }
+    catch (e) { setHistoryError(errorMessage(e)); } finally { setBusy(false); }
   }
 
   const cancel = detail?.actions.cancel;
@@ -313,379 +327,104 @@ export function RunDetailPage({
   const requested = cancelRequested || Boolean(cancel?.requested);
   const acknowledged = Boolean(cancel?.acknowledged) || detail?.observed.state === 'cancelled';
   const live = Boolean(detail) && !TERMINAL.includes(state ?? '');
-  const stale = updatedAt !== null && now - updatedAt > pollMs * 2;
+  const stale = updatedAt !== null && staleNow - updatedAt > pollMs * 2;
   const links = detail?.links ?? {};
-  const displayName = detail?.name?.replace(/^(Training run|Evaluation) [a-f0-9]{8}$/i, kind === 'training' ? 'Training run' : 'Evaluation run');
+  const displayName = detail?.name?.replace(/^(Training run|Evaluation) [a-f0-9]{8}$/i, KIND_LABEL[kind]);
+  const blockers = [...(cancel?.blocked_by ?? []), ...(resume?.blocked_by ?? [])].slice(0, 3);
+  const desiredAction = detail?.desired.action
+    ? `${statusLabel(detail.desired.action)} · ${acknowledged ? 'Acknowledged' : requested ? 'Requested — not yet acknowledged by the worker' : detail.desired.acknowledged ? 'Acknowledged' : 'Pending'}`
+    : 'None';
+  const freshnessTone = connectionError ? 'error' : live && stale ? 'caution' : undefined;
 
   return (
     <div className="runs-page">
-      <section className="runs-panel">
-        <div className="runs-heading">
-          <div>
-            <h2>{displayName ?? 'Run detail'}</h2>
-            <p className="runs-hint">
-              {kind === 'training'
-                ? 'Training run'
-                : kind === 'evaluation'
-                ? 'Evaluation run'
-                : 'Durable job'}{' '}
-              <Identifier value={runId} label="Run ID" />
-              {detail?.project && (
-                <>
-                  {' '}
-                  · project <Identifier value={detail.project} label="Project ID" />
-                </>
-              )}
-            </p>
-          </div>
-          <div className="actions">
-            <Button type="button" onClick={() => void load()}>
-              <RefreshCw size={15} aria-hidden="true" /> Refresh
-            </Button>
-            <a href={sourceHash(window.location.hash, kind === 'training' ? '#training' : kind === 'evaluation' ? '#evaluation' : '#workflows')}>Back to {kind === 'training' ? 'training' : kind === 'evaluation' ? 'evaluation' : 'workflows'}</a>
-          </div>
-        </div>
-
-        <ResourceState loading={loading} error={error} onRetry={() => void load()} />
-
-        <div className={`runs-freshness ${connectionError ? 'offline' : live && stale ? 'stale' : ''}`}>
-          <span>
-            {connectionError
-              ? 'Live updates interrupted'
-              : `Last successful update ${age(updatedAt, now)}`}
-          </span>
-          <span className="muted">Polling every {Math.round(pollMs / 1000)}s</span>
-          <Badge className={`state state-${live ? 'running' : 'paused'}`}>
-            {!detail ? 'Waiting for run data' : live ? 'Live updates on' : 'Terminal state — polling stopped'}
-          </Badge>
-        </div>
-        <p className="runs-note-status" role="status" aria-live="polite">
-          {connectionError
-            ? `Live updates interrupted: ${connectionError} The last recorded values stay on screen.`
-            : live && stale
-            ? 'The last successful update is older than two poll intervals.'
-            : !detail
-            ? 'Load a durable run record to inspect its execution state.'
-            : live
-            ? 'Live updates are current.'
-            : 'This run is terminal, so polling stopped.'}
-        </p>
-
-        {detail && (
-          <>
-            <div className="runs-states">
-              <div className="runs-state-card">
-                <h3>
-                  Observed state{' '}
-                  <Badge className={`state state-${detail.observed.state}`}>{detail.observed.state}</Badge>
-                </h3>
-                <dl className="runs-kv">
-                  <div>
-                    <dt>Progress</dt>
-                    <dd>
-                      {detail.observed.current_step === null
-                        ? 'Not tracked by this run type'
-                        : `${detail.observed.current_step} / ${detail.observed.total_steps}`}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Attempts</dt>
-                    <dd>{detail.observed.attempts ?? 'No durable job'}</dd>
-                  </div>
-                  {detail.observed.job_state &&
-                    detail.observed.job_state !== detail.observed.state && (
-                      <div>
-                        <dt>Linked job state (differs from this record)</dt>
-                        <dd>
-                          <Badge
-                            className={`state state-${detail.observed.job_state}`}
-                          >
-                            {detail.observed.job_state}
-                          </Badge>
-                        </dd>
-                      </div>
-                    )}
-                  <div>
-                    <dt>Recorded update</dt>
-                    <dd>{new Date(detail.observed.updated_at).toLocaleString()}</dd>
-                  </div>
-                </dl>
-              </div>
-              <div className="runs-state-card">
-                <h3>
-                  Desired state{' '}
-                  <Badge className={`state state-${requested ? 'pending' : 'ready'}`}>
-                    {detail.desired.action}
-                  </Badge>
-                </h3>
-                <p className="muted">{detail.desired.note}</p>
-                <dl className="runs-kv">
-                  <div>
-                    <dt>Worker acknowledgement</dt>
-                    <dd>
-                      {acknowledged
-                        ? 'Acknowledged'
-                        : requested
-                        ? 'Requested — not yet acknowledged by the worker'
-                        : detail.desired.action === 'cancel'
-                        ? 'Not requested'
-                        : detail.desired.acknowledged
-                        ? 'Acknowledged'
-                        : 'Pending'}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Ownership</dt>
-                    <dd>
-                      {detail.ownership.state}
-                      {detail.ownership.worker ? ` · ${detail.ownership.worker}` : ''}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Lease</dt>
-                    <dd>
-                      {detail.ownership.lease_expires_at
-                        ? new Date(detail.ownership.lease_expires_at).toLocaleString()
-                        : 'No active lease'}
-                    </dd>
-                  </div>
-                </dl>
-                <p className="runs-hint">{detail.ownership.reason}</p>
-              </div>
-            </div>
-
-            {actionError && (
-              <Notice tone="error" className="notice error" role="alert">
-                {actionError}
-              </Notice>
-            )}
-
-            <div className="runs-actions">
-              <Button
-                type="button"
-                disabled={!cancel?.available || busy || requested}
-                onClick={() => void requestCancellation()}
-              >
-                <XCircle size={15} aria-hidden="true" />
-                {acknowledged
-                  ? 'Cancellation acknowledged'
-                  : requested
-                  ? 'Cancellation requested'
-                  : 'Request cancellation'}
-              </Button>
-              {(cancel?.blocked_by ?? []).map((reason) => (
-                <span key={reason} className="runs-hint">
-                  {reason}
-                </span>
-              ))}
-            </div>
-
-
-          </>
-        )}
-      </section>
-
+      <ResourceState loading={loading && !detail} error={error} onRetry={() => void load()} />
       {detail && (
         <>
-          <details className="workspace-details"><summary>Run charts and timeline</summary><div className="visualization-grid">
-            {kind === 'training' && <ChartPanel title="Recorded loss" description={`Exact metric steps · evidence: ${detail.evidence?.level ?? 'not reported'}`}>
-              <LineChart series={[
-                { name: 'Training loss', points: detail.metrics.rows.flatMap(row => typeof row.step === 'number' && typeof row.loss === 'number' ? [{ x: row.step, y: row.loss }] : []) },
-                { name: 'Validation loss', points: detail.metrics.rows.flatMap(row => typeof row.step === 'number' && typeof row.validation_loss === 'number' ? [{ x: row.step, y: row.validation_loss }] : []) },
-              ].filter(series => series.points.length)} yLabel="Loss" />
-              {detail.metrics.truncated && <p className="runs-hint">The API returned a bounded metric window. Inspect recorded metrics below for its total.</p>}
-            </ChartPanel>}
-            {kind === 'evaluation' && <ChartPanel title="Evaluation measurements" description="Frozen scoring metrics and case coverage; inspect sample counts and uncertainty below.">
-              <BarChart data={detail.metrics.rows.filter(row => typeof row.value === 'number').map(row => ({ label: String(row.key || 'Metric'), value: Number(row.value) }))} />
-            </ChartPanel>}
-            <ChartPanel title="Execution record" description="Recorded timestamps and the current observed state.">
-              <EventTimeline events={[
-                { label: 'Created', detail: new Date(detail.observed.created_at).toLocaleString() },
-                ...(detail.observed.started_at ? [{ label: 'Execution started', detail: new Date(detail.observed.started_at).toLocaleString() }] : []),
-                { label: 'Current observed state', status: detail.observed.state, detail: new Date(detail.observed.updated_at).toLocaleString() },
-                ...(detail.observed.completed_at ? [{ label: 'Execution ended', detail: new Date(detail.observed.completed_at).toLocaleString() }] : []),
-              ]} />
-              <p className="runs-hint">Execution mode: {detail.execution_mode}. Worker: {detail.ownership.worker ?? 'not assigned'}.</p>
-            </ChartPanel>
-          </div>
-          </details>
-          <section className="runs-panel runs-recovery">
-            <h2>Next actions and blockers</h2>
-            {resume?.available && <Button type="button" disabled={busy || stale || !!connectionError} onClick={() => void reviewRecovery()}>Review checkpoint recovery</Button>}
-            {resume?.recovery_run_id && <a href={runHash('training', resume.recovery_run_id)}>Open linked recovery execution</a>}
-            {recoveryReview && <div className="detail-box" aria-label="Recovery review">
-              <h3>Resume from step {recoveryReview.step}</h3><p>Reserve {recoveryReview.remaining_steps} remaining training steps. Prior committed usage stays on the parent execution.</p>
-              <p>{recoveryReview.replay_limits}</p><DataInspector value={recoveryReview.pins} />
-              {recoveryReview.blocked_by.map(reason => <p key={reason} role="alert">{reason}</p>)}
-              <div className="actions"><Button className="primary" disabled={busy || !recoveryReview.available} onClick={() => void resumeRecovery()}>Resume from verified checkpoint</Button><Button disabled={busy} onClick={() => setRecoveryReview(null)}>Close recovery review</Button></div>
-            </div>}
-            <p className="runs-hint">
-              Resume and retry eligibility is re-evaluated from recorded evidence on every load: the caller role,
-              the committed checkpoint's runtime contract and cursor, and the budget state. Nothing here restarts
-              work on its own.
-            </p>
-            <ul className="runs-blockers">
-              {(resume?.blocked_by ?? []).map((reason) => (
-                <li key={reason}>{reason}</li>
-              ))}
-            </ul>
-            {resume?.budget && (
-              <p className="runs-hint">
-                Budget ({resume.budget.state}): {resume.budget.reason}
-              </p>
-            )}
-            {resume?.checkpoint && (
-              <p className="runs-hint">
-                Checkpoint: {resume.checkpoint.reason}
-                {resume.checkpoint.step === null ? '' : ` (step ${resume.checkpoint.step})`}
-              </p>
-            )}
-            {resume?.operator_path && <p className="runs-hint">{resume.operator_path}</p>}
-            <p className="runs-hint">{resume?.preserves_history}</p>
-          </section>
-          <section className="runs-panel">
-            <h2>Linked records</h2>
-            <p className="runs-hint">
-              Every link below opens the record this run pinned, produced or was executed under.
-            </p>
-            <div className="runs-links">
-              {links.job && <a href={runHash('job', linkId(links.job))}>Durable job</a>}
-              {links.training_run && (
-                <a href={runHash('training', linkId(links.training_run))}>Training run</a>
+          <header className="runs-states">
+            <div className="runs-head-main">
+              <h2>{displayName ?? 'Run detail'}</h2>
+              <div data-ui="actions">
+                <StatusBadge status={detail.observed.state} />
+                <span className="muted">{KIND_LABEL[kind]}</span>
+                {requested && <StatusBadge status="cancellation_requested" label={acknowledged ? 'Cancellation acknowledged' : 'Cancellation requested'} />}
+              </div>
+              {detail.observed.current_step !== null && (
+                <div className="runs-progress">
+                  <span>Progress</span>
+                  <strong>{detail.observed.current_step} / {detail.observed.total_steps}</strong>
+                  <progress value={detail.observed.current_step} max={detail.observed.total_steps || 1} aria-label="Run progress" />
+                </div>
               )}
-              {links.output_model_version && <a href={resourceHash('model-version', linkId(links.output_model_version))}>Trained candidate</a>}
-              {links.base_model_version && <a href={resourceHash('model-version', linkId(links.base_model_version))}>Pinned base version</a>}
-              {links.recovery_parent && <a href={runHash('training', linkId(links.recovery_parent))}>Parent execution</a>}
-              {links.model_version && <a href={resourceHash('model-version', linkId(links.model_version))}>Model version</a>}
-              {links.dataset_revision && <a href={resourceHash('dataset-revision', linkId(links.dataset_revision))}>Dataset revision</a>}
-              {Array.isArray(links.evaluation_runs) &&
-                links.evaluation_runs.map((id, index) => (
-                  <span key={id}><a href={runHash('evaluation', id)}>Evaluation run {index + 1}</a> <Identifier value={id} label="Evaluation run ID" /></span>
-                ))}
-              <a href="#infrastructure">Worker pools</a>
-              <a href="#budgets">Budgets</a>
-              <a href="#audit">Audit</a>
+              <p className="runs-freshness" role="status" aria-live="polite" data-tone={freshnessTone}>
+                {connectionError
+                  ? `Live updates interrupted: ${connectionError} The last recorded values stay on screen.`
+                  : live
+                  ? <><RelativeTime from={updatedAt} prefix="Last successful update" /> · polling every {Math.round(pollMs / 1000)}s{stale ? ' · older than two poll intervals' : ''}</>
+                  : <>Final state · <RelativeTime from={updatedAt} prefix="last successful update" /></>}
+              </p>
             </div>
-          </section>
+            <div data-ui="actions">
+              {(cancel?.available || requested) && (
+                <Button type="button" variant="primary" disabled={!cancel?.available || busy || requested} onClick={() => void requestCancellation()}>
+                  {acknowledged ? 'Cancellation acknowledged' : requested ? 'Cancellation requested' : 'Cancel run'}
+                </Button>
+              )}
+              {resume?.available && <Button type="button" variant={cancel?.available ? 'secondary' : 'primary'} disabled={busy || stale || !!connectionError} onClick={() => void reviewRecovery()}>Review checkpoint recovery</Button>}
+              {resume?.recovery_run_id && <LinkButton href={runHash('training', resume.recovery_run_id)}>Open recovery run</LinkButton>}
+              <Button type="button" variant="quiet" onClick={() => void load()}>Refresh</Button>
+              <LinkButton variant="quiet" href={sourceHash(window.location.hash, BACK[kind].hash)}>{BACK[kind].label}</LinkButton>
+            </div>
+          </header>
 
-          <div className="runs-columns">
-            <section className="runs-panel">
-              <h2>Pinned inputs</h2>
-              <DataInspector value={detail.inputs} />
-            </section>
+          {actionError && <Notice tone="error" role="alert">{actionError}</Notice>}
+          {blockers.length > 0 && <ul className="runs-blockers">{blockers.map((reason) => <li key={reason}>{reason}</li>)}</ul>}
 
-            <section className="runs-panel">
-              <h2>Recorded evidence</h2>
-              {detail.evidence ? (
-                <dl className="runs-kv">
-                  <div>
-                    <dt>Level</dt>
-                    <dd>{detail.evidence.level}</dd>
-                  </div>
-                  <div>
-                    <dt>Source</dt>
-                    <dd>{detail.evidence.source}</dd>
-                  </div>
-                  <div>
-                    <dt>Execution mode</dt>
-                    <dd>{detail.execution_mode}</dd>
-                  </div>
-                  <div>
-                    <dt>Projection generated</dt>
-                    <dd>{new Date(detail.generated_at).toLocaleString()}</dd>
-                  </div>
-                </dl>
-              ) : (
-                <p className="runs-empty">
-                  Durable jobs carry no runtime evidence level; the worker outcome is recorded on the attempts
-                  below.
-                </p>
-              )}
-              <h3>Budget reservation</h3>
-              {detail.usage.reservations.length === 0 ? (
-                <p className="runs-empty">No budget reservation is recorded for this run.</p>
-              ) : (
-                <ul>
-                  {detail.usage.reservations.map((item) => (
-                    <li key={item.reservation_id}>
-                      {item.policy_name}: {item.state} · estimated {item.estimated_amount} {item.unit}
-                      {item.settled_amount ? ` · settled ${item.settled_amount}` : ''}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <h3>Usage events</h3>
-              {detail.usage.events.length === 0 ? (
-                <p className="runs-empty">No usage events recorded.</p>
-              ) : (
-                <>
-                  <ul>
-                    {detail.usage.events.map((event) => (
-                      <li key={event.usage_id}>
-                        {new Date(event.occurred_at).toLocaleString()} · {event.quantity} {event.unit}
-                      </li>
-                    ))}
-                  </ul>
-                  {detail.usage.events_truncated && (
-                    <p className="runs-hint">Only the most recent usage events are loaded.</p>
-                  )}
-                </>
-              )}
-            </section>
-          </div>
+          {recoveryReview && (
+            <div className="runs-review" aria-label="Recovery review">
+              <h3>Resume from step {recoveryReview.step}</h3>
+              <p>Reserve {recoveryReview.remaining_steps} remaining training steps. Prior committed usage stays on the parent execution.</p>
+              <p>{recoveryReview.replay_limits}</p>
+              <DataInspector value={recoveryReview.pins} />
+              {recoveryReview.blocked_by.map(reason => <p key={reason} role="alert">{reason}</p>)}
+              <div data-ui="actions">
+                <Button type="button" variant="primary" disabled={busy || !recoveryReview.available} onClick={() => void resumeRecovery()}>Resume from verified checkpoint</Button>
+                <Button type="button" disabled={busy} onClick={() => setRecoveryReview(null)}>Close recovery review</Button>
+              </div>
+            </div>
+          )}
+
+          <KeyValueList columns={2} items={[
+            { label: 'Observed state', value: `${statusLabel(detail.observed.state)}${detail.observed.job_state && detail.observed.job_state !== detail.observed.state ? ` · job ${statusLabel(detail.observed.job_state)}` : ''}` },
+            { label: 'Desired action', value: desiredAction },
+            { label: 'Progress', value: detail.observed.current_step === null ? 'Not tracked by this run type' : `${detail.observed.current_step} / ${detail.observed.total_steps}` },
+            { label: 'Attempts', value: detail.observed.attempts ?? 'No durable job' },
+            { label: 'Worker', value: `${detail.ownership.worker ?? 'Not assigned'} · ${statusLabel(detail.ownership.state)}` },
+            { label: 'Lease', value: detail.ownership.lease_expires_at ? new Date(detail.ownership.lease_expires_at).toLocaleString() : 'No active lease' },
+            { label: 'Execution mode', value: detail.execution_mode },
+            { label: 'Evidence', value: detail.evidence ? `${detail.evidence.level} · ${detail.evidence.source}` : 'No runtime evidence level' },
+            { label: 'Updated', value: new Date(detail.observed.updated_at).toLocaleString() },
+            { label: 'Run ID', value: <Identifier value={runId} label="Run ID" display="code" /> },
+          ]} />
+          {detail.ownership.reason && <p className="runs-hint">{detail.ownership.reason}</p>}
 
           {Boolean(detail.links.job) && (
-            <section className="runs-panel">
-              <h2>Worker attempts ({attempts.length} loaded)</h2>
-              <p className="runs-hint">
-                Attempts are append-only: every recorded failure stays visible after any later action.
-              </p>
-              <ResourceState
-                error={attemptsError}
-                onRetry={() => void loadAttempts(attemptsPath(kind, runId), false)}
-              />
-              {attempts.length === 0 && !attemptsLoading && (
-                <p className="runs-empty">No worker attempt has claimed this job.</p>
-              )}
+            <Disclosure summary={`Attempts (${attempts.length} loaded)`} variant="card">
+              <ResourceState error={attemptsError} onRetry={() => void loadAttempts(attemptsPath(kind, runId), false)} />
+              {attempts.length === 0 && !attemptsLoading && <p className="muted">No worker attempt has claimed this job.</p>}
               {attempts.length > 0 && (
                 <div className="table-scroll" tabIndex={0}>
-                  <RecordTable className="resource-table runs-attempts">
-                    <thead>
-                      <tr>
-                        <th scope="col">Attempt</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Worker</th>
-                        <th scope="col">Progress</th>
-                        <th scope="col">Started</th>
-                        <th scope="col">Recorded outcome</th>
-                      </tr>
-                    </thead>
+                  <RecordTable>
+                    <thead><tr><th scope="col">Attempt</th><th scope="col">Status</th><th scope="col">Worker</th><th scope="col">Progress</th><th scope="col">Started</th><th scope="col">Recorded outcome</th></tr></thead>
                     <tbody>
                       {attempts.map((attempt, index) => (
                         <tr key={attempt.attempt_id}>
-                          <td>
-                            Attempt {index + 1} <Identifier value={attempt.attempt_id} label="Attempt ID" />
-                            <small className="id-text">
-                              {attempt.lease_expires_at
-                                ? `lease until ${new Date(attempt.lease_expires_at).toLocaleTimeString()}`
-                                : 'no lease'}
-                            </small>
-                          </td>
-                          <td>
-                            <Badge className={`state state-${attempt.status}`}>{attempt.status}</Badge>
-                          </td>
-                          <td>
-                            {attempt.worker ?? 'Unassigned'}
-                            {attempt.worker_status && (
-                              <small className="id-text">{attempt.worker_status}</small>
-                            )}
-                          </td>
+                          <td>Attempt {index + 1}<small>{attempt.lease_expires_at ? `lease until ${new Date(attempt.lease_expires_at).toLocaleTimeString()}` : 'no lease'}</small></td>
+                          <td><StatusBadge status={attempt.status} /></td>
+                          <td>{attempt.worker ?? 'Unassigned'}{attempt.worker_status && <small>{attempt.worker_status}</small>}</td>
                           <td>{Math.round((attempt.progress ?? 0) * 100)}%</td>
                           <td>{new Date(attempt.started_at).toLocaleString()}</td>
-                          <td>
-                            {attempt.error ||
-                              (attempt.has_result ? 'Result envelope recorded' : 'No outcome recorded')}
-                          </td>
+                          <td>{attempt.error || (attempt.has_result ? 'Result envelope recorded' : 'No outcome recorded')}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -693,56 +432,28 @@ export function RunDetailPage({
                 </div>
               )}
               {attemptsNext && (
-                <Button
-                  type="button"
-                  disabled={attemptsLoading}
-                  onClick={() =>
-                    void loadAttempts(nextPagePath(attemptsNext, attemptsPath(kind, runId)), true)
-                  }
-                >
+                <div data-ui="actions"><Button type="button" disabled={attemptsLoading} onClick={() => void loadAttempts(nextPagePath(attemptsNext, attemptsPath(kind, runId)), true)}>
                   {attemptsLoading ? 'Loading…' : 'Load more attempts'}
-                </Button>
+                </Button></div>
               )}
-            </section>
+              <p className="runs-hint">Attempts are append-only: every recorded failure stays visible after any later action.</p>
+            </Disclosure>
           )}
 
           {detail.checkpoints && (
-            <section className="runs-panel">
-              <h2>Checkpoints ({detail.checkpoints.total})</h2>
-              <p className="runs-hint">
-                {detail.checkpoints.total === 0
-                  ? 'No checkpoint has been committed for this run.'
-                  : `${detail.checkpoints.rows.length} of ${detail.checkpoints.total} loaded.`}
-              </p>
+            <Disclosure summary={`Checkpoints (${detail.checkpoints.total})`} variant="card">
+              <p className="runs-hint">{detail.checkpoints.total === 0 ? 'No checkpoint has been committed for this run.' : `${detail.checkpoints.rows.length} of ${detail.checkpoints.total} loaded.`}</p>
               {detail.checkpoints.rows.length > 0 && (
                 <div className="table-scroll" tabIndex={0}>
-                  <RecordTable className="resource-table">
-                    <thead>
-                      <tr>
-                        <th scope="col">Step</th>
-                        <th scope="col">State digest</th>
-                        <th scope="col">Recorded validity</th>
-                        <th scope="col">Runtime contract</th>
-                        <th scope="col">Committed</th>
-                      </tr>
-                    </thead>
+                  <RecordTable>
+                    <thead><tr><th scope="col">Step</th><th scope="col">State digest</th><th scope="col">Validity</th><th scope="col">Runtime contract</th><th scope="col">Committed</th></tr></thead>
                     <tbody>
                       {detail.checkpoints.rows.map((checkpoint) => (
                         <tr key={checkpoint.checkpoint_id}>
                           <td>{checkpoint.step}</td>
-                          <td>
-                            <Identifier value={checkpoint.state_digest} label="Checkpoint state digest" />
-                          </td>
-                          <td>
-                            <Badge className={`state state-${checkpoint.is_valid ? 'completed' : 'failed'}`}>
-                              {checkpoint.is_valid ? 'valid' : 'invalid'}
-                            </Badge>
-                          </td>
-                          <td>
-                            {checkpoint.contract_digest
-                              ? <Identifier value={checkpoint.contract_digest} label="Runtime contract digest" />
-                              : 'not recorded'}
-                          </td>
+                          <td><Identifier value={checkpoint.state_digest} label="Checkpoint state digest" display="code" /></td>
+                          <td><StatusBadge status={checkpoint.is_valid ? 'valid' : 'invalid'} /></td>
+                          <td>{checkpoint.contract_digest ? <Identifier value={checkpoint.contract_digest} label="Runtime contract digest" display="code" /> : 'Not recorded'}</td>
                           <td>{new Date(checkpoint.created_at).toLocaleString()}</td>
                         </tr>
                       ))}
@@ -750,78 +461,102 @@ export function RunDetailPage({
                   </RecordTable>
                 </div>
               )}
-            </section>
+            </Disclosure>
           )}
 
-          <section className="runs-panel">
-            <h2>Recorded metrics ({detail.metrics.total})</h2>
-            {kind === 'training' && detail.metrics.truncated && <Button disabled={busy} onClick={async () => {
-              setBusy(true); setHistoryError('');
-              try { const record = await apiRequest<{ metrics_log: Record<string, unknown>[] }>(`/api/v1/training-runs/${runId}/`, token); setFullMetrics(record.metrics_log); }
-              catch (e) { setHistoryError(errorMessage(e)); } finally { setBusy(false); }
-            }}>Inspect complete training history</Button>}
-            {historyError && <p role="alert">{historyError}</p>}
-            {fullMetrics && <details open><summary>Complete recorded training history ({fullMetrics.length} points)</summary><DataInspector value={fullMetrics} /></details>}
-            {detail.metrics.total === 0 ? (
-              <p className="runs-empty">No metrics have been recorded for this run.</p>
-            ) : (
-              <>
-                <p className="runs-hint">
-                  Showing the {detail.metrics.rows.length} most recent of {detail.metrics.total} recorded points.
-                </p>
-                <div className="table-scroll" tabIndex={0}>
-                  <RecordTable className="resource-table">
-                    <thead>
-                      <tr>
-                        <th scope="col">{kind === 'training' ? 'Step' : 'Metric'}</th>
-                        <th scope="col">{kind === 'training' ? 'Loss' : 'Value'}</th>
-                        <th scope="col">Other recorded values</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {detail.metrics.rows.map((row, index) => {
-                        const rest = Object.entries(row).filter(([key]) => key !== 'step' && key !== 'loss');
-                        return (
-                          <tr key={`${String(row.step ?? index)}-${index}`}>
-                            <td><DataValue value={kind === 'training' ? row.step ?? '—' : row.key ?? '—'} /></td>
-                            <td>
-                              {kind === 'training' ? typeof row.loss === 'number' ? row.loss.toFixed(6) : 'Not reported' : <DataValue value={row.value ?? 'Not reported'} />}
-                            </td>
-                            <td>
-                              {rest.length === 0
-                                ? '—'
-                                : <DataValue value={Object.fromEntries(rest)} />}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </RecordTable>
-                </div>
-              </>
+          <Disclosure summary={`Metrics (${detail.metrics.total})`} variant="card" open={kind === 'training' && detail.metrics.total > 0}>
+            {kind === 'training' && detail.metrics.rows.length > 0 && <ChartPanel title="Recorded loss" description={`Exact metric steps · evidence: ${detail.evidence?.level ?? 'not reported'}`} bordered={false}>
+              <LineChart series={[
+                { name: 'Training loss', points: detail.metrics.rows.flatMap(row => typeof row.step === 'number' && typeof row.loss === 'number' ? [{ x: row.step, y: row.loss }] : []) },
+                { name: 'Validation loss', points: detail.metrics.rows.flatMap(row => typeof row.step === 'number' && typeof row.validation_loss === 'number' ? [{ x: row.step, y: row.validation_loss }] : []) },
+              ].filter(series => series.points.length)} yLabel="Loss" />
+            </ChartPanel>}
+            {kind === 'evaluation' && detail.metrics.rows.length > 0 && <ChartPanel title="Evaluation measurements" description="Frozen scoring metrics; sample counts and uncertainty are in the table." bordered={false}>
+              <BarChart data={detail.metrics.rows.filter(row => typeof row.value === 'number').map(row => ({ label: String(row.key || 'Metric'), value: Number(row.value) }))} />
+            </ChartPanel>}
+            {detail.metrics.truncated && <p className="runs-hint">Showing the {detail.metrics.rows.length} most recent of {detail.metrics.total} recorded points.</p>}
+            {kind === 'training' && detail.metrics.truncated && <div data-ui="actions"><Button type="button" disabled={busy} onClick={() => void loadHistory()}>Inspect complete training history</Button></div>}
+            {historyError && <p role="alert" className="error-text">{historyError}</p>}
+            {fullMetrics && <Disclosure summary={`Complete recorded training history (${fullMetrics.length} points)`} variant="quiet" open><DataInspector value={fullMetrics} /></Disclosure>}
+            {detail.metrics.total === 0 ? <p className="muted">No metrics have been recorded for this run.</p> : (
+              <div className="table-scroll" tabIndex={0}>
+                <RecordTable>
+                  <thead><tr><th scope="col">{kind === 'training' ? 'Step' : 'Metric'}</th><th scope="col">{kind === 'training' ? 'Loss' : 'Value'}</th><th scope="col">Other recorded values</th></tr></thead>
+                  <tbody>
+                    {detail.metrics.rows.map((row, index) => {
+                      const rest = Object.entries(row).filter(([key]) => key !== 'step' && key !== 'loss');
+                      return (
+                        <tr key={`${String(row.step ?? index)}-${index}`}>
+                          <td><DataValue value={kind === 'training' ? row.step ?? '—' : row.key ?? '—'} /></td>
+                          <td>{kind === 'training' ? typeof row.loss === 'number' ? row.loss.toFixed(6) : 'Not reported' : <DataValue value={row.value ?? 'Not reported'} />}</td>
+                          <td>{rest.length === 0 ? '—' : <DataValue value={Object.fromEntries(rest)} />}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </RecordTable>
+              </div>
             )}
-          </section>
+          </Disclosure>
 
-          <section className="runs-panel">
-            <h2>Recovery note</h2><DraftStatus draft={noteDraft} />
-            <p className="runs-hint">
-              A private draft kept in this browser tab. Live updates never clear it and it is never sent to the
-              API.
-            </p>
-            <label className="runs-hint" htmlFor="run-recovery-note">
-              What you observed and what you tried
-            </label>
-            <MultilineField
-              id="run-recovery-note"
-              className="runs-note"
-              value={note}
-              onChange={(event) => updateNote(event.target.value)}
-              placeholder="e.g. Attempt 3 failed on worker cpu-1 after a lease expiry; checked the pool before re-queueing."
-            />
-            <p className="runs-note-status" aria-live="polite">
-              {note ? `${note.length} characters kept in this browser session.` : 'No draft stored yet.'}
-            </p>
-          </section>
+          <Disclosure summary="Evidence and usage" variant="card">
+            <div className="runs-columns">
+              <div>
+                <h3>Execution record</h3>
+                <EventTimeline events={[
+                  { label: 'Created', detail: new Date(detail.observed.created_at).toLocaleString() },
+                  ...(detail.observed.started_at ? [{ label: 'Execution started', detail: new Date(detail.observed.started_at).toLocaleString() }] : []),
+                  { label: 'Current observed state', status: detail.observed.state, detail: new Date(detail.observed.updated_at).toLocaleString() },
+                  ...(detail.observed.completed_at ? [{ label: 'Execution ended', detail: new Date(detail.observed.completed_at).toLocaleString() }] : []),
+                ]} />
+                <h3>Recorded evidence</h3>
+                {detail.evidence ? <KeyValueList items={[
+                  { label: 'Level', value: detail.evidence.level },
+                  { label: 'Source', value: detail.evidence.source },
+                  { label: 'Projection generated', value: new Date(detail.generated_at).toLocaleString() },
+                ]} /> : <p className="muted">Durable jobs carry no runtime evidence level; the worker outcome is recorded on the attempts.</p>}
+              </div>
+              <div>
+                <h3>Budget reservation</h3>
+                {detail.usage.reservations.length === 0 ? <p className="muted">No budget reservation is recorded for this run.</p> : <ul className="runs-list">
+                  {detail.usage.reservations.map((item) => <li key={item.reservation_id}>{item.policy_name}: {statusLabel(item.state)} · estimated {item.estimated_amount} {item.unit}{item.settled_amount ? ` · settled ${item.settled_amount}` : ''}</li>)}
+                </ul>}
+                <h3>Usage events</h3>
+                {detail.usage.events.length === 0 ? <p className="muted">No usage events recorded.</p> : <>
+                  <ul className="runs-list">{detail.usage.events.map((event) => <li key={event.usage_id}>{new Date(event.occurred_at).toLocaleString()} · {event.quantity} {event.unit}</li>)}</ul>
+                  {detail.usage.events_truncated && <p className="runs-hint">Only the most recent usage events are loaded.</p>}
+                </>}
+                {resume?.budget && <p className="runs-hint">Budget ({resume.budget.state}): {resume.budget.reason}</p>}
+                {resume?.checkpoint && <p className="runs-hint">Checkpoint: {resume.checkpoint.reason}{resume.checkpoint.step === null ? '' : ` (step ${resume.checkpoint.step})`}</p>}
+                {resume?.operator_path && <p className="runs-hint">{resume.operator_path}</p>}
+                {resume?.preserves_history && <p className="runs-hint">{resume.preserves_history}</p>}
+              </div>
+            </div>
+            <h3>Pinned inputs</h3>
+            <DataInspector value={detail.inputs} />
+          </Disclosure>
+
+          <Disclosure summary="Links" variant="card">
+            <div data-ui="actions">
+              {links.job && <LinkButton href={runHash('job', linkId(links.job))}>Job</LinkButton>}
+              {links.training_run && <LinkButton href={runHash('training', linkId(links.training_run))}>Training run</LinkButton>}
+              {links.output_model_version && <LinkButton href={resourceHash('model-version', linkId(links.output_model_version))}>Trained model</LinkButton>}
+              {links.base_model_version && <LinkButton href={resourceHash('model-version', linkId(links.base_model_version))}>Base model version</LinkButton>}
+              {links.recovery_parent && <LinkButton href={runHash('training', linkId(links.recovery_parent))}>Parent run</LinkButton>}
+              {links.model_version && <LinkButton href={resourceHash('model-version', linkId(links.model_version))}>Model version</LinkButton>}
+              {links.dataset_revision && <LinkButton href={resourceHash('dataset-revision', linkId(links.dataset_revision))}>Dataset version</LinkButton>}
+              {Array.isArray(links.evaluation_runs) && links.evaluation_runs.map((id, index) => <LinkButton key={id} href={runHash('evaluation', id)}>Evaluation run {index + 1}</LinkButton>)}
+              <LinkButton variant="quiet" href="#infrastructure">Infrastructure</LinkButton>
+              <LinkButton variant="quiet" href="#budgets">Budgets</LinkButton>
+              <LinkButton variant="quiet" href="#audit">Audit</LinkButton>
+            </div>
+          </Disclosure>
+
+          <Disclosure summary="Recovery note" variant="card">
+            <DraftIndicator draft={noteDraft} />
+            <MultilineControl id="run-recovery-note" label="What you observed and what you tried" hint="A private draft kept in this browser tab. It is never sent to the API." value={note} onChange={(event) => setNote(event.target.value)} placeholder="e.g. Attempt 3 failed on worker cpu-1 after a lease expiry; checked the pool before re-queueing." />
+            <p className="runs-hint" aria-live="polite">{note ? `${note.length} characters kept in this browser session.` : 'No draft stored yet.'}</p>
+          </Disclosure>
         </>
       )}
     </div>
