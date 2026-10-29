@@ -58,9 +58,9 @@ export const AdvancedModelAndPool: Story = {
     await waitFor(() => expect(within(base).getAllByRole('option').length).toBeGreaterThan(1));
     await userEvent.selectOptions(base, '1');
     await waitFor(() => expect(canvas.getByText('Meets declared memory minimum')).toBeVisible());
-    await userEvent.selectOptions(canvas.getByLabelText('Worker execution pool'), '2');
+    await userEvent.selectOptions(canvas.getByLabelText('Worker pool'), '2');
     await expect(canvas.getByText('Memory minimum not met')).toBeVisible();
-    await userEvent.selectOptions(canvas.getByLabelText('Recipe type'), 'qlora_adapter');
+    await userEvent.selectOptions(canvas.getByLabelText('Training method'), 'qlora_adapter');
     await expect(canvas.getByText('Training compatibility unavailable')).toBeVisible();
     verified(canvasElement);
   },

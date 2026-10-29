@@ -18,7 +18,8 @@ export const FirstTrainingSetup: Story = { parameters: { demoRoute: '#training' 
   await waitFor(() => expect(canvas.queryByLabelText('Loaded training summary')).not.toBeInTheDocument());
   expect(canvas.queryByRole('complementary', { name: 'Run summary' })).not.toBeInTheDocument();
   expect(canvas.queryByLabelText('Training plan')).not.toBeInTheDocument();
-  for (const button of canvas.getAllByRole('button', { name: 'Configure a run', hidden: true })) await expect(button).not.toBeVisible();
+  await waitFor(() => expect(canvas.getAllByRole('button', { name: 'New training run', hidden: true }).length).toBeGreaterThan(0));
+  for (const button of canvas.getAllByRole('button', { name: 'New training run', hidden: true })) await expect(button).not.toBeVisible();
   passed(canvasElement);
 } };
 

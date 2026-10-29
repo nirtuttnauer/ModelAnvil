@@ -102,25 +102,25 @@ export const NarrowBoard: Story = { render: () => <Board narrow />, play: async 
   await expect(board.scrollWidth).toBeLessThanOrEqual(board.clientWidth + 1); verified(canvasElement);
 } };
 export const PreflightReady: Story = { render: () => <PreflightChecklist report={approved} onLaunch={() => {}} />, play: async ({ canvasElement }) => {
-  const canvas = within(canvasElement); await expect(canvas.getByRole('button', { name: 'Launch fine-tuning' })).toBeEnabled();
+  const canvas = within(canvasElement); await expect(canvas.getByRole('button', { name: 'Start training' })).toBeEnabled();
   await userEvent.click(canvas.getByText(/Encoded training samples/)); await userEvent.click(canvas.getByText('Exact token IDs')); await expect(canvas.getByText('42', { selector: 'code' })).toBeVisible(); verified(canvasElement);
 } };
 export const PreflightBlocked: Story = { render: () => <PreflightChecklist report={blocked} onLaunch={() => {}} />, play: async ({ canvasElement }) => {
-  const canvas = within(canvasElement); await expect(canvas.getByRole('button', { name: 'Launch fine-tuning' })).toBeDisabled(); await expect(canvas.getByText('Choose a policy with sufficient remaining steps.', { exact: false })).toBeVisible(); verified(canvasElement);
+  const canvas = within(canvasElement); await expect(canvas.getByRole('button', { name: 'Start training' })).toBeDisabled(); await expect(canvas.getByText('Choose a policy with sufficient remaining steps.', { exact: false })).toBeVisible(); verified(canvasElement);
 } };
 export const PreflightExpired: Story = { render: () => <PreflightChecklist report={{ ...approved, expires_in_seconds: 0 }} onLaunch={() => {}} onRefresh={() => {}} />, play: async ({ canvasElement }) => {
-  const canvas = within(canvasElement); await expect(canvas.getByText('Preview expired')).toBeVisible(); await expect(canvas.getByRole('button', { name: 'Launch fine-tuning' })).toBeDisabled(); verified(canvasElement);
+  const canvas = within(canvasElement); await expect(canvas.getByText('Preview expired')).toBeVisible(); await expect(canvas.getByRole('button', { name: 'Start training' })).toBeDisabled(); verified(canvasElement);
 } };
 export const PreflightMissingExpiry: Story = { render: () => <PreflightChecklist report={{ ...approved, expires_in_seconds: NaN }} onLaunch={() => {}} />, play: async ({ canvasElement }) => {
-  const canvas = within(canvasElement); await expect(canvas.getByText('Expiry not reported')).toBeVisible(); await expect(canvas.getByRole('button', { name: 'Launch fine-tuning' })).toBeDisabled(); verified(canvasElement);
+  const canvas = within(canvasElement); await expect(canvas.getByText('Expiry not reported')).toBeVisible(); await expect(canvas.getByRole('button', { name: 'Start training' })).toBeDisabled(); verified(canvasElement);
 } };
 function ExpiringDemo() {
   const [report, setReport] = useState(() => ({ ...approved, expires_in_seconds: 1 }));
   return <PreflightChecklist report={report} onLaunch={() => {}} onRefresh={() => setReport({ ...approved })} />;
 }
 export const PreflightLiveExpiry: Story = { render: () => <ExpiringDemo />, play: async ({ canvasElement }) => {
-  const canvas = within(canvasElement); await waitFor(() => expect(canvas.getByRole('button', { name: 'Launch fine-tuning' })).toBeDisabled(), { timeout: 4000 });
-  await userEvent.click(canvas.getByRole('button', { name: 'Refresh preflight' })); await waitFor(() => expect(canvas.getByRole('button', { name: 'Launch fine-tuning' })).toBeEnabled()); verified(canvasElement);
+  const canvas = within(canvasElement); await waitFor(() => expect(canvas.getByRole('button', { name: 'Start training' })).toBeDisabled(), { timeout: 4000 });
+  await userEvent.click(canvas.getByRole('button', { name: 'Run preflight again' })); await waitFor(() => expect(canvas.getByRole('button', { name: 'Start training' })).toBeEnabled()); verified(canvasElement);
 } };
 export const ResourceSelection: Story = { render: () => <PickerDemo />, play: async ({ canvasElement }) => {
   const canvas = within(canvasElement); await userEvent.type(canvas.getByRole('searchbox', { name: 'Search candidate model' }), '000000000004');

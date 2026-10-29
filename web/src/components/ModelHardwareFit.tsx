@@ -4,9 +4,9 @@ import { formatMemory, memoryBytes, modelHardwareFit, type HardwareTarget, type 
 import './model-hardware.css';
 
 export function ModelHardwareFit({ memory, targets = [], compatible = true, reason, headingLevel = 4 }: {
-  memory?: ModelMemory; targets?: HardwareTarget[]; compatible?: boolean; reason?: string; headingLevel?: 3 | 4;
+  memory?: ModelMemory; targets?: HardwareTarget[]; compatible?: boolean; reason?: string; headingLevel?: 2 | 3 | 4;
 }) {
-  const Heading = headingLevel === 3 ? 'h3' : 'h4';
+  const Heading = headingLevel === 2 ? 'h2' : headingLevel === 3 ? 'h3' : 'h4';
   const [now, setNow] = useState(Date.now());
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 5000); return () => clearInterval(timer); }, []);
   const fit = compatible ? modelHardwareFit(memory?.training, targets, Math.max(now, Date.now())) : { status: 'unsupported' as const, reason: reason || 'This model has no supported training profile.' };

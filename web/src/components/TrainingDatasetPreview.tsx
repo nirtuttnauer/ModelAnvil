@@ -11,9 +11,9 @@ export function TrainingSourcePreview({ inspection, mapping, onChange, disabled 
   const fields = mappingFields(mapping.mode);
   const fieldControl = (field: typeof fields[number]) => <label key={field.key}>{field.label}{field.required ? ' *' : ' (optional)'}<select value={mapping[field.key] || ''} required={field.required} disabled={disabled} onChange={event => onChange({ ...mapping, [field.key]: event.target.value })}><option value="">{field.required ? 'Select a source column' : field.key === 'group_field' ? 'Group repeated prompts automatically' : 'Do not include'}</option>{inspection.columns.map(column => <option key={column} value={column}>{column}</option>)}</select></label>;
   return <section className="training-dataset-preview" aria-label="Dataset source preview">
-    <h4>Preview source rows</h4><p>{inspection.row_count} source rows · {inspection.columns.length} columns</p>
+    <h3>Preview source rows</h3><p>{inspection.row_count} source rows · {inspection.columns.length} columns</p>
     <div className="training-sample-table" role="region" aria-label="Source sample rows" tabIndex={0}><RecordTable className="resource-table"><caption>{inspection.limits}</caption><thead><tr><th scope="col">Row</th>{inspection.columns.map(column => <th scope="col" key={column}>{column}</th>)}</tr></thead><tbody>{inspection.sample_rows.map((row, index) => <tr key={index}><th scope="row" data-label="Row">{index + 1}</th>{inspection.columns.map(column => <td key={column} data-label={column}>{row[column] ?? 'Missing'}</td>)}</tr>)}</tbody></RecordTable></div>
-    <h4>Map columns to training fields</h4><div className="training-column-mapping">
+    <h3>Map columns to training fields</h3><div className="training-column-mapping">
       <label>Training data structure<select value={mapping.mode} disabled={disabled} onChange={event => onChange({ mode: event.target.value as TrainingColumnMapping['mode'] })}><option value="auto">Automatic (standard fields)</option><option value="prompt_response">Prompt and response</option><option value="messages">Chat messages</option><option value="text">Plain text</option></select></label>
       {fields.filter(field => field.required).map(fieldControl)}
     </div>
@@ -29,7 +29,7 @@ export function TrainingSampleRows({ rows, caption = 'Sample rows from the prepa
 
 export function DatasetValidationWarnings({ report, checking }: { report: TrainingDatasetValidation | null; checking: boolean }) {
   return <section id="training-dataset-validation" className="training-dataset-validation" aria-label="Dataset validation" aria-busy={checking}>
-    <h4>Dataset validation</h4>
+    <h3>Dataset validation</h3>
     <p role="status">{checking ? 'Checking every row with the selected column mapping…' : !report ? 'Validation has not completed. Complete the mapping or retry the check before continuing.' : report.invalid_rows ? `${report.invalid_rows} of ${report.checked_rows} rows need repair. Fix the source data or adjust your column mapping before continuing.` : report.issues.length ? `All ${report.checked_rows} rows checked. Review the warnings before continuing.` : `All ${report.checked_rows} rows checked. No missing values, duplicate content or formatting issues found.`}</p>
     {report && !checking && <>
       <dl className="training-validation-counts">{[['Missing values', report.missing_value_rows], ['Duplicate rows', report.duplicate_rows], ['Formatting errors', report.formatting_error_rows]].map(([label, count]) => <div key={label}><dt>{label}</dt><dd>{count}</dd></div>)}</dl>
@@ -52,7 +52,7 @@ export function PreparedDatasetPreview({ revisionId, token }: { revisionId: stri
       .then(value => { if (!controller.signal.aborted) setResult(value); }).catch(e => { if (!controller.signal.aborted) setError(errorMessage(e)); });
     return () => controller.abort();
   }, [revisionId, token]);
-  return <section className="training-dataset-preview" aria-label="Selected dataset preview"><h4>Selected dataset · sample rows</h4>
+  return <section className="training-dataset-preview" aria-label="Selected dataset preview"><h3>Selected dataset · sample rows</h3>
     {error ? <p role="status">Dataset preview unavailable: {error}</p> : !result ? <p role="status">Loading prepared samples…</p> : <><p>{result.total} prepared rows. This published revision uses a fixed mapping; create a new revision to change it.</p>{!!result.report?.drop_reason_counts?.['duplicate.exact'] && <Notice as="p" className="notice">{result.report.drop_reason_counts['duplicate.exact']} exact duplicate rows were removed when preparing this revision.</Notice>}{result.recipe?.extraction?.source_mapping && <dl className="training-mapping-summary">{Object.entries(result.recipe.extraction.source_mapping).map(([key, value]) => <div key={key}><dt>{key.replaceAll('_', ' ')}</dt><dd>{value}</dd></div>)}</dl>}{result.rows.length ? <TrainingSampleRows rows={result.rows} /> : <p>No sample rows are available in this revision.</p>}</>}
   </section>;
 }

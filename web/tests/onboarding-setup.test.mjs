@@ -244,23 +244,7 @@ test('overview page mounts onboarding checklist with derived readiness and actio
   assert.match(checklistSource, /Next action:/);
 });
 
-test('training and models pages provide in-product registration flows without API curl dead-ends', () => {
-  const trainingSource = readFileSync(
-    new URL('../src/pages/TrainingPage.tsx', import.meta.url),
-    'utf8'
-  );
-  assert.match(
-    trainingSource,
-    /import\s+\{[^}]*RegisterTokenizerModal[^}]*\}\s+from\s+['"]\.\.\/components\/PrerequisiteModals['"]/
-  );
-  assert.match(
-    trainingSource,
-    /import\s+\{[^}]*RegisterModelVersionModal[^}]*\}\s+from\s+['"]\.\.\/components\/PrerequisiteModals['"]/
-  );
-  assert.match(trainingSource, /<RegisterTokenizerModal/);
-  assert.match(trainingSource, /<RegisterModelVersionModal/);
-  assert.doesNotMatch(trainingSource, /Register a tokenizer through the API/);
-
+test('the models page provides in-product registration flows without API curl dead-ends', () => {
   const modelsSource = readFileSync(
     new URL('../src/pages/ModelsPage.tsx', import.meta.url),
     'utf8'

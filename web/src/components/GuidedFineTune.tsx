@@ -1,6 +1,6 @@
-import { Button, Card, Field, Notice } from './ui';
+import { Badge, Button, Disclosure, FileInput, KeyValueList, Notice, StatusBadge, TextControl } from './ui';
 import { useEffect, useRef, useState } from 'react';
-import { ArrowRight, CheckCircle, Cpu, LoaderCircle } from 'lucide-react';
+import { ArrowRight, LoaderCircle } from 'lucide-react';
 import { apiRequest, errorMessage } from '../api/client';
 import { prepareUploadedDataset, type PrepareUploadedDatasetOptions } from '../api/datasets';
 import { readGuidedValue, type GuidedInputs, type GuidedOptions, type GuidedPreview, type GuidedRevision } from '../api/guided-training';
@@ -13,8 +13,9 @@ import { memoryBytes, type HardwareTarget } from '../api/model-hardware';
 import { classificationStarterCsv } from '../api/classification-starter';
 import './guided-training.css';
 
-const stages = ['Model', 'Dataset', 'Review'];
+const titles = ['Choose your pretrained model', 'Add your training examples', 'Model and dataset selected'];
 
+/** The three Prepare steps: model, examples, review. Edits the same draft as the advanced form. */
 export function GuidedFineTune({ token, draft, modelLabel, datasetLabel, datasetRevisionId, onModelPrepared, onDatasetPrepared, onBusyChange }: {
   token: string; draft: ReturnType<typeof useDraft<TrainingConfiguration>>; modelLabel: string; datasetLabel: string;
   datasetRevisionId?: string;
@@ -107,37 +108,38 @@ export function GuidedFineTune({ token, draft, modelLabel, datasetLabel, dataset
     backend: options.compute.device?.split(':')[0] || '', runtimeContract: options.model.memory_requirements?.training?.runtime_contract || '',
     connected: options.compute.available, busy: options.compute.busy,
     observedAt: Date.parse(options.compute.memory_observed_at || ''), maxAgeSeconds: 15 } : null;
-  return <Card className="guided-training panel" aria-labelledby="guided-title">
-    <header className="guided-header"><div><h2 id="guided-title">Choose your model and data</h2><p>Choose a model, add your examples, and review your training plan.</p></div><Cpu aria-hidden="true" size={28} /></header>
-    <ol className="guided-stages" aria-label="Fine-tuning progress">{stages.map((label, index) => <li key={label} aria-current={stage === index ? 'step' : undefined}><span>{index < stage ? <CheckCircle size={18} aria-hidden="true" /> : index + 1}</span>{label}</li>)}</ol>
-    <div className="guided-body" aria-busy={busy}>
-      <h3 ref={heading} tabIndex={-1}>{['Choose your pretrained model', 'Add your training examples', 'Model and dataset selected'][stage]}</h3>
-      {error && <Notice tone="error" className="notice error" role="alert">{error}<Button type="button" disabled={busy} onClick={() => { setError(''); if (stage === 1 && file && !inspection) setInspectionRetry(value => value + 1); else setRetry(v => v + 1); }}>Try again</Button></Notice>}
-      {busy && <p role="status"><LoaderCircle size={16} aria-hidden="true" /> {progress || 'Working…'}</p>}
-      {stage === 0 && <>
-        {options ? <><div className="guided-model"><strong>{options.model.name}</strong><span className="guided-tag">Recommended for this computer</span><p>{options.model.description}</p><p>{options.model.parameters >= 1000000000 ? '1.7 billion' : '135 million'} parameters · {options.model.license} · up to {options.model.max_tokens} tokens per example</p><a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noreferrer">Model license</a></div><p role="status">{options.compute.message}</p><p>The matching tokenizer, training settings and local compute are configured automatically.</p><Button type="button" className="primary" onClick={() => void prepareModel()} disabled={busy || !options.compute.available}>Use this model <ArrowRight size={16} aria-hidden="true" /></Button><details><summary>Computer requirements</summary><ModelHardwareFit memory={options.model.memory_requirements} targets={target ? [target] : []} /></details></> : <p role="status">Checking this computer…</p>}
-      </>}
-      {stage === 1 && <>
-        <section className="starter-guidance" aria-labelledby="classification-starter-title"><h3 id="classification-starter-title">Start with a classification task</h3><p>Give each example a short input and one consistent label. Include a <code>group_id</code> for related examples so they stay in the same split.</p><p className="muted">The support-request starter contains 30 synthetic examples across billing, access and technical issues. It demonstrates the workflow; use representative data to evaluate your own product.</p><Button type="button" disabled={busy} onClick={() => { setName('Support request classification'); changeFile(new File([classificationStarterCsv()], 'support-classification.csv', { type: 'text/csv' })); }}>Use classification starter</Button></section>
-        <p>Upload JSONL, JSON or CSV. Use chat <code>messages</code>, <code>prompt</code>/<code>response</code> pairs, or a <code>text</code> column. Up to 1,000 examples, 16 MiB total.</p>
-        <p>Include different ways people ask each question, paired with the exact answers you want. Repeated copies add less information than varied examples.</p>
-        <div className="guided-form"><label>Dataset name<Field value={name} onChange={e => { setName(e.target.value); setResumeJson(''); setError(''); }} maxLength={200} required disabled={busy} /></label><label>Training file<input type="file" aria-describedby={inspection ? "training-dataset-validation" : undefined} aria-invalid={validation && !validation.can_prepare ? true : undefined} accept=".jsonl,.json,.csv" onChange={e => changeFile(e.target.files?.[0] ?? null)} disabled={busy} /></label></div>
-        {file && <p role="status">Selected file: {file.name}</p>}
-        {inspection && <TrainingSourcePreview inspection={inspection} mapping={mapping} disabled={busy} onChange={value => { setMappingJson(JSON.stringify(value)); setError(''); }} />}
-        {inspection && <DatasetValidationWarnings report={validation} checking={checkingValidation} />}
-        <details><summary>See the expected file format</summary><p>One JSON object per line, or a CSV with prompt and response columns. Optional <code>group_id</code> keeps related examples together.</p><pre>{'{"messages":[{"role":"user","content":"How do I reset my password?"},{"role":"assistant","content":"Open Settings, then choose Reset password."}]}'}</pre><p>Chat examples train on assistant responses only. Plain text trains on all text tokens. Examples exceeding 128 model tokens are refused with a repair message.</p></details>
-        <div className="guided-actions"><Button type="button" disabled={busy} onClick={() => setStage(0)}>Back</Button><Button type="button" onClick={() => void inspectFile()} disabled={busy || !file || !name.trim() || !inspection || !!mappingProblem || checkingValidation || !validation?.can_prepare}>Preview dataset</Button></div>
-        {preview && <div className="guided-preview"><h4>{preview.row_count} examples ready</h4><p>{preview.dropped_count} duplicate examples removed. Training learns {preview.objectives.join(' and ')}.</p><SplitCounts splits={preview.split_counts} /><p>Repeated prompts and related examples stay in the same split.</p>{preview.warnings.map(w => <Notice as="p" className="notice" key={w}>{w}</Notice>)}<TrainingSampleRows rows={preview.sample_rows || preview.examples.map(blocks => ({ blocks }))} caption="First validated examples, with the exact input and target text used for training." /><Button type="button" className="primary" onClick={() => void publish()} disabled={busy}>Use this dataset <ArrowRight size={16} aria-hidden="true" /></Button></div>}
-      </>}
-      {stage === 2 && <>
-        <dl className="guided-review"><div><dt>Starting model</dt><dd>{modelLabel || 'Choose a model'}</dd></div><div><dt>Your dataset</dt><dd>{datasetLabel || 'Choose a dataset'}</dd></div></dl>
-        {datasetRevisionId && <details><summary>Review prepared examples</summary><PreparedDatasetPreview revisionId={datasetRevisionId} token={token} /></details>}
-        <p>Review the training plan and run summary below. Advanced settings edit this same configuration.</p>
-        <div className="guided-actions"><Button type="button" disabled={busy} onClick={() => setStage(0)}>Change model</Button><Button type="button" disabled={busy} onClick={() => { setStage(1); setPreview(null); }}>Change dataset</Button></div>
-      </>}
-
-    </div>
-  </Card>;
+  return <section className="guided-training" aria-label="Guided fine-tuning" aria-busy={busy}>
+    <h2 ref={heading} tabIndex={-1}>{titles[stage]}</h2>
+    {error && <Notice tone="error" role="alert">{error}<Button type="button" disabled={busy} onClick={() => { setError(''); if (stage === 1 && file && !inspection) setInspectionRetry(value => value + 1); else setRetry(v => v + 1); }}>Try again</Button></Notice>}
+    {busy && <p role="status" className="guided-progress"><LoaderCircle size={16} aria-hidden="true" /> {progress || 'Working…'}</p>}
+    {stage === 0 && (options ? <>
+      <div className="guided-model">
+        <div><strong>{options.model.name}</strong> <Badge tone="info">Recommended for this computer</Badge></div>
+        <p>{options.model.description}</p>
+        <p className="muted">{options.model.parameters >= 1000000000 ? '1.7 billion' : '135 million'} parameters · {options.model.license} · up to {options.model.max_tokens} tokens per example · <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noreferrer">Model license</a></p>
+      </div>
+      <p role="status" className="guided-compute"><StatusBadge status={options.compute.available ? 'ready' : 'blocked'} label={options.compute.available ? 'Ready' : 'Not available'} /><span>{options.compute.message} Tokenizer, settings and compute are set up for you.</span></p>
+      <div data-ui="actions"><Button type="button" variant="primary" size="lg" onClick={() => void prepareModel()} disabled={busy || !options.compute.available}>Use this model <ArrowRight size={16} aria-hidden="true" /></Button></div>
+      <Disclosure summary="Computer requirements"><ModelHardwareFit memory={options.model.memory_requirements} targets={target ? [target] : []} headingLevel={3} /></Disclosure>
+    </> : <p role="status" className="muted">Checking this computer…</p>)}
+    {stage === 1 && <>
+      <p className="muted">JSONL, JSON or CSV · up to 1,000 examples, 16 MiB. Use chat <code>messages</code>, <code>prompt</code>/<code>response</code> pairs or a <code>text</code> column.</p>
+      <div className="guided-form">
+        <TextControl label="Dataset name" value={name} onChange={e => { setName(e.target.value); setResumeJson(''); setError(''); }} maxLength={200} required disabled={busy} />
+        <FileInput label="Training file" accept=".jsonl,.json,.csv" aria-describedby={inspection ? 'training-dataset-validation' : undefined} aria-invalid={validation && !validation.can_prepare ? true : undefined} onChange={e => changeFile(e.target.files?.[0] ?? null)} disabled={busy} hint="Varied examples teach more than repeated copies." />
+      </div>
+      {inspection && <TrainingSourcePreview inspection={inspection} mapping={mapping} disabled={busy} onChange={value => { setMappingJson(JSON.stringify(value)); setError(''); }} />}
+      {inspection && <DatasetValidationWarnings report={validation} checking={checkingValidation} />}
+      <Disclosure summary="Format help" variant="quiet"><p className="muted">One JSON object per line, or a CSV with prompt and response columns. An optional <code>group_id</code> keeps related examples in the same split.</p><pre>{'{"messages":[{"role":"user","content":"How do I reset my password?"},{"role":"assistant","content":"Open Settings, then choose Reset password."}]}'}</pre><p className="muted">Chat examples train on assistant responses only. Examples over 128 model tokens are refused with a repair message.</p></Disclosure>
+      <div className="guided-actions" data-ui="actions"><Button type="button" disabled={busy} onClick={() => setStage(0)}>Back</Button><Button type="button" onClick={() => void inspectFile()} disabled={busy || !file || !name.trim() || !inspection || !!mappingProblem || checkingValidation || !validation?.can_prepare}>Preview dataset</Button><Button type="button" variant="quiet" disabled={busy} onClick={() => { setName('Support request classification'); changeFile(new File([classificationStarterCsv()], 'support-classification.csv', { type: 'text/csv' })); }}>Use classification starter</Button></div>
+      {preview && <div className="guided-preview"><h3>{preview.row_count} examples ready</h3><p className="muted">{preview.dropped_count} duplicate examples removed. Training learns {preview.objectives.join(' and ')}. Related examples stay in the same split.</p><SplitCounts splits={preview.split_counts} />{preview.warnings.map(w => <Notice tone="caution" as="p" key={w}>{w}</Notice>)}<TrainingSampleRows rows={preview.sample_rows || preview.examples.map(blocks => ({ blocks }))} caption="First validated examples, with the exact input and target text used for training." /><div data-ui="actions"><Button type="button" variant="primary" size="lg" onClick={() => void publish()} disabled={busy}>Use this dataset <ArrowRight size={16} aria-hidden="true" /></Button></div></div>}
+    </>}
+    {stage === 2 && <>
+      <KeyValueList items={[{ label: 'Model', value: modelLabel || 'Choose a model' }, { label: 'Dataset', value: datasetLabel || 'Choose a dataset' }]} />
+      {datasetRevisionId && <Disclosure summary="Review prepared examples" variant="quiet"><PreparedDatasetPreview revisionId={datasetRevisionId} token={token} /></Disclosure>}
+      <div className="guided-actions" data-ui="actions"><Button type="button" disabled={busy} onClick={() => setStage(0)}>Change model</Button><Button type="button" disabled={busy} onClick={() => { setStage(1); setPreview(null); }}>Change dataset</Button></div>
+    </>}
+  </section>;
 }
 
 function SplitCounts({ splits }: { splits: Record<string, number> }) { return <dl className="guided-splits">{[['train', 'Training'], ['validation', 'Validation'], ['test', 'Test']].map(([key, label]) => <div key={key}><dt>{label}</dt><dd>{splits[key] ?? 0}</dd></div>)}</dl>; }

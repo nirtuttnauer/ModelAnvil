@@ -1,6 +1,7 @@
 /* Element defaults. Raw elements look like the primitives so unmigrated pages stay coherent. */
 @layer base {
   * { box-sizing: border-box; }
+  [hidden]:not([hidden="until-found"]) { display: none !important; }
   :root {
     font-family: var(--font-sans);
     font-synthesis: none;

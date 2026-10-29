@@ -141,7 +141,7 @@ export const StopGeneration: Story = { parameters: { compareState: 'stop' }, pla
   await waitFor(() => expect(canvas.getByRole('button', { name: 'Send message' })).toBeEnabled()); expect(inputs).toHaveLength(1); expect(pairCount).toBe(0); canvasElement.dataset.demoVerified = 'passed';
 } };
 export const FromTraining: Story = { parameters: { demoRoute: '#training?tab=current-run&run=30000000-0000-4000-8000-000000000001' }, play: async ({ canvasElement }) => {
-  const canvas = within(canvasElement); await userEvent.click(await canvas.findByRole('link', { name: 'Compare with base model' }));
+  const canvas = within(canvasElement); await userEvent.click(await canvas.findByRole('link', { name: 'Try base vs trained' }));
   await waitFor(() => expect(canvas.getByLabelText('Trained model', { exact: true })).toHaveValue(trainedId));
   await expect(canvas.getByLabelText('Base model', { exact: true })).toHaveValue('Base model · Demo'); canvasElement.dataset.demoVerified = 'passed';
 } };

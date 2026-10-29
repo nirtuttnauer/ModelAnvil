@@ -88,7 +88,7 @@ export const WorkflowInputs: Story = {
 };
 
 export const TokenizerSymbols: Story = {
-  parameters: { demoRoute: '#training', demoHeading: 'Training', demoApiPath: '/api/v1/training-runs/' },
+  parameters: { demoRoute: '#models', demoHeading: 'Models', demoApiPath: '/api/v1/models/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await readyWorkspace(canvasElement);
