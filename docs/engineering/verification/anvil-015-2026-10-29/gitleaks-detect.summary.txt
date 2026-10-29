@@ -1,0 +1,17 @@
+label: local
+sha: a06ad96cf56723cceb8bf2a2e41e8637a1d76b42
+date: 2026-10-29T06:14:00+00:00
+machine: cursor, Linux 6.12.94+ x86_64
+tool: gitleaks 8.28.0
+command: gitleaks detect --source . --log-opts=--all --redact
+config: stock (no --config, no baseline, no allowlist, no .gitleaks.toml)
+exit: 1
+commits_scanned: 183
+findings: 411
+unique_fingerprints: 391
+rule: generic-api-key
+on_anvil_017_triage_list: 391
+missing_from_triage_list: 0
+findings_in_a06ad96: 0
+
+Every fingerprint is on reviews/ANVIL-017-gitleaks-history.md. The raw report is not committed because it repeats digest text.
