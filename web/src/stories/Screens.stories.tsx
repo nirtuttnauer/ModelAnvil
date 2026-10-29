@@ -91,6 +91,52 @@ export const Audit: Story = { name: '15 · Audit', parameters: route('Audit') };
 export const RunDetail: Story = { name: '16 · Run Detail', parameters: route('Run Detail', '#runs/training/30000000-0000-4000-8000-000000000001') };
 export const Recipes: Story = { name: '17 · Recipes', parameters: { demoRoute: '#recipes', demoHeading: 'Recipes', demoApiPath: '/api/v1/recipes/' } };
 export const Specialists: Story = { name: '18 · Specialists', parameters: { demoRoute: '#specialists', demoHeading: 'Specialists', demoApiPath: '/api/v1/specialists/' } };
+export const Audio: Story = {
+  name: '19 · Audio', parameters: { demoRoute: '#audio', demoHeading: 'Audio', demoApiPath: '/api/v1/audio/' },
+  play: async ({ canvasElement, parameters }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.findByRole('heading', { name: 'Audio', level: 1 })).resolves.toBeVisible();
+    const job = await canvas.findByLabelText('Job');
+    await waitFor(() => expect(within(job).getAllByRole('option').length).toBeGreaterThan(1));
+    await userEvent.selectOptions(job, 'b0000000-0000-4000-8000-000000000001');
+    await expect(canvas.findByText('Download WAV')).resolves.toBeVisible();
+    await waitFor(() => expect(canvas.queryAllByRole('alert')).toHaveLength(0));
+    await expect(demoRequests.filter(request => request.status >= 400)).toHaveLength(0);
+    canvasElement.dataset.demoVerified = 'passed'; canvasElement.dataset.demoRoute = parameters.demoRoute;
+  },
+};
+export const ToolsChat: Story = {
+  name: '20 · Tools chat', parameters: { demoRoute: '#chat', demoHeading: 'Chat', demoApiPath: '/api/v1/tools/' },
+  play: async ({ canvasElement, parameters }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.findByRole('heading', { name: 'Chat', level: 1 })).resolves.toBeVisible();
+    await userEvent.click(await canvas.findByRole('button', { name: 'Tools' }));
+    const model = await canvas.findByLabelText('Tool model');
+    await waitFor(() => expect(within(model).getAllByRole('option').length).toBeGreaterThan(1));
+    const runs = canvas.getByLabelText('Recent tool runs');
+    await waitFor(() => expect(within(runs).getAllByRole('option').length).toBeGreaterThan(1));
+    await userEvent.selectOptions(runs, 'b1000000-0000-4000-8000-000000000001');
+    await expect(canvas.findByRole('region', { name: 'Tool run result' })).resolves.toBeVisible();
+    await waitFor(() => expect(canvas.queryAllByRole('alert')).toHaveLength(0));
+    await expect(demoRequests.filter(request => request.status >= 400)).toHaveLength(0);
+    canvasElement.dataset.demoVerified = 'passed'; canvasElement.dataset.demoRoute = parameters.demoRoute;
+  },
+};
+export const ResearchChat: Story = {
+  name: '21 · Research chat', parameters: { demoRoute: '#chat', demoHeading: 'Chat', demoApiPath: '/api/v1/research-sessions/' },
+  play: async ({ canvasElement, parameters }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.findByRole('heading', { name: 'Chat', level: 1 })).resolves.toBeVisible();
+    await userEvent.click(await canvas.findByRole('button', { name: 'Documents & research' }));
+    const session = await canvas.findByLabelText('Saved session');
+    await waitFor(() => expect(within(session).getAllByRole('option').length).toBeGreaterThan(1));
+    await userEvent.selectOptions(session, 'b2000000-0000-4000-8000-000000000001');
+    await expect(canvas.findByRole('heading', { name: 'Ask with evidence' })).resolves.toBeVisible();
+    await waitFor(() => expect(canvas.queryAllByRole('alert')).toHaveLength(0));
+    await expect(demoRequests.filter(request => request.status >= 400)).toHaveLength(0);
+    canvasElement.dataset.demoVerified = 'passed'; canvasElement.dataset.demoRoute = parameters.demoRoute;
+  },
+};
 export const RagAuthoring: Story = {
   name: '17 · RAG authoring', parameters: route('RAG'),
   play: async ({ canvasElement, parameters }) => {

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { ApiRequestError, apiRequest, errorMessage } from '../api/client';
 import { allResources } from '../api/resources';
+import { Button, Disclosure, MultilineControl, Notice, RecordTable, Section, Select, StatusBadge, TextControl } from './ui';
+import { EmptyState, Feedback } from './Feedback';
 
 interface Plugin { id: string; kind: 'compute' | 'task'; name: string; digest: string; can_manage: boolean; can_submit: boolean; configuration_schema: { properties?: Record<string, unknown> } }
 interface Allocation { allocation_id: string; request_id: string; plugin_id: string; pool: number; worker_id: number; state: string; provider_status: string; worker_connected: boolean; expires_at: string; error_code: string }
@@ -88,33 +90,46 @@ export function ExternalCompute({ token, refreshKey, onChange }: { token: string
     } catch (e) { setError(errorMessage(e)); } finally { setBusy(false); }
   }
 
-  return <section className="panel" aria-labelledby="external-compute-title">
-    <div className="panel-title"><div><h2 id="external-compute-title">External compute and plugins</h2><p>Rent GPU capacity or run an installed custom task.</p></div><button disabled={busy || loading} onClick={() => setRetry(value => value + 1)}>Refresh</button></div>
-    <div className="panel-body">
-      {loading && <p role="status">Loading providers…</p>}
-      {error && <p role="alert" className="error-text">{error}</p>}{notice && <p role="status">{notice}</p>}
-      {!loading && !plugins.length && !error && <p>No providers or task plugins are configured for this organization. Ask an administrator to install and configure one.</p>}
-      {!!plugins.length && <form className="external-compute-form" onSubmit={submit}>
-        <div className="toolbar">
-          <label>Provider or task<select value={selected} required disabled={busy} onChange={e => { setSelected(e.target.value); setConfiguration('{}'); setError(''); }}><option value="">Choose a provider or task</option>{plugins.map(row => <option key={row.id} value={row.id}>{row.name} ({row.kind})</option>)}</select></label>
-          <label>Worker pool<select value={pool} required disabled={busy} onChange={e => setPool(e.target.value)}><option value="">Choose a pool</option>{pools.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select></label>
-          <label>Budget<select value={policy} required disabled={busy} onChange={e => setPolicy(e.target.value)}><option value="">Choose a budget</option>{policies.filter(row => plugin?.kind !== 'compute' || row.unit === 'allocation_seconds').map(row => <option key={row.policy_id} value={row.policy_id}>{row.name} ({row.unit})</option>)}</select></label>
-        </div>
-        {plugin && <>
-          {runpodFields ? <div className="toolbar">
-            <label>GPU<select required value={gpu} disabled={busy || catalogLoading} onChange={e => { setGPU(e.target.value); setDataCenter(''); }}><option value="">{catalogLoading ? 'Loading GPUs…' : 'Choose a GPU'}</option>{catalog.map(row => <option key={row.id} value={row.id}>{row.name || row.id}{row.memory ? ` · ${row.memory} GB` : ''}</option>)}</select></label>
-            <label>Data center<select required value={dataCenter} disabled={busy} onChange={e => setDataCenter(e.target.value)}><option value="">Choose a data center</option>{selectedGPU?.dataCenters?.map(row => <option key={row.id} value={row.id}>{row.name || row.id}</option>)}</select></label>
-            <label>Cloud tier<select value={cloud} disabled={busy} onChange={e => setCloud(e.target.value)}><option value="SECURE">Secure</option><option value="COMMUNITY">Community</option></select></label>
-            <label>GPU count<input type="number" min={1} max={8} required value={count} disabled={busy} onChange={e => setCount(Number(e.target.value))} /></label>
-            <label>Disk (GB)<input type="number" min={1} max={1000} required value={disk} disabled={busy} onChange={e => setDisk(Number(e.target.value))} /></label>
-          </div> : <label>Task or provider configuration (JSON)<textarea value={configuration} disabled={busy} rows={5} onChange={e => setConfiguration(e.target.value)} required /><details><summary>Configuration fields</summary><pre>{JSON.stringify(plugin.configuration_schema, null, 2)}</pre></details></label>}
-          <div className="toolbar">{plugin.kind === 'compute' ? <label>Maximum rental time (minutes)<input required type="number" min={1} max={1440} value={minutes} disabled={busy} onChange={e => setMinutes(Number(e.target.value))} /></label> : <label>Budget estimate ({policies.find(row => row.policy_id === policy)?.unit || 'choose a budget'})<input required type="number" min={0.000001} step="any" value={estimate} disabled={busy} onChange={e => setEstimate(Number(e.target.value))} /></label>}
-            <button type="submit" disabled={busy || loading || (plugin.kind === 'compute' ? !plugin.can_manage : !plugin.can_submit)}>{busy ? 'Submitting…' : plugin.kind === 'compute' ? 'Rent GPU' : 'Run task plugin'}</button></div>
-          {plugin.kind === 'compute' && <p className="muted">Rental charges begin when the provider allocates capacity. Storage and transfers may cost extra. Automatic expiry release requires the compute reconciler to be running.</p>}
-          {plugin.kind === 'compute' && !plugin.can_manage && <p>Renting and releasing capacity requires an organization administrator key.</p>}
-        </>}
-      </form>}
-      {!!allocations.length && <div className="table-scroll" tabIndex={0}><table className="resource-table"><caption>External allocations</caption><thead><tr><th>Provider / worker</th><th>Allocation</th><th>Provider</th><th>Worker</th><th>Expires</th><th>Actions</th></tr></thead><tbody>{allocations.map(row => <tr key={row.allocation_id}><td>{row.plugin_id} · #{row.worker_id}</td><td>{row.state}{row.error_code && <small>{row.error_code}</small>}</td><td>{row.provider_status || 'Unknown'}</td><td>{row.worker_connected ? 'Recent heartbeat' : 'No recent heartbeat'}</td><td>{new Date(row.expires_at).toLocaleString()}</td><td>{canManage && !['released', 'failed'].includes(row.state) && <><button disabled={busy} onClick={() => void update(row, 'refresh')}>Refresh status</button> <button disabled={busy} onClick={() => void update(row, 'release')}>Release capacity</button></>}</td></tr>)}</tbody></table></div>}
-    </div>
-  </section>;
+  const budgetUnit = policies.find(row => row.policy_id === policy)?.unit;
+  return <Section title="External compute and plugins" description="Rent GPU capacity or run an installed custom task." actions={<Button type="button" disabled={busy || loading} onClick={() => setRetry(value => value + 1)}>Refresh</Button>}>
+    {loading && <Feedback state="loading" title="Loading providers…" />}
+    {error && <Notice tone="error" role="alert">{error}</Notice>}{notice && <Notice tone="success" role="status">{notice}</Notice>}
+    {!loading && !plugins.length && !error && <EmptyState title="No providers or task plugins are configured for this organization" description="Ask an administrator to install and configure one." />}
+    {!!plugins.length && <form data-ui="form" onSubmit={submit}>
+      <div data-ui="field-grid">
+        <Select label="Provider or task" value={selected} required disabled={busy} onChange={e => { setSelected(e.target.value); setConfiguration('{}'); setError(''); }}><option value="">Choose a provider or task</option>{plugins.map(row => <option key={row.id} value={row.id}>{row.name} ({row.kind})</option>)}</Select>
+        <Select label="Worker pool" value={pool} required disabled={busy} onChange={e => setPool(e.target.value)}><option value="">Choose a pool</option>{pools.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</Select>
+        <Select label="Budget" value={policy} required disabled={busy} onChange={e => setPolicy(e.target.value)}><option value="">Choose a budget</option>{policies.filter(row => plugin?.kind !== 'compute' || row.unit === 'allocation_seconds').map(row => <option key={row.policy_id} value={row.policy_id}>{row.name} ({row.unit})</option>)}</Select>
+        {plugin && (runpodFields ? <>
+          <Select label="GPU" required value={gpu} disabled={busy || catalogLoading} onChange={e => { setGPU(e.target.value); setDataCenter(''); }}><option value="">{catalogLoading ? 'Loading GPUs…' : 'Choose a GPU'}</option>{catalog.map(row => <option key={row.id} value={row.id}>{row.name || row.id}{row.memory ? ` · ${row.memory} GB` : ''}</option>)}</Select>
+          <Select label="Data center" required value={dataCenter} disabled={busy} onChange={e => setDataCenter(e.target.value)}><option value="">Choose a data center</option>{selectedGPU?.dataCenters?.map(row => <option key={row.id} value={row.id}>{row.name || row.id}</option>)}</Select>
+          <Select label="Cloud tier" value={cloud} disabled={busy} onChange={e => setCloud(e.target.value)} options={[{ value: 'SECURE', label: 'Secure' }, { value: 'COMMUNITY', label: 'Community' }]} />
+          <TextControl label="GPU count" type="number" min={1} max={8} required value={count} disabled={busy} onChange={e => setCount(Number(e.target.value))} />
+          <TextControl label="Disk (GB)" type="number" min={1} max={1000} required value={disk} disabled={busy} onChange={e => setDisk(Number(e.target.value))} />
+        </> : <div data-span="full" data-ui="form">
+          <MultilineControl label="Task or provider configuration (JSON)" value={configuration} disabled={busy} rows={5} required onChange={e => setConfiguration(e.target.value)} />
+          <Disclosure summary="Configuration fields" variant="quiet"><pre>{JSON.stringify(plugin.configuration_schema, null, 2)}</pre></Disclosure>
+        </div>)}
+        {plugin && (plugin.kind === 'compute'
+          ? <TextControl label="Maximum rental time (minutes)" required type="number" min={1} max={1440} value={minutes} disabled={busy} onChange={e => setMinutes(Number(e.target.value))} />
+          : <TextControl label={`Budget estimate (${budgetUnit || 'choose a budget'})`} required type="number" min={0.000001} step="any" value={estimate} disabled={busy} onChange={e => setEstimate(Number(e.target.value))} />)}
+      </div>
+      {plugin && <>
+        <div data-ui="actions"><Button type="submit" variant="primary" disabled={busy || loading || (plugin.kind === 'compute' ? !plugin.can_manage : !plugin.can_submit)}>{busy ? 'Submitting…' : plugin.kind === 'compute' ? 'Rent GPU' : 'Run task plugin'}</Button></div>
+        {plugin.kind === 'compute' && <p className="muted">Rental charges begin when the provider allocates capacity. Storage and transfers may cost extra. Automatic expiry release requires the compute reconciler to be running.</p>}
+        {plugin.kind === 'compute' && !plugin.can_manage && <Notice tone="caution">Renting and releasing capacity requires an organization administrator key.</Notice>}
+      </>}
+    </form>}
+    {!!allocations.length && <div className="table-scroll" tabIndex={0}><RecordTable><caption>External allocations</caption>
+      <thead><tr><th>Provider / worker</th><th>Allocation</th><th>Provider</th><th>Worker</th><th>Expires</th><th>Actions</th></tr></thead>
+      <tbody>{allocations.map(row => <tr key={row.allocation_id}>
+        <td>{row.plugin_id} · #{row.worker_id}</td>
+        <td><StatusBadge status={row.state} />{row.error_code && <small>{row.error_code}</small>}</td>
+        <td>{row.provider_status || 'Unknown'}</td>
+        <td>{row.worker_connected ? 'Recent heartbeat' : 'No recent heartbeat'}</td>
+        <td>{new Date(row.expires_at).toLocaleString()}</td>
+        <td>{canManage && !['released', 'failed'].includes(row.state) && <div data-ui="actions"><Button type="button" size="sm" disabled={busy} onClick={() => void update(row, 'refresh')}>Refresh status</Button><Button type="button" size="sm" disabled={busy} onClick={() => void update(row, 'release')}>Release capacity</Button></div>}</td>
+      </tr>)}</tbody>
+    </RecordTable></div>}
+  </Section>;
 }

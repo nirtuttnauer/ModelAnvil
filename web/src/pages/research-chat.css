@@ -1,5 +1,11 @@
 @layer tokens, base, primitives, shell, pages;
 @layer pages {
-  .research-chat label { display: grid; gap: var(--space-8); min-width: 0; }
-  .research-chat li { margin-block: var(--space-16); }
+  .research-chat { display: grid; gap: var(--space-24); min-width: 0; }
+  .research-chat .research-sources { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-12); }
+  .research-chat .research-sources > li { display: grid; gap: var(--space-8); justify-items: start; padding-top: var(--space-12); border-top: 1px solid var(--border); }
+  .research-chat .research-sources > li > .readable-text { justify-self: stretch; }
+  .research-chat .research-sources p { margin: 0; }
+  .research-chat .research-turn { display: grid; gap: var(--space-8); padding-bottom: var(--space-16); border-bottom: 1px solid var(--border); }
+  .research-chat .research-turn p { margin: 0; }
+  .research-chat .research-citations { margin: 0; padding-left: var(--space-24); display: grid; gap: var(--space-4); }
 }

@@ -1,15 +1,11 @@
 @layer tokens, base, primitives, shell, pages;
 @layer pages {
-  .tools-chat .tools-form { display: grid; gap: var(--space-16); margin: var(--space-20) 0; }
-  .tools-chat .specialist-fields { margin: 0; }
-  .tools-chat .tools-policy { border: 0; border-top: 1px solid var(--border); padding: var(--space-16) 0 0; margin-top: var(--space-8); }
-  .tools-chat .tools-policy legend { padding: 0 var(--space-8) 0 0; font-weight: 600; }
-  .tools-chat .tools-check { display: flex; align-items: center; gap: var(--space-10); min-height: 44px; }
-  .tools-chat .tools-check input { width: 18px; height: 18px; flex: 0 0 18px; }
-  .tools-chat p, .tools-chat .tools-policy p { max-width: 72ch; }
-  .tools-chat .tools-form textarea { font: inherit; }
-  .tools-chat label, .tools-chat p, .tools-chat li { overflow-wrap: anywhere; }
-  .tools-chat .tools-history { display: grid; gap: var(--space-8); margin: var(--space-24) 0; max-width: 38rem; }
-  .tools-chat .tools-events { padding-left: var(--space-24); }
-  .tools-chat .tools-events > li { padding: var(--space-12) 0; border-top: 1px solid var(--border); }
+  .tools-chat .tools-fields { display: grid; gap: var(--space-16); margin: 0; padding: 0; border: 0; min-width: 0; }
+  .tools-chat .tools-targets { display: grid; gap: var(--space-12); }
+  .tools-chat .tools-target { display: grid; gap: var(--space-8); justify-items: start; }
+  .tools-chat .tools-result { display: grid; gap: var(--space-12); min-width: 0; }
+  .tools-chat .tools-result > p { margin: 0; }
+  .tools-chat .tools-events { margin: 0; padding-left: var(--space-24); display: grid; gap: var(--space-4); }
+  .tools-chat .tools-events > li { padding: var(--space-8) 0; border-top: 1px solid var(--border); }
+  .tools-chat .tools-events p { margin: var(--space-4) 0 0; }
 }

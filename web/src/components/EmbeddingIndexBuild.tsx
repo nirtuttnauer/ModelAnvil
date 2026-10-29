@@ -1,7 +1,8 @@
 import { allResources } from '../api/resources';
 import { useEffect, useRef, useState } from 'react';
 import { apiRequest, errorMessage } from '../api/client';
-import { Button, Card, Field, Notice } from './ui';
+import { Button, Checkbox, Disclosure, KeyValueList, Notice, RecordTable, Section, Select, StatusBadge, TextControl } from './ui';
+import { Feedback } from './Feedback';
 import { Identifier } from './Identifier';
 interface Source { index_id: string; status: string; revision_no: number; chunk_count: number }
 interface Space { space_id: string; name: string; dimension: number }
@@ -47,17 +48,46 @@ export function EmbeddingIndexBuild({ token, source, refreshKey, onReady }: { to
     try { const saved = await apiRequest<Build>(`/api/v1/embedding-builds/${build.build_id}/${action}/`, token, { method: 'POST', body: '{}' }); setBuilds(rows => rows.map(b => b.build_id === saved.build_id ? saved : b)); }
     catch (e) { setError(errorMessage(e)); } finally { setBusy(false); }
   }
-  return <Card className="panel"><div className="panel-title"><div><h2>Local embedding index</h2><p>Build semantic search from the selected frozen source revision.</p></div><Button disabled={busy || loading} onClick={() => setRetry(v => v + 1)}>Refresh embedding builds</Button></div><div className="panel-body">
-    {error && <Notice tone="error" role="alert">{error}</Notice>}{loading && <p role="status">Loading embedding setup…</p>}
-    {profile && <><p>{profile.model} · normalized {profile.dimension} dimensional vectors · CPU. Each text must fit 254 content tokens. Builds support up to 1,000 chunks; source data stays on your worker.</p><details><summary>Pinned model revision</summary><Identifier value={profile.revision} label="Embedding model revision" /></details>
+  const running = builds.filter(active);
+  return <Section title="Local embedding index" description="Build semantic search from the selected frozen source revision." actions={<Button type="button" disabled={busy || loading} onClick={() => setRetry(v => v + 1)}>Refresh embedding builds</Button>}>
+    {error && <Notice tone="error" role="alert">{error}</Notice>}{loading && <Feedback state="loading" title="Loading embedding setup…" />}
+    {profile && <>
+      <KeyValueList columns={2} items={[
+        { label: 'Embedding model', value: profile.model },
+        { label: 'Vectors', value: `Normalized ${profile.dimension} dimensional · CPU` },
+        { label: 'Pinned model revision', value: <Identifier value={profile.revision} label="Embedding model revision" display="code" /> },
+        { label: 'Limits', value: 'Each text must fit 254 content tokens. Builds support up to 1,000 chunks; source data stays on your worker.' },
+      ]} />
       {!profile.available && <Notice tone="caution">{profile.reason} An administrator connects a local CPU embeddings worker through Infrastructure.</Notice>}
-      <details><summary>Register a pinned model space</summary><form className="form-grid" onSubmit={register}><label>Embedding space name<Field required maxLength={200} value={name} onChange={e => setName(e.target.value)} /></label><label className="checkbox-label"><input type="checkbox" checked={accepted} onChange={e => setAccepted(e.target.checked)} />I accept the model’s Apache 2.0 license.</label><Button disabled={busy || !profile.available || !name.trim() || !accepted}>Register embedding space</Button></form></details>
-      <form className="form-grid" onSubmit={queue}><p className="full-width">{source ? `Selected source: revision ${source.revision_no} · ${source.chunk_count} chunks · ${source.status}. A new revision is published when all vectors are verified.` : 'Select a ready source index above after importing documents.'}</p>
-        <label>Embedding space<select required value={space} onChange={e => setSpace(e.target.value)}><option value="">Choose a pinned space</option>{spaces.map(s => <option key={s.space_id} value={s.space_id}>{s.name} · {s.dimension} dimensions</option>)}</select></label>
-        <label>Embedding worker pool<select required value={pool} onChange={e => setPool(e.target.value)}><option value="">Choose an active pool</option>{pools.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
-        <label>Embedding attempt allowance<select required value={policy} onChange={e => setPolicy(e.target.value)}><option value="">Choose an attempt quota</option>{policies.map(p => <option key={p.policy_id} value={p.policy_id}>{p.name}</option>)}</select></label>
-        <p className="muted full-width">Connect a matching worker in Infrastructure and create an embedding build attempt allowance in Budgets. Three attempts are reserved; only started attempts are charged. Cancellation keeps verified chunks for retry.</p><Button className="primary" disabled={busy || loading || !profile.available || source?.status !== 'ready' || !space || !pool || !policy}>Queue embedding index</Button>
+      <Disclosure summary="Register a pinned model space" variant="quiet"><form data-ui="form" onSubmit={register}>
+        <div data-ui="field-grid"><TextControl label="Embedding space name" required maxLength={200} value={name} onChange={e => setName(e.target.value)} /></div>
+        <Checkbox label="I accept the model’s Apache 2.0 license." checked={accepted} onChange={e => setAccepted(e.target.checked)} />
+        <div data-ui="actions"><Button disabled={busy || !profile.available || !name.trim() || !accepted}>Register embedding space</Button></div>
+      </form></Disclosure>
+      <form data-ui="form" onSubmit={queue}>
+        <p className="muted">{source ? `Selected source: revision ${source.revision_no} · ${source.chunk_count} chunks · ${source.status}. A new revision is published when all vectors are verified.` : 'Select a ready source index above after importing documents.'}</p>
+        <div data-ui="field-grid">
+          <Select label="Embedding space" required value={space} onChange={e => setSpace(e.target.value)}><option value="">Choose a pinned space</option>{spaces.map(s => <option key={s.space_id} value={s.space_id}>{s.name} · {s.dimension} dimensions</option>)}</Select>
+          <Select label="Embedding worker pool" required value={pool} onChange={e => setPool(e.target.value)}><option value="">Choose an active pool</option>{pools.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</Select>
+          <Select label="Embedding attempt allowance" required value={policy} onChange={e => setPolicy(e.target.value)}><option value="">Choose an attempt quota</option>{policies.map(p => <option key={p.policy_id} value={p.policy_id}>{p.name}</option>)}</Select>
+        </div>
+        <p className="muted">Connect a matching worker in Infrastructure and create an embedding build attempt allowance in Budgets. Three attempts are reserved; only started attempts are charged. Cancellation keeps verified chunks for retry.</p>
+        <div data-ui="actions"><Button variant="primary" disabled={busy || loading || !profile.available || source?.status !== 'ready' || !space || !pool || !policy}>Queue embedding index</Button></div>
       </form></>}
-    {builds.map(build => <article className="detail-box" key={build.build_id}><p role="status">Embedding build · {build.job_status} · {build.completed_chunks} / {build.total_chunks} chunks verified · index {build.index_status}</p><Identifier value={build.build_id} label="Embedding build ID" />{build.error && <p>{build.error}</p>}<div className="actions">{['queued', 'running', 'interrupted'].includes(build.job_status) && <Button disabled={busy} onClick={() => void control(build, 'cancel')}>Cancel embedding build</Button>}{['failed', 'cancelled', 'interrupted'].includes(build.job_status) && <Button disabled={busy} onClick={() => void control(build, 'retry')}>Resume verified build</Button>}{build.index_status === 'ready' && <Button onClick={() => onReady(build.index_id)}>Use ready embedding index</Button>}</div></article>)}
-  </div></Card>;
+    {!!running.length && <p role="status" className="muted">{running.length === 1 ? 'One embedding build is' : `${running.length} embedding builds are`} in progress. Verified chunks update every two seconds.</p>}
+    {!!builds.length && <div className="table-scroll" tabIndex={0}><RecordTable><caption>Embedding builds</caption>
+      <thead><tr><th>Build</th><th>Job</th><th>Chunks verified</th><th>Index</th><th>Actions</th></tr></thead>
+      <tbody>{builds.map((build, index) => <tr key={build.build_id}>
+        <td>Embedding build {builds.length - index} <Identifier value={build.build_id} label="Embedding build ID" /></td>
+        <td><StatusBadge status={build.job_status} />{build.error && <small>{build.error}</small>}</td>
+        <td>{build.completed_chunks} / {build.total_chunks}</td>
+        <td><StatusBadge status={build.index_status} /></td>
+        <td><div data-ui="actions">
+          {active(build) && <Button type="button" size="sm" disabled={busy} onClick={() => void control(build, 'cancel')}>Cancel embedding build</Button>}
+          {['failed', 'cancelled', 'interrupted'].includes(build.job_status) && <Button type="button" size="sm" disabled={busy} onClick={() => void control(build, 'retry')}>Resume verified build</Button>}
+          {build.index_status === 'ready' && <Button type="button" size="sm" onClick={() => onReady(build.index_id)}>Use ready embedding index</Button>}
+        </div></td>
+      </tr>)}</tbody>
+    </RecordTable></div>}
+  </Section>;
 }

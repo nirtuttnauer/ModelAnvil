@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { apiPage, apiRequest, authHeaders, errorMessage, getActiveProjectId } from '../api/client';
-import { Button, Notice } from '../components/ui';
+import { statusLabel } from '../api/status';
+import { Button, Disclosure, KeyValueList, MultilineControl, Notice, Section, Select, StatusBadge, TextControl } from '../components/ui';
 import { DataInspector } from '../components/DataInspector';
 import './ml-pages.css';
 import './specialists.css';
@@ -65,35 +66,47 @@ export function AudioPage({ token, refreshKey }: { token: string; refreshKey?: n
     } catch (e) { setError(errorMessage(e)); }
     finally { pending.current = false; setBusy(false); }
   }
-  return <section className="panel ml-page">
-    <div className="panel-title"><div><h2>Audio</h2><p>Generate English speech with the pinned SpeechT5 model, audio processor and vocoder.</p></div></div>
-    <div className="panel-body">
-      {error && <Notice tone="error">{error}</Notice>}
-      <Notice>CPU speech uses fixed published demo conditioning. Human quality and speaker fidelity need separate review. ASR and voice cloning are not qualified.</Notice>
-      {!models.length && <p className="empty-state">No verified speech model is available. Import the bounded SpeechT5 profile with the operator setup command, then Refresh.</p>}
-      <form className="form-grid" onSubmit={submit}>
-        <fieldset disabled={busy || !models.length} className="specialist-fields form-grid full-width">
-          <label>Speech model<select required value={model} onChange={e => setModel(e.target.value)}><option value="">Select a model</option>{models.map(m => <option key={m.id} value={m.id}>{m.name}{m.trained ? ' · trained draft' : ' · base'}</option>)}</select></label>
-          <label>Worker pool<select required value={pool} onChange={e => setPool(e.target.value)}><option value="">Select a CPU speech pool</option>{pools.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
-          <label>Audio quota<select required value={budget} onChange={e => setBudget(e.target.value)}><option value="">Select an audio_samples policy</option>{policies.map(p => <option key={p.policy_id} value={p.policy_id}>{p.name}</option>)}</select></label>
-          <label>Maximum seconds<input required type="number" min={1} max={6} step={1} value={seconds} onChange={e => setSeconds(Number(e.target.value))} /></label>
-          <label>Seed<input required type="number" min={0} max={2147483647} step={1} value={seed} onChange={e => setSeed(Number(e.target.value))} /></label>
-          <label className="full-width">Text<textarea required maxLength={96} rows={3} value={text} onChange={e => setText(e.target.value)} /></label>
-          <p className="muted full-width">Up to 96 characters and 6 seconds. Quota reserves three bounded attempts; lost attempts use their sample ceiling. A length limit or missing WAV fails the job.</p>
-          <Button disabled={busy || !model || !pool || !budget}>{busy ? 'Queuing speech…' : 'Generate speech'}</Button>
+  const cancelable = job ? ['queued', 'running', 'interrupted'].includes(job.status) : false;
+  return <div className="ml-page">
+    <Section title="Speech generation" description="Generate English speech with the pinned SpeechT5 model, audio processor and vocoder.">
+      {error && <Notice tone="error" role="alert">{error}</Notice>}
+      <Notice tone="info">CPU speech uses fixed published demo conditioning. Human quality and speaker fidelity need separate review. ASR and voice cloning are not qualified.</Notice>
+      {!models.length && <Notice tone="caution">No verified speech model is available. Import the bounded SpeechT5 profile with the operator setup command, then refresh.</Notice>}
+      <form data-ui="form" onSubmit={submit}>
+        <fieldset disabled={busy || !models.length} className="specialist-fields">
+          <div data-ui="field-grid">
+            <Select label="Speech model" required value={model} onChange={e => setModel(e.target.value)}><option value="">Select a model</option>{models.map(m => <option key={m.id} value={m.id}>{m.name}{m.trained ? ' · trained draft' : ' · base'}</option>)}</Select>
+            <Select label="Worker pool" required value={pool} onChange={e => setPool(e.target.value)}><option value="">Select a CPU speech pool</option>{pools.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</Select>
+            <Select label="Audio quota" required value={budget} onChange={e => setBudget(e.target.value)}><option value="">Select an audio_samples policy</option>{policies.map(p => <option key={p.policy_id} value={p.policy_id}>{p.name}</option>)}</Select>
+            <TextControl label="Maximum seconds" required type="number" min={1} max={6} step={1} value={seconds} onChange={e => setSeconds(Number(e.target.value))} />
+            <TextControl label="Seed" required type="number" min={0} max={2147483647} step={1} value={seed} onChange={e => setSeed(Number(e.target.value))} />
+            <div data-span="full"><MultilineControl label="Text" required maxLength={96} rows={3} value={text} onChange={e => setText(e.target.value)}
+              hint="Up to 96 characters and 6 seconds. Quota reserves three bounded attempts; lost attempts use their sample ceiling. A length limit or missing WAV fails the job." /></div>
+          </div>
+          <div data-ui="actions"><Button variant="primary" disabled={busy || !model || !pool || !budget}>{busy ? 'Queuing speech…' : 'Generate speech'}</Button></div>
         </fieldset>
       </form>
-      <h3>Speech jobs</h3>
-      <label>Job<select value={selected} onChange={e => { setSelected(e.target.value); setJob(null); }}><option value="">Select a job</option>{jobs.map(j => <option key={j.request_id} value={j.request_id}>{j.request_id.slice(0, 8)} · {j.status}</option>)}</select></label>
-      {job && <div aria-live="polite"><p>Status: <strong>{job.status}</strong>{job.status === 'running' && ' · generating bounded audio'}</p>
+    </Section>
+    <Section title="Speech jobs" description="Follow a queued job, play its verified output and inspect the generation provenance.">
+      <div data-ui="field-grid">
+        <Select label="Job" value={selected} onChange={e => { setSelected(e.target.value); setJob(null); }}><option value="">Select a job</option>{jobs.map((j, index) => <option key={j.request_id} value={j.request_id}>Speech job {index + 1} · {statusLabel(j.status)}</option>)}</Select>
+      </div>
+      {job && <div aria-live="polite" data-ui="form">
+        <div data-ui="actions"><StatusBadge status={job.status} />{job.status === 'running' && <span className="muted">Generating bounded audio</span>}</div>
         {job.error && <Notice tone="error">{job.error}</Notice>}
-        {['queued', 'running', 'interrupted'].includes(job.status) && <Button disabled={busy || job.desired_action === 'cancel'} onClick={() => {
+        {cancelable && <div data-ui="actions"><Button type="button" disabled={busy || job.desired_action === 'cancel'} onClick={() => {
           setBusy(true); void apiRequest(`/api/v1/audio/jobs/${job.request_id}/cancel/`, token, { method: 'POST' }).catch(e => setError(errorMessage(e))).finally(() => setBusy(false));
-        }}>Cancel speech</Button>}
-        {job.result && <><p>{job.result.report.duration_seconds.toFixed(2)} seconds · {job.result.report.sample_rate.toLocaleString()} Hz mono PCM16 · {job.result.report.frames.toLocaleString()} samples</p>
+        }}>Cancel speech</Button></div>}
+        {job.result && <>
+          <KeyValueList columns={2} items={[
+            { label: 'Duration', value: `${job.result.report.duration_seconds.toFixed(2)} seconds` },
+            { label: 'Sample rate', value: `${job.result.report.sample_rate.toLocaleString()} Hz mono PCM16` },
+            { label: 'Samples', value: job.result.report.frames.toLocaleString() },
+          ]} />
           {audio && <><audio controls preload="metadata" src={audio} aria-label="Generated speech" /><p><a href={audio} download="speech.wav">Download WAV</a></p></>}
-          <details><summary>Model, processor and generation provenance</summary><DataInspector value={job.result} /></details></>}
+          <Disclosure summary="Model, processor and generation provenance" variant="quiet"><DataInspector value={job.result} /></Disclosure>
+        </>}
       </div>}
-    </div>
-  </section>;
+    </Section>
+  </div>;
 }

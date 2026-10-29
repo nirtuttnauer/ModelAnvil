@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiPage, apiRequest, errorMessage } from '../api/client';
-import { Badge, Button, Card, Field, MultilineField, Notice } from './ui';
-import { DataInspector } from './DataInspector';
+import { statusLabel } from '../api/status';
+import { Badge, Button, Checkbox, Disclosure, KeyValueList, MultilineControl, Notice, Section, Select, StatusBadge, TextControl } from './ui';
+import { Feedback } from './Feedback';
+import { DataInspector, TextContent } from './DataInspector';
 import { Identifier } from './Identifier';
 
 interface LocalModel { model_version_id: string; model_name?: string; architecture_ref: string; metadata?: { format?: string; configuration?: { model_type?: string } } }
@@ -12,14 +14,15 @@ interface Run { run_id: string; model_version_id: string; condition: string; que
 const conditions: Record<string, string> = { none: 'No retrieval', retrieved: 'Retrieved evidence', human: 'Human-supplied evidence' };
 
 function Answer({ run }: { run: Run }) {
-  return <div className="panel-body generation-answer"><div className="wb-row"><Badge>{conditions[run.condition]}</Badge><Badge>{run.status === 'answered' ? 'Generated locally' : run.status.replaceAll('_', ' ')}</Badge></div>
+  return <article data-ui="form">
+    <div data-ui="actions"><Badge>{conditions[run.condition]}</Badge><StatusBadge status={run.status} tone={run.status === 'answered' ? 'success' : undefined} label={run.status === 'answered' ? 'Generated locally' : undefined} /></div>
     <p><strong>Question:</strong> {run.query}</p>
-    {run.answer ? <p className="preserve-lines">{run.answer}</p> : <Notice>{run.status === 'validation_refusal' ? 'The model output did not pass citation validation.' : 'No answer was returned.'} Reason: {run.receipt.reason.replaceAll('_', ' ')}.</Notice>}
-    {run.citations.length > 0 && <><h3>Source links</h3><ul className="generation-citations">{run.citations.map(c => <li key={c.chunk_id}><strong>[{c.label}] {c.title}</strong><p>{c.source_uri}</p><Identifier value={c.chunk_id} label="Source chunk" /></li>)}</ul></>}
+    {run.answer ? <TextContent text={run.answer} /> : <Notice tone="caution">{run.status === 'validation_refusal' ? 'The model output did not pass citation validation.' : 'No answer was returned.'} Reason: {run.receipt.reason.replaceAll('_', ' ')}.</Notice>}
+    {run.citations.length > 0 && <Disclosure summary="Source links" variant="quiet" open><ul>{run.citations.map(c => <li key={c.chunk_id}><strong>[{c.label}] {c.title}</strong><p className="muted">{c.source_uri} <Identifier value={c.chunk_id} label="Source chunk" /></p></li>)}</ul></Disclosure>}
     {run.receipt.usage && <p className="muted">{run.receipt.usage.prompt_tokens} input + {run.receipt.usage.completion_tokens} generated tokens · {(run.receipt.elapsed_ms / 1000).toFixed(1)} seconds</p>}
-    <details><summary>Model, source links and exact token budget</summary><Identifier value={run.model_version_id} label="Pinned model version" /><DataInspector value={run.receipt} /></details>
-    {run.raw_output && <details><summary>Raw local model output</summary><p className="preserve-lines">{run.raw_output}</p></details>}
-  </div>;
+    <Disclosure summary="Model, source links and exact token budget" variant="quiet"><KeyValueList items={[{ label: 'Pinned model version', value: <Identifier value={run.model_version_id} label="Pinned model version" display="code" /> }]} /><DataInspector value={run.receipt} /></Disclosure>
+    {run.raw_output && <Disclosure summary="Raw local model output" variant="quiet"><TextContent text={run.raw_output} /></Disclosure>}
+  </article>;
 }
 
 export function RAGAnswers({ token, indexId, semantic, refreshKey = 0 }: { token: string; indexId: string; semantic: boolean; refreshKey?: number }) {
@@ -53,20 +56,33 @@ export function RAGAnswers({ token, indexId, semantic, refreshKey = 0 }: { token
       if (!c.signal.aborted) { setResult(run); setRuns(v => [run, ...v].slice(0, 20)); }
     } catch (e) { if (!c.signal.aborted) setError(errorMessage(e)); } finally { if (!c.signal.aborted) setBusy(false); }
   }
-  return <Card className="panel"><div className="panel-title"><div><h2>Answer with a local model</h2><p>Compare the same question with no evidence, retrieved sources or evidence you select.</p></div><Badge>Local CPU</Badge></div>
-    <div className="panel-body">{error && <Notice tone="error" role="alert">{error}<Button type="button" disabled={busy} onClick={() => setRetry(v => v + 1)}>Reload model and source lists</Button></Notice>}
-      {loading ? <p role="status">Loading available models and source history…</p> : !models.length ? <Notice>Import a supported local Safetensors text model in Models to start. The model is loaded and checked when you generate.</Notice> :
-      <form className="form-grid" onSubmit={generate}>
-        <label>Local model<select required value={model} disabled={busy} onChange={e => setModel(e.target.value)}>{models.map(m => <option key={m.model_version_id} value={m.model_version_id}>{m.model_name || 'Local text snapshot'}</option>)}</select></label>
-        <label>Evidence condition<select value={condition} disabled={busy} onChange={e => setCondition(e.target.value)}>{Object.entries(conditions).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></label>
-        <label className="full-width">Question<MultilineField required maxLength={8192} rows={3} value={question} disabled={busy} onChange={e => setQuestion(e.target.value)} /></label>
-        {condition === 'retrieved' && semantic && <label>Retrieval mode<select value={mode} disabled={busy} onChange={e => setMode(e.target.value)}><option value="dense">Semantic cosine</option><option value="hybrid">Hybrid rank fusion</option><option value="lexical">Full-text lexical</option></select></label>}
-        {condition === 'human' && <fieldset className="full-width generation-evidence"><legend>Select up to five source chunks</legend>{pool.map(c => <label key={c.chunk_id}><input type="checkbox" checked={selected.includes(c.chunk_id)} disabled={busy || (!selected.includes(c.chunk_id) && selected.length >= 5)} onChange={e => { const checked = e.target.checked; setSelected(v => checked ? [...v, c.chunk_id] : v.filter(id => id !== c.chunk_id)); }} /><span><strong>{c.title}</strong><span className="generation-source-excerpt">{c.text.slice(0, 240)}</span></span></label>)}{offset !== null && <Button type="button" disabled={busy} onClick={() => void moreEvidence()}>Load more source chunks</Button>}</fieldset>}
-        <details className="full-width"><summary>Output budget and context overflow</summary><div className="form-grid"><label>Output reserve (tokens)<Field type="number" min="1" max="128" required value={maxTokens} disabled={busy} onChange={e => setMaxTokens(e.target.value)} /></label><label>Overflow policy<select value={policy} disabled={busy} onChange={e => setPolicy(e.target.value)}><option value="fail">Fail if the complete context does not fit</option><option value="omit_optional_evidence">Omit optional evidence, lowest rank first</option></select></label></div><p className="muted">The required question stays intact. Exact tokenizer and template counts reserve output capacity before generation. Decoding is greedy with seed 42; each run retains its settings.</p></details>
-        <p className="muted full-width">Question and answer drafts stay in memory. Saved runs recheck current source and model access when opened.</p>
-        <Button className="primary" disabled={busy || !question.trim() || !model || (condition === 'human' && !selected.length)}>{busy ? 'Loading model and generating…' : 'Generate local answer'}</Button>
-      </form>}
-    </div>{result && <Answer run={result} />}
-    {runs.length > 0 && <div className="panel-body"><h3>Saved evidence conditions</h3>{runs.map(run => <details key={run.run_id}><summary>{conditions[run.condition]} · {run.status.replaceAll('_', ' ')} · {new Date(run.created_at).toLocaleString()}</summary><Answer run={run} /></details>)}</div>}
-  </Card>;
+  return <Section title="Answer with a local model" description="Compare the same question with no evidence, retrieved sources or evidence you select." actions={<Badge>Local CPU</Badge>}>
+    {error && <Notice tone="error" role="alert"><span>{error}</span><Button type="button" disabled={busy} onClick={() => setRetry(v => v + 1)}>Reload model and source lists</Button></Notice>}
+    {loading ? <Feedback state="loading" title="Loading available models and source history…" /> : !models.length ? <Notice>Import a supported local Safetensors text model in Models to start. The model is loaded and checked when you generate.</Notice> :
+    <form data-ui="form" onSubmit={generate}>
+      <div data-ui="field-grid">
+        <Select label="Local model" required value={model} disabled={busy} onChange={e => setModel(e.target.value)}>{models.map(m => <option key={m.model_version_id} value={m.model_version_id}>{m.model_name || 'Local text snapshot'}</option>)}</Select>
+        <Select label="Evidence condition" value={condition} disabled={busy} onChange={e => setCondition(e.target.value)} options={Object.entries(conditions).map(([value, label]) => ({ value, label }))} />
+        <div data-span="full"><MultilineControl label="Question" required maxLength={8192} rows={3} value={question} disabled={busy} onChange={e => setQuestion(e.target.value)} /></div>
+        {condition === 'retrieved' && semantic && <Select label="Retrieval mode" value={mode} disabled={busy} onChange={e => setMode(e.target.value)} options={[{ value: 'dense', label: 'Semantic cosine' }, { value: 'hybrid', label: 'Hybrid rank fusion' }, { value: 'lexical', label: 'Full-text lexical' }]} />}
+      </div>
+      {condition === 'human' && <Section level={3} title="Select up to five source chunks">
+        <div data-ui="form">{pool.map(c => <Checkbox key={c.chunk_id} label={c.title} hint={c.text.slice(0, 240)} checked={selected.includes(c.chunk_id)} disabled={busy || (!selected.includes(c.chunk_id) && selected.length >= 5)} onChange={e => { const checked = e.target.checked; setSelected(v => checked ? [...v, c.chunk_id] : v.filter(id => id !== c.chunk_id)); }} />)}</div>
+        {offset !== null && <div data-ui="actions"><Button type="button" disabled={busy} onClick={() => void moreEvidence()}>Load more source chunks</Button></div>}
+      </Section>}
+      <Disclosure summary="Output budget and context overflow" variant="quiet">
+        <div data-ui="field-grid">
+          <TextControl label="Output reserve (tokens)" type="number" min="1" max="128" required value={maxTokens} disabled={busy} onChange={e => setMaxTokens(e.target.value)} />
+          <Select label="Overflow policy" value={policy} disabled={busy} onChange={e => setPolicy(e.target.value)} options={[{ value: 'fail', label: 'Fail if the complete context does not fit' }, { value: 'omit_optional_evidence', label: 'Omit optional evidence, lowest rank first' }]} />
+        </div>
+        <p className="muted">The required question stays intact. Exact tokenizer and template counts reserve output capacity before generation. Decoding is greedy with seed 42; each run retains its settings.</p>
+      </Disclosure>
+      <p className="muted">Question and answer drafts stay in memory. Saved runs recheck current source and model access when opened.</p>
+      <div data-ui="actions"><Button variant="primary" disabled={busy || !question.trim() || !model || (condition === 'human' && !selected.length)}>{busy ? 'Loading model and generating…' : 'Generate local answer'}</Button></div>
+    </form>}
+    {result && <Answer run={result} />}
+    {runs.length > 0 && <Section level={3} title="Saved evidence conditions">
+      {runs.map(run => <Disclosure key={run.run_id} variant="plain" summary={`${conditions[run.condition]} · ${statusLabel(run.status)} · ${new Date(run.created_at).toLocaleString()}`}><Answer run={run} /></Disclosure>)}
+    </Section>}
+  </Section>;
 }
