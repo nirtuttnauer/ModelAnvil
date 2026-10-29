@@ -1,0 +1,12 @@
+pip-audit -r on every requirements*.txt, no --ignore-vuln. Measured exits:
+/workspace/requirements.audio.txt exit 0 no known vulnerabilities
+/workspace/requirements.documents.txt exit 0 no known vulnerabilities
+/workspace/requirements.embeddings.txt exit 0 no known vulnerabilities
+/workspace/requirements.gpu.txt exit 0 no known vulnerabilities
+/workspace/requirements.inference.txt exit 0 no known vulnerabilities
+/workspace/requirements.production.txt exit 0 no known vulnerabilities
+/workspace/requirements.selfhost.lock.txt exit 0 no known vulnerabilities
+/workspace/requirements.specialists.txt exit 0 no known vulnerabilities
+/workspace/requirements.tools.txt exit 0 no known vulnerabilities
+/workspace/requirements.txt exit 0 no known vulnerabilities
+/workspace/requirements.vision.txt exit 0 no known vulnerabilities
