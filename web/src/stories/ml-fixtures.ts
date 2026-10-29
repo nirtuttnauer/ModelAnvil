@@ -88,7 +88,7 @@ const metrics = [0.78, 0.61, 0.67, 0.92, 0.76].map((value, index) => ({
   uncertainty_interval: { lower: round2(Math.max(0, value - 0.06)), upper: round2(Math.min(1, value + 0.06)) },
 }));
 const evaluationPins = {
-  scorer_version: 'modelanvil.local-scorers.v1',
+  scorer_version: 'modelanvil.deterministic-text-scorer.v1',
   decoding: 'greedy',
   prompt_format: 'plain',
   device: 'cpu',
@@ -271,6 +271,34 @@ function installAlignmentAction(runId: string) {
   };
 }
 for (const run of alignmentRuns) installAlignmentAction(run.run_id);
+
+mlActions[`/api/v1/training-runs/${ids.training}/prepare-evaluation/`] = body => {
+  const runId = '30000000-0000-4000-8000-000000000099';
+  const suite = suites.find(item => item.suite_version_id === body.suite_version) || { id: 99, suite: 99, suite_version_id: '80000000-0000-4000-8000-000000000099', suite_name: 'Support classification · Demo', revision_no: 1, cases_count: 3, scorer_type: 'exact_match', protected_role: 'protected_eval', source_group_count: 3 };
+  const caseSet = ['billing', 'access', 'technical'].map((label, index) => ({ case_id: `CLASS-${index + 1}`, input_prompt: ['I was charged twice.', 'I forgot my password.', 'The app crashes.'][index], expected_output: label, source_group_id: `held-out-${index}`, slice: label }));
+  const report = { available: false, reason: 'Synthetic preview: comparison has not run.', candidate: { accuracy: null, macro_f1: null }, baseline: { accuracy: null, macro_f1: null }, complete_cases: 0, total_cases: 3, labels: ['billing', 'access', 'technical'], accuracy_delta: null, accuracy_delta_interval: null, training_run_id: ids.training, export_available: false };
+  const current = mlResponses['/api/v1/evaluation-runs/'] as Array<Record<string, unknown> & { run_id: string }>;
+  const evaluation = current.find(item => item.run_id === runId) || { ...evaluationRuns[0], run_id: runId, suite_version: suite.id, status: 'pending', job: null, metrics: [], baseline_metrics: [], candidate_name: 'Trained support model · Demo', baseline_name: 'Starting model · Demo', decision_report: report, case_coverage: { completed: 0, total: 3, failed: 0, missing: 3 } };
+  if (!current.some(item => item.run_id === runId)) current.unshift(evaluation);
+  if (!suites.some(item => item.id === suite.id)) suites.push(suite);
+  mlResponses[`/api/v1/evaluation-runs/${runId}/cases/`] ||= [];
+  mlActions[`/api/v1/evaluation-runs/${runId}/execute/`] = () => {
+    const completed = { ...evaluation, status: 'completed', job: ids.job, execution_evidence: fixtureEvidence,
+      metrics: [{ key: 'accuracy', slice_name: 'all', value: 1, sample_count: 3, uncertainty_interval: null }],
+      baseline_metrics: [{ key: 'accuracy', slice_name: 'all', value: 1 / 3, sample_count: 3, uncertainty_interval: null }],
+      case_coverage: { completed: 3, total: 3, failed: 0, missing: 0 },
+      decision_report: { ...report, available: true, reason: '', complete_cases: 3,
+        candidate: { accuracy: 1, macro_f1: 1, confusion_matrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0]] },
+        baseline: { accuracy: 1 / 3, macro_f1: 1 / 6, confusion_matrix: [[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0]] },
+        accuracy_delta: 2 / 3, accuracy_delta_interval: [0, 1], case_changes: { improved: 2, regressed: 0, unchanged: 1, changed_cases: [] } },
+    };
+    mlResponses['/api/v1/evaluation-runs/'] = (mlResponses['/api/v1/evaluation-runs/'] as Array<{ run_id: string }>).map(item => item.run_id === runId ? completed : item);
+    mlResponses[`/api/v1/evaluation-runs/${runId}/`] = completed;
+    mlResponses[`/api/v1/evaluation-runs/${runId}/cases/`] = caseSet.map((item, index) => ({ ...item, result_id: `${runId}-${index}`, candidate_output: item.expected_output, baseline_output: 'billing', score: 1, passed: true, baseline_score: index === 0 ? 1 : 0, failure_reason: '', slice_name: 'all' }));
+    return completed;
+  };
+  return { evaluation, suite, cases: caseSet, labels: report.labels, warnings: ['Synthetic preview only. No model is executed or qualified.'], launch: { pool: 1, budget_policy_id: '50000000-0000-4000-8000-000000000005', max_tokens: 32, profile: 'guided-native' } };
+};
 
 const initialResponses = structuredClone(mlResponses);
 const initialActions = { ...mlActions };

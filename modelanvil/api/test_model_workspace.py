@@ -445,6 +445,18 @@ class ModelWorkspaceTests(TransactionTestCase):
             download_file(item, 'model.safetensors', {**pin, 'sha256': '0' * 64}, SimpleNamespace(heartbeat=lambda: True))
         self.assertFalse(path.exists())
 
+    @override_settings(MODELANVIL_OFFLINE=True)
+    def test_provisioned_transformer_inference_does_not_connect_to_external_services(self):
+        imported = self.import_model()
+        self.assertEqual(imported.status_code,201,imported.json())
+        with patch('socket.socket.connect',side_effect=AssertionError('Unexpected network connection')) as connect:
+            response = self.client.post('/api/v1/inference/chat/completions',{
+                'model':imported.data['candidate_id'],'messages':[{'role':'user','content':'hello'}],
+                'prompt_format':'plain','device':'cpu','max_tokens':2,'temperature':0},format='json')
+            self.assertEqual(response.status_code,200,response.content)
+            self.assertIn('completion_tokens',response.json()['usage'])
+            connect.assert_not_called()
+
     def test_download_contains_actual_verified_weights_and_fails_on_corruption(self):
         import zipfile
         from modelanvil.runners.models import TrainingRun
@@ -460,7 +472,8 @@ class ModelWorkspaceTests(TransactionTestCase):
         with patch('modelanvil.api.views.training_views.TrainingRunViewSet._worker_bundle', return_value=bundle):
             response = self.client.get(path)
             self.assertEqual(response.status_code, 200)
-            raw = b''.join(response.streaming_content); response.close()
+            raw = b''.join(response.streaming_content)
+            self.assertTrue(response.closed)
             with zipfile.ZipFile(io.BytesIO(raw)) as archive:
                 self.assertEqual(archive.read('model.safetensors'), (Path(self.fixture.name) / 'model.safetensors').read_bytes())
                 self.assertEqual(json.loads(archive.read('modelanvil-provenance.json')), bundle)

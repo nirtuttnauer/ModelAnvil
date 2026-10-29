@@ -118,7 +118,7 @@ export const PublishReviewedMapping: Story = { play: async ({ canvasElement }) =
 } };
 export const ExistingPublishedRevision: Story = { play: async ({ canvasElement }) => {
   const canvas = within(canvasElement); await userEvent.click(await canvas.findByRole('button', { name: 'Advanced settings' }));
-  const revisions = canvas.getByLabelText('Prepared dataset revision', { exact: true }); await waitFor(() => expect(within(revisions).getAllByRole('option').length).toBeGreaterThan(1));
+  const revisions = canvas.getByLabelText('Dataset version', { exact: true }); await waitFor(() => expect(within(revisions).getAllByRole('option').length).toBeGreaterThan(1));
   await userEvent.selectOptions(revisions, '1'); await expect(canvas.findByRole('region', { name: 'Selected dataset preview' })).resolves.toBeVisible(); await expect(canvas.findByRole('region', { name: 'Prepared sample rows' })).resolves.toBeVisible(); verified(canvasElement);
 } };
 export const InspectionRetry: Story = { parameters: { datasetState: 'retry' }, play: async ({ canvasElement }) => {

@@ -1,0 +1,110 @@
+[
+  {
+    "story": "modelanvil-actions-training-progress--small-validation-loss",
+    "passed": true,
+    "client": 305,
+    "document": 305,
+    "width": 320
+  },
+  {
+    "story": "modelanvil-actions-training-dataset-preview--optional-context",
+    "passed": true,
+    "client": 305,
+    "document": 305,
+    "width": 320
+  },
+  {
+    "story": "modelanvil-actions-base-chat-comparison--generate-pair",
+    "passed": true,
+    "client": 305,
+    "document": 305,
+    "width": 320
+  },
+  {
+    "story": "modelanvil-actions-chat--active-jobs-panel",
+    "passed": true,
+    "client": 305,
+    "document": 305,
+    "width": 320
+  },
+  {
+    "story": "modelanvil-actions-engineering-components--training-launch",
+    "passed": true,
+    "client": 305,
+    "document": 305,
+    "width": 320
+  },
+  {
+    "story": "modelanvil-actions-engineering-components--training-modes-and-tabs",
+    "passed": true,
+    "client": 305,
+    "document": 305,
+    "width": 320
+  },
+  {
+    "story": "modelanvil-actions-dataset-validation--missing-and-formatting-errors",
+    "passed": true,
+    "client": 305,
+    "document": 305,
+    "theme": "light",
+    "width": 320
+  },
+  {
+    "story": "modelanvil-actions-training-dataset-preview--dark",
+    "passed": true,
+    "client": 305,
+    "document": 305,
+    "theme": "dark",
+    "width": 320
+  },
+  {
+    "story": "modelanvil-actions-base-chat-comparison--dark",
+    "passed": true,
+    "client": 305,
+    "document": 305,
+    "theme": "dark",
+    "width": 320
+  },
+  {
+    "story": "modelanvil-actions-training-progress--dark",
+    "passed": true,
+    "client": 305,
+    "document": 305,
+    "theme": "dark",
+    "width": 320
+  },
+  {
+    "story": "modelanvil-actions-base-chat-comparison--generate-pair",
+    "passed": true,
+    "client": 797,
+    "document": 797,
+    "height": 375,
+    "width": 812
+  },
+  {
+    "story": "modelanvil-actions-chat--active-jobs-panel",
+    "passed": true,
+    "client": 797,
+    "document": 797,
+    "height": 375,
+    "width": 812
+  },
+  {
+    "story": "modelanvil-actions-training-dataset-preview--optional-context",
+    "passed": true,
+    "client": 797,
+    "document": 797,
+    "height": 375,
+    "width": 812
+  },
+  {
+    "story": "modelanvil-actions-base-chat-comparison--loading-comparison",
+    "passed": true,
+    "width": 375
+  },
+  {
+    "story": "modelanvil-actions-base-chat-comparison--missing-base",
+    "passed": true,
+    "width": 375
+  }
+]

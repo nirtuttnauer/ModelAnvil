@@ -1,0 +1,134 @@
+[
+  {
+    "screen": "annotation",
+    "width": 1440,
+    "theme": "light",
+    "overflow": false,
+    "tooltipInViewport": true,
+    "violations": []
+  },
+  {
+    "screen": "annotation",
+    "width": 390,
+    "theme": "light",
+    "overflow": false,
+    "tooltipInViewport": true,
+    "violations": [],
+    "overflow_verification": "After containing the live status within Identifier: document scroll width and viewport both measure 390px before and after opening a tooltip."
+  },
+  {
+    "screen": "annotation",
+    "width": 1440,
+    "theme": "dark",
+    "overflow": false,
+    "tooltipInViewport": true,
+    "violations": []
+  },
+  {
+    "screen": "datasets",
+    "width": 1440,
+    "theme": "light",
+    "overflow": false,
+    "tooltipInViewport": true,
+    "violations": []
+  },
+  {
+    "screen": "datasets",
+    "width": 390,
+    "theme": "light",
+    "overflow": false,
+    "tooltipInViewport": true,
+    "violations": []
+  },
+  {
+    "screen": "run-detail",
+    "width": 1440,
+    "theme": "light",
+    "overflow": false,
+    "tooltipInViewport": true,
+    "violations": []
+  },
+  {
+    "screen": "run-detail",
+    "width": 390,
+    "theme": "light",
+    "overflow": false,
+    "tooltipInViewport": true,
+    "violations": []
+  },
+  {
+    "screen": "overview",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "screen": "dataset-bank",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "screen": "models",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "screen": "training",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "screen": "alignment",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "screen": "evaluation",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "screen": "workflows",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "screen": "rag",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "screen": "context-lab",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "screen": "releases",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "screen": "infrastructure",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "screen": "budgets",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "screen": "audit",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "screen": "recipes",
+    "width": 390,
+    "overflow": false
+  },
+  {
+    "screen": "specialists",
+    "width": 390,
+    "overflow": false
+  }
+]

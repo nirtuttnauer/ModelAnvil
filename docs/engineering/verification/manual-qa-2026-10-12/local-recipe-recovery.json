@@ -1,0 +1,738 @@
+{
+  "date": "2026-10-12",
+  "device": "mps:0",
+  "qualification": "Authored engineering-note smoke; tiny-model quality is not representative",
+  "model_pins": {
+    "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+    "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+    "license": "Apache-2.0",
+    "files": {
+      "model.safetensors": {
+        "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+        "byte_size": 269060552
+      },
+      "config.json": {
+        "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+        "byte_size": 861
+      },
+      "tokenizer.json": {
+        "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "byte_size": 2104556
+      },
+      "tokenizer_config.json": {
+        "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+        "byte_size": 3764
+      },
+      "special_tokens_map.json": {
+        "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+        "byte_size": 655
+      },
+      "generation_config.json": {
+        "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+        "byte_size": 132
+      }
+    }
+  },
+  "cases": {
+    "text": {
+      "preview": {
+        "run_id": "33d801bf-7b1e-4a53-a421-7ba5b60ba296",
+        "job_id": "cb930b72-fb53-4877-b3f3-670eee7acc19",
+        "status": "succeeded",
+        "desired_action": "run",
+        "definition": {
+          "name": "Mac text recipe qualification",
+          "schema": "modelanvil.recipe.v1",
+          "steps": [
+            {
+              "format": "json",
+              "id": "source",
+              "type": "source"
+            },
+            {
+              "id": "sample",
+              "input": "source",
+              "limit": 2,
+              "seed": 42,
+              "type": "sample"
+            },
+            {
+              "id": "prompt",
+              "input": "sample",
+              "template": "Write one brief sentence about this note: {{value}}",
+              "type": "template"
+            },
+            {
+              "id": "generate",
+              "input": "prompt",
+              "max_tokens": 96,
+              "output": "text",
+              "seed": 42,
+              "type": "generate"
+            },
+            {
+              "id": "validate",
+              "input": "generate",
+              "min_characters": 1,
+              "type": "validate"
+            },
+            {
+              "id": "output",
+              "input": "validate",
+              "type": "output"
+            }
+          ]
+        },
+        "bindings": {
+          "recipe": "c4cebc29-3ad2-4134-afe8-c69a00c7d3b3",
+          "sources": {
+            "source": "0aa3b8e7-0718-4b67-a723-657f94d2dd03"
+          },
+          "model": "81b9090f-a40b-47d0-ae40-561f7ae43e4f",
+          "device": "mps:0",
+          "pool": 1,
+          "budget_policy": "043e45be-d219-4950-8b34-00d74131d4d8",
+          "protected_sources": []
+        },
+        "attempt_count": 2,
+        "max_attempts": 3,
+        "preview": true,
+        "completed_steps": [
+          "source",
+          "sample",
+          "prompt",
+          "generate",
+          "validate",
+          "output"
+        ],
+        "saved_rows": 6,
+        "publication": {
+          "report": {
+            "artifact_id": "6d7fc12f-7fab-4f53-bfde-2469b7d1754e",
+            "sha256": "fc9254b9aa7d83abd712d9f2d449bcbb5fefed1801c0734f54c7b369f5a76f77",
+            "byte_size": 2964
+          },
+          "row_count": 2,
+          "rejected_count": 0,
+          "preview": true,
+          "usage": {
+            "prompt_tokens": 96,
+            "completion_tokens": 59,
+            "total_tokens": 155,
+            "completed_generation_calls": 2
+          }
+        },
+        "result": {
+          "rows": [
+            {
+              "schema_version": "1.0",
+              "sample_id": "43803ead-39da-5fdd-9e2b-ba3f7d5fe990",
+              "source_group_id": "source-sha256:b133e767db954a1f3c4f3b7ee1d685aac1950f45c2f41ca6cba371bf7c10237f",
+              "blocks": [
+                {
+                  "block_id": "generated",
+                  "type": "text",
+                  "text": "The note begins at 14:30 UTC, with the note's content and the date being the same as the note's content.",
+                  "location": {
+                    "source_path": "/0"
+                  }
+                }
+              ],
+              "provenance": {
+                "source_snapshot_ref": "sha256:b133e767db954a1f3c4f3b7ee1d685aac1950f45c2f41ca6cba371bf7c10237f",
+                "source_record_key": "/0",
+                "content_sha256": "284b7f2cfb3e7984d3636a4bba48af3eca46fc9c8c71a58c46bf7f634e68a53c",
+                "transformation_revision_ref": "modelanvil.recipe.v1",
+                "parent_sample_refs": [
+                  "ae2e8c49-cfe2-5957-b636-731ccd3c6543"
+                ]
+              },
+              "metadata": {
+                "recipe_sha256": "1f61b8cd6825a2a11484e7c598ef7ec52129233ed2a78792172150b70a9c0aae",
+                "model_snapshot_sha256": "1256f69490e0d1667280e1f925e47ae8140a65ff6b7ddd45f280e7ba70d68399",
+                "runtime_sha256": "91deada52ead3942d6dd9cec6bd7938d69349c66683138d33648828b9da73d3f",
+                "steps": [
+                  "source",
+                  "prompt",
+                  "generate",
+                  "validate"
+                ],
+                "source_sample_id": "ae2e8c49-cfe2-5957-b636-731ccd3c6543",
+                "generation_calls": {
+                  "b7efc0b5bde58c4c362199dc3bcbe50008cd8e4261ddaf4f7cbc3de4906b1b0d": {
+                    "usage": {
+                      "prompt_tokens": 49,
+                      "completion_tokens": 30,
+                      "total_tokens": 79
+                    },
+                    "finish_reason": "stop"
+                  }
+                },
+                "review_required": true,
+                "source_locations": [
+                  {
+                    "source_path": "/0"
+                  }
+                ]
+              }
+            },
+            {
+              "schema_version": "1.0",
+              "sample_id": "3d509093-c218-54cb-8166-7a2c5d553579",
+              "source_group_id": "source-sha256:b133e767db954a1f3c4f3b7ee1d685aac1950f45c2f41ca6cba371bf7c10237f",
+              "blocks": [
+                {
+                  "block_id": "generated",
+                  "type": "text",
+                  "text": "The note is a collection of operational notes, which are a set of notes that are used to track and record the activities of a company.",
+                  "location": {
+                    "source_path": "/1"
+                  }
+                }
+              ],
+              "provenance": {
+                "source_snapshot_ref": "sha256:b133e767db954a1f3c4f3b7ee1d685aac1950f45c2f41ca6cba371bf7c10237f",
+                "source_record_key": "/1",
+                "content_sha256": "865c66c88103e9ea48ea59617ffbeaf194322e71cdd68538590b93d5895f8528",
+                "transformation_revision_ref": "modelanvil.recipe.v1",
+                "parent_sample_refs": [
+                  "63c450ea-6ea4-5011-8f13-f0490420e2ab"
+                ]
+              },
+              "metadata": {
+                "recipe_sha256": "1f61b8cd6825a2a11484e7c598ef7ec52129233ed2a78792172150b70a9c0aae",
+                "model_snapshot_sha256": "1256f69490e0d1667280e1f925e47ae8140a65ff6b7ddd45f280e7ba70d68399",
+                "runtime_sha256": "91deada52ead3942d6dd9cec6bd7938d69349c66683138d33648828b9da73d3f",
+                "steps": [
+                  "source",
+                  "prompt",
+                  "generate",
+                  "validate"
+                ],
+                "source_sample_id": "63c450ea-6ea4-5011-8f13-f0490420e2ab",
+                "generation_calls": {
+                  "63e74c20c0c443b6f5f5f184d44b3f40b8b40d5a04a2d7e8152f40ecae1a8d83": {
+                    "usage": {
+                      "prompt_tokens": 47,
+                      "completion_tokens": 29,
+                      "total_tokens": 76
+                    },
+                    "finish_reason": "stop"
+                  }
+                },
+                "review_required": true,
+                "source_locations": [
+                  {
+                    "source_path": "/1"
+                  }
+                ]
+              }
+            }
+          ],
+          "rejected": [],
+          "preview": true,
+          "usage": {
+            "prompt_tokens": 96,
+            "completion_tokens": 59,
+            "total_tokens": 155,
+            "completed_generation_calls": 2
+          }
+        },
+        "error": ""
+      },
+      "published": {
+        "run_id": "01304c20-0dd6-46d2-bd45-ddf6cc84db67",
+        "job_id": "abcd0528-252a-48ef-a342-7e151631a689",
+        "status": "succeeded",
+        "desired_action": "run",
+        "definition": {
+          "name": "Mac text recipe qualification",
+          "schema": "modelanvil.recipe.v1",
+          "steps": [
+            {
+              "format": "json",
+              "id": "source",
+              "type": "source"
+            },
+            {
+              "id": "sample",
+              "input": "source",
+              "limit": 2,
+              "seed": 42,
+              "type": "sample"
+            },
+            {
+              "id": "prompt",
+              "input": "sample",
+              "template": "Write one brief sentence about this note: {{value}}",
+              "type": "template"
+            },
+            {
+              "id": "generate",
+              "input": "prompt",
+              "max_tokens": 96,
+              "output": "text",
+              "seed": 42,
+              "type": "generate"
+            },
+            {
+              "id": "validate",
+              "input": "generate",
+              "min_characters": 1,
+              "type": "validate"
+            },
+            {
+              "id": "output",
+              "input": "validate",
+              "type": "output"
+            }
+          ]
+        },
+        "bindings": {
+          "recipe": "c4cebc29-3ad2-4134-afe8-c69a00c7d3b3",
+          "sources": {
+            "source": "0aa3b8e7-0718-4b67-a723-657f94d2dd03"
+          },
+          "model": "81b9090f-a40b-47d0-ae40-561f7ae43e4f",
+          "device": "mps:0",
+          "pool": 1,
+          "budget_policy": "043e45be-d219-4950-8b34-00d74131d4d8",
+          "protected_sources": []
+        },
+        "attempt_count": 1,
+        "max_attempts": 3,
+        "preview": false,
+        "completed_steps": [
+          "source",
+          "sample",
+          "prompt",
+          "generate",
+          "validate",
+          "output"
+        ],
+        "saved_rows": 6,
+        "publication": {
+          "report": {
+            "artifact_id": "e2c2ff63-e70d-4564-927d-8a5be263b92d",
+            "sha256": "f1af5cd79d380ad09bcc84724c1eeffed4bfb21a24ee9dea225f713f8f092465",
+            "byte_size": 2965
+          },
+          "row_count": 2,
+          "rejected_count": 0,
+          "preview": false,
+          "usage": {
+            "prompt_tokens": 96,
+            "completion_tokens": 59,
+            "total_tokens": 155,
+            "completed_generation_calls": 2
+          },
+          "output_artifact": {
+            "artifact_id": "009c7c1b-1120-403c-b03d-a20c67403fe1",
+            "sha256": "bdb0613f3394927ff3c7759db91a1b9bad9bf6a8c84be1ba03cc3d6906bbf633",
+            "byte_size": 2808
+          },
+          "revision_id": "ff0f7d11-f132-40f0-88ee-fcbf7f097ebc"
+        },
+        "result": {
+          "rows": [
+            {
+              "schema_version": "1.0",
+              "sample_id": "43803ead-39da-5fdd-9e2b-ba3f7d5fe990",
+              "source_group_id": "source-sha256:b133e767db954a1f3c4f3b7ee1d685aac1950f45c2f41ca6cba371bf7c10237f",
+              "blocks": [
+                {
+                  "block_id": "generated",
+                  "type": "text",
+                  "text": "The note begins at 14:30 UTC, with the note's content and the date being the same as the note's content.",
+                  "location": {
+                    "source_path": "/0"
+                  }
+                }
+              ],
+              "provenance": {
+                "source_snapshot_ref": "sha256:b133e767db954a1f3c4f3b7ee1d685aac1950f45c2f41ca6cba371bf7c10237f",
+                "source_record_key": "/0",
+                "content_sha256": "284b7f2cfb3e7984d3636a4bba48af3eca46fc9c8c71a58c46bf7f634e68a53c",
+                "transformation_revision_ref": "modelanvil.recipe.v1",
+                "parent_sample_refs": [
+                  "ae2e8c49-cfe2-5957-b636-731ccd3c6543"
+                ]
+              },
+              "metadata": {
+                "recipe_sha256": "1f61b8cd6825a2a11484e7c598ef7ec52129233ed2a78792172150b70a9c0aae",
+                "model_snapshot_sha256": "1256f69490e0d1667280e1f925e47ae8140a65ff6b7ddd45f280e7ba70d68399",
+                "runtime_sha256": "91deada52ead3942d6dd9cec6bd7938d69349c66683138d33648828b9da73d3f",
+                "steps": [
+                  "source",
+                  "prompt",
+                  "generate",
+                  "validate"
+                ],
+                "source_sample_id": "ae2e8c49-cfe2-5957-b636-731ccd3c6543",
+                "generation_calls": {
+                  "b7efc0b5bde58c4c362199dc3bcbe50008cd8e4261ddaf4f7cbc3de4906b1b0d": {
+                    "usage": {
+                      "prompt_tokens": 49,
+                      "completion_tokens": 30,
+                      "total_tokens": 79
+                    },
+                    "finish_reason": "stop"
+                  }
+                },
+                "review_required": true,
+                "source_locations": [
+                  {
+                    "source_path": "/0"
+                  }
+                ]
+              }
+            },
+            {
+              "schema_version": "1.0",
+              "sample_id": "3d509093-c218-54cb-8166-7a2c5d553579",
+              "source_group_id": "source-sha256:b133e767db954a1f3c4f3b7ee1d685aac1950f45c2f41ca6cba371bf7c10237f",
+              "blocks": [
+                {
+                  "block_id": "generated",
+                  "type": "text",
+                  "text": "The note is a collection of operational notes, which are a set of notes that are used to track and record the activities of a company.",
+                  "location": {
+                    "source_path": "/1"
+                  }
+                }
+              ],
+              "provenance": {
+                "source_snapshot_ref": "sha256:b133e767db954a1f3c4f3b7ee1d685aac1950f45c2f41ca6cba371bf7c10237f",
+                "source_record_key": "/1",
+                "content_sha256": "865c66c88103e9ea48ea59617ffbeaf194322e71cdd68538590b93d5895f8528",
+                "transformation_revision_ref": "modelanvil.recipe.v1",
+                "parent_sample_refs": [
+                  "63c450ea-6ea4-5011-8f13-f0490420e2ab"
+                ]
+              },
+              "metadata": {
+                "recipe_sha256": "1f61b8cd6825a2a11484e7c598ef7ec52129233ed2a78792172150b70a9c0aae",
+                "model_snapshot_sha256": "1256f69490e0d1667280e1f925e47ae8140a65ff6b7ddd45f280e7ba70d68399",
+                "runtime_sha256": "91deada52ead3942d6dd9cec6bd7938d69349c66683138d33648828b9da73d3f",
+                "steps": [
+                  "source",
+                  "prompt",
+                  "generate",
+                  "validate"
+                ],
+                "source_sample_id": "63c450ea-6ea4-5011-8f13-f0490420e2ab",
+                "generation_calls": {
+                  "63e74c20c0c443b6f5f5f184d44b3f40b8b40d5a04a2d7e8152f40ecae1a8d83": {
+                    "usage": {
+                      "prompt_tokens": 47,
+                      "completion_tokens": 29,
+                      "total_tokens": 76
+                    },
+                    "finish_reason": "stop"
+                  }
+                },
+                "review_required": true,
+                "source_locations": [
+                  {
+                    "source_path": "/1"
+                  }
+                ]
+              }
+            }
+          ],
+          "rejected": [],
+          "preview": false,
+          "usage": {
+            "prompt_tokens": 96,
+            "completion_tokens": 59,
+            "total_tokens": 155,
+            "completed_generation_calls": 2
+          }
+        },
+        "error": ""
+      },
+      "saved_row_reused": true,
+      "retry_generation_calls": 1,
+      "started_attempts": 2,
+      "idempotent_publication": true
+    },
+    "json": {
+      "run_id": "a9c84ca1-a592-4819-a68e-0b750b4e8dda",
+      "job_id": "1e856d38-7044-44f4-9666-648215013235",
+      "status": "succeeded",
+      "desired_action": "run",
+      "definition": {
+        "name": "Mac json recipe qualification",
+        "schema": "modelanvil.recipe.v1",
+        "steps": [
+          {
+            "format": "json",
+            "id": "source",
+            "type": "source"
+          },
+          {
+            "id": "sample",
+            "input": "source",
+            "limit": 2,
+            "seed": 42,
+            "type": "sample"
+          },
+          {
+            "id": "prompt",
+            "input": "sample",
+            "template": "Reply with exactly {\"status\":\"ready\"} and no other text.",
+            "type": "template"
+          },
+          {
+            "id": "generate",
+            "input": "prompt",
+            "max_tokens": 96,
+            "output": "json",
+            "seed": 42,
+            "type": "generate"
+          },
+          {
+            "id": "validate",
+            "input": "generate",
+            "min_characters": 1,
+            "required_keys": [
+              "status"
+            ],
+            "type": "validate"
+          },
+          {
+            "id": "output",
+            "input": "validate",
+            "type": "output"
+          }
+        ]
+      },
+      "bindings": {
+        "recipe": "c858882b-b8f6-46f7-a521-3fdd399d06f4",
+        "sources": {
+          "source": "3a9bbf9f-070b-434d-b4cf-48c710ef5580"
+        },
+        "model": "81b9090f-a40b-47d0-ae40-561f7ae43e4f",
+        "device": "mps:0",
+        "pool": 1,
+        "budget_policy": "043e45be-d219-4950-8b34-00d74131d4d8",
+        "protected_sources": []
+      },
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "preview": true,
+      "completed_steps": [
+        "source",
+        "sample",
+        "prompt",
+        "generate",
+        "validate",
+        "output"
+      ],
+      "saved_rows": 2,
+      "publication": {
+        "report": {
+          "artifact_id": "4b1f54ef-ee77-4677-acde-92df585d4cff",
+          "sha256": "85a8fc13c37692f0839301a652c2c618ca4559e75aed5bc990353aa263c4f4e4",
+          "byte_size": 617
+        },
+        "row_count": 0,
+        "rejected_count": 1,
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 44,
+          "completion_tokens": 16,
+          "total_tokens": 60,
+          "completed_generation_calls": 1
+        }
+      },
+      "result": {
+        "rows": [],
+        "rejected": [
+          {
+            "source_sample_id": "2d0bf679-954a-5f26-9906-f2c32844343c",
+            "step": "generate",
+            "reason": "invalid_json_output",
+            "output": "\"Reply with exactly {\"status\":\"ready\"} and no other text.\"",
+            "usage": {
+              "prompt_tokens": 44,
+              "completion_tokens": 16,
+              "total_tokens": 60
+            },
+            "generation_calls": {
+              "52b236022b5a7b760c304b26fa01f10d2fd89b911c103115f9dd52ea7be3b608": {
+                "usage": {
+                  "prompt_tokens": 44,
+                  "completion_tokens": 16,
+                  "total_tokens": 60
+                },
+                "finish_reason": "stop"
+              }
+            }
+          }
+        ],
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 44,
+          "completion_tokens": 16,
+          "total_tokens": 60,
+          "completed_generation_calls": 1
+        }
+      },
+      "error": ""
+    },
+    "code": {
+      "run_id": "935bf0c5-4d40-429d-b5fa-d055524f912f",
+      "job_id": "89cabfa8-97bd-404b-a7b4-a98d26a60fd4",
+      "status": "succeeded",
+      "desired_action": "run",
+      "definition": {
+        "name": "Mac code recipe qualification",
+        "schema": "modelanvil.recipe.v1",
+        "steps": [
+          {
+            "format": "json",
+            "id": "source",
+            "type": "source"
+          },
+          {
+            "id": "sample",
+            "input": "source",
+            "limit": 2,
+            "seed": 42,
+            "type": "sample"
+          },
+          {
+            "id": "prompt",
+            "input": "sample",
+            "template": "Return only a Python assignment, without markdown or explanation: answer = 42",
+            "type": "template"
+          },
+          {
+            "id": "generate",
+            "input": "prompt",
+            "max_tokens": 96,
+            "output": "code",
+            "seed": 42,
+            "type": "generate"
+          },
+          {
+            "id": "validate",
+            "input": "generate",
+            "min_characters": 1,
+            "type": "validate"
+          },
+          {
+            "id": "output",
+            "input": "validate",
+            "type": "output"
+          }
+        ]
+      },
+      "bindings": {
+        "recipe": "12e8d3a3-b1e2-4dd2-a92b-ee97f5ecddcc",
+        "sources": {
+          "source": "15c3cc9b-3e47-4007-8b86-ebc1b0f80d24"
+        },
+        "model": "81b9090f-a40b-47d0-ae40-561f7ae43e4f",
+        "device": "mps:0",
+        "pool": 1,
+        "budget_policy": "043e45be-d219-4950-8b34-00d74131d4d8",
+        "protected_sources": []
+      },
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "preview": true,
+      "completed_steps": [
+        "source",
+        "sample",
+        "prompt",
+        "generate",
+        "validate",
+        "output"
+      ],
+      "saved_rows": 3,
+      "publication": {
+        "report": {
+          "artifact_id": "c79ed918-1992-4de6-829c-7accc53c83dd",
+          "sha256": "ad35a17f70b988665e5c3ee581792f134f6622e506fce9dc23384f91af4f719d",
+          "byte_size": 1448
+        },
+        "row_count": 1,
+        "rejected_count": 0,
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 47,
+          "completion_tokens": 6,
+          "total_tokens": 53,
+          "completed_generation_calls": 1
+        }
+      },
+      "result": {
+        "rows": [
+          {
+            "schema_version": "1.0",
+            "sample_id": "d08477d4-2221-5484-9f01-936d1ffd6726",
+            "source_group_id": "source-sha256:ed88e8ca8622d6d13e5bdb7582ae84e4175b9e9d5c07de2cdeeb06d314269155",
+            "blocks": [
+              {
+                "block_id": "generated",
+                "type": "code",
+                "text": "Answer = 42",
+                "location": {
+                  "source_path": "/0"
+                }
+              }
+            ],
+            "provenance": {
+              "source_snapshot_ref": "sha256:ed88e8ca8622d6d13e5bdb7582ae84e4175b9e9d5c07de2cdeeb06d314269155",
+              "source_record_key": "/0",
+              "content_sha256": "7afd7a8d3b80367226c79295b05cf054b326cebc3ff096ad70cfd063ccb15c9e",
+              "transformation_revision_ref": "modelanvil.recipe.v1",
+              "parent_sample_refs": [
+                "2d0bf679-954a-5f26-9906-f2c32844343c"
+              ]
+            },
+            "metadata": {
+              "recipe_sha256": "b914389ed12a5e4cbbe486895ac5cbb71884f716ed3f723cf9cef15eaa7c53ce",
+              "model_snapshot_sha256": "1256f69490e0d1667280e1f925e47ae8140a65ff6b7ddd45f280e7ba70d68399",
+              "runtime_sha256": "91deada52ead3942d6dd9cec6bd7938d69349c66683138d33648828b9da73d3f",
+              "steps": [
+                "source",
+                "prompt",
+                "generate",
+                "validate"
+              ],
+              "source_sample_id": "2d0bf679-954a-5f26-9906-f2c32844343c",
+              "generation_calls": {
+                "52b236022b5a7b760c304b26fa01f10d2fd89b911c103115f9dd52ea7be3b608": {
+                  "usage": {
+                    "prompt_tokens": 47,
+                    "completion_tokens": 6,
+                    "total_tokens": 53
+                  },
+                  "finish_reason": "stop"
+                }
+              },
+              "review_required": true,
+              "source_locations": [
+                {
+                  "source_path": "/0"
+                }
+              ]
+            }
+          }
+        ],
+        "rejected": [],
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 47,
+          "completion_tokens": 6,
+          "total_tokens": 53,
+          "completed_generation_calls": 1
+        }
+      },
+      "error": ""
+    }
+  }
+}

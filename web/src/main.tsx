@@ -1,51 +1,22 @@
-import { ReviewAccess } from './components/Access';
-import { Button, Field, NavigationItem, Notice, WorkspaceHeader, WorkspaceTabs } from './components/ui';
+import { Button, Dialog, Field, Notice, PageHeader, WorkspaceHeader } from './components/ui';
+import { PrivacySettings } from './components/PrivacySettings';
+import { LocalMeasurements } from './components/LocalMeasurements';
 import { Welcome } from './components/Welcome';
+import { ReviewAccess } from './components/Access';
 import { parseResourceRoute } from './api/resource-routes';
 import { DraftScope } from './components/Draft';
 import { ScreenBoundary } from './components/ScreenBoundary';
+import { NavigationRail } from './components/NavigationRail';
+import { SettingsMenu } from './components/SettingsMenu';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import {
-  Activity,
-  Bot,
-  Braces,
-  Building2,
-  FolderGit2,
-  ChevronRight,
-  ArrowUpRight,
-  RefreshCw,
-  KeyRound,
-  Settings2,
-  X,
-  CircleDollarSign,
-  Compass,
-  Database,
-  FileSearch,
-  Flame,
-  History,
-  ListTree,
-  MessageSquare,
-  ScanText,
-  Layers3,
-  Library,
-  Rocket,
-  Workflow,
-  Tags,
-  CheckCheck,
-  Server,
-  Scale,
-} from 'lucide-react';
-import './design-system/tokens.css';
-import './style.css';
-import './premium.css';
-import './workspace-ui.css';
-import './design-system/components.css';
+import { Activity, BookOpen, CheckCheck, ChevronRight, CircleDollarSign, Compass, Database, FileCode, Flame, Layers3, Library, Menu as MenuIcon, MessageSquare, Package, Rocket, Scale, ScanText, Server, Tags, Workflow, X, Mic } from 'lucide-react';
+import './design-system/index.css';
+import './app.css';
 import { WorkspaceSearch } from './components/WorkspaceSearch';
 import { ActiveJobs } from './components/ActiveJobs';
 import { startActivation } from './api/activation';
 import { BuildIdentity } from './components/BuildIdentity';
-import { ThemeControl } from './components/ThemeControl';
 import { apiPage, apiRequest, errorMessage, setActiveProjectId } from './api/client';
 import { CreateProjectModal } from './components/PrerequisiteModals';
 import { allResources } from './api/resources';
@@ -59,8 +30,8 @@ const WorkflowsPage = React.lazy(() => import('./pages/WorkflowsPage').then(modu
 const BudgetsPage = React.lazy(() => import('./pages/BudgetsPage').then(module => ({ default: module.BudgetsPage })));
 const ModelsPage = React.lazy(() => import('./pages/ModelsPage').then(module => ({ default: module.ModelsPage })));
 const ChatPage = React.lazy(() => import('./pages/ChatPage').then(module => ({ default: module.ChatPage })));
-const AudioPage = React.lazy(() => import('./pages/AudioPage').then(module => ({ default: module.AudioPage })));
 const SpecialistsPage = React.lazy(() => import('./pages/SpecialistsPage').then(module => ({ default: module.SpecialistsPage })));
+const AudioPage = React.lazy(() => import('./pages/AudioPage').then(module => ({ default: module.AudioPage })));
 const RecipesPage = React.lazy(() => import('./pages/RecipesPage').then(module => ({ default: module.RecipesPage })));
 const TrainingPage = React.lazy(() => import('./pages/TrainingPage').then(module => ({ default: module.TrainingPage })));
 const ClusterExplorerPage = React.lazy(() => import('./pages/ClusterExplorerPage').then(module => ({ default: module.ClusterExplorerPage })));
@@ -104,99 +75,72 @@ const pages: { name: Page; icon: React.ElementType; endpoint: string; slug?: str
   { name: 'Dataset Bank', icon: Library, endpoint: '/api/v1/dataset-bank/sources/' },
   { name: 'Datasets', icon: Database, endpoint: '/api/v1/datasets/' },
   { name: 'Annotation', icon: Tags, endpoint: '/api/v1/labeling-campaigns/' },
-  { name: 'Models', icon: Bot, endpoint: '/api/v1/models/' },
+  { name: 'Models', icon: Package, endpoint: '/api/v1/models/' },
   { name: 'Chat', icon: MessageSquare, endpoint: '/api/v1/inference/models/' },
-  { name: 'Audio', icon: ScanText, endpoint: '/api/v1/audio/' },
   { name: 'Specialists', icon: ScanText, endpoint: '/api/v1/specialists/' },
-  { name: 'Recipes', icon: ListTree, endpoint: '/api/v1/recipes/' },
+  { name: 'Audio', icon: Mic, endpoint: '/api/v1/audio/' },
+  { name: 'Recipes', icon: BookOpen, endpoint: '/api/v1/recipes/' },
   { name: 'Training', icon: Flame, endpoint: '/api/v1/training-runs/' },
   { name: 'Alignment', icon: Scale, endpoint: '/api/v1/alignment-runs/' },
   { name: 'Evaluation', icon: CheckCheck, endpoint: '/api/v1/evaluation-runs/' },
   { name: 'Workflows', icon: Workflow, endpoint: '/api/v1/jobs/' },
   { name: 'RAG', icon: Compass, endpoint: '/api/v1/knowledge-bases/' },
-  { name: 'Context Lab', icon: Braces, endpoint: '/api/v1/context-recipes/' },
+  { name: 'Context Lab', icon: FileCode, endpoint: '/api/v1/context-recipes/' },
   { name: 'Releases', icon: Rocket, endpoint: '/api/v1/serving-endpoints/' },
   { name: 'Infrastructure', icon: Server, endpoint: '/api/v1/worker-pools/' },
   { name: 'Budgets', icon: CircleDollarSign, endpoint: '/api/v1/budget-policies/' },
   { name: 'Audit', icon: Layers3, endpoint: '/api/v1/audit/' },
   // Reached only through a run deep link; it renders in no navigation group.
-  { name: 'Resource Detail', icon: FileSearch, endpoint: '/api/v1/model-versions/', slug: 'resources' },
-  { name: 'Run Detail', icon: History, endpoint: '/api/v1/jobs/', slug: 'runs' },
+  { name: 'Resource Detail', icon: Database, endpoint: '/api/v1/model-versions/', slug: 'resources' },
+  { name: 'Run Detail', icon: Workflow, endpoint: '/api/v1/jobs/', slug: 'runs' },
 ];
 
 function slugFor(name: Page): string {
   return pages.find((page) => page.name === name)?.slug ?? name.toLowerCase().replaceAll(' ', '-');
 }
 
-const primaryNavigation: { label: string; names: Page[] }[] = [
-  { label: 'Workspace', names: ['Overview', 'Training', 'Chat', 'Datasets'] },
-];
-const advancedNavigation: { label: string; names: Page[] }[] = [
-  { label: 'Data', names: ['Annotation'] },
-  { label: 'Develop', names: ['Models', 'Audio', 'Specialists'] },
-  { label: 'Context & release', names: ['RAG', 'Releases'] },
+const navigationGroups = [
+  { label: 'Workspace', names: ['Overview', 'Datasets', 'Models', 'Training', 'Evaluation', 'Chat'] },
+  { label: 'Data tools', names: ['Dataset Bank', 'Recipes', 'Annotation'] },
+  { label: 'Develop', names: ['Specialists', 'Audio', 'Alignment'] },
+  { label: 'Context & release', names: ['RAG', 'Context Lab', 'Releases'] },
   { label: 'Operations', names: ['Workflows', 'Infrastructure', 'Budgets', 'Audit'] },
 ];
-const navigationGroups = [...primaryNavigation, ...advancedNavigation];
 
 const descriptions: Record<Page, string> = {
-  Audio: 'Generate bounded English speech and inspect verified WAV output.',
-  Overview: 'Your data, experiments, and next decisions. All in one workspace.',
-  'Dataset Bank': 'Find source data and inspect its license and readiness.',
-  Datasets: 'Acquire, prepare, and publish data, including typed recipes.',
-  Annotation: 'Review samples, refine labels, and build approved training snapshots.',
-  Models: 'Keep model versions and their evaluation evidence together.',
-  Chat: 'Run local models, save conversations and compare actual responses.',
-  Specialists: 'Read image text and evaluate structured decisions with pinned local models.',
-  Recipes: 'Compose typed transformations, preview actual generation and publish recoverable dataset runs.',
-  Training: 'Fine-tune, align, and evaluate a model in one place.',
-  Alignment: 'Configure preference learning and inspect recorded outcomes.',
-  Evaluation: 'Compare pinned versions, inspect failures, and review the evidence.',
-  Workflows: 'Follow durable work from the queue to its recorded outcome.',
-  RAG: 'Retrieve source evidence, then compile it into an exact prompt.',
-  'Context Lab': 'Compile a prompt from saved blocks and inspect how the token budget is allocated.',
-  Releases: 'Inspect release versions, serving endpoints, and software provenance.',
-  Infrastructure: 'Inspect worker pools, capabilities, and recorded availability.',
-  Budgets: 'Understand measured usage, reservations, and spending policies.',
-  Audit: 'Trace changes and inspect the events behind your workspace.',
-  'Resource Detail': 'Inspect an exact authorized revision, its evidence and compatible next actions.',
-  'Run Detail':
-    'Follow one run end to end: observed state, desired state, attempts, evidence and recovery blockers.',
+  Overview: 'Your next step, active work and latest results.',
+  'Dataset Bank': 'Find source data and check its license and readiness.',
+  Datasets: 'Prepare and publish dataset versions.',
+  Annotation: 'Review samples and build approved label snapshots.',
+  Models: 'Model versions and what they can do.',
+  Chat: 'Run local models and compare responses.',
+  Specialists: 'Read documents and make typed decisions with local models.',
+  Audio: 'Train speech output heads and generate audio locally.',
+  Recipes: 'Compose data recipes, preview them and publish runs.',
+  Training: 'Fine-tune a model on your examples.',
+  Alignment: 'Configure preference learning and inspect outcomes.',
+  Evaluation: 'Compare model versions on held-out examples.',
+  Workflows: 'Follow jobs from queue to outcome.',
+  RAG: 'Explore knowledge sources and retrieved evidence.',
+  'Context Lab': 'Compile exact inputs and see the token budget.',
+  Releases: 'Release versions, serving endpoints and provenance.',
+  Infrastructure: 'Worker pools, capabilities and availability.',
+  Budgets: 'Usage, reservations and spending policies.',
+  Audit: 'Trace the events behind your workspace.',
+  'Resource Detail': 'One exact version, its evidence and next actions.',
+  'Run Detail': 'One run end to end: state, attempts, evidence and recovery.',
 };
 
-function hashPath(hash = window.location.hash): string {
-  return hash.slice(1).split('?')[0];
+/** The rail item that represents a route, including the URL-only detail routes. */
+function navigationTarget(active: Page, runRoute: ReturnType<typeof parseRunRoute>, resourceRoute: ReturnType<typeof parseResourceRoute>): Page {
+  if (active === 'Resource Detail') return resourceRoute?.kind === 'model-version' ? 'Models' : 'Datasets';
+  if (active === 'Run Detail') return runRoute?.kind === 'training' ? 'Training' : runRoute?.kind === 'evaluation' ? 'Evaluation' : 'Workflows';
+  return active;
 }
 
 function currentPage(): Page {
-  const slug = hashPath().split('/')[0];
-  if (slug === 'dataset-bank' || slug === 'datasets' || slug === 'recipes') return 'Datasets';
-  if (slug === 'training' || slug === 'alignment' || slug === 'evaluation') return 'Training';
-  if (slug === 'rag' || slug === 'context-lab') return 'RAG';
+  const slug = window.location.hash.slice(1).split('?')[0].split('/')[0];
   return pages.find((p) => (p.slug ?? p.name.toLowerCase().replaceAll(' ', '-')) === slug)?.name || 'Overview';
-}
-
-function developMode(hash: string): 'train' | 'align' | 'evaluate' {
-  const path = hashPath(hash);
-  if (path === 'alignment' || path.startsWith('training/align')) return 'align';
-  if (path === 'evaluation' || path.startsWith('training/evaluate')) return 'evaluate';
-  return 'train';
-}
-
-function contextMode(hash: string): 'retrieve' | 'compile' {
-  const path = hashPath(hash);
-  if (path === 'context-lab' || path.endsWith('/compile')) return 'compile';
-  return 'retrieve';
-}
-
-function headingFor(name: Page): string {
-  if (name === 'Overview') return 'Project overview';
-  if (name === 'RAG') return 'Context';
-  return name;
-}
-
-function navLabel(name: Page): string {
-  return name === 'RAG' ? 'Context' : name;
 }
 
 interface Organization {
@@ -211,9 +155,12 @@ interface OrganizationConnection {
 
 export function App() {
   const [active, setActive] = React.useState<Page>(currentPage);
-  const [routeHash, setRouteHash] = React.useState(window.location.hash);
   const [resourceRoute, setResourceRoute] = React.useState(() => parseResourceRoute(window.location.hash));
   const [runRoute, setRunRoute] = React.useState(() => parseRunRoute(window.location.hash));
+  const selectedNavigation = navigationTarget(active, runRoute, resourceRoute);
+  const [advancedNavigation, setAdvancedNavigation] = React.useState(() => !navigationGroups[0].names.includes(selectedNavigation));
+  // The advanced groups open for their own pages and close again when the user returns to the workspace group.
+  React.useEffect(() => { setAdvancedNavigation(!navigationGroups[0].names.includes(selectedNavigation)); }, [selectedNavigation]);
   const [token, setTokenState] = React.useState<string>(
     () => localStorage.getItem('modelanvil_token') ?? ''
   );
@@ -239,17 +186,7 @@ export function App() {
   );
   const [projectLoading, setProjectLoading] = React.useState(true);
   const [showCreateProjectModal, setShowCreateProjectModal] = React.useState(false);
-  const [accessError, setAccessError] = React.useState('');
-  const [access, setAccess] = React.useState<{ token: string; role: string } | null>(null);
-  const reviewOnly = access?.token === token && ['reviewer', 'viewer'].includes(access.role);
-  React.useEffect(() => { const c = new AbortController();
-    setAccessError('');
-    if (token) apiRequest<{ role: string }>('/api/v1/accounts/access/', token, { signal: c.signal })
-      .then(result => { if (!c.signal.aborted) setAccess({ token, role: result.role }); })
-      .catch(() => { if (!c.signal.aborted) { setAccess(null); setAccessError('Could not check workspace permissions.'); } });
-    return () => c.abort();
-  }, [token, refreshKey]);
-
+  const [workspaceSettingsOpen, setWorkspaceSettingsOpen] = React.useState(false);
 
   const currentOrganization =
     organizationConnection?.token === token ? organizationConnection.organization : null;
@@ -259,11 +196,6 @@ export function App() {
   const activeProject = projects.find((p) => p.id === activeProjectId) || null;
 
   const [navigationOpen, setNavigationOpen] = React.useState(false);
-  const [advancedOpen, setAdvancedOpen] = React.useState(() => advancedNavigation.some(group => group.names.includes(currentPage())));
-  React.useEffect(() => {
-    if (advancedNavigation.some(group => group.names.includes(active))) setAdvancedOpen(true);
-  }, [active]);
-  const [headerOptionsOpen, setHeaderOptionsOpen] = React.useState(false);
   const menuButton = React.useRef<HTMLButtonElement>(null);
   const connectionDialog = React.useRef<HTMLDialogElement>(null);
   const connectionRequest = React.useRef<AbortController | null>(null);
@@ -352,7 +284,6 @@ export function App() {
 
   React.useEffect(() => {
     const onHashChange = () => {
-      setRouteHash(window.location.hash);
       setRunRoute(parseRunRoute(window.location.hash));
       setResourceRoute(parseResourceRoute(window.location.hash));
       setActive(currentPage());
@@ -382,12 +313,11 @@ export function App() {
   }, [refreshKey]);
 
   function load(page: Page) {
+    setActive(page);
     setNavigationOpen(false);
     if (navigationOpen) document.getElementById('workspace-content')?.focus();
     window.scrollTo(0, 0);
     window.location.hash = slugFor(page);
-    setRouteHash(window.location.hash);
-    setActive(currentPage());
     if (page === 'Datasets') setDatasetRefreshKey((value) => value + 1);
   }
 
@@ -474,13 +404,22 @@ export function App() {
     refresh();
   }
 
-  function welcomeConnected(value: string, role?: string) {
+  const [access, setAccess] = React.useState<{ token: string; role: string } | null>(null);
+  React.useEffect(() => {
+    const c = new AbortController();
+    if (token) apiRequest<{ role: string }>('/api/v1/accounts/access/', token, { signal: c.signal })
+      .then(result => { if (!c.signal.aborted) setAccess({ token, role: result.role }); })
+      .catch(() => { if (!c.signal.aborted) setAccess(null); });
+    return () => c.abort();
+  }, [token, refreshKey]);
+
+  function welcomeConnected(value: string) {
     setActiveProjectId(null);
     setActiveProjectIdState(null);
     localStorage.removeItem('modelanvil_active_project');
     localStorage.setItem('modelanvil_token', value);
     setTokenState(value); setDraftToken(value);
-    load(role === 'reviewer' || role === 'viewer' ? 'Overview' : 'Training'); refresh();
+    load('Training'); refresh();
   }
 
   async function signOut() {
@@ -491,10 +430,6 @@ export function App() {
   }
 
   if (!token || (!organizationLoading && !currentOrganization)) return <Welcome onConnected={welcomeConnected} />;
-
-  const selectedNavigation = active === 'Resource Detail' ? resourceRoute?.kind === 'model-version' ? 'Models' : 'Datasets' : active === 'Run Detail'
-    ? runRoute?.kind === 'training' || runRoute?.kind === 'evaluation' ? 'Training' : 'Workflows'
-    : active;
 
   return (
     <div className={`layout ${navigationOpen ? 'navigation-open' : ''}`}>
@@ -508,112 +443,29 @@ export function App() {
       >
         Skip to content
       </a>
-      <aside className="navigation-rail" id="workspace-navigation" aria-label="Workspace navigation">
-        <a className="brand" href="#overview" aria-label="ModelAnvil Model Workspace overview">
-          <img className="brand-logo" src={`${import.meta.env.BASE_URL}brand/modelanvil-logo-reversed.svg`} alt="" width="1088" height="240" />
-          <img className="brand-icon" src={`${import.meta.env.BASE_URL}brand/modelanvil-icon.svg`} alt="" width="256" height="256" />
-          <span className="brand-subtitle">MODEL WORKSPACE</span>
-        </a>
-        <div
-          className="workspace"
-          title="Workspace is scoped to the connected API key and active project"
-        >
-          <span className="workspace-avatar">{tenantName.charAt(0).toUpperCase()}</span>
-          <div>
-            <strong>{tenantName}</strong>
-            <small>{activeProject ? activeProject.name : 'Tenant workspace'}</small>
-          </div>
-        </div>
-        <nav aria-label="Main navigation">
-          {(reviewOnly ? [{ label: 'Workspace', names: ['Overview', 'Annotation', 'Evaluation'] as Page[] }] : primaryNavigation).map((group) => (
-            <div className="nav-group" key={group.label}>
-              <p className="nav-label">{group.label}</p>
-              {pages
-                .filter((page) => group.names.includes(page.name))
-                .sort((a, b) => group.names.indexOf(a.name) - group.names.indexOf(b.name))
-                .map(({ name, icon: Icon }) => (
-                  <NavigationItem
-                    key={name}
-                    title={headingFor(name)}
-                    selected={selectedNavigation === name}
-                    icon={<Icon size={18} aria-hidden="true" />}
-                    aria-label={navLabel(name)}
-                    onClick={() => load(name)}
-                  >
-                    {navLabel(name)}
-                  </NavigationItem>
-                ))}
-            </div>
-          ))}
-          {!reviewOnly && <details className="nav-advanced" open={advancedOpen} onToggle={event => setAdvancedOpen(event.currentTarget.open)}>
-            <summary>Advanced</summary>
-            {advancedNavigation.map((group) => (
-              <div className="nav-group" key={group.label}>
-                <p className="nav-label">{group.label}</p>
-                {pages.filter((page) => group.names.includes(page.name)).map(({ name, icon: Icon }) => (
-                  <NavigationItem key={name} title={name} selected={selectedNavigation === name}
-                    icon={<Icon size={18} aria-hidden="true" />} aria-label={name} onClick={() => load(name)}>
-                    {name}
-                  </NavigationItem>
-                ))}
-              </div>
-            ))}
-          </details>}
-        </nav>
-        <div className="sidebar-bottom">
-          <span
-            className={`status-dot ${
-              apiStatus === 'API unavailable'
-                ? 'offline'
-                : apiStatus === 'Checking API'
-                ? 'checking'
-                : ''
-            }`}
-          />
-          <span>
-            {apiStatus}
-            <small>Control plane</small>
-          </span>
-        </div>
-      </aside>
+      <NavigationRail
+        groups={navigationGroups}
+        pages={pages.filter((page) => !page.slug)}
+        selected={selectedNavigation}
+        advancedOpen={advancedNavigation}
+        onAdvancedToggle={setAdvancedNavigation}
+        onNavigate={(name) => load(name as Page)}
+      />
       <main>
-        <WorkspaceHeader className={headerOptionsOpen ? 'options-open' : undefined}>
-          <div className="compact-title">
-            <a className="compact-product" href="#overview">ModelAnvil</a>
-            <span className="compact-page">{active}</span>
-            <Button type="button" className="icon-button" aria-label="Workspace options" aria-expanded={headerOptionsOpen} aria-controls="workspace-context workspace-actions" onClick={() => setHeaderOptionsOpen(value => !value)}>
-              <Settings2 size={17} aria-hidden="true" />
-            </Button>
-            <Button type="button" ref={menuButton} variant="quiet" aria-label="Toggle navigation" aria-expanded={navigationOpen} aria-controls="workspace-navigation" onClick={() => setNavigationOpen(value => !value)}>Menu</Button>
-          </div>
-          <div className="breadcrumbs" id="workspace-context">
+        <WorkspaceHeader>
+          <Button type="button" ref={menuButton} variant="quiet" icon className="menu-button" aria-label="Menu — toggle navigation" aria-expanded={navigationOpen} aria-controls="workspace-navigation" onClick={() => setNavigationOpen((value) => !value)}>
+            <MenuIcon size={20} aria-hidden="true" />
+          </Button>
+          <a className="brand-compact" href="#overview" aria-label="ModelAnvil overview">
+            <img src={`${import.meta.env.BASE_URL}brand/modelanvil-icon.svg`} alt="" width="28" height="28" />
+          </a>
+          <div className="scope" id="workspace-context">
+            <span className="scope-org" title={tenantName}>{tenantName}</span>
+            <ChevronRight size={14} aria-hidden="true" />
             <label className="organization-select">
-              <Building2 size={16} aria-hidden="true" />
-              <select
-                aria-label="Organization"
-                value={currentOrganization?.tenant_id || ''}
-                disabled={organizationLoading || connectionBusy}
-                onChange={(e) => selectOrganization(e.target.value)}
-              >
-                {!currentOrganization && (
-                  <option value="" disabled>
-                    {tenantName}
-                  </option>
-                )}
-                {organizationConnections.map(({ organization }) => (
-                  <option key={organization.tenant_id} value={organization.tenant_id}>
-                    {organization.name}
-                  </option>
-                ))}
-                <option value="connect-organization">Connect organization…</option>
-              </select>
-            </label>
-            <ChevronRight className="breadcrumb-divider" size={14} aria-hidden="true" />
-            <label className="organization-select">
-              <FolderGit2 size={16} aria-hidden="true" />
               <select
                 aria-label="Project"
-                value={activeProject?.id || ''}
+                value={activeProjectId || ''}
                 disabled={organizationLoading || connectionBusy || projectLoading}
                 onChange={(e) => selectProject(e.target.value)}
               >
@@ -627,80 +479,74 @@ export function App() {
                     {p.name}
                   </option>
                 ))}
-                {!reviewOnly && <option value="create-project">+ New project…</option>}
+                <option value="create-project">+ New project…</option>
               </select>
             </label>
-            <ChevronRight className="breadcrumb-divider" size={14} aria-hidden="true" />
-            <strong className="breadcrumb-page">{active}</strong>
           </div>
           <div className="header-actions" id="workspace-actions">
-            <a className="mobile-brand" href="#overview" aria-label="ModelAnvil overview">
-              <img src={`${import.meta.env.BASE_URL}brand/modelanvil-icon.svg`} alt="" width="32" height="32" />
-            </a>
-            <WorkspaceSearch pages={pages.filter(p => p.name !== 'Run Detail').map(p => p.name)} onNavigate={name => load(name as Page)} />
-            <ThemeControl />
+            <WorkspaceSearch pages={navigationGroups.flatMap((group) => group.names)} onNavigate={(name) => load(name as Page)} />
             {!projectLoading && !organizationLoading && token && <ActiveJobs key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />}
-            <Button
-              className="icon-button"
-              title="Refresh workspace"
-              aria-label="Refresh workspace"
-              onClick={refresh}
-            >
-              <RefreshCw size={16} />
-            </Button>
-            <Button
-              className="connection-button"
-              aria-label={token === 'session' ? 'Sign out' : 'Connection'}
-              disabled={connectionBusy}
-              onClick={() => token === 'session' ? void signOut() : openConnection()}
-            >
-              <KeyRound size={15} aria-hidden="true" />
-              <span>{token === 'session' ? 'Sign out' : 'Connection'}</span>
-            </Button>
+            <SettingsMenu
+              tenantName={tenantName}
+              organizations={organizationConnections.map((connection) => connection.organization)}
+              currentOrganization={currentOrganization}
+              organizationDisabled={organizationLoading || connectionBusy}
+              onSelectOrganization={selectOrganization}
+              onRefresh={refresh}
+              isSession={token === 'session'}
+              connectionBusy={connectionBusy}
+              onConnection={() => openConnection()}
+              onSignOut={() => void signOut()}
+              apiStatus={apiStatus}
+              onWorkspaceSettings={() => setWorkspaceSettingsOpen(true)}
+              about={<BuildIdentity token={token} refreshKey={refreshKey} />}
+            />
           </div>
         </WorkspaceHeader>
         <dialog
           ref={connectionDialog}
-          className="connection-dialog"
+          data-ui="dialog"
           aria-labelledby="connection-title"
           onCancel={cancelConnectionRequest}
           onClose={cancelConnectionRequest}
         >
-          <div className="dialog-title">
-            <h2 id="connection-title">Connect organization</h2>
-            <Button
-              className="icon-button"
-              aria-label="Close connection settings"
-              onClick={() => connectionDialog.current?.close()}
-            >
-              <X size={18} />
+          <header>
+            <div>
+              <h2 id="connection-title">Connect organization</h2>
+              <p>Enter an organization’s API key to verify access. Connected organizations stay available in this browser session.</p>
+            </div>
+            <Button type="button" variant="quiet" icon aria-label="Close connection settings" onClick={() => connectionDialog.current?.close()}>
+              <X size={18} aria-hidden="true" />
             </Button>
+          </header>
+          <div data-ui="dialog-body">
+            <form data-ui="form" onSubmit={connect} aria-busy={connectionBusy}>
+              {connectionError && (
+                <Notice as="p" tone="error" className="notice error" role="alert">
+                  {connectionError}
+                </Notice>
+              )}
+              <div data-ui="control"><label data-ui="control-label" htmlFor="api-key">API key</label>
+              <Field
+                id="api-key"
+                required
+                disabled={connectionBusy}
+                type="password"
+                placeholder="Bearer API key"
+                value={draftToken}
+                onChange={(e) => setDraftToken(e.target.value)}
+              /></div>
+              <div data-ui="actions"><Button variant="primary" type="submit" disabled={connectionBusy}>
+                {connectionBusy ? 'Verifying access…' : 'Connect'}
+              </Button></div>
+            </form>
           </div>
-          <p className="muted">
-            Enter an organization’s API key to verify access and connect its workspace. Connected
-            organizations appear in the dropdown for this browser session.
-          </p>
-          <form className="api-key" onSubmit={connect} aria-busy={connectionBusy}>
-            {connectionError && (
-              <Notice as="p" tone="error" className="notice error" role="alert">
-                {connectionError}
-              </Notice>
-            )}
-            <label htmlFor="api-key">API key</label>
-            <Field
-              id="api-key"
-              required
-              disabled={connectionBusy}
-              type="password"
-              placeholder="Bearer API key"
-              value={draftToken}
-              onChange={(e) => setDraftToken(e.target.value)}
-            />
-            <Button className="primary" type="submit" disabled={connectionBusy}>
-              {connectionBusy ? 'Verifying access…' : 'Connect'}
-            </Button>
-          </form>
         </dialog>
+
+        <Dialog title="Workspace settings" description="Privacy policy and local measurements for this project." size="lg" open={workspaceSettingsOpen} onClose={() => setWorkspaceSettingsOpen(false)}>
+          <PrivacySettings token={token} />
+          <LocalMeasurements token={token} />
+        </Dialog>
 
         <CreateProjectModal
           token={token}
@@ -719,25 +565,15 @@ export function App() {
               <Button onClick={() => openConnection()}>Review connection</Button>
             </Notice>
           )}
-          {!['Run Detail', 'Resource Detail'].includes(active) && <div className="page-heading">
-            <div>
-              <span className="eyebrow">
-                {navigationGroups.find((group) => group.names.includes(active))?.label ?? 'Run'}
-              </span>
-              <h1>{headingFor(active)}</h1>
-              <p>{descriptions[active]}</p>
-            </div>
-            {!reviewOnly && active === 'Overview' && (
-              <Button onClick={() => load('Training')}>
-                Start fine-tuning
-                <ArrowUpRight size={16} aria-hidden="true" />
-              </Button>
-            )}
-          </div>}
+          <PageHeader
+            title={active === 'Overview' ? 'Project overview' : active === 'RAG' ? 'Retrieval workbench' : active}
+            description={descriptions[active]}
+            actions={<div id="page-actions" data-ui="actions" />}
+          />
 
           <DraftScope.Provider value={currentOrganization ? { organization: currentOrganization.tenant_id, project: activeProjectId } : null}>
-          <ReviewAccess.Provider value={access?.token === token ? access.role : 'viewer'}><ScreenBoundary key={`${token}-${activeProjectId}-${active}`}>
-          {accessError ? <Notice role="alert">{accessError}<Button onClick={() => refresh()}>Retry permissions</Button></Notice> : !access || access.token !== token ? <p role="status">Checking workspace access…</p> : reviewOnly && !['Overview', 'Annotation', 'Evaluation', 'Run Detail', 'Resource Detail'].includes(active) ? <Notice><p>This workflow requires an engineer or owner. Your access is for evidence and reviews.</p><Button onClick={() => load('Annotation')}>Review labels</Button><Button onClick={() => load('Evaluation')}>Review evaluations</Button></Notice> : projectLoading || organizationLoading ? (<p role="status">Loading project scope…</p>) : active === 'Resource Detail' ? (resourceRoute ? <ResourceDetailPage key={`${token}-${activeProjectId}-${resourceRoute.kind}-${resourceRoute.id}`} token={token} kind={resourceRoute.kind} id={resourceRoute.id} refreshKey={refreshKey} /> : <p role="alert">This resource address is invalid. Open an exact revision from Models or Datasets.</p>) : active === 'Run Detail' ? (
+          <ReviewAccess.Provider value={access?.token === token ? access.role : 'engineer'}><ScreenBoundary key={`${token}-${activeProjectId}-${active}`}>
+          {projectLoading || organizationLoading ? (<p role="status">Loading project scope…</p>) : active === 'Resource Detail' ? (resourceRoute ? <ResourceDetailPage key={`${token}-${activeProjectId}-${resourceRoute.kind}-${resourceRoute.id}`} token={token} kind={resourceRoute.kind} id={resourceRoute.id} refreshKey={refreshKey} /> : <p role="alert">This resource address is invalid. Open an exact revision from Models or Datasets.</p>) : active === 'Run Detail' ? (
             runRoute ? (
               <RunDetailPage
                 key={`${token}-${activeProjectId}-${runRoute.kind}-${runRoute.id}`}
@@ -809,32 +645,28 @@ export function App() {
             <ChatPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
           ) : active === 'Recipes' ? (
             <RecipesPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
-          ) : active === 'Audio' ? (
-            <AudioPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
           ) : active === 'Specialists' ? (
             <SpecialistsPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
+          ) : active === 'Audio' ? (
+            <AudioPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
           ) : active === 'Training' ? (
-            <>
-              <WorkspaceTabs label="Model development" value={developMode(routeHash)} onChange={(mode) => {
-                window.location.hash = mode === 'align' ? 'training/align' : mode === 'evaluate' ? 'training/evaluate' : 'training';
-                setRouteHash(window.location.hash);
-              }} tabs={[{ value: 'train', label: 'Fine-tune' }, { value: 'align', label: 'Align' }, { value: 'evaluate', label: 'Evaluate' }]}>
-              {developMode(routeHash) === 'align' ? <AlignmentPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
-                : developMode(routeHash) === 'evaluate' ? <EvaluationPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
-                : <TrainingPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />}
-              </WorkspaceTabs>
-            </>
+            <TrainingPage
+              key={`${token}-${activeProjectId}`}
+              token={token}
+              refreshKey={refreshKey}
+            />
           ) : active === 'RAG' ? (
-            <>
-              <WorkspaceTabs label="Context workspace" value={contextMode(routeHash)} onChange={(mode) => {
-                window.location.hash = mode === 'compile' ? 'context-lab' : 'rag';
-                setRouteHash(window.location.hash);
-              }} tabs={[{ value: 'retrieve', label: 'Retrieve' }, { value: 'compile', label: 'Compile' }]}>
-              {contextMode(routeHash) === 'compile'
-                ? <ContextLabPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />
-                : <ClusterExplorerPage key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />}
-              </WorkspaceTabs>
-            </>
+            <ClusterExplorerPage
+              key={`${token}-${activeProjectId}`}
+              token={token}
+              refreshKey={refreshKey}
+            />
+          ) : active === 'Context Lab' ? (
+            <ContextLabPage
+              key={`${token}-${activeProjectId}`}
+              token={token}
+              refreshKey={refreshKey}
+            />
           ) : active === 'Releases' ? (
             <ReleasesPage
               key={`${token}-${activeProjectId}`}
@@ -856,17 +688,12 @@ export function App() {
                 selectProject(p.id);
               }}
               onPrerequisiteAdded={() => refresh()}
+              onCreateProject={() => setShowCreateProjectModal(true)}
             />
           )}
 
           </ScreenBoundary></ReviewAccess.Provider>
           </DraftScope.Provider>
-          <footer>
-            <BuildIdentity token={token} refreshKey={refreshKey} />
-            <span>
-              <Activity size={14} /> Control plane
-            </span>
-          </footer>
         </div>
       </main>
     </div>

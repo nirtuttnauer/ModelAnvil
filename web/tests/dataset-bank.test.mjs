@@ -13,7 +13,7 @@ function deferred() { let resolve; const promise = new Promise(done => { resolve
 async function fixture({policies=[], policyId='', estimate='', existing=null, bankSource=source, downloadScope='sample', storageQuota='', consent=false, pending=false, budgetFailure=false}={}) {
   let stateIndex=0,refIndex=0,mounted=false,callbacks=0;
   const states=[],refs=[],effects=[],cleanups=[],calls=[];
-  const draftValues={query:'',selectedModality:'all',catalogView:'all',selectedId:source.id,budgetPolicyId:policyId,estimatedAmount:estimate,shareAlikeSourceId:consent?source.id:'',downloadScope,storageQuota,recordLimit:''};
+  const draftValues={query:'',selectedModality:'all',selectedId:source.id,budgetPolicyId:policyId,estimatedAmount:estimate,shareAlikeSourceId:consent?source.id:'',downloadScope,storageQuota,recordLimit:''};
   const wait=deferred(); const jsx=(type,props)=>({type,props});
   const React={useState(initial){const i=stateIndex++;if(!(i in states))states[i]=initial;return [states[i],value=>{states[i]=typeof value==='function'?value(states[i]):value;}];},useRef(initial){const i=refIndex++;return refs[i]??=( {current:initial});},useEffect(fn){if(!mounted)effects.push(fn);},createElement:(type,props,...children)=>jsx(type,{...props,children})};
   const module={exports:{}};

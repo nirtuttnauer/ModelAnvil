@@ -1,0 +1,31 @@
+@layer tokens, base, primitives, shell, pages;
+@layer pages {
+  .overview-page { display: grid; gap: var(--space-24); }
+  .overview-page .next-step { display: grid; gap: var(--space-12); }
+  .overview-page .next-step h2 { font-size: var(--type-20); }
+  .overview-page .next-step p { margin: var(--space-4) 0 0; color: var(--text-secondary); max-width: 70ch; }
+  .overview-page .overview-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-24); }
+  .overview-page .overview-columns > * + * { margin-top: 0; }
+  .overview-usage { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-8); margin: 0; font-size: var(--type-13); color: var(--text-muted); }
+  .setup-rows { display: grid; margin: 0; padding: 0; list-style: none; border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface); }
+  .setup-rows li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8) var(--space-12); padding: var(--space-10) var(--space-16); border-top: 1px solid var(--border); }
+  .setup-rows li:first-child { border-top: 0; }
+  .setup-rows li > svg { flex-shrink: 0; }
+  .setup-rows li > div { flex: 1 1 240px; min-width: 0; }
+  .setup-rows li strong { display: block; font-weight: 500; }
+  .setup-rows li small { color: var(--text-muted); }
+  .setup-next { display: grid; gap: 2px; min-width: 0; }
+  .setup-next small { color: var(--text-secondary); }
+  .setup-ready { color: var(--success); }
+  .setup-missing { color: var(--text-muted); }
+  .work-rows { display: grid; margin: 0; padding: 0; list-style: none; }
+  .work-rows li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-4) var(--space-16); align-items: center; padding: var(--space-10) 0; border-top: 1px solid var(--border); }
+  .work-rows li:first-child { border-top: 0; padding-top: 0; }
+  .work-rows li > span { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8) var(--space-12); min-width: 0; }
+  .work-rows li > span strong { font-weight: 500; overflow-wrap: anywhere; }
+  .work-rows li > a { font-size: var(--type-13); white-space: nowrap; }
+  .work-rows li > small, .work-rows li > progress { grid-column: 1 / -1; }
+  .work-rows li > small { color: var(--text-muted); }
+  .work-rows progress { height: 4px; }
+  @media (max-width: 900px) { .overview-page .overview-columns { grid-template-columns: minmax(0, 1fr); } }
+}

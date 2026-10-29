@@ -5,7 +5,7 @@ import { ConfigFields, ObjectFields, RecordListEditor, VerifierFields } from '..
 import { DataInspector } from '../components/DataInspector';
 import { alignmentFields, evaluationFields, objectInput, preferenceFields, recordsInput, sampleFields, spanFields, structuredInput, type FormField } from '../components/form-data';
 import { preferencePairs } from '../api/alignment';
-import '../style.css';
+import '../design-system/index.css';
 import './form-editor-stories.css';
 
 const meta = {
@@ -20,14 +20,14 @@ function ObjectDemo({ initial = '{"prompt":"Summarize the source.","options":{"s
   const [value, setValue] = useState(initial), [result, setResult] = useState<unknown>(), [error, setError] = useState('');
   return <form aria-label="Field builder demo" onSubmit={e => { e.preventDefault(); try { setResult(structuredInput(value)); setError(''); } catch (error) { setError(String(error)); } }}>
     <ObjectFields title={tokens ? 'Special tokens' : rubric ? 'Rubric scores' : 'Job inputs'} description={tokens ? 'Keep token symbols exactly as the model expects.' : 'Use labeled fields, groups, and lists to describe your inputs.'} value={value} onChange={setValue} disabled={disabled} textOnly={tokens} defaultKind={rubric ? 'number' : 'text'} nameLabel={tokens ? 'Token name' : rubric ? 'Criterion' : 'Field name'} valueLabel={tokens ? 'Token symbol' : rubric ? 'Score' : 'Value'} />
-    <button className="primary" disabled={disabled}>Save inputs</button>{error && <p role="alert">{error}</p>}{result !== undefined && <><p role="status">Inputs saved.</p><DataInspector title="Saved inputs" value={result} /></>}
+    <button data-ui="button" data-variant="primary" disabled={disabled}>Save inputs</button>{error && <p role="alert">{error}</p>}{result !== undefined && <><p role="status">Inputs saved.</p><DataInspector title="Saved inputs" value={result} /></>}
   </form>;
 }
 
 function RecordsDemo({ title, itemName, fields, maximum, uniqueKey, initial = '[]', preferences = false }: { title: string; itemName: string; fields: FormField[]; maximum?: number; uniqueKey?: string; initial?: string; preferences?: boolean }) {
   const [value, setValue] = useState(initial), [result, setResult] = useState<unknown>(), [error, setError] = useState('');
   return <form aria-label={`${title} demo`} onSubmit={e => { e.preventDefault(); try { const rows = recordsInput(value, fields, maximum ?? Infinity, uniqueKey); setResult(preferences ? preferencePairs(JSON.stringify(rows)) : rows); setError(''); } catch (error) { setError((error as Error).message); } }}>
-    <RecordListEditor title={title} itemName={itemName} fields={fields} maximum={maximum} uniqueKey={uniqueKey} value={value} onChange={setValue} /><button className="primary">Save records</button>
+    <RecordListEditor title={title} itemName={itemName} fields={fields} maximum={maximum} uniqueKey={uniqueKey} value={value} onChange={setValue} /><button data-ui="button" data-variant="primary">Save records</button>
     {error && <p role="alert">{error}</p>}{result !== undefined && <><p role="status">Records saved.</p><DataInspector title="Saved records" value={result} /></>}
   </form>;
 }
@@ -37,7 +37,7 @@ function SettingsDemo() {
   return <form aria-label="Alignment settings demo" onSubmit={e => { e.preventDefault(); setResult({ hyperparameters: objectInput(params), verifier_spec: objectInput(verifier) }); }}>
     <label>Algorithm<select value={algorithm} onChange={e => setAlgorithm(e.target.value)}><option value="dpo">Direct preference optimization</option><option value="reward_model">Reward model</option><option value="ppo_rlhf">PPO RLHF</option><option value="verifier_rl">Verifier guided RL</option></select></label>
     <ConfigFields title="Optimizer settings" fields={alignmentFields(algorithm)} value={params} onChange={setParams} />
-    {algorithm === 'verifier_rl' && <VerifierFields value={verifier} onChange={setVerifier} />}<button className="primary">Save settings</button>{result !== undefined && <><p role="status">Settings saved.</p><DataInspector title="Saved settings" value={result} /></>}
+    {algorithm === 'verifier_rl' && <VerifierFields value={verifier} onChange={setVerifier} />}<button data-ui="button" data-variant="primary">Save settings</button>{result !== undefined && <><p role="status">Settings saved.</p><DataInspector title="Saved settings" value={result} /></>}
   </form>;
 }
 
@@ -46,7 +46,7 @@ export const PayloadBuilder: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: 'Save inputs' }));
-    await expect(canvas.getByText('No', { exact: true })).toBeVisible();
+    await expect(canvas.getByText('No', { exact: true, selector: '.data-boolean' })).toBeVisible();
     await expect(canvas.getByText('0', { exact: true })).toBeVisible();
     await expect(canvas.getByRole('status')).toHaveTextContent('Inputs saved.');
     canvasElement.dataset.demoVerified = 'passed';
@@ -67,12 +67,11 @@ export const EvaluationCases: Story = {
     await userEvent.type(second.getByLabelText('Case ID'), 'case-2');
     await userEvent.type(second.getByLabelText('Input prompt'), 'Keep whitespace.\n');
     await userEvent.type(second.getByLabelText('Expected response'), ' exact response ');
-    await userEvent.type(second.getByLabelText('Source group ID'), 'held-out-second');
     await userEvent.click(canvas.getByRole('button', { name: 'Remove case 1' }));
     await expect(canvas.getByLabelText('Case ID')).toHaveValue('case-2');
     await expect(canvas.getByLabelText('Expected response')).toHaveValue(' exact response ');
     await userEvent.click(canvas.getByRole('button', { name: 'Save records' }));
-    await expect(canvas.getByRole('status')).toHaveTextContent('Records saved.');
+    await expect(canvas.getByText('Records saved.')).toBeVisible();
     canvasElement.dataset.demoVerified = 'passed';
   },
 };
@@ -89,7 +88,7 @@ export const Preferences: Story = {
     await userEvent.clear(canvas.getByLabelText('Rejected response'));
     await userEvent.type(canvas.getByLabelText('Rejected response'), 'b');
     await userEvent.click(canvas.getByRole('button', { name: 'Save records' }));
-    await expect(canvas.getByRole('status')).toHaveTextContent('Records saved.');
+    await expect(canvas.getByText('Records saved.')).toBeVisible();
     canvasElement.dataset.demoVerified = 'passed';
   },
 };

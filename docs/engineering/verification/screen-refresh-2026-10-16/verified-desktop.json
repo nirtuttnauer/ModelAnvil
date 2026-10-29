@@ -1,0 +1,149 @@
+[
+  {
+    "screen": "overview",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "dataset-bank",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "datasets",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "annotation",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "models",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "training",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "alignment",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "evaluation",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "workflows",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "rag",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "context-lab",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "releases",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "infrastructure",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "budgets",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "audit",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "run-detail",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "recipes",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "specialists",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "resource-model",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "resource-dataset",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  },
+  {
+    "screen": "chat",
+    "passed": true,
+    "client": 1425,
+    "document": 1425,
+    "width": 1440
+  }
+]

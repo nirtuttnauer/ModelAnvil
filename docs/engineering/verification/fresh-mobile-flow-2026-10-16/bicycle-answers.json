@@ -1,0 +1,5 @@
+{
+  "prompt": "In one sentence, where should I park my bicycle at Juniper Tool Library?",
+  "base": "BASE MODEL\nSmolLM2-1.7B Instruct\n\nYou should park your bicycle at the designated bicycle parking area located near the entrance of the Juniper Tool Library.\n\nCopy response\n\ncompleted · 16.59 seconds including model load · 46 input / 23 output tokens",
+  "trained": "TRAINED MODEL\nSmolLM2 fine-tune · c67e2e82\n\nUse the bicycle racks beside the Juniper west entrance and bring your own lock.\n\nCopy response\n\ncompleted · 20.09 seconds including model load · 46 input / 17 output tokens"
+}

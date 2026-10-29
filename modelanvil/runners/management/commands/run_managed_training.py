@@ -9,6 +9,7 @@ import time
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db import close_old_connections
+from django.db.models import Q
 from django.utils import timezone
 
 from modelanvil.core.tenancy import reset_context, set_active_tenant
@@ -19,6 +20,15 @@ from modelanvil.runners.training import hf_runtime
 from modelanvil.runners.training.hardware import total_memory_bytes
 from modelanvil.runners.training.managed import refresh_evaluation_capabilities, verified_model_directory, recommended_source
 from modelanvil.runners.training.managed_executor import managed_executor
+from modelanvil.runners.guided_evaluation import CONTRACT_DIGEST as EVALUATION_CONTRACT
+from modelanvil.runners.eval_worker import BUILD_DIGEST as EVALUATION_BUILD
+
+
+def managed_workers():
+    """Training workers and the separate managed native-evaluation workers share this one service."""
+    return Worker.all_objects.filter(capabilities__managed_local=True).filter(
+        Q(capabilities__training_runtime=hf_runtime.CONTRACT_DIGEST)
+        | Q(capabilities__evaluation_runtime=EVALUATION_CONTRACT, capabilities__evaluation_build=EVALUATION_BUILD))
 
 
 class Command(BaseCommand):
@@ -50,13 +60,13 @@ class Command(BaseCommand):
                 while not stopped.is_set():
                     close_old_connections()
                     LocalTrainingHost.objects.filter(pk=host.pk).update(status=state['status'], last_heartbeat_at=timezone.now())
-                    workers = Worker.all_objects.filter(capabilities__managed_local=True, capabilities__training_runtime=hf_runtime.CONTRACT_DIGEST)
+                    workers = managed_workers()
                     if state['status'] in ('ready', 'training'):
                         workers.filter(status='offline', drain_requested=False).update(status='available')
                         workers.update(last_heartbeat_at=timezone.now())
                         current = LocalTrainingHost.objects.filter(pk=host.pk).first()
                         if current and current.memory_bytes:
-                            for worker in workers:
+                            for worker in workers.filter(capabilities__training_runtime=hf_runtime.CONTRACT_DIGEST):
                                 refresh_evaluation_capabilities(worker, current)
                     stopped.wait(2)
             finally:
@@ -87,8 +97,7 @@ class Command(BaseCommand):
                 if hf_runtime.build_digest() != build:
                     raise ValueError('Training code changed. Restart ModelAnvil to use the updated runtime.')
                 reconcile_expired_leases()
-                workers = Worker.all_objects.filter(capabilities__managed_local=True,
-                    capabilities__training_runtime=hf_runtime.CONTRACT_DIGEST).order_by('last_heartbeat_at', 'pk')
+                workers = managed_workers().order_by('last_heartbeat_at', 'pk')
                 claimed = False
                 for worker in workers:
                     reset_context()

@@ -3,8 +3,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { http, HttpResponse } from 'msw';
 import { ExternalCompute } from '../components/ExternalCompute';
 import { setActiveProjectId } from '../api/client';
-import '../style.css';
-import '../premium.css';
+import '../design-system/index.css';
 import '../pages/operations.css';
 
 let allocations: Record<string, unknown>[] = [];

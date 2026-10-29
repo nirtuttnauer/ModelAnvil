@@ -209,14 +209,19 @@ test('overview page mounts onboarding checklist with derived readiness and actio
     new URL('../src/components/OnboardingChecklist.tsx', import.meta.url),
     'utf8'
   );
+  const readinessSource = readFileSync(
+    new URL('../src/components/useSetupReadiness.ts', import.meta.url),
+    'utf8'
+  );
 
-  // Derives readiness from saved resources
-  assert.match(checklistSource, /\/api\/v1\/dataset-revisions\//);
-  assert.match(checklistSource, /\/api\/v1\/tokenizers\//);
-  assert.match(checklistSource, /\/api\/v1\/model-versions\//);
-  assert.match(checklistSource, /\/api\/v1\/worker-pools\//);
-  assert.match(checklistSource, /\/api\/v1\/worker-inventory\//);
-  assert.match(checklistSource, /\/api\/v1\/budget-policies\//);
+  // Derives readiness from saved resources through the one shared readiness hook
+  assert.match(checklistSource, /useSetupReadiness/);
+  assert.match(readinessSource, /\/api\/v1\/dataset-revisions\//);
+  assert.match(readinessSource, /\/api\/v1\/tokenizers\//);
+  assert.match(readinessSource, /\/api\/v1\/model-versions\//);
+  assert.match(readinessSource, /\/api\/v1\/worker-pools\//);
+  assert.match(readinessSource, /\/api\/v1\/worker-inventory\//);
+  assert.match(readinessSource, /\/api\/v1\/budget-policies\//);
 
   // Resumable state surviving refresh/reconnect
   assert.match(
@@ -232,29 +237,18 @@ test('overview page mounts onboarding checklist with derived readiness and actio
   assert.match(checklistSource, /aria-labelledby="onboarding-heading"/);
   assert.match(checklistSource, /aria-expanded=\{!collapsed\}/);
   assert.match(checklistSource, /aria-controls="onboarding-checklist-body"/);
-  assert.match(checklistSource, /aria-label="Workspace readiness progress"/);
 
   // Actionable next step and preflight launch
-  assert.match(checklistSource, /Ready for training preflight!/);
-  assert.match(checklistSource, /Launch Training Preflight/);
+  assert.match(checklistSource, /Ready to train/);
+  assert.match(checklistSource, /Start training/);
   assert.match(checklistSource, /Next action:/);
 });
 
-test('training and models pages provide in-product registration flows without API curl dead-ends', () => {
-  const shared = readFileSync(new URL('../src/components/PrerequisiteActions.tsx', import.meta.url), 'utf8');
-  assert.match(shared, /<RegisterTokenizerModal/);
-  assert.match(shared, /<RegisterModelVersionModal/);
-  assert.match(shared, /openTokenizer/);
-
-  const trainingSource = readFileSync(new URL('../src/pages/TrainingPage.tsx', import.meta.url), 'utf8');
-  assert.match(trainingSource, /<PrerequisiteActions/);
-  assert.match(trainingSource, /openTokenizer=\{openTokenizer\}/);
-  assert.match(trainingSource, /setOpenTokenizer\(value => value \+ 1\)/);
-  assert.doesNotMatch(trainingSource, /<RegisterTokenizerModal/);
-  assert.doesNotMatch(trainingSource, /Register a tokenizer through the API/);
-
-  const modelsSource = readFileSync(new URL('../src/pages/ModelsPage.tsx', import.meta.url), 'utf8');
-  assert.match(modelsSource, /<PrerequisiteActions/);
-  assert.doesNotMatch(modelsSource, /<RegisterTokenizerModal/);
-  assert.doesNotMatch(modelsSource, /MetricsChart|MetricComparison|evaluation-runs/);
+test('the models page provides in-product registration flows without API curl dead-ends', () => {
+  const modelsSource = readFileSync(
+    new URL('../src/pages/ModelsPage.tsx', import.meta.url),
+    'utf8'
+  );
+  assert.match(modelsSource, /<RegisterTokenizerModal/);
+  assert.match(modelsSource, /<RegisterModelVersionModal/);
 });

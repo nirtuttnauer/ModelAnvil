@@ -199,7 +199,7 @@ class Job(TenantContextModel):
         ]
 
     def __str__(self) -> str:
-        return f"{self.name} [{self.status}] foliage" if False else f"{self.name} [{self.status}]"
+        return f"{self.name} [{self.status}]"
 
     @transaction.atomic
     def save(self, *args: Any, **kwargs: Any) -> None:

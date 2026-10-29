@@ -3,9 +3,10 @@ import { Cpu, CircleHelp, TriangleAlert, CheckCircle2 } from 'lucide-react';
 import { formatMemory, memoryBytes, modelHardwareFit, type HardwareTarget, type ModelMemory } from '../api/model-hardware';
 import './model-hardware.css';
 
-export function ModelHardwareFit({ memory, targets = [], compatible = true, reason }: {
-  memory?: ModelMemory; targets?: HardwareTarget[]; compatible?: boolean; reason?: string;
+export function ModelHardwareFit({ memory, targets = [], compatible = true, reason, headingLevel = 4 }: {
+  memory?: ModelMemory; targets?: HardwareTarget[]; compatible?: boolean; reason?: string; headingLevel?: 2 | 3 | 4;
 }) {
+  const Heading = headingLevel === 2 ? 'h2' : headingLevel === 3 ? 'h3' : 'h4';
   const [now, setNow] = useState(Date.now());
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 5000); return () => clearInterval(timer); }, []);
   const fit = compatible ? modelHardwareFit(memory?.training, targets, Math.max(now, Date.now())) : { status: 'unsupported' as const, reason: reason || 'This model has no supported training profile.' };
@@ -17,7 +18,7 @@ export function ModelHardwareFit({ memory, targets = [], compatible = true, reas
   const titles = { meets: 'Meets declared memory minimum', partial: 'Host memory fits · accelerator memory unknown', insufficient: 'Memory minimum not met', unknown: 'Hardware fit unknown', offline: 'Hardware report unavailable', unsupported: 'Training compatibility unavailable' };
   const Icon = fit.status === 'meets' ? CheckCircle2 : ['insufficient', 'unsupported'].includes(fit.status) ? TriangleAlert : CircleHelp;
   return <section className={`model-hardware model-hardware-${fit.status}`} aria-label="Model hardware fit">
-    <header><div><Cpu size={18} aria-hidden="true" /><h4>Hardware & memory</h4></div><span className="model-hardware-status" role="status"><Icon size={16} aria-hidden="true" />{titles[fit.status]}</span></header>
+    <header><div><Cpu size={18} aria-hidden="true" /><Heading>Hardware & memory</Heading></div><span className="model-hardware-status" role="status"><Icon size={16} aria-hidden="true" />{titles[fit.status]}</span></header>
     <dl>
       {memoryBytes(memory?.weights_bytes) !== null && <div><dt>Serialized weight files</dt><dd>{formatMemory(memory?.weights_bytes)}</dd></div>}
       {profile && <><div><dt>Minimum host memory</dt><dd>{formatMemory(profile.host_memory_bytes)}</dd></div>

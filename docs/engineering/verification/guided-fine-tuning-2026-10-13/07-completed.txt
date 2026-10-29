@@ -1,0 +1,68 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Guided flow QA workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Training
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Configure reproducible runs and follow their actual progress.
+  - region "Train a model on your data":
+    - text: YOUR FIRST FINE-TUNE
+    - heading "Train a model on your data" [level=2]
+    - paragraph: Everything you need, in four steps. Training runs on this computer.
+    - list "Fine-tuning progress":
+      - text: Model
+      - text: Dataset
+      - text: Review
+      - generic: "4"
+      - text: Train
+    - heading "Your training run" [active] [level=3]
+    - status: Your fine-tuned model is ready.
+    - text: 3 of 3 steps
+    - progressbar
+    - paragraph: "Latest recorded loss: 3.2037"
+    - link "Open run details":
+      - /url: "#runs/training/b7806bb0-711a-4fbb-aeed-8bfb1d099665?from=%23training"
+    - button "Download trained model"
+    - link "Try your model":
+      - /url: "#chat?model_version=083a2cd0-c4d7-4971-929e-4be066377201"
+    - button "Start another fine-tune"
+    - paragraph: Completion confirms that training ran. Test the model on held-out examples before using it for real work.
+  - button "Advanced training workspace"
+  - generic "App information"
+  - text: Control plane

@@ -1,0 +1,79 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Fresh User Retest workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Training
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Fine-tune a pretrained model with your own examples.
+  - region "Train a model on your data":
+    - text: YOUR FIRST FINE-TUNE
+    - heading "Train a model on your data" [level=2]
+    - paragraph: Everything you need, in four steps. Training runs on this computer.
+    - list "Fine-tuning progress":
+      - text: Model
+      - text: Dataset
+      - generic: "3"
+      - text: Review
+      - generic: "4"
+      - text: Train
+    - heading "Review your fine-tune" [active] [level=3]
+    - term: Pretrained model
+    - definition: SmolLM2-135M
+    - term: Your dataset
+    - definition: library-help · 12 examples
+    - term: Training computer
+    - definition: This Mac · Apple GPU
+    - term: Training
+    - definition: "10"
+    - term: Validation
+    - definition: "1"
+    - term: Test
+    - definition: "1"
+    - text: Training steps
+    - spinbutton "Training steps Start with 3 steps to check the pipeline. Each step updates the model using one training example; up to 50 steps per run.": "3"
+    - generic: Start with 3 steps to check the pipeline. Each step updates the model using one training example; up to 50 steps per run.
+    - paragraph: This uses your computer’s GPU and disk space. No external compute service is charged.
+    - status: Ready to train. The model, data, compute and allowance have passed their checks.
+    - button "Change dataset"
+    - button "Refresh checks"
+    - button "Start fine-tuning":
+      - text: Start fine-tuning
+  - button "Advanced training workspace"
+  - generic "App information"
+  - text: Control plane

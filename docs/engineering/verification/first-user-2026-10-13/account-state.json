@@ -1,0 +1,28 @@
+{
+  "tenant": "0dd481db-e01e-4e64-9a0e-62c7a91cd945",
+  "projects": [
+    {
+      "id": "ec260f6e-f2be-4d28-99cb-c1bd79a411de",
+      "name": "Custom support assistant"
+    }
+  ],
+  "datasets": [
+    {
+      "name": "Support custom CSV",
+      "dataset_id": "e5a39e6b-4f3d-4880-be8c-873538c5e7ce"
+    }
+  ],
+  "revisions": [
+    {
+      "revision_id": "f0c81341-4f91-4d10-93da-3fc9968036fa",
+      "state": "published",
+      "row_count": 20
+    }
+  ],
+  "workers": 0,
+  "pools": 0,
+  "models": 0,
+  "training_runs": 0,
+  "jobs": 0,
+  "budgets": 1
+}

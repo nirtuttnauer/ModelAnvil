@@ -1,5 +1,5 @@
 import { Identifier } from './Identifier';
-import { Button, Card, RecordTable } from './ui';
+import { Button, Disclosure, RecordTable, StatusBadge } from './ui';
 import { useEffect, useRef, useState } from 'react';
 import { apiRequest, errorMessage } from '../api/client';
 import { allResources } from '../api/resources';
@@ -12,6 +12,8 @@ interface Policy { policy_id: string; name: string; unit: string; currency: stri
 function sourceLink(source: Source) {
   return source.run_id ? source.kind === 'alignment' ? `#alignment?run=${source.run_id}` : runHash(source.kind === 'training' || source.kind === 'evaluation' ? source.kind : 'job', source.run_id) : null;
 }
+
+/** Committed usage, reservations and policy allowances for the selected scope, folded away by default. */
 export function BudgetLedger({ token, query, refreshKey }: { token: string; query: string; refreshKey: number }) {
   const [usage, setUsage] = useState<Usage[]>([]), [reservations, setReservations] = useState<Reservation[]>([]), [policies, setPolicies] = useState<Policy[]>([]);
   const [error, setError] = useState(''), [loading, setLoading] = useState(true), [busy, setBusy] = useState(false), [notice, setNotice] = useState('');
@@ -33,13 +35,19 @@ export function BudgetLedger({ token, query, refreshKey }: { token: string; quer
       setNotice(`${report.complete ? 'Complete' : 'Partial'} scoped export: ${report.event_count} events and ${report.reservation_count} reservations. Metadata declares filters, UTC dates and completeness.`);
     } catch (e) { if (!c.signal.aborted) setError(errorMessage(e)); } finally { if (!c.signal.aborted) setBusy(false); }
   }
-  return <Card className="panel"><div className="panel-title"><div><h2>Usage and reservation attribution</h2><p>Exact execution, corrections and policy periods for the selected scope.</p></div><Button disabled={busy || loading || !!error} onClick={() => void exportLedger()}>Export scoped ledger</Button></div><div className="panel-body">
-    {error && <p role="alert">{error}</p>}{loading && <p role="status">Loading all scoped ledger pages…</p>}{notice && <p role="status">{notice}</p>}
-    {!error && <>
-      <h3>Current shared policy allowances</h3><p className="muted">Policies are tenant-wide. These current-period allowances include the whole policy ledger, independently of the usage filters. Forecasts are unavailable without a compatible measured and priced basis.</p>
-      {policies.map(policy => <div key={policy.policy_id}><strong>{policy.name}</strong> · {policy.allowance?.remaining_amount ?? 'unknown'} {policy.unit} {policy.currency} remaining · period {policy.allowance?.period_start ?? 'unknown'}{policy.allowance && Number(policy.allowance.remaining_amount) <= Number(policy.limit_amount)*0.2 && <p role="alert">Policy {policy.name} has {Number(policy.allowance.remaining_amount) <= 0 ? 'no' : '20% or less'} allowance remaining. Refresh to check new reservations and settlements.</p>}</div>)}
-      <h3>Committed usage ({usage.length})</h3><div className="table-scroll" tabIndex={0}><RecordTable className="resource-table"><thead><tr><th>Time / exact execution</th><th>Quantity</th><th>Cost / corrections</th><th>Attribution</th></tr></thead><tbody>{usage.map(row => <tr key={row.usage_id}><td>{new Date(row.occurred_at).toLocaleString()}{sourceLink(row.source) ? <a href={sourceLink(row.source)!}>Open execution</a> : <small>Execution attribution unavailable</small>}</td><td>{row.quantity} {row.unit}</td><td>{row.net_amount ?? 'Unpriced'} {row.currency}<details><summary>Original cost and adjustments</summary><DataInspector value={{ amount: row.amount, adjustments: row.adjustments, reservation: row.reservation_id }} /></details></td><td>{row.source.scope}<small>{row.source.project_id ? <>Project <Identifier value={row.source.project_id} label="Project ID" /></> : 'No project attribution'}</small><small>Actor: {row.source.actor_id ? <Identifier value={row.source.actor_id} label="Actor ID" /> : 'Not recorded'}</small></td></tr>)}</tbody></RecordTable></div>
-      <h3>Reservations ({reservations.length})</h3><div className="table-scroll" tabIndex={0}><RecordTable className="resource-table"><thead><tr><th>Policy / period</th><th>Estimated reservation</th><th>Committed usage</th><th>State / source</th></tr></thead><tbody>{reservations.map(row => <tr key={row.reservation_id}><td>{row.policy_name}<small>Period starts {row.period_start}</small></td><td>{row.estimated_amount} {row.unit} {row.currency}</td><td>{row.settled_amount ?? 'Not settled'}</td><td>{row.state}{sourceLink(row.source) && <a href={sourceLink(row.source)!}>Open exact execution</a>}<details><summary>Reservation record</summary><DataInspector value={row} /></details></td></tr>)}</tbody></RecordTable></div>
-    </>}
-  </div></Card>;
+  return <Disclosure summary="Reservations ledger" variant="card">
+    <div data-ui="form">
+      <div data-ui="actions"><Button type="button" disabled={busy || loading || !!error} onClick={() => void exportLedger()}>Export ledger</Button>{loading && <span role="status" className="muted">Loading all scoped ledger pages…</span>}</div>
+      {error && <p role="alert" className="error-text">{error}</p>}{notice && <p role="status">{notice}</p>}
+      {!error && <>
+        <h3>Policy allowances</h3>
+        <p className="muted">Current-period allowances for the whole policy ledger, independent of the usage filters.</p>
+        {policies.length > 0 && <ul className="ops-allowances">{policies.map(policy => <li key={policy.policy_id}><strong>{policy.name}</strong> · {policy.allowance?.remaining_amount ?? 'unknown'} {policy.unit} {policy.currency} remaining · period {policy.allowance?.period_start ?? 'unknown'}{policy.allowance && Number(policy.allowance.remaining_amount) <= Number(policy.limit_amount)*0.2 && <p role="alert">Policy {policy.name} has {Number(policy.allowance.remaining_amount) <= 0 ? 'no' : '20% or less'} allowance remaining. Refresh to check new reservations and settlements.</p>}</li>)}</ul>}
+        <h3>Committed usage ({usage.length})</h3>
+        <div className="table-scroll" tabIndex={0}><RecordTable><thead><tr><th>Time and execution</th><th>Quantity</th><th>Cost and corrections</th><th>Attribution</th></tr></thead><tbody>{usage.map(row => <tr key={row.usage_id}><td>{new Date(row.occurred_at).toLocaleString()}{sourceLink(row.source) ? <a href={sourceLink(row.source)!}>Open execution</a> : <small>Execution attribution unavailable</small>}</td><td>{row.quantity} {row.unit}</td><td>{row.net_amount ?? 'Unpriced'} {row.currency}<Disclosure summary="Original cost and adjustments" variant="quiet"><DataInspector value={{ amount: row.amount, adjustments: row.adjustments, reservation: row.reservation_id }} /></Disclosure></td><td>{row.source.scope}<small>{row.source.project_id ? <>Project <Identifier value={row.source.project_id} label="Project ID" /></> : 'No project attribution'}</small><small>Actor: {row.source.actor_id ? <Identifier value={row.source.actor_id} label="Actor ID" /> : 'Not recorded'}</small></td></tr>)}</tbody></RecordTable></div>
+        <h3>Reservations ({reservations.length})</h3>
+        <div className="table-scroll" tabIndex={0}><RecordTable><thead><tr><th>Policy and period</th><th>Estimated reservation</th><th>Committed usage</th><th>State and source</th></tr></thead><tbody>{reservations.map(row => <tr key={row.reservation_id}><td>{row.policy_name}<small>Period starts {row.period_start}</small></td><td>{row.estimated_amount} {row.unit} {row.currency}</td><td>{row.settled_amount ?? 'Not settled'}</td><td><StatusBadge status={row.state} />{sourceLink(row.source) && <small><a href={sourceLink(row.source)!}>Open execution</a></small>}<Disclosure summary="Reservation record" variant="quiet"><DataInspector value={row} /></Disclosure></td></tr>)}</tbody></RecordTable></div>
+      </>}
+    </div>
+  </Disclosure>;
 }

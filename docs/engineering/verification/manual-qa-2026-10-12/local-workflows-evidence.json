@@ -1,0 +1,810 @@
+{
+  "date": "2026-10-12",
+  "environment": "Isolated SQLite and filesystem, Chromium, macOS arm64, real authenticated HTTP and real pinned CPU/MPS/MLX models",
+  "bank": {
+    "sources": [
+      {
+        "source": "svg-lucide",
+        "records": 3
+      },
+      {
+        "source": "numeric-iris",
+        "records": 5
+      },
+      {
+        "source": "text-smol-magpie-ultra",
+        "verified_records": 3,
+        "revision_id": "e8adbf86-76ca-4ccc-b319-fc51b5545fc6",
+        "transferred_bytes": 21612
+      },
+      {
+        "source": "text-ultrachat-200k",
+        "verified_records": 3,
+        "revision_id": "5fa10163-23a0-4a99-9113-fcbfba6b898b",
+        "transferred_bytes": 22824
+      },
+      {
+        "source": "text-squad",
+        "verified_records": 3,
+        "revision_id": "a81023d4-a3d5-42cf-a144-90279fd7453c",
+        "transferred_bytes": 2714
+      },
+      {
+        "source": "preference-ultrafeedback-binarized",
+        "verified_records": 3,
+        "revision_id": "350555cc-28db-4360-96ea-1d679cbce02f",
+        "transferred_bytes": 16983
+      },
+      {
+        "source": "tools-glaive-v2",
+        "verified_records": 3,
+        "revision_id": "09e316cf-5d08-4d9c-99a5-4e2e4b74bc04",
+        "transferred_bytes": 5682
+      },
+      {
+        "source": "image-clevr",
+        "verified_records": 3,
+        "revision_id": "e51d28b5-f2e1-461c-8a54-eaa38cd56b52",
+        "transferred_bytes": 1180504
+      },
+      {
+        "source": "audio-vctk",
+        "verified_records": 3,
+        "revision_id": "4a9407d5-e22d-485b-a030-a9ea9afe78ae",
+        "transferred_bytes": 709636
+      },
+      {
+        "source": "audio-libritts-r",
+        "verified_records": 3,
+        "revision_id": "78f744f8-a91b-4338-8fc0-21600ae452aa",
+        "transferred_bytes": 1183261
+      },
+      {
+        "source": "numeric-wine-quality",
+        "verified_records": 3,
+        "revision_id": "f23f4463-7bf1-4463-8f4e-683aa9463d86",
+        "transferred_bytes": 690
+      }
+    ],
+    "full_iris_release": {
+      "verified_files": 1,
+      "bytes": 3738,
+      "sha256": "d11fe30213d36434a0879aab7cb00ce3c812eb7ba2495874438abff7b7b762e9"
+    },
+    "recovery": {
+      "snapshot_id": "2b3bfa20-0297-41ee-b4aa-8ea7fd100318",
+      "queued_cancel_released_quota": true,
+      "verified_before_fault": 1,
+      "reused_verified_record": true,
+      "fetched_on_resume": [
+        "icons/cloud-off.svg",
+        "icons/layout-freeform.svg",
+        "icons/search-check.svg",
+        "LICENSE"
+      ],
+      "published": {
+        "snapshot_id": "2b3bfa20-0297-41ee-b4aa-8ea7fd100318",
+        "download_scope": "sample",
+        "source_files": [],
+        "source_id": "svg-lucide",
+        "source_revision": "70562c1ee1c4fdcf736fe97bc893fb8511927934",
+        "state": "ready",
+        "connector": "git_tree_blob_snapshot",
+        "record_selection": "deterministic evenly spaced slice of the sorted icons/*.svg inventory at the pinned commit",
+        "planned_records": 4,
+        "verified_records": 4,
+        "remaining_records": 0,
+        "planned_bytes": 1399,
+        "transferred_bytes": 1399,
+        "progress": 1.0,
+        "manifest_digest": "8d9f0a6eefbf73084a9af698626eb3e1e5a8eb8081d2010a7158934e7bc929d0",
+        "failures": [
+          {
+            "at": "2026-10-12T01:37:24.803514+00:00",
+            "reason": "Injected QA interruption after one verified real record."
+          }
+        ],
+        "job": {
+          "job_id": "29a5c667-b082-461e-8bce-32a8f98f6870",
+          "status": "succeeded",
+          "desired_action": "run",
+          "attempt_count": 1,
+          "pool": "QA local workflows"
+        },
+        "budget_reservation": {
+          "reservation_id": "7244edc9-7baf-4112-973d-5d3eee194582",
+          "state": "settled",
+          "unit": "bank_acquisition_records",
+          "estimated_amount": "3.000000",
+          "settled_amount": "3.000000"
+        },
+        "dataset_id": "906f8581-0e24-4dd1-a3e0-4735400ce060",
+        "revision_id": "2f108ab8-00ba-43cc-aa67-d84e70686d9b",
+        "revision_no": 1,
+        "manifest_artifact_id": "190",
+        "row_count": 4,
+        "recipe_digest": "eff5bdc591abaf7fcef0be6d5cd9248b0950ff9e194582cfd712640012081ff7",
+        "rejection_report": {
+          "input_rows": 4,
+          "kept": 4,
+          "dropped": 0,
+          "drop_reason_counts": {}
+        },
+        "updated_at": "2026-10-12T01:37:26.404197+00:00"
+      }
+    },
+    "rate_limit_fallback": {
+      "initial_http": 403,
+      "pinned_inventory_sha256": "ddab7725a4625fb684518296ce6e3a88fcefc0ac3ac3b3036b268decd7861bd3",
+      "inventory_records": 1877,
+      "inventory_icon_bytes": 762249
+    },
+    "scope_replay_guard": "Changed subset or split seed refused; immutable saved acquisition retained"
+  },
+  "specialists": {
+    "department_correct": 6,
+    "department_total": 6,
+    "routing_cases": [
+      {
+        "state": "I was charged twice for March. Please refund the duplicate charge.",
+        "expected": "billing",
+        "actual": "billing"
+      },
+      {
+        "state": "My invoice total is wrong. Please correct the billing statement.",
+        "expected": "billing",
+        "actual": "billing"
+      },
+      {
+        "state": "The website crashes whenever I open the dashboard.",
+        "expected": "technical",
+        "actual": "technical"
+      },
+      {
+        "state": "All servers are down. Nobody can sign in. Fix the outage immediately.",
+        "expected": "technical",
+        "actual": "technical"
+      },
+      {
+        "state": "Please send pricing for a new contract with 100 seats.",
+        "expected": "sales",
+        "actual": "sales"
+      },
+      {
+        "state": "Can your sales team schedule a demo for our new business?",
+        "expected": "sales",
+        "actual": "sales"
+      }
+    ],
+    "cpu": {
+      "device": "cpu",
+      "answers": {
+        "department": {
+          "type": "choice",
+          "choice": "billing",
+          "probabilities": {
+            "billing": 0.9516,
+            "sales": 0.0177,
+            "technical": 0.0307
+          },
+          "confidence": 0.7947,
+          "answer_confidence": 0.9516
+        },
+        "refund": {
+          "type": "noul",
+          "noul": 0.8869,
+          "confidence": 0.8869,
+          "answer_confidence": 0.8869
+        },
+        "urgency": {
+          "type": "score",
+          "score": 0.8702,
+          "legend": {
+            "0": "not urgent",
+            "1": "soon",
+            "2": "critical blocking issue"
+          },
+          "probabilities": {
+            "0": 0.4564,
+            "1": 0.2169,
+            "2": 0.3267
+          },
+          "confidence": 0.0397,
+          "answer_confidence": 0.4564
+        }
+      }
+    },
+    "ocr_receipt_exact_match": true,
+    "refusals": [
+      {
+        "kind": "laya",
+        "status": 400,
+        "error": {
+          "error": {
+            "code": "validation_failed",
+            "message": "Validation failed.",
+            "details": [
+              {
+                "path": "(root)",
+                "message": "[ErrorDetail(string='The state, instructions or options exceed the pinned token budget; shorten the request.', code='invalid')]"
+              }
+            ],
+            "request_id": "e3d385c6-8558-4673-af03-f6b14400bd61"
+          }
+        }
+      },
+      {
+        "kind": "laya",
+        "status": 400,
+        "error": {
+          "error": {
+            "code": "validation_failed",
+            "message": "Validation failed.",
+            "details": [
+              {
+                "path": "(root)",
+                "message": "[ErrorDetail(string='Literal model mask tokens are unsupported in decision inputs.', code='invalid')]"
+              }
+            ],
+            "request_id": "6ff514cf-2f4a-443a-b984-05bf16a5bc4d"
+          }
+        }
+      },
+      {
+        "kind": "ocr_length",
+        "status": 400,
+        "error": {
+          "error": {
+            "code": "validation_failed",
+            "message": "Validation failed.",
+            "details": [
+              {
+                "path": "(root)",
+                "message": "[ErrorDetail(string='OCR output is empty or reached its token limit; no partial text was published.', code='invalid')]"
+              }
+            ],
+            "request_id": "ed82a26d-87af-44cb-800a-b1f9b5b7815c"
+          }
+        }
+      }
+    ],
+    "layout_pages": 2,
+    "regions": 8,
+    "canonical_rows": 2,
+    "resume": {
+      "reused_pages": [
+        1
+      ],
+      "processed_pages": [
+        2
+      ],
+      "page_count": 2
+    },
+    "page_1_reference_unchanged": true,
+    "usage_counts_saved_pages_once": true,
+    "quota": {
+      "settled": "2.000000",
+      "usage_events": 2
+    }
+  },
+  "recipes": {
+    "text_recovery": {
+      "saved_row_reused": true,
+      "retry_generation_calls": 1,
+      "started_attempts": 2,
+      "idempotent_publication": true
+    },
+    "published": {
+      "report": {
+        "artifact_id": "e2c2ff63-e70d-4564-927d-8a5be263b92d",
+        "sha256": "f1af5cd79d380ad09bcc84724c1eeffed4bfb21a24ee9dea225f713f8f092465",
+        "byte_size": 2965
+      },
+      "row_count": 2,
+      "rejected_count": 0,
+      "preview": false,
+      "usage": {
+        "prompt_tokens": 96,
+        "completion_tokens": 59,
+        "total_tokens": 155,
+        "completed_generation_calls": 2
+      },
+      "output_artifact": {
+        "artifact_id": "009c7c1b-1120-403c-b03d-a20c67403fe1",
+        "sha256": "bdb0613f3394927ff3c7759db91a1b9bad9bf6a8c84be1ba03cc3d6906bbf633",
+        "byte_size": 2808
+      },
+      "revision_id": "ff0f7d11-f132-40f0-88ee-fcbf7f097ebc"
+    },
+    "output_validation": {
+      "json": {
+        "report": {
+          "artifact_id": "4b1f54ef-ee77-4677-acde-92df585d4cff",
+          "sha256": "85a8fc13c37692f0839301a652c2c618ca4559e75aed5bc990353aa263c4f4e4",
+          "byte_size": 617
+        },
+        "row_count": 0,
+        "rejected_count": 1,
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 44,
+          "completion_tokens": 16,
+          "total_tokens": 60,
+          "completed_generation_calls": 1
+        }
+      },
+      "code": {
+        "report": {
+          "artifact_id": "c79ed918-1992-4de6-829c-7accc53c83dd",
+          "sha256": "ad35a17f70b988665e5c3ee581792f134f6622e506fce9dc23384f91af4f719d",
+          "byte_size": 1448
+        },
+        "row_count": 1,
+        "rejected_count": 0,
+        "preview": true,
+        "usage": {
+          "prompt_tokens": 47,
+          "completion_tokens": 6,
+          "total_tokens": 53,
+          "completed_generation_calls": 1
+        }
+      }
+    },
+    "formats": {
+      "csv": {
+        "accepted_rows": 2,
+        "status": "succeeded"
+      },
+      "docx": {
+        "accepted_rows": 2,
+        "status": "succeeded"
+      },
+      "pdf": {
+        "accepted_rows": 1,
+        "status": "succeeded"
+      },
+      "jsonl": {
+        "accepted_rows": 2,
+        "status": "succeeded"
+      },
+      "merge": {
+        "accepted_rows": 4,
+        "status": "succeeded"
+      }
+    },
+    "browser_preview_restored_after_reload": true,
+    "browser_review_gate": true,
+    "browser_full_published_rows": 2,
+    "browser_published_revision": "0c62cb3b-3fb1-4794-87c4-6af19b73fd51",
+    "source_grounding_limit": "The tiny model invented an end time for maintenance; human review remains required."
+  },
+  "cancellations": {
+    "specialist": {
+      "cancelled": true,
+      "settled_units": 0,
+      "usage_events": 0
+    },
+    "recipe": {
+      "cancelled": true,
+      "settled_units": 0,
+      "usage_events": 0
+    }
+  },
+  "integrity": {
+    "verified_authenticated_downloads": 45,
+    "artifacts": [
+      {
+        "artifact_id": "ed058b16-2ae3-440f-abf2-e535ac1fbbef",
+        "kind": "ocr_dataset_input",
+        "sha256": "f190da17c3bb6887c2e5af19d9574507feaa8727fb7a3f56a66309b822980bfe",
+        "byte_size": 13689
+      },
+      {
+        "artifact_id": "f7f1bb3d-c65a-43ec-9bdf-32486491c709",
+        "kind": "dataset_bank_acquisition",
+        "sha256": "26ddce32847218d05d16bea3e15e934de1cc16947c549fd689d44d793a2659fd",
+        "byte_size": 4392
+      },
+      {
+        "artifact_id": "40c60a05-d293-4e4a-9d8c-a0bd3360e16d",
+        "kind": "prepared_dataset",
+        "sha256": "3bd1b187cd3a523d75c833b7391981ee797b578eeb4e4f5d309a408bb8aabe21",
+        "byte_size": 5097
+      },
+      {
+        "artifact_id": "0cc7728a-a17b-46f2-8d47-c781e02021a8",
+        "kind": "prepared_dataset",
+        "sha256": "937419fee1c8ceed8f83bb5c3a3814ff0217e327ec7d4b586f7aa84cae744fb9",
+        "byte_size": 13460
+      },
+      {
+        "artifact_id": "dd5dfcd3-a2e3-4d3c-9070-29cd2e85ac61",
+        "kind": "recipe_dataset_input",
+        "sha256": "6bb21404e994b61f88d43ad2b90a3d716c1cf17c4aec4eb3aa0278cb46866c62",
+        "byte_size": 2695
+      },
+      {
+        "artifact_id": "b2cb1844-1bf6-4b9a-ba71-a554d71f5ed9",
+        "kind": "prepared_dataset",
+        "sha256": "a3ac2b83be0835acf73dcbdce7676da6d8ce615df4e691feb84ff93a21d6e3ce",
+        "byte_size": 3232
+      },
+      {
+        "artifact_id": "4893e92c-3366-4ff5-8170-0d53ebe6742f",
+        "kind": "dataset_bank_acquisition",
+        "sha256": "182b939e5217ee9721b4931b8d5284df9c497da160b6ecaa40747b71285c5ec2",
+        "byte_size": 4894
+      },
+      {
+        "artifact_id": "b8721a29-5032-4842-8db9-77c2ddab2379",
+        "kind": "prepared_dataset",
+        "sha256": "00fca88626eec0d00e420fe2795038de584fb4943bd4e6ce1b2aa9c959a21e41",
+        "byte_size": 5521
+      },
+      {
+        "artifact_id": "8dcc5eed-33be-45de-9f97-9b73634e9610",
+        "kind": "ocr_dataset_input",
+        "sha256": "03f8e25e2ef908bd2a77179edfdd868299edca94508eb8519aea81bae50287cf",
+        "byte_size": 13689
+      },
+      {
+        "artifact_id": "009c7c1b-1120-403c-b03d-a20c67403fe1",
+        "kind": "recipe_dataset_input",
+        "sha256": "bdb0613f3394927ff3c7759db91a1b9bad9bf6a8c84be1ba03cc3d6906bbf633",
+        "byte_size": 2808
+      },
+      {
+        "artifact_id": "e7c95cf7-7d4f-4ef8-829f-3e674efbff7f",
+        "kind": "prepared_dataset",
+        "sha256": "7935905c79e1012dc7599568882d99c2d16de714e46b84fbb102171f0d02a940",
+        "byte_size": 3345
+      },
+      {
+        "artifact_id": "8d8078ef-23a1-44bd-b05f-739b0fcb1fd3",
+        "kind": "ocr_dataset_input",
+        "sha256": "e5f99e5d9512c897e1f9a3908acf5a9956872b0ffaf6f088a702f6c5ffe3c343",
+        "byte_size": 13689
+      },
+      {
+        "artifact_id": "598431cc-b73b-4aa7-ad08-0096e0f0aedc",
+        "kind": "ocr_dataset_input",
+        "sha256": "e5318d89499ef04b650a9c3e505726e7b830eac1a2d8d5942b1b9353153deb45",
+        "byte_size": 2767
+      },
+      {
+        "artifact_id": "493c2579-f173-4cfe-8192-67d2b1b9b571",
+        "kind": "prepared_dataset",
+        "sha256": "0ed098a680cd756662915f2edf7b76606aec13bb4bf56a967e6522118719c677",
+        "byte_size": 3841
+      },
+      {
+        "artifact_id": "5eb82b29-a799-4469-b383-ef4832465cdf",
+        "kind": "dataset_bank_acquisition",
+        "sha256": "828685fc4aae515b9079f3de58b2d4f036ab29ef8fa9f4c5f256a41d1c2c986e",
+        "byte_size": 6342
+      },
+      {
+        "artifact_id": "4bc10ee5-8d40-45b4-b664-cbb21f86c93a",
+        "kind": "prepared_dataset",
+        "sha256": "6625c49dc8725484a1204ac910d038faf1a81095f2b56fc5dad663ef6f34c93b",
+        "byte_size": 7014
+      },
+      {
+        "artifact_id": "05ab3f5a-ae2d-448d-bcac-baa8ae9070d6",
+        "kind": "dataset_bank_acquisition",
+        "sha256": "f6014c908508077f15f77ecf4f76eda3caa861cb2e6f7a96872e8db295a5d2b7",
+        "byte_size": 24510
+      },
+      {
+        "artifact_id": "6aeb9887-98ea-4131-99ca-02fb67e6fb95",
+        "kind": "prepared_dataset",
+        "sha256": "c1345a40ed90ce62354ef8dbdff9419dd043ae29df62ed77075e60afb80d55ca",
+        "byte_size": 25148
+      },
+      {
+        "artifact_id": "698a1569-a556-4dcb-901a-5f59267ad7c3",
+        "kind": "dataset_bank_acquisition",
+        "sha256": "70e2061f6ae6bda3e27ddc0fdfbb5befb77c73788d9a94801a110fc8b7c3a625",
+        "byte_size": 25695
+      },
+      {
+        "artifact_id": "a257ad9b-e7e7-460a-b4fc-c93257203aa4",
+        "kind": "prepared_dataset",
+        "sha256": "5f96af335c3771c012f0a2942d756199ed4738eec29b130dcdd9385c877bb1ec",
+        "byte_size": 26332
+      },
+      {
+        "artifact_id": "9ddf4780-1aba-4786-b4fd-d1f70f705ef1",
+        "kind": "dataset_bank_acquisition",
+        "sha256": "38abcc117ccbc92c1a85a36e0beec31b9d4a174d930a9e57743f39f35b5f6f26",
+        "byte_size": 5465
+      },
+      {
+        "artifact_id": "d68ac6a4-b524-4ab1-b21e-6d19a3119872",
+        "kind": "prepared_dataset",
+        "sha256": "92c9eef320d3bfa20255b76c28a3ff4f3c18140251c45a47109af1aaf1a2b6fe",
+        "byte_size": 6103
+      },
+      {
+        "artifact_id": "b6a7acea-e4cc-48ca-8f4a-8269eaae574a",
+        "kind": "dataset_bank_acquisition",
+        "sha256": "c966bbd86af9b7c384923f33c52f35e6ad1c847c6cb3791ded11b45488c0bd69",
+        "byte_size": 19842
+      },
+      {
+        "artifact_id": "e5a493ac-b7f0-433f-aa51-7b920c34a1c8",
+        "kind": "prepared_dataset",
+        "sha256": "29110ba43df6d31555b6bfb6b1eddfefb97cf64d9c94bbc6a069df69b05c0de4",
+        "byte_size": 20480
+      },
+      {
+        "artifact_id": "db1464a9-0abe-42cd-8fd5-d1f14de08cce",
+        "kind": "dataset_bank_acquisition",
+        "sha256": "95bf72ed16b6e55a6597b9740fefff7e03fe3ba1d9e0a82c650def5a620d6969",
+        "byte_size": 8362
+      },
+      {
+        "artifact_id": "df2d471f-392b-4b4b-a7ac-57bb7c5ee617",
+        "kind": "prepared_dataset",
+        "sha256": "ce75390e234fdcc640bcfd8c8d4c9fbba548b5b6f23cdcf1d6034009ad0514e0",
+        "byte_size": 9000
+      },
+      {
+        "artifact_id": "ceb78980-4815-44ca-b0b5-8caecc4518b6",
+        "kind": "dataset_bank_media",
+        "sha256": "c9082fa80f32097e49c314326826625c6d0ba31a14da745458757512733ee18c",
+        "byte_size": 186950
+      },
+      {
+        "artifact_id": "c6e51092-f8d8-45dd-b76a-54ae75e26dd9",
+        "kind": "dataset_bank_media",
+        "sha256": "d1a83960a3e1bd6b2a9894724ba5dd8df8861ec14f8c10d7ca4fb107593cffd7",
+        "byte_size": 204779
+      },
+      {
+        "artifact_id": "69abbf45-a636-45a3-bfe5-b966cf6c2ceb",
+        "kind": "dataset_bank_media",
+        "sha256": "07cc3e6838eaf088ccaf553889defad55bc36dc88b938c65d206ded20cd3d4f8",
+        "byte_size": 186106
+      },
+      {
+        "artifact_id": "b13456a0-6f89-4a29-a75b-21daea47fbff",
+        "kind": "dataset_bank_acquisition",
+        "sha256": "8944fafd2d83d401e037de95f40a40c995fddb6a213322e2a4801acfdbe32efd",
+        "byte_size": 28197
+      },
+      {
+        "artifact_id": "96da2445-538a-408f-a826-606f4167358f",
+        "kind": "prepared_dataset",
+        "sha256": "46b0d27ea6b2637989d190d28ab012aca6f47aac74294d90e18ba634ed297b30",
+        "byte_size": 28834
+      },
+      {
+        "artifact_id": "6d48cf93-baac-4f5d-a3cc-43881dd33169",
+        "kind": "dataset_bank_media",
+        "sha256": "2439aaaaf7edc055d4051a1c43c3130582dcb4c3f4c797936fe118208d06b1bb",
+        "byte_size": 105899
+      },
+      {
+        "artifact_id": "9d8979c1-8ea7-436b-8c38-ce5030ea0e2e",
+        "kind": "dataset_bank_media",
+        "sha256": "bbba79cc4d1203df387f18cb7f5ce0804bb8e1c362acf1d49ba001b9e9c0f7a8",
+        "byte_size": 112834
+      },
+      {
+        "artifact_id": "8328e8da-1496-4388-b5d3-e5b5b2be6931",
+        "kind": "dataset_bank_media",
+        "sha256": "5cdeb5763d2e09afe3e9f42d3ee284b58ec563bb11a2284dce0630cd2d7a208a",
+        "byte_size": 136000
+      },
+      {
+        "artifact_id": "3deea53b-4488-4f7d-b062-919684778fa0",
+        "kind": "dataset_bank_acquisition",
+        "sha256": "6d73558e7ced22ec62b076a22c1897d96e251a3d10b94e92874009c4c88dfbc0",
+        "byte_size": 3485
+      },
+      {
+        "artifact_id": "5d53abb3-5942-4aad-a35d-04ffc3887bf3",
+        "kind": "prepared_dataset",
+        "sha256": "ad2349bf32e7240165a2df311f10ea610b759e8c8285acb9d6b8e69cc4ceb660",
+        "byte_size": 4122
+      },
+      {
+        "artifact_id": "5c89f61c-3bc3-4cde-9470-b2c8c54947e6",
+        "kind": "dataset_bank_media",
+        "sha256": "d21c2365971914bd4f18b8866b8900470844485b6165ae27e5403416dcce88c4",
+        "byte_size": 46124
+      },
+      {
+        "artifact_id": "6301411b-e37b-4899-8a97-649004a772a8",
+        "kind": "dataset_bank_media",
+        "sha256": "1524a0551655a594ebd8323de9ae96ab4297a6245f53380b32266fc758a8ab3b",
+        "byte_size": 405164
+      },
+      {
+        "artifact_id": "0ee04768-4e36-4a59-ad1d-bc3e7a919df6",
+        "kind": "dataset_bank_media",
+        "sha256": "11e4aca775dd575e6c9f5b210a1ddf1a2ba3b39366528335cadbc9d45156722b",
+        "byte_size": 140204
+      },
+      {
+        "artifact_id": "fe136ab3-bf5d-4d8f-a9bb-aa71da717111",
+        "kind": "dataset_bank_acquisition",
+        "sha256": "25d07c882202955dd68f6403c7542636c8d42518c35036d3fcb657e3cce8153a",
+        "byte_size": 3618
+      },
+      {
+        "artifact_id": "8af32b98-9eb7-4cd1-b8f2-0801ce547811",
+        "kind": "prepared_dataset",
+        "sha256": "9f1738b92f8fda54b7d5c1c8648987eb03180b001abb9cedeabb67af3b2e71cd",
+        "byte_size": 4256
+      },
+      {
+        "artifact_id": "93cd6cd6-e090-405d-ba26-d231fa1f106f",
+        "kind": "dataset_bank_acquisition",
+        "sha256": "1415bacdd20f09d8e58674929b5b1a800fb5205448e85f63f1b4b7292c37e467",
+        "byte_size": 3126
+      },
+      {
+        "artifact_id": "552e4f23-2e30-447a-adb0-c7f6db098f5b",
+        "kind": "prepared_dataset",
+        "sha256": "598f939ea525a4ba57eb22efca29e6ec9270f3b9b1208957c825cd1bd83e69b2",
+        "byte_size": 3762
+      },
+      {
+        "artifact_id": "6db5be64-9531-44e3-820d-66586f52fdfe",
+        "kind": "dataset_bank_full_file",
+        "sha256": "d11fe30213d36434a0879aab7cb00ce3c812eb7ba2495874438abff7b7b762e9",
+        "byte_size": 3738
+      },
+      {
+        "artifact_id": "ade9cf02-4508-4716-8514-3fefe37358d1",
+        "kind": "dataset_bank_full_manifest",
+        "sha256": "2e682e75b7ed4c0c36a87225cd81ada35fd060c1a3561d24264e2938705e27b3",
+        "byte_size": 694335
+      }
+    ]
+  },
+  "accessibility": [
+    {
+      "screen": "Dataset Bank",
+      "violations": []
+    },
+    {
+      "screen": "Specialists",
+      "violations": []
+    },
+    {
+      "screen": "Recipes",
+      "violations": []
+    }
+  ],
+  "tests": {
+    "frozen_backend": {
+      "tests": 815,
+      "skipped": 9,
+      "failures": 0
+    },
+    "current_backend": {
+      "tests": 820,
+      "skipped": 9,
+      "failures": 0
+    },
+    "frontend": {
+      "tests": 153,
+      "failures": 0
+    },
+    "production_build": "passed",
+    "django_checks": "passed",
+    "migration_drift": "none"
+  },
+  "core_repeat": {
+    "scope": "packaged_browser_local_beta",
+    "tasks": [
+      "PM001",
+      "PM002",
+      "PM003",
+      "PM004",
+      "PM005",
+      "PM006",
+      "PM007",
+      "PM009"
+    ],
+    "elapsed_seconds": 47.388,
+    "project": "Final QA 1791769631149",
+    "training_run": "352965dd-43c5-4e2a-a556-f5f0270b64e5",
+    "candidate": "04acbd0c-b232-4151-b314-7e21196ac88e",
+    "evaluation_run": "1e7d896c-12f5-411e-b8ae-bc3e10b8ac69",
+    "release_version": "a0b806e9-4c9f-4f86-8c82-bb325f270235",
+    "local_serving_verified": true,
+    "local_deployment": "bdd74603-b981-4196-8d9f-3b788291ad3f",
+    "local_acceptance_accuracy_threshold": 0,
+    "committed_steps": 2,
+    "known_overlap_check": "known_lineage_checked",
+    "failed_cases": 1,
+    "missing_cases": 0,
+    "review_state": "failing",
+    "production_qualified": false,
+    "reload_preserved": true,
+    "narrow_layout_passed": true,
+    "manual_api_requests": false
+  },
+  "snapshot": {
+    "revision": "unversioned",
+    "source_digest": "acd04b02a9903a261cd3789d05d566dbaa446baa0acfc6ee43017dba02604fdd",
+    "protocol": "modelanvil.local-beta.v1",
+    "dataset_formats": [
+      "jsonl",
+      "csv",
+      "docx",
+      "json",
+      "pdf"
+    ],
+    "production_qualified": false,
+    "source_manifest_sha256": "04633cc2f1b7cb08393773c3a5cb1f87b78ee97938102df025005ba84ac36b70"
+  },
+  "browser_page_errors": [],
+  "cleanup": {
+    "workers": [
+      {
+        "name": "Final QA 1791769631149 evaluator",
+        "status": "offline",
+        "connection_state": "credential_unavailable",
+        "heartbeat_recorded": true
+      },
+      {
+        "name": "Final QA 1791769631149 worker",
+        "status": "offline",
+        "connection_state": "credential_unavailable",
+        "heartbeat_recorded": true
+      },
+      {
+        "name": "qa-bank",
+        "status": "offline",
+        "connection_state": "offline",
+        "heartbeat_recorded": true
+      },
+      {
+        "name": "qa-laya",
+        "status": "offline",
+        "connection_state": "offline",
+        "heartbeat_recorded": true
+      },
+      {
+        "name": "qa-ocr",
+        "status": "offline",
+        "connection_state": "offline",
+        "heartbeat_recorded": true
+      },
+      {
+        "name": "qa-recipe",
+        "status": "offline",
+        "connection_state": "offline",
+        "heartbeat_recorded": true
+      },
+      {
+        "name": "qa-recipe-cpu",
+        "status": "offline",
+        "connection_state": "offline",
+        "heartbeat_recorded": true
+      },
+      {
+        "name": "qa-recipe-cpu2",
+        "status": "offline",
+        "connection_state": "offline",
+        "heartbeat_recorded": true
+      }
+    ],
+    "active_api_keys": 0,
+    "active_worker_credentials": 0
+  },
+  "independent_consumer": {
+    "completion": "  ",
+    "generated_token_ids": [
+      36,
+      36
+    ],
+    "runtime": "independent_stdlib_transformer_consumer",
+    "weights_sha256": "3b55f30aa34cc1de3a9cf9bfecc654312abce32de21314c898e461ff67a1cdb5"
+  }
+}

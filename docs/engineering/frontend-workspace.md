@@ -167,38 +167,51 @@ PostgreSQL test database to exercise transactional locking.
 
 ## Workspace design
 
-The browser applies the [design brief](design-brief.md) through a shared semantic
-token system in `web/src/style.css`. Light is the default; Light, Dark, and System
-preferences persist locally. Dataset forms, catalog cards, release views, and
-budget tables share surface, text, action, and status tokens.
+The browser applies the [design brief](design-brief.md) through
+`web/src/design-system/`: `tokens.css` is generated from
+`design/figcraft/variables.json` (`npm run tokens:sync`; the build fails when it
+is stale), `semantic.css` derives the aliases pages use, `base.css` resets
+elements, and `primitives.css` styles every shared component through `data-ui`
+attributes. `web/src/app.css` holds the shell. The sheets are cascade layers
+(`tokens, base, primitives, shell, pages`), so import order never changes a
+result. Page stylesheets contain layout only; `web/tests/css-policy.test.mjs`
+rejects element selectors, primitive overrides, `!important` and color literals
+in them. Light is the default theme; Light, Dark and System persist locally. The
+`web/src/design-system/README.md` lists the primitives and the type, spacing and
+nesting rules.
 
-Navigation groups are Workspace, Data, Develop, Context & release, and Operations.
-The shell reads the actual API-key-scoped tenant name from `/api/v1/tenants/`;
-the sidebar tenant display is informational. The top bar organization dropdown
-lists verified connections from this browser session. Connect organization opens
-a native dialog to verify another API key before changing scope. Additional keys
-stay in memory; the existing active-key preference is retained. Switching uses
-the selected organization’s key, resets resource views, and preserves the route. Refresh
-remains available for every area. The full rail collapses to labeled icon buttons
-at 1024 px and a toggleable menu at 768 px. Tables scroll inside their panels.
+The rail is a light surface 240 px wide. The Workspace group (Overview, Datasets,
+Models, Training, Evaluation, Chat) is always visible; Data, Develop, Context &
+release and Operations sit behind an "Advanced workspace" disclosure that opens on
+its own pages. The header carries four controls: the organization name with the
+project select, "Go to…" page search, Active jobs, and a settings menu holding
+appearance, organization switching (verified connections from this browser
+session, plus "Connect organization…"), refresh, connection or sign-out, API
+status and build identity. The shell renders the single page title; pages render
+sections, not titles. Under 1024 px the rail becomes a menu and inspectors become
+drawers; under 768 px forms are one column and controls grow to 44 px.
 
-Overview places workflow choices and prerequisites first, followed by inventory,
-actual job activity, completed evaluation evidence, and measured usage access.
-Inventory identifies whether counts are totals or loaded-page counts. Completed
-evaluations are not presented as qualified releases. Evaluation and usage fail
-independently of the inventory request. Missing budget values appear as a dash.
+Pages follow three patterns. List pages (Workflows, Audit, Infrastructure,
+Budgets, Releases, Models, Dataset Bank) are a searchable table with one primary
+action that opens a dialog, an inspector for the selected row, and charts folded
+into an "Insights" disclosure. Form-first pages (Datasets, Recipes, Context Lab,
+RAG, Specialists, Evaluation, Alignment) open with the form that is the page's
+job and fold execution settings and raw records away. Detail pages (Run Detail,
+Resource Detail) show a status header, a fact list and folded sections for
+attempts, checkpoints, metrics, evidence and links. Overview leads with the next
+step in the fine-tuning journey, then setup gaps, active work, latest results and
+usage. Training is wizard-first with an advanced form behind one toggle. Chat
+shows a toolbar, two settings disclosures and a sticky composer.
 
-Shared controls provide visible focus, a skip link that preserves the route,
-text status badges, sticky table headings, reduced-motion behavior, and an
-Escape-dismissable connection dialog with native focus restoration. Token
-contrast checks pass 4.5:1 for tested text pairs and 3:1 for input borders in both
-themes. This is not a full WCAG certification or a replacement for pilot testing.
+Vocabulary is one term per concept in sentence case: training run, job, model,
+model version, dataset version, examples, training method, training plan,
+compute, budget and preflight. Status badges carry an icon and a humanized label
+from `web/src/api/status.ts`. Identifiers stay out of tables and live in the
+inspector as copyable values.
 
-Validation covers the TypeScript/production build, 84 existing frontend tests,
-and browser checks at 1440, 1024, 768, and 390 px. Browser checks covered route
-rendering, panel overflow, light/dark display, theme persistence, responsive
-navigation, and connection dialog dismissal. Advanced builders, full lineage,
-project switching, and release gates retain the limitations documented above.
-
-Fresh-account CPU onboarding, project switching and prerequisite-aware preflight were
-[verified on 23 October 2026](verification/task3-onboarding-2026-10-23/report.md).
+Validation covers the TypeScript and production builds, the node test suite, the
+Storybook build and the browser suite (every screen and action story checks its
+heading, demo requests, alerts and axe at error level). `npm run screenshots`
+captures every screen story at 1440 and 768 px in both themes for review.
+Advanced builders, full lineage, project switching and release gates retain the
+limitations documented above.

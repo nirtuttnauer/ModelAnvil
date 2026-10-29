@@ -1,0 +1,293 @@
+
+> modelanvil-web@0.1.0 build-storybook
+> storybook build
+
+
+┌  Building storybook v10.6.1
+│
+◇  Cleaning outputDir: storybook-static
+(node:19362) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│
+◇  Loading presets
+│
+◇  Building manager..
+│
+●  Building open services..
+│
+●  Building preview..
+│  Vite vite v8.3.4 building client environment for production...
+transforming...
+│
+●  Copying static files: public at storybook-static
+│
+●  Copying static files: .storybook/static at storybook-static
+✓ 2369 modules transformed.
+rendering chunks...
+computing gzip size...
+│  Vite storybook-static/iframe.html
+│  18.77 kB │ gzip:   5.29 kB
+│  storybook-static/assets/FormEditors-D_nNMY7c.css
+│  0.31 kB │ gzip:   0.18 kB
+│  storybook-static/assets/data-inspector-stories-Cf37PFta.css
+│  0.47 kB │ gzip:   0.23 kB
+│  storybook-static/assets/WorkbenchComponents-DYpcQv4I.css
+│  0.96 kB │ gzip:   0.41 kB
+│  storybook-static/assets/RecipesPage-B-VeqtJ0.css
+│  1.09 kB │ gzip:   0.52 kB
+│  storybook-static/assets/SpecialistsPage-D21Wg0o1.css
+│  1.35 kB │ gzip:   0.58 kB
+│  storybook-static/assets/ModelHardwareFit-HJ9V-wFs.css
+│  1.44 kB │ gzip:   0.54 kB
+│  storybook-static/assets/model-workspace-B2ijFv3v.css
+│  1.74 kB │ gzip:   0.66 kB
+│  storybook-static/assets/FormEditors-CR_5HtTg.css
+│  2.74 kB │ gzip:   0.90 kB
+│  storybook-static/assets/RunDetailPage-COabcTFi.css
+│  2.78 kB │ gzip:   0.77 kB
+│  storybook-static/assets/MarkdownResponse-CN79cDd9.css
+│  3.04 kB │ gzip:   0.91 kB
+│  storybook-static/assets/guided-training-2U2HbAeA.css
+│  4.33 kB │ gzip:   1.24 kB
+│  storybook-static/assets/Charts-BGsrHGrZ.css
+│  4.82 kB │ gzip:   1.48 kB
+│  storybook-static/assets/DataInspector-uTpJaj9l.css
+│  4.85 kB │ gzip:   1.28 kB
+│  storybook-static/assets/ml-pages-BQPM32V_.css
+│  4.92 kB │ gzip:   1.37 kB
+│  storybook-static/assets/workbench-components-CLtwUFIc.css
+│  6.53 kB │ gzip:   1.66 kB
+│  storybook-static/assets/operations-BVg6ycQ4.css
+│  6.93 kB │ gzip:   1.64 kB
+│  storybook-static/assets/TrainingPage-CQZrz3mJ.css
+│  6.96 kB │ gzip:   1.59 kB
+│  storybook-static/assets/DatasetsPage-Cv-jBuU4.css
+│  7.21 kB │ gzip:   1.68 kB
+│  storybook-static/assets/Screens-BJCX23mu.css
+│  10.62 kB │ gzip:   2.95 kB
+│  storybook-static/assets/data-workspace-C1XBezIw.css
+│  10.93 kB │ gzip:   2.49 kB
+│  storybook-static/assets/style-CAB6K1Gp.css
+│  20.70 kB │ gzip:   4.90 kB
+│  storybook-static/assets/iframe-C4ZETZ-t.js
+│  0.04 kB │ gzip:   0.06 kB
+│  storybook-static/assets/data-inspector-stories-eYBNGcHH.js
+│  0.09 kB │ gzip:   0.11 kB
+│  storybook-static/assets/data-workspace-C8kpbiiN.js
+│  0.09 kB │ gzip:   0.11 kB
+│  storybook-static/assets/guided-training-L1AcD908.js
+│  0.09 kB │ gzip:   0.11 kB
+│  storybook-static/assets/ml-pages-HRY7CgM5.js
+│  0.09 kB │ gzip:   0.11 kB
+│  storybook-static/assets/model-workspace-40nHA9uG.js
+│  0.09 kB │ gzip:   0.11 kB
+│  storybook-static/assets/operations-CJYxhuNq.js
+│  0.09 kB │ gzip:   0.11 kB
+│  storybook-static/assets/style-BiFNLG8l.js
+│  0.09 kB │ gzip:   0.11 kB
+│  storybook-static/assets/workbench-components-BbJx1ZVh.js
+│  0.09 kB │ gzip:   0.11 kB
+│  storybook-static/assets/plus-B4mBbgOC.js
+│  0.29 kB │ gzip:   0.24 kB
+│  storybook-static/assets/x-Ba0gxfSh.js
+│  0.29 kB │ gzip:   0.24 kB
+│  storybook-static/assets/arrow-right-DK1I9XnB.js
+│  0.31 kB │ gzip:   0.25 kB
+│  storybook-static/assets/arrow-up-right-DrclBdhw.js
+│  0.31 kB │ gzip:   0.25 kB
+│  storybook-static/assets/search-CKBQwoBH.js
+│  0.31 kB │ gzip:   0.26 kB
+│  storybook-static/assets/circle-check-B4whSJiA.js
+│  0.35 kB │ gzip:   0.28 kB
+│  storybook-static/assets/circle-x-BxQBwf-k.js
+│  0.37 kB │ gzip:   0.28 kB
+│  storybook-static/assets/download-dXfsVoFV.js
+│  0.37 kB │ gzip:   0.28 kB
+│  storybook-static/assets/copy-CY4tTBUr.js
+│  0.38 kB │ gzip:   0.30 kB
+│  storybook-static/assets/database-Duhb0Xd6.js
+│  0.38 kB │ gzip:   0.29 kB
+│  storybook-static/assets/circle-question-mark-DXUwSXe4.js
+│  0.43 kB │ gzip:   0.32 kB
+│  storybook-static/assets/jsx-runtime-DeHZSEgm.js
+│  0.43 kB │ gzip:   0.30 kB
+│  storybook-static/assets/box-DwbljeEW.js
+│  0.45 kB │ gzip:   0.31 kB
+│  storybook-static/assets/shield-check-BL4PAjGJ.js
+│  0.46 kB │ gzip:   0.34 kB
+│  storybook-static/assets/refresh-cw-Dl4wbwe7.js
+│  0.46 kB │ gzip:   0.32 kB
+│  storybook-static/assets/server-h8YNaOmI.js
+│  0.48 kB │ gzip:   0.30 kB
+│  storybook-static/assets/layers-rvp0ElPK.js
+│  0.58 kB │ gzip:   0.34 kB
+│  storybook-static/assets/rocket-lPCMYqMO.js
+│  0.59 kB │ gzip:   0.40 kB
+│  storybook-static/assets/resources-DfLQP7d2.js
+│  0.62 kB │ gzip:   0.43 kB
+│  storybook-static/assets/cpu-IiwdyEvb.js
+│  0.78 kB │ gzip:   0.38 kB
+│  storybook-static/assets/useHardwareInventory-Bh-1eB78.js
+│  0.79 kB │ gzip:   0.48 kB
+│  storybook-static/assets/resource-routes-BAk0EzF3.js
+│  0.83 kB │ gzip:   0.45 kB
+│  storybook-static/assets/ResourceState-GYyuLnaD.js
+│  0.83 kB │ gzip:   0.48 kB
+│  storybook-static/assets/workbench-data-C1yid7Q_.js
+│  0.87 kB │ gzip:   0.50 kB
+│  storybook-static/assets/react-18-BEXDHHkj.js
+│  0.89 kB │ gzip:   0.52 kB
+│  storybook-static/assets/ResourceHandoff-DOeNR79k.js
+│  0.91 kB │ gzip:   0.53 kB
+│  storybook-static/assets/runs-DUEPwetq.js
+│  0.92 kB │ gzip:   0.53 kB
+│  storybook-static/assets/rolldown-runtime-DkW27tQK.js
+│  1.19 kB │ gzip:   0.67 kB
+│  storybook-static/assets/States.stories-SKSVNP8d.js
+│  1.23 kB │ gzip:   0.60 kB
+│  storybook-static/assets/LineagePanel-8j-wfuGP.js
+│  1.49 kB │ gzip:   0.69 kB
+│  storybook-static/assets/preload-helper-s6jzklqy.js
+│  1.64 kB │ gzip:   0.87 kB
+│  storybook-static/assets/InspectorPanel-BtcAcg9D.js
+│  1.90 kB │ gzip:   0.86 kB
+│  storybook-static/assets/alignment-DQwR7XJr.js
+│  1.95 kB │ gzip:   0.88 kB
+│  storybook-static/assets/ReleaseGateChecklist-GH7X9uz1.js
+│  2.34 kB │ gzip:   0.95 kB
+│  storybook-static/assets/ModelHardware.stories-CFKUunlj.js
+│  2.43 kB │ gzip:   1.26 kB
+│  storybook-static/assets/RetrievalEvidenceCard-ChRiqN-Z.js
+│  2.74 kB │ gzip:   1.13 kB
+│  storybook-static/assets/workflow-Cdyuv8DP.js
+│  2.95 kB │ gzip:   1.23 kB
+│  storybook-static/assets/training-workspace-Biy7MSe7.js
+│  2.97 kB │ gzip:   1.29 kB
+│  storybook-static/assets/MetricComparison-CuG-tVh6.js
+│  3.64 kB │ gzip:   1.24 kB
+│  storybook-static/assets/createLucideIcon-DXGoS8KL.js
+│  3.66 kB │ gzip:   1.68 kB
+│  storybook-static/assets/ChatActions.stories-awf9Vt4d.js
+│  3.74 kB │ gzip:   1.60 kB
+│  storybook-static/assets/client-D4i-OUTn.js
+│  3.94 kB │ gzip:   1.78 kB
+│  storybook-static/assets/ResourcePicker-cX2IqaZC.js
+│  4.37 kB │ gzip:   1.68 kB
+│  storybook-static/assets/ChatResponses.stories-C0SW_uHu.js
+│  4.37 kB │ gzip:   1.89 kB
+│  storybook-static/assets/HardwareSelection.stories-B06oMdx0.js
+│  4.47 kB │ gzip:   1.78 kB
+│  storybook-static/assets/TrainingProgress.stories-qmK5kiy3.js
+│  4.49 kB │ gzip:   1.78 kB
+│  storybook-static/assets/ContextBlockEditor-Ca_F9DaS.js
+│  4.58 kB │ gzip:   1.71 kB
+│  storybook-static/assets/Draft-CsKnIcXQ.js
+│  4.95 kB │ gzip:   2.16 kB
+│  storybook-static/assets/MlActions.stories-Cn-IjwW9.js
+│  5.52 kB │ gzip:   1.42 kB
+│  storybook-static/assets/ModelExport.stories-CT1_YonO.js
+│  5.78 kB │ gzip:   2.36 kB
+│  storybook-static/assets/ResourceDetailPage-BENE-XEm.js
+│  5.79 kB │ gzip:   2.13 kB
+│  storybook-static/assets/DataInspector.stories-CWiUZsiZ.js
+│  5.84 kB │ gzip:   2.27 kB
+│  storybook-static/assets/FormActions.stories-ChTS0CBh.js
+│  6.08 kB │ gzip:   1.93 kB
+│  storybook-static/assets/ModelHardwareFit-DZ2iDVvg.js
+│  6.92 kB │ gzip:   2.60 kB
+│  storybook-static/assets/TrainingDatasetValidation.stories-B7hZetLY.js
+│  7.05 kB │ gzip:   2.59 kB
+│  storybook-static/assets/DataInspector-BFHeVgLI.js
+│  7.18 kB │ gzip:   2.19 kB
+│  storybook-static/assets/TrainingDatasetPreview.stories-COlMXcUW.js
+│  8.43 kB │ gzip:   3.09 kB
+│  storybook-static/assets/BaseChatComparison.stories-B_pxlN-E.js
+│  8.66 kB │ gzip:   2.79 kB
+│  storybook-static/assets/FormEditors.stories-5xkUpAzl.js
+│  8.70 kB │ gzip:   2.73 kB
+│  storybook-static/assets/datasets-Duc5XYxl.js
+│  8.82 kB │ gzip:   3.34 kB
+│  storybook-static/assets/PreflightChecklist-CEt6RYvk.js
+│  8.99 kB │ gzip:   2.76 kB
+│  storybook-static/assets/ContextLabPage-DH-7gz1a.js
+│  9.62 kB │ gzip:   3.43 kB
+│  storybook-static/assets/AuditPage-BjHjX6QI.js
+│  11.19 kB │ gzip:   3.84 kB
+│  storybook-static/assets/ClusterExplorerPage-GLabRPMr.js
+│  12.07 kB │ gzip:   3.97 kB
+│  storybook-static/assets/Charts-C-saL-Ay.js
+│  13.26 kB │ gzip:   4.32 kB
+│  storybook-static/assets/WorkbenchActions.stories-BMscUSnN.js
+│  13.64 kB │ gzip:   3.71 kB
+│  storybook-static/assets/WorkflowsPage-D3Vo06Pz.js
+│  14.30 kB │ gzip:   4.71 kB
+│  storybook-static/assets/PrerequisiteModals-DfMtFXfy.js
+│  15.54 kB │ gzip:   4.11 kB
+│  storybook-static/assets/AlignmentPage-BIMm6ZnR.js
+│  16.75 kB │ gzip:   5.45 kB
+│  storybook-static/assets/EvaluationPage-JTSM9cu-.js
+│  17.24 kB │ gzip:   5.33 kB
+│  storybook-static/assets/SpecialistsPage-BzXMkYQZ.js
+│  18.05 kB │ gzip:   5.49 kB
+│  storybook-static/assets/WorkbenchComponents.stories-DWFxF33b.js
+│  18.48 kB │ gzip:   5.33 kB
+│  storybook-static/assets/FormEditors-C10oMXa-.js
+│  18.97 kB │ gzip:   5.43 kB
+│  storybook-static/assets/RecipesPage-VMpoBn1x.js
+│  19.36 kB │ gzip:   5.97 kB
+│  storybook-static/assets/InfrastructurePage-DuLiqVuv.js
+│  19.46 kB │ gzip:   5.61 kB
+│  storybook-static/assets/BudgetsPage-B4gorvvx.js
+│  20.73 kB │ gzip:   6.11 kB
+│  storybook-static/assets/RunDetailPage-Y1RsA45i.js
+│  21.40 kB │ gzip:   6.16 kB
+│  storybook-static/assets/ReleasesPage-XmPFyDWD.js
+│  21.61 kB │ gzip:   6.26 kB
+│  storybook-static/assets/DatasetBankPage-B5KFo8JX.js
+│  22.84 kB │ gzip:   6.76 kB
+│  storybook-static/assets/OverviewPage-CZmypvtY.js
+│  24.41 kB │ gzip:   7.33 kB
+│  storybook-static/assets/DatasetsPage-il-t4S7i.js
+│  25.17 kB │ gzip:   7.35 kB
+│  storybook-static/assets/ModelsPage-O2VObw5e.js
+│  25.62 kB │ gzip:   8.03 kB
+│  storybook-static/assets/ChatPage-H51z4p0R.js
+│  26.24 kB │ gzip:   8.39 kB
+│  storybook-static/assets/AnnotationPage-BsEb0i78.js
+│  26.48 kB │ gzip:   7.98 kB
+│  storybook-static/vite-inject-mocker-entry.js
+│  27.81 kB │ gzip:   9.67 kB
+│  storybook-static/assets/matchers-JIUQ3HVY-C789_MAK.js
+│  28.79 kB │ gzip:   9.68 kB
+│  storybook-static/assets/Screens.stories-DAcqS1vj.js
+│  45.19 kB │ gzip:  13.82 kB
+│  storybook-static/assets/browser-Cew79wzN.js
+│  59.04 kB │ gzip:  17.79 kB
+│  storybook-static/assets/TrainingPage-CrPsgU9v.js
+│  72.71 kB │ gzip:  21.45 kB
+│  storybook-static/assets/MarkdownResponse-BeiQoYBd.js
+│  164.84 kB │ gzip:  49.44 kB
+│  storybook-static/assets/client-CnzB0iRT.js
+│  210.54 kB │ gzip:  65.70 kB
+│  storybook-static/assets/http-response-D_iO_MtE.js
+│  331.31 kB │ gzip: 135.03 kB
+│  storybook-static/assets/axe-CX04DNRJ.js
+│  659.31 kB │ gzip: 187.88 kB
+│  storybook-static/assets/iframe-BexXbcTN.js
+│  1,215.99 kB │ gzip: 344.70 kB
+
+│
+▲  Vite [plugin builtin:vite-reporter]
+│  (!) Some chunks are larger than 500 kB after minification. Consider:
+│  - Using dynamic import() to code-split the application
+│  - Use build.rolldownOptions.output.codeSplitting to improve chunking:
+│  ]8;;https://rolldown.rs/reference/OutputOptions.codeSplittinghttps://rolldown.rs/reference/OutputOptions.codeSplitting]8;;
+│  - Adjust chunk size limit for this warning via
+│  build.chunkSizeWarningLimit.
+│  Vite ✓ built in 4.13s
+│
+◇  Output directory:
+│  /Users/nirtuttnauer/Documents/Code/modelanvil/web/storybook-static
+│
+└  Storybook build completed successfully
+

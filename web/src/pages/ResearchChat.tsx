@@ -49,7 +49,7 @@ export function ResearchChat({ token, refreshKey }: { token: string; refreshKey?
     <div className="workflow-page-heading"><div><h2>Documents &amp; research</h2><p>Ask your local model about attached documents and reviewed web pages. Inspect the exact evidence and retained conversation memory.</p></div></div>
     {error && <Notice role="alert" tone="error">{error}</Notice>}
     {loading ? <p role="status">Loading document sessions…</p> : <>
-      <Card><h3>Research session</h3><div className="form-grid">
+      <Card><h3>Research session</h3><div data-ui="field-grid">
         <label>Saved session<select aria-label="Saved research session" disabled={busy} value={session?.session_id || ''} onChange={e => { if (e.target.value) void load(e.target.value); else setSession(null); }}><option value="">New session</option>{catalog.sessions.map(s => <option key={s.session_id} value={s.session_id}>{s.title}</option>)}</select></label>
         {!session && <><label>Session title<Field value={title} maxLength={180} disabled={busy} onChange={e => setTitle(e.target.value)} /></label>
           <label>Local answer model<select value={model} disabled={busy} onChange={e => setModel(e.target.value)}><option value="">Choose a provisioned model</option>{catalog.models.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}</select></label></>}
@@ -77,7 +77,7 @@ export function ResearchChat({ token, refreshKey }: { token: string; refreshKey?
             <details><summary>Measured generation and context</summary><DataInspector value={t.generation.receipt} /></details></section>)}
           <form onSubmit={e => { e.preventDefault(); void action('ask', { question, max_tokens: maxTokens, memory_tokens: memoryTokens }); }}>
             <label>Question<MultilineField value={question} maxLength={8192} disabled={busy} onChange={e => setQuestion(e.target.value)} /></label>
-            <div className="form-grid"><label>Output token limit<Field type="number" min={1} max={128} value={maxTokens} disabled={busy} onChange={e => setMaxTokens(Number(e.target.value))} /></label><label>History token limit<Field type="number" min={64} max={512} value={memoryTokens} disabled={busy} onChange={e => setMemoryTokens(Number(e.target.value))} /></label></div>
+            <div data-ui="field-grid"><label>Output token limit<Field type="number" min={1} max={128} value={maxTokens} disabled={busy} onChange={e => setMaxTokens(Number(e.target.value))} /></label><label>History token limit<Field type="number" min={64} max={512} value={memoryTokens} disabled={busy} onChange={e => setMemoryTokens(Number(e.target.value))} /></label></div>
             <Button type="submit" disabled={busy || !question.trim() || !session.evidence_available || !session.documents.some(d => d.available)}>{busy ? 'Working…' : 'Search sources & answer'}</Button>
           </form>
           <details><summary>Retained conversation memory</summary><p className="hint">Pinned verbatim compaction retains recent text and bounded earlier prefixes. Inspect measured tokens and omissions. Source authorization is checked again before reuse.</p><DataInspector value={session.memory} /></details>

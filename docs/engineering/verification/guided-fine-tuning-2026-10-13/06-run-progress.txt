@@ -1,0 +1,64 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Guided flow QA workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Training
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Configure reproducible runs and follow their actual progress.
+  - region "Train a model on your data":
+    - text: YOUR FIRST FINE-TUNE
+    - heading "Train a model on your data" [level=2]
+    - paragraph: Everything you need, in four steps. Training runs on this computer.
+    - list "Fine-tuning progress":
+      - text: Model
+      - text: Dataset
+      - text: Review
+      - generic: "4"
+      - text: Train
+    - heading "Your training run" [level=3]
+    - status: Training failed. Open run details to inspect the failure and recovery options.
+    - text: 0 of 3 steps
+    - progressbar
+    - link "Open run details":
+      - /url: "#runs/training/c4485001-c1b0-44f5-9c7b-61750454cff4?from=%23training"
+    - button "Start another fine-tune"
+  - button "Advanced training workspace"
+  - text: ModelAnvil · c39a2e95 · b22e8eb9
+  - alert: "· API build changed; rebuild/reload this client before acceptance testing · Imports: JSONL, CSV, DOCX, JSON, PDF, TRAINING"
+  - text: Control plane

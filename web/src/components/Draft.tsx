@@ -1,25 +1,26 @@
-import { Button } from './ui';
+import { Button, Disclosure } from './ui';
 import { createContext, useContext, useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import { assertDraftFields, draftKey, pruneDrafts, readDraft, writeDraft, type DraftValues } from '../api/drafts';
 import { DRAFT_TTL_MS } from '../api/drafts';
 
 const memoryDrafts = new Map<string, { values: DraftValues; expiresAt: number; status: string }>();
+/** Reset volatile drafts when creating an isolated preview session. */
+export function resetDraftMemory() { memoryDrafts.clear(); }
 
 export const DraftScope = createContext<{ organization: string; project: string | null } | null>(null);
 
-export function useDraft<T extends DraftValues>(form: string, defaults: T, resource = 'new', persist = true) {
+export function useDraft<T extends DraftValues>(form: string, defaults: T, resource = 'new') {
   assertDraftFields(defaults);
   const scope = useContext(DraftScope);
   const key = scope ? draftKey(scope.organization, scope.project, form, resource) : '';
   const activeKey = useRef(key); activeKey.current = key;
-  useEffect(() => { if (key && !persist) { try { sessionStorage.removeItem(key); } catch { /* Private reviews stay in memory. */ } } }, [key, persist]);
   function load() {
     const memory = key ? memoryDrafts.get(key) : null;
-    if (memory && memory.expiresAt > Date.now()) return { key, values: memory.values as T, status: memory.status === 'private' ? 'private' : memory.status === 'unsaved' ? 'unsaved' : 'restored' };
+    if (memory && memory.expiresAt > Date.now()) return { key, values: memory.values as T, status: memory.status === 'unsaved' ? 'unsaved' : 'restored' };
     if (key) memoryDrafts.delete(key);
     try {
       pruneDrafts(sessionStorage);
-      const saved = key && persist ? readDraft(sessionStorage, key, defaults) : null;
+      const saved = key ? readDraft(sessionStorage, key, defaults) : null;
       if (saved) memoryDrafts.set(key, { values: saved, expiresAt: JSON.parse(sessionStorage.getItem(key)!).expiresAt, status: 'saved' });
       return { key, values: saved || { ...defaults }, status: saved ? 'restored' : 'empty' };
     } catch { return { key, values: { ...defaults }, status: 'unavailable' }; }
@@ -49,8 +50,8 @@ export function useDraft<T extends DraftValues>(form: string, defaults: T, resou
       const value = typeof update === 'function' ? (update as (v: T[K]) => T[K])(prior.values[name]) : update;
       if (value === prior.values[name]) return;
       const values = { ...prior.values, [name]: value };
-      let status = persist ? 'unsaved' : 'private';
-      try { if (key && persist) { writeDraft(sessionStorage, key, values, defaults); status = 'saved'; } } catch { /* Keep edits in memory when browser storage is unavailable. */ }
+      let status = 'unsaved';
+      try { if (key) { writeDraft(sessionStorage, key, values, defaults); status = 'saved'; } } catch { /* Keep edits in memory when browser storage is unavailable. */ }
       if (key) memoryDrafts.set(key, { values, status, expiresAt: Date.now() + DRAFT_TTL_MS });
       const next = { key, values, status }; currentRef.current = next; setState(next);
     }];
@@ -62,15 +63,16 @@ export function useDraft<T extends DraftValues>(form: string, defaults: T, resou
     const next = { key, values: { ...defaults }, status: 'empty' }; currentRef.current = next; setState(next);
   }
   function restore() { if (activeKey.current === key) { const next = load(); currentRef.current = next; setState(next); } }
-  return { field, discard, restore, status: current.status, privateMode: !persist };
+  return { field, discard, restore, status: current.status };
 }
 
-export function DraftStatus({ draft, disabled = false }: { draft: { status: string; privateMode?: boolean; restore(): void; discard(): void }; disabled?: boolean }) {
-  return <aside className="notice draft-status full-width" aria-label="Local draft">
-    <p role="status">{({ private: 'Private draft stays in this tab’s memory.', saved: 'Draft saved in this tab.', restored: 'Draft restored. Review inputs before submitting.', empty: 'No unfinished draft.', unsaved: 'Draft is unsaved: browser storage is unavailable or full. Edits remain in memory for navigation in this tab.', expired: 'Draft backup expired. Edit to save a fresh backup before leaving this page.', unavailable: 'Browser draft storage is unavailable.' }[draft.status] || 'Draft is unsaved.')}</p>
-    <details open={['unsaved', 'expired', 'unavailable'].includes(draft.status)}><summary>Draft options and storage</summary>
-    <p className="muted">{draft.privateMode ? 'This private review stays only in this tab’s memory. Reloading or closing the tab discards unsaved corrections. Discard removes the in-memory draft.' : 'Drafts use this tab’s session storage and expire 8 hours after an edit. Browsers may retain session storage when restoring tabs; expired backups are removed when the app checks them. Discard removes the draft. Credentials and execution approvals are excluded. Avoid entering secrets in content.'}</p>
-    <div className="actions"><Button type="button" disabled={disabled || !['saved', 'restored'].includes(draft.status)} onClick={draft.restore}>Restore saved draft</Button><Button type="button" disabled={disabled || draft.status === 'empty'} onClick={draft.discard}>Discard draft</Button></div>
-    </details>
-  </aside>;
+/** One-line draft state with Restore/Discard; the storage explanation folds away. */
+export function DraftIndicator({ draft, disabled = false }: { draft: { status: string; restore(): void; discard(): void }; disabled?: boolean }) {
+  const text = ({ saved: 'Draft saved in this tab', restored: 'Draft restored', empty: 'No draft', unsaved: 'Draft unsaved · browser storage unavailable', expired: 'Draft expired', unavailable: 'Draft storage unavailable' } as Record<string, string>)[draft.status] ?? 'Draft unsaved';
+  return <div data-ui="draft" aria-label="Local draft">
+    <span role="status">{text}</span>
+    {['saved', 'restored'].includes(draft.status) && <Button type="button" variant="quiet" size="sm" disabled={disabled} onClick={draft.restore}>Restore</Button>}
+    {draft.status !== 'empty' && <Button type="button" variant="quiet" size="sm" disabled={disabled} onClick={draft.discard}>Discard draft</Button>}
+    <Disclosure summary="About drafts" variant="quiet"><p className="muted">Drafts use this tab’s session storage and expire 8 hours after an edit. File contents and credentials are never stored.</p></Disclosure>
+  </div>;
 }

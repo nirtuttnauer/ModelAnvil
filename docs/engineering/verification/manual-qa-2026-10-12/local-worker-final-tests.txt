@@ -1,0 +1,7 @@
+----------------------------------------------------------------------
+Ran 10 tests in 0.109s
+
+OK
+Destroying test database for alias 'default'...
+Found 10 test(s).
+System check identified no issues (0 silenced).

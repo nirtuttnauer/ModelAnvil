@@ -1,0 +1,21 @@
+{
+  "scope": "20 routes, with both model and dataset resource-detail variants (21 states)",
+  "mobile_states": 21,
+  "desktop_states": 21,
+  "mobile_width": 375,
+  "desktop_width": 1440,
+  "screen_render_checks_passed": 42,
+  "document_overflow": false,
+  "mobile_clipped_controls": false,
+  "changes": [
+    "Shared compact headings, spacing and touch controls",
+    "Expandable setup, charts and secondary filters",
+    "Compact draft storage explanations with important errors expanded",
+    "Focused source and job detail panels",
+    "Expandable context overrides and recipe steps",
+    "Mobile results and training examples prioritize readable content"
+  ],
+  "limits": [
+    "Browser viewport emulation; physical phone keyboard, system font scaling and reduced-motion OS settings not exercised"
+  ]
+}

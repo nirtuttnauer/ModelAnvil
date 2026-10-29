@@ -12,7 +12,7 @@ from modelanvil.runners.training.runtime import digest
 
 def comparison_evidence(run, project):
     """Verify server-owned durable execution and current access to its inputs."""
-    from modelanvil.runners.eval_worker import resolve_inputs
+    from modelanvil.runners.eval_worker import verified_evaluation_inputs
     from modelanvil.runners.evidence import training_evidence
 
     if (run.status != 'completed' or not run.job_id or run.job.status != 'succeeded'
@@ -34,7 +34,7 @@ def comparison_evidence(run, project):
     if training_evidence(training)['level'] != 'integrated_execution':
         raise ValueError('The candidate needs actual completed worker training evidence.')
     pins = run.protocol_ref.get('pins', {})
-    if not pins or resolve_inputs(run, pins.get('max_tokens'))['pins'] != pins:
+    if not pins or verified_evaluation_inputs(run)['pins'] != pins:
         raise ValueError('Comparison inputs or runtime no longer match their frozen evidence.')
     expected = {case['case_id'] for case in run.suite_version.cases}
     rows = list(run.case_results.order_by('case_id').values('case_id', 'passed', 'score', 'candidate_output'))
@@ -77,6 +77,29 @@ def job_timing(job):
     execution = (sum(max(0, (a.completed_at - a.started_at).total_seconds()) for a in attempts)
                  if all(a.completed_at for a in attempts) else None)
     return {'queue_seconds': queue, 'execution_seconds': execution}
+
+
+def evaluation_resources(run):
+    """Observed wall times and committed ledger units, without estimated GPU usage or prices."""
+    from modelanvil.budgets.models import UsageEvent
+
+    def measured(job):
+        if job is None:
+            return {'queue_seconds': None, 'execution_seconds': None, 'usage_available': False, 'usage': []}
+        events = UsageEvent.all_objects.filter(tenant_id=run.tenant_id, reservation__job_id=job.job_id).order_by('pk')
+        usage = [{'quantity': str(event.quantity), 'unit': event.unit,
+                  'amount': str(event.net_amount()) if event.amount is not None else None,
+                  'currency': event.currency or None} for event in events]
+        return {**job_timing(job), 'usage_available': bool(usage), 'usage': usage}
+
+    training = TrainingRun.all_objects.filter(tenant_id=run.tenant_id, output_model_version=run.candidate_model_version,
+        status='completed').select_related('job').first()
+    if training and not check_resource_access(training, run.project_id, run.tenant_id):
+        training = None
+    return {'evaluation': measured(run.job if run.job_id else None),
+            'training': measured(training.job if training and training.job_id else None),
+            'peak_memory_bytes': None,
+            'basis': 'Attempt wall time includes model loading and checkpointing. Usage is committed ledger units, with recorded cost adjustments when priced. Peak memory and unpriced cost are unavailable, not zero.'}
 
 
 def activation_report(tenant, project=None, week=None):

@@ -1,39 +1,53 @@
 The React UI implements the native [FigCraft project](../../../design/figcraft/ModelAnvil.figcraft).
 
-`design/figcraft/variables.json` is the source for all 58 design variables. Run `npm run tokens:sync` in `web` after exporting updated variables from FigCraft. The generator converts numeric values to CSS lengths and maps FigCraft mode names to the app's lowercase attributes. `npm run build` checks that generated tokens are current.
+## Tokens
 
-`tokens.css` defines light/dark colors and compact/comfortable spacing, typography, and radii. Existing semantic names such as `--surface`, `--primary`, and `--text` in `style.css` reference these exported tokens. Feature styles use the same spacing and type scale. Theme and density preferences persist locally; System follows the OS color theme. Workspace strings from the design remain reference values; live organization and project names come from the API.
+`design/figcraft/variables.json` is the source for the 58 design variables. Run `npm run tokens:sync` in `web` after exporting updated variables from FigCraft; `npm run build` checks that `tokens.css` is current, so never edit it by hand. Everything derived from the tokens lives in `semantic.css`: the semantic aliases page CSS uses (`--surface`, `--primary`, `--border`, `--text`, status tones), the system font stacks (a font stack cannot be a FigCraft variable), control height, radii, overlay shadow, chart palette and layout sizes. It is the only hand-written stylesheet allowed to contain a color literal, and every literal has a dark pair.
 
-The shared components in `components/ui.tsx` and `components/Feedback.tsx` map the design families to React:
+## Stylesheet layers
 
-| FigCraft family | React | Editable properties |
-| --- | --- | --- |
-| Button | `Button` | `variant="primary\|secondary\|quiet"`, native `disabled`, children/icon |
-| Tab | `Tab` | `aria-selected`, label, native keyboard handlers |
-| Badge | `Badge` | `tone="neutral\|success\|caution\|error"`, children |
-| Card | `Card` | `tone="surface\|subtle\|accent"`, semantic `as`, children |
-| Notice | `Notice` | tone, semantic `as`, children, native live-region role |
-| Field | `Field`, `MultilineField` | native input/textarea value, validation, labels and refs |
-| Header | `WorkspaceHeader` | desktop and compact layouts through CSS |
-| Navigation item | `NavigationItem` | selected, label, icon, action |
-| Record row | `RecordTable` | column headers, records and existing controls |
-| Feedback | `Feedback` | `state="loading\|empty\|error"`, title, description, optional action slot |
-| Metric summary | `MetricSummary` | `as="button\|article"`, label, value, optional detail/icon, native actions |
+`index.css` imports, in order, `tokens.css` → `semantic.css` → `base.css` → `primitives.css`; `src/app.css` holds the shell. `semantic.css` declares the cascade order `@layer tokens, base, primitives, shell, pages;` so a stylesheet's import order can no longer change the result. Page stylesheets wrap their rules in `@layer pages { … }` and contain layout only: grids, sticky regions, page-specific spacing. They never restyle elements or `[data-ui]` primitives, and they contain no `!important` and no color literals. `tests/css-policy.test.mjs` enforces this for every page and component stylesheet and checks that the shell imports nothing but `design-system/index.css` and `app.css`.
 
-Components forward native attributes, events and refs. Buttons retain native form submission defaults. Feature components continue to own their data and interactions.
+Two text utilities live in `base.css` because every page needs them: `.muted` for secondary lines and `.error-text` for inline errors. Everything else is keyed on `data-ui`.
 
-Button hover and pressed colors come from FigCraft's `Color/Action hover` and `Color/Action pressed` tokens. Keyboard focus uses `:focus-visible`; field error styles use `aria-invalid="true"` and keep the caller's associated error message. Disabled fields retain native disabled behavior. Storybook's **Interaction states** example exercises validation and keyboard focus without adding artificial state props to the runtime components.
+Type scale: page title `--type-24`, section `--type-20`, subsection `--type-16`, body and controls `--type-14`, labels `--type-13`, captions and badges `--type-12` (the minimum). Weights 400/500/600 only, no letter-spacing, no uppercase. Spacing uses `--space-4/8/12/16/24/32`; controls use `--radius-control` (6 px) and panels `--radius-panel` (8 px); only floating surfaces carry `--shadow-overlay`. A bordered container never holds another bordered box: nested cards, form grids and feedback lose their border inside cards, inspectors, dialogs and card sections.
 
-`Feedback` shares loading, empty and error layouts across resource requests, screen boundaries, workflows, evaluations and the source catalog. Loading uses a status region; errors use an alert; empty content stays passive. Callers provide the optional recovery action. Retry and reload buttons explicitly use `type="button"`, and the loading animation stops for reduced-motion preferences. Storybook’s **Feedback states** shows the variants; **Loading and recovery** verifies retry without form submission.
+## Primitives
 
-`MetricSummary` serves Overview actions and Budget read-only articles. Action tiles default to `type="button"`; callers can explicitly request submission. Both forms retain zero values, wrap long content, use tabular numerals and align content at the top. Metric grids use a 200px preferred minimum and collapse to one column on phones. The **Resource summaries** story checks keyboard activation, passive articles, disabled actions and form isolation.
+`components/ui.tsx` re-exports everything in `components/primitives/` plus `RecordTable`, `MetricSummary`, `NavigationItem` and `WorkspaceHeader`. Styling is keyed on `data-ui` / `data-variant` / `data-tone` attributes, never on class names.
 
-At 1024px and below, the full-label menu replaces the rail. Workspace options reveal organization/project selectors and appearance controls. At 600px and below, simple record tables reflow into labeled cards while retaining table semantics and the same controls. Multi-level or spanning tables retain local scrolling. Metrics and panels wrap with available space. Interactive charts retain their recorded series, tooltips, legends and data views.
+| Primitive | Purpose |
+| --- | --- |
+| `Button`, `LinkButton` | `variant="primary\|secondary\|quiet"`, `size="sm\|lg"`, `icon` for square icon buttons; native `type` default kept |
+| `Card` | `tone="surface\|subtle\|accent"`, `padded` |
+| `PageHeader` | the one `<h1>` per page, rendered by the shell; `PageActions` portals page buttons into its action slot |
+| `Section` | `title`, `description`, `actions`, `level={2\|3}`, `variant="plain\|card"`; groups content with one heading |
+| `StatRow` / `Stat` | one row of figures with hairline dividers; `tone` tints the value |
+| `StatusBadge` | text plus icon for any lifecycle string, toned by `api/status.ts` (`statusTone`, `statusLabel`); keeps the `state` class |
+| `Badge`, `Notice` | tones `neutral\|info\|success\|caution\|error` (`Notice` defaults to neutral) |
+| `Field`, `MultilineField`, `TextControl`, `MultilineControl`, `Select`, `Checkbox`, `Radio`, `FileInput` | labelled controls with hint and error slots; `FileInput` keeps the native input focusable |
+| `SegmentedControl`, `TabList` + `Tab` | pressed-state group and underline tabs |
+| `Disclosure` | real `<details>/<summary>`; `variant="plain\|card\|quiet"` |
+| `KeyValueList` | `<dl>` of facts, one or two columns |
+| `Toolbar` | filters left, `actions` right |
+| `Dialog`, `Menu`, `MenuSection` | native `<dialog>` rendered in place; disclosure-based popover menu |
+| `JourneySteps` | numbered steps for the shared fine-tuning journey in `api/journey.ts` |
+| `Feedback`, `EmptyState` | loading / empty / error with `layout="inline\|centered"` |
+| `InspectorPanel` | `<aside data-ui="inspector">` for one selected record: eyebrow, title, close button, body and `footer`; Escape closes it and focus returns to the trigger |
+| `DraftIndicator` | one line of draft state (saved, restore, discard) with an "About drafts" disclosure |
 
-Preview every variant and exercise native form submission in Storybook under **ModelAnvil → Components → FigCraft**. Existing screen and action stories exercise the integrated components with synthetic API data.
+Layout attributes, used directly in JSX: `data-ui="form"` stacks controls 16 px apart; `data-ui="field-grid"` lays controls out in two columns (`data-span="full"` spans both; one column under 768 px); `data-ui="split"` with `data-open` places a list beside an inspector and stacks them under 1000 px; `data-ui="actions"` is a wrapping row of buttons; `data-ui="table"` styles any table, with `tbody tr[aria-selected="true"]` highlighting the inspected row.
+
+Charts: `ChartPanel` is unbordered by default and takes `bordered` only when it stands alone on a page; colors come from `--chart-1..4` and `--chart-neutral`; "View data" is a quiet disclosure and the selected point is announced through a live region instead of a permanent readout bar.
 
 ### Technical identifiers
 
-Use `Identifier` from `components/Identifier` beside a readable resource name. It displays a circle icon, reveals the exact value on hover or keyboard focus, and copies it on activation with announced success or failure. Tooltips use the top layer so they remain visible in scroll containers and dialogs. Keep controls outside links, buttons, summaries and select options. UUIDs and hashes in structured inspectors use this shared control automatically; source text, editable IDs and exported data retain their exact contents.
+Use `Identifier` from `components/Identifier` beside a readable resource name. It shows a small circle icon, reveals the exact value on hover or keyboard focus, and copies it on activation with announced success or failure; `display="code"` shows the value inline for detail and inspector rows. Tables show the human name only; the copyable identifier belongs in the inspector, never as the only content of a cell and never twice in a row.
 
-New internal UUIDs use `modelanvil.core.ids.uuid7`. Existing identifiers, imported source references and deterministic UUID5 sample references remain valid. Avoid using shortened UUID prefixes for display or identity: UUIDv7 prefixes encode time and are shared by nearby records. Prefer names, revisions and per-list ordinals.
+New internal UUIDs use `modelanvil.core.ids.uuid7`. Avoid shortened UUID prefixes for display or identity: UUIDv7 prefixes encode time and are shared by nearby records. Prefer names, revisions and per-list ordinals.
+
+## Shell
+
+The rail is a light surface (dark in the dark theme), 240 px, with the Workspace group always visible and the other groups behind "Advanced workspace", which opens for its own pages and closes when the user returns to the workspace group. The header carries four controls: the project scope, "Go to…" page search (⌘K), Active jobs, and a settings menu holding appearance, organization, refresh, connection/sign-out, API status and build identity. Theme and density preferences persist locally; Light is the default and System follows the OS.
+
+Preview every variant in Storybook under **ModelAnvil → Components → FigCraft** (light and dark). Screen and action stories exercise the integrated components with synthetic API data.

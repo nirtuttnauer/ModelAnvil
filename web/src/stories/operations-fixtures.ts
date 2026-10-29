@@ -18,8 +18,6 @@ const updated = '2026-10-11T10:00:00Z';
 export const operationsResponses: Record<string, unknown> = {
   '/api/v1/workers/setup/': { can_administer: false, profiles: [] },
   '/api/v1/budget-policies/permissions/': { can_administer: false, scope: 'tenant' },
-  '/api/v1/compute-plugins/': [],
-  '/api/v1/compute-allocations/': [],
   '/api/v1/jobs/': [
     {
       job_id: '40000000-0000-4000-8000-000000000001', name: 'Anvil Assistant · SFT demo', pool: 1,
@@ -109,6 +107,7 @@ export const operationsResponses: Record<string, unknown> = {
     },
   ],
   '/api/v1/budget-policies/': [
+    { policy_id: '50000000-0000-4000-8000-000000000005', name: 'Evaluation cases · Demo', period: 'monthly', unit: 'evaluation_cases', limit_amount: '1000', currency: '', enabled: true, stop_behavior: 'stop', allowance: { remaining_amount: '1000' }, created_at: created, updated_at: updated },
     { policy_id: '50000000-0000-4000-8000-000000000001', name: 'Research CPU hours', period: 'monthly', unit: 'cpu_hour', limit_amount: '2400.000000', currency: 'USD', enabled: true, stop_behavior: 'stop', created_at: created, updated_at: updated },
     { policy_id: '50000000-0000-4000-8000-000000000002', name: 'Evaluation input tokens', period: 'monthly', unit: 'input_token', limit_amount: '100000000.000000', currency: 'USD', enabled: true, stop_behavior: 'stop', created_at: created, updated_at: updated },
     { policy_id: '50000000-0000-4000-8000-000000000003', name: 'Archived GPU allowance', period: 'monthly', unit: 'gpu_hour_eu', limit_amount: '100.000000', currency: 'EUR', enabled: false, stop_behavior: 'stop', created_at: created, updated_at: updated },

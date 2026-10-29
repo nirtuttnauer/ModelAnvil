@@ -1,0 +1,147 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "First-time user review" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "Custom support assistant" [selected]
+    - option "+ New project…"
+  - strong: Budgets
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Connection":
+    - generic: Connection
+  - text: Operations
+  - heading "Budgets" [level=1]
+  - paragraph: Understand measured usage, reservations, and spending policies.
+  - text: Resource accounting
+  - heading "Resource accounting" [level=2]
+  - paragraph: Inspect measured costs and reservations for pending work.
+  - button "Refresh usage":
+    - text: Refresh usage
+  - text: Ledger scope
+  - combobox "Ledger scope":
+    - option "Current project and accessible shared executions" [selected]
+    - option "Tenant-wide (unrestricted keys only)"
+  - text: From (UTC)
+  - textbox "From (UTC)"
+  - text: Through (UTC)
+  - textbox "Through (UTC)"
+  - text: Resource unit
+  - textbox "Resource unit":
+    - /placeholder: All units
+  - text: Currency
+  - combobox "Currency":
+    - option "All currencies, kept separate" [selected]
+    - option "Unpriced / no currency"
+    - option "USD"
+    - option "EUR"
+  - region "Budget policy management":
+    - heading "Budget policies" [level=2]
+    - paragraph: Organization-wide limits shared across projects. Reservations and usage use the policy’s resource unit.
+    - button "New budget policy" [active]
+    - text: Policy name
+    - textbox "Policy name"
+    - text: Resource unit
+    - combobox "Resource unit":
+      - option "Training steps" [selected]
+      - option "Dataset Bank records"
+      - option "Evaluation cases"
+    - text: Budget period
+    - combobox "Budget period":
+      - option "Lifetime" [selected]
+      - option "Monthly"
+      - option "Daily"
+    - text: Policy limit
+    - spinbutton "Policy limit": "100"
+    - checkbox "Enabled" [checked]
+    - text: Enabled
+    - paragraph: This is a quantity allowance, not a monetary price. Costs remain unpriced unless measured rates are available. Existing reservations retain their units and periods.
+    - button "Save budget policy" [disabled]
+    - button "Cancel budget edit"
+    - paragraph: No policies yet. Create a training-step policy to enable budgeted training.
+  - heading "Usage and reservation attribution" [level=2]
+  - paragraph: Exact execution, corrections and policy periods for the selected scope.
+  - button "Export scoped ledger"
+  - heading "Current shared policy allowances" [level=3]
+  - paragraph: Policies are tenant-wide. These current-period allowances include the whole policy ledger, independently of the usage filters. Forecasts are unavailable without a compatible measured and priced basis.
+  - heading "Committed usage (0)" [level=3]
+  - table:
+    - rowgroup:
+      - row "Time / exact execution Quantity Cost / corrections Attribution":
+        - columnheader "Time / exact execution"
+        - columnheader "Quantity"
+        - columnheader "Cost / corrections"
+        - columnheader "Attribution"
+    - rowgroup
+  - heading "Reservations (0)" [level=3]
+  - table:
+    - rowgroup:
+      - row "Policy / period Estimated reservation Committed usage State / source":
+        - columnheader "Policy / period"
+        - columnheader "Estimated reservation"
+        - columnheader "Committed usage"
+        - columnheader "State / source"
+    - rowgroup
+  - article:
+    - generic: Active reservations
+    - generic: "0"
+    - generic: Awaiting completion or release
+  - article:
+    - generic: Reservation units
+    - generic: "0"
+    - generic: Each resource unit kept separate
+  - article:
+    - generic: Budget policies
+    - generic: "0"
+    - generic: Configured spending policies
+  - article:
+    - generic: Resource units
+    - generic: "0"
+    - generic: Units with recorded usage
+  - heading "Recorded resource costs" [level=3]
+  - paragraph: Measurements will be grouped by their reported currency.
+  - strong: Waiting for recorded data
+  - paragraph: Billable resource events are needed to display measured costs.
+  - heading "Reservation ledger" [level=3]
+  - paragraph: Summary returned by the usage API.
+  - generic: Reserved for pending work
+  - strong: "0"
+  - paragraph: 0 active reservations · 0 configured policies
+  - generic: Reserved quantities are grouped by policy unit and currency. Policy limits and forecasts are not inferred.
+  - heading "Recorded usage & costs" [level=2]
+  - paragraph: Measured usage by resource unit. Currency is reported with each cost.
+  - button "Refresh usage":
+    - text: Refresh usage
+  - heading "No usage recorded" [level=3]
+  - paragraph: Recorded usage will appear here when resources report billable events.
+  - text: ModelAnvil · c39a2e95 · 28838a1d
+  - generic: "· API build matches · Imports: JSONL, CSV, DOCX, JSON, PDF"
+  - text: Control plane

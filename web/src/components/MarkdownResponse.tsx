@@ -23,7 +23,7 @@ export function CopyResponseButton({ text, label = 'Copy response' }: { text: st
   return <div className="response-copy">
     <Button type="button" aria-label={label} disabled={!text || result?.status === 'copying'} onClick={() => void copy()}>
       {status === 'copied' ? <Check size={15} aria-hidden="true" /> : <Copy size={15} aria-hidden="true" />}
-      {status === 'copied' ? 'Copied' : status === 'copying' ? 'Copying…' : label}
+      {label}
     </Button>
     <span role="status">{status === 'copied' ? `${label === 'Copy code' ? 'Code' : 'Response'} copied.` : status === 'failed' ? 'Copy unavailable. Select the text to copy it.' : ''}</span>
   </div>;

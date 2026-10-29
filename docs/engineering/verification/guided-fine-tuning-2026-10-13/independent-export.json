@@ -1,0 +1,12 @@
+{
+  "run_id": "b7806bb0-711a-4fbb-aeed-8bfb1d099665",
+  "archive_bytes": 541625246,
+  "model_sha256": "3d9f930030cc2d184fd3ff746042c55d03d255386bd9b2d9fa57f168e33c3f6c",
+  "changed_q_projection_values": 331625,
+  "maximum_q_projection_change": 3.007054328918457e-05,
+  "chat_template_exported": true,
+  "generated_tokens": 8,
+  "completion": "1. Click on the \"Reset Password",
+  "device": "cpu",
+  "scope": "Independent transformers load from browser-downloaded files; model quality not evaluated"
+}

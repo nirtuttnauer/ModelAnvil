@@ -1,6 +1,6 @@
+import { Badge, Button, Dialog, Disclosure, KeyValueList, Notice, RecordTable, Section, Select, StatusBadge, TextControl } from '../components/ui';
+import { EmptyState } from '../components/Feedback';
 import { Identifier } from '../components/Identifier';
-import { Badge, Button, Card, Field, Notice, RecordTable } from '../components/ui';
-import { Feedback } from '../components/Feedback';
 import { runHash } from '../api/runs';
 import { ReleaseGateChecklist } from '../components/ReleaseGateChecklist';
 import { InspectorPanel } from '../components/InspectorPanel';
@@ -9,15 +9,14 @@ import React from 'react';
 import { apiPage, apiRequest, errorMessage, apiDownload } from '../api/client';
 import { CandidateReview } from '../components/CandidateReview';
 import { ResourceState } from '../components/ResourceState';
-import { Rocket, Plus, FileText, CheckCircle2, ArrowRight, Box, X } from 'lucide-react';
+import { statusLabel } from '../api/status';
 import { ChartPanel, ChartEmpty, SegmentBar } from '../components/Charts';
 import './operations.css';
 
 interface ReleaseVersion {
   release_version_id: string; revision_no: number; release: number; status: string; recorded_status?: string;
   candidate_type?: string; candidate_ref?: string; model_version?: number | null; manifest_digest?: string; created_at?: string;
-  review_freshness?: { valid: boolean; checked_at: string; reason: string } | null;
-  local_review?: { reviewed_at?: string; state: string; criteria: { key: string; required: unknown; actual: unknown; passed: boolean }[]; evaluation_run: string; production_qualified: boolean }; execution_evidence?: unknown; gate_results?: unknown; model_card?: unknown;
+  local_review?: { state: string; criteria: { key: string; required: unknown; actual: unknown; passed: boolean }[]; evaluation_run: string; production_qualified: boolean }; execution_evidence?: unknown; gate_results?: unknown; model_card?: unknown;
 }
 interface ServingEndpoint {
   endpoint_id: string; endpoint_key: string; name: string; created_at?: string; updated_at?: string;
@@ -30,9 +29,11 @@ interface ReleasesPageProps {
 }
 
 export function ReleasesPage({ token, refreshKey = 0 }: ReleasesPageProps) {
+  const endpointFormId = React.useId();
   const [endpoints, setEndpoints] = React.useState<ServingEndpoint[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [showModal, setShowModal] = React.useState(false);
+  const [reviewOpen, setReviewOpen] = React.useState(false);
   const [newKey, setNewKey] = React.useState('');
   const [newName, setNewName] = React.useState('');
   const [submitting, setSubmitting] = React.useState(false);
@@ -128,34 +129,104 @@ export function ReleasesPage({ token, refreshKey = 0 }: ReleasesPageProps) {
     } catch(e) { await fetchEndpoints(); setError(errorMessage(e)); } finally { setSubmitting(false); }
   }
   const selected = releaseVersions.find(v => v.release_version_id === releaseVersion);
-  const states = [...new Set(releaseVersions.map(v => v.status))].map(label => ({ label, value: releaseVersions.filter(v => v.status === label).length }));
+  const states = [...new Set(releaseVersions.map(v => v.status))].map(label => ({ label: statusLabel(label), value: releaseVersions.filter(v => v.status === label).length }));
   const linkedEndpoints = selected ? endpoints.filter(ep => ep.active_deployment?.release_version_id === selected.release_version_id) : [];
-  return <div className="resource-view releases-view operations-page">
-    <div className="page-actions"><Button disabled={!token?.trim() || submitting} aria-expanded={showModal} onClick={() => setShowModal(v => !v)}><Plus size={16} aria-hidden="true" />New Endpoint</Button></div>
-    <Notice as="p" className="notice">Reviewed CPU candidates export actual verified model bytes. Other exports may contain metadata only. Local CPU serving is available after a passing frozen review and actual readiness probe. Production qualification remains unavailable.</Notice>
-    <ResourceState loading={loading} error={error} onRetry={() => void fetchEndpoints()} />
-    {notice && <Notice tone="success" className="notice success" role="status"><CheckCircle2 size={16} aria-hidden="true" />{notice}</Notice>}
-    {showModal && <Card className="panel"><div className="panel-title"><div><h2>Create serving endpoint</h2><p>Creates an endpoint record. Select a reviewed candidate, deploy locally and check actual service health.</p></div><Button className="icon-button" aria-label="Close endpoint form" disabled={submitting} onClick={() => setShowModal(false)}><X size={17} aria-hidden="true" /></Button></div><form onSubmit={handleCreateEndpoint} className="form-grid"><label htmlFor="endpoint-key">Endpoint Key<Field type="text" id="endpoint-key" placeholder="e.g. svg-generation-primary" value={newKey} onChange={e => setNewKey(e.target.value)} required /></label><label htmlFor="endpoint-name">Display Name<Field type="text" id="endpoint-name" placeholder="e.g. SVG Generation Primary Cluster" value={newName} onChange={e => setNewName(e.target.value)} /></label><div className="full-width actions"><Button className="primary" type="submit" disabled={submitting || !token?.trim() || !newKey.trim()}>{submitting ? 'Creating...' : 'Create Endpoint'}</Button><Button type="button" disabled={submitting} onClick={() => setShowModal(false)}>Cancel</Button></div></form></Card>}
-    <CandidateReview token={token || ''} onCreated={id => { setReleaseVersion(id); setNotice('Candidate review frozen. Inspect each criterion before downloading.'); void fetchEndpoints(); }} />
-    <details className="workspace-details"><summary>Release overview and references</summary><div className="ops-chart-grid">
-      <ChartPanel title="Reported release states" description={`${releaseVersions.length} versions in the loaded page · backend state does not certify production readiness.`}>{releaseVersions.length ? <SegmentBar data={states} unit="versions" /> : <ChartEmpty message="Create a candidate review to see its reported state." />}</ChartPanel>
+  const ready = !!token?.trim();
+  const sbomDisabled = !releaseVersion || sbomBusy || !ready;
+  function choose(id: string) { setReleaseVersion(id); setSbomJson(null); }
+
+  return <div className="ops-page">
+    <Section title="Release versions" description="Candidate records and their reported states." actions={<>
+      <Select aria-label="Release version for SBOM" value={releaseVersion} onChange={e => choose(e.target.value)}>
+        <option value="">Select a release version</option>{releaseVersions.map(v => <option key={v.release_version_id} value={v.release_version_id}>Release · r{v.revision_no} · {statusLabel(v.status)}</option>)}
+      </Select>
+      <Button type="button" variant="primary" disabled={!ready || submitting} onClick={() => setReviewOpen(true)}>New candidate release</Button>
+      <Button type="button" disabled={!ready || submitting} onClick={() => setShowModal(true)}>New endpoint</Button>
+    </>}>
+      {notice && <Notice tone="success" role="status">{notice}</Notice>}
+      <ResourceState loading={loading && !releaseVersions.length} error={error} onRetry={() => void fetchEndpoints()} />
+      <div data-ui="split" data-open={selected ? '' : undefined}>
+        <div className="ops-main">
+          {!loading && !error && !releaseVersions.length && <EmptyState title="No release versions" description={ready ? 'Review a completed CPU candidate and its evaluation to create one.' : 'Connect with an API key to load the release registry.'} />}
+          {!!releaseVersions.length && <div className="table-scroll" tabIndex={0}><RecordTable>
+            <thead><tr><th>Version</th><th>Candidate</th><th>State</th><th>Created</th></tr></thead>
+            <tbody>{releaseVersions.map(v => <tr key={v.release_version_id} aria-selected={selected === v || undefined}>
+              <td><Button type="button" variant="quiet" size="sm" onClick={() => choose(v.release_version_id)}>Release · r{v.revision_no}</Button></td>
+              <td>{v.candidate_type || 'Not reported'}</td>
+              <td><StatusBadge status={v.status} />{v.recorded_status && v.recorded_status !== v.status && <small>Recorded state: {statusLabel(v.recorded_status)}</small>}</td>
+              <td>{v.created_at ? new Date(v.created_at).toLocaleString() : 'Not reported'}</td>
+            </tr>)}</tbody>
+          </RecordTable></div>}
+        </div>
+        {selected && <InspectorPanel key={selected.release_version_id} eyebrow="Release" title={`Release · r${selected.revision_no}`} closeLabel="Close release details" onClose={() => choose('')}>
+          <div data-ui="actions"><StatusBadge status={selected.status} /></div>
+          <KeyValueList items={[
+            { label: 'Reported state', value: statusLabel(selected.status) },
+            { label: 'Recorded state', value: statusLabel(selected.recorded_status || selected.status) },
+            { label: 'Candidate type', value: selected.candidate_type || 'Not reported' },
+            { label: 'Candidate reference', value: selected.candidate_ref ? <Identifier value={selected.candidate_ref} label="Candidate reference" display="code" /> : 'Not reported' },
+            { label: 'Model version', value: selected.model_version ? <Identifier value={selected.model_version} label="Model version record ID" display="code" /> : 'Not linked' },
+            { label: 'Linked endpoint records', value: `${linkedEndpoints.length} in loaded page` },
+            { label: 'Manifest digest', value: selected.manifest_digest ? <Identifier value={selected.manifest_digest} label="Manifest SHA-256" display="code" /> : 'Not reported' },
+            { label: 'Release version ID', value: <Identifier value={selected.release_version_id} label="Release version ID" display="code" /> },
+          ]} />
+          {selected.local_review && <ReleaseGateChecklist criteria={selected.local_review.criteria} state={selected.local_review.state} evidenceHref={runHash('evaluation', selected.local_review.evaluation_run)} />}
+          <div data-ui="actions">
+            <Button type="button" size="sm" disabled={sbomDisabled} onClick={() => void handleGenerateSbom()}>{sbomBusy ? 'Loading…' : 'View SPDX SBOM'}</Button>
+            <Button type="button" size="sm" disabled={sbomDisabled} onClick={() => void handleGenerateSbom(true)}>Save SPDX artifact</Button>
+            <Button type="button" size="sm" disabled={sbomDisabled} onClick={downloadReleaseBundle}>Download release bundle</Button>
+          </div>
+          <Disclosure summary="Recorded execution evidence" variant="quiet" open>{selected.execution_evidence ? <DataInspector value={selected.execution_evidence} /> : <p className="muted">No execution evidence was returned.</p>}</Disclosure>
+          <Disclosure summary="Recorded gate results" variant="quiet"><DataInspector value={selected.gate_results ?? []} /></Disclosure>
+          <Disclosure summary="Model card" variant="quiet"><DataInspector value={selected.model_card ?? {}} /></Disclosure>
+          <p className="ops-footnote">Recorded gates and endpoint pointers do not establish live serving or production qualification.</p>
+        </InspectorPanel>}
+      </div>
+    </Section>
+    {sbomJson && <Section title="Software bill of materials" description="SPDX 2.3 document for the selected release version." actions={<><Button type="button" onClick={downloadSbom}>Download JSON</Button><Button type="button" variant="quiet" onClick={() => setSbomJson(null)}>Close</Button></>}>
+      <p className="muted">{sbomEvidence?.verified ? 'Model byte checksums verified against the committed bundle.' : 'Metadata inventory; model bytes are unverified.'}</p>
+      {sbomEvidence?.warnings?.map(warning => <p className="muted" key={warning}>{warning}</p>)}
+      <DataInspector value={JSON.parse(sbomJson)} title="Software inventory" />
+    </Section>}
+    <Section title="Serving endpoints" description="Local CPU serving records. Check live health after interruptions.">
+      {endpoints.length ? <div className="ops-endpoints">{endpoints.map(ep => <article key={ep.endpoint_id} className="ops-endpoint">
+        <div data-ui="actions"><h3>{ep.name || ep.endpoint_key}</h3><Badge tone={ep.active_deployment ? 'success' : 'neutral'}>{ep.active_deployment ? 'Pointer recorded' : 'No pointer'}</Badge></div>
+        <KeyValueList items={[
+          { label: 'Deployment revision', value: ep.active_deployment ? `Rev ${ep.active_deployment.revision_no}` : 'None' },
+          { label: 'Last startup readiness', value: ep.active_deployment?.readiness_state ? statusLabel(ep.active_deployment.readiness_state) : 'Not reported' },
+          ...(ep.active_deployment?.recorded_readiness_state && ep.active_deployment.recorded_readiness_state !== ep.active_deployment.readiness_state ? [{ label: 'Recorded readiness', value: statusLabel(ep.active_deployment.recorded_readiness_state) }] : []),
+          { label: 'Updated', value: ep.updated_at ? new Date(ep.updated_at).toLocaleString() : 'Not reported' },
+          { label: 'Endpoint ID', value: <Identifier value={ep.endpoint_id} label="Endpoint ID" display="code" /> },
+        ]} />
+        <div data-ui="actions">
+          <Button type="button" size="sm" disabled={submitting || !selected?.local_review || selected.local_review.state !== 'approved'} onClick={() => void servingAction(ep, 'deploy-local')}>Deploy selected locally</Button>
+          <Button type="button" size="sm" disabled={submitting || !ep.active_deployment} onClick={() => void servingAction(ep, 'local-health')}>Check live health</Button>
+          <Button type="button" size="sm" disabled={submitting || !ep.active_deployment} onClick={() => void servingAction(ep, 'completions')}>Test inference</Button>
+          <Button type="button" size="sm" disabled={submitting || !ep.active_deployment} onClick={() => void servingAction(ep, 'rollback')}>Roll back locally</Button>
+        </div>
+        {ep.deployments && <Disclosure summary="Deployment history" variant="quiet"><DataInspector value={ep.deployments} /></Disclosure>}
+        {ep.active_deployment && <Disclosure summary="Linked version and evidence" variant="quiet"><DataInspector value={ep.active_deployment} /></Disclosure>}
+      </article>)}</div> : !loading && !error && <EmptyState title="No serving endpoints" description="Create an endpoint record to track release deployment metadata." />}
+    </Section>
+    <Disclosure summary="Insights" variant="card"><div className="ops-charts">
+      <ChartPanel title="Reported release states" description={`${releaseVersions.length} versions in the loaded page. Backend state does not certify production readiness.`}>{releaseVersions.length ? <SegmentBar data={states} unit="versions" /> : <ChartEmpty message="Create a candidate review to see its reported state." />}</ChartPanel>
       <ChartPanel title="Recorded release references" description={selected ? `Release revision ${selected.revision_no}` : 'Select a release version to inspect its recorded references.'}>
-        {selected ? <div className="ops-release-lineage"><div><Box size={20} aria-hidden="true" /><small>{selected.candidate_type || 'Candidate'}</small><span>{selected.candidate_ref ? <Identifier value={selected.candidate_ref} label="Candidate reference" /> : 'Reference not reported'}</span></div><ArrowRight size={19} aria-hidden="true" /><div><Rocket size={20} aria-hidden="true" /><span>Release <Identifier value={selected.release_version_id} label="Release version ID" /></span><strong>Revision {selected.revision_no}</strong><Badge className={`state state-${selected.status}`}>{selected.status}</Badge></div></div> : <ChartEmpty message="Choose a version from the registry below. References use the selected record only." />}
+        {selected ? <KeyValueList items={[
+          { label: selected.candidate_type || 'Candidate', value: selected.candidate_ref ? <Identifier value={selected.candidate_ref} label="Candidate reference" display="code" /> : 'Reference not reported' },
+          { label: 'Release', value: <Identifier value={selected.release_version_id} label="Release version ID" display="code" /> },
+          { label: 'Revision', value: `${selected.revision_no} · ${statusLabel(selected.status)}` },
+        ]} /> : <ChartEmpty message="Choose a version from the list above." />}
       </ChartPanel>
-    </div>
-    </details>
-    <div className={`ops-workspace ${selected ? 'with-inspector' : ''}`}>
-      <Card className="panel"><div className="panel-title"><div><h2>Release versions</h2><p>Candidate records and effective states returned by the API.</p></div><Badge className="badge">Loaded page</Badge></div><div className="panel-body">
-        <div className="toolbar"><select aria-label="Release version for SBOM" value={releaseVersion} onChange={e => { setReleaseVersion(e.target.value); setSbomJson(null); }}><option value="">Select release version</option>{releaseVersions.map(v => <option key={v.release_version_id} value={v.release_version_id}>Release · r{v.revision_no} · {v.status}</option>)}</select><Button disabled={!releaseVersion || sbomBusy || !token?.trim()} onClick={() => void handleGenerateSbom()}><FileText size={15} aria-hidden="true" />{sbomBusy ? 'Loading…' : 'View SPDX SBOM'}</Button><Button disabled={!releaseVersion || sbomBusy || !token?.trim()} onClick={() => void handleGenerateSbom(true)}>Save SPDX artifact</Button><Button disabled={!releaseVersion || sbomBusy || !token?.trim() || (!!selected?.local_review && selected.review_freshness?.valid !== true)} onClick={downloadReleaseBundle}>Download release bundle</Button></div>
-        {!!releaseVersions.length && <div className="table-scroll" tabIndex={0}><RecordTable className="resource-table"><thead><tr><th>Version</th><th>Candidate</th><th>Reported state</th><th>Created</th></tr></thead><tbody>{releaseVersions.map(v => <tr key={v.release_version_id} className={selected === v ? 'ops-selected-row' : ''}><td><Button className="text-button" onClick={() => { setReleaseVersion(v.release_version_id); setSbomJson(null); }}>Release · r{v.revision_no}</Button><Identifier value={v.release_version_id} label="Release version ID" /></td><td>{v.candidate_type || 'Not reported'}<Identifier value={v.candidate_ref} label="Candidate reference" /></td><td><Badge className={`state state-${v.status}`}>{v.status}</Badge>{v.recorded_status && v.recorded_status !== v.status && <small className="id-text">Recorded state: {v.recorded_status}</small>}</td><td>{v.created_at ? new Date(v.created_at).toLocaleString() : 'Not reported'}</td></tr>)}</tbody></RecordTable></div>}
-        {!loading && !error && !releaseVersions.length && <Feedback state="empty" title="No release versions loaded" description={token?.trim() ? 'Use New candidate release to review a completed CPU candidate and exact evaluation.' : 'Open Connection and enter an API key to connect to the release registry.'} />}
-      </div></Card>
-      {selected && <InspectorPanel eyebrow="Release details" title={`Release · r${selected.revision_no}`} closeLabel="Close release details" onClose={() => { setReleaseVersion(''); setSbomJson(null); }}><dl className="ops-facts"><div><dt>Reported state</dt><dd>{selected.status}</dd></div><div><dt>Recorded state</dt><dd>{selected.recorded_status || selected.status}</dd></div><div><dt>Candidate type</dt><dd>{selected.candidate_type || 'Not reported'}</dd></div><div><dt>Candidate reference</dt><dd className="id-text">{selected.candidate_ref ? <Identifier value={selected.candidate_ref} label="Candidate reference" /> : 'Not reported'}</dd></div><div><dt>Model version</dt><dd>{selected.model_version ? <Identifier value={selected.model_version} label="Model version record ID" /> : 'Not linked'}</dd></div><div><dt>Linked endpoint records</dt><dd>{linkedEndpoints.length} in loaded page</dd></div><div><dt>Manifest digest</dt><dd className="id-text">{selected.manifest_digest ? <Identifier value={selected.manifest_digest} label="Manifest SHA-256" /> : 'Not reported'}</dd></div></dl>{selected.local_review && <><Notice tone={selected.review_freshness?.valid ? 'neutral' : 'error'}><p>{selected.review_freshness?.reason || 'Evidence freshness has not been verified. Create a fresh review.'}</p><p>Review frozen: {selected.local_review.reviewed_at ? new Date(selected.local_review.reviewed_at).toLocaleString() : 'Not recorded'}. Evidence checked: {selected.review_freshness?.checked_at ? new Date(selected.review_freshness.checked_at).toLocaleString() : 'Not checked'}.</p></Notice><ReleaseGateChecklist criteria={selected.local_review.criteria} state={selected.local_review.state} evidenceHref={runHash('evaluation', selected.local_review.evaluation_run)} /></>}
-<details open><summary>Recorded execution evidence</summary>{selected.execution_evidence ? <DataInspector value={selected.execution_evidence} /> : <p className="muted">No execution evidence was returned.</p>}</details><details><summary>Recorded gate results</summary><DataInspector value={selected.gate_results ?? []} /></details><details><summary>Model card</summary><DataInspector value={selected.model_card ?? {}} /></details><p className="ops-scope">Recorded gates and endpoint pointers do not establish live serving or production qualification.</p></InspectorPanel>}
-    </div>
-    {sbomJson && <Card className="panel"><div className="panel-title"><div><h2>SPDX 2.3 Software Bill of Materials (SBOM)</h2><p>Recorded document for the selected release version.</p></div><div className="actions"><Button onClick={downloadSbom}>Download JSON</Button><Button onClick={() => setSbomJson(null)}>Close</Button></div></div><div className="panel-body"><p>{sbomEvidence?.verified ? 'Model byte checksums verified against the committed bundle.' : 'Metadata inventory; model bytes are unverified.'}</p>{sbomEvidence?.warnings?.map(warning => <p className="muted" key={warning}>{warning}</p>)}<DataInspector value={JSON.parse(sbomJson)} title="Software inventory" /></div></Card>}
-    <Card className="panel"><div className="panel-title"><div><h2>Serving endpoint records</h2><p>Authenticated local CPU serving. Startup probes and deployment failures are retained; check live health after interruptions.</p></div><Badge className="badge">{endpoints.length} in loaded page</Badge></div><div className="panel-body">
-      {endpoints.length ? <div className="ops-endpoint-grid">{endpoints.map(ep => <article key={ep.endpoint_id} className="ops-endpoint"><div className="ops-endpoint-title"><Rocket size={19} aria-hidden="true" /><strong>{ep.name || ep.endpoint_key}</strong><Badge className="badge">{ep.active_deployment ? 'Pointer recorded' : 'No pointer'}</Badge></div><Identifier value={ep.endpoint_id} label="Endpoint ID" /><dl className="ops-facts"><div><dt>Deployment revision</dt><dd>{ep.active_deployment ? `Rev ${ep.active_deployment.revision_no}` : 'None'}</dd></div><div><dt>Last startup readiness</dt><dd>{ep.active_deployment?.readiness_state || 'Not reported'}</dd></div>{ep.active_deployment?.recorded_readiness_state && ep.active_deployment.recorded_readiness_state !== ep.active_deployment.readiness_state && <div><dt>Recorded readiness</dt><dd>{ep.active_deployment.recorded_readiness_state}</dd></div>}<div><dt>Updated</dt><dd>{ep.updated_at ? new Date(ep.updated_at).toLocaleString() : 'Not reported'}</dd></div></dl><div className="actions"><Button disabled={submitting || !selected?.local_review || selected.local_review.state !== 'approved'} onClick={() => void servingAction(ep, 'deploy-local')}>Deploy selected locally</Button><Button disabled={submitting || !ep.active_deployment} onClick={() => void servingAction(ep, 'local-health')}>Check live health</Button><Button disabled={submitting || !ep.active_deployment} onClick={() => void servingAction(ep, 'completions')}>Test authenticated inference</Button><Button disabled={submitting || !ep.active_deployment} onClick={() => void servingAction(ep, 'rollback')}>Rollback locally</Button></div>{ep.deployments && <details><summary>Deployment history, including failed attempts</summary><DataInspector value={ep.deployments} /></details>}{ep.active_deployment && <details><summary>Linked version and recorded evidence</summary><DataInspector value={ep.active_deployment} /></details>}</article>)}</div> : !loading && !error && <Feedback state="empty" title="No serving endpoints loaded" description="Create an endpoint record to track release deployment metadata." />}
-    </div></Card>
+    </div></Disclosure>
+    <CandidateReview token={token || ''} open={reviewOpen} onOpen={() => setReviewOpen(true)} onClose={() => setReviewOpen(false)} onCreated={id => { choose(id); setNotice('Candidate review frozen. Inspect each criterion before downloading.'); void fetchEndpoints(); }} />
+    <Dialog title="New serving endpoint" description="Creates an endpoint record. Deploy a reviewed candidate to it, then check its health." open={showModal} onClose={() => setShowModal(false)}
+      footer={<><Button type="button" disabled={submitting} onClick={() => setShowModal(false)}>Cancel</Button><Button form={endpointFormId} type="submit" variant="primary" disabled={submitting || !ready || !newKey.trim()}>{submitting ? 'Creating…' : 'Create endpoint'}</Button></>}>
+      <form id={endpointFormId} data-ui="form" onSubmit={handleCreateEndpoint}>
+        <div data-ui="field-grid">
+          <TextControl label="Endpoint key" placeholder="svg-generation-primary" value={newKey} onChange={e => setNewKey(e.target.value)} required />
+          <TextControl label="Display name" placeholder="SVG generation primary" value={newName} onChange={e => setNewName(e.target.value)} />
+        </div>
+      </form>
+    </Dialog>
   </div>;
 }

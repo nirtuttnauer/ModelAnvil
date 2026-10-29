@@ -12,7 +12,10 @@ export const InitializeCpuBase: Story = {
   parameters: { demoRoute: '#models', demoHeading: 'Models', demoApiPath: '/api/v1/models/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(await canvas.findByRole('button', { name: 'Initialize CPU base' }));
+    await userEvent.click(await canvas.findByText('Advanced', { selector: 'summary' }));
+    const open = canvas.getByRole('button', { name: 'Initialize CPU base' });
+    await waitFor(() => expect(open).toBeEnabled());
+    await userEvent.click(open);
     await userEvent.type(canvas.getByLabelText('CPU base model name'), 'Storybook CPU base');
     await userEvent.click(canvas.getByRole('button', { name: 'Create pinned CPU base' }));
     await expect(canvas.findByText('Demo CPU base “Storybook CPU base” registered in this Storybook session.')).resolves.toBeVisible();
@@ -32,10 +35,53 @@ export const ExecuteEvaluation: Story = {
     await userEvent.selectOptions(selector, '30000000-0000-4000-8000-000000000007');
     await userEvent.clear(canvas.getByLabelText('Maximum generated tokens'));
     await userEvent.type(canvas.getByLabelText('Maximum generated tokens'), '4');
-    await userEvent.click(canvas.getByRole('button', { name: 'Execute CPU evaluation' }));
+    await userEvent.selectOptions(canvas.getByLabelText('Evaluation worker pool'), '1');
+    await userEvent.selectOptions(canvas.getByLabelText('Evaluation case budget'), '50000000-0000-4000-8000-000000000005');
+    await userEvent.click(canvas.getByRole('button', { name: 'Queue CPU evaluation' }));
     await expect(canvas.findByText('Demo evaluation completed with fictional Storybook results.')).resolves.toBeVisible();
     await expect(canvas.findByText('SUPPORT-001', { exact: true })).resolves.toBeVisible();
     await expect(demoRequests.filter(r => r.status >= 400)).toHaveLength(0);
+    canvasElement.dataset.demoVerified = 'passed';
+  },
+};
+
+export const GuidedClassificationComparison: Story = {
+  name: 'Review and run a guided classification comparison',
+  parameters: { demoRoute: '#evaluation?training_run=30000000-0000-4000-8000-000000000001', demoHeading: 'Evaluation', demoApiPath: '/api/v1/evaluation-runs/' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const prepare = await canvas.findByRole('button', { name: 'Prepare comparison' });
+    await waitFor(() => expect(prepare).toBeEnabled());
+    await userEvent.click(prepare);
+    await expect(canvas.findByText('Trained support model · Demo')).resolves.toBeVisible();
+    await expect(canvas.findByText('Synthetic preview only. No model is executed or qualified.')).resolves.toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'Run comparison' }));
+    await expect(canvas.findByText('2 improved · 0 regressed · 1 unchanged cases.')).resolves.toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Record accept decision' })).toBeDisabled();
+    await expect(demoRequests.filter(request => request.path.endsWith('/execute/'))[0]?.body).toMatchObject({ profile: 'guided-native', max_tokens: 32 });
+    await expect(demoRequests.filter(request => request.status >= 400)).toHaveLength(0);
+    canvasElement.dataset.demoVerified = 'passed';
+  },
+};
+
+export const GuidedExistingSuite: Story = {
+  name: 'Use an existing protected classification suite',
+  parameters: { demoRoute: '#evaluation?training_run=30000000-0000-4000-8000-000000000001', demoHeading: 'Evaluation', demoApiPath: '/api/v1/evaluation-runs/' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const register = await canvas.findByRole('button', { name: 'Register evaluation suite' });
+    await waitFor(() => expect(register).toBeEnabled());
+    await userEvent.click(register);
+    await userEvent.type(canvas.getByLabelText('Suite name'), 'Protected classification checks');
+    await userEvent.click(canvas.getByRole('button', { name: 'Pin evaluation suite' }));
+    const suite = await canvas.findByRole('option', { name: 'Protected classification checks · r1 · 1 cases' });
+    const suiteVersion = (suite as HTMLOptionElement).value;
+    await userEvent.selectOptions(canvas.getByLabelText('Protected comparison examples'), suiteVersion);
+    await waitFor(() => expect(window.location.hash).toContain(`suite_version=${suiteVersion}`));
+    await userEvent.click(canvas.getByRole('button', { name: 'Prepare comparison' }));
+    await expect(canvas.findByText('1 · Protected classification checks · r1')).resolves.toBeVisible();
+    await expect(demoRequests.find(request => request.path.endsWith('/prepare-evaluation/'))?.body).toEqual({ suite_version: suiteVersion });
+    await expect(demoRequests.filter(request => request.status >= 400)).toHaveLength(0);
     canvasElement.dataset.demoVerified = 'passed';
   },
 };
@@ -49,7 +95,6 @@ export const RegisterEvaluationSuite: Story = {
     await waitFor(() => expect(register).toBeEnabled());
     await userEvent.click(register);
     await userEvent.type(canvas.getByLabelText('Suite name'), 'Storybook checks');
-    await userEvent.type(canvas.getByLabelText(/Source group ID/), 'storybook-held-out');
     await userEvent.click(canvas.getByRole('button', { name: 'Pin evaluation suite' }));
     await expect(canvas.findByText('Suite r1 pinned as protected evaluation with 1 source group.')).resolves.toBeVisible();
     await expect(canvas.getByLabelText('Evaluation suite version')).toHaveValue('3');

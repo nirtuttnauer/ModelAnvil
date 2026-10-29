@@ -1,4 +1,4 @@
-import { Badge, Button, RecordTable } from './ui';
+import { Button, RecordTable, StatusBadge } from './ui';
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { BarChart3, ChevronDown } from 'lucide-react';
 import { chartRange, formatValue, interval, validPoints, type BarDatum, type Point } from './chart-data';
@@ -20,10 +20,11 @@ function usePlotWidth() {
   return { ref, width };
 }
 
-const colors = ['var(--chart-primary)', 'var(--chart-teal)', 'var(--chart-violet)', 'var(--chart-amber)', 'var(--chart-gray)'];
+const colors = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-neutral)'];
 
-export function ChartPanel({ title, description, children, action }: { title: string; description?: string; children: ReactNode; action?: ReactNode }) {
-  return <section className="chart-panel"><div className="chart-heading"><div><h3>{title}</h3>{description && <p>{description}</p>}</div>{action}</div>{children}</section>;
+/** A chart with its heading. Pass `bordered={false}` when the chart already sits inside a card or section. */
+export function ChartPanel({ title, description, children, action, bordered = false }: { title: string; description?: string; children: ReactNode; action?: ReactNode; bordered?: boolean }) {
+  return <section className="chart-panel" data-ui="chart-panel" data-bordered={bordered || undefined}><div className="chart-heading"><div><h3>{title}</h3>{description && <p>{description}</p>}</div>{action}</div>{children}</section>;
 }
 
 export function ChartEmpty({ message = 'No measurements recorded yet.' }: { message?: string }) {
@@ -31,7 +32,7 @@ export function ChartEmpty({ message = 'No measurements recorded yet.' }: { mess
 }
 
 function DataTable({ children }: { children: ReactNode }) {
-  return <details className="chart-data"><summary>View data <ChevronDown size={13} aria-hidden="true" /></summary><div className="table-scroll" tabIndex={0}><RecordTable className="resource-table">{children}</RecordTable></div></details>;
+  return <details className="chart-data" data-ui="disclosure" data-variant="quiet"><summary>View data <ChevronDown size={14} aria-hidden="true" /></summary><div className="table-scroll" tabIndex={0}><RecordTable>{children}</RecordTable></div></details>;
 }
 
 export interface Series { name: string; points: Point[] }
@@ -55,7 +56,7 @@ export function LineChart({ series, xLabel = 'Step', yLabel = 'Value' }: { serie
       <text className="chart-axis" x={(width + 40) / 2} y={295} textAnchor="middle">{xLabel}</text><text className="chart-axis" x={15} y={142} textAnchor="middle" transform="rotate(-90 15 142)">{yLabel}</text>
       {visible.map(s => { const color = colors[available.findIndex(a => a.name === s.name) % colors.length]; return <g key={s.name}><polyline fill="none" stroke={color} strokeWidth="2.2" strokeLinejoin="round" points={s.points.map(p => `${sx(p.x)},${sy(p.y)}`).join(' ')} />{s.points.map((p, i) => <circle key={i} cx={sx(p.x)} cy={sy(p.y)} r={s.points.length === 1 ? 5 : 3} fill={color} stroke="var(--surface)" strokeWidth="1" tabIndex={0} role="button" aria-label={`${s.name}: ${xLabel} ${formatValue(p.x)}, ${yLabel} ${formatValue(p.y, (yMax - yMin) / 4)}`} onMouseEnter={() => setSelection({ name: s.name, ...p })} onFocus={() => setSelection({ name: s.name, ...p })} onClick={() => setSelection({ name: s.name, ...p })} onKeyDown={e => { if (e.key === 'Escape') setSelection(null); if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelection({ name: s.name, ...p }); } }}><title>{s.name}: {xLabel} {formatValue(p.x)} · {yLabel} {formatValue(p.y, (yMax - yMin) / 4)}</title></circle>)}</g>; })}
       {activeSelection && <line className="chart-crosshair" x1={sx(activeSelection.x)} x2={sx(activeSelection.x)} y1={34} y2={250} />}
-    </svg><div className="chart-readout" aria-live="polite">{activeSelection ? <><strong>{activeSelection.name}</strong><span>{xLabel} {formatValue(activeSelection.x)}</span><b>{yLabel} {formatValue(activeSelection.y, (yMax - yMin) / 4)}</b></> : <span>Hover or focus a point to inspect the recorded value.</span>}</div>
+    </svg><p className="chart-selection" aria-live="polite">{activeSelection ? `${activeSelection.name} · ${xLabel} ${formatValue(activeSelection.x)} · ${yLabel} ${formatValue(activeSelection.y, (yMax - yMin) / 4)}` : ''}</p>
     <DataTable><thead><tr><th>Series</th><th>{xLabel}</th><th>{yLabel}</th></tr></thead><tbody>{available.flatMap(s => s.points.map((p, i) => <tr key={`${s.name}-${i}`}><td>{s.name}</td><td>{String(p.x)}</td><td>{String(p.y)}</td></tr>))}</tbody></DataTable>
   </div>;
 }
@@ -93,5 +94,5 @@ export function MetricsChart({ metrics }: { metrics: RecordedMetric[] }) {
 }
 
 export function EventTimeline({ events }: { events: { label: string; detail?: string; status?: string }[] }) {
-  return <ol className="event-timeline">{events.map((e, i) => <li key={i}><span className={`timeline-dot state-${e.status || 'pending'}`} /><div><strong>{e.label}</strong>{e.detail && <small>{e.detail}</small>}</div>{e.status && <Badge className={`state state-${e.status}`}>{e.status.replaceAll('_', ' ')}</Badge>}</li>)}</ol>;
+  return <ol className="event-timeline">{events.map((e, i) => <li key={i}><span className={`timeline-dot state-${e.status || 'pending'}`} /><div><strong>{e.label}</strong>{e.detail && <small>{e.detail}</small>}</div>{e.status && <StatusBadge status={e.status} />}</li>)}</ol>;
 }

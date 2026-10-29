@@ -13,6 +13,7 @@ from rest_framework.routers import DefaultRouter
 
 from modelanvil.api.views import accounts, guided_training
 from modelanvil.api.views import activation
+from modelanvil.api.views.deployment import DeploymentCapabilities
 from modelanvil.api.views import privacy
 from modelanvil.api.views import audit as audit_views
 from modelanvil.compute import views as compute_views
@@ -113,6 +114,7 @@ router.register("serving-endpoints", release_views.ServingEndpointViewSet, basen
 urlpatterns = [
     path("pretraining-corpora/", continued_corpus.ContinuedCorpora.as_view()),
     path("compute-support/", accelerator_support.OperationSupport.as_view()),
+    path('deployment-capabilities/', DeploymentCapabilities.as_view()),
     path('privacy/', privacy.ProjectPrivacy.as_view()),
     path('privacy/diagnostics/', privacy.Diagnostics.as_view()),
     path('privacy/purge-measurements/', privacy.PurgeMeasurements.as_view()),

@@ -102,3 +102,10 @@ test('prepared merged and Q8 exports retain the scoped disk download path', asyn
     });
   }
 });
+
+test('reviewed exports bind the exact evaluation without changing raw export URLs', async () => {
+  await fixture(response(), {}, async f => {
+    await downloadModelExport('training', native, 'token', f.controller.signal, () => {}, 'training-runs', 'evaluation/id');
+    assert.equal(f.calls.find(call => call.path).path, '/api/v1/training-runs/training/download/?export_format=native&evaluation_run=evaluation%2Fid');
+  });
+});

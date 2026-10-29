@@ -1,7 +1,7 @@
 """Pinned CPU inference with per-case fenced commits and durable accounting."""
 import hashlib
 import json
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from pathlib import Path
 
 from django.db import transaction
@@ -21,8 +21,11 @@ CONTRACT_DIGEST = digest(CONTRACT)
 BUILD_DIGEST = hashlib.sha256(b''.join((Path(__file__).parent / name).read_bytes()
     for name in ('eval_worker.py', 'eval_executor.py', 'local_execution.py', 'inference.py',
         'training/runtime.py', 'training/general_runtime.py', 'training/general_transformer.py',
-        'training/autograd.py', 'training/engine.py', 'training/registry.py', 'training/hf_runtime.py'))).hexdigest()
+        'training/autograd.py', 'training/engine.py', 'training/registry.py', 'training/hf_runtime.py',
+        'guided_evaluation.py'))).hexdigest()
 MEMORY_BYTES = 512 * 1024 * 1024
+# The pre-beta CPU implementation is retained; only this known historical build may validate completed evidence.
+LEGACY_CPU_BUILD = '89a1654d8178a0ace9923711aa42b49e7d5d267c00cf235e1f86c63d71a82912'
 
 
 def model_inputs(version, tenant, project):
@@ -81,10 +84,14 @@ def check_training_overlap(run):
                 raise ValueError('Known training manifest no longer matches its pinned digest.')
             prepared = json.loads(raw)
             train_ids = set(prepared['split_manifest']['train'])
+            if run.protocol_ref.get('profile') == 'guided-native':
+                train_ids.update(prepared['split_manifest'].get('validation', []))
             rows = [r for r in prepared['rows'] if r['sample_id'] in train_ids]
             groups = {r['source_group_id'] for r in rows}
             texts = {'\n'.join(b['text'] for b in r['blocks'] if b['type'] == 'text') for r in rows}
-            if any(c.get('sample_id') in train_ids or c.get('source_group_id') in groups or c['input_prompt'] in texts for c in cases):
+            prompts = [[{'role': b.get('role'), 'content': b.get('text')} for b in r['blocks'][:-1]] for r in rows]
+            if any(c.get('sample_id') in train_ids or c.get('source_group_id') in groups or c['input_prompt'] in texts
+                   or c.get('messages') in prompts for c in cases):
                 raise ValueError('Evaluation cases overlap known training samples or source groups.')
             known = True
             version = training.base_model_version
@@ -103,11 +110,17 @@ def evaluation_prompt_format(run):
 
 
 def resolve_inputs(run, max_tokens):
+    from modelanvil.runners import guided_evaluation as guided
+    native = run.protocol_ref.get('profile') == guided.PROFILE
     if run.suite_version.protected_role != 'protected_eval':
         raise ValueError('Queue a suite version declared as protected evaluation.')
     validate_local_suite(run.suite_version.cases, run.suite_version.scorer_type, run.suite_version.scorer_config)
     if not check_resource_access(run.suite_version, run.project_id, run.tenant_id):
         raise ValueError('The evaluation suite is unavailable in this project.')
+    template_digest = None
+    if native:
+        _, _, template_digest = guided.native_pair(run)
+        guided.validate_classification_suite(run.suite_version)
     candidate = model_inputs(run.candidate_model_version, run.tenant_id, run.project_id)
     baseline = model_inputs(run.baseline_model_version, run.tenant_id, run.project_id) if run.baseline_model_version_id else None
     if baseline and run.baseline_model_version.tokenizer_id != run.candidate_model_version.tokenizer_id:
@@ -116,9 +129,13 @@ def resolve_inputs(run, max_tokens):
         raise ValueError('Candidate and baseline must evaluate on the same device.')
     if type(max_tokens) is not int or not 1 <= max_tokens <= 32:
         raise ValueError('Choose 1–32 generated tokens per case.')
-    prompt_format = evaluation_prompt_format(run)
-    if prompt_format == 'native_template' and (candidate['kind'] != 'snapshot' or (baseline and baseline['kind'] != 'snapshot')):
-        raise ValueError('Native-template comparison requires Safetensors snapshots for the candidate and baseline.')
+    if native:
+        # The guided profile renders every case through the pinned native template on the Apple GPU used for training.
+        prompt_format, device = 'model', 'mps:0'
+    else:
+        prompt_format, device = evaluation_prompt_format(run), candidate['device']
+        if prompt_format == 'native_template' and (candidate['kind'] != 'snapshot' or (baseline and baseline['kind'] != 'snapshot')):
+            raise ValueError('Native-template comparison requires Safetensors snapshots for the candidate and baseline.')
     from modelanvil.runners.training import runtime, general_runtime
     for inputs in (candidate, baseline):
         if inputs and inputs['kind'] == 'reference':
@@ -140,25 +157,49 @@ def resolve_inputs(run, max_tokens):
                 tokenizer = AutoTokenizer.from_pretrained(str(directory), local_files_only=True, trust_remote_code=False)
                 limit = min(2048, config.get('max_position_embeddings', 2048))
                 for case in run.suite_version.cases:
-                    if prompt_format == 'native_template':
+                    if native:
+                        messages = case.get('messages', [{'role': 'user', 'content': case['input_prompt']}])
+                        encoded_len = len(tokenizer.encode(rendered_prompt(tokenizer, messages, 'model'), add_special_tokens=False))
+                    elif prompt_format == 'native_template':
                         prompt = rendered_prompt(tokenizer, [{'role': 'user', 'content': case['input_prompt']}], 'model')
                         encoded_len = len(tokenizer.encode(prompt, add_special_tokens=False))
                     else:
                         encoded_len = len(tokenizer.encode(case['input_prompt'], add_special_tokens=True))
                     if encoded_len + max_tokens > limit:
                         raise ValueError('A case prompt and output exceed the selected snapshot context limit.')
+    runtime_id = guided.RUNTIME_ID if native else RUNTIME_ID
+    native_pins = {'template_sha256': template_digest, 'contract_digest': guided.CONTRACT_DIGEST} if native else {}
     return {'candidate': candidate, 'baseline': baseline, 'pins': {
-        'runtime': RUNTIME_ID, 'build_digest': BUILD_DIGEST, 'scorer_version': SCORER_VERSION,
+        'runtime': runtime_id, 'build_digest': BUILD_DIGEST, 'scorer_version': SCORER_VERSION,
         'protected_role': run.suite_version.protected_role, 'candidate': candidate['pins'],
         'baseline': baseline['pins'] if baseline else None,
         'suite_digest': digest({'cases': run.suite_version.cases, 'scorer': run.suite_version.scorer_type,
                               'config': run.suite_version.scorer_config}),
-        'max_tokens': max_tokens, 'decoding': 'greedy', 'prompt_format': prompt_format, 'device': candidate['device'],
+        'max_tokens': max_tokens, 'decoding': 'greedy', 'prompt_format': prompt_format, 'device': device, **native_pins,
+        'environment': {'runtime': runtime_id, 'build_digest': BUILD_DIGEST, 'device': device, 'prompt_format': prompt_format,
+                        'decoding': 'greedy', **({'template_sha256': template_digest, 'precision': 'fp32', 'adapter': 'rank16', 'seed': 42} if native else {})},
         'training_overlap': check_training_overlap(run)}}
+
+
+def verified_evaluation_inputs(run):
+    """Verify completed old CPU evidence without treating it as permission to execute old code."""
+    pins = run.protocol_ref.get('pins', {})
+    inputs = resolve_inputs(run, pins.get('max_tokens'))
+    expected = inputs['pins']
+    if (run.status == 'completed' and pins.get('runtime') == RUNTIME_ID
+            and pins.get('build_digest') == LEGACY_CPU_BUILD
+            and pins.get('environment', {}).get('build_digest') == LEGACY_CPU_BUILD):
+        expected['build_digest'] = LEGACY_CPU_BUILD
+        expected['environment']['build_digest'] = LEGACY_CPU_BUILD
+    if expected != pins:
+        raise ValueError('Evaluation inputs or runtime no longer match their frozen evidence.')
+    return inputs
 
 
 @transaction.atomic
 def queue_evaluation(run, *, pool, policy, max_tokens):
+    from modelanvil.runners import guided_evaluation as guided
+    native = run.protocol_ref.get('profile') == guided.PROFILE
     request = {'pool': pool.pk, 'budget_policy_id': str(policy.policy_id), 'max_tokens': max_tokens}
     if run.job_id:
         if run.protocol_ref.get('execution_request') != request:
@@ -171,8 +212,14 @@ def queue_evaluation(run, *, pool, policy, max_tokens):
         raise ValueError('Select an active evaluation pool in this organization.')
     from modelanvil.jobs.setup import connection_state
     device = inputs['pins']['device']
+    requirements = {'slots': 1, 'evaluation_runtime': guided.CONTRACT_DIGEST if native else CONTRACT_DIGEST, 'evaluation_build': BUILD_DIGEST}
+    if native:
+        requirements['gpu_device'] = device
+    elif device != 'cpu':
+        requirements.update(gpu_backend=device.split(':')[0], gpu_device=device)
+    memory = guided.MEMORY_BYTES if native else MEMORY_BYTES
     workers = Worker.all_objects.filter(tenant_id=run.tenant_id, pool=pool, status='available', slots__gte=1)
-    if not any(_worker_can_evaluate(w, device, connection_state) for w in workers):
+    if not any(_worker_can_evaluate(w, requirements, memory, connection_state) for w in workers):
         raise ValueError('Connect an installed evaluation worker with matching runtime, device and sufficient memory.')
     if policy.tenant_id != run.tenant_id or policy.unit != 'evaluation_cases' or policy.currency:
         raise ValueError('Select an enabled evaluation_cases quantity budget.')
@@ -180,17 +227,17 @@ def queue_evaluation(run, *, pool, policy, max_tokens):
     BudgetReservation.reserve(tenant_id=run.tenant_id, policy=policy, job_id=job_id,
                               estimated_amount=len(run.suite_version.cases))
     job = Job.all_objects.create(tenant_id=run.tenant_id, job_id=job_id, pool=pool,
-        name=f'Evaluation {str(run.run_id)[:8]}', requirements={'slots': 1,
-            'evaluation_runtime': CONTRACT_DIGEST, 'evaluation_build': BUILD_DIGEST,
-            **({} if device == 'cpu' else {'gpu_backend': device.split(':')[0], 'gpu_device': device})},
+        name=f'Evaluation {str(run.run_id)[:8]}', requirements=requirements,
         payload={'type': 'qualified_evaluation', 'run_id': str(run.run_id)})
     OutboxEvent.all_objects.create(tenant_id=run.tenant_id,
         topic=dispatch_topic(run.tenant_id, pool.queue_name, pool.name),
         payload={'event_type': 'job.queued', 'job_id': str(job.job_id)})
     run.job = job
-    run.protocol_ref = {'execution_request': request, 'pins': inputs['pins'],
+    run.protocol_ref = {**{key: run.protocol_ref[key] for key in ('profile', 'training_run_id') if key in run.protocol_ref},
+        'execution_request': request, 'pins': inputs['pins'],
         'total_cases': len(run.suite_version.cases), 'completed_cases': 0, 'baseline_results': [],
-        'execution_evidence': {'level': 'configuration_only', 'source': 'Budgeted CPU evaluation awaiting actual case outputs.'}}
+        'execution_evidence': {'level': 'configuration_only', 'source': ('Budgeted native evaluation awaiting actual case outputs.' if native else
+                                                                        'Budgeted CPU evaluation awaiting actual case outputs.')}}
     run.save(update_fields=['job', 'protocol_ref', 'updated_at'])
     return run
 
@@ -210,14 +257,11 @@ def locked_run(context, run_id):
     return EvaluationRun.all_objects.select_for_update().get(run_id=run_id, tenant_id=job.tenant_id, job=job)
 
 
-def _worker_can_evaluate(worker, device, connection_state):
+def _worker_can_evaluate(worker, requirements, memory, connection_state):
+    """Mirror claim-time matching so queueing refuses work no connected worker could claim."""
     caps = worker.capabilities or {}
-    if (connection_state(worker) != 'connected' or caps.get('evaluation_runtime') != CONTRACT_DIGEST
-            or caps.get('evaluation_build') != BUILD_DIGEST or caps.get('memory_bytes', 0) < MEMORY_BYTES):
-        return False
-    if device != 'cpu' and (caps.get('gpu_device') != device or caps.get('gpu_backend') != device.split(':')[0]):
-        return False
-    return True
+    return (connection_state(worker) == 'connected' and caps.get('memory_bytes', 0) >= memory
+            and all(caps.get(key) == value for key, value in requirements.items() if key != 'slots'))
 
 
 @contextmanager
@@ -242,56 +286,70 @@ def predictor(version, inputs, run, max_tokens, context):
 
 
 def evaluation_worker_executor(descriptor, context):
+    from modelanvil.runners import guided_evaluation as guided
     if context.attempt.worker.capabilities.get('memory_bytes', 0) < MEMORY_BYTES:
         raise ValueError('Evaluation worker memory is below the runtime requirement.')
     run = EvaluationRun.all_objects.select_related('suite_version', 'candidate_model_version__tokenizer',
         'baseline_model_version__tokenizer').get(run_id=descriptor['payload']['run_id'],
             tenant_id=context.attempt.tenant_id, job=context.attempt.job_id)
+    native = run.protocol_ref.get('profile') == guided.PROFILE
     max_tokens = run.protocol_ref['pins']['max_tokens']
     inputs = resolve_inputs(run, max_tokens)
     if inputs['pins'] != run.protocol_ref['pins']:
         raise ValueError('Evaluation inputs or runtime changed since launch.')
+    if native and context.attempt.worker.capabilities.get('gpu_device') != 'mps:0':
+        raise ValueError('The native evaluation worker must use the pinned Apple GPU.')
     with transaction.atomic():
         current = locked_run(context, run.run_id)
         current.status = 'running'; current.started_at = current.started_at or timezone.now()
         import platform
         current.protocol_ref['environment'] = {'python': platform.python_version(), 'platform': platform.platform(),
-            'device': inputs['pins']['device'], 'runtime': RUNTIME_ID, 'build_digest': BUILD_DIGEST,
+            'device': inputs['pins']['device'], 'runtime': inputs['pins']['runtime'], 'build_digest': BUILD_DIGEST,
             'scorer_version': SCORER_VERSION}
         current.save(update_fields=['status', 'started_at', 'protocol_ref', 'updated_at'])
-    for case in run.suite_version.cases:
-        if run.case_results.filter(case_id=case['case_id']).exists():
-            continue
-        if not context.heartbeat(run.case_results.count() / len(run.suite_version.cases)):
-            return
-        with predictor(run.candidate_model_version, inputs['candidate'], run, max_tokens, context) as predict:
-            output = predict(case['input_prompt'])
-        baseline_result = None
-        if inputs['baseline']:
-            with predictor(run.baseline_model_version, inputs['baseline'], run, max_tokens, context) as predict:
-                baseline_output = predict(case['input_prompt'])
-            score, passed = default_eval_scorer(baseline_output, case['expected_output'], run.suite_version.scorer_type, run.suite_version.scorer_config)
-            baseline_result = {'case_id': case['case_id'], 'candidate_output': baseline_output, 'score': score,
-                               'passed': passed, 'slice_name': case.get('slice', 'all')}
-        score, passed = default_eval_scorer(output, case['expected_output'], run.suite_version.scorer_type, run.suite_version.scorer_config)
-        if not context.heartbeat():
-            return
-        with transaction.atomic():
-            current = locked_run(context, run.run_id)
-            if not current.case_results.filter(case_id=case['case_id']).exists():
-                EvaluationCaseResult.all_objects.create(tenant_id=run.tenant_id, run=current,
-                    case_id=case['case_id'], input_prompt=case['input_prompt'], expected_output=case['expected_output'],
-                    candidate_output=output, score=score, passed=passed, slice_name=case.get('slice', 'all'),
-                    failure_reason='' if passed else 'Candidate did not satisfy the pinned scorer.')
-                if baseline_result:
-                    current.protocol_ref['baseline_results'].append(baseline_result)
-                current.protocol_ref['completed_cases'] = current.case_results.count()
-                native = current.protocol_ref.get('pins', {}).get('prompt_format') == 'native_template'
-                current.protocol_ref['execution_evidence'] = {'level': 'integrated_execution',
-                    'source': ('Actual native-template candidate/baseline inference with pinned bytes, suite and fenced case commits; production qualification unavailable.'
-                               if native else
-                               'Actual CPU candidate/baseline inference with pinned bytes, suite and fenced case commits; production qualification unavailable.')}
-                current.save(update_fields=['protocol_ref', 'updated_at'])
+    # The guided profile loads the adapter once and scores its exact base by disabling the adapter.
+    with (guided.native_predictors(run, max_tokens, context) if native else nullcontext(None)) as native_predict:
+        for case in run.suite_version.cases:
+            if run.case_results.filter(case_id=case['case_id']).exists():
+                continue
+            if not context.heartbeat(run.case_results.count() / len(run.suite_version.cases)):
+                return
+            if native_predict:
+                output = native_predict(case)
+            else:
+                with predictor(run.candidate_model_version, inputs['candidate'], run, max_tokens, context) as predict:
+                    output = predict(case['input_prompt'])
+            baseline_result = None
+            if inputs['baseline']:
+                if native_predict:
+                    baseline_output = native_predict(case, baseline=True)
+                else:
+                    with predictor(run.baseline_model_version, inputs['baseline'], run, max_tokens, context) as predict:
+                        baseline_output = predict(case['input_prompt'])
+                score, passed = default_eval_scorer(baseline_output, case['expected_output'], run.suite_version.scorer_type, run.suite_version.scorer_config)
+                baseline_result = {'case_id': case['case_id'], 'candidate_output': baseline_output, 'score': score,
+                                   'passed': passed, 'slice_name': case.get('slice', 'all')}
+            score, passed = default_eval_scorer(output, case['expected_output'], run.suite_version.scorer_type, run.suite_version.scorer_config)
+            if not context.heartbeat():
+                return
+            with transaction.atomic():
+                current = locked_run(context, run.run_id)
+                if not current.case_results.filter(case_id=case['case_id']).exists():
+                    EvaluationCaseResult.all_objects.create(tenant_id=run.tenant_id, run=current,
+                        case_id=case['case_id'], input_prompt=case['input_prompt'], expected_output=case['expected_output'],
+                        candidate_output=output, score=score, passed=passed, slice_name=case.get('slice', 'all'),
+                        failure_reason='' if passed else 'Candidate did not satisfy the pinned scorer.')
+                    if baseline_result:
+                        current.protocol_ref['baseline_results'].append(baseline_result)
+                    current.protocol_ref['completed_cases'] = current.case_results.count()
+                    templated = current.protocol_ref.get('pins', {}).get('prompt_format') == 'native_template'
+                    current.protocol_ref['execution_evidence'] = {'level': 'integrated_execution',
+                        'source': ('Actual candidate/baseline inference with pinned bytes, template, suite and fenced case commits; production qualification unavailable.'
+                                   if native else
+                                   'Actual native-template candidate/baseline inference with pinned bytes, suite and fenced case commits; production qualification unavailable.'
+                                   if templated else
+                                   'Actual CPU candidate/baseline inference with pinned bytes, suite and fenced case commits; production qualification unavailable.')}
+                    current.save(update_fields=['protocol_ref', 'updated_at'])
     # Job result commit below determines terminal state and settles recorded cases.
 
 

@@ -3,39 +3,66 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import '../main';
-import { Badge, Button, Card, Field, MetricSummary, MultilineField, Notice, RecordTable, Tab } from '../components/ui';
+import {
+  Badge, Button, Card, Checkbox, Dialog, Disclosure, Field, FileInput, KeyValueList, MetricSummary, MultilineField, Notice, PageHeader,
+  RecordTable, Section, SegmentedControl, Select, Stat, StatRow, StatusBadge, Tab, TabList, Toolbar,
+} from '../components/ui';
+import { JourneySteps } from '../components/primitives/Journey';
+import { FINE_TUNE_STAGES } from '../api/journey';
 import { ThemeControl } from '../components/ThemeControl';
-import { Feedback } from '../components/Feedback';
+import { EmptyState, Feedback } from '../components/Feedback';
 
 function Components() {
   const [saved, setSaved] = useState(0);
   const [tab, setTab] = useState('configure');
-  return <main id="workspace-content" style={{ display: 'grid', gap: 'var(--space-20)', maxWidth: 960, margin: 'auto' }}>
-    <header><h1>FigCraft components</h1><p>Shared variants and native form behavior.</p><div className="actions"><ThemeControl /></div></header>
-    <Card tone="surface"><div className="panel-body">
-      <h2>Actions and fields</h2>
+  const [mode, setMode] = useState<'guided' | 'advanced'>('guided');
+  const [dialog, setDialog] = useState(false);
+  return <main id="workspace-content" className="page-content" style={{ maxWidth: 960 }}>
+    <PageHeader title="FigCraft components" description="Shared variants and native form behavior." actions={<div data-ui="actions"><ThemeControl /></div>} />
+    <Section title="Actions and fields" description="Buttons, fields and the labelled controls pages compose.">
       <form onSubmit={event => { event.preventDefault(); setSaved(value => value + 1); }} style={{ display: 'grid', gap: 'var(--space-16)' }}>
         <label>Project label<Field name="project" defaultValue="Research workspace" required /></label>
-        <label>Notes<MultilineField defaultValue="Reusable configuration" /></label>
-        <div className="actions"><Button variant="primary">Save configuration <ArrowRight size={16} aria-hidden="true" /></Button><Button type="button">Secondary</Button><Button type="button" variant="quiet">Quiet</Button><Button disabled>Unavailable</Button></div>
+        <label>Notes<MultilineField defaultValue="Reusable configuration" rows={2} /></label>
+        <Select label="Training plan" hint="Recommended plans scale with your examples." defaultValue="recommended" options={[{ value: 'recommended', label: 'Recommended' }, { value: 'quick', label: 'Quick check' }, { value: 'custom', label: 'Custom' }]} />
+        <Checkbox label="Detect duplicate examples" hint="Exact duplicates are dropped before training." defaultChecked />
+        <FileInput label="Training file" hint="JSONL, JSON or CSV · up to 16 MiB." />
+        <SegmentedControl label="Configuration mode" value={mode} onChange={value => setMode(value as typeof mode)} options={[{ value: 'guided', label: 'Guided' }, { value: 'advanced', label: 'Advanced' }]} />
+        <div data-ui="actions"><Button variant="primary">Save configuration <ArrowRight size={16} aria-hidden="true" /></Button><Button type="button">Secondary</Button><Button type="button" variant="quiet">Quiet</Button><Button disabled>Unavailable</Button><Button type="button" onClick={() => setDialog(true)}>Open dialog</Button></div>
         <output aria-live="polite">Saved {saved} times</output>
       </form>
-    </div></Card>
-    <Card tone="subtle"><div className="panel-body"><h2>Tabs and feedback</h2>
-      <div className="training-tabs" role="tablist" aria-label="Example view">{['configure', 'history'].map(value => <Tab key={value} id={`example-tab-${value}`} aria-controls="example-panel" aria-selected={tab === value} onClick={() => setTab(value)}>{value}</Tab>)}</div>
+    </Section>
+    <Section title="Tabs, status and feedback">
+      <TabList label="Example view">{['configure', 'history'].map(value => <Tab key={value} id={`example-tab-${value}`} aria-controls="example-panel" aria-selected={tab === value} onClick={() => setTab(value)}>{value}</Tab>)}</TabList>
       <div id="example-panel" role="tabpanel" aria-labelledby={`example-tab-${tab}`}><p>{tab === 'configure' ? 'Saved configuration' : 'Recorded runs'}</p></div>
-      <div className="actions"><Badge>Neutral</Badge><Badge tone="success">Ready</Badge><Badge tone="caution">Pending</Badge><Badge tone="error">Failed</Badge></div>
-      <Notice tone="success">Configuration saved.</Notice><Notice tone="caution">Review the recorded evidence.</Notice><Notice tone="error">A retry is available.</Notice>
-    </div></Card>
-    <Card tone="accent"><div className="panel-body"><h2>Responsive records</h2><RecordTable>
+      <div data-ui="actions"><Badge>Neutral</Badge><Badge tone="success">Ready</Badge><Badge tone="caution">Pending</Badge><Badge tone="error">Failed</Badge></div>
+      <div data-ui="actions">{['queued', 'running', 'succeeded', 'interrupted', 'failed', 'accepted_without_edit', ''].map(status => <StatusBadge key={status} status={status} />)}</div>
+      <Notice tone="info">Information uses the primary accent.</Notice><Notice tone="success">Configuration saved.</Notice><Notice tone="caution">Review the recorded evidence.</Notice><Notice tone="error">A retry is available.</Notice>
+      <Feedback state="loading" title="Loading workspace data…" />
+      <EmptyState title="No training runs yet" description="Start a run to see progress here." action={<Button type="button">Start training</Button>} layout="centered" />
+    </Section>
+    <Section title="Structure" description="Stats, facts, journeys and disclosures.">
+      <StatRow><Stat label="Elapsed" value="4 min" /><Stat label="Training loss" value="1.887" hint="step 50" /><Stat label="Validation loss" value="Not reported" /><Stat label="Checkpoints" value={6} tone="success" /></StatRow>
+      <KeyValueList items={[{ label: 'Base model', value: 'SmolLM2-135M Instruct' }, { label: 'Dataset', value: 'Support tickets · 120 examples' }, { label: 'Compute', value: 'This computer' }]} />
+      <JourneySteps steps={FINE_TUNE_STAGES} current={1} label="Fine-tuning journey" />
+      <Toolbar label="Filters" actions={<Button type="button" variant="primary">Create job</Button>}><Field aria-label="Search jobs" placeholder="Search jobs" /><Select aria-label="Status" defaultValue="all" options={[{ value: 'all', label: 'All states' }, { value: 'running', label: 'Running' }]} /></Toolbar>
+      <Disclosure summary="Advanced settings"><p>Learning rate, seed and validation interval live here.</p></Disclosure>
+      <Disclosure summary="Details" variant="card"><KeyValueList items={[{ label: 'Run ID', value: '30000000-0000-4000-8000-000000000001' }]} /></Disclosure>
+    </Section>
+    <Card tone="accent" padded><h2>Responsive records</h2><RecordTable>
       <caption>One record with the same action on every screen size.</caption>
       <thead><tr><th>Run</th><th>State</th><th>Action</th></tr></thead>
       <tbody><tr><td>Example run</td><td><Badge tone="success">Completed</Badge></td><td><Button type="button" onClick={() => setSaved(value => value + 1)}>Inspect record</Button></td></tr></tbody>
-    </RecordTable></div></Card>
+    </RecordTable></Card>
+    <Dialog title="Register tokenizer" description="Dialogs render in place and close on Escape." open={dialog} onClose={() => setDialog(false)} footer={<><Button type="button" onClick={() => setDialog(false)}>Cancel</Button><Button type="button" variant="primary" onClick={() => setDialog(false)}>Register</Button></>}>
+      <label>Tokenizer name<Field defaultValue="smollm2-tokenizer" /></label>
+    </Dialog>
   </main>;
 }
 
-const meta = { title: 'ModelAnvil/Components/FigCraft', component: Components } satisfies Meta<typeof Components>;
+const meta = {
+  title: 'ModelAnvil/Components/FigCraft', component: Components,
+  beforeEach({ parameters }) { localStorage.setItem('modelanvil_theme', parameters.demoTheme ?? 'light'); },
+} satisfies Meta<typeof Components>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Variants: Story = {
@@ -51,18 +78,25 @@ export const Variants: Story = {
     await expect(canvas.getByLabelText('Project label')).toHaveValue('Updated project');
     await userEvent.click(canvas.getByRole('tab', { name: 'history' }));
     await expect(canvas.getByRole('tabpanel')).toHaveTextContent('Recorded runs');
+    await userEvent.click(canvas.getByRole('button', { name: 'Advanced' }));
+    await expect(canvas.getByRole('button', { name: 'Advanced' })).toHaveAttribute('aria-pressed', 'true');
+    await userEvent.click(canvas.getByRole('button', { name: 'Open dialog' }));
+    await expect(canvas.getByRole('dialog', { name: 'Register tokenizer' })).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await expect(canvas.queryByRole('dialog', { name: 'Register tokenizer' })).not.toBeInTheDocument();
     canvasElement.dataset.demoVerified = 'passed';
   },
 };
+export const Dark: Story = { ...Variants, parameters: { demoTheme: 'dark' } };
 
 function InteractionExamples() {
   const [name, setName] = useState('');
   const invalid = name.trim().length < 3;
-  return <main id="workspace-content" style={{ maxWidth: 700, margin: 'auto' }}>
-    <h1>Interactive component states</h1><ThemeControl />
-    <Card><div className="panel-body" style={{ display: 'grid', gap: 'var(--space-16)' }}>
+  return <main id="workspace-content" className="page-content" style={{ maxWidth: 700 }}>
+    <PageHeader title="Interactive component states" actions={<div data-ui="actions"><ThemeControl /></div>} />
+    <Card padded><div style={{ display: 'grid', gap: 'var(--space-16)' }}>
       <h2>Pointer and keyboard feedback</h2>
-      <div className="actions"><Button type="button" variant="primary">Primary action</Button><Button type="button">Secondary action</Button><Button type="button" variant="quiet">Quiet action</Button><Button disabled>Disabled action</Button></div>
+      <div data-ui="actions"><Button type="button" variant="primary">Primary action</Button><Button type="button">Secondary action</Button><Button type="button" variant="quiet">Quiet action</Button><Button disabled>Disabled action</Button></div>
       <label>Workspace name<Field value={name} onChange={event => setName(event.target.value)} aria-invalid={invalid} aria-describedby={invalid ? 'interaction-name-error' : undefined} /></label>
       {invalid && <p id="interaction-name-error" className="error-text">Use at least three characters.</p>}
       <label>Disabled field<Field disabled value="Read-only example" /></label>
@@ -92,8 +126,8 @@ export const InteractionStates: Story = {
 function FeedbackExamples() {
   const [failed, setFailed] = useState(true);
   const [submits, setSubmits] = useState(0);
-  return <main id="workspace-content" style={{ maxWidth: 800, margin: 'auto' }}>
-    <h1>Loading and recovery</h1><ThemeControl />
+  return <main id="workspace-content" className="page-content" style={{ maxWidth: 800 }}>
+    <PageHeader title="Loading and recovery" actions={<div data-ui="actions"><ThemeControl /></div>} />
     <Feedback state="loading" title="Loading workspace data…" description="Waiting for workspace data." />
     <Feedback state="empty" title="No matching sources" description="Try another search or clear your filters." />
     <form aria-label="Recovery example" onSubmit={event => { event.preventDefault(); setSubmits(value => value + 1); }}>
@@ -131,11 +165,10 @@ export const LoadingAndRecovery: Story = {
 function MetricExamples() {
   const [inspected, setInspected] = useState(0);
   const [submits, setSubmits] = useState(0);
-  return <main id="workspace-content" style={{ maxWidth: 960, margin: 'auto' }}>
-    <h1>Resource summaries</h1><div className="actions"><ThemeControl /></div>
-    <p>Demo values demonstrate actions, read-only metrics, and long content.</p>
+  return <main id="workspace-content" className="page-content" style={{ maxWidth: 960 }}>
+    <PageHeader title="Resource summaries" description="Demo values demonstrate actions, read-only metrics, and long content." actions={<div data-ui="actions"><ThemeControl /></div>} />
     <form aria-label="Metric actions" onSubmit={event => { event.preventDefault(); setSubmits(value => value + 1); }}>
-      <div className="cards">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
         <MetricSummary label="Datasets" value="2" detail={<>Total resources <ArrowUpRight size={12} aria-hidden="true" /></>} onClick={() => setInspected(value => value + 1)} />
         <MetricSummary as="article" label="Active reservations" value={0} detail="Awaiting completion or release" />
         <MetricSummary as="article" label="Resource units with recorded usage" value="12345678901234567890" detail="Each resource unit kept separate" />

@@ -1,0 +1,169 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+    - generic: MODEL WORKSPACE
+  - generic "Workspace is scoped to the connected API key and active project":
+    - generic: H
+    - strong: Harbor Defaults Test workspace
+    - generic: My first fine-tune
+  - navigation "Main navigation":
+    - paragraph: Workspace
+    - button "Overview":
+      - generic: Overview
+    - paragraph: Data
+    - button "Dataset Bank":
+      - generic: Dataset Bank
+    - button "Datasets":
+      - generic: Datasets
+    - button "Annotation":
+      - generic: Annotation
+    - button "Recipes":
+      - generic: Recipes
+    - paragraph: Develop
+    - button "Models":
+      - generic: Models
+    - button "Chat":
+      - generic: Chat
+    - button "Specialists":
+      - generic: Specialists
+    - button "Training":
+      - generic: Training
+    - button "Alignment":
+      - generic: Alignment
+    - button "Evaluation":
+      - generic: Evaluation
+    - paragraph: Context & release
+    - button "RAG":
+      - generic: RAG
+    - button "Context Lab":
+      - generic: Context Lab
+    - button "Releases":
+      - generic: Releases
+    - paragraph: Operations
+    - button "Workflows":
+      - generic: Workflows
+    - button "Infrastructure":
+      - generic: Infrastructure
+    - button "Budgets":
+      - generic: Budgets
+    - button "Audit":
+      - generic: Audit
+  - text: API connected
+  - generic: Control plane
+- main:
+  - combobox "Organization":
+    - option "Harbor Defaults Test workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Training
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Fine-tune a pretrained model with your own examples.
+  - heading "Training studio" [level=2]
+  - paragraph: Choose your model and data, review your training plan, and follow the results in one workspace.
+  - button "Tokenizer":
+    - text: Tokenizer
+  - button "Model Version":
+    - text: Model Version
+  - button "Configure a run"
+  - tablist "Training workspace":
+    - tab "Configure" [active] [selected]
+    - tab "Current run"
+    - tab "History"
+  - generic "Loaded training summary":
+    - generic: Training runs
+    - strong: "1"
+    - generic: All accessible recorded runs
+    - generic: Active runs
+    - strong: "0"
+    - generic: Pending or running
+    - generic: Saved checkpoints
+    - strong: "3"
+    - generic: Recorded checkpoint artifacts
+    - generic: Latest selected loss
+    - strong: "0.0001"
+    - generic: Run a1856b64
+  - tabpanel "Configure":
+    - heading "Configure your training run" [level=3]
+    - paragraph: Simple and advanced settings share the same saved configuration.
+    - button "Advanced settings"
+    - region "Choose your model and data":
+      - text: YOUR FIRST FINE-TUNE
+      - heading "Choose your model and data" [level=2]
+      - paragraph: Prepare recommended resources, then review the settings for your run.
+      - list "Fine-tuning progress":
+        - generic: "1"
+        - text: Model
+        - generic: "2"
+        - text: Dataset
+        - generic: "3"
+        - text: Review
+      - heading "Choose your pretrained model" [level=3]
+      - strong: SmolLM2-1.7B Instruct
+      - generic: Recommended for this computer
+      - paragraph: An instruction model selected for this computer. Lightweight adapters adapt its answers while keeping the base weights frozen.
+      - paragraph: 1.7 billion parameters · Apache-2.0 · up to 128 tokens per example
+      - link "Model license":
+        - /url: https://www.apache.org/licenses/LICENSE-2.0
+      - region "Model hardware fit":
+        - heading "Hardware & memory" [level=4]
+        - status:
+          - text: Host memory fits · accelerator memory unknown
+        - term: Minimum host memory
+        - definition: 32 GiB
+        - term: Required device
+        - definition: MPS
+        - term: Minimum accelerator memory
+        - definition: 12 GiB
+        - term: Compared hardware
+        - definition: This computer
+        - term: Reported total host memory
+        - definition: 48 GiB
+        - term: Reported accelerator capacity
+        - definition: Unknown
+        - meter "Minimum host memory as a share of reported capacity"
+        - generic: 32 GiB required / 48 GiB reported
+        - paragraph: Host memory meets the minimum. Accelerator memory and live headroom have not been reported.
+        - paragraph: Pinned training profile minimum. Preflight checks live accelerator headroom, inputs and allocation.
+      - status: Training runs on this computer. No server commands or cloud account needed.
+      - paragraph: The matching tokenizer, training settings and local compute are configured automatically.
+      - button "Use this model":
+        - text: Use this model
+    - heading "Training plan" [level=3]
+    - text: Training plan
+    - combobox "Training plan":
+      - option "Recommended · prepare a dataset first" [disabled] [selected]
+      - option "Quick setup check · 3 steps"
+      - option "Custom step count"
+    - paragraph: Add your dataset to calculate the recommended training plan automatically.
+    - generic "Saved configuration"
+    - complementary "Run summary":
+      - generic: RUN SUMMARY
+      - heading "Your training run" [level=3]
+      - term: Model
+      - definition: Choose a model
+      - term: Dataset
+      - definition: Choose a dataset
+      - term: Method
+      - definition: full sft
+      - term: Compute
+      - definition: Prepare or select compute
+      - term: Training steps
+      - definition: Prepare a dataset
+      - paragraph: Reserves the selected training steps. Preflight checks compatibility, hardware, storage and allowance before launch.
+      - button "Preview preflight" [disabled]
+      - status: Choose compatible model, tokenizer, dataset, compute and training settings to review this run.
+  - generic "App information"
+  - text: Control plane

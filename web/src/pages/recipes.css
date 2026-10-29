@@ -1,18 +1,11 @@
-.recipe-toolbar { display:flex; flex-wrap:wrap; align-items:end; gap:var(--space-12); margin:var(--space-18) 0; padding:0; border:0; }
-.recipe-toolbar label { min-width:200px; flex:1; }
-.recipe-editor { display:grid; grid-template-columns:minmax(180px,1fr) minmax(300px,2fr); gap:var(--space-24); margin:var(--space-24) 0; }
-.recipe-editor:has(.recipe-map:not([open])) { grid-template-columns: minmax(0, 1fr); gap: var(--space-12); }
-.recipe-step-list > li > details { border: 1px solid var(--border); border-radius: var(--radius-10); margin-bottom: var(--space-12); padding: 0 14px; }
-.recipe-step-list summary { min-height: 44px; padding: var(--space-12) 0; font-size: var(--type-14); font-weight: 550; cursor: pointer; }
-.recipe-step-list > li > details > fieldset { border: 0; padding: 0 0 14px; margin: 0; }
-.recipe-graph { width:100%; max-height:900px; position:sticky; top:20px; }
-.recipe-graph rect { fill:var(--surface,#f8fafc); stroke:var(--border,#cbd5e1); }
-.recipe-graph path { fill:none; stroke:var(--accent,#c75b30); stroke-width:2; }
-.recipe-graph text { fill:var(--text,#1e293b); font-size:15px; }
-.recipe-step-list { margin:0; padding:0; list-style:none; }
-.recipe-step-list fieldset { display:grid; gap:var(--space-12); border:1px solid var(--border,#d1d5db); border-radius:var(--radius-10); padding:var(--space-16); margin-bottom:var(--space-16); }
-.recipe-step-list legend { font-weight:600; padding:0 var(--space-8); }
-.recipe-step-list label, .recipe-page > label { display:grid; gap:var(--space-6); }
-.recipe-execution { border:0; padding:var(--space-20) 0; }
-.recipe-page pre { max-height:500px; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; }
-@media (max-width:800px) { .recipe-editor { grid-template-columns:1fr; } .recipe-graph { position:static; max-height:350px; } }
+@layer tokens, base, primitives, shell, pages;
+@layer pages {
+  .recipe-steps { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-8); }
+  .recipe-step { display: grid; gap: var(--space-12); border: 0; padding: 0; margin: 0; min-width: 0; }
+  .recipe-merge { display: grid; gap: var(--space-4); }
+  .recipe-graph { display: block; width: 100%; max-width: 520px; max-height: 720px; }
+  .recipe-graph rect { fill: var(--surface-subtle); stroke: var(--border); }
+  .recipe-graph path { fill: none; stroke: var(--primary); stroke-width: 2; }
+  .recipe-graph text { fill: var(--text); font-size: 15px; }
+  .recipe-pre { margin: 0; max-height: 420px; overflow: auto; padding: var(--space-12); border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface-subtle); font-size: var(--type-13); white-space: pre-wrap; overflow-wrap: anywhere; }
+}

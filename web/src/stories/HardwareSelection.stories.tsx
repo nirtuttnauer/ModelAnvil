@@ -41,6 +41,7 @@ export const RecommendedModelMemory: Story = {
   parameters: { demoRoute: '#training', demoHeading: 'Training', demoApiPath: '/api/v1/fine-tuning/options/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByText('Computer requirements', { selector: 'summary' }));
     const card = within(await canvas.findByRole('region', { name: 'Model hardware fit' }));
     await waitFor(() => expect(card.getByText('Host memory fits · accelerator memory unknown')).toBeVisible());
     await expect(card.getByText('16 GiB')).toBeVisible();
@@ -57,9 +58,9 @@ export const AdvancedModelAndPool: Story = {
     await waitFor(() => expect(within(base).getAllByRole('option').length).toBeGreaterThan(1));
     await userEvent.selectOptions(base, '1');
     await waitFor(() => expect(canvas.getByText('Meets declared memory minimum')).toBeVisible());
-    await userEvent.selectOptions(canvas.getByLabelText('Worker execution pool'), '2');
+    await userEvent.selectOptions(canvas.getByLabelText('Worker pool'), '2');
     await expect(canvas.getByText('Memory minimum not met')).toBeVisible();
-    await userEvent.selectOptions(canvas.getByLabelText('Recipe type'), 'qlora_adapter');
+    await userEvent.selectOptions(canvas.getByLabelText('Training method'), 'qlora_adapter');
     await expect(canvas.getByText('Training compatibility unavailable')).toBeVisible();
     verified(canvasElement);
   },
@@ -68,11 +69,15 @@ export const HubSnapshotMemory: Story = {
   parameters: { demoRoute: '#models', demoHeading: 'Models', demoApiPath: '/api/v1/model-versions/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(await canvas.findByRole('button', { name: 'Hugging Face' }));
-    await userEvent.type(canvas.getByLabelText('Repository'), 'storybook/model');
-    await userEvent.type(canvas.getByLabelText('Commit revision'), 'f'.repeat(40));
-    await userEvent.click(canvas.getByRole('button', { name: 'Inspect snapshot' }));
-    const card = within(await canvas.findByRole('region', { name: 'Model hardware fit' }));
+    const add = await canvas.findByRole('button', { name: 'Add model' });
+    await waitFor(() => expect(add).toBeEnabled());
+    await userEvent.click(add);
+    const dialog = within(await canvas.findByRole('dialog', { name: 'Add a model' }));
+    await userEvent.click(dialog.getByRole('button', { name: 'Hugging Face' }));
+    await userEvent.type(dialog.getByLabelText('Repository'), 'storybook/model');
+    await userEvent.type(dialog.getByLabelText('Commit revision'), 'f'.repeat(40));
+    await userEvent.click(dialog.getByRole('button', { name: 'Check repository' }));
+    const card = within(await dialog.findByRole('region', { name: 'Model hardware fit' }));
     await waitFor(() => expect(card.getByText('Meets declared memory minimum')).toBeVisible());
     await expect(card.getByText('1 GiB')).toBeVisible();
     await expect(card.getByText(/storage measurement, not runtime RAM or VRAM/)).toBeVisible();

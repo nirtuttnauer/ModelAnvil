@@ -1,7 +1,7 @@
 import type { StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import screens from './Screens.stories';
-import { DraftStatus } from '../components/Draft';
+import { DraftIndicator } from '../components/Draft';
 import { http, HttpResponse } from 'msw';
 
 const meta = { ...screens, title: 'ModelAnvil/Actions/Compact screens' };
@@ -18,36 +18,44 @@ export const FirstTrainingSetup: Story = { parameters: { demoRoute: '#training' 
   await waitFor(() => expect(canvas.queryByLabelText('Loaded training summary')).not.toBeInTheDocument());
   expect(canvas.queryByRole('complementary', { name: 'Run summary' })).not.toBeInTheDocument();
   expect(canvas.queryByLabelText('Training plan')).not.toBeInTheDocument();
-  for (const button of canvas.getAllByRole('button', { name: 'Configure a run', hidden: true })) await expect(button).not.toBeVisible();
+  await waitFor(() => expect(canvas.getAllByRole('button', { name: 'New training run', hidden: true }).length).toBeGreaterThan(0));
+  for (const button of canvas.getAllByRole('button', { name: 'New training run', hidden: true })) await expect(button).not.toBeVisible();
   passed(canvasElement);
 } };
 
 export const DatasetUpload: Story = { parameters: { demoRoute: '#datasets' }, play: async ({ canvasElement }) => {
   const canvas = within(canvasElement);
-  await expect(canvas.findByRole('heading', { name: 'Dataset and revision lists' })).resolves.toBeVisible();
-  const name = canvas.getByRole('textbox', { name: 'Dataset name', hidden: true });
-  await expect(name).not.toBeVisible();
-  await userEvent.click(canvas.getByRole('tab', { name: 'Prepare' }));
-  await expect(canvas.getByRole('heading', { name: 'Dataset and revision lists', hidden: true })).not.toBeVisible();
+  await expect(canvas.findByRole('heading', { name: 'Upload and prepare a dataset', level: 2 })).resolves.toBeVisible();
+  await expect(canvas.findByText('Assistant Research · Demo', { selector: 'option' })).resolves.toBeInTheDocument();
+  const name = canvas.getByLabelText('Dataset name');
   await expect(name).toBeVisible();
+  await waitFor(() => expect(name).toBeEnabled());
   await userEvent.type(name, 'My custom examples');
-  await userEvent.click(canvas.getByRole('tab', { name: 'Library' }));
-  await expect(canvas.getByRole('heading', { name: 'Dataset and revision lists' })).toBeVisible();
+  await expect(canvas.findByText('Draft saved in this tab')).resolves.toBeVisible();
+  await expect(canvas.getByLabelText('Validation percentage')).not.toBeVisible();
+  await userEvent.click(canvas.getByText('Split and cleanup options', { selector: 'summary' }));
+  await expect(canvas.getByLabelText('Validation percentage')).toBeVisible();
   await expect(name).toHaveValue('My custom examples');
-  await userEvent.click(canvas.getByRole('tab', { name: 'Prepare' }));
-  await expect(name).toHaveValue('My custom examples');
-  await expect(canvas.getByLabelText('Source file')).toBeVisible();
+  await expect(canvas.getByLabelText('Source file')).toBeEnabled();
+  await expect(canvas.getByText('Choose file')).toBeVisible();
   passed(canvasElement);
 } };
 
 export const ModelCatalog: Story = { parameters: { demoRoute: '#models' }, play: async ({ canvasElement }) => {
   const canvas = within(canvasElement);
   await expect(canvas.findByRole('heading', { name: 'Models', level: 1 })).resolves.toBeVisible();
-  await expect(canvas.getByText('Acquire a model', { selector: 'h2' })).not.toBeVisible();
-  await userEvent.click(canvas.getByText('Add or import a model', { selector: 'summary' }));
-  await expect(canvas.findByRole('heading', { name: 'Acquire a model' })).resolves.toBeVisible();
+  await expect(canvas.queryByRole('dialog', { name: 'Add a model' })).not.toBeInTheDocument();
+  const add = await canvas.findByRole('button', { name: 'Add model' });
+  await waitFor(() => expect(add).toBeEnabled());
+  await userEvent.click(add);
+  const dialog = await canvas.findByRole('dialog', { name: 'Add a model' });
+  await expect(within(dialog).getByRole('button', { name: 'Hugging Face' })).toBeVisible();
+  await userEvent.keyboard('{Escape}');
+  await waitFor(() => expect(canvas.queryByRole('dialog', { name: 'Add a model' })).not.toBeInTheDocument());
+  await expect(canvas.getByText('Model runtime compatibility', { selector: 'summary' })).not.toBeVisible();
+  await userEvent.click(canvas.getByText('Advanced', { selector: 'summary' }));
   await userEvent.click(canvas.getByText('Model runtime compatibility', { selector: 'summary' }));
-  await expect(canvas.findByRole('heading', { name: 'Model runtime compatibility' })).resolves.toBeVisible();
+  await expect(canvas.findByText('Anvil Assistant · r8')).resolves.toBeVisible();
   passed(canvasElement);
 } };
 
@@ -82,8 +90,9 @@ export const AuditFilters: Story = { parameters: { demoRoute: '#audit' }, play: 
 export const SourceInspector: Story = { parameters: { demoRoute: '#dataset-bank' }, play: async ({ canvasElement }) => {
   const canvas = within(canvasElement);
   const inspect = (await canvas.findAllByRole('button', { name: /^Inspect / }))[0];
+  const name = inspect.getAttribute('aria-label')!.replace(/^Inspect /, '');
   await userEvent.click(inspect);
-  await waitFor(() => expect(canvas.getByRole('region', { name: 'Source details' })).toHaveFocus());
+  await waitFor(() => expect(canvas.getByRole('complementary', { name })).toHaveFocus());
   passed(canvasElement);
 } };
 
@@ -117,10 +126,11 @@ export const ContextOverrides: Story = { parameters: { demoRoute: '#context-lab'
   passed(canvasElement);
 } };
 
-export const UnsavedDraft: Story = { render: () => <DraftStatus draft={{ status: 'unsaved', restore() {}, discard() {} }} />, play: async ({ canvasElement }) => {
+export const UnsavedDraft: Story = { render: () => <DraftIndicator draft={{ status: 'unsaved', restore() {}, discard() {} }} />, play: async ({ canvasElement }) => {
   const canvas = within(canvasElement);
-  await expect(canvas.getByRole('status')).toHaveTextContent('Draft is unsaved');
+  await expect(canvas.getByRole('status')).toHaveTextContent('Draft unsaved');
   await expect(canvas.getByRole('button', { name: 'Discard draft' })).toBeVisible();
+  await userEvent.click(canvas.getByText('About drafts', { selector: 'summary' }));
   await expect(canvas.getByText(/Drafts use this tab’s session storage/)).toBeVisible();
   passed(canvasElement);
 } };

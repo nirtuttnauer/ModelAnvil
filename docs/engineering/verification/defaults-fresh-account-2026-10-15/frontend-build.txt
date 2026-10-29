@@ -1,0 +1,68 @@
+
+> modelanvil-web@0.1.0 build
+> tsc -b && vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 2251 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                  0.67 kB │ gzip:  0.36 kB
+dist/assets/RecipesPage-B-VeqtJ0.css             1.09 kB │ gzip:  0.52 kB
+dist/assets/SpecialistsPage-D21Wg0o1.css         1.35 kB │ gzip:  0.58 kB
+dist/assets/useHardwareInventory-HJ9V-wFs.css    1.44 kB │ gzip:  0.54 kB
+dist/assets/model-workspace-B2ijFv3v.css         1.74 kB │ gzip:  0.66 kB
+dist/assets/RunDetailPage-COabcTFi.css           2.78 kB │ gzip:  0.77 kB
+dist/assets/ChatPage-CN79cDd9.css                3.04 kB │ gzip:  0.91 kB
+dist/assets/Charts-BGsrHGrZ.css                  4.82 kB │ gzip:  1.48 kB
+dist/assets/DataInspector-uTpJaj9l.css           4.85 kB │ gzip:  1.28 kB
+dist/assets/ml-pages-BQPM32V_.css                4.92 kB │ gzip:  1.37 kB
+dist/assets/workbench-components-CLtwUFIc.css    6.53 kB │ gzip:  1.66 kB
+dist/assets/operations-BVg6ycQ4.css              6.93 kB │ gzip:  1.64 kB
+dist/assets/TrainingPage-CQZrz3mJ.css            6.96 kB │ gzip:  1.59 kB
+dist/assets/DatasetsPage-Cv-jBuU4.css            7.21 kB │ gzip:  1.68 kB
+dist/assets/data-workspace-C1XBezIw.css         10.93 kB │ gzip:  2.49 kB
+dist/assets/index-DSwkaGIM.css                  38.03 kB │ gzip:  8.02 kB
+dist/assets/arrow-right-CAZhnb67.js              0.20 kB │ gzip:  0.18 kB
+dist/assets/circle-check-BTjAVXIr.js             0.24 kB │ gzip:  0.21 kB
+dist/assets/circle-x-Ccu8M52C.js                 0.26 kB │ gzip:  0.21 kB
+dist/assets/download-CoBYFqlr.js                 0.26 kB │ gzip:  0.22 kB
+dist/assets/copy-vpRz91iQ.js                     0.27 kB │ gzip:  0.23 kB
+dist/assets/circle-question-mark-WlQEnAeJ.js     0.32 kB │ gzip:  0.25 kB
+dist/assets/ResourceState-CyZPvBnW.js            0.34 kB │ gzip:  0.26 kB
+dist/assets/box-DtLT5NXp.js                      0.34 kB │ gzip:  0.25 kB
+dist/assets/shield-check-BoK_U_jV.js             0.35 kB │ gzip:  0.27 kB
+dist/assets/cpu-BxiOIJ5F.js                      0.67 kB │ gzip:  0.31 kB
+dist/assets/ResourceHandoff-DQniWptV.js          0.78 kB │ gzip:  0.47 kB
+dist/assets/workbench-data-CrU0Bbio.js           0.79 kB │ gzip:  0.45 kB
+dist/assets/InspectorPanel-BLzCWPjX.js           1.24 kB │ gzip:  0.63 kB
+dist/assets/MetricComparison-CLfcxxLy.js         2.95 kB │ gzip:  1.02 kB
+dist/assets/ResourcePicker-C5ZnG00D.js           3.41 kB │ gzip:  1.39 kB
+dist/assets/ResourceDetailPage-B7tKp13j.js       5.95 kB │ gzip:  2.14 kB
+dist/assets/useHardwareInventory-B_BNijpg.js     6.79 kB │ gzip:  2.60 kB
+dist/assets/datasets-8xm0v8TF.js                 8.71 kB │ gzip:  3.28 kB
+dist/assets/DataInspector-CM4RG0Se.js            8.81 kB │ gzip:  3.12 kB
+dist/assets/AuditPage-Cy8nKK-0.js               10.71 kB │ gzip:  3.63 kB
+dist/assets/Charts-D2FhNs5_.js                  10.80 kB │ gzip:  3.81 kB
+dist/assets/ContextLabPage-TONUlSCX.js          11.95 kB │ gzip:  4.10 kB
+dist/assets/jsx-runtime-m0uJbZsq.js             12.74 kB │ gzip:  4.95 kB
+dist/assets/ClusterExplorerPage-PSChJfvk.js     13.02 kB │ gzip:  4.18 kB
+dist/assets/WorkflowsPage-2rCBukE0.js           13.57 kB │ gzip:  4.39 kB
+dist/assets/EvaluationPage-C_R15TgR.js          16.59 kB │ gzip:  5.09 kB
+dist/assets/SpecialistsPage-DBWYndvT.js         16.77 kB │ gzip:  5.11 kB
+dist/assets/AlignmentPage-Cn1nWzsa.js           17.94 kB │ gzip:  5.77 kB
+dist/assets/InfrastructurePage-CgQ7jXbM.js      18.38 kB │ gzip:  5.23 kB
+dist/assets/RecipesPage-BOTJJUx-.js             18.89 kB │ gzip:  5.75 kB
+dist/assets/BudgetsPage-Biow0MRK.js             19.31 kB │ gzip:  5.52 kB
+dist/assets/RunDetailPage-D31N4DTf.js           20.52 kB │ gzip:  5.83 kB
+dist/assets/OverviewPage-CDc2KpaV.js            21.23 kB │ gzip:  6.62 kB
+dist/assets/DatasetBankPage-DJoiLOEV.js         21.87 kB │ gzip:  6.34 kB
+dist/assets/ReleasesPage-CPNSwQ0h.js            22.14 kB │ gzip:  6.17 kB
+dist/assets/ModelsPage-Dn06okFs.js              24.14 kB │ gzip:  7.41 kB
+dist/assets/DatasetsPage-aQSkDcTx.js            24.71 kB │ gzip:  7.15 kB
+dist/assets/AnnotationPage-CeJKqoG6.js          25.89 kB │ gzip:  7.76 kB
+dist/assets/TrainingPage-DbXCc95y.js            77.83 kB │ gzip: 22.49 kB
+dist/assets/ChatPage-B8DaADmz.js               182.70 kB │ gzip: 54.88 kB
+dist/assets/index-FobFFB2d.js                  286.09 kB │ gzip: 88.59 kB
+
+✓ built in 216ms

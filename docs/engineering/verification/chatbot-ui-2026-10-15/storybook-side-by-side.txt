@@ -1,0 +1,725 @@
+- log
+- log
+- banner "Storybook":
+  - heading "Storybook" [level=1]
+  - link "Skip to content":
+    - /url: "#storybook-preview-wrapper"
+  - link "Storybook":
+    - /url: ./
+    - img "Storybook"
+  - switch "Settings":
+  - button "Open onboarding guide":
+    - strong: Get started
+  - button "Collapse onboarding guide" [expanded]:
+  - button "37% completed":
+    - generic: 37%
+  - list:
+    - button "Open onboarding guide for Change a story with Controls":
+      - generic: Change a story with Controls
+    - button "Open onboarding guide for Publish your Storybook for feedback":
+      - generic: Publish your Storybook for feedback
+    - button "Open onboarding guide for Install Vitest addon":
+      - generic: Install Vitest addon
+  - generic: Search for components
+  - search:
+    - combobox "Search for components":
+      - searchbox "Search for components"
+      - code:
+        - generic: ⌘
+        - text: K
+      - button "Tag filters":
+    - button "Create a new story":
+  - switch "Show new and modified stories since last commit":
+    - text: Show new and modified stories
+  - navigation "Stories":
+    - heading "Stories" [level=2]
+    - button "Collapse" [expanded]:
+      - text: ModelAnvil
+    - button "Expand all":
+    - button "Screens":
+      - text: Screens
+    - button "States":
+      - text: States
+    - button "Actions" [expanded]:
+      - text: Actions
+    - 'button "Change status: New"':
+    - button "Base chat comparison" [expanded]:
+      - text: Base chat comparison
+    - 'button "Change status: New"':
+    - link "Generate Pair":
+      - /url: /?path=/story/modelanvil-actions-base-chat-comparison--generate-pair
+      - text: Generate Pair
+    - link "Skip to content":
+      - /url: "#storybook-preview-wrapper"
+    - button "Open context menu":
+    - link "Fresh Prompt Each Time":
+      - /url: /?path=/story/modelanvil-actions-base-chat-comparison--fresh-prompt-each-time
+      - text: Fresh Prompt Each Time
+    - 'button "Change status: New"':
+    - link "Saved Pair":
+      - /url: /?path=/story/modelanvil-actions-base-chat-comparison--saved-pair
+      - text: Saved Pair
+    - 'button "Change status: New"':
+    - link "Missing Base":
+      - /url: /?path=/story/modelanvil-actions-base-chat-comparison--missing-base
+      - text: Missing Base
+    - 'button "Change status: New"':
+    - link "One Model Fails":
+      - /url: /?path=/story/modelanvil-actions-base-chat-comparison--one-model-fails
+      - text: One Model Fails
+    - 'button "Change status: New"':
+    - link "Stop Generation":
+      - /url: /?path=/story/modelanvil-actions-base-chat-comparison--stop-generation
+      - text: Stop Generation
+    - 'button "Change status: New"':
+    - link "From Training":
+      - /url: /?path=/story/modelanvil-actions-base-chat-comparison--from-training
+      - text: From Training
+    - 'button "Change status: New"':
+    - link "Handoff":
+      - /url: /?path=/story/modelanvil-actions-base-chat-comparison--handoff
+      - text: Handoff
+    - 'button "Change status: New"':
+    - link "Dark":
+      - /url: /?path=/story/modelanvil-actions-base-chat-comparison--dark
+      - text: Dark
+    - 'button "Change status: New"':
+    - link "Preview":
+      - /url: /?path=/story/modelanvil-actions-base-chat-comparison--preview
+      - text: Preview
+    - 'button "Change status: New"':
+    - button "Chat" [expanded]:
+      - text: Chat
+    - 'button "Change status: New"':
+    - link "Saved Markdown Response":
+      - /url: /?path=/story/modelanvil-actions-chat--saved-markdown-response
+      - text: Saved Markdown Response
+    - 'button "Change status: New"':
+    - link "Generate Markdown Comparison":
+      - /url: /?path=/story/modelanvil-actions-chat--generate-markdown-comparison
+      - text: Generate Markdown Comparison
+    - 'button "Change status: New"':
+    - link "Chat Composer Keyboard":
+      - /url: /?path=/story/modelanvil-actions-chat--chat-composer-keyboard
+      - text: Chat Composer Keyboard
+    - 'button "Change status: New"':
+    - link "Active Jobs Panel":
+      - /url: /?path=/story/modelanvil-actions-chat--active-jobs-panel
+      - text: Active Jobs Panel
+    - 'button "Change status: New"':
+    - button "Input forms":
+      - text: Input forms
+    - 'button "Change status: New"':
+    - button "Model hardware":
+      - text: Model hardware
+    - 'button "Change status: New"':
+    - button "ML":
+      - text: ML
+    - button "Model export":
+      - text: Model export
+    - 'button "Change status: New"':
+    - button "Training dataset preview":
+      - text: Training dataset preview
+    - 'button "Change status: New"':
+    - button "Dataset validation":
+      - text: Dataset validation
+    - 'button "Change status: New"':
+    - button "Training progress":
+      - text: Training progress
+    - 'button "Change status: New"':
+    - button "Engineering components":
+      - text: Engineering components
+    - 'button "Change status: New"':
+    - button "Components":
+      - text: Components
+    - 'button "Change status: New"':
+- separator "Sidebar resize handle"
+- region "Toolbar":
+  - heading "Toolbar" [level=2]
+  - toolbar:
+    - button "Reload story":
+    - switch "Grid visibility":
+    - button "Preview background":
+    - switch "Measure tool":
+    - switch "Outline tool":
+    - button "Viewport size":
+    - button "Vision filter":
+    - button "Open in isolation mode":
+    - switch "Change zoom level": 100%
+    - button "Enter full screen":
+    - button "Open in editor":
+- main "Main preview area":
+  - heading "Main preview area" [level=2]
+  - link "Skip to sidebar":
+    - /url: "#modelanvil-actions-base-chat-comparison--generate-pair"
+  - iframe [active] [id="storybook-preview-iframe"]:
+    - note: DEMO WORKSPACE · Synthetic data · Actions stay in this Storybook session
+    - link "Skip to content":
+      - /url: "#workspace-content"
+    - main:
+      - button "Toggle navigation":
+      - combobox "Organization":
+        - option "Anvil Research · Demo" [selected]
+        - option "Connect organization…"
+      - combobox "Project":
+        - option "Assistant Research · Demo" [selected]
+        - option "+ New project…"
+      - link "ModelAnvil overview":
+        - /url: "#overview"
+      - button "Go to a workspace screen… ⌘ / Ctrl K":
+      - combobox "Color theme":
+        - option "Light" [selected]
+        - option "Dark"
+        - option "System"
+      - button "Active jobs":
+      - button "Refresh workspace":
+      - button "Connection":
+      - heading "Chat with your model" [level=2]:
+        - text: Chat with your model
+      - paragraph: How do I reset?
+      - group "Chat view":
+        - button "Chat"
+        - button "Base vs trained" [pressed]
+      - text: Trained model
+      - combobox "Trained model":
+        - option "Select a model"
+        - option "Trained model · Demo" [selected]
+      - button "New conversation":
+        - text: New conversation
+      - button "Export":
+        - text: Export
+      - status: Base and trained responses saved with the same prompt and generation settings.
+      - generic "Saved conversations"
+      - option "New conversation"
+      - option "How do I reset?" [selected]
+      - generic "Generation settings"
+      - option "CPU" [selected]
+      - option "CPU" [selected]
+      - option "Imported model template" [selected]
+      - option "Plain text (one user prompt)"
+      - option "ChatML override"
+      - text: Base model
+      - textbox "Base model"
+      - paragraph: Both models receive the same prompt and settings in a fresh context.
+      - region "Base and trained model responses":
+        - heading "Base vs trained responses" [level=3]
+        - paragraph: Same prompt · fresh context. Compare how your training changed the answer.
+        - group "Shared comparison input":
+          - article:
+            - strong: Shared prompt
+            - paragraph: How do I reset?
+        - paragraph: Scroll horizontally to see both responses on a small screen.
+        - region "Side-by-side responses":
+          - article "Base model response":
+            - generic: BASE MODEL
+            - heading "Base model · Demo" [level=3]
+            - heading "Base answer" [level=2]
+            - paragraph: Try restarting the device.
+            - button "Copy response":
+              - text: Copy response
+            - status: completed · 0.26 seconds including model load · 12 input / 20 output tokens
+          - article "Trained model response":
+            - generic: TRAINED MODEL
+            - heading "Trained model · Demo" [level=3]
+            - heading "Trained answer" [level=2]
+            - list:
+              - text: Open
+              - strong: Settings
+              - text: .
+              - listitem: Choose Reset.
+            - generic: python
+            - button "Copy code":
+              - text: Copy code
+            - generic "python code block":
+              - code: print("reset")
+            - button "Copy response":
+              - text: Copy response
+            - status: completed · 0.30 seconds including model load · 12 input / 20 output tokens
+      - text: Message
+      - textbox "Message":
+        - /placeholder: Ask both models the same question…
+      - generic: Enter to send · Shift + Enter for a new line
+      - button "Regenerate":
+        - text: Regenerate
+      - button "Send message" [disabled]:
+        - text: Send
+      - generic "Message draft"
+      - generic "App information"
+      - text: Control plane
+- separator "Addon panel resize handle"
+- region "Addon panel":
+  - heading "Addon panel" [level=2]
+  - button "Move addon panel to right":
+  - button "Hide addon panel":
+  - tablist "Available addons":
+    - tab "Actions":
+      - generic: Actions
+    - tab "Interactions 25" [selected]:
+      - generic: Interactions
+      - generic: "25"
+    - tab "Accessibility 1":
+      - generic: Accessibility
+      - generic: "1"
+  - tabpanel "Interactions 25":
+    - toolbar "Component test playback controls":
+      - 'generic "Story status: Pass"': Pass
+      - button "Scroll to end"
+      - button "Go to start":
+      - button "Go back":
+      - button "Go forward" [disabled]:
+      - button "Go to end" [disabled]:
+      - button "Rerun":
+      - button "Open in editor": BaseChatComparison.stories.tsx
+    - heading "Interaction steps" [level=3]
+    - list:
+      - 'button "Go to interaction row: waitFor. Status: passed."':
+        - text: waitFor
+        - text: (
+        - text: anonymous
+        - text: )
+      - button "Collapse nested interaction steps for waitFor" [expanded]:
+      - 'button "Interaction row: toBeGreaterThan. Status: passed." [disabled]':
+        - text: expect
+        - text: (
+        - text: "3"
+        - text: )
+        - text: .
+        - text: toBeGreaterThan
+        - text: (
+        - text: "1"
+        - text: )
+      - 'button "Go to interaction row: click. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: click
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"button\","
+        - text: "{"
+        - generic: "name:"
+        - generic: /^Base vs trained$/
+        - text: "}"
+        - text: )
+        - text: )
+      - 'button "Go to interaction row: waitFor. Status: passed."':
+        - text: waitFor
+        - text: (
+        - text: anonymous
+        - text: )
+      - button "Collapse nested interaction steps for waitFor" [expanded]:
+      - 'button "Interaction row: toHaveValue. Status: passed." [disabled]':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByLabelText
+        - text: (
+        - text: "\"Trained model\","
+        - text: "{"
+        - generic: "exact:"
+        - text: "true }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toHaveValue
+        - text: (
+        - text: "\"b1000000-0000-4000-8000-000000000002\""
+        - text: )
+      - 'button "Go to interaction row: type. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: type
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByLabelText
+        - text: (
+        - text: "\"Message\","
+        - text: "{"
+        - generic: "exact:"
+        - text: "true }"
+        - text: )
+        - text: ","
+        - text: "\"How do I reset?\""
+        - text: )
+      - 'button "Go to interaction row: click. Status: passed."':
+        - text: userEvent
+        - text: .
+        - text: click
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"button\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Send message\" }"
+        - text: )
+        - text: )
+      - 'button "Go to interaction row: waitFor. Status: passed."':
+        - text: waitFor
+        - text: (
+        - text: anonymous,
+        - text: "{"
+        - generic: "timeout:"
+        - text: "6000 }"
+        - text: )
+      - button "Collapse nested interaction steps for waitFor" [expanded]:
+      - 'button "Interaction row: toBeVisible. Status: passed." [disabled]':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByText
+        - text: (
+        - text: "\"Base and trained responses saved with the same…\""
+        - text: )
+        - text: )
+        - text: .
+        - text: toBeVisible
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: toBeLessThan. Status: passed."':
+        - text: expect
+        - text: (
+        - text: "0"
+        - text: )
+        - text: .
+        - text: toBeLessThan
+        - text: (
+        - text: "2"
+        - text: )
+      - 'button "Go to interaction row: toBeGreaterThan. Status: passed."':
+        - text: expect
+        - text: (
+        - text: "320.5"
+        - text: )
+        - text: .
+        - text: toBeGreaterThan
+        - text: (
+        - text: "304.5"
+        - text: )
+      - 'button "Go to interaction row: toBeVisible. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"region\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Base and trained model responses\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"heading\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Base model · Demo\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toBeVisible
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: toBeVisible. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"region\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Base and trained model responses\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"heading\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Trained model · Demo\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toBeVisible
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: toBeVisible. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"region\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Base and trained model responses\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"heading\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Base answer\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toBeVisible
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: toBeVisible. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"region\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Base and trained model responses\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"heading\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Trained answer\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toBeVisible
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: toHaveLength. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"region\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Base and trained model responses\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: getAllByRole
+        - text: (
+        - text: "\"button\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Copy response\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toHaveLength
+        - text: (
+        - text: "2"
+        - text: )
+      - 'button "Go to interaction row: toBeVisible. Status: passed."':
+        - text: expect
+        - text: (
+        - text: within
+        - text: (
+        - text: within
+        - text: (
+        - generic: <div#storybook-root>
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"region\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Base and trained model responses\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: getByRole
+        - text: (
+        - text: "\"button\","
+        - text: "{"
+        - generic: "name:"
+        - text: "\"Copy code\" }"
+        - text: )
+        - text: )
+        - text: .
+        - text: toBeVisible
+        - text: (
+        - text: )
+      - 'button "Go to interaction row: toHaveLength. Status: passed."':
+        - text: expect
+        - text: (
+        - text: "["
+        - text: "(9) {"
+        - generic: "model:"
+        - text: "\"b1000000-0000-4000-8000-000000000001\","
+        - generic: "messages:"
+        - text: "["
+        - text: "{"
+        - generic: "role:"
+        - text: "\"user\","
+        - generic: "content:"
+        - text: "\"How do I reset?\" }"
+        - text: "]"
+        - text: ", … }"
+        - text: ","
+        - text: "(9) {"
+        - generic: "model:"
+        - text: "\"b1000000-0000-4000-8000-000000000002\","
+        - generic: "messages:"
+        - text: "["
+        - text: "{"
+        - generic: "role:"
+        - text: "\"user\","
+        - generic: "content:"
+        - text: "\"How do I reset?\" }"
+        - text: "]"
+        - text: ", … }"
+        - text: "]"
+        - text: )
+        - text: .
+        - text: toHaveLength
+        - text: (
+        - text: "2"
+        - text: )
+      - 'button "Go to interaction row: toBe. Status: passed."':
+        - text: expect
+        - text: (
+        - text: "\"b1000000-0000-4000-8000-000000000001\""
+        - text: )
+        - text: .
+        - text: toBe
+        - text: (
+        - text: "\"b1000000-0000-4000-8000-000000000001\""
+        - text: )
+      - 'button "Go to interaction row: toBe. Status: passed."':
+        - text: expect
+        - text: (
+        - text: "\"b1000000-0000-4000-8000-000000000002\""
+        - text: )
+        - text: .
+        - text: toBe
+        - text: (
+        - text: "\"b1000000-0000-4000-8000-000000000002\""
+        - text: )
+      - 'button "Go to interaction row: toEqual. Status: passed."':
+        - text: expect
+        - text: (
+        - text: "["
+        - text: "{"
+        - generic: "role:"
+        - text: "\"user\","
+        - generic: "content:"
+        - text: "\"How do I reset?\" }"
+        - text: "]"
+        - text: )
+        - text: .
+        - text: toEqual
+        - text: (
+        - text: "["
+        - text: "{"
+        - generic: "role:"
+        - text: "\"user\","
+        - generic: "content:"
+        - text: "\"How do I reset?\" }"
+        - text: "]"
+        - text: )
+      - 'button "Go to interaction row: toEqual. Status: passed."':
+        - text: expect
+        - text: (
+        - text: "0"
+        - text: )
+        - text: .
+        - text: toEqual
+        - text: (
+        - text: "0"
+        - text: )
+      - 'button "Go to interaction row: toEqual. Status: passed."':
+        - text: expect
+        - text: (
+        - text: "128"
+        - text: )
+        - text: .
+        - text: toEqual
+        - text: (
+        - text: "128"
+        - text: )
+      - 'button "Go to interaction row: toEqual. Status: passed."':
+        - text: expect
+        - text: (
+        - text: "42"
+        - text: )
+        - text: .
+        - text: toEqual
+        - text: (
+        - text: "42"
+        - text: )
+      - 'button "Go to interaction row: toEqual. Status: passed."':
+        - text: expect
+        - text: (
+        - text: "\"model\""
+        - text: )
+        - text: .
+        - text: toEqual
+        - text: (
+        - text: "\"model\""
+        - text: )

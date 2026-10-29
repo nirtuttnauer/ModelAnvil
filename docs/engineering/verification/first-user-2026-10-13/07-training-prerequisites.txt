@@ -1,0 +1,247 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "First-time user review" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "Custom support assistant" [selected]
+    - option "+ New project…"
+  - strong: Training
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Connection":
+    - generic: Connection
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Configure reproducible runs and follow their actual progress.
+  - heading "Training studio" [level=2]
+  - paragraph: Fine-tune on a registered CPU or GPU worker using published text and pinned weights. Preview runtime requirements, then monitor committed steps, checkpoints and usage.
+  - button "Tokenizer":
+    - text: Tokenizer
+  - button "Model Version":
+    - text: Model Version
+  - button "Close setup"
+  - generic "Loaded training summary":
+    - generic: Training runs
+    - strong: "0"
+    - generic: All accessible recorded runs
+    - generic: Active runs
+    - strong: "0"
+    - generic: Pending or running
+    - generic: Saved checkpoints
+    - strong: "0"
+    - generic: Recorded checkpoint artifacts
+    - generic: Latest selected loss
+    - strong: —
+    - generic: Select a recorded run
+  - complementary "Local draft":
+    - status: Draft saved in this tab.
+    - paragraph: Drafts use this tab’s session storage and expire 8 hours after an edit. Browsers may retain session storage when restoring tabs; expired backups are removed when the app checks them. Discard removes the draft. Credentials and execution approvals are excluded. Avoid entering secrets in content.
+    - button "Restore saved draft"
+    - button "Discard draft"
+  - text: Execution
+  - combobox "Execution":
+    - option "Worker text fine-tuning" [selected]
+    - option "Synthetic training fixture"
+  - text: Recipe type
+  - combobox "Recipe type":
+    - option "Full parameter SFT" [selected]
+    - option "GPU LoRA · pinned SmolLM2 profile"
+    - option "Apple GPU QLoRA · four-bit SmolLM2 profile"
+    - option "GPU continued pretraining · pinned text corpus"
+  - text: Tokenizer version
+  - combobox "Tokenizer version":
+    - option "Select a tokenizer" [selected]
+  - button "+ New"
+  - generic: Base model version
+  - searchbox "Search base model version"
+  - combobox "Base model version":
+    - option "Select an exact revision" [selected]
+  - button "+ New"
+  - paragraph: 0 resources in the loaded inventory.
+  - paragraph:
+    - link "Initialize a CPU base in Models":
+      - /url: "#models"
+    - text: or select a GPU base registered on your worker host. Choose its matching tokenizer.
+  - generic: Prepared dataset revision
+  - searchbox "Search prepared dataset revision"
+  - combobox "Prepared dataset revision":
+    - option "Select an exact revision"
+    - option "Support custom CSV · r1 · published" [selected]
+  - paragraph: 1 resources in the loaded inventory.
+  - link "Support custom CSV":
+    - /url: "#resources/dataset-revision/f0c81341-4f91-4d10-93da-3fc9968036fa"
+  - generic: r1
+  - generic: published
+  - generic "Exact resource ID"
+  - paragraph: 20 rows · manifest 769dc96bf544ee141bdad02edd1f38d6ca470899b2c1ad9f55b88877f0be2d1a
+  - text: Worker execution pool
+  - combobox "Worker execution pool":
+    - option "Select a durable worker pool" [selected]
+  - text: Budget policy & limit
+  - combobox "Budget policy & limit":
+    - option "Select a training step budget" [selected]
+  - text: Registered training runner
+  - combobox "Registered training runner":
+    - option "Select a runtime manifest" [selected]
+  - text: Initialization seed
+  - spinbutton "Initialization seed" [disabled]: "42"
+  - text: Total steps
+  - spinbutton "Total steps": "50"
+  - button "Preview preflight"
+  - button "Cancel"
+  - paragraph: Reserves 50 training steps. Preflight resolves the selected runtime's data limits, hardware and storage requirements. Monetary cost is unknown.
+  - region "Measured pilot":
+    - heading "Measured local pilot" [level=3]
+    - text: Pilot optimizer steps
+    - spinbutton "Pilot optimizer steps": "3"
+    - button "Review pilot preflight" [disabled]
+    - paragraph: A pilot trains real weights and reserves its actual step count. A matching completed execution can inform the duration estimate; monetary cost stays unknown without a recorded rate.
+  - region "Training preflight" [active]:
+    - heading "Training preflight" [level=3]
+    - status: Blocked
+    - paragraph: "Blocking checks: Base model version, Tokenizer version, Runner manifest, Pool, Worker memory, Worker slots, Budget, Storage"
+    - region "Compatibility checks":
+      - heading "Compatibility" [level=4]
+      - list:
+        - strong: Recipe execution mode
+        - generic: Passed
+        - paragraph: Worker recipe must match the selected runtime.
+        - strong: Dataset revision
+        - generic: Passed
+        - paragraph: "dataset_revision: selected accessible resource."
+        - strong: Base model version
+        - generic: Blocked
+        - paragraph: "base_model_version: missing or inaccessible."
+        - paragraph:
+          - strong: "Next step:"
+          - text: Select an accessible base model version.
+        - strong: Tokenizer version
+        - generic: Blocked
+        - paragraph: "tokenizer_version: missing or inaccessible."
+        - paragraph:
+          - strong: "Next step:"
+          - text: Select an accessible tokenizer version.
+        - strong: Runner manifest
+        - generic: Blocked
+        - paragraph: "runner_manifest: missing or inaccessible."
+        - paragraph:
+          - strong: "Next step:"
+          - text: Select an accessible runner manifest.
+        - strong: Pool
+        - generic: Blocked
+        - paragraph: "pool: missing or inaccessible."
+        - paragraph:
+          - strong: "Next step:"
+          - text: Select an accessible pool.
+        - strong: Dataset published
+        - generic: Passed
+        - paragraph: Dataset must be published with immutable prepared text.
+    - region "Capacity checks":
+      - heading "Capacity" [level=4]
+      - list:
+        - strong: Worker memory
+        - generic: Blocked
+        - paragraph: A worker must declare the selected contract and sufficient memory.
+        - paragraph:
+          - strong: "Next step:"
+          - text: Register a worker with the selected runtime contract and required memory declaration.
+        - generic "Check details and units"
+        - strong: Worker slots
+        - generic: Blocked
+        - paragraph: 0 free matching worker slot(s); one required.
+        - paragraph:
+          - strong: "Next step:"
+          - text: Activate the pool and free or add a matching worker slot.
+        - generic "Check details and units"
+        - strong: Storage
+        - generic: Blocked
+        - paragraph: Storage requirement unknown until inputs resolve.
+        - paragraph:
+          - strong: "Next step:"
+          - text: Correct the input checks, then preview again.
+    - region "Budget checks":
+      - heading "Budget" [level=4]
+      - list:
+        - strong: Budget
+        - generic: Blocked
+        - paragraph: Budget must be enabled, use training_steps, and cover the requested sample passes.
+        - paragraph:
+          - strong: "Next step:"
+          - text: Select an enabled training_steps budget, increase its limit or reduce steps.
+    - heading "Resolved requirements" [level=4]
+    - term: Runtime
+    - definition: Unresolved
+    - term: Worker slots
+    - definition: Unknown
+    - term: Host memory
+    - definition: Unknown
+    - term: Projected storage
+    - definition: Unknown
+    - generic "Resolved recipe parameters"
+    - heading "Estimate and budget" [level=4]
+    - term: Engine time
+    - definition: Unknown — no matching measured pilot
+    - term: Next-token pairs
+    - definition: Unknown
+    - term: Estimated cost
+    - definition: Unknown — No measured monetary rate or currency is configured.
+    - paragraph: "No matching completed worker pilot. · uncertainty: Unknown; no confidence interval has been measured."
+    - generic "Pinned input revisions and digests"
+    - paragraph: Capacity is observed, not reserved. Launch rechecks; worker claim enforces slots and budget reservation is atomic.
+    - paragraph: Preview expires in 10 minutes.
+    - button "Refresh preflight"
+    - button "Launch fine-tuning" [disabled]
+  - generic: EXPERIMENT MONITOR
+  - heading "Loss & checkpoint activity" [level=3]
+  - paragraph: Recorded training loss at committed steps, alongside saved checkpoint artifacts.
+  - text: Inspect run
+  - combobox "Training run to visualize":
+    - option "Select a training run" [disabled] [selected]
+  - heading "Training loss" [level=3]
+  - paragraph: Loss from committed training measurements.
+  - strong: Waiting for recorded data
+  - paragraph: Run an experiment to record measurements. Curves will use the exact recorded steps.
+  - heading "Checkpoint timeline" [level=3]
+  - paragraph: Saved artifacts from the selected run.
+  - strong: Waiting for recorded data
+  - paragraph: Create a training run to inspect committed steps and checkpoints.
+  - heading "Run history" [level=3]
+  - paragraph: Inspect inputs, download candidates, and open the durable execution record.
+  - paragraph: No training runs yet.
+  - heading "Compare recorded experiments" [level=3]
+  - text: Two run IDs, separated by a comma
+  - textbox "Two run IDs, separated by a comma":
+    - /placeholder: Select exact runs from the complete list below
+  - paragraph: Loss overlays require the same recipe, runtime build, tokenizer, architecture, dataset and validation protocol. Different optimizer settings remain visible as experimental changes. QLoRA quantized and unquantized baselines are distinct evidence; execution success does not pass a quality gate.
+  - status: Select exactly two runs.
+  - text: ModelAnvil · c39a2e95 · 28838a1d
+  - generic: "· API build matches · Imports: JSONL, CSV, DOCX, JSON, PDF"
+  - text: Control plane

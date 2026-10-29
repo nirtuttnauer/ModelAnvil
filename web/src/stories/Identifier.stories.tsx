@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect, useRef } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Identifier } from '../components/Identifier';
-import '../style.css';
+import '../design-system/index.css';
 
 const value = '019a3621-4d78-7bd0-8e43-9a091242336a';
 let write = fn(async (_value: string) => {});

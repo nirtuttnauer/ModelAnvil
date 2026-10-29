@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { apiRequest, errorMessage } from '../api/client';
 import { Button, Field, MultilineField } from './ui';
-import { useDraft, DraftStatus } from './Draft';
+import { useDraft, DraftIndicator } from './Draft';
 export interface RecipeBlock { block_key: string; block_type: string; role: string; priority: number; order: number; content_template: string; max_tokens?: number | null }
 export interface RecipeVersion { recipe_version_id: string; recipe: number; revision_no: number; model_limit_tokens: number; output_reserve_tokens: number; budget_policy: string; blocks: RecipeBlock[]; model_version?: number | null; runtime_pins?: Record<string, unknown> }
 export interface ContextModel { id: number; model_version_id: string; architecture_ref: string; revision_no: number; model: number }
@@ -30,7 +30,7 @@ export function ContextRecipeAuthor({ token, source, versions, models, onSaved, 
       draft.discard(); onSaved(value);
     } catch (e) { setError(errorMessage(e)); } finally { setBusy(false); }
   }
-  return <form className="form-grid" onSubmit={save}><DraftStatus draft={draft} disabled={busy} />{error && <p className="full-width" role="alert">{error}</p>}
+  return <form className="form-grid" onSubmit={save}><DraftIndicator draft={draft} disabled={busy} />{error && <p className="full-width" role="alert">{error}</p>}
     {!source && <label className="full-width">Recipe name<Field required maxLength={200} value={name} onChange={e => setName(e.target.value)} disabled={busy} /></label>}
     <label className="full-width">Pinned model (optional)<select disabled={busy} value={model} onChange={e => { setModel(e.target.value); if (e.target.value) { setLimit(models.find(m => String(m.id) === e.target.value)?.architecture_ref === 'modelanvil.general-transformer-sft.v1' ? '32' : '64'); setReserve('8'); } }}><option value="">Estimator only · no model execution</option>{models.filter(m => ['modelanvil.cpu-character-sft.v1', 'modelanvil.general-transformer-sft.v1'].includes(m.architecture_ref)).map(m => <option key={m.id} value={m.id}>Model record {m.model} · r{m.revision_no} · {m.architecture_ref}</option>)}</select></label>
     <p className="muted full-width">The measured path uses verified local CPU reference weights, their exact tokenizer and the pinned role-lines template. Counts for unpinned recipes remain estimates. Model bytes are checked again on compilation and execution.</p>

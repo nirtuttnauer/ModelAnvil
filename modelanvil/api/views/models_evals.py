@@ -310,6 +310,18 @@ class EvaluationMetricSerializer(serializers.ModelSerializer):
 
 
 class EvaluationRunSerializer(serializers.ModelSerializer):
+    candidate_name = serializers.CharField(source='candidate_model_version.model.name', read_only=True)
+    baseline_name = serializers.CharField(source='baseline_model_version.model.name', read_only=True, default=None)
+    decision_report = serializers.SerializerMethodField()
+
+    def get_decision_report(self, obj):
+        from modelanvil.runners.guided_evaluation import decision_report
+        from modelanvil.core.activation import evaluation_resources
+        report = decision_report(obj)
+        if report is not None:
+            report['resource_evidence'] = {**report['resource_evidence'], **evaluation_resources(obj)}
+        return report
+
     improvement_decision = serializers.SerializerMethodField()
 
     def get_improvement_decision(self, obj):
@@ -369,7 +381,7 @@ class EvaluationRunSerializer(serializers.ModelSerializer):
     class Meta:
         model = EvaluationRun
         fields = (
-            "improvement_decision",
+            "improvement_decision", "candidate_name", "baseline_name", "decision_report",
             "execution_evidence", "case_coverage", "comparison",
             "run_id", "job", "project", "suite_version", "candidate_model_version",
             "baseline_model_version", "status", "metrics", "baseline_metrics", "protocol_ref", "created_at", "started_at", "completed_at"
@@ -426,6 +438,8 @@ class EvaluationRunViewSet(TenantScopedViewSet):
         from modelanvil.runners.local_execution import load_character_bundle
         from modelanvil.runners.training.engine import TrainingEngine
         run = self.get_queryset().select_for_update().get(pk=self.get_object().pk)
+        if request.data.get('profile', run.protocol_ref.get('profile')) != run.protocol_ref.get('profile'):
+            raise serializers.ValidationError('The requested evaluation profile does not match this prepared run.')
         if 'pool' in request.data or 'budget_policy_id' in request.data or run.job_id:
             from modelanvil.jobs.models import WorkerPool
             from modelanvil.budgets.models import BudgetPolicy

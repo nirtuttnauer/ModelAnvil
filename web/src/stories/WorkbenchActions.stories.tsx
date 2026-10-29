@@ -59,15 +59,15 @@ export const TrainingLaunch: Story = {
     await userEvent.click(await canvas.findByRole('button', { name: 'Advanced settings' }));
     await userEvent.selectOptions(canvas.getByLabelText('Tokenizer version', { exact: true }), '1');
     await userEvent.selectOptions(canvas.getByLabelText('Base model version', { exact: true }), '1');
-    await userEvent.selectOptions(canvas.getByLabelText('Prepared dataset revision', { exact: true }), '1');
-    await userEvent.selectOptions(canvas.getByLabelText('Worker execution pool'), '1');
-    const budget = canvas.getByLabelText('Budget policy & limit'); const options = within(budget).getAllByRole('option').filter(option => (option as HTMLOptionElement).value && !(option as HTMLOptionElement).disabled);
+    await userEvent.selectOptions(canvas.getByLabelText('Dataset version', { exact: true }), '1');
+    await userEvent.selectOptions(canvas.getByLabelText('Worker pool'), '1');
+    const budget = canvas.getByLabelText('Budget'); const options = within(budget).getAllByRole('option').filter(option => (option as HTMLOptionElement).value && !(option as HTMLOptionElement).disabled);
     await userEvent.selectOptions(budget, (options[0] as HTMLOptionElement).value);
-    await userEvent.selectOptions(canvas.getByLabelText('Registered training runner'), '1');
-    await userEvent.click(canvas.getByRole('button', { name: 'Preview preflight' }));
+    await userEvent.selectOptions(canvas.getByLabelText('Training runner'), '1');
+    await userEvent.click(canvas.getByRole('button', { name: 'Run preflight' }));
     const preflight = await canvas.findByRole('region', { name: 'Training preflight' }); await expect(preflight).toHaveFocus();
-    await userEvent.click(within(preflight).getByRole('button', { name: 'Launch fine-tuning' }));
-    await expect(canvas.findByText(/Training run dispatched successfully/)).resolves.toBeVisible();
+    await userEvent.click(within(preflight).getByRole('button', { name: 'Start training' }));
+    await expect(canvas.findByText(/Training started/)).resolves.toBeVisible();
     await expect(canvas.getByRole('tab', { name: /Current run/ })).toHaveAttribute('aria-selected', 'true');
     const payload = [...demoRequests].reverse().find(request => request.path === '/api/v1/training-runs/' && request.method === 'POST')?.body;
     await expect(payload).toMatchObject({ base_model_version: 1, dataset_revision: 1, preflight_token: 'storybook-demo-preflight-only' }); verified(canvasElement);
@@ -112,7 +112,7 @@ export const ReleaseReview: Story = {
     const canvas = within(canvasElement); await ready(canvasElement);
     const select = await canvas.findByLabelText('Release version for SBOM'); await waitFor(() => expect(within(select).getAllByRole('option').length).toBeGreaterThan(1)); await userEvent.selectOptions(select, releaseId);
     const gates = await canvas.findByRole('region', { name: 'Release gate checklist' }); await expect(within(gates).getByText('Missing evidence')).toBeVisible();
-    const inspector = canvas.getByRole('complementary', { name: 'Release #1 · r3' });
+    const inspector = canvas.getByRole('complementary', { name: 'Release · r3' });
     await expect(within(inspector).getByText('1 in loaded page')).toBeVisible();
     await expect(canvas.getAllByRole('button', { name: 'Deploy selected locally' }).every(button => (button as HTMLButtonElement).disabled)).toBe(true); verified(canvasElement);
   },
@@ -149,19 +149,19 @@ export const TrainingModesAndTabs: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Advanced settings' }));
     await waitFor(() => expect(canvas.getByLabelText('Base model version', { exact: true })).toHaveValue('1'));
     await expect(canvas.getByLabelText('Tokenizer version', { exact: true })).toHaveValue('1');
-    await userEvent.selectOptions(canvas.getByLabelText('Prepared dataset revision', { exact: true }), '1');
+    await userEvent.selectOptions(canvas.getByLabelText('Dataset version', { exact: true }), '1');
     await userEvent.selectOptions(canvas.getByLabelText('Training plan', { exact: true }), 'custom');
     await userEvent.clear(canvas.getByLabelText('Total steps')); await userEvent.type(canvas.getByLabelText('Total steps'), '72');
-    await userEvent.click(canvas.getByRole('button', { name: 'Preview preflight' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Run preflight' }));
     await expect(canvas.findByRole('region', { name: 'Training preflight' })).resolves.toBeVisible();
     await userEvent.clear(canvas.getByLabelText('Total steps')); await userEvent.type(canvas.getByLabelText('Total steps'), '73');
     await waitFor(() => expect(canvas.queryByRole('region', { name: 'Training preflight' })).not.toBeInTheDocument());
     await userEvent.click(canvas.getByRole('button', { name: 'Hide advanced settings' }));
     await expect(canvas.getByRole('heading', { name: 'Model and dataset selected' })).toBeVisible();
     await expect(canvas.getByLabelText('Total steps')).toHaveValue(73);
-    await userEvent.click(canvas.getByRole('button', { name: 'Preview preflight' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Run preflight' }));
     const simplePreflight = within(await canvas.findByRole('region', { name: 'Training preflight' }));
-    await expect(simplePreflight.getByRole('button', { name: 'Launch fine-tuning' })).toBeEnabled();
+    await expect(simplePreflight.getByRole('button', { name: 'Start training' })).toBeEnabled();
     const checkDetails = simplePreflight.getByText('Compatibility, capacity and budget details').closest('details');
     await expect(checkDetails).not.toHaveAttribute('open');
     await userEvent.click(simplePreflight.getByText('Compatibility, capacity and budget details'));
@@ -177,7 +177,7 @@ export const TrainingModesAndTabs: Story = {
     await userEvent.keyboard('{Home}'); await expect(configure).toHaveFocus();
     await expect(canvas.getByLabelText('Total steps')).toHaveValue(73);
     await userEvent.click(canvas.getByRole('button', { name: 'Advanced settings' }));
-    await expect(canvas.getByLabelText('Prepared dataset revision', { exact: true })).toHaveValue('1');
+    await expect(canvas.getByLabelText('Dataset version', { exact: true })).toHaveValue('1');
     await expect(canvas.getByLabelText('Base model version', { exact: true })).toHaveValue('1');
     verified(canvasElement);
   },
@@ -201,7 +201,7 @@ export const TrainingDraftMigration: Story = {
     await expect(canvas.getByLabelText('Total steps')).toHaveValue(73);
     await userEvent.click(canvas.getByRole('button', { name: 'Advanced settings' }));
     await expect(canvas.getByLabelText('Base model version', { exact: true })).toHaveValue('1');
-    await expect(canvas.getByLabelText('Prepared dataset revision', { exact: true })).toHaveValue('1');
+    await expect(canvas.getByLabelText('Dataset version', { exact: true })).toHaveValue('1');
     await expect(sessionStorage.getItem(draftKey('demo-tenant', '1', 'guided-fine-tune'))).toBeNull();
     verified(canvasElement);
   },
@@ -216,11 +216,11 @@ export const TrainingCurrentRunAndHistory: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Cancel run' }));
     await expect(canvas.findByText('Run cancelled.')).resolves.toBeVisible();
     await userEvent.click(canvas.getByRole('tab', { name: 'History' }));
-    await expect(canvas.getAllByText('cancelled', { selector: '.state' }).length).toBeGreaterThan(0);
+    await expect(canvas.getAllByText('Cancelled', { selector: '.state' }).length).toBeGreaterThan(0);
     await userEvent.click(canvas.getAllByRole('button', { name: 'Inspect run' })[0]);
-    await expect(canvas.getByRole('heading', { name: `Run ${activeId}` })).toBeVisible();
+    await expect(canvas.getByRole('heading', { name: 'Training run 2' })).toBeVisible();
     await userEvent.click(canvas.getByRole('button', { name: 'Close details' }));
-    await expect(canvas.queryByRole('heading', { name: `Run ${activeId}` })).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('heading', { name: 'Training run 2' })).not.toBeInTheDocument();
     verified(canvasElement);
   },
 };

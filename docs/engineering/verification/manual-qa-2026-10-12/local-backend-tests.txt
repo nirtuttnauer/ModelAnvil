@@ -1,0 +1,8 @@
+----------------------------------------------------------------------
+Ran 815 tests in 105.607s
+
+OK (skipped=9)
+Destroying test database for alias 'default'...
+Found 815 test(s).
+System check identified no issues (0 silenced).
+Purged parts for 1 transfer sessions (1 part objects).

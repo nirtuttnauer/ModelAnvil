@@ -1,0 +1,86 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Local Training Test workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Chat
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Chat" [level=1]
+  - paragraph: Run local models, save conversations and compare actual responses.
+  - heading "Chat with your model" [level=2]:
+    - text: Chat with your model
+  - paragraph: Send a message to try your model. Conversations are saved automatically.
+  - button "New conversation"
+  - button "Export":
+    - text: Export
+  - status: Conversation saved.
+  - generic "Saved conversations · How do I renew a library loan?"
+  - option "New conversation"
+  - option "How do I renew a library loan?" [selected]
+  - option "What identification should I bring to get a library card?"
+  - option "How do I renew a library loan?"
+  - text: Model
+  - combobox "Model":
+    - option "Select a model"
+    - option "SmolLM2 fine-tune · 6c4b9102"
+    - option "SmolLM2 fine-tune · 6a350e9b" [selected]
+  - generic "Generation settings"
+  - option "Single model" [selected]
+  - option "SmolLM2 fine-tune · 6c4b9102"
+  - option "CPU" [selected]
+  - option "Apple Silicon GPU (PyTorch)"
+  - option "Imported model template" [selected]
+  - option "Plain text (one user prompt)"
+  - option "ChatML override"
+  - log "Conversation":
+    - article:
+      - strong: user
+      - paragraph: How do I renew a library loan?
+  - article:
+    - heading "SmolLM2 fine-tune · 6a350e9b" [level=3]
+    - paragraph: Open the library app and choose Renew from the library page.
+    - status: completed · 7.49 seconds including model load · 38 input / 13 output tokens
+  - text: Message
+  - textbox "Message"
+  - button "Generate" [disabled]
+  - button "Stop" [disabled]:
+    - text: Stop
+  - button "Regenerate":
+    - text: Regenerate
+  - generic "Message draft"
+  - generic "App information"
+  - text: Control plane

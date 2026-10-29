@@ -7,7 +7,7 @@ import { workspaceActions, workspaceResponses } from './workspace-fixtures';
 export const demoRequests: Array<{ path: string; method: string; status: number; body?: Record<string, unknown> }> = [];
 export const resetDemoRequests = () => { demoRequests.length = 0; };
 export type DemoState = 'populated' | 'empty' | 'loading' | 'error';
-const scopePaths = new Set(['/api/v1/build/', '/api/v1/health/', '/api/v1/tenants/', '/api/v1/projects/', '/api/v1/teams/']);
+const scopePaths = new Set(['/api/v1/build/', '/api/v1/health/', '/api/v1/accounts/access/', '/api/v1/tenants/', '/api/v1/projects/', '/api/v1/teams/', '/api/v1/activation/events/', '/api/v1/deployment-capabilities/']);
 export function demoHandlers(state: DemoState = 'populated') {
   return [http.all('/api/v1/*', async ({ request }) => {
     const path = new URL(request.url).pathname;

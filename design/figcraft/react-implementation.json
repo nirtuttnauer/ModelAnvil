@@ -1,0 +1,3210 @@
+{
+  "screens": [
+    {
+      "screen": "dataset-bank",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "datasets",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "overview",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "annotation",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "training",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "models",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "alignment",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "workflows",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "evaluation",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "releases",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "context-lab",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "rag",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "infrastructure",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "budgets",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "audit",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "run-detail",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "recipes",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "specialists",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "chat",
+      "checks": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "overflow": []
+        },
+        {
+          "width": 1024,
+          "scrollWidth": 1024,
+          "overflow": []
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "overflow": []
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "state-empty",
+      "checks": [
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "state-loading",
+      "checks": [
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "state-error",
+      "checks": [
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "state-dark-evaluation",
+      "checks": [
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "training-dark-comfortable",
+      "checks": [
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "overflow": []
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "overflow": []
+        }
+      ]
+    },
+    {
+      "screen": "component-variants",
+      "checks": [
+        {
+          "width": 375,
+          "scrollWidth": 375,
+          "overflow": []
+        },
+        {
+          "width": 844,
+          "scrollWidth": 844,
+          "overflow": []
+        }
+      ]
+    }
+  ],
+  "interactions": [
+    "Compact menu navigation, focus and Escape",
+    "Live dark/comfortable variable modes and persisted preferences",
+    "Training tabs after responsive navigation",
+    "Native form submit, disabled action, field value, record action and tab variants"
+  ],
+  "errors": [],
+  "implementation": {
+    "design": "design/figcraft/ModelAnvil.figcraft",
+    "variables": "design/figcraft/variables.json",
+    "components": "web/src/components/ui.tsx",
+    "generatedTokens": "web/src/design-system/tokens.css",
+    "frontendTests": {
+      "passed": 207,
+      "failed": 0
+    },
+    "productionBuild": "passed",
+    "storybookBuild": "passed",
+    "dataScope": "Storybook synthetic API fixtures; live backend flows not retested"
+  },
+  "interactionRefinement": {
+    "date": "2026-10-18",
+    "variables": 58,
+    "designVariants": 106,
+    "browserChecks": "verification.json: interactionRefinement.react",
+    "frontendTests": 207,
+    "productionBuild": "passed"
+  },
+  "feedbackRefinement": {
+    "date": "2026-10-18",
+    "execution": "FigCraft 0.6.0 headless engine; desktop kept in background",
+    "family": 42245,
+    "playground": 42278,
+    "nativeChecks": [
+      {
+        "width": 320,
+        "height": 1432.0,
+        "overflow": [],
+        "density": "Compact"
+      },
+      {
+        "width": 390,
+        "height": 1243.0,
+        "overflow": [],
+        "density": "Compact"
+      },
+      {
+        "width": 768,
+        "height": 1102.0,
+        "overflow": [],
+        "density": "Compact"
+      },
+      {
+        "width": 1100,
+        "height": 1081.0,
+        "overflow": [],
+        "density": "Compact"
+      },
+      {
+        "width": 320,
+        "height": 1860.0,
+        "overflow": [],
+        "density": "Comfortable"
+      },
+      {
+        "width": 390,
+        "height": 1555.0,
+        "overflow": [],
+        "density": "Comfortable"
+      },
+      {
+        "width": 768,
+        "height": 1247.0,
+        "overflow": [],
+        "density": "Comfortable"
+      },
+      {
+        "width": 1100,
+        "height": 1203.0,
+        "overflow": [],
+        "density": "Comfortable"
+      },
+      {
+        "width": 390,
+        "height": 1100.0,
+        "overflow": [],
+        "screen": "empty"
+      },
+      {
+        "width": 390,
+        "height": 1100.0,
+        "overflow": [],
+        "screen": "loading"
+      },
+      {
+        "width": 390,
+        "height": 1100.0,
+        "overflow": [],
+        "screen": "error"
+      }
+    ],
+    "slotPreservation": "Custom title, description and nested action-button label survive Loading → Error variant changes",
+    "unchangedScreen": {
+      "screen": "mobile Training",
+      "pixelDifference": null,
+      "size": [
+        390,
+        1100
+      ]
+    },
+    "react": {
+      "pages": [
+        {
+          "screen": "feedback",
+          "mode": "light",
+          "density": "compact",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "screen": "feedback",
+          "mode": "light",
+          "density": "compact",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "screen": "feedback",
+          "mode": "light",
+          "density": "compact",
+          "width": 768,
+          "scrollWidth": 768
+        },
+        {
+          "screen": "feedback",
+          "mode": "light",
+          "density": "compact",
+          "width": 1100,
+          "scrollWidth": 1100
+        },
+        {
+          "screen": "feedback",
+          "mode": "light",
+          "density": "comfortable",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "screen": "feedback",
+          "mode": "light",
+          "density": "comfortable",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "screen": "feedback",
+          "mode": "light",
+          "density": "comfortable",
+          "width": 768,
+          "scrollWidth": 768
+        },
+        {
+          "screen": "feedback",
+          "mode": "light",
+          "density": "comfortable",
+          "width": 1100,
+          "scrollWidth": 1100
+        },
+        {
+          "screen": "feedback",
+          "mode": "dark",
+          "density": "compact",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "screen": "feedback",
+          "mode": "dark",
+          "density": "compact",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "screen": "feedback",
+          "mode": "dark",
+          "density": "compact",
+          "width": 768,
+          "scrollWidth": 768
+        },
+        {
+          "screen": "feedback",
+          "mode": "dark",
+          "density": "compact",
+          "width": 1100,
+          "scrollWidth": 1100
+        },
+        {
+          "screen": "feedback",
+          "mode": "dark",
+          "density": "comfortable",
+          "width": 320,
+          "scrollWidth": 320
+        },
+        {
+          "screen": "feedback",
+          "mode": "dark",
+          "density": "comfortable",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "screen": "feedback",
+          "mode": "dark",
+          "density": "comfortable",
+          "width": 768,
+          "scrollWidth": 768
+        },
+        {
+          "screen": "feedback",
+          "mode": "dark",
+          "density": "comfortable",
+          "width": 1100,
+          "scrollWidth": 1100
+        },
+        {
+          "screen": "state-empty",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "state-loading",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "state-error",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 390,
+              "scrollWidth": 390
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "datasets",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "dataset-bank",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "annotation",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "training",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "models",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "alignment",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "workflows",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "evaluation",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "context-lab",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "releases",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "rag",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "infrastructure",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "audit",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "recipes",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "run-detail",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "specialists",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        },
+        {
+          "screen": "chat",
+          "checks": [
+            {
+              "width": 320,
+              "scrollWidth": 320
+            },
+            {
+              "width": 768,
+              "scrollWidth": 768
+            },
+            {
+              "width": 1440,
+              "scrollWidth": 1440
+            }
+          ]
+        }
+      ],
+      "interactions": [
+        "Loading motion respects reduced-motion preferences",
+        "Retry clears the error without submitting its surrounding form"
+      ],
+      "errors": []
+    },
+    "browserViewportChecks": 85,
+    "unitTests": 210,
+    "scope": "Synthetic Storybook data; backend flows not retested",
+    "builds": {
+      "app": "passed",
+      "storybook": "passed",
+      "tokens": "current"
+    }
+  },
+  "metricRefinement": {
+    "date": "2026-10-18",
+    "execution": "FigCraft 0.6.0 headless engine; desktop kept in background",
+    "family": 42393,
+    "playground": 42460,
+    "native": {
+      "responsive": [
+        {
+          "density": "Compact",
+          "width": 320,
+          "overflow": []
+        },
+        {
+          "density": "Compact",
+          "width": 390,
+          "overflow": []
+        },
+        {
+          "density": "Compact",
+          "width": 768,
+          "overflow": []
+        },
+        {
+          "density": "Compact",
+          "width": 1100,
+          "overflow": []
+        },
+        {
+          "density": "Comfortable",
+          "width": 320,
+          "overflow": []
+        },
+        {
+          "density": "Comfortable",
+          "width": 390,
+          "overflow": []
+        },
+        {
+          "density": "Comfortable",
+          "width": 768,
+          "overflow": []
+        },
+        {
+          "density": "Comfortable",
+          "width": 1100,
+          "overflow": []
+        },
+        {
+          "screen": "overview",
+          "width": 320,
+          "overflow": []
+        },
+        {
+          "screen": "overview",
+          "width": 390,
+          "overflow": []
+        },
+        {
+          "screen": "overview",
+          "width": 768,
+          "overflow": []
+        },
+        {
+          "screen": "overview",
+          "width": 1024,
+          "overflow": []
+        },
+        {
+          "screen": "overview",
+          "width": 1440,
+          "overflow": []
+        },
+        {
+          "screen": "models",
+          "width": 320,
+          "overflow": []
+        },
+        {
+          "screen": "models",
+          "width": 390,
+          "overflow": []
+        },
+        {
+          "screen": "models",
+          "width": 768,
+          "overflow": []
+        },
+        {
+          "screen": "models",
+          "width": 1024,
+          "overflow": []
+        },
+        {
+          "screen": "models",
+          "width": 1440,
+          "overflow": []
+        },
+        {
+          "screen": "training",
+          "width": 320,
+          "overflow": []
+        },
+        {
+          "screen": "training",
+          "width": 390,
+          "overflow": []
+        },
+        {
+          "screen": "training",
+          "width": 768,
+          "overflow": []
+        },
+        {
+          "screen": "training",
+          "width": 1024,
+          "overflow": []
+        },
+        {
+          "screen": "training",
+          "width": 1440,
+          "overflow": []
+        },
+        {
+          "screen": "alignment",
+          "width": 320,
+          "overflow": []
+        },
+        {
+          "screen": "alignment",
+          "width": 390,
+          "overflow": []
+        },
+        {
+          "screen": "alignment",
+          "width": 768,
+          "overflow": []
+        },
+        {
+          "screen": "alignment",
+          "width": 1024,
+          "overflow": []
+        },
+        {
+          "screen": "alignment",
+          "width": 1440,
+          "overflow": []
+        },
+        {
+          "screen": "evaluation",
+          "width": 320,
+          "overflow": []
+        },
+        {
+          "screen": "evaluation",
+          "width": 390,
+          "overflow": []
+        },
+        {
+          "screen": "evaluation",
+          "width": 768,
+          "overflow": []
+        },
+        {
+          "screen": "evaluation",
+          "width": 1024,
+          "overflow": []
+        },
+        {
+          "screen": "evaluation",
+          "width": 1440,
+          "overflow": []
+        },
+        {
+          "screen": "budgets",
+          "width": 320,
+          "overflow": []
+        },
+        {
+          "screen": "budgets",
+          "width": 390,
+          "overflow": []
+        },
+        {
+          "screen": "budgets",
+          "width": 768,
+          "overflow": []
+        },
+        {
+          "screen": "budgets",
+          "width": 1024,
+          "overflow": []
+        },
+        {
+          "screen": "budgets",
+          "width": 1440,
+          "overflow": []
+        }
+      ],
+      "properties": [
+        {
+          "default": "Read only",
+          "name": "Behavior",
+          "options": [
+            "Read only",
+            "Action"
+          ],
+          "type": "variant"
+        },
+        {
+          "default": "All recorded runs",
+          "name": "Detail",
+          "type": "text"
+        },
+        {
+          "default": "Training runs",
+          "name": "Label",
+          "type": "text"
+        },
+        {
+          "default": true,
+          "name": "Show detail",
+          "type": "boolean"
+        },
+        {
+          "default": "3",
+          "name": "Value",
+          "type": "text"
+        }
+      ],
+      "variantPreservation": {
+        "Detail": "Exact recorded detail",
+        "Label": "Custom resource count",
+        "Show detail": false,
+        "Value": "0"
+      }
+    },
+    "instances": {
+      "existingInstancesRetained": 80,
+      "overviewMappingsCorrected": 12,
+      "allOtherInstanceValues": "unchanged",
+      "detailToggle": "hidden after variant switching"
+    },
+    "react": {
+      "pages": [
+        {
+          "screen": "components",
+          "mode": "light",
+          "density": "compact",
+          "width": 320,
+          "scrollWidth": 320,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Active reservations0Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Resource units with recorded usage12345678901234567890Each resource unit kept separate"
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Unavailable resource count—Waiting for workspace data"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Budget policies4"
+            }
+          ]
+        },
+        {
+          "screen": "components",
+          "mode": "light",
+          "density": "compact",
+          "width": 390,
+          "scrollWidth": 390,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Active reservations0Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Resource units with recorded usage12345678901234567890Each resource unit kept separate"
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Unavailable resource count—Waiting for workspace data"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Budget policies4"
+            }
+          ]
+        },
+        {
+          "screen": "components",
+          "mode": "light",
+          "density": "compact",
+          "width": 768,
+          "scrollWidth": 768,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Active reservations0Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Resource units with recorded usage12345678901234567890Each resource unit kept separate"
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Unavailable resource count—Waiting for workspace data"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Budget policies4"
+            }
+          ]
+        },
+        {
+          "screen": "components",
+          "mode": "light",
+          "density": "compact",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 217,
+              "width": 217,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 217,
+              "width": 217,
+              "text": "Active reservations0Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 217,
+              "width": 217,
+              "text": "Resource units with recorded usage12345678901234567890Each resource unit kept separate"
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 217,
+              "width": 217,
+              "text": "Unavailable resource count—Waiting for workspace data"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 217,
+              "width": 217,
+              "text": "Budget policies4"
+            }
+          ]
+        },
+        {
+          "screen": "components",
+          "mode": "light",
+          "density": "comfortable",
+          "width": 320,
+          "scrollWidth": 320,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Active reservations0Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Resource units with recorded usage12345678901234567890Each resource unit kept separate"
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Unavailable resource count—Waiting for workspace data"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Budget policies4"
+            }
+          ]
+        },
+        {
+          "screen": "components",
+          "mode": "light",
+          "density": "comfortable",
+          "width": 390,
+          "scrollWidth": 390,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Active reservations0Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Resource units with recorded usage12345678901234567890Each resource unit kept separate"
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Unavailable resource count—Waiting for workspace data"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Budget policies4"
+            }
+          ]
+        },
+        {
+          "screen": "components",
+          "mode": "light",
+          "density": "comfortable",
+          "width": 768,
+          "scrollWidth": 768,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Active reservations0Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Resource units with recorded usage12345678901234567890Each resource unit kept separate"
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Unavailable resource count—Waiting for workspace data"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Budget policies4"
+            }
+          ]
+        },
+        {
+          "screen": "components",
+          "mode": "light",
+          "density": "comfortable",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 210,
+              "width": 210,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 210,
+              "width": 210,
+              "text": "Active reservations0Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 210,
+              "width": 210,
+              "text": "Resource units with recorded usage12345678901234567890Each resource unit kept separate"
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 210,
+              "width": 210,
+              "text": "Unavailable resource count—Waiting for workspace data"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 210,
+              "width": 210,
+              "text": "Budget policies4"
+            }
+          ]
+        },
+        {
+          "screen": "components",
+          "mode": "dark",
+          "density": "compact",
+          "width": 320,
+          "scrollWidth": 320,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Active reservations0Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Resource units with recorded usage12345678901234567890Each resource unit kept separate"
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Unavailable resource count—Waiting for workspace data"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Budget policies4"
+            }
+          ]
+        },
+        {
+          "screen": "components",
+          "mode": "dark",
+          "density": "compact",
+          "width": 390,
+          "scrollWidth": 390,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Active reservations0Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Resource units with recorded usage12345678901234567890Each resource unit kept separate"
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Unavailable resource count—Waiting for workspace data"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Budget policies4"
+            }
+          ]
+        },
+        {
+          "screen": "components",
+          "mode": "dark",
+          "density": "compact",
+          "width": 768,
+          "scrollWidth": 768,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Active reservations0Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Resource units with recorded usage12345678901234567890Each resource unit kept separate"
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Unavailable resource count—Waiting for workspace data"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Budget policies4"
+            }
+          ]
+        },
+        {
+          "screen": "components",
+          "mode": "dark",
+          "density": "compact",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 217,
+              "width": 217,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 217,
+              "width": 217,
+              "text": "Active reservations0Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 217,
+              "width": 217,
+              "text": "Resource units with recorded usage12345678901234567890Each resource unit kept separate"
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 217,
+              "width": 217,
+              "text": "Unavailable resource count—Waiting for workspace data"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 217,
+              "width": 217,
+              "text": "Budget policies4"
+            }
+          ]
+        },
+        {
+          "screen": "components",
+          "mode": "dark",
+          "density": "comfortable",
+          "width": 320,
+          "scrollWidth": 320,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Active reservations0Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Resource units with recorded usage12345678901234567890Each resource unit kept separate"
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Unavailable resource count—Waiting for workspace data"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Budget policies4"
+            }
+          ]
+        },
+        {
+          "screen": "components",
+          "mode": "dark",
+          "density": "comfortable",
+          "width": 390,
+          "scrollWidth": 390,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Active reservations0Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Resource units with recorded usage12345678901234567890Each resource unit kept separate"
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Unavailable resource count—Waiting for workspace data"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Budget policies4"
+            }
+          ]
+        },
+        {
+          "screen": "components",
+          "mode": "dark",
+          "density": "comfortable",
+          "width": 768,
+          "scrollWidth": 768,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Active reservations0Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Resource units with recorded usage12345678901234567890Each resource unit kept separate"
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Unavailable resource count—Waiting for workspace data"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Budget policies4"
+            }
+          ]
+        },
+        {
+          "screen": "components",
+          "mode": "dark",
+          "density": "comfortable",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 210,
+              "width": 210,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 210,
+              "width": 210,
+              "text": "Active reservations0Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 210,
+              "width": 210,
+              "text": "Resource units with recorded usage12345678901234567890Each resource unit kept separate"
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 210,
+              "width": 210,
+              "text": "Unavailable resource count—Waiting for workspace data"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 210,
+              "width": 210,
+              "text": "Budget policies4"
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "mode": "light",
+          "density": "compact",
+          "width": 320,
+          "scrollWidth": 320,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Models3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Training runs3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Jobs7Total resources "
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "mode": "light",
+          "density": "compact",
+          "width": 390,
+          "scrollWidth": 390,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Models3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Training runs3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Jobs7Total resources "
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "mode": "light",
+          "density": "compact",
+          "width": 768,
+          "scrollWidth": 768,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Models3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Training runs3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Jobs7Total resources "
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "mode": "light",
+          "density": "compact",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 281,
+              "width": 281,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 281,
+              "width": 281,
+              "text": "Models3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 281,
+              "width": 281,
+              "text": "Training runs3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 281,
+              "width": 281,
+              "text": "Jobs7Total resources "
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "mode": "light",
+          "density": "comfortable",
+          "width": 320,
+          "scrollWidth": 320,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Models3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Training runs3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Jobs7Total resources "
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "mode": "light",
+          "density": "comfortable",
+          "width": 390,
+          "scrollWidth": 390,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Models3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Training runs3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Jobs7Total resources "
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "mode": "light",
+          "density": "comfortable",
+          "width": 768,
+          "scrollWidth": 768,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Models3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Training runs3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Jobs7Total resources "
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "mode": "light",
+          "density": "comfortable",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 274,
+              "width": 274,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 274,
+              "width": 274,
+              "text": "Models3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 274,
+              "width": 274,
+              "text": "Training runs3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 274,
+              "width": 274,
+              "text": "Jobs7Total resources "
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "mode": "dark",
+          "density": "compact",
+          "width": 320,
+          "scrollWidth": 320,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Models3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Training runs3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Jobs7Total resources "
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "mode": "dark",
+          "density": "compact",
+          "width": 390,
+          "scrollWidth": 390,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Models3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Training runs3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Jobs7Total resources "
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "mode": "dark",
+          "density": "compact",
+          "width": 768,
+          "scrollWidth": 768,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Models3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Training runs3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Jobs7Total resources "
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "mode": "dark",
+          "density": "compact",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 281,
+              "width": 281,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 281,
+              "width": 281,
+              "text": "Models3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 281,
+              "width": 281,
+              "text": "Training runs3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 281,
+              "width": 281,
+              "text": "Jobs7Total resources "
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "mode": "dark",
+          "density": "comfortable",
+          "width": 320,
+          "scrollWidth": 320,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Models3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Training runs3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Jobs7Total resources "
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "mode": "dark",
+          "density": "comfortable",
+          "width": 390,
+          "scrollWidth": 390,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Models3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Training runs3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Jobs7Total resources "
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "mode": "dark",
+          "density": "comfortable",
+          "width": 768,
+          "scrollWidth": 768,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Models3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Training runs3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Jobs7Total resources "
+            }
+          ]
+        },
+        {
+          "screen": "overview",
+          "mode": "dark",
+          "density": "comfortable",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "tiles": [
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 274,
+              "width": 274,
+              "text": "Datasets2Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 274,
+              "width": 274,
+              "text": "Models3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 274,
+              "width": 274,
+              "text": "Training runs3Total resources "
+            },
+            {
+              "tag": "BUTTON",
+              "scrollWidth": 274,
+              "width": 274,
+              "text": "Jobs7Total resources "
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "mode": "light",
+          "density": "compact",
+          "width": 320,
+          "scrollWidth": 320,
+          "tiles": [
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Active reservations3Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Reservation units2Each resource unit kept separate"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Budget policies4Configured spending policies"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Resource units5Units with recorded usage"
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "mode": "light",
+          "density": "compact",
+          "width": 390,
+          "scrollWidth": 390,
+          "tiles": [
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Active reservations3Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Reservation units2Each resource unit kept separate"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Budget policies4Configured spending policies"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Resource units5Units with recorded usage"
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "mode": "light",
+          "density": "compact",
+          "width": 768,
+          "scrollWidth": 768,
+          "tiles": [
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Active reservations3Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Reservation units2Each resource unit kept separate"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Budget policies4Configured spending policies"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Resource units5Units with recorded usage"
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "mode": "light",
+          "density": "compact",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "tiles": [
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 281,
+              "width": 281,
+              "text": "Active reservations3Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 281,
+              "width": 281,
+              "text": "Reservation units2Each resource unit kept separate"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 281,
+              "width": 281,
+              "text": "Budget policies4Configured spending policies"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 281,
+              "width": 281,
+              "text": "Resource units5Units with recorded usage"
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "mode": "light",
+          "density": "comfortable",
+          "width": 320,
+          "scrollWidth": 320,
+          "tiles": [
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Active reservations3Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Reservation units2Each resource unit kept separate"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Budget policies4Configured spending policies"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Resource units5Units with recorded usage"
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "mode": "light",
+          "density": "comfortable",
+          "width": 390,
+          "scrollWidth": 390,
+          "tiles": [
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Active reservations3Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Reservation units2Each resource unit kept separate"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Budget policies4Configured spending policies"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Resource units5Units with recorded usage"
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "mode": "light",
+          "density": "comfortable",
+          "width": 768,
+          "scrollWidth": 768,
+          "tiles": [
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Active reservations3Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Reservation units2Each resource unit kept separate"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Budget policies4Configured spending policies"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Resource units5Units with recorded usage"
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "mode": "light",
+          "density": "comfortable",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "tiles": [
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 274,
+              "width": 274,
+              "text": "Active reservations3Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 274,
+              "width": 274,
+              "text": "Reservation units2Each resource unit kept separate"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 274,
+              "width": 274,
+              "text": "Budget policies4Configured spending policies"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 274,
+              "width": 274,
+              "text": "Resource units5Units with recorded usage"
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "mode": "dark",
+          "density": "compact",
+          "width": 320,
+          "scrollWidth": 320,
+          "tiles": [
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Active reservations3Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Reservation units2Each resource unit kept separate"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Budget policies4Configured spending policies"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 270,
+              "width": 270,
+              "text": "Resource units5Units with recorded usage"
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "mode": "dark",
+          "density": "compact",
+          "width": 390,
+          "scrollWidth": 390,
+          "tiles": [
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Active reservations3Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Reservation units2Each resource unit kept separate"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Budget policies4Configured spending policies"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 340,
+              "width": 340,
+              "text": "Resource units5Units with recorded usage"
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "mode": "dark",
+          "density": "compact",
+          "width": 768,
+          "scrollWidth": 768,
+          "tiles": [
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Active reservations3Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Reservation units2Each resource unit kept separate"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Budget policies4Configured spending policies"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 230,
+              "width": 230,
+              "text": "Resource units5Units with recorded usage"
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "mode": "dark",
+          "density": "compact",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "tiles": [
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 281,
+              "width": 281,
+              "text": "Active reservations3Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 281,
+              "width": 281,
+              "text": "Reservation units2Each resource unit kept separate"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 281,
+              "width": 281,
+              "text": "Budget policies4Configured spending policies"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 281,
+              "width": 281,
+              "text": "Resource units5Units with recorded usage"
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "mode": "dark",
+          "density": "comfortable",
+          "width": 320,
+          "scrollWidth": 320,
+          "tiles": [
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Active reservations3Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Reservation units2Each resource unit kept separate"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Budget policies4Configured spending policies"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 254,
+              "width": 254,
+              "text": "Resource units5Units with recorded usage"
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "mode": "dark",
+          "density": "comfortable",
+          "width": 390,
+          "scrollWidth": 390,
+          "tiles": [
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Active reservations3Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Reservation units2Each resource unit kept separate"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Budget policies4Configured spending policies"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 324,
+              "width": 324,
+              "text": "Resource units5Units with recorded usage"
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "mode": "dark",
+          "density": "comfortable",
+          "width": 768,
+          "scrollWidth": 768,
+          "tiles": [
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Active reservations3Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Reservation units2Each resource unit kept separate"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Budget policies4Configured spending policies"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 222,
+              "width": 222,
+              "text": "Resource units5Units with recorded usage"
+            }
+          ]
+        },
+        {
+          "screen": "budgets",
+          "mode": "dark",
+          "density": "comfortable",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "tiles": [
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 274,
+              "width": 274,
+              "text": "Active reservations3Awaiting completion or release"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 274,
+              "width": 274,
+              "text": "Reservation units2Each resource unit kept separate"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 274,
+              "width": 274,
+              "text": "Budget policies4Configured spending policies"
+            },
+            {
+              "tag": "ARTICLE",
+              "scrollWidth": 274,
+              "width": 274,
+              "text": "Resource units5Units with recorded usage"
+            }
+          ]
+        }
+      ],
+      "interactions": [
+        "Enter and Space activate metric action without submitting its form; static metrics and disabled actions do not enter the tab sequence; focus ring visible",
+        "Overview Datasets metric navigates to Datasets",
+        "All four budget summaries remain passive articles"
+      ],
+      "errors": []
+    },
+    "unitTests": 212,
+    "builds": {
+      "app": "passed",
+      "storybook": "passed",
+      "tokens": "unchanged"
+    },
+    "scope": "Synthetic Storybook data; backend operations not retested"
+  }
+}

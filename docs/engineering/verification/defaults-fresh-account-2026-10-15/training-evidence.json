@@ -1,0 +1,82 @@
+{
+  "status": "completed",
+  "run_id": "a1856b64-9f39-4ef4-9374-bc1f5339cc5a",
+  "job_status": "succeeded",
+  "updates": 288,
+  "requested_updates": 288,
+  "recipe": "lora_adapter",
+  "seed": 42,
+  "source": {
+    "repo_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    "revision": "31b70e2e869a7173562077fd711b654946d38674",
+    "license": "Apache-2.0"
+  },
+  "optimizer": {
+    "algorithm": "adamw",
+    "learning_rate": 0.0002,
+    "beta1": 0.9,
+    "beta2": 0.999,
+    "epsilon": 1e-08,
+    "weight_decay": 0.0
+  },
+  "adapter": {
+    "r": 16,
+    "lora_alpha": 32,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "lora_dropout": 0.0,
+    "bias": "none",
+    "task_type": "CAUSAL_LM"
+  },
+  "sample_order": "seeded_epoch_shuffle_v1",
+  "split_counts": {
+    "train": 48,
+    "validation": 6,
+    "test": 6
+  },
+  "checkpoints": [
+    {
+      "step": 96,
+      "validation_loss_before_training": 2.4952963984618752,
+      "validation_loss": 0.22161492478039305,
+      "validation_samples": 6,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "trainable_parameters": 18087936,
+      "gpu_allocated_bytes": 7212614656,
+      "updates_since_checkpoint": 96
+    },
+    {
+      "step": 192,
+      "validation_loss_before_training": 2.4952963984618752,
+      "validation_loss": 0.03862406753725767,
+      "validation_samples": 6,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "trainable_parameters": 18087936,
+      "gpu_allocated_bytes": 7212614656,
+      "updates_since_checkpoint": 96
+    },
+    {
+      "step": 288,
+      "validation_loss_before_training": 2.4952963984618752,
+      "validation_loss": 0.015648907025579473,
+      "validation_samples": 6,
+      "gpu_backend": "mps",
+      "gpu_device": "mps:0",
+      "trainable_parameters": 18087936,
+      "gpu_allocated_bytes": 7212614656,
+      "updates_since_checkpoint": 96
+    }
+  ],
+  "candidate_id": "27ec73ce-fb75-45ee-a83d-83bbbbdc3bdd",
+  "selected_checkpoint": 288,
+  "duration_seconds": 199.421031
+}

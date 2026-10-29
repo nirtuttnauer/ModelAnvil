@@ -1,0 +1,9 @@
+{
+  "task": "PM002",
+  "create": true,
+  "remaining_quantity": 100,
+  "scope": "tenant",
+  "training_selector_updated": true,
+  "disabled_policy_excluded": true,
+  "mobile_overflow": false
+}

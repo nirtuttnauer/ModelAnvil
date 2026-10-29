@@ -1,12 +1,15 @@
-.ml-page.tools-chat .form-grid { border: 0; border-radius: 0; background: transparent; padding: 0; margin: var(--space-20) 0; }
-.ml-page.tools-chat .specialist-fields { margin: 0; }
-.tools-chat .tools-policy { border: 0; border-top: 1px solid var(--border); padding: var(--space-16) 0 0; margin-top: var(--space-8); }
-.tools-chat .tools-policy legend { padding: 0 var(--space-8) 0 0; font-weight: 600; }
-.tools-chat .checkbox-label { display: flex; align-items: center; gap: var(--space-10); min-height: 44px; }
-.tools-chat .checkbox-label input { width: 18px; height: 18px; flex: 0 0 18px; }
-.tools-chat .panel-body > p, .tools-chat .tools-policy p { max-width: 72ch; }
-.tools-chat .form-grid textarea { font: inherit; }
-.tools-chat label, .tools-chat p, .tools-chat li { overflow-wrap: anywhere; }
-.tools-chat .tools-history { display: grid; gap: var(--space-8); margin: var(--space-24) 0; max-width: 38rem; }
-.tools-chat .tools-events { padding-left: var(--space-24); }
-.tools-chat .tools-events > li { padding: var(--space-12) 0; border-top: 1px solid var(--border); }
+@layer tokens, base, primitives, shell, pages;
+@layer pages {
+  .tools-chat .tools-form { display: grid; gap: var(--space-16); margin: var(--space-20) 0; }
+  .tools-chat .specialist-fields { margin: 0; }
+  .tools-chat .tools-policy { border: 0; border-top: 1px solid var(--border); padding: var(--space-16) 0 0; margin-top: var(--space-8); }
+  .tools-chat .tools-policy legend { padding: 0 var(--space-8) 0 0; font-weight: 600; }
+  .tools-chat .tools-check { display: flex; align-items: center; gap: var(--space-10); min-height: 44px; }
+  .tools-chat .tools-check input { width: 18px; height: 18px; flex: 0 0 18px; }
+  .tools-chat p, .tools-chat .tools-policy p { max-width: 72ch; }
+  .tools-chat .tools-form textarea { font: inherit; }
+  .tools-chat label, .tools-chat p, .tools-chat li { overflow-wrap: anywhere; }
+  .tools-chat .tools-history { display: grid; gap: var(--space-8); margin: var(--space-24) 0; max-width: 38rem; }
+  .tools-chat .tools-events { padding-left: var(--space-24); }
+  .tools-chat .tools-events > li { padding: var(--space-12) 0; border-top: 1px solid var(--border); }
+}

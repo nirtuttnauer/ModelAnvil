@@ -1,21 +1,10 @@
-.specialist-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-24); margin-top: var(--space-20); }
-.specialist-grid > section { min-width: 0; }
-.specialist-grid form { display: grid; gap: var(--space-16); }
-.specialist-fields { display: grid; gap: var(--space-16); border: 0; padding: 0; margin: 0; min-width: 0; }
-.specialist-grid label { display: grid; gap: 7px; font-size: var(--type-13); }
-.specialist-grid textarea, .specialist-grid select, .specialist-grid input[type="file"] { width: 100%; min-width: 0; }
-.specialist-grid textarea { resize: vertical; }
-.specialist-page pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 420px; overflow: auto; }
-.specialist-page .checkbox-label { display: flex; align-items: center; gap: var(--space-10); min-height: 44px; }
-.specialist-result { margin-top: var(--space-24); border-top: 1px solid var(--border); padding-top: var(--space-16); }
-.specialist-result > label { margin-bottom: 14px; }
-.specialist-page code { overflow-wrap: anywhere; }
-@media (max-width: 1000px) { .specialist-grid { grid-template-columns: minmax(0, 1fr); } }
-
-.specialist-jobs { margin: var(--space-20) 0; }
-.specialist-actions { display: flex; gap: var(--space-12); margin-top: var(--space-12); flex-wrap: wrap; }
-.layout-regions svg { width: 100%; max-height: 280px; background: var(--surface, #fff); border: 1px solid var(--border, #cbd5e1); }
-.layout-regions rect { fill: #2563eb18; stroke: #2563eb; stroke-width: 2; }
-.layout-regions text { fill: #1d4ed8; font-size: 22px; font-weight: 700; }
-.layout-regions ol { padding-left: var(--space-24); }
-.layout-regions li { margin: var(--space-12) 0; list-style: none; }
+@layer tokens, base, primitives, shell, pages;
+@layer pages {
+  .specialist-fields { display: grid; gap: var(--space-16); border: 0; padding: 0; margin: 0; min-width: 0; }
+  .specialist-result { display: grid; gap: var(--space-12); padding-top: var(--space-16); border-top: 1px solid var(--border); }
+  .specialist-result p { margin: 0; }
+  .layout-regions svg { display: block; width: 100%; max-height: 280px; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); }
+  .layout-regions rect { fill: var(--primary-surface); stroke: var(--primary); stroke-width: 2; fill-opacity: .6; }
+  .layout-regions text { fill: var(--primary-text); font-size: 22px; font-weight: 600; }
+  .layout-regions ol { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-8); }
+}

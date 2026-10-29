@@ -2,8 +2,8 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within, waitFor, fn } from 'storybook/test';
 import { ChatResponseContent } from '../components/MarkdownResponse';
-import '../style.css';
-import '../pages/model-workspace.css';
+import '../design-system/index.css';
+import '../pages/chat-page.css';
 import './data-inspector-stories.css';
 
 const python = 'def train_model():\n    print("ready")\n\ntrain_model()';

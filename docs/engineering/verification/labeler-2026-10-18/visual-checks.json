@@ -1,0 +1,80 @@
+[
+  {
+    "name": "desktop",
+    "layout": {
+      "overflow": false,
+      "source": {
+        "x": 465,
+        "y": 632.078125,
+        "width": 510,
+        "height": 833.359375
+      },
+      "decision": {
+        "x": 991,
+        "y": 632.078125,
+        "width": 408,
+        "height": 736.171875
+      },
+      "toolbar": {
+        "x": 465,
+        "y": 515.078125,
+        "width": 934,
+        "height": 101
+      },
+      "workflowVisible": false
+    },
+    "a11y": []
+  },
+  {
+    "name": "mobile",
+    "layout": {
+      "overflow": false,
+      "source": {
+        "x": 41,
+        "y": 1313.046875,
+        "width": 308,
+        "height": 989.921875
+      },
+      "decision": {
+        "x": 41,
+        "y": 2318.96875,
+        "width": 308,
+        "height": 798.171875
+      },
+      "toolbar": {
+        "x": 41,
+        "y": 1142.046875,
+        "width": 308,
+        "height": 155
+      },
+      "workflowVisible": false
+    },
+    "a11y": []
+  },
+  {
+    "name": "dark",
+    "layout": {
+      "overflow": false,
+      "source": {
+        "x": 465,
+        "y": 632.078125,
+        "width": 510,
+        "height": 833.359375
+      },
+      "decision": {
+        "x": 991,
+        "y": 632.078125,
+        "width": 408,
+        "height": 736.171875
+      },
+      "toolbar": {
+        "x": 465,
+        "y": 515.078125,
+        "width": 934,
+        "height": 101
+      },
+      "workflowVisible": false
+    },
+    "a11y": []
+  }
+]

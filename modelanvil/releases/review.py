@@ -67,8 +67,8 @@ def _current_review(version, project=None):
             or not evaluation.job_id or evaluation.job.status != 'succeeded'
             or evaluation.case_results.count() != len(evaluation.suite_version.cases)):
         raise ValueError('Required evaluation is incomplete or unavailable; run it and create a fresh review.')
-    from modelanvil.runners.eval_worker import resolve_inputs
-    current = resolve_inputs(evaluation, evaluation.protocol_ref['pins']['max_tokens'])
+    from modelanvil.runners.eval_worker import verified_evaluation_inputs
+    current = verified_evaluation_inputs(evaluation)
     if current['pins'] != review['evaluation_pins'] or digest(_evidence(evaluation,training)) != review['evidence_digest']:
         raise ValueError('Pinned evaluation, results or training inputs changed; create a fresh review.')
     if digest(version.model_card) != review['model_card_digest']:
@@ -91,14 +91,112 @@ def assert_current_review(version, project=None):
         raise ValueError('Required frozen evidence is missing; create a fresh review.') from None
 
 
+def assert_current_guided_review(version):
+    """A guided review stays current only while its decision, candidate and evaluation evidence are unchanged."""
+    from django.core.exceptions import ObjectDoesNotExist
+    review = version.bundle_manifest.get('local_review', {})
+    if review.get('scope') != 'guided_native_export' or digest(review) != version.manifest_digest:
+        raise ValueError('The frozen guided candidate review is invalid.')
+    try:
+        training = TrainingRun.all_objects.get(tenant_id=version.tenant_id, run_id=review['training_run'])
+        evaluation = EvaluationRun.all_objects.get(tenant_id=version.tenant_id, run_id=review['evaluation_run'])
+        current = guided_review(training, evaluation)
+    except (KeyError, TypeError, AttributeError, ObjectDoesNotExist):
+        raise ValueError('Required frozen evidence is missing; create a fresh review.') from None
+    if any(review.get(key) != value for key, value in current.items()):
+        raise ValueError('The reviewed candidate, decision or evaluation evidence changed.')
+    return training, evaluation
+
+
 def review_freshness(version):
     try:
-        assert_current_review(version)
+        if version.bundle_manifest.get('local_review', {}).get('scope') == 'guided_native_export':
+            assert_current_guided_review(version)
+        else:
+            assert_current_review(version)
         return {'valid': True, 'checked_at': timezone.now().isoformat(), 'reason': 'Evidence is current. Check the frozen review criteria before release.'}
     except (ValueError, PermissionError) as exc:
         return {'valid': False, 'checked_at': timezone.now().isoformat(), 'reason': str(exc)}
     except (KeyError, TypeError, AttributeError):
         return {'valid': False, 'checked_at': timezone.now().isoformat(), 'reason': 'Required frozen evidence is missing; create a fresh review.'}
+
+
+def guided_review(training, evaluation):
+    """Freeze the exact saved comparison decision alongside the selected candidate."""
+    from modelanvil.core.activation import comparison_evidence
+    from modelanvil.core.models import ImprovementDecision
+    from modelanvil.identity.models import Project
+    from modelanvil.runners.guided_evaluation import PROFILE, decision_report, native_pair
+    if (evaluation.protocol_ref.get('profile') != PROFILE or evaluation.candidate_model_version_id != training.output_model_version_id
+            or evaluation.baseline_model_version_id != training.base_model_version_id or evaluation.project_id != training.project_id):
+        raise ValueError('The comparison must evaluate this exact trained candidate and its base in the same project.')
+    native_pair(evaluation)
+    _, evidence_digest, _, _ = comparison_evidence(evaluation, Project.all_objects.get(pk=training.project_id, tenant_id=training.tenant_id))
+    decision = ImprovementDecision.all_objects.filter(tenant_id=training.tenant_id, project_id=training.project_id,
+        evaluation=evaluation, evidence_digest=evidence_digest).first()
+    if decision is None:
+        raise ValueError('Record an explicit decision on this complete comparison before exporting its review.')
+    return {'scope': 'guided_native_export', 'production_qualified': False, 'training_run': str(training.run_id),
+        'candidate_model_version': str(training.output_model_version.model_version_id),
+        'baseline_model_version': str(training.base_model_version.model_version_id),
+        'selected_checkpoint_step': training.output_model_version.metadata['selected_checkpoint_step'],
+        'evaluation_run': str(evaluation.run_id), 'evaluation_pins': evaluation.protocol_ref['pins'],
+        'decision': {'decision_id': str(decision.decision_id), 'outcome': decision.outcome, 'evidence_digest': evidence_digest},
+        'report': decision_report(evaluation)}
+
+
+def write_guided_evidence(archive, files, review, *, adapter_only=False, resource_usage=None):
+    """Additional entries for an existing native ZIP; weights are never converted."""
+    from modelanvil.runners.training.hf_runtime import CONTRACT, PACKAGES
+    archive.writestr('review.json', json.dumps(review, sort_keys=True, indent=2))
+    manifest = {'schema_version': 'modelanvil.reviewed-native.v1',
+        'candidate': review['candidate_model_version'], 'evaluation_run': review['evaluation_run'],
+        'production_qualified': False, 'files': {name: {'sha256': ref['sha256'], 'byte_size': ref['byte_size']} for name, ref in files.items()},
+        'review_sha256': hashlib.sha256(json.dumps(review, sort_keys=True, indent=2).encode()).hexdigest()}
+    if resource_usage is not None:
+        resources = json.dumps(resource_usage, sort_keys=True, indent=2).encode()
+        archive.writestr('resource-usage.json', resources)
+        manifest['resource_usage_sha256'] = hashlib.sha256(resources).hexdigest()
+    archive.writestr('manifest.json', json.dumps(manifest, sort_keys=True, indent=2))
+    instructions = ('This archive contains the selected LoRA adapter and its exact pinned base, without merging or conversion.\n'
+        'Use a clean Python environment with the following tested package versions: ' + json.dumps({**PACKAGES, **CONTRACT['adapter_package']}) + '\n'
+        'Verify every file against manifest.json before loading. Read review.json for the decision, failures and uncertainty.\n'
+        'This export is not production qualified.\n')
+    if adapter_only:
+        instructions += 'Adapter-only export: obtain the exact base revision and hashes from modelanvil-provenance.json; do not substitute another base.\n'
+    else:
+        archive.writestr('infer.py', (Path(__file__).resolve().parents[2] / 'scripts' / 'native_adapter_infer.py').read_bytes())
+        instructions += 'Independent loader: python -I infer.py . --prompt "Your request" --device mps:0 --max-tokens 32\n'
+        instructions += ('The loader verifies hashes, isolates local base files to prevent implicit Hub loading, '
+            'loads the adapter with PEFT, renders the exported native chat template, and generates greedily.\n'
+            'Use --system for a system instruction matching the evaluation. '
+            'The native template, FP32 adapter, pinned base and exact tokenizer must remain together.\n')
+    archive.writestr('LOADING.txt', instructions)
+
+
+def guided_archive(version):
+    import shutil
+    import tempfile
+    from modelanvil.runners.inference import snapshot, staged_snapshot
+    review = version.bundle_manifest['local_review']
+    _, evaluation = assert_current_guided_review(version)
+    plan = snapshot(version.model_version, version.tenant_id, version.project_id)
+    output = tempfile.TemporaryFile()
+    try:
+        with staged_snapshot(plan['files'], version.tenant_id, version.project_id) as directory:
+            with zipfile.ZipFile(output, 'w', zipfile.ZIP_STORED, allowZip64=True) as archive:
+                for name in plan['files']:
+                    with (directory / name).open('rb') as source, archive.open(name, 'w', force_zip64=True) as target:
+                        shutil.copyfileobj(source, target, length=1024 * 1024)
+                archive.writestr('modelanvil-provenance.json', json.dumps({'source': plan['source'], 'files': plan['files'],
+                    'training_run': review['training_run'], 'selected_checkpoint_step': review['selected_checkpoint_step']}, indent=2))
+                from modelanvil.core.activation import evaluation_resources
+                write_guided_evidence(archive, plan['files'], review, resource_usage=evaluation_resources(evaluation))
+        output.seek(0)
+        return output
+    except BaseException:
+        output.close()
+        raise
 
 
 @transaction.atomic
@@ -111,10 +209,35 @@ def create_candidate_review(*, tenant, project, name, candidate, evaluation, min
     if (evaluation.status != 'completed' or not evaluation.job_id or evaluation.job.status != 'succeeded'
             or evaluation.case_results.count() != len(evaluation.suite_version.cases)):
         raise ValueError('Attach a complete durable evaluation with all actual case outputs.')
-    from modelanvil.runners.eval_worker import resolve_inputs
-    verified = resolve_inputs(evaluation, evaluation.protocol_ref['pins']['max_tokens'])
+    from modelanvil.runners.eval_worker import verified_evaluation_inputs
+    verified = verified_evaluation_inputs(evaluation)
     if verified['pins'] != evaluation.protocol_ref['pins']:
         raise ValueError('Evaluation pins no longer match the candidate, suite or runtime.')
+    if evaluation.protocol_ref.get('profile') == 'guided-native':
+        review = guided_review(training, evaluation)
+        review['request_digest'] = digest({'review': review, 'min_accuracy': min_accuracy, 'license_record': license_record})
+        release, _ = Release.all_objects.get_or_create(tenant_id=tenant, name=name, defaults={'project_id': project})
+        if not check_resource_access(release, project, tenant):
+            raise ValueError('This release name is already used outside the selected project.')
+        release = Release.all_objects.select_for_update().get(pk=release.pk)
+        existing = release.versions.filter(bundle_manifest__local_review__request_digest=review['request_digest']).first()
+        if existing:
+            return existing, False
+        accuracy = review['report']['candidate']['accuracy']
+        license = (license_record['spdx'] if license_record else candidate.license_evidence or 'unknown').lower()
+        review['criteria'] = [
+            {'key': 'explicit_acceptance', 'required': 'accept', 'actual': review['decision']['outcome'], 'passed': review['decision']['outcome'] == 'accept'},
+            {'key': 'min_accuracy', 'required': min_accuracy, 'actual': accuracy, 'passed': accuracy >= min_accuracy},
+            {'key': 'no_regression', 'required': 0, 'actual': review['report']['accuracy_delta'], 'passed': review['report']['accuracy_delta'] >= 0},
+            {'key': 'license_compliance', 'required': 'recorded supported license', 'actual': license, 'passed': license in ('apache-2.0', 'mit', 'bsd-3-clause', 'open-rail')}]
+        review['state'] = 'approved' if all(c['passed'] for c in review['criteria']) else 'failing'
+        review['license_record'] = license_record or {'spdx': license, 'source': 'Recorded model license evidence'}
+        version = ReleaseVersion.all_objects.create(tenant_id=tenant, project_id=project, release=release,
+            revision_no=(release.versions.order_by('-revision_no').values_list('revision_no', flat=True).first() or 0) + 1,
+            candidate_type='model', candidate_ref=str(candidate.model_version_id), model_version=candidate,
+            bundle_manifest={'local_review': review}, manifest_digest=digest(review),
+            model_card={'name': name, 'license': license, 'intended_use': 'Bounded local classification', 'production_qualified': False})
+        return version, True
     release, _ = Release.all_objects.get_or_create(tenant_id=tenant, name=name, defaults={'project_id': project})
     if not check_resource_access(release, project, tenant):
         raise ValueError('This release name is already used outside the selected project.')

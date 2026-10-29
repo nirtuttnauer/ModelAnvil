@@ -1,0 +1,255 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Harbor Defaults Test workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Training
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Fine-tune a pretrained model with your own examples.
+  - heading "Training studio" [level=2]
+  - paragraph: Choose your model and data, review your training plan, and follow the results in one workspace.
+  - button "Tokenizer":
+    - text: Tokenizer
+  - button "Model Version":
+    - text: Model Version
+  - button "Configure a run"
+  - tablist "Training workspace":
+    - tab "Configure" [selected]
+    - tab "Current run"
+    - tab "History"
+  - generic "Loaded training summary":
+    - generic: Training runs
+    - strong: "0"
+    - generic: All accessible recorded runs
+    - generic: Active runs
+    - strong: "0"
+    - generic: Pending or running
+    - generic: Saved checkpoints
+    - strong: "0"
+    - generic: Recorded checkpoint artifacts
+    - generic: Latest selected loss
+    - strong: —
+    - generic: Select a recorded run
+  - tabpanel "Configure":
+    - heading "Configure your training run" [level=3]
+    - paragraph: Simple and advanced settings share the same saved configuration.
+    - button "Advanced settings"
+    - region "Choose your model and data":
+      - text: YOUR FIRST FINE-TUNE
+      - heading "Choose your model and data" [level=2]
+      - paragraph: Prepare recommended resources, then review the settings for your run.
+      - list "Fine-tuning progress":
+        - text: Model
+        - text: Dataset
+        - generic: "3"
+        - text: Review
+      - heading "Model and dataset selected" [level=3]
+      - term: Starting model
+      - definition: SmolLM2-1.7B Instruct
+      - term: Your dataset
+      - definition: harbor-hub-support
+      - region "Selected dataset preview":
+        - heading "Selected dataset · sample rows" [level=4]
+        - paragraph: 60 prepared rows. This published revision uses a fixed mapping; create a new revision to change it.
+        - term: mode
+        - definition: prompt_response
+        - term: prompt field
+        - definition: prompt
+        - term: response field
+        - definition: response
+        - region "Prepared sample rows":
+          - table "Sample rows from the prepared training data.":
+            - caption: Sample rows from the prepared training data.
+            - rowgroup:
+              - row "Example Input / context Target response / training text Split":
+                - columnheader "Example"
+                - columnheader "Input / context"
+                - columnheader "Target response / training text"
+                - columnheader "Split"
+            - rowgroup:
+              - 'row "1 user: What are Harbor Hub opening hours? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends. train"':
+                - rowheader "1"
+                - 'cell "user: What are Harbor Hub opening hours?"'
+                - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+                - cell "train"
+              - 'row "2 user: When is Harbor Hub open? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends. train"':
+                - rowheader "2"
+                - 'cell "user: When is Harbor Hub open?"'
+                - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+                - cell "train"
+              - 'row "3 user: What time does Harbor Hub open and close? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends. train"':
+                - rowheader "3"
+                - 'cell "user: What time does Harbor Hub open and close?"'
+                - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+                - cell "train"
+              - 'row "4 user: Can I work at Harbor Hub on weekends? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends. validation"':
+                - rowheader "4"
+                - 'cell "user: Can I work at Harbor Hub on weekends?"'
+                - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+                - cell "validation"
+              - 'row "5 user: Which days is Harbor Hub available? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends. validation"':
+                - rowheader "5"
+                - 'cell "user: Which days is Harbor Hub available?"'
+                - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+                - cell "validation"
+      - paragraph: Review the training plan and run summary below. Advanced settings edit this same configuration.
+      - button "Change model"
+      - button "Change dataset"
+    - heading "Training plan" [level=3]
+    - text: Training plan
+    - combobox "Training plan":
+      - option "Recommended · 6 passes" [selected]
+      - option "Quick setup check · 3 steps"
+      - option "Custom step count"
+    - paragraph: 6 complete passes through 48 training examples (288 updates).
+    - paragraph: 6 validation and 6 test examples remain held out.
+    - generic "Saved configuration"
+    - complementary "Run summary":
+      - generic: RUN SUMMARY
+      - heading "Your training run" [level=3]
+      - term: Model
+      - definition: SmolLM2-1.7B Instruct
+      - term: Dataset
+      - definition: harbor-hub-support
+      - term: Method
+      - definition: lora adapter
+      - term: Compute
+      - definition: Managed local fine-tuning · 1cf02496
+      - term: Training steps
+      - definition: "288"
+      - paragraph: Reserves 288 training steps. Preflight checks compatibility, hardware, storage and allowance before launch.
+      - button "Preview preflight"
+    - region "Training preflight" [active]:
+      - heading "Training preflight" [level=3]
+      - status: Ready to launch
+      - region "Compatibility checks":
+        - heading "Compatibility" [level=4]
+        - list:
+          - strong: Recipe execution mode
+          - generic: Passed
+          - paragraph: Worker recipe must match the selected runtime.
+          - strong: Dataset revision
+          - generic: Passed
+          - paragraph: "dataset_revision: selected accessible resource."
+          - strong: Base model version
+          - generic: Passed
+          - paragraph: "base_model_version: selected accessible resource."
+          - strong: Tokenizer version
+          - generic: Passed
+          - paragraph: "tokenizer_version: selected accessible resource."
+          - strong: Runner manifest
+          - generic: Passed
+          - paragraph: "runner_manifest: selected accessible resource."
+          - strong: Pool
+          - generic: Passed
+          - paragraph: "pool: selected accessible resource."
+          - strong: Dataset published
+          - generic: Passed
+          - paragraph: Dataset must be published with immutable prepared text.
+          - strong: Model tokenizer
+          - generic: Passed
+          - paragraph: Base weights must pin the selected tokenizer.
+          - strong: Runner contract
+          - generic: Passed
+          - paragraph: Runner must be enabled and match the qualified runtime contract.
+          - strong: Pinned inputs
+          - generic: Passed
+          - paragraph: Verified dataset bytes, base weights, tokenizer encoding and runner contract.
+      - region "Capacity checks":
+        - heading "Capacity" [level=4]
+        - list:
+          - strong: Worker memory
+          - generic: Passed
+          - paragraph: A worker must declare the selected contract and sufficient memory.
+          - generic "Check details and units"
+          - strong: Worker slots
+          - generic: Passed
+          - paragraph: 1 free matching worker slot(s); one required.
+          - generic "Check details and units"
+          - strong: Device admission
+          - generic: Passed
+          - paragraph: The named local device must be idle across cooperating API and training processes.
+          - strong: Storage
+          - generic: Passed
+          - paragraph: Local artifact and checkpoint storage must cover the projected states.
+          - generic "Check details and units"
+      - region "Budget checks":
+        - heading "Budget" [level=4]
+        - list:
+          - strong: Budget
+          - generic: Passed
+          - paragraph: Budget must be enabled, use training_steps, and cover the requested sample passes.
+          - generic "Check details and units"
+      - heading "Resolved requirements" [level=4]
+      - term: Runtime
+      - definition: modelanvil.smollm2-gpu-sft.v1
+      - term: Worker slots
+      - definition: "1"
+      - term: Host memory
+      - definition: 8192 MiB
+      - term: Projected storage
+      - definition: 7568.43 MiB
+      - term: GPU devices
+      - definition: "1"
+      - term: Precision
+      - definition: fp32
+      - paragraph: Immutable shared base references plus FP32 adapter weights and Adam moments per step; shared local host.
+      - generic "Resolved GPU device and capacity source"
+      - generic "Resolved recipe parameters"
+      - heading "Estimate and budget" [level=4]
+      - term: Engine time
+      - definition: Unknown — no matching measured pilot
+      - term: Next-token pairs
+      - definition: Unknown
+      - term: Estimated cost
+      - definition: Unknown — No measured monetary rate or currency is configured.
+      - term: Requested
+      - definition: 288 training_steps
+      - term: Remaining / limit
+      - definition: 10000.000000 / 10000.000000 training_steps
+      - term: Already committed
+      - definition: 0 training_steps
+      - paragraph: "GPU estimate unavailable; CPU process time is not GPU elapsed time. · uncertainty: Unknown; no confidence interval has been measured."
+      - generic "Encoded training samples · 48 total, showing 5"
+      - generic "Pinned input revisions and digests"
+      - paragraph: Capacity is observed, not reserved. Launch rechecks; worker claim enforces slots and budget reservation is atomic.
+      - paragraph: Preview expires in 10 minutes.
+      - button "Refresh preflight"
+      - button "Launch fine-tuning"
+  - generic "App information"
+  - text: Control plane

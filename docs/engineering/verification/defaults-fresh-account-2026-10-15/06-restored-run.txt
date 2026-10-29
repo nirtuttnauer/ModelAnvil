@@ -1,0 +1,189 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Harbor Defaults Test workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Training
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Fine-tune a pretrained model with your own examples.
+  - heading "Training studio" [level=2]
+  - paragraph: Choose your model and data, review your training plan, and follow the results in one workspace.
+  - button "Tokenizer":
+    - text: Tokenizer
+  - button "Model Version":
+    - text: Model Version
+  - button "Configure a run"
+  - tablist "Training workspace":
+    - tab "Configure"
+    - tab "Current run Training active" [selected]:
+      - text: Current run
+      - generic "Training active"
+    - tab "History"
+  - generic "Loaded training summary":
+    - generic: Training runs
+    - strong: "1"
+    - generic: All accessible recorded runs
+    - generic: Active runs
+    - strong: "1"
+    - generic: Pending or running
+    - generic: Saved checkpoints
+    - strong: "2"
+    - generic: Recorded checkpoint artifacts
+    - generic: Latest selected loss
+    - strong: "0.0033"
+    - generic: Run a1856b64
+  - tabpanel "Current run Training active":
+    - heading "Current run" [level=3]
+    - paragraph: Live progress, recorded metrics and checkpoints.
+    - text: Inspect run
+    - combobox "Current training run":
+      - option "Select a run"
+      - option "a1856b64 · lora_adapter · running" [selected]
+    - region "Live training progress":
+      - heading "Training progress" [level=3]
+      - generic: running
+      - status: Live · refreshes every 3 seconds
+      - button "Refresh progress"
+      - strong: 87% complete
+      - generic: 252 / 288 steps reported
+      - progressbar "Training completion"
+      - paragraph: 192 steps saved in checkpoints · 60 additional steps reported by the worker.
+      - term: Elapsed time
+      - definition: 2m 54s
+      - term: Estimated time remaining
+      - definition: About 23s
+      - term: Latest training loss
+      - definition: "0.0033"
+      - term: Latest validation loss
+      - definition: "0.0386"
+      - paragraph: Based on recent measured step intervals. Validation and checkpoint work can change the finish time.
+      - paragraph: Last refreshed 5:53:42 PM. Progress changes only when the server reports it.
+    - generic: EXPERIMENT MONITOR
+    - heading "Loss & checkpoint activity" [level=3]
+    - paragraph: Recorded training loss at committed steps, alongside saved checkpoint artifacts.
+    - heading "Training & validation loss" [level=3]
+    - paragraph: a1856b64 · integrated_execution · exact recorded values
+    - button "Training loss" [pressed]: Training loss
+    - button "Validation loss" [pressed]: Validation loss
+    - group "Loss by Committed step. Focus a point to inspect its value. Use the legend to toggle series.":
+      - generic: "0.003"
+      - generic: "96"
+      - generic: "0.057"
+      - generic: "120"
+      - generic: "0.112"
+      - generic: "144"
+      - generic: "0.167"
+      - generic: "168"
+      - generic: "0.222"
+      - generic: "192"
+      - generic: Committed step
+      - generic: Loss
+      - 'button "Training loss: Committed step 96, Loss 0.003"'
+      - 'button "Training loss: Committed step 192, Loss 0.003"'
+      - 'button "Validation loss: Committed step 96, Loss 0.222"'
+      - 'button "Validation loss: Committed step 192, Loss 0.039"'
+    - generic: Hover or focus a point to inspect the recorded value.
+    - generic "View data":
+      - text: View data
+    - heading "Checkpoint timeline" [level=3]
+    - paragraph: Saved artifacts from the selected run.
+    - generic: Committed steps
+    - strong: 192 / 288
+    - progressbar "Selected run committed steps"
+    - list:
+      - strong: Checkpoint · step 96
+      - generic: 4607be76c4e5f1da90…
+      - generic: completed
+      - strong: Checkpoint · step 192
+      - generic: deb78de08d60528503…
+      - generic: completed
+    - table "Measured GPU optimizer steps; throughput includes the post-update loss pass. Missing metrics are not estimated.":
+      - caption: Measured GPU optimizer steps; throughput includes the post-update loss pass. Missing metrics are not estimated.
+      - rowgroup:
+        - row "Step / timestamp Protected validation loss Gradient norm Prediction tokens/sec Allocated / peak MiB GPU utilization Trainable / total parameters":
+          - columnheader "Step / timestamp"
+          - columnheader "Protected validation loss"
+          - columnheader "Gradient norm"
+          - columnheader "Prediction tokens/sec"
+          - columnheader "Allocated / peak MiB"
+          - columnheader "GPU utilization"
+          - columnheader "Trainable / total parameters"
+      - rowgroup:
+        - row "96 2026-10-15T14:51:58.151863+00:00 0.221615 118 prediction tokens 0.0698 30.59 6878.5 / Not reported Not reported 18,087,936 / 1,729,464,320":
+          - cell "96 2026-10-15T14:51:58.151863+00:00":
+            - text: "96"
+            - text: 2026-10-15T14:51:58.151863+00:00
+          - cell "0.221615 118 prediction tokens":
+            - text: "0.221615"
+            - text: 118 prediction tokens
+          - cell "0.0698"
+          - cell "30.59"
+          - cell "6878.5 / Not reported"
+          - cell "Not reported"
+          - cell "18,087,936 / 1,729,464,320"
+        - row "192 2026-10-15T14:52:58.807961+00:00 0.038624 118 prediction tokens 0.0963 30.74 6878.5 / Not reported Not reported 18,087,936 / 1,729,464,320":
+          - cell "192 2026-10-15T14:52:58.807961+00:00":
+            - text: "192"
+            - text: 2026-10-15T14:52:58.807961+00:00
+          - cell "0.038624 118 prediction tokens":
+            - text: "0.038624"
+            - text: 118 prediction tokens
+          - cell "0.0963"
+          - cell "30.74"
+          - cell "6878.5 / Not reported"
+          - cell "Not reported"
+          - cell "18,087,936 / 1,729,464,320"
+    - heading "Run a1856b64-9f39-4ef4-9374-bc1f5339cc5a" [level=3]
+    - generic: running
+    - button "Cancel run":
+      - text: Cancel run
+    - link "Open run":
+      - /url: "#runs/training/a1856b64-9f39-4ef4-9374-bc1f5339cc5a?from=%23training%3Ftab%3Dcurrent-run%26run%3Da1856b64-9f39-4ef4-9374-bc1f5339cc5a"
+    - paragraph: "Tokenizer #5 · Pinned base weights · Base model #14 · Dataset digest: 915bab6653be9e79… · Job: f95d0f6e"
+    - heading "Saved checkpoints (2)" [level=4]
+    - strong: Step 96
+    - text: Valid Safetensors
+    - text: "Digest:"
+    - code: 4607be76c4e5f1da90223332476d7eb52a5b0a3d0d6ad1068c82ded996443dd4
+    - strong: Step 192
+    - text: Valid Safetensors
+    - text: "Digest:"
+    - code: deb78de08d60528503ecd6297e175ce2f198a51fe6a4f8308b8584775f685a39
+    - generic "Advanced inference check"
+  - generic "App information"
+  - text: Control plane

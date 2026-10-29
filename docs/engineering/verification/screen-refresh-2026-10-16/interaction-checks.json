@@ -1,0 +1,86 @@
+{
+  "mobile": [
+    {
+      "story": "modelanvil-actions-training-dataset-preview--optional-context",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-training-dataset-preview--publish-reviewed-mapping",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-compact-screens--dataset-upload",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-compact-screens--model-catalog",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-compact-screens--workflow-details",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-compact-screens--audit-filters",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-compact-screens--source-inspector",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-compact-screens--recipe-steps",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-compact-screens--context-overrides",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-compact-screens--unsaved-draft",
+      "passed": true
+    }
+  ],
+  "desktop": [
+    {
+      "story": "modelanvil-actions-compact-screens--dataset-upload",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-compact-screens--model-catalog",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-compact-screens--workflow-details",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-compact-screens--audit-filters",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-compact-screens--source-inspector",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-compact-screens--recipe-steps",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-compact-screens--context-overrides",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-compact-screens--unsaved-draft",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-training-dataset-preview--optional-context",
+      "passed": true
+    },
+    {
+      "story": "modelanvil-actions-base-chat-comparison--generate-pair",
+      "passed": true
+    }
+  ]
+}

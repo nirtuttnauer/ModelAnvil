@@ -1,0 +1,410 @@
+{
+  "tested_on": "2026-10-12",
+  "timezone": "Asia/Jerusalem",
+  "method": "Exploratory browser QA against real isolated Django API; Playwright drives UI; screenshots visually inspected. No Storybook mocks in browser journeys.",
+  "build": {
+    "revision": "4c551354d0db11fbe730040237d9394dd62b0233",
+    "source_digest": "d0ed1d9965aee31585fc462f40032203e7e0293fe2b8af50d6fdb0a15399e468",
+    "protocol": "modelanvil.local-beta.v1",
+    "dataset_formats": [
+      "jsonl",
+      "csv",
+      "docx",
+      "json",
+      "pdf"
+    ],
+    "production_qualified": false
+  },
+  "backend": {
+    "tests": 801,
+    "skipped": 9,
+    "failures": 0
+  },
+  "frontend_snapshot": {
+    "tests": 149,
+    "failures": 0
+  },
+  "frontend_current_checkout": {
+    "tests": 153,
+    "failures": 0
+  },
+  "desktop": [
+    {
+      "screen": "Overview",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "Dataset Bank",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "Datasets",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "Annotation",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "Recipes",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "Models",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "Chat",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "Specialists",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "Training",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "Alignment",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "Evaluation",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "Workflows",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "RAG",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "Context Lab",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "Releases",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "Infrastructure",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "Budgets",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "screen": "Audit",
+      "alerts": [],
+      "violations": [],
+      "overflow": false
+    }
+  ],
+  "mobile": [
+    {
+      "screen": "Overview",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "Dataset Bank",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "Datasets",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "Annotation",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "Recipes",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "Models",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "Chat",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "Specialists",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "Training",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "Alignment",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "Evaluation",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "Workflows",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "RAG",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "Context Lab",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "Releases",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "Infrastructure",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "Budgets",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "screen": "Audit",
+      "alerts": [],
+      "width": 390,
+      "scrollWidth": 390
+    }
+  ],
+  "http_burst": {
+    "before_fix": {
+      "requests": 24,
+      "http_502": 10
+    },
+    "after_fix": {
+      "rounds": 10,
+      "requests_per_round": 24,
+      "total_requests": 240,
+      "failures": 0
+    }
+  },
+  "regressions": [
+    {
+      "name": "Compile exact prompt within token budget",
+      "pass": true
+    },
+    {
+      "name": "Evaluation cancellation reaches backend",
+      "pass": true
+    },
+    {
+      "name": "Evaluation cancellation is acknowledged",
+      "pass": true
+    },
+    {
+      "name": "Cancelled evaluation settles zero usage",
+      "pass": true,
+      "detail": {
+        "reservations": [
+          {
+            "reservation_id": "ba0ce556-8b8d-431a-a67e-f84e42bfd8ac",
+            "policy": "2",
+            "policy_name": "QA cases",
+            "unit": "evaluation_cases",
+            "state": "settled",
+            "estimated_amount": "1.000000",
+            "settled_amount": "0.000000",
+            "reserved_at": "2026-10-12T00:42:18.804608+00:00",
+            "settled_at": "2026-10-12T00:42:56.869457+00:00"
+          }
+        ],
+        "events": [
+          {
+            "usage_id": "027ceb33-345e-4ed3-ae4f-c8cdda46cf99",
+            "quantity": "0.000000",
+            "unit": "evaluation_cases",
+            "reservation": "4",
+            "occurred_at": "2026-10-12T00:42:56.870380+00:00",
+            "detail": {
+              "run_id": "1b5a9fc5-76fc-436d-a095-a56d4cb53f05",
+              "committed_cases": 0,
+              "complete": false
+            }
+          }
+        ],
+        "events_truncated": false
+      }
+    },
+    {
+      "name": "Chat accessibility after role fix",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "DPO alignment completes real optimizer steps",
+      "pass": true,
+      "detail": {
+        "status": "completed",
+        "steps": 2
+      }
+    },
+    {
+      "name": "Imported model generates natural-language completion",
+      "pass": true
+    },
+    {
+      "name": "Arena comparison and durable preference vote",
+      "pass": true
+    },
+    {
+      "name": "Budget cannot be reduced below committed usage",
+      "pass": true
+    },
+    {
+      "name": "Direct run link cannot cross active project boundary",
+      "pass": true
+    },
+    {
+      "name": "Invalid API key rejected without replacing connection",
+      "pass": true
+    },
+    {
+      "name": "Explicit refresh recovers offline API",
+      "pass": true
+    },
+    {
+      "name": "Updated client isolates new dataset in active project",
+      "pass": true
+    },
+    {
+      "name": "Returning to original project restores scoped dataset",
+      "pass": true
+    },
+    {
+      "name": "Terminal run no longer claims stale live data",
+      "pass": true
+    },
+    {
+      "name": "Annotation export preserves exact sample-to-label mapping",
+      "pass": true,
+      "detail": [
+        {
+          "sample": "exact-positive",
+          "label": "positive"
+        },
+        {
+          "sample": "exact-negative",
+          "label": "negative"
+        }
+      ]
+    },
+    {
+      "name": "Canonical JSONL example publishes after preview",
+      "pass": true
+    }
+  ],
+  "core_journey": {
+    "scope": "packaged_browser_local_beta",
+    "tasks": [
+      "PM001",
+      "PM002",
+      "PM003",
+      "PM004",
+      "PM005",
+      "PM006",
+      "PM007",
+      "PM009"
+    ],
+    "elapsed_seconds": 67.283,
+    "project": "Final QA 1791767096768",
+    "training_run": "c0f44d6f-af46-43d5-9f92-1493d4f6f585",
+    "candidate": "f5cabd01-091a-437e-8e53-e620a2070bf4",
+    "evaluation_run": "1a10ea34-ecb9-4934-bf30-fba43639e15b",
+    "release_version": "42141cf9-f628-42e5-8292-5c566b39d340",
+    "local_serving_verified": true,
+    "local_deployment": "caf0f096-6b63-4377-aab5-2b3b9237fa93",
+    "local_acceptance_accuracy_threshold": 0,
+    "committed_steps": 2,
+    "known_overlap_check": "known_lineage_checked",
+    "failed_cases": 1,
+    "missing_cases": 0,
+    "review_state": "failing",
+    "production_qualified": false,
+    "reload_preserved": true,
+    "narrow_layout_passed": true,
+    "manual_api_requests": false
+  },
+  "browser_page_errors": []
+}

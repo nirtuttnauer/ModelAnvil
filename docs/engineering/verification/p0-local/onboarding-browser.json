@@ -1,0 +1,12 @@
+{
+  "tasks": [
+    "PM003",
+    "PM004"
+  ],
+  "profile": "cpu-transformer",
+  "actual_weights_initialized": true,
+  "dataset_published": true,
+  "all_prerequisites_recorded": true,
+  "preflight_approved": true,
+  "manual_api_requests": false
+}

@@ -1,0 +1,5 @@
+{
+  "prompt": "In one sentence, when and how do I renew my plot at Willow Community Garden?",
+  "base": "BASE MODEL\nSmolLM2-1.7B Instruct\n\nYou can renew your plot at Willow Community Garden by contacting the garden's management office or the plot holder you previously signed up with, typically by the end of the current season to ensure a smooth transition.\n\nCopy response\n\ncompleted · 5.56 seconds including model load · 47 input / 41 output tokens",
+  "trained": "TRAINED MODEL\nSmolLM2 fine-tune · 42955491\n\nRenew your plot in the Willow member portal by February 12. Keep the confirmation email.\n\nCopy response\n\ncompleted · 8.06 seconds including model load · 47 input / 21 output tokens"
+}

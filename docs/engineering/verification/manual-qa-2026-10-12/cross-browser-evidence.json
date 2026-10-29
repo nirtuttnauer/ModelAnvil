@@ -1,0 +1,661 @@
+{
+  "source": {
+    "source_sha256": "cab49b27b7698628d31f2aeda54644ebad62a99539876869918c6c423aadff51",
+    "frontend_matches_checkout": true,
+    "concurrent_backend_differences": [
+      "modelanvil/api/test_local_serving.py",
+      "modelanvil/api/views/release_views.py"
+    ]
+  },
+  "fix": {
+    "file": "web/src/pages/RecipesPage.tsx",
+    "problem": "HTML input pattern is invalid with Unicode-set (v) compilation",
+    "change": "Escape the hyphen in the recipe step-ID character class"
+  },
+  "native_safari": {
+    "installed_version": "27.0.1",
+    "automation_enabled": false,
+    "user_selected_webkit_coverage": true
+  },
+  "engines": {
+    "firefox": {
+      "platform": "Linux arm64 container",
+      "screens": {
+        "engine": "firefox",
+        "version": "151.0",
+        "checks": [
+          {
+            "name": "Cold startup loads Overview without unopened screens",
+            "pass": true,
+            "detail": {
+              "bytes": 333946,
+              "chunks": [
+                {
+                  "url": "/assets/DataInspector-Cl5uEXx9.js",
+                  "bytes": 8709
+                },
+                {
+                  "url": "/assets/client-CGG4s8sx.js",
+                  "bytes": 12164
+                },
+                {
+                  "url": "/assets/index-sIvuRVIo.js",
+                  "bytes": 280646
+                },
+                {
+                  "url": "/assets/arrow-right-TWcumLGZ.js",
+                  "bytes": 202
+                },
+                {
+                  "url": "/assets/OverviewPage-CHv6xyGg.js",
+                  "bytes": 20839
+                },
+                {
+                  "url": "/assets/Charts-BR4x4sWB.js",
+                  "bytes": 10802
+                },
+                {
+                  "url": "/assets/circle-check-DbjQTshv.js",
+                  "bytes": 247
+                },
+                {
+                  "url": "/assets/ResourceState-BfBZtogw.js",
+                  "bytes": 337
+                }
+              ]
+            }
+          },
+          {
+            "name": "Slow screen download shows accessible loading status and retains navigation",
+            "pass": true
+          },
+          {
+            "name": "Desktop Overview",
+            "pass": true
+          },
+          {
+            "name": "Desktop Dataset Bank",
+            "pass": true
+          },
+          {
+            "name": "Desktop Datasets",
+            "pass": true
+          },
+          {
+            "name": "Desktop Annotation",
+            "pass": true
+          },
+          {
+            "name": "Desktop Models",
+            "pass": true
+          },
+          {
+            "name": "Desktop Chat",
+            "pass": true
+          },
+          {
+            "name": "Desktop Specialists",
+            "pass": true
+          },
+          {
+            "name": "Desktop Recipes",
+            "pass": true
+          },
+          {
+            "name": "Desktop Training",
+            "pass": true
+          },
+          {
+            "name": "Desktop Alignment",
+            "pass": true
+          },
+          {
+            "name": "Desktop Evaluation",
+            "pass": true
+          },
+          {
+            "name": "Desktop Workflows",
+            "pass": true
+          },
+          {
+            "name": "Desktop RAG",
+            "pass": true
+          },
+          {
+            "name": "Desktop Context Lab",
+            "pass": true
+          },
+          {
+            "name": "Desktop Releases",
+            "pass": true
+          },
+          {
+            "name": "Desktop Infrastructure",
+            "pass": true
+          },
+          {
+            "name": "Desktop Budgets",
+            "pass": true
+          },
+          {
+            "name": "Desktop Audit",
+            "pass": true
+          },
+          {
+            "name": "Unsaved draft survives screen navigation and stays scoped to its project",
+            "pass": true
+          },
+          {
+            "name": "Mobile Overview",
+            "pass": true
+          },
+          {
+            "name": "Mobile Dataset Bank",
+            "pass": true
+          },
+          {
+            "name": "Mobile Datasets",
+            "pass": true
+          },
+          {
+            "name": "Mobile Annotation",
+            "pass": true
+          },
+          {
+            "name": "Mobile Models",
+            "pass": true
+          },
+          {
+            "name": "Mobile Chat",
+            "pass": true
+          },
+          {
+            "name": "Mobile Specialists",
+            "pass": true
+          },
+          {
+            "name": "Mobile Recipes",
+            "pass": true
+          },
+          {
+            "name": "Mobile Training",
+            "pass": true
+          },
+          {
+            "name": "Mobile Alignment",
+            "pass": true
+          },
+          {
+            "name": "Mobile Evaluation",
+            "pass": true
+          },
+          {
+            "name": "Mobile Workflows",
+            "pass": true
+          },
+          {
+            "name": "Mobile RAG",
+            "pass": true
+          },
+          {
+            "name": "Mobile Context Lab",
+            "pass": true
+          },
+          {
+            "name": "Mobile Releases",
+            "pass": true
+          },
+          {
+            "name": "Mobile Infrastructure",
+            "pass": true
+          },
+          {
+            "name": "Mobile Budgets",
+            "pass": true
+          },
+          {
+            "name": "Mobile Audit",
+            "pass": true
+          },
+          {
+            "name": "Production mobile screen passes WCAG axe checks",
+            "pass": true
+          },
+          {
+            "name": "No unexpected browser errors in normal navigation",
+            "pass": true
+          },
+          {
+            "name": "Aborted chunk is contained; navigation works; explicit reload recovers same deep link",
+            "pass": true,
+            "detail": {
+              "expectedErrors": [
+                "JSHandle@object",
+                "JSHandle@object"
+              ]
+            }
+          }
+        ],
+        "errors": []
+      },
+      "interactions": {
+        "engine": "firefox",
+        "version": "151.0",
+        "checks": [
+          {
+            "name": "Full recipe history restores recorded definition without restoring publication approval",
+            "pass": true
+          },
+          {
+            "name": "Native HTML step-ID validation accepts hyphens and underscores and rejects invalid IDs",
+            "pass": true
+          },
+          {
+            "name": "Recipe Blob download contains the exact definition without source credentials",
+            "pass": true
+          },
+          {
+            "name": "Recipe JSON file import updates the editor",
+            "pass": true
+          },
+          {
+            "name": "Keyboard screen search focuses its input, selects with Enter and dismisses with Escape",
+            "pass": true
+          },
+          {
+            "name": "Unsaved draft content survives a full browser reload",
+            "pass": true
+          },
+          {
+            "name": "No unexpected console errors or page exceptions",
+            "pass": true
+          }
+        ],
+        "errors": []
+      },
+      "deep_links": {
+        "pass": true,
+        "resource": "dataset-revision",
+        "reload": true,
+        "browser_back": true,
+        "errors": []
+      },
+      "local_workflow": {
+        "browser": "firefox",
+        "version": "151.0",
+        "scope": "packaged_browser_local_beta",
+        "tasks": [
+          "PM001",
+          "PM002",
+          "PM003",
+          "PM004",
+          "PM005",
+          "PM006",
+          "PM007",
+          "PM009"
+        ],
+        "elapsed_seconds": 59.482,
+        "project": "firefox QA 1791837733262",
+        "training_run": "1751bc04-cfe5-4c02-8827-52835a38ab0a",
+        "candidate": "f7a6cffc-1ce6-4482-abec-bb366fc7b905",
+        "evaluation_run": "745b9292-f973-44e0-81eb-369560cb32db",
+        "release_version": "1acb0f7b-3444-4c81-bba9-9df7b3bde602",
+        "local_serving_verified": true,
+        "local_deployment": "3aee7bc1-95ba-4c00-a804-720c13f0e2af",
+        "local_acceptance_accuracy_threshold": 0,
+        "committed_steps": 2,
+        "known_overlap_check": "known_lineage_checked",
+        "failed_cases": 1,
+        "missing_cases": 0,
+        "review_state": "failing",
+        "production_qualified": false,
+        "reload_preserved": true,
+        "narrow_layout_passed": true,
+        "manual_api_requests": false
+      },
+      "independent_consumer": {
+        "completion": "  ",
+        "generated_token_ids": [
+          36,
+          36
+        ],
+        "runtime": "independent_stdlib_transformer_consumer",
+        "weights_sha256": "3b55f30aa34cc1de3a9cf9bfecc654312abce32de21314c898e461ff67a1cdb5"
+      }
+    },
+    "webkit": {
+      "platform": "macOS 27.0.1",
+      "screens": {
+        "engine": "webkit",
+        "version": "26.5",
+        "checks": [
+          {
+            "name": "Cold startup loads Overview without unopened screens",
+            "pass": true,
+            "detail": {
+              "bytes": 333946,
+              "chunks": [
+                {
+                  "url": "/assets/DataInspector-Cl5uEXx9.js",
+                  "bytes": 8709
+                },
+                {
+                  "url": "/assets/client-CGG4s8sx.js",
+                  "bytes": 12164
+                },
+                {
+                  "url": "/assets/index-sIvuRVIo.js",
+                  "bytes": 280646
+                },
+                {
+                  "url": "/assets/arrow-right-TWcumLGZ.js",
+                  "bytes": 202
+                },
+                {
+                  "url": "/assets/circle-check-DbjQTshv.js",
+                  "bytes": 247
+                },
+                {
+                  "url": "/assets/Charts-BR4x4sWB.js",
+                  "bytes": 10802
+                },
+                {
+                  "url": "/assets/OverviewPage-CHv6xyGg.js",
+                  "bytes": 20839
+                },
+                {
+                  "url": "/assets/ResourceState-BfBZtogw.js",
+                  "bytes": 337
+                }
+              ]
+            }
+          },
+          {
+            "name": "Slow screen download shows accessible loading status and retains navigation",
+            "pass": true
+          },
+          {
+            "name": "Desktop Overview",
+            "pass": true
+          },
+          {
+            "name": "Desktop Dataset Bank",
+            "pass": true
+          },
+          {
+            "name": "Desktop Datasets",
+            "pass": true
+          },
+          {
+            "name": "Desktop Annotation",
+            "pass": true
+          },
+          {
+            "name": "Desktop Models",
+            "pass": true
+          },
+          {
+            "name": "Desktop Chat",
+            "pass": true
+          },
+          {
+            "name": "Desktop Specialists",
+            "pass": true
+          },
+          {
+            "name": "Desktop Recipes",
+            "pass": true
+          },
+          {
+            "name": "Desktop Training",
+            "pass": true
+          },
+          {
+            "name": "Desktop Alignment",
+            "pass": true
+          },
+          {
+            "name": "Desktop Evaluation",
+            "pass": true
+          },
+          {
+            "name": "Desktop Workflows",
+            "pass": true
+          },
+          {
+            "name": "Desktop RAG",
+            "pass": true
+          },
+          {
+            "name": "Desktop Context Lab",
+            "pass": true
+          },
+          {
+            "name": "Desktop Releases",
+            "pass": true
+          },
+          {
+            "name": "Desktop Infrastructure",
+            "pass": true
+          },
+          {
+            "name": "Desktop Budgets",
+            "pass": true
+          },
+          {
+            "name": "Desktop Audit",
+            "pass": true
+          },
+          {
+            "name": "Unsaved draft survives screen navigation and stays scoped to its project",
+            "pass": true
+          },
+          {
+            "name": "Mobile Overview",
+            "pass": true
+          },
+          {
+            "name": "Mobile Dataset Bank",
+            "pass": true
+          },
+          {
+            "name": "Mobile Datasets",
+            "pass": true
+          },
+          {
+            "name": "Mobile Annotation",
+            "pass": true
+          },
+          {
+            "name": "Mobile Models",
+            "pass": true
+          },
+          {
+            "name": "Mobile Chat",
+            "pass": true
+          },
+          {
+            "name": "Mobile Specialists",
+            "pass": true
+          },
+          {
+            "name": "Mobile Recipes",
+            "pass": true
+          },
+          {
+            "name": "Mobile Training",
+            "pass": true
+          },
+          {
+            "name": "Mobile Alignment",
+            "pass": true
+          },
+          {
+            "name": "Mobile Evaluation",
+            "pass": true
+          },
+          {
+            "name": "Mobile Workflows",
+            "pass": true
+          },
+          {
+            "name": "Mobile RAG",
+            "pass": true
+          },
+          {
+            "name": "Mobile Context Lab",
+            "pass": true
+          },
+          {
+            "name": "Mobile Releases",
+            "pass": true
+          },
+          {
+            "name": "Mobile Infrastructure",
+            "pass": true
+          },
+          {
+            "name": "Mobile Budgets",
+            "pass": true
+          },
+          {
+            "name": "Mobile Audit",
+            "pass": true
+          },
+          {
+            "name": "Production mobile screen passes WCAG axe checks",
+            "pass": true
+          },
+          {
+            "name": "No unexpected browser errors in normal navigation",
+            "pass": true
+          },
+          {
+            "name": "Aborted chunk is contained; navigation works; explicit reload recovers same deep link",
+            "pass": true,
+            "detail": {
+              "expectedErrors": [
+                "TypeError: Importing a module script failed.",
+                "TypeError: Importing a module script failed.",
+                "TypeError: Importing a module script failed."
+              ]
+            }
+          }
+        ],
+        "errors": []
+      },
+      "interactions": {
+        "engine": "webkit",
+        "version": "26.5",
+        "checks": [
+          {
+            "name": "Full recipe history restores recorded definition without restoring publication approval",
+            "pass": true
+          },
+          {
+            "name": "Native HTML step-ID validation accepts hyphens and underscores and rejects invalid IDs",
+            "pass": true
+          },
+          {
+            "name": "Recipe Blob download contains the exact definition without source credentials",
+            "pass": true
+          },
+          {
+            "name": "Recipe JSON file import updates the editor",
+            "pass": true
+          },
+          {
+            "name": "Keyboard screen search focuses its input, selects with Enter and dismisses with Escape",
+            "pass": true
+          },
+          {
+            "name": "Unsaved draft content survives a full browser reload",
+            "pass": true
+          },
+          {
+            "name": "No unexpected console errors or page exceptions",
+            "pass": true
+          }
+        ],
+        "errors": []
+      },
+      "deep_links": {
+        "pass": true,
+        "resource": "dataset-revision",
+        "reload": true,
+        "browser_back": true,
+        "errors": []
+      },
+      "local_workflow": {
+        "browser": "webkit",
+        "version": "26.5",
+        "scope": "packaged_browser_local_beta",
+        "tasks": [
+          "PM001",
+          "PM002",
+          "PM003",
+          "PM004",
+          "PM005",
+          "PM006",
+          "PM007",
+          "PM009"
+        ],
+        "elapsed_seconds": 50.541,
+        "project": "webkit QA 1791837815130",
+        "training_run": "e7470bf7-a209-46c9-9de8-77a16c5c27b4",
+        "candidate": "a5ceeff3-0ae2-4517-9787-81ba56b3bfd3",
+        "evaluation_run": "4687a1fa-fb8e-4508-826e-306e2848f01d",
+        "release_version": "fa089e55-e8b5-4774-a8d4-908062238d0a",
+        "local_serving_verified": true,
+        "local_deployment": "1fe64363-fbd5-488b-be61-eab2c64c6e93",
+        "local_acceptance_accuracy_threshold": 0,
+        "committed_steps": 2,
+        "known_overlap_check": "known_lineage_checked",
+        "failed_cases": 1,
+        "missing_cases": 0,
+        "review_state": "failing",
+        "production_qualified": false,
+        "reload_preserved": true,
+        "narrow_layout_passed": true,
+        "manual_api_requests": false
+      },
+      "independent_consumer": {
+        "completion": "  ",
+        "generated_token_ids": [
+          36,
+          36
+        ],
+        "runtime": "independent_stdlib_transformer_consumer",
+        "weights_sha256": "3b55f30aa34cc1de3a9cf9bfecc654312abce32de21314c898e461ff67a1cdb5"
+      }
+    }
+  },
+  "frontend_tests": {
+    "passed": 160,
+    "failed": 0
+  },
+  "backend_suite_rerun": false,
+  "webkit_sticky_navigation": {
+    "samples": [
+      {
+        "scrollY": 0,
+        "top": 0,
+        "height": 1000,
+        "position": "sticky"
+      },
+      {
+        "scrollY": 829,
+        "top": 0,
+        "height": 1000,
+        "position": "sticky"
+      }
+    ],
+    "pass": true
+  },
+  "qa_cleanup": {
+    "servers_stopped": true,
+    "workers_offline": true,
+    "firefox_container_removed": true,
+    "isolated_credentials_disabled": true
+  }
+}

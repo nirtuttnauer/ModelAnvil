@@ -1,0 +1,76 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Fresh User Retest workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Training
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Fine-tune a pretrained model with your own examples.
+  - region "Train a model on your data":
+    - text: YOUR FIRST FINE-TUNE
+    - heading "Train a model on your data" [level=2]
+    - paragraph: Everything you need, in four steps. Training runs on this computer.
+    - list "Fine-tuning progress":
+      - text: Model
+      - generic: "2"
+      - text: Dataset
+      - generic: "3"
+      - text: Review
+      - generic: "4"
+      - text: Train
+    - heading "Add your training examples" [active] [level=3]
+    - paragraph:
+      - text: Upload JSONL, JSON or CSV. Use chat
+      - code: messages
+      - text: ","
+      - code: prompt
+      - text: /
+      - code: response
+      - text: pairs, or a
+      - code: text
+      - text: column. Up to 1,000 examples, 16 MiB total.
+    - text: Dataset name
+    - textbox "Dataset name"
+    - text: Training file
+    - button "Training file"
+    - generic "See the expected file format"
+    - button "Back"
+    - button "Preview dataset" [disabled]
+  - button "Advanced training workspace"
+  - generic "App information"
+  - text: Control plane

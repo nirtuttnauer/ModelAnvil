@@ -1,0 +1,63 @@
+{
+  "signup": "Fresh disposable account created through the 375px browser UI; account and project provisioned automatically.",
+  "dataset": {
+    "file": "willow-garden.csv",
+    "sha256": "99905fdff4aa85893491209e1c184246e5a11498400100acd01e43db7251c25b",
+    "rows": 60,
+    "mapping": {
+      "prompt_field": "question",
+      "response_field": "answer"
+    },
+    "split_counts": {
+      "train": 48,
+      "validation": 6,
+      "test": 6
+    }
+  },
+  "training": {
+    "run_id": "42955491-2fe2-4d3a-a3e0-9d14c38cb584",
+    "candidate_id": "d04272d2-db20-4118-9e92-fb6fadfa2abd",
+    "settings": "Unchanged recommended defaults",
+    "steps": 288,
+    "passes": 6,
+    "status": "completed",
+    "duration_seconds": 259.745576,
+    "device": "Local Apple MPS"
+  },
+  "comparison": {
+    "unseen_questions": 2,
+    "correct_custom_policies": [
+      "Silver bicycle rack beside the cedar shed",
+      "Renew in the member portal by February 12"
+    ],
+    "same_prompt_and_generation_settings": true,
+    "saved_after_refresh": true,
+    "mobile_layout": "Both answers stacked within viewport width"
+  },
+  "active_jobs": {
+    "running_job_visible": true,
+    "completed_job_removed": true,
+    "mobile_modal_fits": true
+  },
+  "fixes": [
+    "Stack source and prepared sample cells with field labels on phones",
+    "Put optional context and grouping behind an expandable control while preserving values",
+    "Hide empty first-run metrics, premature plan and run summary, and redundant configure action",
+    "Keep small nonzero validation loss visible with significant digits",
+    "Show loading model labels until the comparison catalog has loaded"
+  ],
+  "checks": {
+    "frontend_tests": 205,
+    "frontend_tests_passed": 205,
+    "mobile_widths": [
+      320,
+      375
+    ],
+    "landscape": [
+      812,
+      375
+    ],
+    "dark_mode": true,
+    "physical_phone_keyboard_checked": false
+  }
+}

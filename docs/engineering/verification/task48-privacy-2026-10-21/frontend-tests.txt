@@ -1,0 +1,15 @@
+✔ shared launch pins exactly the selected inputs and preserves an uncertain guided launch identity (0.19675ms)
+✔ record cards retain captions, values, header associations and native actions (4.866833ms)
+✔ spanning tables and existing labeled row headers retain their own layout (0.496667ms)
+✔ metric actions keep native activation without submitting surrounding forms (2.112958ms)
+✔ read-only metrics stay articles and forward labels and native refs (0.241709ms)
+✔ comparison matches exact metric and slice, keeps baseline-only evidence, zeros and missing values (1.079875ms)
+✔ query highlighting preserves exact source text, handles Unicode and treats source markup as text (1.995334ms)
+ℹ tests 225
+ℹ suites 0
+ℹ pass 225
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1377.521

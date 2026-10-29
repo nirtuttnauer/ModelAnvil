@@ -1,63 +1,52 @@
-.training-tabs { display: flex; gap: var(--space-24); border-bottom: 1px solid var(--border); margin-bottom: var(--space-24); }
-.training-tabs [role="tab"] { position: relative; display: inline-flex; align-items: center; gap: var(--space-8); min-height: 44px; padding: var(--space-10) 2px; background: transparent; border: 0; border-radius: 0; color: var(--text-secondary); }
-.training-tabs [aria-selected="true"] { color: var(--text); font-weight: 650; }
-.training-tabs [aria-selected="true"]::after { content: ''; position: absolute; inset-inline: 0; bottom: -1px; height: 2px; background: var(--primary); }
-.training-tabs button:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
-.training-live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--primary); }
-.training-config-heading { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-16); margin-bottom: var(--space-24); }
-.training-config-heading h3 { margin: 0 0 var(--space-8); }
-.training-config-heading p { margin: 0; color: var(--text-secondary); }
-.training-config-heading button { min-height: 44px; }
-.training-config-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; align-items: start; gap: var(--space-24); }
-.training-config-guided { grid-template-columns: minmax(0, 1fr); }
-.training-config-fields { min-width: 0; }
-.training-config-fields .guided-training { margin: 0 0 var(--space-24); }
-.training-config-fields .guided-header { padding: var(--space-20); }
-.training-config-fields .guided-header h2 { font-size: 21px; }
-.training-config-fields .guided-stages { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.training-fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
-.training-fieldset > .form-grid { margin-bottom: var(--space-24); }
-.training-plan { display: grid; gap: var(--space-16); }
-.training-plan h3, .training-plan p { margin: 0; }
-.training-plan label { display: grid; gap: var(--space-8); }
-.training-plan p, .training-draft { color: var(--text-secondary); }
-.training-plan input { max-width: 180px; }
-.training-run-preview { position: sticky; top: 24px; margin: 0; overflow-wrap: anywhere; }
-.training-run-preview .guided-review div { display: grid; gap: var(--space-6); }
-.training-run-preview button { width: 100%; min-height: 44px; }
-.training-draft { margin-top: var(--space-24); }
-.training-draft summary { cursor: pointer; padding-block: var(--space-12); }
-.training-empty { padding: 40px var(--space-24); text-align: center; border: 1px dashed var(--border); border-radius: var(--radius-10); }
-.training-empty p { color: var(--text-secondary); }
-.ml-training [hidden] { display: none !important; }
-@media (max-width: 1100px) { .training-config-layout { grid-template-columns: minmax(0, 1fr); } .training-run-preview { position: static; } .training-run-preview .guided-review { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 540px) { .training-tabs { gap: var(--space-16); } .training-config-heading { align-items: start; } .training-run-preview .guided-review { grid-template-columns: minmax(0, 1fr); } }
-@media (max-width: 540px) {
-  .page-content[data-screen="training"] { padding: var(--space-12) var(--space-8); }
-  .ml-training > .panel-body, .training-config-fields .guided-header { padding: var(--space-12); }
-  .training-config-fields .guided-body { padding: 14px; }
-  .training-config-fields .guided-model { padding: var(--space-16); }
-  .training-config-fields .guided-model strong { font-size: 18px; }
-  .training-config-fields :is(input, select, textarea) { font-size: var(--type-16); }
+@layer tokens, base, primitives, shell, pages;
+@layer pages {
+  .training-page { display: grid; gap: var(--space-16); }
+  .training-page [hidden] { display: none; }
+  .training-live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--primary); }
+  .training-config-toolbar { margin-top: var(--space-4); }
+  .training-config-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; align-items: start; gap: var(--space-24); }
+  .training-config-guided { grid-template-columns: minmax(0, 1fr); }
+  .training-config-fields { min-width: 0; display: grid; gap: var(--space-16); }
+  .training-fieldset { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; gap: var(--space-16); }
+  .training-advanced { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-16) var(--space-20); padding: var(--space-20); border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface); }
+  .training-advanced .resource-picker, .training-full { grid-column: 1 / -1; }
+  .training-advanced > h2 { font-size: var(--type-16); }
+  .training-plan { display: grid; gap: var(--space-12); max-width: 480px; }
+  .training-plan p { margin: 0; }
+  .training-run-preview { position: sticky; top: calc(var(--header-height) + var(--space-16)); display: grid; gap: var(--space-12); padding: var(--space-20); border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface); overflow-wrap: anywhere; }
+  .training-run-preview h3 { font-size: var(--type-16); }
+  .training-run-preview p { margin: 0; }
+  .training-run-preview button { width: 100%; }
+  .training-run-toolbar { margin-top: var(--space-4); }
+  .training-run-toolbar select { min-width: min(360px, 100%); }
+  .training-current { display: grid; gap: var(--space-24); }
+  .training-progress { display: grid; gap: var(--space-12); padding: var(--space-20); border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface); }
+  .training-progress header, .training-progress header > div:first-child { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8) var(--space-12); }
+  .training-progress header { justify-content: space-between; }
+  .training-progress h3 { font-size: var(--type-16); }
+  .training-progress p { margin: 0; }
+  .training-progress-feed { font-size: var(--type-13); color: var(--text-secondary); }
+  .training-progress-bar { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-8) var(--space-12); }
+  .training-progress-bar strong { font-size: var(--type-20); font-variant-numeric: tabular-nums; }
+  .training-progress-bar progress { flex-basis: 100%; }
+  .training-candidate { align-items: flex-start; }
+  .training-candidate p { margin: var(--space-4) 0 0; }
+  .training-run-details { display: grid; gap: var(--space-16); }
+  .training-run-details-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-8) var(--space-16); }
+  .training-run-details-head > div:first-child { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-12); }
+  .training-run-details-head h3 { font-size: var(--type-20); }
+  .training-checkpoints h4 { margin-bottom: var(--space-8); }
+  .training-checkpoints ul { list-style: none; margin: 0; padding: 0; display: grid; }
+  .training-checkpoints li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8) var(--space-12); padding: var(--space-8) 0; border-top: 1px solid var(--border); }
+  .training-checkpoints li:first-child { border-top: 0; }
+  .training-inference { display: grid; gap: var(--space-12); }
+  .training-inference-controls { display: flex; flex-wrap: wrap; gap: var(--space-8); }
+  .training-inference-controls input:first-child { flex: 1 1 240px; }
+  .training-inference-controls input:nth-child(2) { width: 96px; }
+  .training-inference-result { display: grid; gap: var(--space-12); }
+  .training-run-cell { display: flex; align-items: center; gap: var(--space-4); }
+  .training-run-cell + div { margin-top: var(--space-4); }
+  .training-selected-row { background: var(--primary-surface); }
+  @media (max-width: 1100px) { .training-config-layout { grid-template-columns: minmax(0, 1fr); } .training-run-preview { position: static; } }
+  @media (max-width: 768px) { .training-advanced { grid-template-columns: minmax(0, 1fr); padding: var(--space-16); } .training-progress { padding: var(--space-16); } }
 }
-.training-progress { margin-bottom: var(--space-24); border: 1px solid var(--border); border-radius: var(--radius-10); padding: var(--space-24); background: var(--surface); }
-.training-progress header, .training-progress header > div { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-12); }
-.training-progress header { justify-content: space-between; margin-bottom: var(--space-24); }
-.training-progress h3 { margin: 0; }
-.training-progress header button { min-height: 44px; }
-.training-progress-feed, .training-progress-updated { font-size: var(--type-13); }
-.training-progress-feed { color: var(--text-secondary); }
-.training-progress-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-12); }
-.training-progress-bar strong { font-size: var(--type-24); }
-.training-progress-bar progress { display: block; flex-basis: 100%; width: 100%; height: 10px; accent-color: var(--primary); }
-.training-progress-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-20); margin: var(--space-24) 0; }
-.training-progress-stats > div { min-width: 0; }
-.training-progress-stats dt { color: var(--text-secondary); font-size: var(--type-13); margin-bottom: var(--space-8); }
-.training-progress-stats dd { margin: 0; font-size: var(--type-20); font-weight: 650; overflow-wrap: anywhere; }
-.training-progress-updated { margin-bottom: 0; }
-@media (max-width: 900px) { .training-progress-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 540px) { .training-progress { padding: var(--space-16); } .training-progress-stats dd { font-size: 18px; } }
-.ml-training .detail-box code { overflow-wrap: anywhere; }
-.training-inference-controls { display: flex; flex-wrap: wrap; gap: var(--space-8); margin-top: var(--space-8); }
-.training-inference-controls input { min-width: 0; }
-@media (max-width: 540px) { .training-inference-controls input:first-child { flex-basis: 100% !important; } }

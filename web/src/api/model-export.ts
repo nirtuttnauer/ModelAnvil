@@ -13,7 +13,7 @@ export function exportBytes(bytes: number): string {
 /** Prefer a disk stream; keep the fallback bounded when the browser has no file picker. */
 export async function downloadModelExport(runId: string, option: ModelExportOption, token: string,
   signal: AbortSignal, onProgress: (progress: ExportProgress) => void,
-  resource: 'training-runs' | 'alignment-runs' = 'training-runs'): Promise<'saved' | 'browser'> {
+  resource: 'training-runs' | 'alignment-runs' = 'training-runs', evaluationRun?: string): Promise<'saved' | 'browser'> {
   if (!token.trim()) throw new Error('Connect to your workspace before downloading.');
   if (!['native', 'adapter', 'json', 'merged', 'gguf-q8'].includes(option.format)) throw new Error('Unsupported export format.');
   if (!['training-runs', 'alignment-runs'].includes(resource) || (resource === 'alignment-runs' && option.format !== 'adapter')) throw new Error('Unsupported export resource or format.');
@@ -25,7 +25,9 @@ export async function downloadModelExport(runId: string, option: ModelExportOpti
   signal.throwIfAborted();
   onProgress({ phase: 'preparing', received: 0, total: null });
   const headers = authHeaders(token); if (project) headers.set('X-Project-ID', project);
-  const response = await fetch(apiPath(`/api/v1/${resource}/${encodeURIComponent(runId)}/download/?export_format=${option.format}`), { method: option.method === 'POST' ? 'POST' : 'GET', headers, signal, redirect: 'error' });
+  const query = new URLSearchParams({ export_format: option.format });
+  if (evaluationRun) query.set('evaluation_run', evaluationRun);
+  const response = await fetch(apiPath(`/api/v1/${resource}/${encodeURIComponent(runId)}/download/?${query}`), { method: option.method === 'POST' ? 'POST' : 'GET', headers, signal, redirect: 'error' });
   if (!response.ok) throw new ApiRequestError(`Export download failed (HTTP ${response.status}).`, response.status);
   const contentType = option.extension === 'json' ? 'application/json' : 'application/zip';
   if (response.headers.get('Content-Type')?.split(';')[0].trim() !== contentType || !response.body) {

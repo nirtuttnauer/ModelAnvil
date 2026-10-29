@@ -1,0 +1,16 @@
+{
+  "exact_candidate_handoff": true,
+  "new_fine_tune_requires_new_dataset": true,
+  "first_turn_saved": true,
+  "followup_saved": true,
+  "model_retained_after_followup": true,
+  "next_message_enabled": true,
+  "mobile": {
+    "scrollWidth": 375,
+    "width": 375
+  },
+  "saved_conversation_restores_both_turns": true,
+  "wrong_password_has_repair_guidance": true,
+  "returning_signin_succeeds": true,
+  "final_signup_ready": true
+}

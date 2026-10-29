@@ -87,6 +87,9 @@ else:
     }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# pg-tagged tests run only in the Postgres CI job. On SQLite they are not
+# selected; `--tag=pg` still runs them and fails if Postgres is down.
+TEST_RUNNER = "modelanvil.core.test_runner.Runner"
 
 # ---------------------------------------------------------------------------
 # Applications

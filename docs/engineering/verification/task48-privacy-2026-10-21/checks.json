@@ -1,0 +1,47 @@
+{
+  "task": "TASK-48",
+  "backend_full": {
+    "tests": 909,
+    "skipped": 9,
+    "result": "passed"
+  },
+  "scoped_targeted": {
+    "tests": 66,
+    "result": "passed"
+  },
+  "updated_privacy_and_transformer_offline": {
+    "tests": 8,
+    "result": "passed"
+  },
+  "frontend": {
+    "tests": 225,
+    "result": "passed"
+  },
+  "build": {
+    "revision": "c39a2e9554efdd6c5c644fb012580298f4bc78ca",
+    "source_digest": "adebeb5962bf9a4c0b2916fbcce1d8f85b799c75aa5fe174ee7230a66ea7a390",
+    "protocol": "modelanvil.local-beta.v1",
+    "dataset_formats": [
+      "jsonl",
+      "csv",
+      "docx",
+      "json",
+      "pdf",
+      "training"
+    ],
+    "production_qualified": false
+  },
+  "design_detector_findings": [],
+  "migration": "core.0006 and rag.0003 applied after private local backup",
+  "scope": "Shipped acquisition transports and local CPU execution; not an OS firewall or arbitrary plugin sandbox.",
+  "final_privacy_retrieval_and_comparison": {
+    "tests": 18,
+    "result": "passed",
+    "scope": "Includes saved-comparison creation retry after model-grant revocation."
+  },
+  "frontend_build": "passed",
+  "system_check": "passed",
+  "migration_drift": "none",
+  "openapi_mirrors": "identical",
+  "source_scope": "API source and contracts digest; broad regression predates final guard hardening, targeted checks follow it."
+}

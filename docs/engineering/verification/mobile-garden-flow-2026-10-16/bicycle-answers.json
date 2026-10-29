@@ -1,0 +1,5 @@
+{
+  "prompt": "In one sentence, where should I park my bicycle at Willow Community Garden?",
+  "base": "BASE MODEL\nSmolLM2-1.7B Instruct\n\nYou should park your bicycle at the designated bike rack near the entrance of the Willow Community Garden.\n\nCopy response\n\ncompleted · 5.29 seconds including model load · 45 input / 20 output tokens",
+  "trained": "TRAINED MODEL\nSmolLM2 fine-tune · 42955491\n\nPark your bicycle at the silver rack beside the cedar shed.\n\nCopy response\n\ncompleted · 6.98 seconds including model load · 45 input / 13 output tokens"
+}

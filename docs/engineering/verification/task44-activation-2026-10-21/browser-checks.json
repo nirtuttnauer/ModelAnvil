@@ -1,0 +1,46 @@
+{
+  "scope": "isolated_real_CPU_API_and_browser",
+  "origin": "http://127.0.0.1:15144",
+  "decisionRecorded": true,
+  "decisionPreservedOnReload": true,
+  "keyboardReportDisclosure": true,
+  "desktopDocumentWidth": 1280,
+  "mobileDocumentWidth": 390,
+  "mobileViewportWidth": 390,
+  "localCounts": [
+    {
+      "label": "Week beginning (UTC)",
+      "value": "2026-10-19"
+    },
+    {
+      "label": "Completed improvement decisions",
+      "value": "2"
+    },
+    {
+      "label": "Accepted candidates with higher measured accuracy",
+      "value": "0"
+    },
+    {
+      "label": "Rejected candidates",
+      "value": "2"
+    },
+    {
+      "label": "Reported interaction time this week",
+      "value": "66.9 seconds"
+    },
+    {
+      "label": "First workspace visit to first decision",
+      "value": "0.1 seconds"
+    }
+  ],
+  "consoleErrors": [],
+  "screenshots": [
+    "evaluation-desktop.png",
+    "evaluation-mobile.png",
+    "overview-desktop.png",
+    "overview-mobile.png"
+  ],
+  "limits": [
+    "Automated synthetic reference task; no human onboarding or useful-model quality claim."
+  ]
+}

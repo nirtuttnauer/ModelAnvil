@@ -69,14 +69,14 @@ export function ToolsChat({ token, refreshKey = 0 }: { token: string; refreshKey
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (e) { setError(errorMessage(e)); } finally { setBusy(false); }
   }
-  return <section className="panel ml-page tools-chat">
-    <div className="panel-title"><div><h2>Tools</h2><p>Let the local model call the tools you select, then continue from their actual results.</p></div></div>
-    <div className="panel-body">
+  return <section data-ui="card" className="ml-page tools-chat">
+    <div data-ui="section-header"><div><h2>Tools</h2><p>Let the local model call the tools you select, then continue from their actual results.</p></div></div>
+    <div data-ui="form">
       {error && <Notice role="alert" tone="error">{error}</Notice>}
       <p>Three model turns, two tool calls and 1,536 context tokens. MCP targets must be reviewed as read-only. Python runs offline in a disposable container with a read-only image, no host files, one CPU, 128 MiB memory and a five-second limit. Model text cannot grant permissions.</p>
       {!catalog && !error && <p role="status">Loading permitted tools…</p>}
       {catalog && !catalog.models.length && <Notice>No verified tool model is available. Provision the exact Qwen3 CPU profile, then Refresh.</Notice>}
-      <form onSubmit={submit} className="form-grid">
+      <form onSubmit={submit} className="tools-form">
         <fieldset disabled={busy || !catalog?.models.length} className="specialist-fields form-grid full-width">
           <label>Tool model<select aria-label="Tool model" required value={model} onChange={e => setModel(e.target.value)}><option value="">Select a model</option>{catalog?.models.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}</select></label>
           <label>Worker pool<select aria-label="Worker pool" required value={pool} onChange={e => setPool(e.target.value)}><option value="">Select a CPU tools pool</option>{pools.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
@@ -85,13 +85,13 @@ export function ToolsChat({ token, refreshKey = 0 }: { token: string; refreshKey
           <fieldset className="full-width tools-policy"><legend>Allowed tools for this run</legend>
             <p>Project administrators enable targets in <a href="#overview">Privacy and data</a>. Remote MCP sends selected tool arguments to its installed endpoint; credentials stay on the API host. Offline mode blocks remote targets.</p>
             {catalog?.installed_mcp_targets.map(t => <div key={t.id}>
-              <label className="checkbox-label"><input type="checkbox" checked={targets.includes(t.id)} disabled={!t.available || !catalog.mcp_targets.includes(t.id)}
+              <label className="tools-check"><input type="checkbox" checked={targets.includes(t.id)} disabled={!t.available || !catalog.mcp_targets.includes(t.id)}
                 onChange={e => setTargets(current => e.target.checked ? [...current, t.id] : current.filter(v => v !== t.id))} />{t.name} · {t.allowed_tools.join(', ')}{!catalog.mcp_targets.includes(t.id) ? ' · permission required' : ''}</label>
               {t.endpoint && <p className="muted">{t.endpoint}</p>}
               {t.reason && <p>{t.reason}</p>}
               <Button type="button" disabled={busy || !catalog.mcp_targets.includes(t.id)} onClick={() => void inspect(t.id)}>Inspect {t.name} schemas</Button>
             </div>)}
-            <label className="checkbox-label"><input type="checkbox" checked={code} disabled={!catalog?.code_execution || !catalog.sandbox.available} onChange={e => setCode(e.target.checked)} />Isolated Python{!catalog?.code_execution ? ' · permission required' : ''}</label>
+            <label className="tools-check"><input type="checkbox" checked={code} disabled={!catalog?.code_execution || !catalog.sandbox.available} onChange={e => setCode(e.target.checked)} />Isolated Python{!catalog?.code_execution ? ' · permission required' : ''}</label>
             {!catalog?.sandbox.available && <p>{catalog?.sandbox.reason}</p>}
           </fieldset>
           <label className="full-width">Prompt<textarea required maxLength={2048} rows={3} value={prompt} onChange={e => setPrompt(e.target.value)} /></label>

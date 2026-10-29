@@ -32,29 +32,30 @@ export const EvaluationSuite: Story = {
     await userEvent.clear(row.getByLabelText('Expected response'));
     await userEvent.type(row.getByLabelText('Expected response'), ' exact answer ');
     await userEvent.click(canvas.getByRole('button', { name: 'Pin evaluation suite' }));
-    await expect(canvas.findByText('Evaluation suite pinned. Select a candidate to create an evaluation.')).resolves.toBeVisible();
-    await expect(submitted('/api/v1/evaluation-suites/register-cpu/')).toMatchObject({ name: 'Form-built checks', cases: [{ case_id: 'case-1', input_prompt: 'Exact prompt\n', expected_output: ' exact answer ', slice: 'general' }] });
+    await expect(canvas.findByText('Suite r1 pinned as protected evaluation with 1 source group.')).resolves.toBeVisible();
+    await expect(submitted('/api/v1/evaluation-suites/register-cpu/')).toMatchObject({ name: 'Form-built checks', protected_role: 'protected_eval', cases: [{ case_id: 'case-1', input_prompt: 'Exact prompt\n', expected_output: ' exact answer ', slice: 'general', source_group_id: 'held-out' }] });
     await expect(demoRequests.filter(request => request.status >= 400)).toHaveLength(0);
     canvasElement.dataset.demoVerified = 'passed';
   },
 };
 
 export const ContextOverrides: Story = {
-  parameters: { demoRoute: '#context-lab', demoHeading: 'Prompt compiler', demoApiPath: '/api/v1/context-recipe-versions/' },
+  parameters: { demoRoute: '#context-lab', demoHeading: 'Context Lab', demoApiPath: '/api/v1/context-recipe-versions/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await readyWorkspace(canvasElement);
     await readySelect(await canvas.findByLabelText('Recipe version'));
+    await userEvent.click(canvas.getByText('Override saved context (optional)', { selector: 'summary' }));
     await userEvent.click(canvas.getByRole('checkbox', { name: 'Override Question' }));
     const question = canvas.getByLabelText('Question override');
     await userEvent.clear(question);
     await userEvent.type(question, 'What is the source?\n');
-    await userEvent.click(canvas.getByRole('button', { name: 'Compile Context Recipe' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Compile context recipe' }));
     await expect(canvas.findByLabelText('Exact compiled prompt')).resolves.toHaveTextContent('What is the source?');
     await expect([...demoRequests].reverse().find(request => request.method === 'POST' && request.path.endsWith('/compile/'))?.body).toEqual({ variables: { question: 'What is the source?\n' } });
     await userEvent.click(canvas.getByRole('button', { name: 'Overview' }));
-    await userEvent.click(canvas.getByRole('button', { name: 'Context' }));
-    await userEvent.click(canvas.getByRole('tab', { name: 'Compile' }));
+    await userEvent.click(canvas.getByText('Advanced workspace', { selector: 'summary' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Context Lab' }));
     await expect(canvas.findByLabelText('Question override')).resolves.toHaveValue('What is the source?\n');
     await expect(demoRequests.filter(request => request.status >= 400)).toHaveLength(0);
     canvasElement.dataset.demoVerified = 'passed';
@@ -87,15 +88,18 @@ export const WorkflowInputs: Story = {
 };
 
 export const TokenizerSymbols: Story = {
-  parameters: { demoRoute: '#training', demoHeading: 'Training', demoApiPath: '/api/v1/training-runs/' },
+  parameters: { demoRoute: '#models', demoHeading: 'Models', demoApiPath: '/api/v1/models/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await readyWorkspace(canvasElement);
-    await userEvent.click(await canvas.findByRole('button', { name: 'Tokenizer' }));
-    const dialog = within(canvas.getByRole('dialog', { name: 'Register Tokenizer' }));
+    await userEvent.click(await canvas.findByText('Advanced', { selector: 'summary' }));
+    const open = canvas.getByRole('button', { name: 'Register tokenizer' });
+    await waitFor(() => expect(open).toBeEnabled());
+    await userEvent.click(open);
+    const dialog = within(canvas.getByRole('dialog', { name: 'Register tokenizer' }));
     await userEvent.click(dialog.getByRole('button', { name: 'Mistral' }));
     await expect(dialog.getAllByLabelText('Token symbol')[0]).toHaveValue('<s>');
-    await userEvent.click(dialog.getByRole('button', { name: 'Register Tokenizer' }));
+    await userEvent.click(dialog.getByRole('button', { name: 'Register tokenizer' }));
     await waitFor(() => expect(submitted('/api/v1/tokenizers/')).toMatchObject({ name: 'Mistral-Tokenizer', special_tokens: { bos_token: '<s>', eos_token: '</s>' } }));
     await expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
     await expect(demoRequests.filter(request => request.status >= 400)).toHaveLength(0);

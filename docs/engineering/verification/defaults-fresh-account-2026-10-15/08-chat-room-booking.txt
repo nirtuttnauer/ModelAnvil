@@ -1,0 +1,87 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Harbor Defaults Test workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Chat
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Chat" [level=1]
+  - paragraph: Run local models, save conversations and compare actual responses.
+  - heading "Chat with your model" [level=2]:
+    - text: Chat with your model
+  - paragraph: Send a message to try your model. Conversations are saved automatically.
+  - button "New conversation"
+  - button "Export":
+    - text: Export
+  - status: Conversation saved.
+  - generic "Saved conversations · How can I reserve a room for my Harbor Hub team meeting?"
+  - option "New conversation"
+  - option "How can I reserve a room for my Harbor Hub team meeting?" [selected]
+  - group "Chat view":
+    - button "Chat" [pressed]
+    - button "Base vs trained"
+  - text: Model
+  - combobox "Model":
+    - option "Select a model"
+    - option "SmolLM2 fine-tune · a1856b64" [selected]
+  - generic "Generation settings"
+  - option "Single model" [selected]
+  - option "CPU" [selected]
+  - option "Apple Silicon GPU (PyTorch)"
+  - option "Imported model template" [selected]
+  - option "Plain text (one user prompt)"
+  - option "ChatML override"
+  - log "Conversation":
+    - article:
+      - strong: user
+      - paragraph: How can I reserve a room for my Harbor Hub team meeting?
+  - article:
+    - heading "SmolLM2 fine-tune · a1856b64" [level=3]
+    - paragraph: Open Rooms in your Harbor Hub dashboard, choose an available room and confirm the booking.
+    - button "Copy response":
+      - text: Copy response
+    - status: completed · 12.16 seconds including model load · 43 input / 19 output tokens
+  - text: Message
+  - textbox "Message"
+  - button "Generate" [disabled]
+  - button "Stop" [disabled]:
+    - text: Stop
+  - button "Regenerate":
+    - text: Regenerate
+  - generic "Message draft"
+  - generic "App information"
+  - text: Control plane

@@ -169,10 +169,15 @@ class ReleaseVersionViewSet(TenantScopedViewSet):
 
     @action(detail=True, methods=['get'], url_path='download')
     def download(self, request, release_version_id=None):
-        from django.http import HttpResponse
-        from modelanvil.releases.review import candidate_archive
+        from django.http import HttpResponse, FileResponse
+        from modelanvil.releases.review import candidate_archive, guided_archive
         version = self.get_object()
         try:
+            if version.bundle_manifest.get('local_review', {}).get('scope') == 'guided_native_export':
+                response = FileResponse(guided_archive(version), as_attachment=True,
+                    filename=f'candidate-{version.release_version_id}.zip', content_type='application/zip')
+                response['Cache-Control'] = 'no-store'
+                return response
             raw = candidate_archive(version)
         except (ValueError, PermissionError) as exc:
             raise serializers.ValidationError({'export': str(exc)}) from exc

@@ -1,0 +1,158 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Harbor Defaults Test workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Training
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Fine-tune a pretrained model with your own examples.
+  - heading "Training studio" [level=2]
+  - paragraph: Choose your model and data, review your training plan, and follow the results in one workspace.
+  - button "Tokenizer":
+    - text: Tokenizer
+  - button "Model Version":
+    - text: Model Version
+  - button "Configure a run"
+  - tablist "Training workspace":
+    - tab "Configure" [selected]
+    - tab "Current run"
+    - tab "History"
+  - generic "Loaded training summary":
+    - generic: Training runs
+    - strong: "0"
+    - generic: All accessible recorded runs
+    - generic: Active runs
+    - strong: "0"
+    - generic: Pending or running
+    - generic: Saved checkpoints
+    - strong: "0"
+    - generic: Recorded checkpoint artifacts
+    - generic: Latest selected loss
+    - strong: —
+    - generic: Select a recorded run
+  - tabpanel "Configure":
+    - heading "Configure your training run" [level=3]
+    - paragraph: Simple and advanced settings share the same saved configuration.
+    - button "Advanced settings"
+    - region "Choose your model and data":
+      - text: YOUR FIRST FINE-TUNE
+      - heading "Choose your model and data" [level=2]
+      - paragraph: Prepare recommended resources, then review the settings for your run.
+      - list "Fine-tuning progress":
+        - text: Model
+        - text: Dataset
+        - generic: "3"
+        - text: Review
+      - heading "Model and dataset selected" [active] [level=3]
+      - term: Starting model
+      - definition: SmolLM2-1.7B Instruct
+      - term: Your dataset
+      - definition: harbor-hub-support
+      - region "Selected dataset preview":
+        - heading "Selected dataset · sample rows" [level=4]
+        - paragraph: 60 prepared rows. This published revision uses a fixed mapping; create a new revision to change it.
+        - term: mode
+        - definition: prompt_response
+        - term: prompt field
+        - definition: prompt
+        - term: response field
+        - definition: response
+        - region "Prepared sample rows":
+          - table "Sample rows from the prepared training data.":
+            - caption: Sample rows from the prepared training data.
+            - rowgroup:
+              - row "Example Input / context Target response / training text Split":
+                - columnheader "Example"
+                - columnheader "Input / context"
+                - columnheader "Target response / training text"
+                - columnheader "Split"
+            - rowgroup:
+              - 'row "1 user: What are Harbor Hub opening hours? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends. train"':
+                - rowheader "1"
+                - 'cell "user: What are Harbor Hub opening hours?"'
+                - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+                - cell "train"
+              - 'row "2 user: When is Harbor Hub open? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends. train"':
+                - rowheader "2"
+                - 'cell "user: When is Harbor Hub open?"'
+                - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+                - cell "train"
+              - 'row "3 user: What time does Harbor Hub open and close? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends. train"':
+                - rowheader "3"
+                - 'cell "user: What time does Harbor Hub open and close?"'
+                - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+                - cell "train"
+              - 'row "4 user: Can I work at Harbor Hub on weekends? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends. validation"':
+                - rowheader "4"
+                - 'cell "user: Can I work at Harbor Hub on weekends?"'
+                - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+                - cell "validation"
+              - 'row "5 user: Which days is Harbor Hub available? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends. validation"':
+                - rowheader "5"
+                - 'cell "user: Which days is Harbor Hub available?"'
+                - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+                - cell "validation"
+      - paragraph: Review the training plan and run summary below. Advanced settings edit this same configuration.
+      - button "Change model"
+      - button "Change dataset"
+    - heading "Training plan" [level=3]
+    - text: Training plan
+    - combobox "Training plan":
+      - option "Recommended · 6 passes" [selected]
+      - option "Quick setup check · 3 steps"
+      - option "Custom step count"
+    - paragraph: 6 complete passes through 48 training examples (288 updates).
+    - paragraph: 6 validation and 6 test examples remain held out.
+    - generic "Saved configuration"
+    - complementary "Run summary":
+      - generic: RUN SUMMARY
+      - heading "Your training run" [level=3]
+      - term: Model
+      - definition: SmolLM2-1.7B Instruct
+      - term: Dataset
+      - definition: harbor-hub-support
+      - term: Method
+      - definition: lora adapter
+      - term: Compute
+      - definition: Managed local fine-tuning · 1cf02496
+      - term: Training steps
+      - definition: "288"
+      - paragraph: Reserves 288 training steps. Preflight checks compatibility, hardware, storage and allowance before launch.
+      - button "Preview preflight"
+  - generic "App information"
+  - text: Control plane

@@ -1,0 +1,12 @@
+{
+  "specialist": {
+    "cancelled": true,
+    "settled_units": 0,
+    "usage_events": 0
+  },
+  "recipe": {
+    "cancelled": true,
+    "settled_units": 0,
+    "usage_events": 0
+  }
+}

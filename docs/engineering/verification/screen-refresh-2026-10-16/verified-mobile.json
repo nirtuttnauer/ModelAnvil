@@ -1,0 +1,776 @@
+[
+  {
+    "screen": "overview",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Project overview",
+        "y": 182
+      },
+      {
+        "text": "Fine-tune an LLM with your own dataset",
+        "y": 360
+      },
+      {
+        "text": "Workspace Setup & Prerequisites",
+        "y": 577
+      },
+      {
+        "text": " Create Project",
+        "y": 0
+      },
+      {
+        "text": "Experiment performance",
+        "y": 1076
+      },
+      {
+        "text": "Active work",
+        "y": 1730
+      },
+      {
+        "text": "Move your project forward",
+        "y": 2210
+      },
+      {
+        "text": "Workspace resources",
+        "y": 2843
+      },
+      {
+        "text": "Recent activity",
+        "y": 3200
+      },
+      {
+        "text": "Evaluation evidence",
+        "y": 3771
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "dataset-bank",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Dataset Bank",
+        "y": 182
+      },
+      {
+        "text": "Source catalog",
+        "y": 454
+      },
+      {
+        "text": "Source details",
+        "y": 1078
+      },
+      {
+        "text": "Lucide vector instructions",
+        "y": 1198
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "datasets",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Datasets",
+        "y": 182
+      },
+      {
+        "text": "Dataset and revision lists",
+        "y": 389
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "annotation",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Annotation",
+        "y": 182
+      },
+      {
+        "text": "Annotation review",
+        "y": 291
+      },
+      {
+        "text": "Assistant helpfulness review active",
+        "y": 660
+      },
+      {
+        "text": "Review queue",
+        "y": 1287
+      },
+      {
+        "text": "Sample assistant-0421",
+        "y": 1558
+      },
+      {
+        "text": "Review annotation",
+        "y": 2788
+      },
+      {
+        "text": "Batch progress",
+        "y": 3425
+      },
+      {
+        "text": "Review decisions",
+        "y": 3762
+      },
+      {
+        "text": "Approved snapshot growth",
+        "y": 4190
+      },
+      {
+        "text": "Approved snapshots",
+        "y": 4814
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "models",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Models",
+        "y": 182
+      },
+      {
+        "text": "Models & checkpoints",
+        "y": 447
+      },
+      {
+        "text": "Evaluation evidence",
+        "y": 1081
+      },
+      {
+        "text": "Performance by slice",
+        "y": 1263
+      },
+      {
+        "text": "Task coverage",
+        "y": 1822
+      },
+      {
+        "text": "Model registry",
+        "y": 2358
+      },
+      {
+        "text": "Anvil Assistant",
+        "y": 2517
+      },
+      {
+        "text": "Anvil Retriever",
+        "y": 2758
+      },
+      {
+        "text": "Anvil Verifier",
+        "y": 3000
+      },
+      {
+        "text": "Selected evaluation record",
+        "y": 3282
+      },
+      {
+        "text": " Register Tokenizer",
+        "y": 0
+      },
+      {
+        "text": " Register Model Version",
+        "y": 0
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "training",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Training",
+        "y": 182
+      },
+      {
+        "text": "Training studio",
+        "y": 271
+      },
+      {
+        "text": "Configure your training run",
+        "y": 764
+      },
+      {
+        "text": "Choose your model and data",
+        "y": 963
+      },
+      {
+        "text": "Choose your pretrained model",
+        "y": 1185
+      },
+      {
+        "text": "Training plan",
+        "y": 1813
+      },
+      {
+        "text": "Your training run",
+        "y": 2133
+      },
+      {
+        "text": "Current run",
+        "y": 793
+      },
+      {
+        "text": "Loss & checkpoint activity",
+        "y": 793
+      },
+      {
+        "text": "Training & validation loss",
+        "y": 793
+      },
+      {
+        "text": "Checkpoint timeline",
+        "y": 793
+      },
+      {
+        "text": "Run history",
+        "y": 793
+      },
+      {
+        "text": "Compare recorded experiments",
+        "y": 793
+      },
+      {
+        "text": " Register Tokenizer",
+        "y": 793
+      },
+      {
+        "text": " Register Model Version",
+        "y": 793
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "alignment",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Alignment",
+        "y": 182
+      },
+      {
+        "text": "Alignment lab",
+        "y": 291
+      },
+      {
+        "text": "Recorded alignment metrics",
+        "y": 914
+      },
+      {
+        "text": "Latest metric snapshot",
+        "y": 1193
+      },
+      {
+        "text": "Pinned execution inputs",
+        "y": 1604
+      },
+      {
+        "text": "Alignment history",
+        "y": 2092
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "evaluation",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Evaluation",
+        "y": 182
+      },
+      {
+        "text": "Evaluation & qualification",
+        "y": 291
+      },
+      {
+        "text": "Slice performance & evidence",
+        "y": 895
+      },
+      {
+        "text": "Performance by slice",
+        "y": 1077
+      },
+      {
+        "text": "Evaluation evidence",
+        "y": 1636
+      },
+      {
+        "text": "Evaluation history",
+        "y": 2167
+      },
+      {
+        "text": "Evaluation 30000000",
+        "y": 2631
+      },
+      {
+        "text": "Loaded case outcomes",
+        "y": 3473
+      },
+      {
+        "text": "Loaded case coverage",
+        "y": 3767
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "workflows",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Workflows",
+        "y": 182
+      },
+      {
+        "text": "Durable execution",
+        "y": 276
+      },
+      {
+        "text": "Job pool",
+        "y": 656
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "rag",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Retrieval workbench",
+        "y": 182
+      },
+      {
+        "text": "Retrieval workbench",
+        "y": 291
+      },
+      {
+        "text": "Retrieval ranking",
+        "y": 1587
+      },
+      {
+        "text": "Retrieved chunks",
+        "y": 1036
+      },
+      {
+        "text": "Dataset split integrity",
+        "y": 1166
+      },
+      {
+        "text": "Worker cancellation lifecycle",
+        "y": 1613
+      },
+      {
+        "text": "Held-out model qualification",
+        "y": 2084
+      },
+      {
+        "text": "Chunk inspector",
+        "y": 1989
+      },
+      {
+        "text": "Retrieval trace",
+        "y": 2405
+      },
+      {
+        "text": "Knowledge bases",
+        "y": 2907
+      },
+      {
+        "text": "Platform documentation",
+        "y": 3040
+      },
+      {
+        "text": "Research playbook",
+        "y": 3184
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "context-lab",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Context Lab",
+        "y": 182
+      },
+      {
+        "text": "Context recipe compiler",
+        "y": 291
+      },
+      {
+        "text": "Estimated token allocation",
+        "y": 1066
+      },
+      {
+        "text": "Compilation evidence",
+        "y": 1466
+      },
+      {
+        "text": "Exact compiled input",
+        "y": 1804
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "releases",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Releases",
+        "y": 182
+      },
+      {
+        "text": "Candidate review",
+        "y": 276
+      },
+      {
+        "text": "Create reviewed candidate",
+        "y": 604
+      },
+      {
+        "text": "Release versions",
+        "y": 845
+      },
+      {
+        "text": "Serving endpoint records",
+        "y": 1748
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "infrastructure",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Infrastructure",
+        "y": 182
+      },
+      {
+        "text": "Compute inventory",
+        "y": 276
+      },
+      {
+        "text": "Workers",
+        "y": 798
+      },
+      {
+        "text": "Pool configuration",
+        "y": 1681
+      },
+      {
+        "text": "Queued job diagnosis",
+        "y": 2070
+      },
+      {
+        "text": "Runner manifests",
+        "y": 2229
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "budgets",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Budgets",
+        "y": 182
+      },
+      {
+        "text": "Resource accounting",
+        "y": 276
+      },
+      {
+        "text": "Budget policies",
+        "y": 504
+      },
+      {
+        "text": "Usage and reservation attribution",
+        "y": 1220
+      },
+      {
+        "text": "Current shared policy allowances",
+        "y": 1389
+      },
+      {
+        "text": "Committed usage (0)",
+        "y": 1748
+      },
+      {
+        "text": "Reservations (0)",
+        "y": 1861
+      },
+      {
+        "text": "Recorded usage & costs",
+        "y": 2404
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "audit",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Audit",
+        "y": 182
+      },
+      {
+        "text": "Activity records",
+        "y": 276
+      },
+      {
+        "text": "Events",
+        "y": 570
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "run-detail",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Run Detail",
+        "y": 182
+      },
+      {
+        "text": "Anvil Assistant · SFT demo",
+        "y": 295
+      },
+      {
+        "text": "Observed state completed",
+        "y": 631
+      },
+      {
+        "text": "Desired state ",
+        "y": 906
+      },
+      {
+        "text": "Next actions and blockers",
+        "y": 1377
+      },
+      {
+        "text": "Linked records",
+        "y": 1668
+      },
+      {
+        "text": "Pinned inputs",
+        "y": 1857
+      },
+      {
+        "text": "Recorded evidence",
+        "y": 2303
+      },
+      {
+        "text": "Budget reservation",
+        "y": 2540
+      },
+      {
+        "text": "Usage events",
+        "y": 2629
+      },
+      {
+        "text": "Worker attempts (1 loaded)",
+        "y": 2775
+      },
+      {
+        "text": "Checkpoints (1)",
+        "y": 3096
+      },
+      {
+        "text": "Recorded metrics (11)",
+        "y": 3352
+      },
+      {
+        "text": "Recovery note",
+        "y": 3996
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "recipes",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Recipes",
+        "y": 182
+      },
+      {
+        "text": "Data recipes",
+        "y": 299
+      },
+      {
+        "text": "Recipe executions",
+        "y": 2840
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "specialists",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Specialists",
+        "y": 182
+      },
+      {
+        "text": "Local OCR & typed decisions",
+        "y": 299
+      },
+      {
+        "text": "Document text recognition",
+        "y": 1069
+      },
+      {
+        "text": "Laya decisions",
+        "y": 1688
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "resource-model",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Resource Detail",
+        "y": 182
+      },
+      {
+        "text": "Anvil Assistant · revision 8",
+        "y": 291
+      },
+      {
+        "text": "Lineage",
+        "y": 629
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "resource-dataset",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Resource Detail",
+        "y": 182
+      },
+      {
+        "text": "Assistant instruction corpus · revision 1",
+        "y": 291
+      },
+      {
+        "text": "Lineage",
+        "y": 657
+      },
+      {
+        "text": "Published records (1)",
+        "y": 1669
+      }
+    ],
+    "width": 375
+  },
+  {
+    "screen": "chat",
+    "passed": true,
+    "client": 360,
+    "clipped": [],
+    "document": 360,
+    "headings": [
+      {
+        "text": "Chat",
+        "y": 0
+      },
+      {
+        "text": " Chat",
+        "y": 199
+      },
+      {
+        "text": "Example answer",
+        "y": 585
+      }
+    ],
+    "width": 375
+  }
+]

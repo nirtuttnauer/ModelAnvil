@@ -104,14 +104,12 @@ export function recordsInput(raw: string, fields: FormField[], maximum: number, 
 
 export const evaluationFields: FormField[] = [
   { key: 'case_id', label: 'Case ID', required: true, maxLength: 128 },
+  { key: 'source_group_id', label: 'Source group', required: true, maxLength: 128, defaultValue: 'held-out', help: 'Cases that share a source stay in one group. This group must stay out of training.' },
   { key: 'slice', label: 'Slice', maxLength: 64, defaultValue: 'general' },
-  { key: 'source_group_id', label: 'Source group ID', required: true, maxLength: 128 },
-  { key: 'sample_id', label: 'Source sample ID (optional)', maxLength: 128 },
   { key: 'input_prompt', label: 'Input prompt', multiline: true, required: true, allowEmpty: true, maxLength: 1024, defaultValue: '' },
   { key: 'expected_output', label: 'Expected response', multiline: true, required: true, allowEmpty: true, maxLength: 4096, defaultValue: '' },
 ];
 export const preferenceFields: FormField[] = [
-  { key: 'source_group_id', label: 'Source group ID (required for GRPO)', maxLength: 128 },
   { key: 'prompt', label: 'Prompt', multiline: true, required: true, maxLength: 61 },
   { key: 'chosen', label: 'Preferred response', multiline: true, required: true, maxLength: 32 },
   { key: 'rejected', label: 'Rejected response', multiline: true, required: true, maxLength: 32 },
@@ -141,19 +139,6 @@ export function alignmentFields(algorithm: string): FormField[] {
     { key: 'rollout_batch_size', label: 'Rollout batch size', kind: 'number', min: 1, max: 4, step: 1, defaultValue: '2' },
     { key: 'max_new_tokens', label: 'Maximum new tokens', kind: 'number', min: 1, max: 16, step: 1, defaultValue: '8' },
     { key: 'value_learning_rate', label: 'Value learning rate', kind: 'number', min: 0.000001, max: 0.2, defaultValue: '0.05' },
-  );
-  if (algorithm === 'rloo') fields.push(
-    { key: 'beta', label: 'Reward KL coefficient', kind: 'number', min: 0, max: 1, defaultValue: '0.1' },
-    { key: 'max_kl_divergence', label: 'Maximum categorical KL', kind: 'number', min: 0, max: 2.5, defaultValue: '0.5' },
-    { key: 'rollout_group_size', label: 'Fresh completions per prompt', kind: 'number', min: 2, max: 4, step: 1, defaultValue: '2' },
-    { key: 'max_new_tokens', label: 'Maximum new tokens', kind: 'number', min: 1, max: 8, step: 1, defaultValue: '4' },
-  );
-  if (algorithm === 'grpo') fields.push(
-    { key: 'kl_coefficient', label: 'KL coefficient', kind: 'number', min: 0, max: 2, defaultValue: '0.1' },
-    { key: 'clip_range', label: 'Clip range', kind: 'number', min: 0.01, max: 0.5, defaultValue: '0.2' },
-    { key: 'ppo_epochs', label: 'Policy epochs per group', kind: 'number', min: 1, max: 4, step: 1, defaultValue: '2' },
-    { key: 'group_size', label: 'Completions per prompt', kind: 'number', min: 2, max: 8, step: 1, defaultValue: '4' },
-    { key: 'max_new_tokens', label: 'Maximum new tokens', kind: 'number', min: 1, max: 16, step: 1, defaultValue: '8' },
   );
   return fields;
 }

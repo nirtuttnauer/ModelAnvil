@@ -1,0 +1,247 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Harbor Defaults Test workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Training
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Fine-tune a pretrained model with your own examples.
+  - heading "Training studio" [level=2]
+  - paragraph: Choose your model and data, review your training plan, and follow the results in one workspace.
+  - button "Tokenizer":
+    - text: Tokenizer
+  - button "Model Version":
+    - text: Model Version
+  - button "Configure a run"
+  - tablist "Training workspace":
+    - tab "Configure" [selected]
+    - tab "Current run"
+    - tab "History"
+  - generic "Loaded training summary":
+    - generic: Training runs
+    - strong: "0"
+    - generic: All accessible recorded runs
+    - generic: Active runs
+    - strong: "0"
+    - generic: Pending or running
+    - generic: Saved checkpoints
+    - strong: "0"
+    - generic: Recorded checkpoint artifacts
+    - generic: Latest selected loss
+    - strong: —
+    - generic: Select a recorded run
+  - tabpanel "Configure":
+    - heading "Configure your training run" [level=3]
+    - paragraph: Simple and advanced settings share the same saved configuration.
+    - button "Advanced settings"
+    - region "Choose your model and data":
+      - text: YOUR FIRST FINE-TUNE
+      - heading "Choose your model and data" [level=2]
+      - paragraph: Prepare recommended resources, then review the settings for your run.
+      - list "Fine-tuning progress":
+        - text: Model
+        - generic: "2"
+        - text: Dataset
+        - generic: "3"
+        - text: Review
+      - heading "Add your training examples" [level=3]
+      - paragraph:
+        - text: Upload JSONL, JSON or CSV. Use chat
+        - code: messages
+        - text: ","
+        - code: prompt
+        - text: /
+        - code: response
+        - text: pairs, or a
+        - code: text
+        - text: column. Up to 1,000 examples, 16 MiB total.
+      - paragraph: Include different ways people ask each question, paired with the exact answers you want. Repeated copies add less information than varied examples.
+      - text: Dataset name
+      - textbox "Dataset name": harbor-hub-support
+      - text: Training file
+      - button "Training file"
+      - region "Dataset source preview":
+        - heading "Preview source rows" [level=4]
+        - paragraph: 60 source rows · 2 columns
+        - region "Source sample rows":
+          - table "First 5 source rows; cells longer than 300 characters are abbreviated. Full values are used for validation and training.":
+            - caption: First 5 source rows; cells longer than 300 characters are abbreviated. Full values are used for validation and training.
+            - rowgroup:
+              - row "Row prompt response":
+                - columnheader "Row"
+                - columnheader "prompt"
+                - columnheader "response"
+            - rowgroup:
+              - row "1 What are Harbor Hub opening hours? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends.":
+                - rowheader "1"
+                - cell "What are Harbor Hub opening hours?"
+                - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+              - row "2 When is Harbor Hub open? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends.":
+                - rowheader "2"
+                - cell "When is Harbor Hub open?"
+                - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+              - row "3 What time does Harbor Hub open and close? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends.":
+                - rowheader "3"
+                - cell "What time does Harbor Hub open and close?"
+                - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+              - row "4 Can I work at Harbor Hub on weekends? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends.":
+                - rowheader "4"
+                - cell "Can I work at Harbor Hub on weekends?"
+                - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+              - row "5 Which days is Harbor Hub available? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends.":
+                - rowheader "5"
+                - cell "Which days is Harbor Hub available?"
+                - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+        - heading "Map columns to training fields" [level=4]
+        - text: Training data structure
+        - combobox "Training data structure":
+          - option "Automatic (standard fields)"
+          - option "Prompt and response" [selected]
+          - option "Chat messages"
+          - option "Plain text"
+        - text: Prompt column *
+        - combobox "Prompt column *":
+          - option "Select a source column"
+          - option "prompt" [selected]
+          - option "response"
+        - text: Response column *
+        - combobox "Response column *":
+          - option "Select a source column"
+          - option "prompt"
+          - option "response" [selected]
+        - text: Additional context column (optional)
+        - combobox "Additional context column (optional)":
+          - option "Do not include" [selected]
+          - option "prompt"
+          - option "response"
+        - text: System instructions column (optional)
+        - combobox "System instructions column (optional)":
+          - option "Do not include" [selected]
+          - option "prompt"
+          - option "response"
+        - text: Source group column (optional)
+        - combobox "Source group column (optional)":
+          - option "Group repeated prompts automatically" [selected]
+          - option "prompt"
+          - option "response"
+        - paragraph: Records with chat roles train on assistant responses and mask user and system tokens. Plain-text records train on all text tokens. Review the validated training examples below before publication.
+      - region "Dataset validation":
+        - heading "Dataset validation" [level=4]
+        - status: All 60 rows checked. No missing values, duplicate content or formatting issues found.
+        - term: Missing values
+        - definition: "0"
+        - term: Duplicate rows
+        - definition: "0"
+        - term: Formatting errors
+        - definition: "0"
+        - paragraph: Row numbers count data records, excluding the CSV header. Every row is checked; issue examples show up to five rows. Model token limits are checked when you preview the dataset.
+      - generic "See the expected file format"
+      - button "Back"
+      - button "Preview dataset"
+      - heading "60 examples ready" [level=4]
+      - paragraph: 0 duplicate examples removed. Training learns assistant responses.
+      - term: Training
+      - definition: "48"
+      - term: Validation
+      - definition: "6"
+      - term: Test
+      - definition: "6"
+      - paragraph: Repeated prompts and related examples stay in the same split.
+      - region "Prepared sample rows":
+        - table "First validated examples, with the exact input and target text used for training.":
+          - caption: First validated examples, with the exact input and target text used for training.
+          - rowgroup:
+            - row "Example Input / context Target response / training text Split":
+              - columnheader "Example"
+              - columnheader "Input / context"
+              - columnheader "Target response / training text"
+              - columnheader "Split"
+          - rowgroup:
+            - 'row "1 user: What are Harbor Hub opening hours? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends. train"':
+              - rowheader "1"
+              - 'cell "user: What are Harbor Hub opening hours?"'
+              - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+              - cell "train"
+            - 'row "2 user: When is Harbor Hub open? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends. train"':
+              - rowheader "2"
+              - 'cell "user: When is Harbor Hub open?"'
+              - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+              - cell "train"
+            - 'row "3 user: What time does Harbor Hub open and close? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends. train"':
+              - rowheader "3"
+              - 'cell "user: What time does Harbor Hub open and close?"'
+              - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+              - cell "train"
+            - 'row "4 user: Can I work at Harbor Hub on weekends? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends. validation"':
+              - rowheader "4"
+              - 'cell "user: Can I work at Harbor Hub on weekends?"'
+              - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+              - cell "validation"
+            - 'row "5 user: Which days is Harbor Hub available? Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends. validation"':
+              - rowheader "5"
+              - 'cell "user: Which days is Harbor Hub available?"'
+              - cell "Harbor Hub is open Monday to Friday from 8 am to 6 pm and closed on weekends."
+              - cell "validation"
+      - button "Use this dataset":
+        - text: Use this dataset
+    - heading "Training plan" [level=3]
+    - text: Training plan
+    - combobox "Training plan":
+      - option "Recommended · prepare a dataset first" [disabled] [selected]
+      - option "Quick setup check · 3 steps"
+      - option "Custom step count"
+    - paragraph: Add your dataset to calculate the recommended training plan automatically.
+    - generic "Saved configuration"
+    - complementary "Run summary":
+      - generic: RUN SUMMARY
+      - heading "Your training run" [level=3]
+      - term: Model
+      - definition: SmolLM2-1.7B Instruct
+      - term: Dataset
+      - definition: Choose a dataset
+      - term: Method
+      - definition: lora adapter
+      - term: Compute
+      - definition: Managed local fine-tuning · 1cf02496
+      - term: Training steps
+      - definition: Prepare a dataset
+      - paragraph: Reserves the selected training steps. Preflight checks compatibility, hardware, storage and allowance before launch.
+      - button "Preview preflight" [disabled]
+      - status: Choose compatible model, tokenizer, dataset, compute and training settings to review this run.
+  - generic "App information"
+  - text: Control plane

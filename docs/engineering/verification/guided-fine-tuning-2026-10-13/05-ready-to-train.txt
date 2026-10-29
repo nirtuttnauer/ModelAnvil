@@ -1,0 +1,110 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+    - generic: MODEL WORKSPACE
+  - generic "Workspace is scoped to the connected API key and active project":
+    - generic: G
+    - strong: Guided flow QA workspace
+    - generic: My first fine-tune
+  - navigation "Main navigation":
+    - paragraph: Workspace
+    - button "Overview":
+      - generic: Overview
+    - paragraph: Data
+    - button "Dataset Bank":
+      - generic: Dataset Bank
+    - button "Datasets":
+      - generic: Datasets
+    - button "Annotation":
+      - generic: Annotation
+    - button "Recipes":
+      - generic: Recipes
+    - paragraph: Develop
+    - button "Models":
+      - generic: Models
+    - button "Chat":
+      - generic: Chat
+    - button "Specialists":
+      - generic: Specialists
+    - button "Training":
+      - generic: Training
+    - button "Alignment":
+      - generic: Alignment
+    - button "Evaluation":
+      - generic: Evaluation
+    - paragraph: Context & release
+    - button "RAG":
+      - generic: RAG
+    - button "Context Lab":
+      - generic: Context Lab
+    - button "Releases":
+      - generic: Releases
+    - paragraph: Operations
+    - button "Workflows":
+      - generic: Workflows
+    - button "Infrastructure":
+      - generic: Infrastructure
+    - button "Budgets":
+      - generic: Budgets
+    - button "Audit":
+      - generic: Audit
+  - text: API connected
+  - generic: Control plane
+- main:
+  - combobox "Organization":
+    - option "Guided flow QA workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Training
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Training" [level=1]
+  - paragraph: Configure reproducible runs and follow their actual progress.
+  - region "Train a model on your data":
+    - text: YOUR FIRST FINE-TUNE
+    - heading "Train a model on your data" [level=2]
+    - paragraph: Everything you need, in four steps. Training runs on this computer.
+    - list "Fine-tuning progress":
+      - text: Model
+      - text: Dataset
+      - generic: "3"
+      - text: Review
+      - generic: "4"
+      - text: Train
+    - heading "Review your fine-tune" [active] [level=3]
+    - term: Pretrained model
+    - definition: SmolLM2-135M
+    - term: Your dataset
+    - definition: support-messages · 8 examples
+    - term: Training computer
+    - definition: This Mac · Apple GPU
+    - term: Training
+    - definition: "6"
+    - term: Validation
+    - definition: "1"
+    - term: Test
+    - definition: "1"
+    - text: Training steps
+    - spinbutton "Training steps Start with 3 steps to check the pipeline. Each step updates the model using one training example; up to 50 steps per run.": "3"
+    - generic: Start with 3 steps to check the pipeline. Each step updates the model using one training example; up to 50 steps per run.
+    - paragraph: This uses your computer’s GPU and disk space. No external compute service is charged.
+    - status: Ready to train. The model, data, compute and allowance have passed their checks.
+    - button "Change dataset"
+    - button "Refresh checks"
+    - button "Start fine-tuning":
+      - text: Start fine-tuning
+  - button "Advanced training workspace"
+  - text: ModelAnvil · c39a2e95 · b22e8eb9
+  - alert: "· API build changed; rebuild/reload this client before acceptance testing · Imports: JSONL, CSV, DOCX, JSON, PDF, TRAINING"
+  - text: Control plane

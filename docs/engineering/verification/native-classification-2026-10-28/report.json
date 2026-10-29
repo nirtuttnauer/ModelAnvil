@@ -1,0 +1,553 @@
+{
+  "scope": "Synthetic classification correctness pilot on one Apple GPU. This is not a model-quality or production qualification.",
+  "training_run": "01a1839e-af80-75aa-9900-27aa95a949a9",
+  "steps": 3,
+  "candidate": "01a1839f-2e2f-75b3-be9d-3ba804a375f8",
+  "selected_checkpoint_step": 3,
+  "evaluation": {
+    "improvement_decision": null,
+    "candidate_name": "smollm2-gpu-sft-01a1839e-af80-75aa-9900-27aa95a949a9",
+    "baseline_name": "Managed SmolLM2-1.7B-Instruct \u00b7 01a1839e-747d-7d47-afd6-0c8a875cde7f",
+    "decision_report": {
+      "available": true,
+      "reason": "",
+      "candidate": {
+        "accuracy": 0.5555555555555556,
+        "macro_f1": 0.38888888888888884,
+        "confusion_matrix": [
+          [
+            4,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            1,
+            0
+          ]
+        ]
+      },
+      "baseline": {
+        "accuracy": 0.0,
+        "macro_f1": 0.0,
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            0,
+            4
+          ],
+          [
+            0,
+            0,
+            0,
+            2
+          ],
+          [
+            0,
+            0,
+            0,
+            3
+          ]
+        ]
+      },
+      "case_changes": {
+        "improved": 5,
+        "regressed": 0,
+        "unchanged": 4,
+        "changed_cases": [
+          {
+            "case_id": "05fc7cea-d3ce-554c-a0ab-c8e03c05135e",
+            "expected_output": "access",
+            "candidate_output": "access",
+            "baseline_output": "The request is classified as: billing",
+            "change": "improved"
+          },
+          {
+            "case_id": "2728500b-33ef-5e0c-8361-b9f98815ac95",
+            "expected_output": "technical",
+            "candidate_output": "access",
+            "baseline_output": "The request is classified as: billing",
+            "change": "unchanged"
+          },
+          {
+            "case_id": "33019cd0-1046-5b58-a150-3d50e75a1ba6",
+            "expected_output": "technical",
+            "candidate_output": "access",
+            "baseline_output": "The request is classified as: billing",
+            "change": "unchanged"
+          },
+          {
+            "case_id": "47bab26f-7043-5e8e-b642-ad8809e67ef1",
+            "expected_output": "access",
+            "candidate_output": "access",
+            "baseline_output": "The request is classified as: billing",
+            "change": "improved"
+          },
+          {
+            "case_id": "566ca7f9-966a-5f3f-bf7d-f037071db7f3",
+            "expected_output": "billing",
+            "candidate_output": "access",
+            "baseline_output": "The request is classified as: billing",
+            "change": "unchanged"
+          },
+          {
+            "case_id": "69b64a8d-9fcb-5c51-87c6-d32244ba7da6",
+            "expected_output": "technical",
+            "candidate_output": "technical",
+            "baseline_output": "The request is labeled as technical.",
+            "change": "improved"
+          },
+          {
+            "case_id": "806798de-8f13-58ae-980b-cff76da80cd6",
+            "expected_output": "access",
+            "candidate_output": "access",
+            "baseline_output": "The request is classified as: billing",
+            "change": "improved"
+          },
+          {
+            "case_id": "cc151794-42f4-5673-b0e8-5d6eb3e19517",
+            "expected_output": "billing",
+            "candidate_output": "access",
+            "baseline_output": "The request is labeled as 'access'.",
+            "change": "unchanged"
+          },
+          {
+            "case_id": "d574b1ea-cd49-5ab7-9449-be516917aa5d",
+            "expected_output": "access",
+            "candidate_output": "access",
+            "baseline_output": "The request is classified as: billing",
+            "change": "improved"
+          }
+        ]
+      },
+      "complete_cases": 9,
+      "total_cases": 9,
+      "labels": [
+        "access",
+        "billing",
+        "technical"
+      ],
+      "accuracy_delta": 0.5555555555555556,
+      "accuracy_delta_interval": [
+        0.2222222222222222,
+        0.8888888888888888
+      ],
+      "uncertainty_method": "Paired percentile bootstrap, 2000 resamples, seed 42; unavailable with fewer than two cases. Small suites cannot establish broad quality.",
+      "training_run_id": "01a1839e-af80-75aa-9900-27aa95a949a9",
+      "export_available": true,
+      "resource_evidence": {
+        "runtime": "modelanvil.guided-native-evaluation.v1",
+        "build_digest": "a634a47c0209d8a413ae3377cd85f95a8a40b8f5e9a270646813f876abc07d0d",
+        "device": "mps:0",
+        "prompt_format": "model",
+        "decoding": "greedy",
+        "template_sha256": "872be49dbb638044ad01b60388f48d469ff2980e5f0dccdc22ec907db54d0788",
+        "precision": "fp32",
+        "adapter": "rank16",
+        "seed": 42
+      },
+      "production_qualified": false
+    },
+    "execution_evidence": {
+      "level": "integrated_execution",
+      "source": "Actual candidate/baseline inference with pinned bytes, template, suite and fenced case commits; production qualification unavailable.",
+      "production_qualified": false,
+      "hardware_qualified": false,
+      "documentation": "/docs/engineering/supported-capabilities.md"
+    },
+    "case_coverage": {
+      "completed": 9,
+      "missing": 0,
+      "failed": 4,
+      "total": 9
+    },
+    "comparison": {
+      "compatible": true,
+      "reason": "Same frozen suite, scorer version, tokenizer, template and decoding."
+    },
+    "run_id": "01a1839f-354e-7d16-981d-d1c46c7530c1",
+    "job": "01a1839f-9a22-70aa-a137-de1babb83c9d",
+    "project": "01a1839e-747d-7d47-afd6-0c8a875cde7f",
+    "suite_version": 1,
+    "candidate_model_version": 2,
+    "baseline_model_version": 1,
+    "status": "completed",
+    "metrics": [
+      {
+        "key": "accuracy",
+        "slice_name": "all",
+        "value": 0.5556,
+        "sample_count": 9,
+        "uncertainty_interval": {
+          "lower": 0.2667,
+          "upper": 0.8112,
+          "ci_low": 0.2667,
+          "ci_high": 0.8112,
+          "confidence": 0.95,
+          "method": "wilson"
+        }
+      },
+      {
+        "key": "accuracy",
+        "slice_name": "technical",
+        "value": 0.3333,
+        "sample_count": 3,
+        "uncertainty_interval": {
+          "lower": 0.0615,
+          "upper": 0.7923,
+          "ci_low": 0.0615,
+          "ci_high": 0.7923,
+          "confidence": 0.95,
+          "method": "wilson"
+        }
+      },
+      {
+        "key": "accuracy",
+        "slice_name": "billing",
+        "value": 0.0,
+        "sample_count": 2,
+        "uncertainty_interval": {
+          "lower": 0,
+          "upper": 0.6576,
+          "ci_low": 0,
+          "ci_high": 0.6576,
+          "confidence": 0.95,
+          "method": "wilson"
+        }
+      },
+      {
+        "key": "accuracy",
+        "slice_name": "access",
+        "value": 1.0,
+        "sample_count": 4,
+        "uncertainty_interval": {
+          "lower": 0.5101,
+          "upper": 1,
+          "ci_low": 0.5101,
+          "ci_high": 1,
+          "confidence": 0.95,
+          "method": "wilson"
+        }
+      }
+    ],
+    "baseline_metrics": [
+      {
+        "key": "accuracy",
+        "slice_name": "all",
+        "value": 0.0,
+        "sample_count": 9,
+        "uncertainty_interval": {
+          "lower": 0,
+          "upper": 0.2991,
+          "ci_low": 0,
+          "ci_high": 0.2991,
+          "confidence": 0.95,
+          "method": "wilson"
+        }
+      },
+      {
+        "key": "accuracy",
+        "slice_name": "technical",
+        "value": 0.0,
+        "sample_count": 3,
+        "uncertainty_interval": {
+          "lower": 0.0,
+          "upper": 0.5615,
+          "ci_low": 0.0,
+          "ci_high": 0.5615,
+          "confidence": 0.95,
+          "method": "wilson"
+        }
+      },
+      {
+        "key": "accuracy",
+        "slice_name": "billing",
+        "value": 0.0,
+        "sample_count": 2,
+        "uncertainty_interval": {
+          "lower": 0,
+          "upper": 0.6576,
+          "ci_low": 0,
+          "ci_high": 0.6576,
+          "confidence": 0.95,
+          "method": "wilson"
+        }
+      },
+      {
+        "key": "accuracy",
+        "slice_name": "access",
+        "value": 0.0,
+        "sample_count": 4,
+        "uncertainty_interval": {
+          "lower": 0,
+          "upper": 0.4899,
+          "ci_low": 0,
+          "ci_high": 0.4899,
+          "confidence": 0.95,
+          "method": "wilson"
+        }
+      }
+    ],
+    "protocol_ref": {
+      "profile": "guided-native",
+      "training_run_id": "01a1839e-af80-75aa-9900-27aa95a949a9",
+      "execution_request": {
+        "pool": 2,
+        "budget_policy_id": "01a1839f-600f-7b06-bc97-172a6a6616a1",
+        "max_tokens": 32
+      },
+      "pins": {
+        "runtime": "modelanvil.guided-native-evaluation.v1",
+        "build_digest": "a634a47c0209d8a413ae3377cd85f95a8a40b8f5e9a270646813f876abc07d0d",
+        "candidate": {
+          "version": "01a1839f-2e2f-75b3-be9d-3ba804a375f8",
+          "artifact_id": "01a1839f-2e23-7af4-9e3a-7248d529d22f",
+          "tokenizer": "01a1839e-9dc4-71ac-a63d-3ce66e9092d9",
+          "files": {
+            "config.json": {
+              "sha256": "994f50b16abb4ae00880baefe03c10260b5bd608d2bf586f7056ca05a534feea",
+              "byte_size": 908
+            },
+            "model.safetensors": {
+              "sha256": "f55217be716b6a997b97b9d8d7eb6fad02e00858f5010ec24f64603c3a98a0e8",
+              "byte_size": 3422777952
+            },
+            "special_tokens_map.json": {
+              "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+              "byte_size": 655
+            },
+            "tokenizer.json": {
+              "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+              "byte_size": 2104556
+            },
+            "tokenizer_config.json": {
+              "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+              "byte_size": 3764
+            },
+            "adapter_model.safetensors": {
+              "sha256": "96546fe65d41985d119b24c33c07a316a7d82880a81c78c0de267732bad80197",
+              "byte_size": 72396376
+            },
+            "adapter_config.json": {
+              "sha256": "a4add1f42baedbff6f5e1839d91c3ad74dd24dbda391dd3376009630ab3ea540",
+              "byte_size": 984
+            }
+          }
+        },
+        "baseline": {
+          "version": "01a1839e-9dc7-7d6a-a9e8-36c5f9b03e6f",
+          "artifact_id": "01a1839e-9858-73a4-a43d-46a699936737",
+          "tokenizer": "01a1839e-9dc4-71ac-a63d-3ce66e9092d9",
+          "files": {
+            "config.json": {
+              "sha256": "994f50b16abb4ae00880baefe03c10260b5bd608d2bf586f7056ca05a534feea",
+              "byte_size": 908
+            },
+            "model.safetensors": {
+              "sha256": "f55217be716b6a997b97b9d8d7eb6fad02e00858f5010ec24f64603c3a98a0e8",
+              "byte_size": 3422777952
+            },
+            "special_tokens_map.json": {
+              "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+              "byte_size": 655
+            },
+            "tokenizer.json": {
+              "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+              "byte_size": 2104556
+            },
+            "tokenizer_config.json": {
+              "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+              "byte_size": 3764
+            }
+          }
+        },
+        "suite_digest": "4185c442749b518865d5d442bcdd5988da4bfcceaaa24a6662e65ab632a55734",
+        "scorer_version": "modelanvil.deterministic-text-scorer.v1",
+        "max_tokens": 32,
+        "decoding": "greedy",
+        "prompt_format": "model",
+        "device": "mps:0",
+        "template_sha256": "872be49dbb638044ad01b60388f48d469ff2980e5f0dccdc22ec907db54d0788",
+        "contract_digest": "acbd7d66efd0fe1f20d93436e40dfa20f96a3416c3000826317e441ce51e25a9",
+        "environment": {
+          "runtime": "modelanvil.guided-native-evaluation.v1",
+          "build_digest": "a634a47c0209d8a413ae3377cd85f95a8a40b8f5e9a270646813f876abc07d0d",
+          "device": "mps:0",
+          "prompt_format": "model",
+          "decoding": "greedy",
+          "template_sha256": "872be49dbb638044ad01b60388f48d469ff2980e5f0dccdc22ec907db54d0788",
+          "precision": "fp32",
+          "adapter": "rank16",
+          "seed": 42
+        },
+        "training_overlap": "known_lineage_checked"
+      },
+      "total_cases": 9,
+      "completed_cases": 9,
+      "baseline_results": [
+        {
+          "case_id": "69b64a8d-9fcb-5c51-87c6-d32244ba7da6",
+          "candidate_output": "The request is labeled as technical.",
+          "score": 0.0,
+          "passed": false,
+          "slice_name": "technical"
+        },
+        {
+          "case_id": "566ca7f9-966a-5f3f-bf7d-f037071db7f3",
+          "candidate_output": "The request is classified as: billing",
+          "score": 0.0,
+          "passed": false,
+          "slice_name": "billing"
+        },
+        {
+          "case_id": "33019cd0-1046-5b58-a150-3d50e75a1ba6",
+          "candidate_output": "The request is classified as: billing",
+          "score": 0.0,
+          "passed": false,
+          "slice_name": "technical"
+        },
+        {
+          "case_id": "05fc7cea-d3ce-554c-a0ab-c8e03c05135e",
+          "candidate_output": "The request is classified as: billing",
+          "score": 0.0,
+          "passed": false,
+          "slice_name": "access"
+        },
+        {
+          "case_id": "47bab26f-7043-5e8e-b642-ad8809e67ef1",
+          "candidate_output": "The request is classified as: billing",
+          "score": 0.0,
+          "passed": false,
+          "slice_name": "access"
+        },
+        {
+          "case_id": "d574b1ea-cd49-5ab7-9449-be516917aa5d",
+          "candidate_output": "The request is classified as: billing",
+          "score": 0.0,
+          "passed": false,
+          "slice_name": "access"
+        },
+        {
+          "case_id": "2728500b-33ef-5e0c-8361-b9f98815ac95",
+          "candidate_output": "The request is classified as: billing",
+          "score": 0.0,
+          "passed": false,
+          "slice_name": "technical"
+        },
+        {
+          "case_id": "cc151794-42f4-5673-b0e8-5d6eb3e19517",
+          "candidate_output": "The request is labeled as 'access'.",
+          "score": 0.0,
+          "passed": false,
+          "slice_name": "billing"
+        },
+        {
+          "case_id": "806798de-8f13-58ae-980b-cff76da80cd6",
+          "candidate_output": "The request is classified as: billing",
+          "score": 0.0,
+          "passed": false,
+          "slice_name": "access"
+        }
+      ],
+      "execution_evidence": {
+        "level": "integrated_execution",
+        "source": "Actual candidate/baseline inference with pinned bytes, template, suite and fenced case commits; production qualification unavailable."
+      },
+      "baseline_metrics": [
+        {
+          "key": "accuracy",
+          "slice_name": "all",
+          "value": 0.0,
+          "sample_count": 9,
+          "uncertainty_interval": {
+            "lower": 0,
+            "upper": 0.2991,
+            "ci_low": 0,
+            "ci_high": 0.2991,
+            "confidence": 0.95,
+            "method": "wilson"
+          }
+        },
+        {
+          "key": "accuracy",
+          "slice_name": "technical",
+          "value": 0.0,
+          "sample_count": 3,
+          "uncertainty_interval": {
+            "lower": 0.0,
+            "upper": 0.5615,
+            "ci_low": 0.0,
+            "ci_high": 0.5615,
+            "confidence": 0.95,
+            "method": "wilson"
+          }
+        },
+        {
+          "key": "accuracy",
+          "slice_name": "billing",
+          "value": 0.0,
+          "sample_count": 2,
+          "uncertainty_interval": {
+            "lower": 0,
+            "upper": 0.6576,
+            "ci_low": 0,
+            "ci_high": 0.6576,
+            "confidence": 0.95,
+            "method": "wilson"
+          }
+        },
+        {
+          "key": "accuracy",
+          "slice_name": "access",
+          "value": 0.0,
+          "sample_count": 4,
+          "uncertainty_interval": {
+            "lower": 0,
+            "upper": 0.4899,
+            "ci_low": 0,
+            "ci_high": 0.4899,
+            "confidence": 0.95,
+            "method": "wilson"
+          }
+        }
+      ]
+    },
+    "created_at": "2026-10-28T17:46:51.598841Z",
+    "started_at": "2026-10-28T17:47:35.614170Z",
+    "completed_at": "2026-10-28T17:48:05.353588Z"
+  },
+  "decision": {
+    "decision_id": "01a183a0-8847-7bd8-8c2c-887298ab982f",
+    "outcome": "reject",
+    "accepted_improvement": false,
+    "production_qualified": false
+  },
+  "warnings": [],
+  "labels": [
+    "access",
+    "billing",
+    "technical"
+  ],
+  "export_sha256": "d4c551054b0a6ba7560640109034dd8983f57d1ec8cc1030fb2d8ace3e4a4000",
+  "export_bytes": 3497310098,
+  "independent_loading_matches": true,
+  "independent": {
+    "candidate": "01a1839f-2e2f-75b3-be9d-3ba804a375f8",
+    "generated_token_ids": [
+      34138
+    ],
+    "text": "technical",
+    "device": "mps:0",
+    "consumer_imported_modelanvil_or_django": false
+  },
+  "production_qualified": false
+}

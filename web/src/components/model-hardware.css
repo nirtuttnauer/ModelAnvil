@@ -1,7 +1,7 @@
 .model-hardware { min-width: 0; border: 1px solid var(--border); border-radius: 9px; padding: var(--space-18); margin: var(--space-16) 0; background: var(--surface-subtle); color: var(--text); }
 .model-hardware > header { display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: var(--space-12); }
 .model-hardware > header > div, .model-hardware-status { display: flex; align-items: center; gap: var(--space-8); }
-.model-hardware h4 { margin: 0; font-size: 15px; }
+.model-hardware :is(h3,h4) { margin: 0; font-size: 15px; }
 .model-hardware-status { font-size: var(--type-12); color: var(--text-secondary); }
 .model-hardware-status svg { flex-shrink: 0; }
 .model-hardware-insufficient .model-hardware-status, .model-hardware-unsupported .model-hardware-status { color: var(--error); }

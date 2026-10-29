@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiRequest, errorMessage } from '../api/client';
 
-export function useResourceHandoff(token: string, receive: (kind: 'model-version' | 'dataset-revision', value: { id: number; tokenizer?: number; model_version_id?: string; revision_id?: string; chat_template?: string; dataset_name?: string; row_count?: number | null; metadata?: { split_counts?: Record<string, number>; source_group_count?: number }; capabilities?: { train?: { eligible: boolean }; chat?: { eligible: boolean }; evaluate?: { eligible: boolean } } }) => void) {
+export function useResourceHandoff(token: string, receive: (kind: 'model-version' | 'dataset-revision', value: { id: number; tokenizer?: number; model_version_id?: string; revision_id?: string; chat_template?: string; capabilities?: { train?: { eligible: boolean }; chat?: { eligible: boolean }; evaluate?: { eligible: boolean } } }) => void) {
   const callback = useRef(receive); callback.current = receive;
   const [error, setError] = useState('');
   useEffect(() => {

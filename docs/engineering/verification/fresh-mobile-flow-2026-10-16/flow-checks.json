@@ -1,0 +1,86 @@
+[
+  {
+    "step": "fresh signup",
+    "passed": true
+  },
+  {
+    "step": "automatic question/answer mapping",
+    "passed": true
+  },
+  {
+    "step": "60-row validation and dataset publication",
+    "passed": true
+  },
+  {
+    "step": "recommended 288-update training launch",
+    "passed": true
+  },
+  {
+    "step": "preserve custom dataset name regression",
+    "passed": true
+  },
+  {
+    "step": "custom-columns",
+    "passed": true
+  },
+  {
+    "step": "publish-reviewed-mapping",
+    "passed": true
+  },
+  {
+    "step": "active jobs interaction regression",
+    "passed": true
+  },
+  {
+    "step": "refresh preserves running job",
+    "passed": true
+  },
+  {
+    "step": "training page has no browser errors",
+    "passed": true
+  },
+  {
+    "step": "comparison regression: handoff",
+    "passed": true
+  },
+  {
+    "step": "comparison regression: from-training",
+    "passed": true
+  },
+  {
+    "step": "comparison regression: missing-base",
+    "passed": true
+  },
+  {
+    "step": "comparison regression: generate-pair",
+    "passed": true
+  },
+  {
+    "step": "real 288-update training completed on local MPS",
+    "passed": true
+  },
+  {
+    "step": "renewal answer matches custom policy",
+    "passed": true
+  },
+  {
+    "step": "bicycle answer matches custom policy",
+    "passed": true
+  },
+  {
+    "step": "saved comparison restored after reload and ready to send",
+    "passed": true
+  },
+  {
+    "step": "repeated handoff regression",
+    "passed": true
+  },
+  {
+    "step": "loading handoff regression",
+    "passed": true
+  },
+  {
+    "step": "completed job removed from active jobs",
+    "passed": true
+  }
+]

@@ -84,6 +84,15 @@ class TrainingCheckpointSerializer(serializers.ModelSerializer):
 
 
 class TrainingRunSerializer(serializers.ModelSerializer):
+    guided_evaluation = serializers.SerializerMethodField()
+
+    def get_guided_evaluation(self, obj):
+        from modelanvil.runners.training.hf_runtime import LARGE_GUIDED_SOURCE
+        eligible = (obj.status == 'completed' and bool(obj.output_model_version_id)
+            and obj.recipe_type == 'lora_adapter' and obj.hardware_config.get('pins', {}).get('source') == LARGE_GUIDED_SOURCE)
+        return {'eligible': eligible, 'reason': 'Evaluate the selected Apple adapter checkpoint against its exact base.' if eligible
+            else 'Guided classification evaluation requires a completed SmolLM2-1.7B Apple adapter run. Other models use advanced evaluation.'}
+
     recovery_parent = serializers.SlugRelatedField(slug_field='run_id', read_only=True)
     recovery_checkpoint = serializers.SlugRelatedField(slug_field='checkpoint_id', read_only=True)
     job = serializers.UUIDField(source='job.job_id', read_only=True, allow_null=True)
@@ -173,7 +182,7 @@ class TrainingRunSerializer(serializers.ModelSerializer):
     class Meta:
         model = TrainingRun
         fields = (
-            "execution_evidence", "execution_mode", "runner_manifest", "runtime", "preflight_token", "setup_check",
+            "execution_evidence", "execution_mode", "runner_manifest", "runtime", "preflight_token", "setup_check", "guided_evaluation",
             "run_id", "project", "recipe_type", "base_model_version", "tokenizer_version",
             "recovery_parent", "recovery_checkpoint",
             "dataset_revision", "dataset_manifest_digest", "pool", "job",
@@ -199,6 +208,28 @@ class TrainingPreflightSerializer(TrainingRunSerializer):
 
 
 class TrainingRunViewSet(TenantScopedViewSet):
+    @action(detail=True, methods=['post'], url_path='prepare-evaluation')
+    def prepare_evaluation(self, request, **kwargs):
+        from modelanvil.runners.guided_evaluation import prepare_evaluation
+        from modelanvil.api.views.models_evals import EvaluationRunSerializer, EvaluationSuiteVersionSerializer
+        from modelanvil.runners.models import EvaluationSuiteVersion
+        from modelanvil.identity.models import Role, role_at_least, get_accessible_queryset
+        if set(request.data) - {'suite_version'}:
+            raise serializers.ValidationError('Submit only an optional protected suite version.')
+        suite = None
+        if request.data.get('suite_version'):
+            identifier = serializers.UUIDField().run_validation(request.data['suite_version'])
+            suite = get_accessible_queryset(EvaluationSuiteVersion).filter(suite_version_id=identifier).first()
+            if suite is None:
+                raise serializers.ValidationError('Select an accessible protected evaluation suite.')
+        try:
+            run, suite, launch, labels, warnings = prepare_evaluation(self.get_object(), suite=suite,
+                allow_new_allowance=role_at_least(getattr(request, 'modelanvil_role', None), Role.ADMIN))
+        except ValueError as exc:
+            raise serializers.ValidationError(str(exc)) from None
+        return Response({'evaluation': EvaluationRunSerializer(run).data, 'suite': EvaluationSuiteVersionSerializer(suite).data,
+            'launch': launch, 'labels': labels, 'cases': suite.cases, 'warnings': warnings})
+
     queryset = TrainingRun.objects.all().prefetch_related("checkpoints")
     serializer_class = TrainingRunSerializer
     lookup_field = "run_id"
@@ -376,6 +407,18 @@ class TrainingRunViewSet(TenantScopedViewSet):
         selected_format = request.query_params.get('export_format', 'native')
         if selected_format not in {option['format'] for option in training_export_options(run)}:
             raise serializers.ValidationError('Choose a supported export format from a completed training run.')
+        review = None
+        if request.query_params.get('evaluation_run'):
+            from modelanvil.runners.models import EvaluationRun
+            from modelanvil.releases.review import guided_review
+            identifier = serializers.UUIDField().run_validation(request.query_params['evaluation_run'])
+            evaluation = get_accessible_queryset(EvaluationRun).filter(run_id=identifier).first()
+            if evaluation is None or selected_format not in ('native', 'adapter'):
+                raise serializers.ValidationError('Choose an accessible reviewed comparison and a native or adapter ZIP.')
+            try:
+                review = guided_review(run, evaluation)
+            except ValueError as exc:
+                raise serializers.ValidationError(str(exc)) from None
         if selected_format in {'merged', 'gguf-q8'}:
             from modelanvil.runners.training.cpu_exports import open_export
             try:
@@ -424,6 +467,11 @@ class TrainingRunViewSet(TenantScopedViewSet):
                     license_path = Path(module.__file__).parent / 'assets' / getattr(module, 'LICENSE_ASSET', 'Apache-2.0.txt')
                     archive.writestr(zipfile.ZipInfo('LICENSE.txt', (1980,1,1,0,0,0)), license_path.read_bytes())
                     archive.writestr(zipfile.ZipInfo('modelanvil-provenance.json', (1980,1,1,0,0,0)), json.dumps(provenance, sort_keys=True, allow_nan=False))
+                    if review:
+                        from modelanvil.releases.review import write_guided_evidence
+                        from modelanvil.core.activation import evaluation_resources
+                        write_guided_evidence(archive, provenance.get('export_files', files), review,
+                            adapter_only=selected_format == 'adapter', resource_usage=evaluation_resources(evaluation))
             output.seek(0)
             return FileResponse(output, as_attachment=True, filename=f'modelanvil-{run.recipe_type}-{run.run_id}.zip', content_type='application/zip')
         except (ValueError, OSError) as exc:

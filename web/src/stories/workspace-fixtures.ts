@@ -5,6 +5,13 @@ const time = '2026-10-11T09:15:00Z';
 const checkpoint = { checkpoint_id: '70000000-0000-4000-8000-000000000003', step: 50, state_digest: '3'.repeat(64), is_valid: true, contract_digest: 'd'.repeat(64), weights_sha256: 'f'.repeat(64), created_at: time };
 const candidate = { available: true, reason: 'Valid demo checkpoint.', checkpoint_id: checkpoint.checkpoint_id, step: 50, state_digest: checkpoint.state_digest, contract_digest: checkpoint.contract_digest };
 export const workspaceResponses: Record<string, unknown> = {
+  '/api/v1/deployment-capabilities/': { mode: 'local', role: 'engineer', operations: {
+    classification: { enabled: false, reason: 'Synthetic preview; no local training worker.' },
+    local_training: { enabled: false, reason: 'Synthetic preview; no local training worker.' },
+    evaluation: { enabled: true, reason: 'Synthetic fixture actions only.', limits: { max_cases: 64, max_output_tokens: 32 } },
+    chat: { enabled: false, reason: 'Synthetic preview.' }, model_export: { enabled: true, reason: 'Fixture exports only.' }, team_management: { enabled: false, reason: 'Installation owner only.' },
+  }, readiness: { training_enabled: false, training_busy: false, qualification_scope: 'synthetic-preview', production_qualified: false } },
+  '/api/v1/activation/report/': { week_start: '2026-10-26', weekly_improvement_cycles: 0, weekly_accepted_improvements: 0, weekly_rejected_candidates: 0, reported_active_seconds: 0, time_to_first_decision_seconds: null },
   '/api/v1/artifacts/': [],
   '/api/v1/inference/models/': { data: [{ id: '10000000-0000-4000-8000-000000000002', name: 'Local text model · Demo', format: 'cpu-reference', chat_template: '', devices: ['cpu'], max_tokens: 128, context_limit: 2048, load_tested: false }] },
   '/api/v1/recipes/': [],
@@ -22,6 +29,7 @@ export const workspaceResponses: Record<string, unknown> = {
   '/api/v1/model-imports/': [],
   '/api/v1/build/': typeof __API_BUILD__ === 'undefined' ? { revision: 'storybook-demo', source_digest: 'synthetic-fixture', protocol: 'demo-only', dataset_formats: ['jsonl', 'csv', 'json', 'docx', 'pdf'] } : __API_BUILD__,
   '/api/v1/health/': { status: 'ok' },
+  '/api/v1/accounts/access/': { role: 'engineer' },
   '/api/v1/tenants/': [{ tenant_id: 'demo-tenant', name: 'Anvil Research · Demo' }],
   '/api/v1/teams/': [{ id: 'demo-team', slug: 'research', name: 'Research', description: 'Synthetic Storybook team.' }],
   '/api/v1/projects/': [{ id: '1', team: 'demo-team', team_slug: 'research', slug: 'assistant', name: 'Assistant Research · Demo', description: 'Synthetic Storybook workspace.', created_at: time, updated_at: time }],
@@ -48,6 +56,7 @@ export const workspaceResponses: Record<string, unknown> = {
   [`/api/v1/run-details/training/${trainingId}/attempts/`]: [{ attempt_id: 'demo-attempt', job_id: '40000000-0000-4000-8000-000000000001', worker: 'CPU research worker · Demo', worker_status: 'idle', status: 'succeeded', progress: 1, error: '', lease_expires_at: null, started_at: time, completed_at: '2026-10-11T09:24:00Z', has_result: true }],
 };
 export const workspaceActions: Record<string, (body: Record<string, unknown>) => unknown> = {
+  '/api/v1/activation/events/': () => ({ recorded: true, demo_only: true }),
   [`/api/v1/context-recipe-versions/${recipeId}/compile/`]: (body) => ({ serialized_prompt: `You are the demo support assistant.\n\nPublished dataset revisions are immutable. Validate splits before launching training.\n\n${(body.variables as Record<string, unknown> | undefined)?.question || 'How should I prepare this dataset for training?'}`, token_count: 1842, included_blocks: ['system', 'retrieved_evidence', 'question'], dropped_blocks: ['optional_examples'], budget_exhausted: false }),
 };
 

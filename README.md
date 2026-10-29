@@ -59,6 +59,12 @@ New users can create an account and use **Training → Model → Dataset → Rev
 
 For the installation owner, start the API and managed training service together with `.venv-gpu/bin/python manage.py run_local` in the installed GPU environment, then start the existing web development server. Users need only the browser. See the [guided local fine-tuning guide](docs/engineering/guided-fine-tuning.md) for setup, account behavior, supported input limits and verification.
 
+## Guided fine-tuning
+
+New users can create an account and use **Training → Model → Dataset → Review → Train → Evaluate against base**. The guided classification path prepares the supported SmolLM2-1.7B Apple adapter and local execution resources automatically, accepts ordinary chat JSONL and prompt/response CSV, and provides progress, a protected comparison, an explicit decision and a reviewed export. A classification starter explains source groups and separate train/validation/test splits. The existing bounded 135M and CPU profiles remain available through their supported paths.
+
+For the installation owner, start the API and managed training service together with `.venv-gpu/bin/python manage.py run_local` in the installed GPU environment, then start the existing web development server. Users need only the browser. See the [guided local fine-tuning guide](docs/engineering/guided-fine-tuning.md) for setup, account behavior, supported input limits and verification.
+
 ## Local development
 
 Use Python 3.12, Node.js 24 and npm to match CI. Docker with Compose is optional for the local SQLite setup and required for the multi-service reference and container integration checks. Model execution needs the optional dependencies and hardware described by its runtime guide; installing the control plane does not provision a training worker or download model weights.

@@ -1,0 +1,93 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "Fresh User Retest workspace" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "My first fine-tune" [selected]
+    - option "+ New project…"
+  - strong: Chat
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Sign out":
+    - generic: Sign out
+  - text: Develop
+  - heading "Chat" [level=1]
+  - paragraph: Run local models, save conversations and compare actual responses.
+  - heading "Chat with your model" [level=2]:
+    - text: Chat with your model
+  - paragraph: Send a message to try your model. Conversations are saved automatically.
+  - button "New conversation"
+  - button "Export":
+    - text: Export
+  - status: Conversation saved.
+  - generic "Saved conversations · How do I reserve a book?"
+  - option "New conversation"
+  - option "How do I reserve a book?" [selected]
+  - option "How do I get a library card?"
+  - option "Where can I return books?"
+  - option "How do I renew a loan?"
+  - text: Model
+  - combobox "Model":
+    - option "Select a model"
+    - option "SmolLM2 fine-tune · a83fc687"
+    - option "SmolLM2 fine-tune · d0f76f3d" [selected]
+  - generic "Generation settings"
+  - option "Single model" [selected]
+  - option "SmolLM2 fine-tune · a83fc687"
+  - option "CPU" [selected]
+  - option "Apple Silicon GPU (PyTorch)"
+  - option "Imported model template" [selected]
+  - option "Plain text (one user prompt)"
+  - option "ChatML override"
+  - log "Conversation":
+    - article:
+      - strong: user
+      - paragraph: How do I reserve a book?
+    - article:
+      - strong: assistant
+      - paragraph: 1. Select the book you want to reserve. 2. Select the book you want to reserve. 3. Select the book you want to reserve. 4. Select the book you want to reserve. 5. Select the book you want to reserve. 6. Select the book you want to reserve. 7. Select the book you want to reserve. 8. Select the book you want to reserve. 9. Select the book you want to reserve. 10. Select the book you want to reserve. 11. Select the book you want to reserve. 12. Select the
+    - article:
+      - strong: user
+      - paragraph: How do I cancel it?
+  - article:
+    - heading "SmolLM2 fine-tune · d0f76f3d" [level=3]
+    - paragraph: 1. Select the book you want to cancel. 2. Select the book you want to cancel. 3. Select the book you want to cancel. 4. Select the book you want to cancel. 5. Select the book you want to cancel. 6. Select the book you want to cancel. 7. Select the book you want to cancel. 8. Select the book you want to cancel. 9. Select the book you want to cancel. 10. Select the book you want to cancel. 11. Select the book you want to cancel. 12. Select the
+    - status: completed · 2.89 seconds including model load · 156 input / 128 output tokens
+  - text: Message
+  - textbox "Message" [active]: Where do I collect it?
+  - button "Generate"
+  - button "Stop" [disabled]:
+    - text: Stop
+  - button "Regenerate":
+    - text: Regenerate
+  - generic "Message draft"
+  - generic "App information"
+  - text: Control plane

@@ -1,0 +1,18 @@
+✔ old guided drafts preserve pinned resources, upload state and the monitored run (0.178375ms)
+✔ current run chooses the newest active run and never substitutes a missing pinned run (0.374292ms)
+✔ training tabs survive shared URLs and reject unknown tab names (0.096583ms)
+✔ shared launch pins exactly the selected inputs and preserves an uncertain guided launch identity (0.195083ms)
+✔ record cards retain captions, values, header associations and native actions (4.122375ms)
+✔ spanning tables and existing labeled row headers retain their own layout (0.405875ms)
+✔ metric actions keep native activation without submitting surrounding forms (0.879208ms)
+✔ read-only metrics stay articles and forward labels and native refs (0.194083ms)
+✔ comparison matches exact metric and slice, keeps baseline-only evidence, zeros and missing values (0.641917ms)
+✔ query highlighting preserves exact source text, handles Unicode and treats source markup as text (1.73825ms)
+ℹ tests 225
+ℹ suites 0
+ℹ pass 225
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1346.864625

@@ -46,7 +46,11 @@ test-dataset-integration:
 	docker compose -p "$$project" -f compose.yaml -f compose.dataset-tests.yaml run --build --rm --no-deps -e DJANGO_SETTINGS_MODULE=modelanvil.settings -e PYTHONPATH=/app api python -m django test modelanvil.data.test_preparation modelanvil.api.test_dataset_preparation modelanvil.api.test_dataset_preparation_http -v 1
 
 test-web:
-	cd web && node --test tests/datasets-client.test.mjs tests/datasets-shell.test.mjs tests/openapi.test.mjs
+	cd web && npm test
+
+.PHONY: test-web-browser
+test-web-browser:
+	cd web && npm run test:browser
 
 smoke:
 	PYTHONPATH=. $(PYTHON) -m scripts.smoke

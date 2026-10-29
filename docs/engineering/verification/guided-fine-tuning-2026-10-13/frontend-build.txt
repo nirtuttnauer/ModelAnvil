@@ -1,0 +1,63 @@
+
+> modelanvil-web@0.1.0 build
+> tsc -b && vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 1981 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                  0.67 kB │ gzip:  0.36 kB
+dist/assets/model-workspace-Bnl64Sz1.css         1.06 kB │ gzip:  0.49 kB
+dist/assets/RecipesPage-B-VeqtJ0.css             1.09 kB │ gzip:  0.52 kB
+dist/assets/SpecialistsPage-D21Wg0o1.css         1.35 kB │ gzip:  0.58 kB
+dist/assets/RunDetailPage-COabcTFi.css           2.78 kB │ gzip:  0.77 kB
+dist/assets/Charts-BGsrHGrZ.css                  4.82 kB │ gzip:  1.48 kB
+dist/assets/DataInspector-uTpJaj9l.css           4.85 kB │ gzip:  1.28 kB
+dist/assets/ml-pages-BQPM32V_.css                4.92 kB │ gzip:  1.37 kB
+dist/assets/workbench-components-CLtwUFIc.css    6.53 kB │ gzip:  1.66 kB
+dist/assets/operations-BVg6ycQ4.css              6.93 kB │ gzip:  1.64 kB
+dist/assets/DatasetsPage-Cv-jBuU4.css            7.21 kB │ gzip:  1.68 kB
+dist/assets/data-workspace-C1XBezIw.css         10.93 kB │ gzip:  2.49 kB
+dist/assets/index-BCmGFKCr.css                  37.89 kB │ gzip:  7.99 kB
+dist/assets/arrow-right-CJwNbz8h.js              0.20 kB │ gzip:  0.18 kB
+dist/assets/circle-check-CeYMPn4s.js             0.24 kB │ gzip:  0.21 kB
+dist/assets/circle-x-D8sXgm4B.js                 0.26 kB │ gzip:  0.21 kB
+dist/assets/download-B4S3SFMc.js                 0.26 kB │ gzip:  0.21 kB
+dist/assets/circle-question-mark-flvf18OL.js     0.32 kB │ gzip:  0.25 kB
+dist/assets/ResourceState-CIlOWfyw.js            0.34 kB │ gzip:  0.26 kB
+dist/assets/box-KkX0ZW7M.js                      0.34 kB │ gzip:  0.25 kB
+dist/assets/shield-check-DEF4gqw4.js             0.35 kB │ gzip:  0.27 kB
+dist/assets/cpu-Dn4x4ZTI.js                      0.67 kB │ gzip:  0.31 kB
+dist/assets/ResourceHandoff-Bz6wIX9J.js          0.78 kB │ gzip:  0.47 kB
+dist/assets/workbench-data-CrU0Bbio.js           0.79 kB │ gzip:  0.45 kB
+dist/assets/InspectorPanel-Mrbn7107.js           1.24 kB │ gzip:  0.64 kB
+dist/assets/MetricComparison-v4n4Eg2w.js         2.95 kB │ gzip:  1.02 kB
+dist/assets/ResourcePicker-Diy-t--7.js           3.62 kB │ gzip:  1.54 kB
+dist/assets/ResourceDetailPage-DTyoVOk9.js       5.95 kB │ gzip:  2.14 kB
+dist/assets/datasets-ClARhpBc.js                 8.41 kB │ gzip:  3.16 kB
+dist/assets/DataInspector-Crjdk3Xv.js            8.71 kB │ gzip:  3.07 kB
+dist/assets/AuditPage-CRnXGc3j.js               10.71 kB │ gzip:  3.63 kB
+dist/assets/Charts-BSouq8nO.js                  10.80 kB │ gzip:  3.81 kB
+dist/assets/ContextLabPage-B9htJz2T.js          11.95 kB │ gzip:  4.10 kB
+dist/assets/jsx-runtime-CgVWP01r.js             12.59 kB │ gzip:  4.88 kB
+dist/assets/ClusterExplorerPage-B8n5VX35.js     13.02 kB │ gzip:  4.18 kB
+dist/assets/WorkflowsPage-CtKix2xn.js           13.57 kB │ gzip:  4.38 kB
+dist/assets/EvaluationPage-CC-KB-yX.js          16.59 kB │ gzip:  5.08 kB
+dist/assets/SpecialistsPage-BiSGdQVv.js         16.77 kB │ gzip:  5.11 kB
+dist/assets/AlignmentPage-B5J3iElA.js           17.94 kB │ gzip:  5.77 kB
+dist/assets/InfrastructurePage-BqlFzivr.js      18.38 kB │ gzip:  5.23 kB
+dist/assets/ChatPage-DBjRIBYx.js                18.59 kB │ gzip:  6.34 kB
+dist/assets/RecipesPage-gAGpfqez.js             18.89 kB │ gzip:  5.76 kB
+dist/assets/BudgetsPage-B0V1KGUU.js             19.31 kB │ gzip:  5.51 kB
+dist/assets/RunDetailPage-4Cml-6de.js           20.52 kB │ gzip:  5.83 kB
+dist/assets/OverviewPage-Czm-IoNw.js            21.23 kB │ gzip:  6.61 kB
+dist/assets/DatasetBankPage-mGH3hsUa.js         21.87 kB │ gzip:  6.34 kB
+dist/assets/ReleasesPage-Do6PRMKS.js            22.14 kB │ gzip:  6.17 kB
+dist/assets/ModelsPage-CmzUdmHt.js              23.74 kB │ gzip:  7.28 kB
+dist/assets/DatasetsPage-CYc9T5ZH.js            24.71 kB │ gzip:  7.15 kB
+dist/assets/AnnotationPage-DpZw9nYk.js          25.89 kB │ gzip:  7.76 kB
+dist/assets/TrainingPage-D9NjPcVK.js            49.87 kB │ gzip: 14.13 kB
+dist/assets/index-D4yawGVO.js                  285.85 kB │ gzip: 88.48 kB
+
+✓ built in 162ms

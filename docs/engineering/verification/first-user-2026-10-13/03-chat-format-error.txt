@@ -1,0 +1,175 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "First-time user review" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "Custom support assistant" [selected]
+    - option "+ New project…"
+  - strong: Datasets
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Connection":
+    - generic: Connection
+  - text: Data
+  - heading "Datasets" [level=1]
+  - paragraph: Prepare reproducible data, inspect splits, and publish immutable versions.
+  - region "Supported upload formats":
+    - heading "Supported upload formats" [level=2]
+    - paragraph: Upload canonical sample-envelope JSONL, CSV, a JSON record array, DOCX main-body text or a text PDF to prepare a dataset version. Files are stored locally and verified before publication.
+  - region "Upload and prepare":
+    - heading "Upload and prepare" [level=2]
+    - paragraph: Create one dataset and publish a revision after the uploaded bytes are verified.
+    - generic: LOCAL / JSONL
+    - complementary "Local draft":
+      - status: Draft backup expired. Edit to save a fresh backup before leaving this page.
+      - paragraph: Drafts use this tab’s session storage and expire 8 hours after an edit. Browsers may retain session storage when restoring tabs; expired backups are removed when the app checks them. Discard removes the draft. Credentials and execution approvals are excluded. Avoid entering secrets in content.
+      - button "Restore saved draft" [disabled]
+      - button "Discard draft"
+    - paragraph: File contents are not stored in drafts. Reattach the source file after navigation or reload.
+    - group "Source file & split configuration":
+      - generic: Source file & split configuration
+      - button "Use an example file"
+      - generic: Dataset name
+      - textbox "Dataset name": Support examples
+      - generic: Source format
+      - combobox "Source format":
+        - option "Canonical sample-envelope JSONL" [selected]
+        - option "CSV records"
+        - option "JSON record array"
+        - option "DOCX main-body text"
+        - option "PDF page text"
+      - generic: Source file
+      - button "Source file"
+      - paragraph: Maximum 16 MiB and 10,000 samples. CSV and JSON text fields must contain nonempty strings. Without a source group field, the entire file stays in one split. DOCX imports body paragraphs and table text; headers, images and embedded objects are excluded. PDF requires the optional document dependencies and supports up to 100 text pages, 1 MiB decoded content per page and 8 MiB total. Encrypted or scanned pages are refused; run OCR separately first.
+      - paragraph: "Selected: support-chat.jsonl · 3,104 bytes"
+      - generic: Split seed
+      - textbox "Split seed": "0"
+      - generic: Text chunk size
+      - combobox "Text chunk size":
+        - option "Keep source rows" [selected]
+        - option "128 characters"
+        - option "256 characters"
+        - option "512 characters"
+        - option "1024 characters"
+        - option "2048 characters"
+        - option "4096 characters"
+      - paragraph: Plain text only. Exact source spans and split groups are retained. Training preflight separately checks tokenizer length.
+      - generic: Validation percentage
+      - spinbutton "Validation percentage": "10"
+      - generic: Test percentage
+      - spinbutton "Test percentage": "10"
+      - paragraph: Percentages must be nonnegative integers with a combined total below 100. Remaining rows belong to the training split; creating that split does not run training.
+      - checkbox "Detect privacy and low quality text"
+      - text: Detect privacy and low quality text
+      - checkbox "Remove exact and near duplicates"
+      - text: Remove exact and near duplicates
+      - paragraph: Single uploads support at most 16 MiB. Partial file uploads restart; a fully verified upload and dataset record are retained for explicit retry. Reattach the same file after reload. Publication repeats the previewed recipe.
+      - button "Preview parsed source"
+      - button "Upload and prepare dataset" [disabled]
+      - generic: File integrity is verified before publication.
+    - alert: "Validation failed. preview: Input or split recipe is invalid for bounded source preparation."
+  - complementary "Dataset preparation preview":
+    - heading "Split configuration" [level=3]
+    - paragraph: Preview of requested percentages, before preparation.
+    - generic: Total percent
+    - strong: "100"
+    - 'img "Train: 80 percent, Validation: 10 percent, Test: 10 percent"':
+      - 'generic "Train: 80 percent"'
+      - 'generic "Validation: 10 percent"'
+      - 'generic "Test: 10 percent"'
+    - term: Train
+    - definition:
+      - text: "80"
+      - generic: percent · 80.0%
+    - term: Validation
+    - definition:
+      - text: "10"
+      - generic: percent · 10.0%
+    - term: Test
+    - definition:
+      - text: "10"
+      - generic: percent · 10.0%
+    - paragraph: These are configuration targets. Source groups stay together, so actual sample counts can differ. Inspect the published revision for recorded allocation.
+    - heading "Publication flow" [level=3]
+    - paragraph: Verified input becomes an immutable dataset revision.
+    - list:
+      - strong: Select source file
+      - generic: support-chat.jsonl · 3,104 bytes
+      - generic: ready
+      - strong: Verify & prepare
+      - generic: SHA-256 verification, schema validation, and source-group splits
+      - generic: pending
+      - strong: Publish immutable revision
+      - generic: Confirmation requires a published server revision.
+      - generic: pending
+  - region "Dataset and revision lists":
+    - heading "Dataset and revision lists" [level=2]
+    - paragraph: Showing the first page of datasets and immutable revisions.
+    - button "Refresh lists"
+    - heading "Revision size" [level=3]
+    - paragraph: Recorded row counts in the loaded first page; revisions can overlap.
+    - strong: Waiting for recorded data
+    - paragraph: No recorded revision row counts in this page.
+    - heading "Revision states" [level=3]
+    - paragraph: Counts for the loaded revision first page.
+    - strong: Waiting for recorded data
+    - paragraph: No measurements recorded yet.
+    - text: Search loaded datasets and revisions
+    - textbox "Search loaded datasets and revisions"
+    - region "Dataset first-page table":
+      - table "Datasets · loaded pages · 0 rows shown":
+        - caption: Datasets · loaded pages · 0 rows shown
+        - rowgroup:
+          - row "Dataset Current revision record Created at":
+            - columnheader "Dataset"
+            - columnheader "Current revision record"
+            - columnheader "Created at"
+        - rowgroup:
+          - row "No datasets returned on this first page.":
+            - cell "No datasets returned on this first page."
+    - paragraph: Revision records are listed separately. Inspect a revision to see its schema, source references, and verified manifest.
+    - region "Revision first-page table":
+      - table "Dataset revisions · loaded pages · 0 rows shown":
+        - caption: Dataset revisions · loaded pages · 0 rows shown
+        - rowgroup:
+          - row "Revision UUID / number Dataset record Rows State Published at Inspect":
+            - columnheader "Revision UUID / number"
+            - columnheader "Dataset record"
+            - columnheader "Rows"
+            - columnheader "State"
+            - columnheader "Published at"
+            - columnheader "Inspect"
+        - rowgroup:
+          - row "No revisions returned on this first page.":
+            - cell "No revisions returned on this first page."
+  - text: ModelAnvil · c39a2e95 · 28838a1d
+  - generic: "· API build matches · Imports: JSONL, CSV, DOCX, JSON, PDF"
+  - text: Control plane

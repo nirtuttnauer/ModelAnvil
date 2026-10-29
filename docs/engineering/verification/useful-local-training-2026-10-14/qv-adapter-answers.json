@@ -1,0 +1,32 @@
+[
+  {
+    "question": "How do I renew a library loan?",
+    "answer": "Sign in to your library account and choose Renew beside your loan.",
+    "finish_reason": "stop"
+  },
+  {
+    "question": "What identification should I bring to get a library card?",
+    "answer": "Bring photo identification and proof of address.",
+    "finish_reason": "stop"
+  },
+  {
+    "question": "Where can I leave my books when the front desk is closed?",
+    "answer": "Leave your books in the outdoor staff room.",
+    "finish_reason": "stop"
+  },
+  {
+    "question": "How can I borrow a digital book from the library?",
+    "answer": "Choose a digital book and click the \"Borrow\" button.",
+    "finish_reason": "stop"
+  },
+  {
+    "question": "How can I cancel a book hold?",
+    "answer": "Go to the library catalogue and choose Place a hold beside the book.",
+    "finish_reason": "stop"
+  },
+  {
+    "question": "How should I reserve a library study room?",
+    "answer": "Book an available study room from the library website.",
+    "finish_reason": "stop"
+  }
+]

@@ -1,0 +1,38 @@
+{
+  "run_id": "6c4b9102-2f12-4bac-94a2-751eeb9eb425",
+  "candidate_id": "4eb0955a-d390-44c4-a5cc-ba91bde48845",
+  "status": "completed",
+  "job_status": "succeeded",
+  "steps": 144,
+  "rows": 60,
+  "splits": {
+    "train": 48,
+    "validation": 6,
+    "test": 6
+  },
+  "checkpoints": [
+    {
+      "step": 48,
+      "validation_loss": 1.243862508431725,
+      "baseline_validation_loss": 3.5087847372759944
+    },
+    {
+      "step": 96,
+      "validation_loss": 0.4217764586210251,
+      "baseline_validation_loss": 3.5087847372759944
+    },
+    {
+      "step": 144,
+      "validation_loss": 0.12013942110554679,
+      "baseline_validation_loss": 3.5087847372759944
+    }
+  ],
+  "selected_checkpoint": 144,
+  "device": "mps:0",
+  "source": {
+    "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+    "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+    "license": "Apache-2.0"
+  },
+  "checkpoint_interval": 48
+}

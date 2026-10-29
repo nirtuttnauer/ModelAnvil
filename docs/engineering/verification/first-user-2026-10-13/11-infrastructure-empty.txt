@@ -1,0 +1,93 @@
+- link "Skip to content":
+  - /url: "#workspace-content"
+- complementary "Workspace navigation":
+  - link "ModelAnvil Model Workspace overview":
+    - /url: "#overview"
+  - navigation "Main navigation":
+    - button "Overview":
+    - button "Dataset Bank":
+    - button "Datasets":
+    - button "Annotation":
+    - button "Recipes":
+    - button "Models":
+    - button "Chat":
+    - button "Specialists":
+    - button "Training":
+    - button "Alignment":
+    - button "Evaluation":
+    - button "RAG":
+    - button "Context Lab":
+    - button "Releases":
+    - button "Workflows":
+    - button "Infrastructure":
+    - button "Budgets":
+    - button "Audit":
+- main:
+  - combobox "Organization":
+    - option "First-time user review" [selected]
+    - option "Connect organization…"
+  - combobox "Project":
+    - option "Custom support assistant" [selected]
+    - option "+ New project…"
+  - strong: Infrastructure
+  - button "Go to a workspace screen… ⌘ / Ctrl K":
+  - combobox "Color theme":
+    - option "Light" [selected]
+    - option "Dark"
+    - option "System"
+  - button "Refresh workspace":
+  - button "Connection":
+    - generic: Connection
+  - text: Operations
+  - heading "Infrastructure" [level=1]
+  - paragraph: Inspect worker pools, capabilities, and recorded availability.
+  - text: Compute inventory
+  - heading "Compute inventory" [level=2]
+  - paragraph: Inspect pool registration, worker capabilities and result handling.
+  - link "Submit a job":
+    - /url: "#workflows"
+    - text: Submit a job
+  - region "Compute setup":
+    - heading "Set up local compute" [level=2]
+    - paragraph: Register an installed runtime, then connect its worker.
+    - button "Register local worker"
+  - article:
+    - generic: Registered pools
+    - generic: "0"
+  - article:
+    - generic: Registered workers
+    - generic: "0"
+  - article:
+    - generic: Configured slots
+    - generic: "0"
+  - heading "Registered pool topology" [level=3]
+  - paragraph: Registered queues and worker memberships. Connections show configuration.
+  - strong: Waiting for recorded data
+  - paragraph: Register a worker pool through the API to see its configured topology.
+  - heading "Configured slot inventory" [level=3]
+  - paragraph: Sum of registered worker slots by pool. Configured capacity is shown here; per-worker rows distinguish allocated and observed free slots.
+  - strong: Waiting for recorded data
+  - paragraph: No pool registrations are available.
+  - heading "Workers" [level=2]
+  - paragraph: Registration state and last reported heartbeat.
+  - generic: Inventory
+  - textbox "Search workers":
+    - /placeholder: Search worker, pool or state
+  - combobox "Filter worker pool":
+    - option "All pools" [selected]
+  - generic: 0 of 0 workers
+  - paragraph: Registration status is reported by the backend. Check the heartbeat timestamp before assuming a worker is healthy.
+  - heading "No workers registered" [level=3]
+  - paragraph: Worker registrations will appear here when added through the API.
+  - heading "Pool configuration" [level=2]
+  - paragraph: Queue and result egress configuration returned by the backend.
+  - paragraph: No pools registered.
+  - heading "Queued job diagnosis" [level=2]
+  - paragraph: No accessible queued work in this snapshot.
+  - heading "Runner manifests" [level=2]
+  - paragraph: Recorded versions and compatibility declarations.
+  - generic: 0 registered
+  - paragraph: No runner manifests registered.
+  - text: ModelAnvil · c39a2e95 · 28838a1d
+  - generic: "· API build matches · Imports: JSONL, CSV, DOCX, JSON, PDF"
+  - text: Control plane

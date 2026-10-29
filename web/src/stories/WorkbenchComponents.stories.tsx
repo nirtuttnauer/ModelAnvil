@@ -10,11 +10,7 @@ import { InspectorPanel } from '../components/InspectorPanel';
 import { ContextBlockEditor, ContextBlockInputs } from '../components/ContextBlockEditor';
 import { RetrievalEvidenceCard } from '../components/RetrievalEvidenceCard';
 import { objectInput } from '../components/form-data';
-import '../design-system/tokens.css';
-import '../style.css';
-import '../premium.css';
-import '../workspace-ui.css';
-import '../design-system/components.css';
+import '../design-system/index.css';
 import './workbench-stories.css';
 
 const meta = {
@@ -72,7 +68,7 @@ const chunk = { chunk_id: '60000000-0000-4000-8000-000000000071', score: 0, text
 function verified(canvas: HTMLElement) { canvas.dataset.demoVerified = 'passed'; }
 function PickerDemo({ initial = '', disabled = false }: { initial?: string; disabled?: boolean }) {
   const [value, setValue] = useState(initial), [saved, setSaved] = useState('');
-  return <form aria-label="Resource selection" onSubmit={e => { e.preventDefault(); setSaved(value); }}><ResourcePicker label="Candidate model" required disabled={disabled} value={value} onChange={setValue} options={resources} /><button className="primary" disabled={disabled}>Use selected revision</button>{saved && <p role="status">Selected resource value: {saved}</p>}</form>;
+  return <form aria-label="Resource selection" onSubmit={e => { e.preventDefault(); setSaved(value); }}><ResourcePicker label="Candidate model" required disabled={disabled} value={value} onChange={setValue} options={resources} /><button data-ui="button" data-variant="primary" disabled={disabled}>Use selected revision</button>{saved && <p role="status">Selected resource value: {saved}</p>}</form>;
 }
 function InspectorDemo() {
   const [open, setOpen] = useState(false);
@@ -80,11 +76,11 @@ function InspectorDemo() {
 }
 function ContextDemo() {
   const [current, setCurrent] = useState(blocks), [saved, setSaved] = useState(false);
-  return <form aria-label="Context editor" onSubmit={e => { e.preventDefault(); setSaved(true); }}><ContextBlockEditor blocks={current} onChange={(key, content) => { setCurrent(current.map(block => block.key === key ? { ...block, content } : block)); setSaved(false); }} /><button className="primary">Save context</button>{saved && <p role="status">Context saved.</p>}</form>;
+  return <form aria-label="Context editor" onSubmit={e => { e.preventDefault(); setSaved(true); }}><ContextBlockEditor blocks={current} onChange={(key, content) => { setCurrent(current.map(block => block.key === key ? { ...block, content } : block)); setSaved(false); }} /><button data-ui="button" data-variant="primary">Save context</button>{saved && <p role="status">Context saved.</p>}</form>;
 }
 function OverridesDemo({ initial = '{}' }: { initial?: string }) {
   const [value, setValue] = useState(initial), [saved, setSaved] = useState('');
-  return <form aria-label="Context override editor" onSubmit={e => { e.preventDefault(); setSaved(String(objectInput(value).question ?? 'Default question retained')); }}><ContextBlockInputs blocks={blocks} value={value} onChange={setValue} /><button className="primary">Compile overrides</button>{saved && <p role="status">{saved}</p>}</form>;
+  return <form aria-label="Context override editor" onSubmit={e => { e.preventDefault(); setSaved(String(objectInput(value).question ?? 'Default question retained')); }}><ContextBlockInputs blocks={blocks} value={value} onChange={setValue} /><button data-ui="button" data-variant="primary">Compile overrides</button>{saved && <p role="status">{saved}</p>}</form>;
 }
 function Board({ narrow = false }: { narrow?: boolean }) {
   const [inspectorOpen, setInspectorOpen] = useState(true);
@@ -106,40 +102,25 @@ export const NarrowBoard: Story = { render: () => <Board narrow />, play: async 
   await expect(board.scrollWidth).toBeLessThanOrEqual(board.clientWidth + 1); verified(canvasElement);
 } };
 export const PreflightReady: Story = { render: () => <PreflightChecklist report={approved} onLaunch={() => {}} />, play: async ({ canvasElement }) => {
-  const canvas = within(canvasElement); await expect(canvas.getByRole('button', { name: 'Launch fine-tuning' })).toBeEnabled();
+  const canvas = within(canvasElement); await expect(canvas.getByRole('button', { name: 'Start training' })).toBeEnabled();
   await userEvent.click(canvas.getByText(/Encoded training samples/)); await userEvent.click(canvas.getByText('Exact token IDs')); await expect(canvas.getByText('42', { selector: 'code' })).toBeVisible(); verified(canvasElement);
 } };
 export const PreflightBlocked: Story = { render: () => <PreflightChecklist report={blocked} onLaunch={() => {}} />, play: async ({ canvasElement }) => {
-  const canvas = within(canvasElement); await expect(canvas.getByRole('button', { name: 'Launch fine-tuning' })).toBeDisabled(); await expect(canvas.getByText('Choose a policy with sufficient remaining steps.', { exact: false })).toBeVisible(); verified(canvasElement);
-} };
-export const PreflightDeviceHeadroom: Story = { render: () => <PreflightChecklist report={{ ...blocked,
-  recipe_type: 'full_sft', pins: null, blocking_checks: ['controlled-device-fixture'],
-  checks: [{ check: 'controlled-device-fixture', category: 'capacity', status: 'fail', blocking: true,
-    reason: 'Controlled display fixture; no accelerator is connected or qualified.', corrective_action: 'Use current host observations before a real launch.' }],
-  requirements: { ...approved.requirements, runtime: 'Controlled GPU display profile · synthetic', memory_bytes: 8 * 1073741824, gpu_count: 1, precision: 'fp32',
-    accelerator: { host_key: 'synthetic-only', device: { id: 'cuda:0', backend: 'cuda' } },
-    device_memory: { headroom_bytes: 6 * 1073741824, observed_at: '2026-10-23T00:00:00Z', scope: 'Synthetic device-memory display; not hardware evidence.' } },
-}} onLaunch={() => {}} />, play: async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
-  await expect(canvas.getByText('cuda:0 · cuda', { exact: true })).toBeVisible();
-  await expect(canvas.getByText('6.00 GiB', { exact: true })).toBeVisible();
-  await expect(canvas.getByText(/Synthetic device-memory display/)).toBeVisible();
-  await expect(canvas.getByRole('button', { name: 'Launch fine-tuning' })).toBeDisabled();
-  verified(canvasElement);
+  const canvas = within(canvasElement); await expect(canvas.getByRole('button', { name: 'Start training' })).toBeDisabled(); await expect(canvas.getByText('Choose a policy with sufficient remaining steps.', { exact: false })).toBeVisible(); verified(canvasElement);
 } };
 export const PreflightExpired: Story = { render: () => <PreflightChecklist report={{ ...approved, expires_in_seconds: 0 }} onLaunch={() => {}} onRefresh={() => {}} />, play: async ({ canvasElement }) => {
-  const canvas = within(canvasElement); await expect(canvas.getByRole('status')).toHaveTextContent('Preview expired'); await expect(canvas.getByRole('button', { name: 'Launch fine-tuning' })).toBeDisabled(); verified(canvasElement);
+  const canvas = within(canvasElement); await expect(canvas.getByText('Preview expired')).toBeVisible(); await expect(canvas.getByRole('button', { name: 'Start training' })).toBeDisabled(); verified(canvasElement);
 } };
 export const PreflightMissingExpiry: Story = { render: () => <PreflightChecklist report={{ ...approved, expires_in_seconds: NaN }} onLaunch={() => {}} />, play: async ({ canvasElement }) => {
-  const canvas = within(canvasElement); await expect(canvas.getByRole('status')).toHaveTextContent('Expiry not reported'); await expect(canvas.getByRole('button', { name: 'Launch fine-tuning' })).toBeDisabled(); verified(canvasElement);
+  const canvas = within(canvasElement); await expect(canvas.getByText('Expiry not reported')).toBeVisible(); await expect(canvas.getByRole('button', { name: 'Start training' })).toBeDisabled(); verified(canvasElement);
 } };
 function ExpiringDemo() {
   const [report, setReport] = useState(() => ({ ...approved, expires_in_seconds: 1 }));
   return <PreflightChecklist report={report} onLaunch={() => {}} onRefresh={() => setReport({ ...approved })} />;
 }
 export const PreflightLiveExpiry: Story = { render: () => <ExpiringDemo />, play: async ({ canvasElement }) => {
-  const canvas = within(canvasElement); await waitFor(() => expect(canvas.getByRole('button', { name: 'Launch fine-tuning' })).toBeDisabled(), { timeout: 4000 });
-  await userEvent.click(canvas.getByRole('button', { name: 'Refresh preflight' })); await waitFor(() => expect(canvas.getByRole('button', { name: 'Launch fine-tuning' })).toBeEnabled()); verified(canvasElement);
+  const canvas = within(canvasElement); await waitFor(() => expect(canvas.getByRole('button', { name: 'Start training' })).toBeDisabled(), { timeout: 4000 });
+  await userEvent.click(canvas.getByRole('button', { name: 'Run preflight again' })); await waitFor(() => expect(canvas.getByRole('button', { name: 'Start training' })).toBeEnabled()); verified(canvasElement);
 } };
 export const ResourceSelection: Story = { render: () => <PickerDemo />, play: async ({ canvasElement }) => {
   const canvas = within(canvasElement); await userEvent.type(canvas.getByRole('searchbox', { name: 'Search candidate model' }), '000000000004');

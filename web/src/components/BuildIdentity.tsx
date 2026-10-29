@@ -13,8 +13,8 @@ export function BuildIdentity({ token, refreshKey }: { token: string; refreshKey
   }, [token, refreshKey]);
   const compatible = server?.protocol === __API_BUILD__.protocol;
   const matching = compatible && server?.source_digest === __API_BUILD__.source_digest;
-  return <details className="build-info"><summary>App information</summary><span>ModelAnvil <Identifier value={__API_BUILD__.revision} label="Client source revision" /><Identifier value={__API_BUILD__.source_digest} label="Client source digest" />
-    {server && <small role={matching ? undefined : 'alert'}>{matching ? ' · API build matches' : compatible ? ' · API build changed; rebuild/reload this client before acceptance testing' : ' · API protocol incompatible; install matching browser and API builds'} · Imports: {server.dataset_formats.join(', ').toUpperCase()}</small>}
-    {error && <small> · API build check unavailable: {error}</small>}
-  </span></details>;
+  return <div className="build-info"><span>ModelAnvil <Identifier value={__API_BUILD__.revision} label="Client source revision" /><Identifier value={__API_BUILD__.source_digest} label="Client source digest" /></span>
+    {server && <small role={matching ? undefined : 'alert'}>{matching ? 'API build matches' : compatible ? 'API build changed; rebuild or reload this client before acceptance testing' : 'API protocol incompatible; install matching browser and API builds'} · Imports: {server.dataset_formats.join(', ').toUpperCase()}</small>}
+    {error && <small>API build check unavailable: {error}</small>}
+  </div>;
 }

@@ -4,11 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { RunDetailPage } from '../pages/RunDetailPage';
 import { DraftScope } from '../components/Draft';
 import { workspaceResponses } from './workspace-fixtures';
-import '../design-system/tokens.css';
-import '../style.css';
-import '../premium.css';
-import '../workspace-ui.css';
-import '../design-system/components.css';
+import '../design-system/index.css';
 
 const id = '30000000-0000-4000-8000-000000000001';
 const path = `/api/v1/run-details/training/${id}/`;
@@ -43,17 +39,19 @@ type Story = StoryObj<typeof meta>;
 export const LongHistoryAndConnectionRecovery: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByText(/^Attempts \(/, { selector: 'summary' }));
     const more = await canvas.findByRole('button', { name: 'Load more attempts' });
     await userEvent.click(more);
     await waitFor(() => expect(canvas.getByText('Synthetic worker 59', { exact: true })).toBeVisible());
     expect(canvas.queryByRole('button', { name: 'Load more attempts' })).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByText('Recovery note', { selector: 'summary' }));
     const note = canvas.getByRole('textbox', { name: 'What you observed and what you tried' });
     await userEvent.clear(note); await userEvent.type(note, 'Preserve my recovery investigation.');
-    await waitFor(() => expect(canvas.getByText('Live updates interrupted')).toBeVisible(), { timeout: 15000 });
+    await waitFor(() => expect(canvas.getByText(/Live updates interrupted/)).toBeVisible(), { timeout: 15000 });
     expect(note).toHaveValue('Preserve my recovery investigation.');
     expect(canvas.getByText('Synthetic worker 59', { exact: true })).toBeVisible();
     await userEvent.click(canvas.getByRole('button', { name: 'Refresh' }));
-    await waitFor(() => expect(canvas.queryByText('Live updates interrupted')).not.toBeInTheDocument());
+    await waitFor(() => expect(canvas.queryByText(/Live updates interrupted/)).not.toBeInTheDocument());
     expect(note).toHaveValue('Preserve my recovery investigation.');
     expect(canvas.getByText('Synthetic worker 59', { exact: true })).toBeVisible();
     expect(canvas.queryByRole('button', { name: 'Load more attempts' })).not.toBeInTheDocument();

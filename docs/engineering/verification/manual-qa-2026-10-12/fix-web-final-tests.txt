@@ -1,0 +1,29 @@
+ns (0.144375ms)
+✔ published data, recorded compatible weights, available matching worker and enabled step budget are counted (0.533917ms)
+✔ drafts, metadata-only models, mismatched tokenizers, inactive or incompatible workers and disabled budgets remain incomplete (0.36725ms)
+✔ visual questions preserve typed labels and ordinal order and reject ambiguous options (0.693041ms)
+✔ durable admission preserves layout and typed inputs and requires explicit quota (13.4595ms)
+✔ OCR upload sends original bytes and refuses oversized or unsupported files before the request (1.933625ms)
+✔ ML stories provide finite recorded measurements and explicit fixture evidence (0.899375ms)
+✔ evaluation intervals contain finite metrics, and loaded cases belong to their suite slices (0.380459ms)
+✔ reset removes demo writes and restores deterministic registration and launch actions (2.101375ms)
+✔ reset restores model registration dependencies and preflight after nested edits (1.400834ms)
+✔ CPU registration and evaluation demo actions stay fictional and reset dynamic routes (0.920333ms)
+✔ alignment demo registration, execution, cancellation and reset stay isolated and explicitly fictional (1.045334ms)
+✔ the actual demo handler returns paginated synthetic data across the entire workspace (36.340542ms)
+✔ unknown API reads and writes fail closed with 501 and never pass through to a live server (9.973959ms)
+✔ build identity is mocked in every story state without reaching a live API (4.9155ms)
+✔ demo create/cancel writes update only fixture records and reset restores all nested state (14.353375ms)
+✔ every durable job link has a faithful detail and attempts projection (13.504416ms)
+✔ empty stories clear resource collections while preserving workspace connection scope (6.506042ms)
+✔ error stories return explicit 503 for API reads and writes without mutating fixtures (4.939375ms)
+✔ comparison matches exact metric and slice, keeps baseline-only evidence, zeros and missing values (0.73ms)
+✔ query highlighting preserves exact source text, handles Unicode and treats source markup as text (1.582625ms)
+ℹ tests 156
+ℹ suites 0
+ℹ pass 156
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 533.566375

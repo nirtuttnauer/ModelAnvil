@@ -1,6 +1,10 @@
 # ModelAnvil delivery roadmap
 
-This is a dependency-based planning outline. Dates, owners, staffing, and budgets are not assigned. Both scratch training and fine-tuning are required for the first complete release.
+The current release is the [two classification betas](two-beta-release.md): local Apple adapter training and the separate private hosted CPU product. That document records the implemented workflow, preserved baseline, reproducible checks and outstanding launch gates. Existing accounts, storage, entitlements and CPU training are integration foundations. The broader PRD milestones below remain future product scope; they are not all requirements for these bounded betas.
+
+For the small-team product strategy, proposed delivery sequence, success measures, and Aftur execution map, see the [category leadership roadmap](category-leadership-roadmap.md), dated 21 October 2026. The milestones below retain the full PRD release scope.
+
+This is a dependency-based planning outline. Dates, owners, staffing, and budgets are not assigned. Both scratch training and fine-tuning remain required for the broader PRD release, beyond the classification betas.
 
 ## Milestone 1 — Foundation and feasibility
 

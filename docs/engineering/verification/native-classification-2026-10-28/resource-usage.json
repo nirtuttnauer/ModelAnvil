@@ -1,0 +1,30 @@
+{
+  "basis": "Attempt wall time includes model loading and checkpointing. Usage is committed ledger units, with recorded cost adjustments when priced. Peak memory and unpriced cost are unavailable, not zero.",
+  "evaluation": {
+    "execution_seconds": 47.884856,
+    "queue_seconds": 0.046767,
+    "usage": [
+      {
+        "amount": null,
+        "currency": null,
+        "quantity": "9.000000",
+        "unit": "evaluation_cases"
+      }
+    ],
+    "usage_available": true
+  },
+  "peak_memory_bytes": null,
+  "training": {
+    "execution_seconds": 29.361268,
+    "queue_seconds": 0.108118,
+    "usage": [
+      {
+        "amount": null,
+        "currency": null,
+        "quantity": "3.000000",
+        "unit": "training_steps"
+      }
+    ],
+    "usage_available": true
+  }
+}

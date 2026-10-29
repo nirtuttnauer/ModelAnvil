@@ -50,14 +50,9 @@ const meta = {
 };
 export default meta;
 type Story = StoryObj<typeof meta>;
-async function openExport(canvasElement: HTMLElement) {
-  const canvas = within(canvasElement);
-  await userEvent.click(await canvas.findByRole('tab', { name: 'History' }));
-  await userEvent.click(await canvas.findByRole('button', { name: 'Inspect run' }));
-  return within(await canvas.findByRole('region', { name: 'Model export' }));
-}
+async function card(canvasElement: HTMLElement) { return within(await within(canvasElement).findByRole('region', { name: 'Model export' })); }
 const download = (format = 'native'): Story['play'] => async ({ canvasElement }) => {
-  const exportCard = await openExport(canvasElement);
+  const exportCard = await card(canvasElement);
   await userEvent.selectOptions(exportCard.getByLabelText('Export format'), format);
   await userEvent.click(exportCard.getByRole('button', { name: 'Download export' }));
   await expect(exportCard.findByText(/^Downloading/)).resolves.toBeVisible();
@@ -71,7 +66,7 @@ export const JsonManifest: Story = { play: download('json') };
 export const UnknownSize: Story = { parameters: { exportState: 'unknown' }, play: download() };
 export const CancelledDownload: Story = {
   play: async ({ canvasElement }) => {
-    const exportCard = await openExport(canvasElement);
+    const exportCard = await card(canvasElement);
     await userEvent.click(exportCard.getByRole('button', { name: 'Download export' }));
     await expect(exportCard.findByText(/^Downloading/)).resolves.toBeVisible();
     await userEvent.click(exportCard.getByRole('button', { name: 'Cancel download' }));
@@ -83,7 +78,7 @@ export const CancelledDownload: Story = {
 export const Retry: Story = {
   parameters: { exportState: 'retry' },
   play: async ({ canvasElement }) => {
-    const exportCard = await openExport(canvasElement);
+    const exportCard = await card(canvasElement);
     await userEvent.click(exportCard.getByRole('button', { name: 'Download export' }));
     await expect(exportCard.findByRole('alert')).resolves.toHaveTextContent('HTTP 503');
     await userEvent.click(exportCard.getByRole('button', { name: 'Retry export' }));
@@ -97,7 +92,17 @@ export const ActiveRun: Story = { parameters: { exportState: 'active' }, play: a
   await expect(canvas.queryByRole('region', { name: 'Model export' })).not.toBeInTheDocument(); canvasElement.dataset.demoVerified = 'passed';
 } };
 export const Dark: Story = { ...NativeSnapshot, parameters: { demoTheme: 'dark' } };
-export const HistoryExport: Story = { play: download('json') };
+export const HistoryExport: Story = { play: async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  await canvas.findByRole('region', { name: 'Model export' });
+  await userEvent.click(canvas.getByRole('tab', { name: 'History' }));
+  await userEvent.click(canvas.getByRole('button', { name: 'Inspect run' }));
+  const exportCard = await card(canvasElement);
+  await userEvent.selectOptions(exportCard.getByLabelText('Export format'), 'json');
+  await userEvent.click(exportCard.getByRole('button', { name: 'Download export' }));
+  await waitFor(() => expect(exportCard.getByText('Transfer complete')).toBeVisible(), { timeout: 6000 });
+  canvasElement.dataset.demoVerified = 'passed';
+} };
 export const Preview: Story = { play: async ({ canvasElement }) => {
-  await expect((await openExport(canvasElement)).getByRole('button', { name: 'Download export' })).toBeVisible(); canvasElement.dataset.demoVerified = 'passed';
+  await expect((await card(canvasElement)).getByRole('button', { name: 'Download export' })).toBeVisible(); canvasElement.dataset.demoVerified = 'passed';
 } };

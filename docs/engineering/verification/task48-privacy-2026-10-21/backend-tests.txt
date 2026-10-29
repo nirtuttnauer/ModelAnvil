@@ -1,0 +1,15 @@
+.s............{"timestamp": "2026-10-21T20:24:02+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a16022-9777-7f7a-a3d9-42a0aa6bbdf7", "tenant_id": "01a16022-96f9-778b-81e1-192ec1204b74", "http_status": 400}
+.{"timestamp": "2026-10-21T20:24:02+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a16022-982a-74f1-abfe-b9b6363803d3", "tenant_id": "01a16022-97a2-7fff-81a2-ca3b089b5e72", "http_status": 400}
+{"timestamp": "2026-10-21T20:24:02+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a16022-983f-7b8e-b40f-9d5b505b3feb", "tenant_id": "01a16022-97a2-7fff-81a2-ca3b089b5e72", "http_status": 409}
+{"timestamp": "2026-10-21T20:24:02+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a16022-9849-7aef-9628-e7b691fcb58e", "tenant_id": "01a16022-97a2-7fff-81a2-ca3b089b5e72", "http_status": 409}
+..........................................................................s.......................{"timestamp": "2026-10-21T20:24:12+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a16022-c076-7e58-ae6c-c60bdf09c6ab", "tenant_id": "01a16022-c069-7117-99b6-5671c64f99b0", "http_status": 403}
+...........{"timestamp": "2026-10-21T20:24:13+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a16022-c1d9-760f-bbb9-fc05e705ad90", "http_status": 401}
+............................s..............................ssss...................
+----------------------------------------------------------------------
+Ran 909 tests in 129.610s
+
+OK (skipped=9)
+Destroying test database for alias 'default'...
+Found 909 test(s).
+System check identified no issues (0 silenced).
+Purged parts for 1 transfer sessions (1 part objects).

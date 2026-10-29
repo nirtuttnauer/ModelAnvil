@@ -2,7 +2,7 @@ import type { StorybookConfig } from '@storybook/react-vite';
 
 const config: StorybookConfig = {
   stories: ['../src/stories/**/*.stories.tsx'],
-  addons: ['@storybook/addon-a11y', 'msw-storybook-addon'],
+  addons: ['@storybook/addon-a11y', '@storybook/addon-vitest', 'msw-storybook-addon'],
   framework: '@storybook/react-vite',
   staticDirs: ['../public', './static'],
   core: { disableTelemetry: true },

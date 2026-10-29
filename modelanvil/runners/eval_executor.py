@@ -124,7 +124,10 @@ def frozen_comparison(run):
     if candidate_pin or baseline_pin:
         if not candidate_pin or not baseline_pin or candidate_pin.get('tokenizer') != baseline_pin.get('tokenizer'):
             return {'compatible': False, 'reason': 'Candidate and baseline do not share the frozen tokenizer.'}
-        if pins.get('scorer_version') != SCORER_VERSION or pins.get('prompt_format') not in ('plain', 'native_template'):
+        from modelanvil.runners.guided_evaluation import PROFILE, CONTRACT_DIGEST
+        native = ((run.protocol_ref or {}).get('profile') == PROFILE and pins.get('prompt_format') == 'model'
+                  and pins.get('contract_digest') == CONTRACT_DIGEST and bool(pins.get('template_sha256')))
+        if pins.get('scorer_version') != SCORER_VERSION or not (pins.get('prompt_format') in ('plain', 'native_template') or native):
             return {'compatible': False, 'reason': 'Candidate and baseline do not share the frozen scorer version and template.'}
         return {'compatible': True, 'reason': 'Same frozen suite, scorer version, tokenizer, template and decoding.'}
     if pins.get('baseline_bundle_sha256') or pins.get('baseline_artifact_id'):

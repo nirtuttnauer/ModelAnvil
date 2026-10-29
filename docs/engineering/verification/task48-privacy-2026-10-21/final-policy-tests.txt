@@ -1,0 +1,12 @@
+.{"timestamp": "2026-10-21T20:33:42+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a1602b-739b-7bce-b647-b274a00fcac6", "tenant_id": "01a1602b-7398-7af3-a24d-f0ee966d7cff", "http_status": 400}
+{"timestamp": "2026-10-21T20:33:42+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a1602b-739c-7d78-bc0b-03022a5e84ec", "tenant_id": "01a1602b-7398-7af3-a24d-f0ee966d7cff", "http_status": 403}
+{"timestamp": "2026-10-21T20:33:42+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a1602b-739d-7a34-8da6-9d31a72dfa86", "http_status": 401}
+.{"timestamp": "2026-10-21T20:33:42+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a1602b-73a3-7d80-adbf-6cf616724625", "tenant_id": "01a1602b-739e-75dd-9270-e19cfd1d115b", "http_status": 404}
+...............
+----------------------------------------------------------------------
+Ran 18 tests in 2.360s
+
+OK
+Destroying test database for alias 'default'...
+Found 18 test(s).
+System check identified no issues (0 silenced).
