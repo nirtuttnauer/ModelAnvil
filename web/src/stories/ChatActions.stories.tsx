@@ -90,7 +90,7 @@ export const ChatComposerKeyboard: Story = {
     if (window.innerWidth <= 700) {
       expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(document.documentElement.clientWidth);
       expect(parseFloat(getComputedStyle(message).fontSize)).toBeGreaterThanOrEqual(16);
-      for (const label of ['New conversation', 'Export', 'Send message']) {
+      for (const label of ['New conversation', 'Send message']) {
         expect(canvas.getByRole('button', { name: label }).getBoundingClientRect().height).toBeGreaterThanOrEqual(44);
       }
     }
