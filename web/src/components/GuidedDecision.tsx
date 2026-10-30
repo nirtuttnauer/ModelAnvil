@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { apiPage, apiRequest, errorMessage } from '../api/client';
 import { ImprovementDecision, type Decision } from './ImprovementDecision';
-import { Button, Field, Notice } from './ui';
+import { Button, Checkbox, Notice, RecordTable, Section, StatusBadge, TextControl } from './ui';
+import { Feedback } from './Feedback';
 
 interface ComparisonPreview {
   eligible: boolean;
@@ -102,36 +103,33 @@ export function GuidedDecision({ token, runId }: { token: string; runId: string 
   const failures = cases.filter(row => !row.passed);
   const waiting = evaluation && ['pending', 'running'].includes(evaluation.status);
   const eligibleDecision = evaluation?.status === 'completed' && evaluation.execution_evidence?.level === 'integrated_execution';
-  return <section className="detail-box" aria-label="Compare and decide">
-    <h3>Compare this candidate with the base model</h3>
-    <p>{preview?.metric || 'Accuracy is the share of cases whose answer matches the expected answer. Recording a choice does not deploy the model.'}</p>
+  return <Section title="Compare this candidate with the base model" description={preview?.metric || 'Accuracy is the share of cases whose answer matches the expected answer. Recording a choice does not deploy the model.'}>
     {error && <Notice tone="error" role="alert">{error}</Notice>}
-    {!preview && !error && <p role="status">Checking whether this candidate can be compared…</p>}
+    {!preview && !error && <Feedback state="loading" title="Checking whether this candidate can be compared…" />}
     {preview && !preview.eligible && <Notice role="status">{preview.reason}</Notice>}
-    {preview?.eligible && !evaluationId && <div className="guided-form">
+    {preview?.eligible && !evaluationId && <div data-ui="form">
       {preview.held_out_count > 0 ? <>
         <p>{preview.held_out_count} held-out {preview.held_out_count === 1 ? 'question' : 'questions'} from this dataset will be scored. These examples were not used for training.</p>
         <ul>{preview.held_out_preview.map(row => <li key={row.case_id}><strong>{row.input_prompt}</strong><br />Expected: {row.expected_output}</li>)}</ul>
       </> : <>
         <p>This dataset has no held-out questions. Confirm a short list and the answers you expect.</p>
-        {questions.map((question, index) => <div key={index}>
-          <label>Question {index + 1}<Field value={question.input_prompt} maxLength={1024} disabled={busy} onChange={event => setQuestions(current => current.map((item, itemIndex) => itemIndex === index ? { ...item, input_prompt: event.target.value } : item))} /></label>
-          <label>Expected answer<Field value={question.expected_output} maxLength={4096} disabled={busy} onChange={event => setQuestions(current => current.map((item, itemIndex) => itemIndex === index ? { ...item, expected_output: event.target.value } : item))} /></label>
+        {questions.map((question, index) => <div key={index} data-ui="field-grid">
+          <TextControl label={`Question ${index + 1}`} value={question.input_prompt} maxLength={1024} disabled={busy} onChange={event => setQuestions(current => current.map((item, itemIndex) => itemIndex === index ? { ...item, input_prompt: event.target.value } : item))} />
+          <TextControl label={`Expected answer ${index + 1}`} value={question.expected_output} maxLength={4096} disabled={busy} onChange={event => setQuestions(current => current.map((item, itemIndex) => itemIndex === index ? { ...item, expected_output: event.target.value } : item))} />
         </div>)}
-        <Button type="button" disabled={busy || questions.length >= 8} onClick={() => setQuestions(current => [...current, { input_prompt: '', expected_output: '' }])}>Add a question</Button>
+        <div data-ui="actions"><Button type="button" disabled={busy || questions.length >= 8} onClick={() => setQuestions(current => [...current, { input_prompt: '', expected_output: '' }])}>Add a question</Button></div>
       </>}
-      <label className="data-license-consent"><input type="checkbox" checked={confirmed} disabled={busy} onChange={event => setConfirmed(event.target.checked)} /><span>I confirm these questions are the comparison to record.</span></label>
-      <Button type="button" className="primary" disabled={busy || !confirmed} onClick={() => void compare()}>{busy ? 'Starting comparison…' : 'Compare with the base model'}</Button>
+      <Checkbox label="I confirm these questions are the comparison to record." checked={confirmed} disabled={busy} onChange={event => setConfirmed(event.target.checked)} />
+      <div data-ui="actions"><Button type="button" variant="primary" disabled={busy || !confirmed} onClick={() => void compare()}>{busy ? 'Starting comparison…' : 'Compare with the base model'}</Button></div>
     </div>}
-    {waiting && <p role="status">Comparison is {evaluation?.status}. This page updates until both models have answered.</p>}
+    {waiting && <Feedback state="loading" title={`Comparison is ${evaluation?.status}.`} description="This page updates until both models have answered." />}
     {evaluation?.status === 'failed' && <Notice tone="error" role="alert">The comparison did not finish. Confirm the questions and compare again.</Notice>}
-    {!!cases.length && <>
-      <h4>Paired answers</h4>
-      {!!failures.length && <p role="status">{failures.length} of {cases.length} cases did not match the expected answer.</p>}
-      <div className="table-scroll" tabIndex={0}><table className="resource-table"><caption>Candidate and base answers for the confirmed questions.</caption><thead><tr><th>Question</th><th>Expected</th><th>Candidate</th><th>Base model</th><th>Result</th></tr></thead><tbody>
-        {cases.map(row => <tr key={row.case_id}><td>{row.input_prompt}</td><td>{row.expected_output}</td><td>{row.candidate_output}</td><td>{row.baseline_output || 'Not recorded'}</td><td>{row.passed ? 'Match' : row.failure_reason || 'Miss'}</td></tr>)}
-      </tbody></table></div>
-    </>}
+    {!!cases.length && <Section level={3} title="Paired answers" description={failures.length ? `${failures.length} of ${cases.length} cases did not match the expected answer.` : 'Every case matched the expected answer.'}>
+      <div className="table-scroll" tabIndex={0}><RecordTable><caption>Candidate and base answers for the confirmed questions.</caption>
+        <thead><tr><th>Question</th><th>Expected</th><th>Candidate</th><th>Base model</th><th>Result</th></tr></thead>
+        <tbody>{cases.map(row => <tr key={row.case_id}><td>{row.input_prompt}</td><td>{row.expected_output}</td><td>{row.candidate_output}</td><td>{row.baseline_output || 'Not recorded'}</td><td><StatusBadge status={row.passed ? 'pass' : 'fail'} label={row.passed ? 'Match' : row.failure_reason || 'Miss'} /></td></tr>)}</tbody>
+      </RecordTable></div>
+    </Section>}
     {evaluation && <ImprovementDecision token={token} run={evaluation.run_id} decision={evaluation.improvement_decision} eligible={!!eligibleDecision} />}
-  </section>;
+  </Section>;
 }

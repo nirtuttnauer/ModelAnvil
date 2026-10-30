@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { apiRequest, errorMessage } from '../api/client';
-import { Button, Field, Notice } from './ui';
+import { Button, Notice, Select, TextControl } from './ui';
 import { Identifier } from './Identifier';
 
 type Revision = { id: number; revision_id: string; dataset_name?: string; revision_no: number; metadata?: { preparation_kind?: string } };
@@ -30,30 +30,28 @@ export function ContinuedCorpusBuilder({ token, revisions, onPublished }: { toke
     } catch (e) { if (request === generation.current) setError(errorMessage(e)); }
     finally { if (request === generation.current) setBusy(false); }
   }
-  return <details className="full-width">
-    <summary>Build a weighted text corpus</summary>
-    <p>Combine up to four prepared source revisions. Original validation and test splits stay protected. Training rows are selected once using your weights and seed, then keep the same order.</p>
-    <fieldset disabled={busy} className="training-fieldset">
-      <div className="form-grid">
-        <label>Corpus name<Field value={name} maxLength={180} onChange={event => setName(event.target.value)} /></label>
-        <label>Training rows<Field type="number" min="1" max="1000" value={count} onChange={event => setCount(event.target.value)} /></label>
-        <label>Selection seed<Field value={seed} maxLength={128} onChange={event => setSeed(event.target.value)} /></label>
-        {components.map((component, index) => <div className="form-grid full-width" key={index}>
-          <label>Source revision {index + 1}<select aria-label={`Source revision ${index + 1}`} value={component.revision_id} onChange={event => change(index, 'revision_id', event.target.value)}>
-            <option value="">Select a prepared text source</option>
-            {sources.map(revision => <option key={revision.revision_id} value={revision.revision_id} disabled={components.some((row, i) => i !== index && row.revision_id === revision.revision_id)}>{revision.dataset_name || 'Dataset'} · r{revision.revision_no}</option>)}
-          </select></label>
-          <label>Relative weight {index + 1}<Field type="number" min="0.001" max="1000" step="0.001" value={component.weight} onChange={event => change(index, 'weight', event.target.value)} /></label>
-        </div>)}
-      </div>
-      <div className="actions">
-        <Button type="button" disabled={components.length >= 4} onClick={() => setComponents(current => [...current, { revision_id: '', weight: '1' }])}>Add source</Button>
-        <Button type="button" disabled={components.length <= 1} onClick={() => setComponents(current => current.slice(0, -1))}>Remove last source</Button>
-        <Button type="button" disabled={!token || !name.trim() || !seed.trim() || !Number.isInteger(Number(count)) || Number(count) < 1 || Number(count) > 1000 || components.some(row => !row.revision_id || !Number.isFinite(Number(row.weight)) || Number(row.weight) <= 0)} onClick={() => void publish()}>{busy ? 'Publishing corpus…' : 'Publish and select corpus'}</Button>
-      </div>
-    </fieldset>
+  const invalid = !token || !name.trim() || !seed.trim() || !Number.isInteger(Number(count)) || Number(count) < 1 || Number(count) > 1000 || components.some(row => !row.revision_id || !Number.isFinite(Number(row.weight)) || Number(row.weight) <= 0);
+  return <div data-ui="form">
+    <p className="muted">Combine up to four prepared source revisions. Original validation and test splits stay protected. Training rows are selected once using your weights and seed, then keep the same order.</p>
+    <div data-ui="field-grid">
+      <TextControl label="Corpus name" value={name} maxLength={180} disabled={busy} onChange={event => setName(event.target.value)} />
+      <TextControl label="Training rows" type="number" min="1" max="1000" value={count} disabled={busy} onChange={event => setCount(event.target.value)} />
+      <TextControl label="Selection seed" value={seed} maxLength={128} disabled={busy} onChange={event => setSeed(event.target.value)} />
+      {components.map((component, index) => <Fragment key={index}>
+        <Select label={`Source revision ${index + 1}`} value={component.revision_id} disabled={busy} onChange={event => change(index, 'revision_id', event.target.value)}>
+          <option value="">Select a prepared text source</option>
+          {sources.map(revision => <option key={revision.revision_id} value={revision.revision_id} disabled={components.some((row, i) => i !== index && row.revision_id === revision.revision_id)}>{revision.dataset_name || 'Dataset'} · r{revision.revision_no}</option>)}
+        </Select>
+        <TextControl label={`Relative weight ${index + 1}`} type="number" min="0.001" max="1000" step="0.001" value={component.weight} disabled={busy} onChange={event => change(index, 'weight', event.target.value)} />
+      </Fragment>)}
+    </div>
+    <div data-ui="actions">
+      <Button type="button" disabled={busy || components.length >= 4} onClick={() => setComponents(current => [...current, { revision_id: '', weight: '1' }])}>Add source</Button>
+      <Button type="button" disabled={busy || components.length <= 1} onClick={() => setComponents(current => current.slice(0, -1))}>Remove last source</Button>
+      <Button type="button" variant="primary" disabled={busy || invalid} onClick={() => void publish()}>{busy ? 'Publishing corpus…' : 'Publish and select corpus'}</Button>
+    </div>
     <p className="muted">Each source must have enough training rows for its weight. Overlapping content or source groups across protected splits are refused. Publishing saves a new corpus revision; training starts after a separate preflight review.</p>
     {error && <Notice tone="error" role="alert">{error}</Notice>}
     {published && <Notice tone="success" role="status">Corpus selected: {published.split_counts.train} training, {published.split_counts.validation} validation and {published.split_counts.test} test rows. <Identifier value={published.manifest_digest} label="Corpus manifest digest" /></Notice>}
-  </details>;
+  </div>;
 }

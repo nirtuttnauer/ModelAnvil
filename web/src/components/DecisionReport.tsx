@@ -1,4 +1,5 @@
 import { EvidenceLabel } from './EvidenceLabel';
+import { KeyValueList, Section } from './ui';
 
 export interface DecisionSlice {
   slice: string;
@@ -33,17 +34,15 @@ function percent(value: number | null) {
 
 export function DecisionReport({ report }: { report: DecisionReportData }) {
   const headline = report.recommended_outcome === 'accept' ? 'Accept is supported' : report.recommended_outcome === 'reject' ? 'Reject is supported' : report.eligible ? 'Not enough evidence to call a win or a loss' : 'Decision report unavailable';
-  return <section aria-label="Decision report">
-    <h4>{headline}</h4>
-    <p>{report.gate.reason}</p>
+  return <Section level={3} title={headline} description={report.gate.reason}>
     <EvidenceLabel evidence={{ level: report.eligible ? 'integrated_execution' : 'configuration_only', source: report.prompt_format ? `Prompt format ${report.prompt_format}` : 'Prompt format not reported', production_qualified: report.production_qualified }} />
-    <dl className="ml-definition-list">
-      <div><dt>Sample</dt><dd>{report.sample_count} cases · decisive from {report.minimum_decisive_cases}</dd></div>
-      <div><dt>Candidate accuracy</dt><dd>{percent(report.candidate_accuracy)}</dd></div>
-      <div><dt>Baseline accuracy</dt><dd>{percent(report.baseline_accuracy)}</dd></div>
-      <div><dt>Runtime</dt><dd>{typeof report.runtime_seconds === 'number' ? `${report.runtime_seconds.toFixed(1)} seconds` : 'Not reported'}</dd></div>
-    </dl>
-    {!!report.slices.length && <ul>{report.slices.map(slice => <li key={slice.slice}>{slice.slice}: {slice.relation} · {slice.sample_count} cases · candidate {percent(slice.candidate_accuracy)} · baseline {percent(slice.baseline_accuracy)}</li>)}</ul>}
+    <KeyValueList columns={2} items={[
+      { label: 'Sample', value: `${report.sample_count} cases · decisive from ${report.minimum_decisive_cases}` },
+      { label: 'Candidate accuracy', value: percent(report.candidate_accuracy) },
+      { label: 'Baseline accuracy', value: percent(report.baseline_accuracy) },
+      { label: 'Runtime', value: typeof report.runtime_seconds === 'number' ? `${report.runtime_seconds.toFixed(1)} seconds` : 'Not reported' },
+    ]} />
+    {!!report.slices.length && <KeyValueList items={report.slices.map(slice => ({ key: slice.slice, label: slice.slice, value: `${slice.relation} · ${slice.sample_count} cases · candidate ${percent(slice.candidate_accuracy)} · baseline ${percent(slice.baseline_accuracy)}` }))} />}
     <p className="muted">Training loss, chat, and a three-step setup check are not this decision. Recording a choice does not deploy the model.</p>
-  </section>;
+  </Section>;
 }

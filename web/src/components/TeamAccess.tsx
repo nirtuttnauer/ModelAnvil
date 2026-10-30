@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { apiRequest, errorMessage } from '../api/client';
-import { Button, Card, Field } from './ui';
+import { statusLabel } from '../api/status';
+import { Button, Card, Notice, RecordTable, Section, StatusBadge, TextControl } from './ui';
 
 type Access = { invitations: { id: string; email: string; role: string; expires_at: string; status: string }[]; members: { id: string; email: string; role: string }[] };
 export function TeamAccess({ token, refreshKey }: { token: string; refreshKey: number }) {
@@ -20,14 +21,28 @@ export function TeamAccess({ token, refreshKey }: { token: string; refreshKey: n
       if (result?.invite_code) { setCode(result.invite_code); setEmail(''); } setRetry(v => v + 1);
     } catch (e) { setError(errorMessage(e)); } finally { setBusy(false); }
   }
-  if (!access) return error ? <p role="alert">{error}<Button onClick={() => setRetry(v => v + 1)}>Retry team access</Button></p> : null;
+  if (!access) return error ? <Notice tone="error" role="alert"><span>{error}</span><Button type="button" onClick={() => setRetry(v => v + 1)}>Retry team access</Button></Notice> : null;
   const occupied = access.members.some(m => m.role !== 'owner') || access.invitations.some(i => i.status === 'pending');
-  return <Card className="panel"><div className="panel-body team-access"><h2>Team access</h2>
-    <p>Invite one reviewer to this workspace. They can inspect its projects, submit labels and record accept or reject decisions. Reviewers cannot launch jobs, deploy models or manage access.</p>
-    {!occupied && <form className="guided-form" onSubmit={e => { e.preventDefault(); void change('/api/v1/accounts/invitations/', 'POST', { email: email.trim() }); }}><label>Reviewer email<Field type="email" autoComplete="off" required value={email} disabled={busy} onChange={e => setEmail(e.target.value)} /></label><Button className="primary" disabled={busy || !email.trim()}>Create invitation</Button></form>}
-    {error && <p role="alert">{error}</p>}
-    {code && <div role="status"><p>Share this one-time code privately. It expires in 72 hours and is shown only now.</p><label>Invitation code<Field readOnly value={code} autoComplete="off" /></label><Button onClick={() => setCode('')}>Hide invitation code</Button></div>}
-    <ul>{access.members.map(m => <li key={m.id}><span>{m.email} · {m.role}</span>{m.role !== 'owner' && <Button disabled={busy} aria-label={`Remove access for ${m.email}`} onClick={() => void change(`/api/v1/memberships/${m.id}/`, 'DELETE')}>Remove access</Button>}</li>)}</ul>
-    {!!access.invitations.length && <><h3>Recent invitations</h3><ul>{access.invitations.map(i => <li key={i.id}><span>{i.email} · {i.status} · expires {new Date(i.expires_at).toLocaleString()}</span>{i.status === 'pending' && <Button disabled={busy} aria-label={`Revoke invitation for ${i.email}`} onClick={() => void change(`/api/v1/accounts/invitations/${i.id}/`, 'DELETE')}>Revoke invitation</Button>}</li>)}</ul></>}
-  </div></Card>;
+  return <Section title="Team access" description="Invite one reviewer to this workspace. They can inspect its projects, submit labels and record accept or reject decisions. Reviewers cannot launch jobs, deploy models or manage access.">
+    {!occupied && <form data-ui="form" onSubmit={e => { e.preventDefault(); void change('/api/v1/accounts/invitations/', 'POST', { email: email.trim() }); }}>
+      <div data-ui="field-grid"><TextControl label="Reviewer email" type="email" autoComplete="off" required value={email} disabled={busy} onChange={e => setEmail(e.target.value)} /></div>
+      <div data-ui="actions"><Button variant="primary" disabled={busy || !email.trim()}>Create invitation</Button></div>
+    </form>}
+    {error && <Notice tone="error" role="alert">{error}</Notice>}
+    {code && <Card tone="accent" padded role="status"><div data-ui="form">
+      <p>Share this one-time code privately. It expires in 72 hours and is shown only now.</p>
+      <div data-ui="field-grid"><TextControl label="Invitation code" readOnly value={code} autoComplete="off" /></div>
+      <div data-ui="actions"><Button type="button" onClick={() => setCode('')}>Hide invitation code</Button></div>
+    </div></Card>}
+    <div className="table-scroll" tabIndex={0}><RecordTable><caption>Members</caption>
+      <thead><tr><th>Member</th><th>Role</th><th>Actions</th></tr></thead>
+      <tbody>{access.members.map(m => <tr key={m.id}><td>{m.email}</td><td>{statusLabel(m.role)}</td><td>{m.role !== 'owner' && <Button type="button" size="sm" disabled={busy} aria-label={`Remove access for ${m.email}`} onClick={() => void change(`/api/v1/memberships/${m.id}/`, 'DELETE')}>Remove access</Button>}</td></tr>)}</tbody>
+    </RecordTable></div>
+    {!!access.invitations.length && <Section level={3} title="Recent invitations">
+      <div className="table-scroll" tabIndex={0}><RecordTable>
+        <thead><tr><th>Email</th><th>Status</th><th>Expires</th><th>Actions</th></tr></thead>
+        <tbody>{access.invitations.map(i => <tr key={i.id}><td>{i.email}</td><td><StatusBadge status={i.status} /></td><td>{new Date(i.expires_at).toLocaleString()}</td><td>{i.status === 'pending' && <Button type="button" size="sm" disabled={busy} aria-label={`Revoke invitation for ${i.email}`} onClick={() => void change(`/api/v1/accounts/invitations/${i.id}/`, 'DELETE')}>Revoke invitation</Button>}</td></tr>)}</tbody>
+      </RecordTable></div>
+    </Section>}
+  </Section>;
 }

@@ -112,6 +112,8 @@ export const operationsResponses: Record<string, unknown> = {
     { policy_id: '50000000-0000-4000-8000-000000000002', name: 'Evaluation input tokens', period: 'monthly', unit: 'input_token', limit_amount: '100000000.000000', currency: 'USD', enabled: true, stop_behavior: 'stop', created_at: created, updated_at: updated },
     { policy_id: '50000000-0000-4000-8000-000000000003', name: 'Archived GPU allowance', period: 'monthly', unit: 'gpu_hour_eu', limit_amount: '100.000000', currency: 'EUR', enabled: false, stop_behavior: 'stop', created_at: created, updated_at: updated },
     { policy_id: '50000000-0000-4000-8000-000000000004', name: 'Dataset acquisition records', period: 'monthly', unit: 'bank_acquisition_records', limit_amount: '100000.000000', currency: '', enabled: true, stop_behavior: 'stop', created_at: created, updated_at: updated },
+    { policy_id: '50000000-0000-4000-8000-000000000006', name: 'Audio samples · Demo', period: 'monthly', unit: 'audio_samples', limit_amount: '200', currency: '', enabled: true, stop_behavior: 'stop', allowance: { remaining_amount: '200' }, created_at: created, updated_at: updated },
+    { policy_id: '50000000-0000-4000-8000-000000000007', name: 'Generated tokens · Demo', period: 'monthly', unit: 'generated_tokens', limit_amount: '50000', currency: '', enabled: true, stop_behavior: 'stop', allowance: { remaining_amount: '50000' }, created_at: created, updated_at: updated },
   ],
   '/api/v1/worker-pools/': [
     { id: 1, name: 'Research CPU pool', status: 'active', queue_name: 'research-cpu', result_egress: 'metadata_only', created_at: created },

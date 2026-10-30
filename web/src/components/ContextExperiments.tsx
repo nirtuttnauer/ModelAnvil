@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { apiPage, apiRequest, errorMessage } from '../api/client';
 import { ContextBlockInputs } from './ContextBlockEditor';
 import { DataInspector, TextContent } from './DataInspector';
-import { Button, Card, Field } from './ui';
+import { Button, Disclosure, KeyValueList, Notice, Section, Select, StatusBadge, TextControl } from './ui';
 import { Identifier } from './Identifier';
 import { objectInput } from './form-data';
 import type { RecipeVersion } from './ContextRecipeAuthor';
@@ -23,15 +23,50 @@ export function ContextExperiments({ token, version, versions }: { token: string
   }
   const report = experiments.find(e => e.experiment_id === selected);
   function patch(index: number, values: Partial<ReturnType<typeof newCase>>) { setCases(rows => rows.map((row, i) => i === index ? { ...row, ...values } : row)); }
-  return <Card className="panel context-experiments"><div className="panel-title"><h2>Measured paired context experiment</h2></div><div className="panel-body">
-    <p>Compare the same frozen cases on two recipes pinned to the same CPU reference model, tokenizer, template and output reserve. Greedy inference records actual outputs, token usage and latency. Each case supplies its own memory and frozen tool text; no session state or live tools carry between cases.</p>
-    {error && <p role="alert">{error}</p>}
-    {!version.model_version && <p>Save a recipe revision with a verified local CPU reference model to enable measured inference. Estimator-only recipes remain available for prompt inspection.</p>}
-    {version.model_version && <Button disabled={busy} onClick={() => setConfigure(v => !v)}>{configure ? 'Close experiment setup' : 'Configure paired experiment'}</Button>}
-    {version.model_version && configure && <form className="form-grid" onSubmit={run}><label>Experiment name<Field required maxLength={200} disabled={busy} value={name} onChange={e => setName(e.target.value)} /></label><label>Baseline recipe revision<select required disabled={busy} value={baseline} onChange={e => setBaseline(e.target.value)}><option value="">Choose a pinned baseline</option>{versions.filter(v => v.recipe_version_id !== version.recipe_version_id && v.model_version && v.model_version === version.model_version && v.output_reserve_tokens === version.output_reserve_tokens).map(v => <option key={v.recipe_version_id} value={v.recipe_version_id}>Recipe {v.recipe} · r{v.revision_no}</option>)}</select></label><label>Decoding seed<Field type="number" required min={0} max={2147483639} disabled={busy} value={seed} onChange={e => setSeed(e.target.value)} /></label>
-    {cases.map((c, index) => <fieldset className="full-width" disabled={busy} key={index}><legend>Experiment case {index + 1}</legend><div className="form-grid"><label>Case ID {index + 1}<Field required maxLength={128} value={c.id} onChange={e => patch(index, { id: e.target.value })} /></label><label>Session key {index + 1}<Field required maxLength={128} value={c.session} onChange={e => patch(index, { session: e.target.value })} /></label><label>Expected exact answer {index + 1}<Field maxLength={512} value={c.expected} onChange={e => patch(index, { expected: e.target.value })} /></label><label>Evidence marker {index + 1} (optional)<Field maxLength={512} value={c.evidence} onChange={e => patch(index, { evidence: e.target.value })} /></label><ContextBlockInputs blocks={version.blocks.map(b => ({ key: b.block_key, content: b.content_template, role: b.role, essential: b.priority === 1 }))} value={c.variables} onChange={value => patch(index, { variables: value })} />{cases.length > 1 && <Button type="button" onClick={() => setCases(rows => rows.filter((_, i) => i !== index))}>Remove case {index + 1}</Button>}</div></fieldset>)}
-    <div className="actions full-width"><Button type="button" disabled={busy || cases.length >= 8} onClick={() => setCases(rows => [...rows, newCase(rows.length + 1)])}>Add experiment case</Button><Button className="primary" disabled={busy || !version.model_version || !baseline || !name.trim()}>{busy ? 'Running paired inference…' : 'Run measured pair'}</Button></div></form>}
-    <label className="context-experiment-history">Saved context experiment<select value={selected} disabled={busy} onChange={e => setSelected(e.target.value)}><option value="">Choose a recorded experiment</option>{experiments.map(e => <option key={e.experiment_id} value={e.experiment_id}>{e.name || 'Unavailable inputs'} · {e.experiment_id.slice(0, 8)}</option>)}</select></label><p className="muted">History shows the loaded first page of accessible experiments. Exact match is scoped to the declared answers; it does not qualify model quality or prompt-injection safety.</p>
-    {report && <section className="detail-box"><Identifier value={report.experiment_id} label="Context experiment ID" />{report.status === 'unavailable' ? <p>{report.reason}</p> : <><h3>{report.name}</h3><p>{report.details?.limits}</p><Identifier value={report.details?.cases_digest} label="Frozen case digest" /><details><summary>Model, tokenizer, decoding and environment pins</summary><DataInspector value={{ pins: report.details?.pins, decoding: report.details?.decoding, environment: report.details?.environment, metrics: report.metrics }} /></details>{report.details?.cases?.map(c => <section key={c.case_id} className="detail-box"><h4>{c.case_id} · {c.session_key}</h4><p>Expected: {c.expected || '(empty)'} · output changed: {String(c.output_changed)}</p><div className="visualization-grid equal">{(['baseline', 'candidate'] as const).map(side => { const row = c[side]; return <article key={side}><h4>{side === 'baseline' ? 'Baseline' : 'Candidate'} · {row.status}</h4>{row.status === 'failed' ? <p role="status">{row.reason}</p> : <><p>Exact match: {String(row.exact_match)} · {row.usage?.prompt_tokens} input / {row.usage?.completion_tokens} output tokens · {row.elapsed_seconds?.toFixed(4)} s</p><TextContent text={row.output || '(empty output)'} label={`${side} model output`} /><details><summary>Exact prompt, evidence retention and omissions</summary><TextContent text={row.prompt || ''} label={`${side} exact prompt`} /><DataInspector value={{ evidence_retained: row.evidence_retained, omitted: row.omitted_blocks, truncated: row.truncated_blocks }} /></details></>}</article>; })}</div></section>)}</>}</section>}
-  </div></Card>;
+  const baselines = versions.filter(v => v.recipe_version_id !== version.recipe_version_id && v.model_version && v.model_version === version.model_version && v.output_reserve_tokens === version.output_reserve_tokens);
+  return <Section title="Measured paired context experiment" description="Compare the same frozen cases on two recipes pinned to the same CPU reference model, tokenizer, template and output reserve. Greedy inference records actual outputs, token usage and latency. Each case supplies its own memory and frozen tool text; no session state or live tools carry between cases."
+    actions={version.model_version ? <Button type="button" disabled={busy} onClick={() => setConfigure(v => !v)}>{configure ? 'Close experiment setup' : 'Configure paired experiment'}</Button> : undefined}>
+    {error && <Notice tone="error" role="alert">{error}</Notice>}
+    {!version.model_version && <Notice>Save a recipe revision with a verified local CPU reference model to enable measured inference. Estimator-only recipes remain available for prompt inspection.</Notice>}
+    {version.model_version && configure && <form data-ui="form" onSubmit={run}>
+      <div data-ui="field-grid">
+        <TextControl label="Experiment name" required maxLength={200} disabled={busy} value={name} onChange={e => setName(e.target.value)} />
+        <Select label="Baseline recipe revision" required disabled={busy} value={baseline} onChange={e => setBaseline(e.target.value)}><option value="">Choose a pinned baseline</option>{baselines.map(v => <option key={v.recipe_version_id} value={v.recipe_version_id}>Recipe {v.recipe} · r{v.revision_no}</option>)}</Select>
+        <TextControl label="Decoding seed" type="number" required min={0} max={2147483639} disabled={busy} value={seed} onChange={e => setSeed(e.target.value)} />
+      </div>
+      {cases.map((c, index) => <Section key={index} level={3} title={`Experiment case ${index + 1}`} actions={cases.length > 1 ? <Button type="button" size="sm" disabled={busy} onClick={() => setCases(rows => rows.filter((_, i) => i !== index))}>Remove case {index + 1}</Button> : undefined}>
+        <div data-ui="field-grid">
+          <TextControl label={`Case ID ${index + 1}`} required maxLength={128} disabled={busy} value={c.id} onChange={e => patch(index, { id: e.target.value })} />
+          <TextControl label={`Session key ${index + 1}`} required maxLength={128} disabled={busy} value={c.session} onChange={e => patch(index, { session: e.target.value })} />
+          <TextControl label={`Expected exact answer ${index + 1}`} maxLength={512} disabled={busy} value={c.expected} onChange={e => patch(index, { expected: e.target.value })} />
+          <TextControl label={`Evidence marker ${index + 1} (optional)`} maxLength={512} disabled={busy} value={c.evidence} onChange={e => patch(index, { evidence: e.target.value })} />
+        </div>
+        <ContextBlockInputs blocks={version.blocks.map(b => ({ key: b.block_key, content: b.content_template, role: b.role, essential: b.priority === 1 }))} value={c.variables} disabled={busy} onChange={value => patch(index, { variables: value })} />
+      </Section>)}
+      <div data-ui="actions"><Button type="button" disabled={busy || cases.length >= 8} onClick={() => setCases(rows => [...rows, newCase(rows.length + 1)])}>Add experiment case</Button><Button variant="primary" disabled={busy || !version.model_version || !baseline || !name.trim()}>{busy ? 'Running paired inference…' : 'Run measured pair'}</Button></div>
+    </form>}
+    <div data-ui="field-grid">
+      <Select label="Saved context experiment" value={selected} disabled={busy} onChange={e => setSelected(e.target.value)} hint="History shows the loaded first page of accessible experiments. Exact match is scoped to the declared answers; it does not qualify model quality or prompt-injection safety."><option value="">Choose a recorded experiment</option>{experiments.map((e, index) => <option key={e.experiment_id} value={e.experiment_id}>Experiment {index + 1} · {e.name || 'Unavailable inputs'}</option>)}</Select>
+    </div>
+    {report && <Section level={3} title={report.status === 'unavailable' ? 'Experiment unavailable' : report.name || 'Recorded experiment'} description={report.status === 'unavailable' ? report.reason : report.details?.limits}>
+      <KeyValueList columns={2} items={[
+        { label: 'Context experiment', value: <Identifier value={report.experiment_id} label="Context experiment ID" display="code" /> },
+        ...(report.status === 'unavailable' ? [] : [{ label: 'Frozen case digest', value: <Identifier value={report.details?.cases_digest} label="Frozen case digest" display="code" /> }]),
+      ]} />
+      {report.status !== 'unavailable' && <>
+        <Disclosure summary="Model, tokenizer, decoding and environment pins" variant="quiet"><DataInspector value={{ pins: report.details?.pins, decoding: report.details?.decoding, environment: report.details?.environment, metrics: report.metrics }} /></Disclosure>
+        {report.details?.cases?.map(c => <Disclosure key={c.case_id} variant="plain" open summary={`${c.case_id} · ${c.session_key}`}>
+          <KeyValueList columns={2} items={[{ label: 'Expected', value: c.expected || '(empty)' }, { label: 'Output changed', value: c.output_changed ? 'Yes' : 'No' }]} />
+          <div data-ui="field-grid">{(['baseline', 'candidate'] as const).map(side => { const row = c[side]; return <article key={side} data-ui="form" aria-label={`${side} result for ${c.case_id}`}>
+            <div data-ui="actions"><strong>{side === 'baseline' ? 'Baseline' : 'Candidate'}</strong><StatusBadge status={row.status} /></div>
+            {row.status === 'failed' ? <Notice tone="error" role="status">{row.reason}</Notice> : <>
+              <p className="muted">Exact match: {String(row.exact_match)} · {row.usage?.prompt_tokens} input / {row.usage?.completion_tokens} output tokens · {row.elapsed_seconds?.toFixed(4)} s</p>
+              <TextContent text={row.output || '(empty output)'} />
+              <Disclosure summary="Exact prompt, evidence retention and omissions" variant="quiet"><TextContent text={row.prompt || ''} /><DataInspector value={{ evidence_retained: row.evidence_retained, omitted: row.omitted_blocks, truncated: row.truncated_blocks }} /></Disclosure>
+            </>}
+          </article>; })}</div>
+        </Disclosure>)}
+      </>}
+    </Section>}
+  </Section>;
 }
