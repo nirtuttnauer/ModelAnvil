@@ -3206,6 +3206,198 @@
         }
       }
     },
+    "/training-runs/{run_id}/prepare-evaluation/": {
+      "post": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Prepare the guided held-out classification comparison for a completed adapter run",
+        "operationId": "prepareTrainingRunEvaluation",
+        "description": "Requires the engineer role. Reuses or creates the pending guided-native evaluation of the run's selected candidate against its exact base model. Without suite_version the run's own protected test split becomes an exact-match classification suite of 1\u201364 cases. Verifies the managed Apple GPU host (mps:0, at least 32 GiB) and the tenant's evaluation-case allowance; only administrators may create a missing allowance. Nothing is executed or qualified; submit launch to /evaluation-runs/{run_id}/execute/.",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "suite_version": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Accessible protected exact-match classification suite version with 2\u20138 labels. Omit to evaluate on the training dataset's held-out test split."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pending evaluation, its protected suite and the exact execution inputs. Repeated calls return the same pending run.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "evaluation",
+                    "suite",
+                    "launch",
+                    "labels",
+                    "cases",
+                    "warnings"
+                  ],
+                  "properties": {
+                    "evaluation": {
+                      "$ref": "#/components/schemas/EvaluationRun"
+                    },
+                    "suite": {
+                      "$ref": "#/components/schemas/EvaluationSuiteVersion"
+                    },
+                    "launch": {
+                      "type": "object",
+                      "description": "Verified managed pool, allowance and bounds; send unchanged as the execute request body.",
+                      "required": [
+                        "pool",
+                        "budget_policy_id",
+                        "max_tokens",
+                        "profile"
+                      ],
+                      "properties": {
+                        "pool": {
+                          "type": "integer"
+                        },
+                        "budget_policy_id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "max_tokens": {
+                          "const": 32
+                        },
+                        "profile": {
+                          "const": "guided-native"
+                        }
+                      }
+                    },
+                    "labels": {
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 8,
+                      "uniqueItems": true,
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9][A-Za-z0-9 _.-]{0,63}$"
+                      },
+                      "description": "Sorted classification labels of the task."
+                    },
+                    "cases": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 64,
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "case_id",
+                          "input_prompt",
+                          "expected_output",
+                          "source_group_id"
+                        ],
+                        "properties": {
+                          "case_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 128
+                          },
+                          "sample_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 128,
+                            "description": "Original dataset sample; present for held-out suites derived from the training dataset."
+                          },
+                          "source_group_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 128
+                          },
+                          "input_prompt": {
+                            "type": "string",
+                            "maxLength": 1024,
+                            "description": "Final user message of the case."
+                          },
+                          "messages": {
+                            "type": "array",
+                            "description": "Optional system/user/assistant history ending with the user message; omitted means a single user turn of input_prompt.",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "role",
+                                "content"
+                              ],
+                              "properties": {
+                                "role": {
+                                  "type": "string",
+                                  "enum": [
+                                    "system",
+                                    "user",
+                                    "assistant"
+                                  ]
+                                },
+                                "content": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "expected_output": {
+                            "type": "string",
+                            "maxLength": 4096,
+                            "description": "Exactly one task label."
+                          },
+                          "slice": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 64,
+                            "description": "Defaults to the expected label."
+                          }
+                        }
+                      },
+                      "description": "Protected suite cases exactly as they will be scored."
+                    },
+                    "warnings": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Non-blocking notes, such as labels the held-out split does not cover."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown body keys, inaccessible or non-classification suite, incomplete training, offline or undersized managed host, or missing evaluation allowance"
+          },
+          "403": {
+            "description": "Engineer role required"
+          },
+          "404": {
+            "description": "Run unavailable in tenant/project scope"
+          }
+        }
+      }
+    },
     "/usage-events/": {
       "get": {
         "tags": [
@@ -5277,6 +5469,39 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/deployment-capabilities/": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Describe installed operations for the caller's role and managed host readiness",
+        "description": "Authenticated. Reports which operations this local installation offers the caller, with the current reason when one is unavailable, and whether the managed training host is online. Advisory only: every operation still enforces its own admission. Served with Cache-Control: private, no-store.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store"
+                },
+                "description": "Role and host readiness are caller-specific and change without notice."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeploymentCapabilities"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
           }
         }
       }
@@ -10631,6 +10856,23 @@
                 }
               }
             }
+          },
+          "guided_evaluation": {
+            "type": "object",
+            "readOnly": true,
+            "required": [
+              "eligible",
+              "reason"
+            ],
+            "description": "Whether /training-runs/{run_id}/prepare-evaluation/ applies: a completed lora_adapter run with a selected output model whose pinned source is the SmolLM2-1.7B Apple adapter profile. Other runs use advanced evaluation.",
+            "properties": {
+              "eligible": {
+                "type": "boolean"
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
           }
         }
       },
@@ -13047,6 +13289,374 @@
               }
             ],
             "readOnly": true
+          },
+          "candidate_name": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Registered model name of candidate_model_version."
+          },
+          "baseline_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "readOnly": true,
+            "description": "Registered model name of baseline_model_version; null without a baseline."
+          },
+          "decision_report": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "readOnly": true,
+            "description": "Paired candidate/baseline classification report for guided-native runs; null for every other profile. Descriptive only: no release gate or production qualification is implied.",
+            "required": [
+              "available",
+              "reason",
+              "candidate",
+              "baseline",
+              "case_changes",
+              "complete_cases",
+              "total_cases",
+              "labels",
+              "accuracy_delta",
+              "accuracy_delta_interval",
+              "uncertainty_method",
+              "training_run_id",
+              "export_available",
+              "resource_evidence",
+              "production_qualified"
+            ],
+            "properties": {
+              "available": {
+                "type": "boolean",
+                "description": "True once the run completed with every candidate and baseline case scored."
+              },
+              "reason": {
+                "type": "string",
+                "description": "Empty when available."
+              },
+              "candidate": {
+                "type": "object",
+                "required": [
+                  "accuracy",
+                  "macro_f1",
+                  "confusion_matrix"
+                ],
+                "properties": {
+                  "accuracy": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "macro_f1": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "confusion_matrix": {
+                    "type": "array",
+                    "description": "One row per label in labels order; the final column counts outputs matching no label.",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    }
+                  }
+                }
+              },
+              "baseline": {
+                "type": "object",
+                "required": [
+                  "accuracy",
+                  "macro_f1",
+                  "confusion_matrix"
+                ],
+                "properties": {
+                  "accuracy": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "macro_f1": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "confusion_matrix": {
+                    "type": "array",
+                    "description": "One row per label in labels order; the final column counts outputs matching no label.",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    }
+                  }
+                }
+              },
+              "case_changes": {
+                "type": "object",
+                "required": [
+                  "improved",
+                  "regressed",
+                  "unchanged",
+                  "changed_cases"
+                ],
+                "properties": {
+                  "improved": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "regressed": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "unchanged": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "changed_cases": {
+                    "type": "array",
+                    "description": "Paired cases whose candidate output differs from the baseline output.",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "case_id",
+                        "expected_output",
+                        "candidate_output",
+                        "baseline_output",
+                        "change"
+                      ],
+                      "properties": {
+                        "case_id": {
+                          "type": "string"
+                        },
+                        "expected_output": {
+                          "type": "string"
+                        },
+                        "candidate_output": {
+                          "type": "string"
+                        },
+                        "baseline_output": {
+                          "type": "string"
+                        },
+                        "change": {
+                          "type": "string",
+                          "enum": [
+                            "improved",
+                            "regressed",
+                            "unchanged"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "complete_cases": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Cases with both candidate and baseline results."
+              },
+              "total_cases": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 64
+              },
+              "labels": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 8,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "accuracy_delta": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": -1,
+                "maximum": 1,
+                "description": "Mean per-case pass difference, candidate minus baseline; null until available."
+              },
+              "accuracy_delta_interval": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "type": "number"
+                },
+                "description": "2.5th and 97.5th percentile of the paired bootstrap; null until available or with fewer than two cases."
+              },
+              "uncertainty_method": {
+                "type": "string"
+              },
+              "training_run_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "run_id of the training run whose candidate is compared."
+              },
+              "export_available": {
+                "type": "boolean",
+                "description": "Mirrors available; the reviewed candidate export requires a recorded decision."
+              },
+              "resource_evidence": {
+                "type": "object",
+                "description": "Pinned execution environment (runtime, build_digest, device, prompt_format, decoding, template_sha256, precision, adapter, seed) merged with observed wall times and committed ledger units. Peak memory and unpriced cost are unavailable, not zero.",
+                "properties": {
+                  "evaluation": {
+                    "type": "object",
+                    "required": [
+                      "queue_seconds",
+                      "execution_seconds",
+                      "usage_available",
+                      "usage"
+                    ],
+                    "properties": {
+                      "queue_seconds": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "execution_seconds": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "usage_available": {
+                        "type": "boolean"
+                      },
+                      "usage": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "quantity",
+                            "unit",
+                            "amount",
+                            "currency"
+                          ],
+                          "properties": {
+                            "quantity": {
+                              "type": "string"
+                            },
+                            "unit": {
+                              "type": "string"
+                            },
+                            "amount": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "currency": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "training": {
+                    "type": "object",
+                    "required": [
+                      "queue_seconds",
+                      "execution_seconds",
+                      "usage_available",
+                      "usage"
+                    ],
+                    "properties": {
+                      "queue_seconds": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "execution_seconds": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "usage_available": {
+                        "type": "boolean"
+                      },
+                      "usage": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "quantity",
+                            "unit",
+                            "amount",
+                            "currency"
+                          ],
+                          "properties": {
+                            "quantity": {
+                              "type": "string"
+                            },
+                            "unit": {
+                              "type": "string"
+                            },
+                            "amount": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "currency": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "peak_memory_bytes": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "basis": {
+                    "type": "string"
+                  }
+                }
+              },
+              "production_qualified": {
+                "const": false
+              }
+            }
           }
         }
       },
@@ -13229,6 +13839,255 @@
           },
           "production_qualified": {
             "const": false
+          }
+        }
+      },
+      "DeploymentCapabilities": {
+        "type": "object",
+        "required": [
+          "mode",
+          "role",
+          "operations",
+          "readiness"
+        ],
+        "properties": {
+          "mode": {
+            "const": "local"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "owner",
+              "admin",
+              "manager",
+              "engineer",
+              "reviewer",
+              "viewer",
+              "worker"
+            ],
+            "description": "Caller's effective role in the active scope."
+          },
+          "operations": {
+            "type": "object",
+            "required": [
+              "classification",
+              "local_training",
+              "evaluation",
+              "chat",
+              "model_export",
+              "team_management"
+            ],
+            "properties": {
+              "classification": {
+                "type": "object",
+                "required": [
+                  "enabled",
+                  "reason",
+                  "limits"
+                ],
+                "description": "Guided classification training. Requires the engineer role and an available managed host.",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Why the operation is unavailable, or guidance; empty when nothing blocks it."
+                  },
+                  "limits": {
+                    "type": "object",
+                    "required": [
+                      "max_rows",
+                      "max_tokens",
+                      "max_steps",
+                      "max_cases",
+                      "max_output_tokens"
+                    ],
+                    "properties": {
+                      "max_rows": {
+                        "type": "integer",
+                        "description": "Dataset rows accepted by the pinned local training runtime."
+                      },
+                      "max_tokens": {
+                        "type": "integer",
+                        "description": "Sequence tokens per example."
+                      },
+                      "max_steps": {
+                        "type": "integer",
+                        "description": "Optimizer steps per run."
+                      },
+                      "max_cases": {
+                        "type": "integer",
+                        "description": "Evaluation cases per suite."
+                      },
+                      "max_output_tokens": {
+                        "type": "integer",
+                        "description": "Generated tokens per evaluation case."
+                      }
+                    }
+                  }
+                }
+              },
+              "local_training": {
+                "type": "object",
+                "required": [
+                  "enabled",
+                  "reason",
+                  "limits"
+                ],
+                "description": "Advanced local training. Requires the engineer role and an available managed host.",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Why the operation is unavailable, or guidance; empty when nothing blocks it."
+                  },
+                  "limits": {
+                    "type": "object",
+                    "required": [
+                      "max_rows",
+                      "max_tokens",
+                      "max_steps",
+                      "max_cases",
+                      "max_output_tokens"
+                    ],
+                    "properties": {
+                      "max_rows": {
+                        "type": "integer",
+                        "description": "Dataset rows accepted by the pinned local training runtime."
+                      },
+                      "max_tokens": {
+                        "type": "integer",
+                        "description": "Sequence tokens per example."
+                      },
+                      "max_steps": {
+                        "type": "integer",
+                        "description": "Optimizer steps per run."
+                      },
+                      "max_cases": {
+                        "type": "integer",
+                        "description": "Evaluation cases per suite."
+                      },
+                      "max_output_tokens": {
+                        "type": "integer",
+                        "description": "Generated tokens per evaluation case."
+                      }
+                    }
+                  }
+                }
+              },
+              "evaluation": {
+                "type": "object",
+                "required": [
+                  "enabled",
+                  "reason",
+                  "limits"
+                ],
+                "description": "Queued candidate/baseline comparisons. Requires the engineer role.",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Why the operation is unavailable, or guidance; empty when nothing blocks it."
+                  },
+                  "limits": {
+                    "type": "object",
+                    "required": [
+                      "max_cases",
+                      "max_output_tokens"
+                    ],
+                    "properties": {
+                      "max_cases": {
+                        "type": "integer"
+                      },
+                      "max_output_tokens": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              },
+              "chat": {
+                "type": "object",
+                "required": [
+                  "enabled",
+                  "reason"
+                ],
+                "description": "Local inference. Requires the engineer role.",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Why the operation is unavailable, or guidance; empty when nothing blocks it."
+                  }
+                }
+              },
+              "model_export": {
+                "type": "object",
+                "required": [
+                  "enabled",
+                  "reason"
+                ],
+                "description": "Always offered; each export still requires an accessible completed candidate.",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Why the operation is unavailable, or guidance; empty when nothing blocks it."
+                  }
+                }
+              },
+              "team_management": {
+                "type": "object",
+                "required": [
+                  "enabled",
+                  "reason"
+                ],
+                "description": "Requires the administrator role.",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Why the operation is unavailable, or guidance; empty when nothing blocks it."
+                  }
+                }
+              }
+            }
+          },
+          "readiness": {
+            "type": "object",
+            "required": [
+              "training_enabled",
+              "training_busy",
+              "qualification_scope",
+              "production_qualified"
+            ],
+            "properties": {
+              "training_enabled": {
+                "type": "boolean",
+                "description": "Managed host heartbeat is fresh, ready and built from this API revision."
+              },
+              "training_busy": {
+                "type": "boolean",
+                "description": "The host is training another run."
+              },
+              "qualification_scope": {
+                "const": "local-apple-beta"
+              },
+              "production_qualified": {
+                "const": false
+              }
+            }
           }
         }
       },
