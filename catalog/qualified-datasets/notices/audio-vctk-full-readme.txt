@@ -9,7 +9,7 @@
                         Copyright (c) 2019 
 
                          Junichi Yamagishi
-                       jyamagis@inf.ed.ac.uk
+                       [contact address removed; see the upstream VCTK README]
 ---------------------------------------------------------------------
 
 Overview 

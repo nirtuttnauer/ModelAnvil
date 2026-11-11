@@ -1,0 +1,9 @@
+tool: gitleaks 8.28.0
+command: gitleaks dir .
+config: stock (no --config, no baseline, no allowlist, no .gitleaks.toml)
+sha: 7c6d8e88c8875c560c9dd5b24e87381f0cdf76eb plus this evidence directory
+date: 2026-11-11T18:41:40Z
+scanned: 31.20 MB
+exit: 0
+findings: 0
+console: no leaks found

@@ -1,0 +1,18 @@
+tool: gitleaks 8.30.1
+config: stock (no --config, no baseline, no allowlist, no .gitleaks.toml)
+sha: 7c6d8e88c8875c560c9dd5b24e87381f0cdf76eb
+date: 2026-11-11T18:17:03Z
+dir_command: gitleaks dir .
+dir_exit: 1
+dir_findings: 370
+dir_rule: generic-api-key
+dir_findings_under_anvil-004_or_vctk_notice_files: 0
+detect_command: gitleaks detect --source . --log-opts=--all
+detect_exit: 1
+detect_findings: 781
+detect_unique_fingerprints: 757
+detect_findings_absent_from_ANVIL-017_list: 370 findings, 366 unique fingerprints
+those_findings_commit: 75e2565a83b4b0cf96aebe793a9da6823e67d165
+those_findings_on_7c6d8e8: 0
+A second dir scan after this evidence directory was added still found 370, and none of those files are under anvil-004.
+The raw reports are not committed.

@@ -3340,9 +3340,9 @@
         "qualified_on": "2026-10-12",
         "connector": "qualified_full_http_release_v1",
         "upstream_repository": "https://datashare.ed.ac.uk/handle/10283/3443",
-        "pinned_revision": "31f515285efcc67d589b91bb97d1df691799c9eec4f43e25a7b8e77b69e470f4",
+        "pinned_revision": "c6f3fd4c8dfbf933eab63a7f488f174f6476f958ded208afb0df3ccb631d5509",
         "qualified_revisions": [
-          "31f515285efcc67d589b91bb97d1df691799c9eec4f43e25a7b8e77b69e470f4"
+          "c6f3fd4c8dfbf933eab63a7f488f174f6476f958ded208afb0df3ccb631d5509"
         ],
         "revision_resolved_on": "2026-10-11",
         "revision_selection": "SHA-256 of complete-release inventory, file/chunk digests, validated full content and publisher notices",
