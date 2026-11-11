@@ -1,0 +1,6 @@
+Label: local
+SHA: 6febdec8fe71da4f759a7a72e419809682e1b4cd
+Date: 2026-11-11T18:16:00Z
+Command: rg -n -i 'always (be )?(free|mit)|will remain' README.md docs
+Exit: 1
+Output: empty

@@ -1,0 +1,33 @@
+Label: local
+SHA: 6febdec8fe71da4f759a7a72e419809682e1b4cd
+Date: 2026-11-11T18:16:00Z
+Commands: git log --format='%ae' and git log --format='%ce'
+Commits: 286
+Addresses are not recorded.
+
+Author commits by class:
+owner 258
+agent 28
+other 0
+
+Author identities by class:
+owner 4
+agent 1
+other 0
+
+Committer commits by class:
+owner 241
+agent 28
+other 17
+
+Committer identities by class:
+owner 2
+agent 1
+other 1
+
+Classes:
+owner — git name Nir Tuttnauer or nirtuttnauer. LICENSE names Copyright (c) 2026 Nir Tuttnauer.
+agent — git name Cursor Agent.
+other — git committer name GitHub, on 17 merge commits. The author of each of those commits is the owner. Two owner author identities appear only as authors; those commits were committed by the GitHub merge identity.
+
+Unexplained third parties: 0

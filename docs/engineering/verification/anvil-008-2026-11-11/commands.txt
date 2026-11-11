@@ -1,0 +1,22 @@
+Label: local
+Base SHA: 6febdec8fe71da4f759a7a72e419809682e1b4cd
+Host: cursor, Linux 6.12.113+ x86_64, Python 3.12.3, pip 26.3
+Date: 2026-11-11 UTC
+
+Python, once per requirements*.txt, in a new venv, with no extra index URL:
+  python3 -m venv <venv>
+  <venv>/bin/python -m pip install --upgrade pip
+  <venv>/bin/python -m pip install -r <requirements file>
+  pip-licenses 5.5.5 --python <venv>/bin/python --from=mixed --format=json --with-urls --order=name
+  pip-licenses 5.5.5 --python <venv>/bin/python --from=all --format=json --with-urls --order=name
+Exit: 0 for every group. Saved as pip-licenses/<group>.mixed.json and pip-licenses/<group>.all.json.
+
+Web, from a copy of web/package.json and web/package-lock.json (sha256 matched the repo files). web/ was not modified.
+  npm ci --ignore-scripts
+  npx --yes license-checker --production --json
+license-checker 25.0.1. Exit: 0. Saved as web/license-checker.json.
+Maintainer email fields were removed before commit. Two other addresses inside saved tool text were replaced with [redacted].
+
+Audit, at 6febdec with an empty git status --porcelain. No --ignore-vuln.
+  pip-audit 2.10.1 --progress-spinner off -r <each requirements*.txt>
+Ten files exited 0. requirements.documents.txt exited 1.
