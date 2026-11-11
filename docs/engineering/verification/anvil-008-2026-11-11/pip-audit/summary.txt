@@ -1,0 +1,28 @@
+Label: local
+SHA: 6febdec8fe71da4f759a7a72e419809682e1b4cd
+git status --porcelain: empty
+Date: 2026-11-11T18:18:39Z
+pip-audit 2.10.1
+Command: pip-audit --progress-spinner off -r <file>
+No --ignore-vuln.
+
+requirements.txt exit 0
+requirements.production.txt exit 0
+requirements.documents.txt exit 1
+requirements.gpu.txt exit 0
+requirements.inference.txt exit 0
+requirements.embeddings.txt exit 0
+requirements.audio.txt exit 0
+requirements.vision.txt exit 0
+requirements.tools.txt exit 0
+requirements.selfhost.lock.txt exit 0
+requirements.specialists.txt exit 0
+
+requirements.documents.txt found 7 known vulnerabilities in pypdf 6.21.2:
+CVE-2026-119208 fix 6.21.3
+CVE-2026-119206 fix 6.21.3
+CVE-2026-119209 fix 6.21.3
+CVE-2026-119207 fix 6.21.3
+CVE-2026-119203 fix 6.21.4
+CVE-2026-119205 fix 6.21.4
+CVE-2026-119204 fix 6.21.4
