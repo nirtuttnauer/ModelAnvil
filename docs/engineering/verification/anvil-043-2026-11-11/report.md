@@ -91,4 +91,44 @@ Without the config, the same history scan reports 781 findings: 411 whose finger
 
 ## Gate results
 
-Gate commands and counts are recorded after this classification, in the files next to this report.
+Label: `local`. Commands ran at `b4dee2ab8cd12859210977b5b41570ebcd8242a4` with an empty `git status --porcelain`. Base: `origin/main` `4dd5060e632bae598003bf3a51a474709fe8c7ac`. Machine: `cursor`, Linux-6.12.113+-x86_64-with-glibc2.39, Python 3.12.3, Node v24.22.3. Records use `docs/engineering/schemas/local-evidence.v1.json`. This section is the following docs commit.
+
+### G-local
+
+`make premerge` exited 0. The process was `.venv/bin/python scripts/premerge.py --output /tmp/anvil043/premerge.json`, and the record's command field is `make premerge`. Record: `premerge.json`, `2026-11-11T22:00:34+00:00`.
+
+| Suite | main `4dd5060` | this SHA | Skipped / xfail / timeout |
+| --- | --- | --- | --- |
+| Backend `--exclude-tag=pg` | 1285 | 1285 passed | 0 |
+| Frontend `npm test` | 249 | 249 passed | 0 |
+| PostgreSQL `--tag=pg` | 28 | 28 passed | 0 |
+
+Backend result: `Ran 1285 tests in 326.985s` then `OK`. Frontend: `tests 249`, `pass 249`, `fail 0`, `skipped 0`. PostgreSQL: `Ran 28 tests in 113.574s` then `OK`, against `pgvector/pgvector:pg16` and `rabbitmq:4.1-alpine`. `premerge.json` lists the 28 excluded `pg` IDs. This ticket adds no test. The diff from `4dd5060` is `.gitleaks.toml` and this evidence directory.
+
+Two IDs were not collected, because this host has neither `MODELANVIL_MLX_TEST_MODEL_DIR` nor `MODELANVIL_GGUF_TEST_MODEL`:
+
+- `modelanvil.runners.training.test_mlx_runtime.NativeAdapterModelTests.test_frozen_four_bit_base_actual_update_exact_resume_and_corruption`
+- `modelanvil.runners.test_gguf_runtime.GGUFNative.test_actual_cpu_generation_cancellation_and_unload`
+
+They are `fixture_tests_not_collected` on `premerge.json`. The same two IDs are absent on `4dd5060`.
+
+### G-skip
+
+A skip, xfail, or timeout at runtime is a failure. The premerge runs have zero of each. The backend command excludes `pg` before the run and lists those 28 IDs. The PostgreSQL command runs those 28.
+
+### G-audit
+
+`pip-audit` 2.10.1, `pip-audit --progress-spinner=off -r <file>` for every root `requirements*.txt`, no `--ignore-vuln`. Record: `pip-audit.json`, `2026-11-11T21:53:38+00:00`, exit 1.
+
+Ten files exited 0 with `No known vulnerabilities found`: `requirements.audio.txt`, `requirements.embeddings.txt`, `requirements.gpu.txt`, `requirements.inference.txt`, `requirements.production.txt`, `requirements.selfhost.lock.txt`, `requirements.specialists.txt`, `requirements.tools.txt`, `requirements.txt`, `requirements.vision.txt`.
+
+`requirements.documents.txt` exited 1. `pypdf` 6.21.2 has CVE-2026-119203, CVE-2026-119204, CVE-2026-119205, CVE-2026-119206, CVE-2026-119207, CVE-2026-119208, and CVE-2026-119209. The reported fix versions are 6.21.3 and 6.21.4. The pin matches `4dd5060`. ANVIL-042 owns that pin. No ignore was added, and pypdf was not bumped.
+
+### G-secrets
+
+`gitleaks` 8.30.1, config `.gitleaks.toml`.
+
+- `gitleaks dir . --redact` exited 0, `no leaks found`, 28.56 MB. Record: `gitleaks-dir.json`, `2026-11-11T21:53:40+00:00`. That scan ran before `make premerge` wrote `web/storybook-static/`. The bundle is gitignored build output. While it was on disk, `gitleaks dir` reported one extra `generic-api-key` hit in `web/storybook-static/assets/iframe-DtDYd3v1.js`. The directory was removed. It is not in the commit. A later dir scan of this tree, after that removal, also exited 0.
+- `gitleaks detect --redact --log-opts=--all` scanned 198 commits and exited 1 with 36 findings, all rule `generic-api-key`, none decoded. Every fingerprint is on `reviews/ANVIL-017-gitleaks-history.md`. Record: `gitleaks-detect.json`, `2026-11-11T21:53:42+00:00`.
+
+The same dir scan without this config, recorded before the allowlist was added, exited 1 with 370 `generic-api-key` findings. The history scan without the config exited 1 with 781: 411 on the ANVIL-017 list and the 370 from `75e2565a83b4b0cf96aebe793a9da6823e67d165`.
