@@ -13,7 +13,7 @@ const options = [
 const demoZip = 'UEsDBBQAAAAIAKK0Tl1tQqhIfgAAACRFAAAIAAAAREVNTy50eHTty7ENwjAQAMCeKX6CjELjCSB+EYsQo2AE2Z4p6O76K8c2lhxtjjL6flx7v0d+n30fU5x7PHrNNT7Zbst4xWXPaNu8vmvW6VRUVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/XX9QSwECFAMUAAAACACitE5dbUKoSH4AAAAkRQAACAAAAAAAAAAAAAAAgAEAAAAAREVNTy50eHRQSwUGAAAAAAEAAQA2AAAApAAAAAAA';
 const meta = {
   ...screens, title: 'ModelAnvil/Actions/Model export',
-  parameters: { demoRoute: `#training?tab=current-run&run=${runId}`, demoHeading: 'Training', demoApiPath: '/api/v1/training-runs/' },
+  parameters: { demoRoute: `#training?tab=current-run&run=${runId}`, demoHeading: 'Fine-tune', demoApiPath: '/api/v1/training-runs/' },
   beforeEach(context: Parameters<typeof screens.beforeEach>[0]) {
     screens.beforeEach(context);
     const original = (mlResponses['/api/v1/training-runs/'] as Record<string, unknown>[])[0];

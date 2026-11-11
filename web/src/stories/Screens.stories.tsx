@@ -45,7 +45,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 const apiPaths: Record<string, string> = { Overview: 'training-runs', 'Dataset Bank': 'dataset-bank/sources', Datasets: 'datasets', Annotation: 'labeling-campaigns', Models: 'models', Training: 'fine-tuning/options', Alignment: 'alignment-runs', Evaluation: 'evaluation-runs', Workflows: 'jobs', RAG: 'index-versions', 'Context Lab': 'context-recipe-versions', Releases: 'release-versions', Infrastructure: 'worker-inventory', Budgets: 'usage-events/summary', Audit: 'audit', 'Run Detail': 'run-details/training/30000000-0000-4000-8000-000000000001' };
-const route = (name: string, hash?: string) => ({ demoHeading: name === 'Overview' ? 'Project overview' : name === 'RAG' ? 'Retrieval workbench' : name, demoApiPath: `/api/v1/${apiPaths[name]}/`, demoRoute: hash ?? `#${name.toLowerCase().replaceAll(' ', '-')}` });
+const headings: Record<string, string> = { Overview: 'Project overview', RAG: 'Retrieval workbench', Datasets: 'Data Lab', Training: 'Fine-tune', Evaluation: 'Evaluate', Releases: 'Release gate', Audit: 'Audit log', Chat: 'Playground' };
+const route = (name: string, hash?: string) => ({ demoHeading: headings[name] ?? name, demoApiPath: `/api/v1/${apiPaths[name]}/`, demoRoute: hash ?? `#${name.toLowerCase().replaceAll(' ', '-')}` });
 export const Overview: Story = { name: '01 · Overview', parameters: route('Overview') };
 export const DatasetBank: Story = { name: '02 · Dataset Bank', parameters: route('Dataset Bank') };
 export const Datasets: Story = { name: '03 · Datasets', parameters: route('Datasets') };
@@ -106,10 +107,10 @@ export const Audio: Story = {
   },
 };
 export const ToolsChat: Story = {
-  name: '20 · Tools chat', parameters: { demoRoute: '#chat', demoHeading: 'Chat', demoApiPath: '/api/v1/tools/' },
+  name: '20 · Tools chat', parameters: { demoRoute: '#chat', demoHeading: 'Playground', demoApiPath: '/api/v1/tools/' },
   play: async ({ canvasElement, parameters }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.findByRole('heading', { name: 'Chat', level: 1 })).resolves.toBeVisible();
+    await expect(canvas.findByRole('heading', { name: 'Playground', level: 1 })).resolves.toBeVisible();
     await userEvent.click(await canvas.findByRole('button', { name: 'Tools' }));
     const model = await canvas.findByLabelText('Tool model');
     await waitFor(() => expect(within(model).getAllByRole('option').length).toBeGreaterThan(1));
@@ -123,10 +124,10 @@ export const ToolsChat: Story = {
   },
 };
 export const ResearchChat: Story = {
-  name: '21 · Research chat', parameters: { demoRoute: '#chat', demoHeading: 'Chat', demoApiPath: '/api/v1/research-sessions/' },
+  name: '21 · Research chat', parameters: { demoRoute: '#chat', demoHeading: 'Playground', demoApiPath: '/api/v1/research-sessions/' },
   play: async ({ canvasElement, parameters }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.findByRole('heading', { name: 'Chat', level: 1 })).resolves.toBeVisible();
+    await expect(canvas.findByRole('heading', { name: 'Playground', level: 1 })).resolves.toBeVisible();
     await userEvent.click(await canvas.findByRole('button', { name: 'Documents & research' }));
     const session = await canvas.findByLabelText('Saved session');
     await waitFor(() => expect(within(session).getAllByRole('option').length).toBeGreaterThan(1));

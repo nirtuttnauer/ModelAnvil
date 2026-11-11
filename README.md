@@ -55,7 +55,7 @@ GPU detection does not establish that a device can run a particular recipe. The 
 
 ## Guided fine-tuning
 
-New users can create an account and use **Training → Model → Dataset → Review → Train**. The guided path prepares pretrained SmolLM2-135M and its local execution resources automatically, accepts ordinary chat JSONL and prompt/response CSV, and provides progress, a trained-model download and a chat link.
+New users can create an account and use **Fine-tune → Model → Data Lab → Review → Train**. The guided path prepares pretrained SmolLM2-135M and its local execution resources automatically, accepts ordinary chat JSONL and prompt/response CSV, and provides progress, a trained-model download and a chat link.
 
 For the installation owner, start the API and managed training service together with `.venv-gpu/bin/python manage.py run_local` in the installed GPU environment, then start the existing web development server. Users need only the browser. See the [guided local fine-tuning guide](docs/engineering/guided-fine-tuning.md) for setup, account behavior, supported input limits and verification.
 

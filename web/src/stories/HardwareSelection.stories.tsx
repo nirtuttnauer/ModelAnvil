@@ -38,7 +38,7 @@ function verified(canvasElement: HTMLElement) {
   canvasElement.dataset.demoVerified = 'passed';
 }
 export const RecommendedModelMemory: Story = {
-  parameters: { demoRoute: '#training', demoHeading: 'Training', demoApiPath: '/api/v1/fine-tuning/options/' },
+  parameters: { demoRoute: '#training', demoHeading: 'Fine-tune', demoApiPath: '/api/v1/fine-tuning/options/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(await canvas.findByText('Computer requirements', { selector: 'summary' }));
@@ -50,7 +50,7 @@ export const RecommendedModelMemory: Story = {
   },
 };
 export const AdvancedModelAndPool: Story = {
-  parameters: { demoRoute: '#training', demoHeading: 'Training', demoApiPath: '/api/v1/model-versions/' },
+  parameters: { demoRoute: '#training', demoHeading: 'Fine-tune', demoApiPath: '/api/v1/model-versions/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(await canvas.findByRole('button', { name: 'Advanced settings' }));

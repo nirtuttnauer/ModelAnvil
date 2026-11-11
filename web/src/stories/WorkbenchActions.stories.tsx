@@ -53,7 +53,7 @@ async function ready(canvasElement: HTMLElement) {
 }
 function verified(canvasElement: HTMLElement) { expect(demoRequests.filter(request => request.status >= 400)).toHaveLength(0); canvasElement.dataset.demoVerified = 'passed'; }
 export const TrainingLaunch: Story = {
-  parameters: { demoRoute: '#training', demoHeading: 'Training', demoApiPath: '/api/v1/training-runs/' },
+  parameters: { demoRoute: '#training', demoHeading: 'Fine-tune', demoApiPath: '/api/v1/training-runs/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement); await ready(canvasElement);
     await userEvent.click(await canvas.findByRole('button', { name: 'Advanced settings' }));
@@ -74,7 +74,7 @@ export const TrainingLaunch: Story = {
   },
 };
 export const EvaluationComparison: Story = {
-  parameters: { demoRoute: '#evaluation', demoHeading: 'Evaluation', demoApiPath: '/api/v1/evaluation-runs/' },
+  parameters: { demoRoute: '#evaluation', demoHeading: 'Evaluate', demoApiPath: '/api/v1/evaluation-runs/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement); await ready(canvasElement);
     await expect(canvas.findByRole('region', { name: 'Metric comparison table' })).resolves.toBeVisible();
@@ -107,7 +107,7 @@ export const DatasetLineage: Story = {
   },
 };
 export const ReleaseReview: Story = {
-  parameters: { demoRoute: '#releases', demoHeading: 'Releases', demoApiPath: '/api/v1/release-versions/' },
+  parameters: { demoRoute: '#releases', demoHeading: 'Release gate', demoApiPath: '/api/v1/release-versions/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement); await ready(canvasElement);
     const select = await canvas.findByLabelText('Release version for SBOM'); await waitFor(() => expect(within(select).getAllByRole('option').length).toBeGreaterThan(1)); await userEvent.selectOptions(select, releaseId);
@@ -126,7 +126,7 @@ export const WorkerInspector: Story = {
   },
 };
 export const AuditInspector: Story = {
-  parameters: { demoRoute: '#audit', demoHeading: 'Audit', demoApiPath: '/api/v1/audit/' },
+  parameters: { demoRoute: '#audit', demoHeading: 'Audit log', demoApiPath: '/api/v1/audit/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement); await ready(canvasElement);
     const trigger = (await canvas.findAllByRole('button', { name: 'job_lifecycle' }))[0]; await userEvent.click(trigger);
@@ -135,7 +135,7 @@ export const AuditInspector: Story = {
 };
 
 export const TrainingModesAndTabs: Story = {
-  parameters: { demoRoute: '#training', demoHeading: 'Training', demoApiPath: '/api/v1/training-runs/' },
+  parameters: { demoRoute: '#training', demoHeading: 'Fine-tune', demoApiPath: '/api/v1/training-runs/' },
   beforeEach(context) {
     context.msw.use(http.get('/api/v1/fine-tuning/options/', () => HttpResponse.json({ ...(workspaceResponses['/api/v1/fine-tuning/options/'] as object), compute: { available: true, busy: false, device: 'cpu', message: 'Synthetic local training setup for this interaction story.' } })), http.post('/api/v1/fine-tuning/setup/', () => HttpResponse.json({ inputs: {
       execution_mode: 'worker', recipe_type: 'full_sft', base_model_version: 1, tokenizer_version: 1,
@@ -184,7 +184,7 @@ export const TrainingModesAndTabs: Story = {
 };
 
 export const TrainingDraftMigration: Story = {
-  parameters: { demoRoute: '#training', demoHeading: 'Training', demoApiPath: '/api/v1/training-runs/' },
+  parameters: { demoRoute: '#training', demoHeading: 'Fine-tune', demoApiPath: '/api/v1/training-runs/' },
   beforeEach() {
     writeDraft(sessionStorage, draftKey('demo-tenant', '1', 'guided-fine-tune'), {
       ...legacyGuidedDefaults, stage: 3, steps: 73, preset: 'custom', modelName: 'Saved model', name: 'Saved dataset', runId,
@@ -208,7 +208,7 @@ export const TrainingDraftMigration: Story = {
 };
 
 export const TrainingCurrentRunAndHistory: Story = {
-  parameters: { demoRoute: '#training?tab=current-run', demoHeading: 'Training', demoApiPath: '/api/v1/training-runs/' },
+  parameters: { demoRoute: '#training?tab=current-run', demoHeading: 'Fine-tune', demoApiPath: '/api/v1/training-runs/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement); await ready(canvasElement);
     const activeId = '30000000-0000-4000-8000-000000000004';

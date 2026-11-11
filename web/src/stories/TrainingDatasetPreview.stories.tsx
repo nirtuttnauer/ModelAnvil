@@ -17,7 +17,7 @@ const mapping = { mode: 'prompt_response', prompt_field: 'customer_question', re
 const sampleRows = records.slice(0, 5).map((row, i) => ({ sample_id: `sample-${i + 1}`, source_group_id: row.group_key, assigned_split: i < 4 ? 'train' : 'validation', blocks: [{ role: 'user', type: 'text', text: row.customer_question }, { role: 'assistant', type: 'text', text: row.support_reply }] }));
 const meta = {
   ...screens, title: 'ModelAnvil/Actions/Training dataset preview',
-  parameters: { demoRoute: '#training', demoHeading: 'Training', demoApiPath: '/api/v1/fine-tuning/options/' },
+  parameters: { demoRoute: '#training', demoHeading: 'Fine-tune', demoApiPath: '/api/v1/fine-tuning/options/' },
   beforeEach(context: Parameters<typeof screens.beforeEach>[0]) {
     screens.beforeEach(context); inspected = 0; mappings = []; prepared = null;
     writeDraft(sessionStorage, 'modelanvil.draft.v1:' + JSON.stringify(['demo-tenant', '1', 'training', 'new']), { ...trainingDefaults, guidedStage: 1 }, trainingDefaults);
