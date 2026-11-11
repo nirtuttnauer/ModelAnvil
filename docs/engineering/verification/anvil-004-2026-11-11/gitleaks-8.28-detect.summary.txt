@@ -1,0 +1,12 @@
+tool: gitleaks 8.28.0
+command: gitleaks detect --source . --log-opts=--all
+config: stock (no --config, no baseline, no allowlist, no .gitleaks.toml)
+sha: 7c6d8e88c8875c560c9dd5b24e87381f0cdf76eb
+date: 2026-11-11T18:17:03Z
+commits_scanned: 195
+exit: 1
+findings: 411
+unique_fingerprints: 391
+rule: generic-api-key
+missing_from_reviews/ANVIL-017-gitleaks-history.md: 0
+raw report not committed: it repeats digest text

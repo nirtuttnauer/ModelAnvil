@@ -1,0 +1,45 @@
+date 2026-11-11T18:17:01Z
+sha 7c6d8e88c8875c560c9dd5b24e87381f0cdf76eb
+pip-audit pip-audit 2.10.1
+===== requirements.audio.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.documents.txt =====
+Found 7 known vulnerabilities in 1 package
+Name  Version ID              Fix Versions
+----- ------- --------------- ------------
+pypdf 6.21.2  CVE-2026-119208 6.21.3
+pypdf 6.21.2  CVE-2026-119206 6.21.3
+pypdf 6.21.2  CVE-2026-119209 6.21.3
+pypdf 6.21.2  CVE-2026-119207 6.21.3
+pypdf 6.21.2  CVE-2026-119203 6.21.4
+pypdf 6.21.2  CVE-2026-119205 6.21.4
+pypdf 6.21.2  CVE-2026-119204 6.21.4
+EXIT:1
+===== requirements.embeddings.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.gpu.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.inference.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.production.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.selfhost.lock.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.specialists.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.tools.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.txt =====
+No known vulnerabilities found
+EXIT:0
+===== requirements.vision.txt =====
+No known vulnerabilities found
+EXIT:0
