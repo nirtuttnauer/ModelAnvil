@@ -128,13 +128,32 @@ Condition (4) passes the required search: no match.
 
 ## Gate G-local
 
-Counts are compared with `main` `6febdec`. This ticket adds no tests. The local premerge record is `premerge.json` in this folder, written by `scripts/premerge.py` (the command `make premerge` runs) with `--output` set here so the existing ANVIL-009 record is left untouched. The record's SHA, date, machine, command, output, and exit code are in that file. Label: `local`.
+Label: `local`. Record: [premerge.json](premerge.json). `scripts/premerge.py` is the command `make premerge` runs. `--output` points at this folder, so `docs/engineering/verification/anvil-009-2026-10-29/premerge.json` was not rewritten.
 
-The run is filled in after this inventory is committed, because premerge requires an empty `git status --porcelain`.
+The recorded run started from an empty `git status --porcelain` at `5b1da33abcd7d8181f99ed9886b2daf3393725ad`. That commit's parent is `6febdec8fe71da4f759a7a72e419809682e1b4cd`. The diff is this evidence folder and contains no tests. Recorded at 2026-11-11T18:45:01+00:00. Machine: `cursor`, Linux-6.12.113+-x86_64-with-glibc2.39, Python 3.12.3, Node v24.22.3. Exit 0.
+
+| Run | Collected | Excluded by tag | Passed | Skipped / xfail / timeout |
+| --- | ---: | ---: | ---: | ---: |
+| backend `--exclude-tag=pg` | 1282 | 28 | 1282 | 0 |
+| frontend `npm --prefix web test` | 249 | 0 | 249 | 0 |
+| pgvector `--tag=pg` | 28 | 0 | 28 | 0 |
+
+Backend result line: `Ran 1282 tests in 324.856s` then `OK`. PostgreSQL result line: `Ran 28 tests in 114.800s` then `OK`. Frontend install, production build, and storybook build exited 0.
+
+Counts against `main` `6febdec`: the suite is unchanged, because this ticket adds no tests. Measured counts are 1282 backend, 28 PostgreSQL, and 249 frontend.
+
+An earlier attempt on the same SHA exited 1 with two errors, both `operator torchvision::nms does not exist`. The local virtualenv had CPU `torch` 2.13.0 and a PyPI `torchvision` 0.28.0 wheel that did not match it. Reinstalling `torchvision==0.28.0+cpu` from the CPU index fixed the import. That mismatch is not a product failure. The record above is the run after that reinstall.
 
 ## Gate G-skip
 
-A skip, xfail, or timeout at runtime is a failure. The premerge record is the required run: backend `--exclude-tag=pg`, then the same IDs under `--tag=pg` on PostgreSQL. Excluded IDs are listed on the backend run. Fixture tests that are not collected on this host are `fixture_tests_not_collected` on that record. They are not runtime skips.
+A skip, xfail, or timeout at runtime is a failure. The premerge record has zero of each. The backend command excludes `pg` before the run. Those 28 IDs are `runs[0].excluded_ids` in `premerge.json`. The PostgreSQL command runs that tag: 28 passed. Every collected ID is in one of those two runs.
+
+Two IDs were not collected, because this host has neither `MODELANVIL_MLX_TEST_MODEL_DIR` nor `MODELANVIL_GGUF_TEST_MODEL`:
+
+- `modelanvil.runners.training.test_mlx_runtime.NativeAdapterModelTests.test_frozen_four_bit_base_actual_update_exact_resume_and_corruption`
+- `modelanvil.runners.test_gguf_runtime.GGUFNative.test_actual_cpu_generation_cancellation_and_unload`
+
+They are `fixture_tests_not_collected` on the record. They are not runtime skips. They are the same two IDs recorded on earlier main runs.
 
 ## Gate G-audit
 
@@ -148,11 +167,10 @@ Ten files exited 0 with `No known vulnerabilities found`: `requirements.txt`, `r
 
 `gitleaks` 8.28.0, stock config. No `--config`, no baseline, no allowlist, and no `.gitleaks.toml`.
 
-- `gitleaks dir . --redact` on the working tree, including this evidence folder before commit, scanned 24.47 MB and exited 0 (`no leaks found`) at 2026-11-11T18:26:25Z.
-- `gitleaks detect --source . --log-opts=--all --redact` at `6febdec` scanned 194 commits and exited 1 with 411 findings, 391 unique fingerprints, all rule `generic-api-key`. Every fingerprint is on `reviews/ANVIL-017-gitleaks-history.md`. None are missing from that list, and the list has no fingerprint this scan did not find. The raw report is not committed.
-
-A repeat of both commands at the committed SHA is recorded with the premerge update.
+- `gitleaks dir . --redact` on the working tree that includes this evidence folder, before `premerge.json`, scanned 24.50 MB at `5b1da33` and exited 0 (`no leaks found`).
+- The same command after `premerge.json` was written, and after the gitignored `web/storybook-static/` build was removed, scanned 32.62 MB and exited 0. While that build output was on disk it added one `generic-api-key` hit in a generated bundle. The directory is gitignored. It is not in the commit. The recorded scan is the one after it was removed.
+- `gitleaks detect --source . --log-opts=--all --redact` at `5b1da33` scanned 195 commits and exited 1 with 411 findings, 391 unique fingerprints, all rule `generic-api-key`. Every fingerprint is on `reviews/ANVIL-017-gitleaks-history.md`. None are missing from that list, and the list has no fingerprint this scan did not find. None are on `5b1da33`. The raw report is not committed.
 
 ## Gate G-rag
 
-This inventory adds no retrieval measurement. If the PostgreSQL run prints the existing `TASK69_CONTROLS` line, that line is the small correctness check already on main: MiniLM nDCG@5 1.0 next to seeded random 0.0215 on 20 queries / 200 SciFact docs. It is not a new RAG number.
+This inventory adds no retrieval measurement. `premerge.json` stdout includes the existing control `TASK69_CONTROLS`: held-out nDCG real `1.0` next to seeded random `0.021535000000000002`, on 200 documents. That is a small correctness check. The documented baseline next to it is MiniLM nDCG@5 `1.0` next to seeded random `0.0215` on 20 queries / 200 SciFact docs. This change does not claim a new RAG number.
