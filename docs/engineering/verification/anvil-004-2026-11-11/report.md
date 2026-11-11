@@ -77,8 +77,8 @@ Ten files exited 0 with `No known vulnerabilities found`: `requirements.audio.tx
 
 `gitleaks` 8.28.0, the version recorded by ANVIL-017. Stock config. No `--config`, no baseline, no allowlist, and no `.gitleaks.toml`.
 
-- `gitleaks dir .` on the working tree, including this evidence directory, scanned 31.19 MB and exited 0 (`no leaks found`). Console: [gitleaks-8.28-dir.summary.txt](gitleaks-8.28-dir.summary.txt). The same command at `7c6d8e8` before this directory existed also exited 0.
-- `gitleaks detect --source . --log-opts=--all` at `7c6d8e8` scanned 195 commits and exited 1 with 411 findings, 391 unique fingerprints, all rule `generic-api-key`. Every fingerprint is on `reviews/ANVIL-017-gitleaks-history.md`. Console: [gitleaks-8.28-detect.summary.txt](gitleaks-8.28-detect.summary.txt). The raw report is not committed.
+- `gitleaks dir .` on the working tree, including this evidence directory, scanned 31.20 MB and exited 0 (`no leaks found`). Console: [gitleaks-8.28-dir.summary.txt](gitleaks-8.28-dir.summary.txt). The same command at `7c6d8e8` before this directory existed also exited 0. The same command at `71f633ae4bb0638b8cfe14565ea4b0d07738201e` also exited 0.
+- `gitleaks detect --source . --log-opts=--all` at `7c6d8e8` scanned 195 commits and exited 1 with 411 findings, 391 unique fingerprints, all rule `generic-api-key`. Every fingerprint is on `reviews/ANVIL-017-gitleaks-history.md`. Console: [gitleaks-8.28-detect.summary.txt](gitleaks-8.28-detect.summary.txt). The raw report is not committed. The same command after the evidence commit scanned 196 commits and still found 411, with no finding on `7c6d8e8` or `71f633ae4bb0638b8cfe14565ea4b0d07738201e`.
 
 `gitleaks` 8.30.1 is also recorded in [gitleaks-8.30-summary.txt](gitleaks-8.30-summary.txt). `gitleaks dir .` exited 1 with 370 findings, all rule `generic-api-key`, and none under this directory or the VCTK notice files. `gitleaks detect --source . --log-opts=--all` found 781. The 370 findings absent from the ANVIL-017 list are on main commit `75e2565a83b4b0cf96aebe793a9da6823e67d165`. None are on `7c6d8e8`.
 
