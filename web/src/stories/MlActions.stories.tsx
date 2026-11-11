@@ -27,7 +27,7 @@ export const InitializeCpuBase: Story = {
 
 export const ExecuteEvaluation: Story = {
   name: 'Execute evaluation',
-  parameters: { demoRoute: '#evaluation', demoHeading: 'Evaluation', demoApiPath: '/api/v1/evaluation-runs/' },
+  parameters: { demoRoute: '#evaluation', demoHeading: 'Evaluate', demoApiPath: '/api/v1/evaluation-runs/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const selector = await canvas.findByLabelText('Evaluation run to visualize');
@@ -47,7 +47,7 @@ export const ExecuteEvaluation: Story = {
 
 export const GuidedClassificationComparison: Story = {
   name: 'Review and run a guided classification comparison',
-  parameters: { demoRoute: '#evaluation?training_run=30000000-0000-4000-8000-000000000001', demoHeading: 'Evaluation', demoApiPath: '/api/v1/evaluation-runs/' },
+  parameters: { demoRoute: '#evaluation?training_run=30000000-0000-4000-8000-000000000001', demoHeading: 'Evaluate', demoApiPath: '/api/v1/evaluation-runs/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const prepare = await canvas.findByRole('button', { name: 'Prepare comparison' });
@@ -66,7 +66,7 @@ export const GuidedClassificationComparison: Story = {
 
 export const GuidedExistingSuite: Story = {
   name: 'Use an existing protected classification suite',
-  parameters: { demoRoute: '#evaluation?training_run=30000000-0000-4000-8000-000000000001', demoHeading: 'Evaluation', demoApiPath: '/api/v1/evaluation-runs/' },
+  parameters: { demoRoute: '#evaluation?training_run=30000000-0000-4000-8000-000000000001', demoHeading: 'Evaluate', demoApiPath: '/api/v1/evaluation-runs/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const register = await canvas.findByRole('button', { name: 'Register evaluation suite' });
@@ -88,7 +88,7 @@ export const GuidedExistingSuite: Story = {
 
 export const RegisterEvaluationSuite: Story = {
   name: 'Register evaluation suite',
-  parameters: { demoRoute: '#evaluation', demoHeading: 'Evaluation', demoApiPath: '/api/v1/evaluation-runs/' },
+  parameters: { demoRoute: '#evaluation', demoHeading: 'Evaluate', demoApiPath: '/api/v1/evaluation-runs/' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const register = await canvas.findByRole('button', { name: 'Register evaluation suite' });

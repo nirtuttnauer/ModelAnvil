@@ -99,34 +99,58 @@ function slugFor(name: Page): string {
   return pages.find((page) => page.name === name)?.slug ?? name.toLowerCase().replaceAll(' ', '-');
 }
 
-const navigationGroups = [
-  { label: 'Workspace', names: ['Overview', 'Datasets', 'Models', 'Training', 'Evaluation', 'Chat'] },
-  { label: 'Data tools', names: ['Dataset Bank', 'Recipes', 'Annotation'] },
-  { label: 'Develop', names: ['Specialists', 'Audio', 'Alignment'] },
-  { label: 'Context & release', names: ['RAG', 'Context Lab', 'Releases'] },
-  { label: 'Operations', names: ['Workflows', 'Infrastructure', 'Budgets', 'Audit'] },
+/** Sidebar text only. Page names and #slugs stay so existing deep links keep working. */
+const navigationLabels: Partial<Record<Page, string>> = {
+  Datasets: 'Data Lab',
+  Training: 'Fine-tune',
+  Evaluation: 'Evaluate',
+  Releases: 'Release gate',
+  Audit: 'Audit log',
+  Chat: 'Playground',
+};
+
+function navigationLabel(name: Page): string {
+  return navigationLabels[name] ?? name;
+}
+
+function pageTitle(name: Page): string {
+  if (name === 'Overview') return 'Project overview';
+  if (name === 'RAG') return 'Retrieval workbench';
+  return navigationLabel(name);
+}
+
+const navigationGroups: { label: string; names: Page[] }[] = [
+  { label: 'Workspace', names: ['Overview', 'Datasets', 'Models', 'Training', 'Evaluation', 'Releases', 'Audit', 'Chat'] },
+  { label: 'Data', names: ['Annotation', 'Dataset Bank', 'Recipes'] },
+  { label: 'Develop', names: ['Audio', 'Specialists', 'Alignment'] },
+  { label: 'Context', names: ['RAG', 'Context Lab'] },
+  { label: 'Operations', names: ['Workflows', 'Infrastructure', 'Budgets'] },
+];
+
+const reviewNavigation: { label: string; names: Page[] }[] = [
+  { label: 'Workspace', names: ['Overview', 'Annotation', 'Evaluation', 'Releases'] },
 ];
 
 const descriptions: Record<Page, string> = {
   Overview: 'Your next step, active work and latest results.',
   'Dataset Bank': 'Find source data and check its license and readiness.',
-  Datasets: 'Prepare and publish dataset versions.',
+  Datasets: 'Prepare local datasets and publish versions for training.',
   Annotation: 'Review samples and build approved label snapshots.',
   Models: 'Model versions and what they can do.',
-  Chat: 'Run local models and compare responses.',
+  Chat: 'Try a local model revision before you release it.',
   Specialists: 'Read documents and make typed decisions with local models.',
   Audio: 'Train speech output heads and generate audio locally.',
   Recipes: 'Compose data recipes, preview them and publish runs.',
-  Training: 'Fine-tune a model on your examples.',
+  Training: 'Fine-tune a local model on your examples.',
   Alignment: 'Configure preference learning and inspect outcomes.',
-  Evaluation: 'Compare model versions on held-out examples.',
+  Evaluation: 'Compare local model versions on held-out examples.',
   Workflows: 'Follow jobs from queue to outcome.',
   RAG: 'Explore knowledge sources and retrieved evidence.',
   'Context Lab': 'Compile exact inputs and see the token budget.',
-  Releases: 'Release versions, serving endpoints and provenance.',
+  Releases: 'Accept or reject a local model revision and keep the evidence record.',
   Infrastructure: 'Worker pools, capabilities and availability.',
   Budgets: 'Usage, reservations and spending policies.',
-  Audit: 'Trace the events behind your workspace.',
+  Audit: 'See who changed what in this workspace.',
   'Resource Detail': 'One exact version, its evidence and next actions.',
   'Run Detail': 'One run end to end: state, attempts, evidence and recovery.',
 };
@@ -295,7 +319,7 @@ export function App() {
   React.useEffect(() => {
     document.title = active === 'Run Detail' && runRoute
       ? `Run details · ModelAnvil`
-      : `${active} · ModelAnvil`;
+      : `${navigationLabel(active)} · ModelAnvil`;
   }, [active, runRoute]);
 
   React.useEffect(() => {
@@ -431,6 +455,10 @@ export function App() {
 
   if (!token || (!organizationLoading && !currentOrganization)) return <Welcome onConnected={welcomeConnected} />;
 
+  const reviewOnly = access?.token === token && ['reviewer', 'viewer'].includes(access.role);
+  const visibleGroups = reviewOnly ? reviewNavigation : navigationGroups;
+  const navigationPages = pages.filter((page) => !page.slug).map((page) => ({ name: page.name, icon: page.icon, label: navigationLabel(page.name) }));
+
   return (
     <div className={`layout ${navigationOpen ? 'navigation-open' : ''}`}>
       <a
@@ -444,8 +472,8 @@ export function App() {
         Skip to content
       </a>
       <NavigationRail
-        groups={navigationGroups}
-        pages={pages.filter((page) => !page.slug)}
+        groups={visibleGroups}
+        pages={navigationPages}
         selected={selectedNavigation}
         advancedOpen={advancedNavigation}
         onAdvancedToggle={setAdvancedNavigation}
@@ -484,7 +512,7 @@ export function App() {
             </label>
           </div>
           <div className="header-actions" id="workspace-actions">
-            <WorkspaceSearch pages={navigationGroups.flatMap((group) => group.names)} onNavigate={(name) => load(name as Page)} />
+            <WorkspaceSearch pages={visibleGroups.flatMap((group) => group.names.map((name) => ({ name, label: navigationLabel(name) })))} onNavigate={(name) => load(name as Page)} />
             {!projectLoading && !organizationLoading && token && <ActiveJobs key={`${token}-${activeProjectId}`} token={token} refreshKey={refreshKey} />}
             <SettingsMenu
               tenantName={tenantName}
@@ -566,7 +594,7 @@ export function App() {
             </Notice>
           )}
           <PageHeader
-            title={active === 'Overview' ? 'Project overview' : active === 'RAG' ? 'Retrieval workbench' : active}
+            title={pageTitle(active)}
             description={descriptions[active]}
             actions={<div id="page-actions" data-ui="actions" />}
           />

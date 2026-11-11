@@ -7,7 +7,7 @@ import { mlResponses } from './ml-fixtures';
 const runId = '30000000-0000-4000-8000-000000000004';
 const meta = {
   ...screens, title: 'ModelAnvil/Actions/Training progress',
-  parameters: { demoRoute: `#training?tab=current-run&run=${runId}`, demoHeading: 'Training', demoApiPath: '/api/v1/training-runs/' },
+  parameters: { demoRoute: `#training?tab=current-run&run=${runId}`, demoHeading: 'Fine-tune', demoApiPath: '/api/v1/training-runs/' },
   beforeEach(context: Parameters<typeof screens.beforeEach>[0]) {
     screens.beforeEach(context);
     const original = (mlResponses['/api/v1/training-runs/'] as Record<string, unknown>[]).find(run => run.run_id === runId)!;

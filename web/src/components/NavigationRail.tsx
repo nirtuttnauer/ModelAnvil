@@ -3,7 +3,7 @@ import { ChevronDown } from 'lucide-react';
 import { NavigationItem } from './ui';
 
 export type NavigationGroup = { label: string; names: string[] };
-export type NavigationPage = { name: string; icon: ElementType };
+export type NavigationPage = { name: string; icon: ElementType; label?: string };
 
 /** Light workspace rail: logo, the primary group, and the other groups behind one disclosure. */
 export function NavigationRail({ groups, pages, selected, advancedOpen, onAdvancedToggle, onNavigate }: {
@@ -11,12 +11,19 @@ export function NavigationRail({ groups, pages, selected, advancedOpen, onAdvanc
   onAdvancedToggle(open: boolean): void; onNavigate(name: string): void;
 }) {
   const base = import.meta.env.BASE_URL;
-  const renderGroup = (group: NavigationGroup) => <div className="nav-group" key={group.label}>
-    <p className="nav-label">{group.label}</p>
-    {pages.filter(page => group.names.includes(page.name)).map(({ name, icon: Icon }) => (
-      <NavigationItem key={name} title={name} selected={selected === name} icon={<Icon size={18} aria-hidden="true" />} aria-label={name} onClick={() => onNavigate(name)}>{name}</NavigationItem>
-    ))}
-  </div>;
+  const renderGroup = (group: NavigationGroup) => {
+    const items = group.names.flatMap(name => {
+      const page = pages.find(item => item.name === name);
+      return page ? [page] : [];
+    });
+    return <div className="nav-group" key={group.label}>
+      <p className="nav-label">{group.label}</p>
+      {items.map(({ name, icon: Icon, label }) => {
+        const text = label ?? name;
+        return <NavigationItem key={name} title={text} selected={selected === name} icon={<Icon size={18} aria-hidden="true" />} aria-label={text} onClick={() => onNavigate(name)}>{text}</NavigationItem>;
+      })}
+    </div>;
+  };
   return <aside className="navigation-rail" id="workspace-navigation" aria-label="Workspace navigation">
     <a className="brand" href="#overview" aria-label="ModelAnvil overview">
       <img className="brand-logo brand-logo-light" src={`${base}brand/modelanvil-logo.svg`} alt="" width="1088" height="240" />
@@ -24,10 +31,10 @@ export function NavigationRail({ groups, pages, selected, advancedOpen, onAdvanc
     </a>
     <nav aria-label="Main navigation">
       {groups.slice(0, 1).map(renderGroup)}
-      <details className="advanced-navigation" open={advancedOpen} onToggle={event => onAdvancedToggle(event.currentTarget.open)}>
-        <summary>Advanced workspace <ChevronDown size={16} aria-hidden="true" /></summary>
+      {groups.length > 1 && <details className="advanced-navigation" open={advancedOpen} onToggle={event => onAdvancedToggle(event.currentTarget.open)}>
+        <summary>More <ChevronDown size={16} aria-hidden="true" /></summary>
         <div className="nav-groups">{groups.slice(1).map(renderGroup)}</div>
-      </details>
+      </details>}
     </nav>
   </aside>;
 }

@@ -12,7 +12,7 @@ let savedBody: Record<string, unknown> | null = null;
 const meta = {
   ...screens,
   title: 'ModelAnvil/Actions/Chat',
-  parameters: { demoRoute: '#chat', demoHeading: 'Chat', demoApiPath: '/api/v1/inference/models/' },
+  parameters: { demoRoute: '#chat', demoHeading: 'Playground', demoApiPath: '/api/v1/inference/models/' },
   beforeEach(context: Parameters<typeof screens.beforeEach>[0]) {
     screens.beforeEach(context); savedBody = null;
     let conversations = [{ conversation_id: conversationId, title: 'Markdown example', revision_no: 1,

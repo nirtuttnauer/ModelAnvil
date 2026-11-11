@@ -13,7 +13,7 @@ const configuration = { model: trainedId, compare_model: baseId, comparison_mode
 let inputs: Record<string, unknown>[] = [], pairCount = 0;
 const meta = {
   ...screens, title: 'ModelAnvil/Actions/Base chat comparison',
-  parameters: { demoRoute: '#chat', demoHeading: 'Chat', demoApiPath: '/api/v1/inference/models/' },
+  parameters: { demoRoute: '#chat', demoHeading: 'Playground', demoApiPath: '/api/v1/inference/models/' },
   beforeEach(context: Parameters<typeof screens.beforeEach>[0]) {
     screens.beforeEach(context); inputs = []; pairCount = 0;
     if (context.parameters.restoreComparison) writeDraft(sessionStorage, draftKey('demo-tenant', '1', 'chat-composer'), { comparisonMode: 'base-trained' }, { comparisonMode: 'blind' });
