@@ -1,0 +1,3345 @@
+{
+  "scan": "gitleaks 8.30.1 detect --log-opts=--all",
+  "introduced_by": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+  "present_on": "4dd5060e632bae598003bf3a51a474709fe8c7ac",
+  "rule": "generic-api-key",
+  "groups": {
+    "D": "SHA-256 digest of a pinned file, stored as JSON unicode escapes.",
+    "H": "SHA-256 from host_key(), a local coordination hash, stored as JSON unicode escapes.",
+    "U": "UUID tokenizer id, stored as JSON unicode escapes.",
+    "R": "Reviewer principal id: api_key: plus the API-key row primary key, not the credential.",
+    "F": "32-hex fencing identifier in a finished qualification report. ANVIL-017 ruled it is not a live credential."
+  },
+  "findings": [
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/qualification-reports/cpu-character-pilot.bundle.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 85,
+      "fp": "dc4c20432fb55ffc66b96e74f5383486d80b1a7fd849c501b4c893a12d1cc34d",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/qualification-reports/cpu-character-pilot.bundle.json:generic-api-key:85"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/qualification-reports/cpu-character-pilot.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 24,
+      "fp": "dc4c20432fb55ffc66b96e74f5383486d80b1a7fd849c501b4c893a12d1cc34d",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/qualification-reports/cpu-character-pilot.json:generic-api-key:24"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/qualification-reports/task4-browser-candidate.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1,
+      "fp": "8929172d89743e8e129b2c7cd922f187b37330bbf0b328dfd43f7e0fb7c030f1",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/qualification-reports/task4-browser-candidate.json:generic-api-key:1"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/qualification-reports/task4-browser-run.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 15,
+      "fp": "8929172d89743e8e129b2c7cd922f187b37330bbf0b328dfd43f7e0fb7c030f1",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/qualification-reports/task4-browser-run.json:generic-api-key:15"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/qualification-reports/task4-browser-run.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 229,
+      "fp": "8929172d89743e8e129b2c7cd922f187b37330bbf0b328dfd43f7e0fb7c030f1",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/qualification-reports/task4-browser-run.json:generic-api-key:229"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/fresh-mobile-flow-2026-10-16/training-evidence.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 23,
+      "fp": "85d67796344ead5f67d2a7783392b81f9dbaf6dbeb5e02cae2f72994ebae5e96",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/fresh-mobile-flow-2026-10-16/training-evidence.json:generic-api-key:23"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/manual-qa-2026-10-12/snapshot.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 3,
+      "fp": "fa9879d9cf00cb773d61c3cad52ceb5b46734ec9377996440302e706cef58054",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/manual-qa-2026-10-12/snapshot.json:generic-api-key:3"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/mobile-garden-flow-2026-10-16/training-evidence.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 21,
+      "fp": "6ca950c9a72b694e62cbf5dd64aaf90b879686b62352d829b4bbe085a7a2eee5",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/mobile-garden-flow-2026-10-16/training-evidence.json:generic-api-key:21"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-continued-pretraining-mac-2026-10-12.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 322,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-continued-pretraining-mac-2026-10-12.json:generic-api-key:322"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-continued-pretraining-mac-2026-10-12.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 323,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-continued-pretraining-mac-2026-10-12.json:generic-api-key:323"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-continued-pretraining-mac-2026-10-12.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 324,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-continued-pretraining-mac-2026-10-12.json:generic-api-key:324"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-continued-pretraining-mac-2026-10-12.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 355,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-continued-pretraining-mac-2026-10-12.json:generic-api-key:355"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-continued-pretraining-mac-2026-10-12.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 356,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-continued-pretraining-mac-2026-10-12.json:generic-api-key:356"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-continued-pretraining-mac-2026-10-12.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 357,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-continued-pretraining-mac-2026-10-12.json:generic-api-key:357"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-continued-pretraining-mac-2026-10-12.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 413,
+      "fp": "a966d7f9dcbdc72cd02cc06d39818d353c0ecea394bcde7c662ee585343c8ba4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-continued-pretraining-mac-2026-10-12.json:generic-api-key:413"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-device-admission-mac-2026-10-12.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 24,
+      "fp": "0190a60a72071f3eb6a6709450ba759c8678eeb466bcd17bfd4c5f20be750a73",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-device-admission-mac-2026-10-12.json:generic-api-key:24"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-device-admission-mac-2026-10-12.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 36,
+      "fp": "79939c3e6b19f81c67a977a419f854bc29324a335b58add6ab4f1d543f5a55f5",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-device-admission-mac-2026-10-12.json:generic-api-key:36"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-device-admission-mac-2026-10-12.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 393,
+      "fp": "72687f6282ae542bea2c8987432b5e4fcbf986a20c2314fe5135a6e329cfb5c1",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-device-admission-mac-2026-10-12.json:generic-api-key:393"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-device-admission-mac-2026-10-12.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 405,
+      "fp": "d98a54c293161ce40426a69a91289a98793788190ef706f6bc513fb65a36bcfc",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-device-admission-mac-2026-10-12.json:generic-api-key:405"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 333,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:333"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 334,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:334"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 335,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:335"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 368,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:368"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 369,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:369"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 370,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:370"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 486,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:486"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 487,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:487"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 488,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:488"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 705,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:705"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 706,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:706"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 707,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:707"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 738,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:738"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 739,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:739"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 740,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:740"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 854,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:854"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 855,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:855"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 856,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-lora-mac-2026-10-11.json:generic-api-key:856"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-native-adapter-mac-2026-10-12.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 387,
+      "fp": "be71b3da5db6bda11a9b9259cc1b49e0df8275cc746f792b2cd80b3ba224d302",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-native-adapter-mac-2026-10-12.json:generic-api-key:387"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task12-context-2026-10-23/browser.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 17,
+      "fp": "170f0c32b6a5079cf273813df468d77e364334dba364bb569e1f08734d02b9d1",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task12-context-2026-10-23/browser.json:generic-api-key:17"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task13-gpu-pilot.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 294,
+      "fp": "2f2add307e5a841cf464ddf13ad23ca5050fa9ff37edb150a366c3dd172874bd",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task13-gpu-pilot.json:generic-api-key:294"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task13-gpu-pilot.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 539,
+      "fp": "2f2add307e5a841cf464ddf13ad23ca5050fa9ff37edb150a366c3dd172874bd",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task13-gpu-pilot.json:generic-api-key:539"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task13-gpu-pilot.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 883,
+      "fp": "2f2add307e5a841cf464ddf13ad23ca5050fa9ff37edb150a366c3dd172874bd",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task13-gpu-pilot.json:generic-api-key:883"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 299,
+      "fp": "1caf75a2e333f55dda7d0621d23d0a3296a796fa76e2f7a597d76cc338f972c5",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:299"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 569,
+      "fp": "1caf75a2e333f55dda7d0621d23d0a3296a796fa76e2f7a597d76cc338f972c5",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:569"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 983,
+      "fp": "1caf75a2e333f55dda7d0621d23d0a3296a796fa76e2f7a597d76cc338f972c5",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:983"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1086,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:1086"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1087,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:1087"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1088,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:1088"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1119,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:1119"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1120,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:1120"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1121,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:1121"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1591,
+      "fp": "a62aca832250fd85ed35ccff9ed32fdabeee69783d27a10b3f41e16ad79b1950",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:1591"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1889,
+      "fp": "a62aca832250fd85ed35ccff9ed32fdabeee69783d27a10b3f41e16ad79b1950",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:1889"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 2329,
+      "fp": "a62aca832250fd85ed35ccff9ed32fdabeee69783d27a10b3f41e16ad79b1950",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:2329"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 2448,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:2448"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 2449,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:2449"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 2450,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:2450"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 2483,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:2483"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 2484,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:2484"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 2485,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:2485"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/browser.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 16,
+      "fp": "1caf75a2e333f55dda7d0621d23d0a3296a796fa76e2f7a597d76cc338f972c5",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/browser.json:generic-api-key:16"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/browser.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 277,
+      "fp": "1caf75a2e333f55dda7d0621d23d0a3296a796fa76e2f7a597d76cc338f972c5",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/browser.json:generic-api-key:277"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task19-cpu-arena-2026-10-23/setup-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 85,
+      "fp": "9ce39d7ab90215780e1adcac468eb85f14411ca670eb182351731b0d9b018ed5",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task19-cpu-arena-2026-10-23/setup-report.json:generic-api-key:85"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/alignment-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 43,
+      "fp": "dc4c20432fb55ffc66b96e74f5383486d80b1a7fd849c501b4c893a12d1cc34d",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/alignment-report.json:generic-api-key:43"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/alignment-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 109,
+      "fp": "dc4c20432fb55ffc66b96e74f5383486d80b1a7fd849c501b4c893a12d1cc34d",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/alignment-report.json:generic-api-key:109"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/source-sha256.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 10,
+      "fp": "b4c28706d196e3d67dc1b4074cee8df1d06eb2127ec72faf898e87fd1a164320",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/source-sha256.json:generic-api-key:10"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/independent-zip-and-api-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 8,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/independent-zip-and-api-report.json:generic-api-key:8"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/independent-zip-and-api-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 9,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/independent-zip-and-api-report.json:generic-api-key:9"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/independent-zip-and-api-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 10,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/independent-zip-and-api-report.json:generic-api-key:10"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 199,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json:generic-api-key:199"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 200,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json:generic-api-key:200"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 201,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json:generic-api-key:201"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 208,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json:generic-api-key:208"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 209,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json:generic-api-key:209"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 210,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json:generic-api-key:210"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 305,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json:generic-api-key:305"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 306,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json:generic-api-key:306"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 307,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json:generic-api-key:307"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 314,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json:generic-api-key:314"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 315,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json:generic-api-key:315"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 316,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json:generic-api-key:316"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/source-hashes.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 5,
+      "fp": "9f1bec3fcdd5e324488b00d98c8bde7807c270a7b4435406790fe603b23459a5",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/source-hashes.json:generic-api-key:5"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/source-hashes.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 10,
+      "fp": "25d1508976b11ed965be9a3254f4483e3493df130e82e325b65e890bac48a911",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/source-hashes.json:generic-api-key:10"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 8,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json:generic-api-key:8"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 9,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json:generic-api-key:9"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 10,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json:generic-api-key:10"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 56,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json:generic-api-key:56"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 57,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json:generic-api-key:57"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 58,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json:generic-api-key:58"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 63,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json:generic-api-key:63"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 64,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json:generic-api-key:64"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 65,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/independent-zip-and-api-report.json:generic-api-key:65"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 159,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:159"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 160,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:160"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 161,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:161"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 166,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:166"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 167,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:167"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 168,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:168"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 630,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:630"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 631,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:631"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 632,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:632"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 639,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:639"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 640,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:640"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 641,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:641"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 878,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:878"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 879,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:879"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 880,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:880"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 885,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:885"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 886,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:886"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 887,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:887"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/source-hashes.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 5,
+      "fp": "af9ac1fa328008cc5f238c79e2d16870ecc65f18e86588142ccd788c7390fd26",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/source-hashes.json:generic-api-key:5"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task26-continued-pretraining-2026-10-24/independent-reload.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 7,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task26-continued-pretraining-2026-10-24/independent-reload.json:generic-api-key:7"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task26-continued-pretraining-2026-10-24/independent-reload.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 8,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task26-continued-pretraining-2026-10-24/independent-reload.json:generic-api-key:8"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task26-continued-pretraining-2026-10-24/independent-reload.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 9,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task26-continued-pretraining-2026-10-24/independent-reload.json:generic-api-key:9"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task26-continued-pretraining-2026-10-24/training.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 17,
+      "fp": "ae79016283cfc2f18d79bc54d650b41105289b808cddf890c0536b0af1a86908",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task26-continued-pretraining-2026-10-24/training.json:generic-api-key:17"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task26-continued-pretraining-2026-10-24/training.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 339,
+      "fp": "ae79016283cfc2f18d79bc54d650b41105289b808cddf890c0536b0af1a86908",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task26-continued-pretraining-2026-10-24/training.json:generic-api-key:339"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 282,
+      "fp": "988f7980f39f8149ee2ee3431059aa171a07367c53b6899f263c183accd431f8",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/browser-report.json:generic-api-key:282"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 78,
+      "fp": "988f7980f39f8149ee2ee3431059aa171a07367c53b6899f263c183accd431f8",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json:generic-api-key:78"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 238,
+      "fp": "782471ee4177f6913b64fb3ee00a5b215e0c9de3e6a9b8186072458ab8c318f5",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json:generic-api-key:238"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 246,
+      "fp": "b255e3b95c07d2e39c743e1856ad8da0414e0848298336a635ce3890f9c27950",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json:generic-api-key:246"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 247,
+      "fp": "b4bcc83ba247307e6228fdc4a1163c103709a80e9e1f8117a8ae92ed236d6835",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json:generic-api-key:247"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 248,
+      "fp": "6254d582942cd1f46f057b0cddfdc67ceb25d6f1552c677c795c3500b2ccdee3",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json:generic-api-key:248"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 254,
+      "fp": "782471ee4177f6913b64fb3ee00a5b215e0c9de3e6a9b8186072458ab8c318f5",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json:generic-api-key:254"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 262,
+      "fp": "b255e3b95c07d2e39c743e1856ad8da0414e0848298336a635ce3890f9c27950",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json:generic-api-key:262"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 263,
+      "fp": "b4bcc83ba247307e6228fdc4a1163c103709a80e9e1f8117a8ae92ed236d6835",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json:generic-api-key:263"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 264,
+      "fp": "6254d582942cd1f46f057b0cddfdc67ceb25d6f1552c677c795c3500b2ccdee3",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json:generic-api-key:264"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/independent-zip-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 7,
+      "fp": "782471ee4177f6913b64fb3ee00a5b215e0c9de3e6a9b8186072458ab8c318f5",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/independent-zip-report.json:generic-api-key:7"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/independent-zip-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 14,
+      "fp": "b255e3b95c07d2e39c743e1856ad8da0414e0848298336a635ce3890f9c27950",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/independent-zip-report.json:generic-api-key:14"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/independent-zip-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 15,
+      "fp": "6254d582942cd1f46f057b0cddfdc67ceb25d6f1552c677c795c3500b2ccdee3",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/independent-zip-report.json:generic-api-key:15"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/independent-zip-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 16,
+      "fp": "b4bcc83ba247307e6228fdc4a1163c103709a80e9e1f8117a8ae92ed236d6835",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/independent-zip-report.json:generic-api-key:16"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 92,
+      "fp": "473c0cb53eba288fc0c768c03bb9a93aca0cc4fb689cac53081d138e3d2f51f2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json:generic-api-key:92"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 266,
+      "fp": "782471ee4177f6913b64fb3ee00a5b215e0c9de3e6a9b8186072458ab8c318f5",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json:generic-api-key:266"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 274,
+      "fp": "b255e3b95c07d2e39c743e1856ad8da0414e0848298336a635ce3890f9c27950",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json:generic-api-key:274"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 275,
+      "fp": "b4bcc83ba247307e6228fdc4a1163c103709a80e9e1f8117a8ae92ed236d6835",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json:generic-api-key:275"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 276,
+      "fp": "6254d582942cd1f46f057b0cddfdc67ceb25d6f1552c677c795c3500b2ccdee3",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json:generic-api-key:276"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 282,
+      "fp": "782471ee4177f6913b64fb3ee00a5b215e0c9de3e6a9b8186072458ab8c318f5",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json:generic-api-key:282"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 290,
+      "fp": "b255e3b95c07d2e39c743e1856ad8da0414e0848298336a635ce3890f9c27950",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json:generic-api-key:290"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 291,
+      "fp": "b4bcc83ba247307e6228fdc4a1163c103709a80e9e1f8117a8ae92ed236d6835",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json:generic-api-key:291"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 292,
+      "fp": "6254d582942cd1f46f057b0cddfdc67ceb25d6f1552c677c795c3500b2ccdee3",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json:generic-api-key:292"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 84,
+      "fp": "0b6e78485f332fd3ea2ce87533d1aebd86c0e43ebd35277f4f9e31a960bef975",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:84"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 336,
+      "fp": "2498e4892c5b81f56207e9e299cfb4dccb91dd00553e7fe55563ada33af2a6cc",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:336"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 341,
+      "fp": "37e0a7b40b12fe84b5d639e0dc30d27a69c409bef95e204cc2ebb23314bad07b",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:341"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 342,
+      "fp": "41e007f8454b3c9dfc53adcdb17d8189b05e7af80ec07bb32568fff331ec81ee",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:342"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 348,
+      "fp": "2498e4892c5b81f56207e9e299cfb4dccb91dd00553e7fe55563ada33af2a6cc",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:348"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 353,
+      "fp": "37e0a7b40b12fe84b5d639e0dc30d27a69c409bef95e204cc2ebb23314bad07b",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:353"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 354,
+      "fp": "41e007f8454b3c9dfc53adcdb17d8189b05e7af80ec07bb32568fff331ec81ee",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:354"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 361,
+      "fp": "ae87fc9c47996e43e73e95110ba09b697a7b5797c49907f8e43a5be4378ac0a5",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:361"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 368,
+      "fp": "a15c40a83bec27c4196ef819757277c723cb894cdb76da8312a473a07b69fd0f",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:368"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 369,
+      "fp": "442a8abe635be63ed0a1b6534afe6201209eee32fd2bdd2db5f2781bc3761b34",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:369"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 370,
+      "fp": "0da80768644378e8a42d502eafb8ab58399f236f361825e94fb954e7371e38dd",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:370"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 631,
+      "fp": "2498e4892c5b81f56207e9e299cfb4dccb91dd00553e7fe55563ada33af2a6cc",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:631"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 636,
+      "fp": "37e0a7b40b12fe84b5d639e0dc30d27a69c409bef95e204cc2ebb23314bad07b",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:636"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 640,
+      "fp": "41e007f8454b3c9dfc53adcdb17d8189b05e7af80ec07bb32568fff331ec81ee",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:640"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 844,
+      "fp": "2498e4892c5b81f56207e9e299cfb4dccb91dd00553e7fe55563ada33af2a6cc",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:844"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 846,
+      "fp": "41e007f8454b3c9dfc53adcdb17d8189b05e7af80ec07bb32568fff331ec81ee",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:846"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 851,
+      "fp": "37e0a7b40b12fe84b5d639e0dc30d27a69c409bef95e204cc2ebb23314bad07b",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:851"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/browser.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 214,
+      "fp": "0b6e78485f332fd3ea2ce87533d1aebd86c0e43ebd35277f4f9e31a960bef975",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/browser.json:generic-api-key:214"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/native-export.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 22,
+      "fp": "2498e4892c5b81f56207e9e299cfb4dccb91dd00553e7fe55563ada33af2a6cc",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/native-export.json:generic-api-key:22"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/native-export.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 24,
+      "fp": "37e0a7b40b12fe84b5d639e0dc30d27a69c409bef95e204cc2ebb23314bad07b",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/native-export.json:generic-api-key:24"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/native-export.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 26,
+      "fp": "41e007f8454b3c9dfc53adcdb17d8189b05e7af80ec07bb32568fff331ec81ee",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/native-export.json:generic-api-key:26"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/source-build.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 33,
+      "fp": "9b2be171ce67d600ff105f696693a41c47864d67e33889637a031a359a14d2d1",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/source-build.json:generic-api-key:33"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/browser-tool-trace.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1,
+      "fp": "19f7051a0e943b4d50af6520b818206868d02ca87e619df2ffb363f630c11f68",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/browser-tool-trace.json:generic-api-key:1"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/browser-tool-trace.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1,
+      "fp": "19f7051a0e943b4d50af6520b818206868d02ca87e619df2ffb363f630c11f68",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/browser-tool-trace.json:generic-api-key:1"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/browser-tool-trace.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1,
+      "fp": "b1b47540db18ffc94ff64e0bf8dbe944bde87fae1abf7af6d2be54675e89e8b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/browser-tool-trace.json:generic-api-key:1"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/browser-tool-trace.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1,
+      "fp": "b1b47540db18ffc94ff64e0bf8dbe944bde87fae1abf7af6d2be54675e89e8b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/browser-tool-trace.json:generic-api-key:1"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 94,
+      "fp": "19f7051a0e943b4d50af6520b818206868d02ca87e619df2ffb363f630c11f68",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:94"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 95,
+      "fp": "b1b47540db18ffc94ff64e0bf8dbe944bde87fae1abf7af6d2be54675e89e8b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:95"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 277,
+      "fp": "19f7051a0e943b4d50af6520b818206868d02ca87e619df2ffb363f630c11f68",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:277"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 278,
+      "fp": "b1b47540db18ffc94ff64e0bf8dbe944bde87fae1abf7af6d2be54675e89e8b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:278"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 372,
+      "fp": "19f7051a0e943b4d50af6520b818206868d02ca87e619df2ffb363f630c11f68",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:372"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 373,
+      "fp": "b1b47540db18ffc94ff64e0bf8dbe944bde87fae1abf7af6d2be54675e89e8b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:373"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 535,
+      "fp": "19f7051a0e943b4d50af6520b818206868d02ca87e619df2ffb363f630c11f68",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:535"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 536,
+      "fp": "b1b47540db18ffc94ff64e0bf8dbe944bde87fae1abf7af6d2be54675e89e8b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:536"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 664,
+      "fp": "19f7051a0e943b4d50af6520b818206868d02ca87e619df2ffb363f630c11f68",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:664"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 665,
+      "fp": "b1b47540db18ffc94ff64e0bf8dbe944bde87fae1abf7af6d2be54675e89e8b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:665"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 774,
+      "fp": "19f7051a0e943b4d50af6520b818206868d02ca87e619df2ffb363f630c11f68",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:774"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 775,
+      "fp": "b1b47540db18ffc94ff64e0bf8dbe944bde87fae1abf7af6d2be54675e89e8b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:775"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 888,
+      "fp": "19f7051a0e943b4d50af6520b818206868d02ca87e619df2ffb363f630c11f68",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:888"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 889,
+      "fp": "b1b47540db18ffc94ff64e0bf8dbe944bde87fae1abf7af6d2be54675e89e8b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:889"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 987,
+      "fp": "19f7051a0e943b4d50af6520b818206868d02ca87e619df2ffb363f630c11f68",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:987"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 988,
+      "fp": "b1b47540db18ffc94ff64e0bf8dbe944bde87fae1abf7af6d2be54675e89e8b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:988"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1155,
+      "fp": "19f7051a0e943b4d50af6520b818206868d02ca87e619df2ffb363f630c11f68",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:1155"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1156,
+      "fp": "b1b47540db18ffc94ff64e0bf8dbe944bde87fae1abf7af6d2be54675e89e8b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/http-proof.json:generic-api-key:1156"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/recovery-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 94,
+      "fp": "19f7051a0e943b4d50af6520b818206868d02ca87e619df2ffb363f630c11f68",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/recovery-proof.json:generic-api-key:94"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/recovery-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 95,
+      "fp": "b1b47540db18ffc94ff64e0bf8dbe944bde87fae1abf7af6d2be54675e89e8b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/recovery-proof.json:generic-api-key:95"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/recovery-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 277,
+      "fp": "19f7051a0e943b4d50af6520b818206868d02ca87e619df2ffb363f630c11f68",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/recovery-proof.json:generic-api-key:277"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task32-tools-2026-10-24/recovery-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 278,
+      "fp": "b1b47540db18ffc94ff64e0bf8dbe944bde87fae1abf7af6d2be54675e89e8b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task32-tools-2026-10-24/recovery-proof.json:generic-api-key:278"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/full_sft.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 13,
+      "fp": "e97140eaf4fecbc87d408bde868c26e3c0a7f7cc29eb568bf399f9d531272511",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/full_sft.json:generic-api-key:13"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/full_sft.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 186,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/full_sft.json:generic-api-key:186"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/full_sft.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 187,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/full_sft.json:generic-api-key:187"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/full_sft.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 188,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/full_sft.json:generic-api-key:188"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/full_sft.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 219,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/full_sft.json:generic-api-key:219"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/full_sft.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 220,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/full_sft.json:generic-api-key:220"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/full_sft.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 221,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/full_sft.json:generic-api-key:221"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/inference.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 10,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/inference.json:generic-api-key:10"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/inference.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 11,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/inference.json:generic-api-key:11"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/inference.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 12,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/inference.json:generic-api-key:12"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/lora_adapter.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 13,
+      "fp": "67cb6ede38cd50530452be7cb06c528c5e1415834df2fbf2113843036213ccd7",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/lora_adapter.json:generic-api-key:13"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/lora_adapter.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 186,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/lora_adapter.json:generic-api-key:186"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/lora_adapter.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 187,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/lora_adapter.json:generic-api-key:187"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/lora_adapter.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 188,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/lora_adapter.json:generic-api-key:188"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/lora_adapter.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 221,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/lora_adapter.json:generic-api-key:221"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/lora_adapter.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 222,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/lora_adapter.json:generic-api-key:222"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/lora_adapter.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 223,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/lora_adapter.json:generic-api-key:223"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-cpu-inference.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 7,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-cpu-inference.json:generic-api-key:7"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-cpu-inference.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 8,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-cpu-inference.json:generic-api-key:8"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-cpu-inference.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 9,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-cpu-inference.json:generic-api-key:9"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 144,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json:generic-api-key:144"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 145,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json:generic-api-key:145"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 146,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json:generic-api-key:146"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 177,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json:generic-api-key:177"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 178,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json:generic-api-key:178"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 179,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json:generic-api-key:179"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 396,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json:generic-api-key:396"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 397,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json:generic-api-key:397"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 398,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json:generic-api-key:398"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 431,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json:generic-api-key:431"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 432,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json:generic-api-key:432"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 433,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-current-mps-2026-10-23/actual-report.json:generic-api-key:433"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-host-preflight.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 245,
+      "fp": "db16071ee5ad7e3c8edf81e650b0df0c4d2bd2ed63cbbb7ef42d7fc698a37de3",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-host-preflight.json:generic-api-key:245"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-mps-inference.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 7,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-mps-inference.json:generic-api-key:7"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-mps-inference.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 8,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-mps-inference.json:generic-api-key:8"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-mps-inference.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 9,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-mps-inference.json:generic-api-key:9"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-mps-pilot.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 294,
+      "fp": "141de5f43d75c76523dcb171a3b65664e74fc6db67b9d8dbc58074732520a4a7",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-mps-pilot.json:generic-api-key:294"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-mps-pilot.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 560,
+      "fp": "141de5f43d75c76523dcb171a3b65664e74fc6db67b9d8dbc58074732520a4a7",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-mps-pilot.json:generic-api-key:560"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-mps-pilot.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 904,
+      "fp": "141de5f43d75c76523dcb171a3b65664e74fc6db67b9d8dbc58074732520a4a7",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-mps-pilot.json:generic-api-key:904"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task5-browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 235,
+      "fp": "8929172d89743e8e129b2c7cd922f187b37330bbf0b328dfd43f7e0fb7c030f1",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task5-browser-report.json:generic-api-key:235"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task76-apple-inference-2026-10-23/execution.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 10,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task76-apple-inference-2026-10-23/execution.json:generic-api-key:10"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task76-apple-inference-2026-10-23/execution.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 11,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task76-apple-inference-2026-10-23/execution.json:generic-api-key:11"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task76-apple-inference-2026-10-23/execution.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 12,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task76-apple-inference-2026-10-23/execution.json:generic-api-key:12"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 37,
+      "fp": "190b0af40c6070880b751dc066f273c3508b92d44f3bcae1374d8ae5b3989aa6",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:37"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 269,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:269"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 270,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:270"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 271,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:271"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 302,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:302"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 303,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:303"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 304,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:304"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 921,
+      "fp": "fb212dd3105e0661ec7ff0b62f6fa95dd1a678d711d96f40ac2a87dd3a705b72",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:921"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1179,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:1179"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1180,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:1180"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1181,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:1181"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1214,
+      "fp": "fae80721456c7d37debd97bf29589edb7b2aad05d85645cc0a2ed3c7ac034962",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:1214"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1215,
+      "fp": "7af599932bc823b894f2a27f8485740f7c56d83a3324e908f2d10d78628cd99a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:1215"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1216,
+      "fp": "9e2e4c5c3ee17890ecbffa88c3e1d6954ae4b635b1586b873b1730a9d95d26b4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:1216"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1452,
+      "fp": "dea57a371bdef8944f3b631ea28a902d67a580a0c184811b853e6d478e02ad7a",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:1452"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 2141,
+      "fp": "d5d8720dd2c607ffde3e007bf3681ee8d8ba98515384b182969d6947c146fdc8",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:2141"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 2150,
+      "fp": "2b7cf0d59163742f460493487b7296c5aa5da5dc9cebb5422ae2ea7c989cc9f4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:2150"
+    },
+    {
+      "g": "D",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 2159,
+      "fp": "a1ada2fbda981055fab28ab5252ab3be56ae4ec078a10b16d6014048c0bfd184",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:2159"
+    },
+    {
+      "g": "F",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/qualification-reports/task4-browser-run.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 349,
+      "fp": "dba3a591aa8e9e17ceb6030cc24a362a6a27817cb91ed5fa8661cf5dd2504b43",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/qualification-reports/task4-browser-run.json:generic-api-key:349"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 12,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:12"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 353,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:353"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 426,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:426"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 623,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:623"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1037,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:1037"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1304,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:1304"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1645,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:1645"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1734,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:1734"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1943,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:1943"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 2383,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:2383"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/browser.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 70,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/browser.json:generic-api-key:70"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/browser.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 159,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/browser.json:generic-api-key:159"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/browser.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 331,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/browser.json:generic-api-key:331"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/browser.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 404,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/browser.json:generic-api-key:404"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task19-cpu-arena-2026-10-23/setup-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 139,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task19-cpu-arena-2026-10-23/setup-report.json:generic-api-key:139"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 7,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task23-apple-dpo-2026-10-23/numerical-report.json:generic-api-key:7"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 7,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:7"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 326,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task24-cpu-rlhf-2026-10-24/numerical-report.json:generic-api-key:326"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task26-continued-pretraining-2026-10-24/training.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 71,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task26-continued-pretraining-2026-10-24/training.json:generic-api-key:71"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task26-continued-pretraining-2026-10-24/training.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 393,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task26-continued-pretraining-2026-10-24/training.json:generic-api-key:393"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task26-continued-pretraining-2026-10-24/training.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 503,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task26-continued-pretraining-2026-10-24/training.json:generic-api-key:503"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 357,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/browser-report.json:generic-api-key:357"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 473,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/browser-report.json:generic-api-key:473"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 153,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json:generic-api-key:153"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 167,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json:generic-api-key:167"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 168,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:168"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 584,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:584"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 794,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:794"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/browser.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 298,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/browser.json:generic-api-key:298"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/browser.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 522,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/browser.json:generic-api-key:522"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/full_sft.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 27,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/full_sft.json:generic-api-key:27"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/lora_adapter.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 27,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/lora_adapter.json:generic-api-key:27"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/operation-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 362,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/operation-report.json:generic-api-key:362"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/operation-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 564,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/operation-report.json:generic-api-key:564"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/operation-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 712,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/operation-report.json:generic-api-key:712"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task35-accelerators-2026-10-24/operation-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 870,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task35-accelerators-2026-10-24/operation-report.json:generic-api-key:870"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 91,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:91"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 584,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:584"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 766,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:766"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 975,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:975"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1506,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:1506"
+    },
+    {
+      "g": "H",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1997,
+      "fp": "2a6a4a14978aaf0b7bebb56f309df7ba2e18ff10f951e0514f77c88a9423e9b0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:1997"
+    },
+    {
+      "g": "R",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 73,
+      "fp": "1936d33aadebc9c258840e09a2be6716a322b75a3083df95edab874b58b89400",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json:generic-api-key:73"
+    },
+    {
+      "g": "R",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 89,
+      "fp": "6030007c186e66a3fbfbbd97a1b86431f1a8ec0c05e6319c2f26e790574ad3ad",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json:generic-api-key:89"
+    },
+    {
+      "g": "R",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 105,
+      "fp": "624ac10419bb0ced92b84f9f24c837c5a1e9e56d51996d9b974326438a766aa3",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json:generic-api-key:105"
+    },
+    {
+      "g": "R",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 121,
+      "fp": "6030007c186e66a3fbfbbd97a1b86431f1a8ec0c05e6319c2f26e790574ad3ad",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json:generic-api-key:121"
+    },
+    {
+      "g": "R",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 137,
+      "fp": "624ac10419bb0ced92b84f9f24c837c5a1e9e56d51996d9b974326438a766aa3",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json:generic-api-key:137"
+    },
+    {
+      "g": "R",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 153,
+      "fp": "6030007c186e66a3fbfbbd97a1b86431f1a8ec0c05e6319c2f26e790574ad3ad",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json:generic-api-key:153"
+    },
+    {
+      "g": "R",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 169,
+      "fp": "624ac10419bb0ced92b84f9f24c837c5a1e9e56d51996d9b974326438a766aa3",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json:generic-api-key:169"
+    },
+    {
+      "g": "R",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 266,
+      "fp": "624ac10419bb0ced92b84f9f24c837c5a1e9e56d51996d9b974326438a766aa3",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json:generic-api-key:266"
+    },
+    {
+      "g": "R",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 276,
+      "fp": "6030007c186e66a3fbfbbd97a1b86431f1a8ec0c05e6319c2f26e790574ad3ad",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json:generic-api-key:276"
+    },
+    {
+      "g": "R",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 286,
+      "fp": "1936d33aadebc9c258840e09a2be6716a322b75a3083df95edab874b58b89400",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json:generic-api-key:286"
+    },
+    {
+      "g": "R",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/exported-preferences.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 85,
+      "fp": "624ac10419bb0ced92b84f9f24c837c5a1e9e56d51996d9b974326438a766aa3",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/exported-preferences.json:generic-api-key:85"
+    },
+    {
+      "g": "R",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/exported-preferences.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 95,
+      "fp": "6030007c186e66a3fbfbbd97a1b86431f1a8ec0c05e6319c2f26e790574ad3ad",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/exported-preferences.json:generic-api-key:95"
+    },
+    {
+      "g": "R",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/exported-preferences.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 105,
+      "fp": "1936d33aadebc9c258840e09a2be6716a322b75a3083df95edab874b58b89400",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/exported-preferences.json:generic-api-key:105"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/qualification-reports/cpu-character-pilot.bundle.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 84,
+      "fp": "6d9e1a99a08d7d37eae48c1f7428fd0d6313153e4ff9a92d2b64aed6f59efb93",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/qualification-reports/cpu-character-pilot.bundle.json:generic-api-key:84"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/qualification-reports/cpu-character-pilot.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 23,
+      "fp": "6d9e1a99a08d7d37eae48c1f7428fd0d6313153e4ff9a92d2b64aed6f59efb93",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/qualification-reports/cpu-character-pilot.json:generic-api-key:23"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/qualification-reports/task4-browser-candidate.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1,
+      "fp": "7ec76de5bd16be39f5b56c7c326826af3d863ce5e92ad39d50e74e936f37d373",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/qualification-reports/task4-browser-candidate.json:generic-api-key:1"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/qualification-reports/task4-browser-run.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 14,
+      "fp": "7ec76de5bd16be39f5b56c7c326826af3d863ce5e92ad39d50e74e936f37d373",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/qualification-reports/task4-browser-run.json:generic-api-key:14"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/qualification-reports/task4-browser-run.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 228,
+      "fp": "7ec76de5bd16be39f5b56c7c326826af3d863ce5e92ad39d50e74e936f37d373",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/qualification-reports/task4-browser-run.json:generic-api-key:228"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/supported-capabilities.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 77,
+      "fp": "260a7d77e08d338a99c9f4270c0486e390c4310be82abcbd6a79f8afc021c002",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/supported-capabilities.json:generic-api-key:77"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/fresh-mobile-flow-2026-10-16/training-evidence.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 22,
+      "fp": "cbe07e88ccd7613878b9af214b6071a9f94b95105fb83020103744bbc3f6adb4",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/fresh-mobile-flow-2026-10-16/training-evidence.json:generic-api-key:22"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/mobile-garden-flow-2026-10-16/training-evidence.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 20,
+      "fp": "e98fbb7242eddaef17e295b9516b2cd2eab68661144483f55108e226ca59ff43",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/mobile-garden-flow-2026-10-16/training-evidence.json:generic-api-key:20"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-device-admission-mac-2026-10-12.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 35,
+      "fp": "af90bf8d77b337ac868c071f621d1275e2f4f5ad2a9231b2e9d8555462bf9f72",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-device-admission-mac-2026-10-12.json:generic-api-key:35"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/modelanvil-device-admission-mac-2026-10-12.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 404,
+      "fp": "ebc4857531186a9d5df28878f0e64e0afe57c5d1fcc75d6f966aa3c568b2b14c",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/modelanvil-device-admission-mac-2026-10-12.json:generic-api-key:404"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/native-classification-2026-10-28/report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 314,
+      "fp": "18a55fea998cf4b5f71503124da5c9168875a934daface1006a0d3f5a6d75f2c",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/native-classification-2026-10-28/report.json:generic-api-key:314"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/native-classification-2026-10-28/report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 349,
+      "fp": "18a55fea998cf4b5f71503124da5c9168875a934daface1006a0d3f5a6d75f2c",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/native-classification-2026-10-28/report.json:generic-api-key:349"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task12-context-2026-10-23/browser.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 16,
+      "fp": "a0bcc93f0f9054951c2af3b78aa61c93bc357dbcaf9eb433ac08b6ed91ae7a65",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task12-context-2026-10-23/browser.json:generic-api-key:16"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task13-gpu-pilot.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 293,
+      "fp": "35186f837ea268755b1555686daa28374f2c4e3868a51d7e0841d57539dc0524",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task13-gpu-pilot.json:generic-api-key:293"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task13-gpu-pilot.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 538,
+      "fp": "35186f837ea268755b1555686daa28374f2c4e3868a51d7e0841d57539dc0524",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task13-gpu-pilot.json:generic-api-key:538"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task13-gpu-pilot.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 882,
+      "fp": "35186f837ea268755b1555686daa28374f2c4e3868a51d7e0841d57539dc0524",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task13-gpu-pilot.json:generic-api-key:882"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1590,
+      "fp": "969b8a8347c0e146080013771f1b282bfbe7ca540221d62378c2b2dae095e712",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:1590"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1888,
+      "fp": "969b8a8347c0e146080013771f1b282bfbe7ca540221d62378c2b2dae095e712",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:1888"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 2328,
+      "fp": "969b8a8347c0e146080013771f1b282bfbe7ca540221d62378c2b2dae095e712",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task15-cpu-pretrained-2026-10-23/actual-report.json:generic-api-key:2328"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task19-cpu-arena-2026-10-23/setup-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 84,
+      "fp": "dfb350ca3637c9430b867df520a37adb5d9f0fcbd901450a83625c7d518280e8",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task19-cpu-arena-2026-10-23/setup-report.json:generic-api-key:84"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 208,
+      "fp": "04871c93b312364d640f0a0598a81340ac77ecde8af52b9945a655b805a721b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json:generic-api-key:208"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 218,
+      "fp": "04871c93b312364d640f0a0598a81340ac77ecde8af52b9945a655b805a721b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/browser-report.json:generic-api-key:218"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/exported-preferences.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 27,
+      "fp": "04871c93b312364d640f0a0598a81340ac77ecde8af52b9945a655b805a721b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/exported-preferences.json:generic-api-key:27"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task22-blind-preferences-2026-10-23/exported-preferences.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 37,
+      "fp": "04871c93b312364d640f0a0598a81340ac77ecde8af52b9945a655b805a721b2",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task22-blind-preferences-2026-10-23/exported-preferences.json:generic-api-key:37"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task26-continued-pretraining-2026-10-24/training.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 16,
+      "fp": "024da92bb9292916d25b295460981cf2711fea7cf9ae11bc8cc04972f39ddce0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task26-continued-pretraining-2026-10-24/training.json:generic-api-key:16"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task26-continued-pretraining-2026-10-24/training.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 338,
+      "fp": "024da92bb9292916d25b295460981cf2711fea7cf9ae11bc8cc04972f39ddce0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task26-continued-pretraining-2026-10-24/training.json:generic-api-key:338"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 281,
+      "fp": "be5d4de723d04806f7613b9467ce4d6f03ad830be90680edad5b890043089a39",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/browser-report.json:generic-api-key:281"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 77,
+      "fp": "be5d4de723d04806f7613b9467ce4d6f03ad830be90680edad5b890043089a39",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/cpu-report.json:generic-api-key:77"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 91,
+      "fp": "cc97b668a1845846fc76871964b90e91992c742a3336ef7d71989052a4db54fd",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task28-vision-language-2026-10-24/mps-report.json:generic-api-key:91"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 83,
+      "fp": "26ad401ca4f01d8b06c89a9bf43c06c00d10b5514470f9876e84b3ccbcce54ff",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/actual-cpu.json:generic-api-key:83"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task29-audio-2026-10-24/browser.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 213,
+      "fp": "26ad401ca4f01d8b06c89a9bf43c06c00d10b5514470f9876e84b3ccbcce54ff",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task29-audio-2026-10-24/browser.json:generic-api-key:213"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task33-research-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 137,
+      "fp": "40053e7a85fb0306161ec2b4fc27259ef68de6d5abfe5a98c227c3a19f99cc74",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task33-research-2026-10-24/http-proof.json:generic-api-key:137"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task33-research-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 327,
+      "fp": "40053e7a85fb0306161ec2b4fc27259ef68de6d5abfe5a98c227c3a19f99cc74",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task33-research-2026-10-24/http-proof.json:generic-api-key:327"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task33-research-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 535,
+      "fp": "40053e7a85fb0306161ec2b4fc27259ef68de6d5abfe5a98c227c3a19f99cc74",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task33-research-2026-10-24/http-proof.json:generic-api-key:535"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task33-research-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 753,
+      "fp": "40053e7a85fb0306161ec2b4fc27259ef68de6d5abfe5a98c227c3a19f99cc74",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task33-research-2026-10-24/http-proof.json:generic-api-key:753"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task33-research-2026-10-24/http-proof.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 920,
+      "fp": "40053e7a85fb0306161ec2b4fc27259ef68de6d5abfe5a98c227c3a19f99cc74",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task33-research-2026-10-24/http-proof.json:generic-api-key:920"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-host-preflight.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 244,
+      "fp": "033aa80d60e22b5bf3a51720eca5a360b33620e2e77e181c261af87f66636c0f",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-host-preflight.json:generic-api-key:244"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-mps-pilot.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 293,
+      "fp": "3258211c535b362dbff1bfacb948881943afcea8aecb0426de5e5209bb21870b",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-mps-pilot.json:generic-api-key:293"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-mps-pilot.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 559,
+      "fp": "3258211c535b362dbff1bfacb948881943afcea8aecb0426de5e5209bb21870b",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-mps-pilot.json:generic-api-key:559"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task40-mps-pilot.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 903,
+      "fp": "3258211c535b362dbff1bfacb948881943afcea8aecb0426de5e5209bb21870b",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task40-mps-pilot.json:generic-api-key:903"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task44-activation-2026-10-21/baseline.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 39,
+      "fp": "6c2db3cd02d907d749069800f7e2d15c8795bf22b052b01f3e4fa3325786764c",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task44-activation-2026-10-21/baseline.json:generic-api-key:39"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task44-activation-2026-10-21/baseline.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 48,
+      "fp": "6c2db3cd02d907d749069800f7e2d15c8795bf22b052b01f3e4fa3325786764c",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task44-activation-2026-10-21/baseline.json:generic-api-key:48"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task44-activation-2026-10-21/baseline.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 54,
+      "fp": "6c2db3cd02d907d749069800f7e2d15c8795bf22b052b01f3e4fa3325786764c",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task44-activation-2026-10-21/baseline.json:generic-api-key:54"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task44-activation-2026-10-23/baseline.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 39,
+      "fp": "260a7d77e08d338a99c9f4270c0486e390c4310be82abcbd6a79f8afc021c002",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task44-activation-2026-10-23/baseline.json:generic-api-key:39"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task44-activation-2026-10-23/baseline.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 48,
+      "fp": "260a7d77e08d338a99c9f4270c0486e390c4310be82abcbd6a79f8afc021c002",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task44-activation-2026-10-23/baseline.json:generic-api-key:48"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task44-activation-2026-10-23/baseline.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 54,
+      "fp": "260a7d77e08d338a99c9f4270c0486e390c4310be82abcbd6a79f8afc021c002",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task44-activation-2026-10-23/baseline.json:generic-api-key:54"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task48-privacy-2026-10-21/offline-baseline.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 40,
+      "fp": "13ed63cf9bc250205a313f65cef4adbea546fc84b36576ebf970127bc4c47fe0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task48-privacy-2026-10-21/offline-baseline.json:generic-api-key:40"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task48-privacy-2026-10-21/offline-baseline.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 49,
+      "fp": "13ed63cf9bc250205a313f65cef4adbea546fc84b36576ebf970127bc4c47fe0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task48-privacy-2026-10-21/offline-baseline.json:generic-api-key:49"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task48-privacy-2026-10-21/offline-baseline.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 55,
+      "fp": "13ed63cf9bc250205a313f65cef4adbea546fc84b36576ebf970127bc4c47fe0",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task48-privacy-2026-10-21/offline-baseline.json:generic-api-key:55"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task48-privacy-2026-10-23/offline-baseline.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 39,
+      "fp": "9dad30c4d7468b32a1f4c89392855a1a67e922412ec6ba6b8ca7e739ddb52e7c",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task48-privacy-2026-10-23/offline-baseline.json:generic-api-key:39"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task48-privacy-2026-10-23/offline-baseline.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 48,
+      "fp": "9dad30c4d7468b32a1f4c89392855a1a67e922412ec6ba6b8ca7e739ddb52e7c",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task48-privacy-2026-10-23/offline-baseline.json:generic-api-key:48"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task48-privacy-2026-10-23/offline-baseline.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 54,
+      "fp": "9dad30c4d7468b32a1f4c89392855a1a67e922412ec6ba6b8ca7e739ddb52e7c",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task48-privacy-2026-10-23/offline-baseline.json:generic-api-key:54"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task5-browser-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 234,
+      "fp": "7ec76de5bd16be39f5b56c7c326826af3d863ce5e92ad39d50e74e936f37d373",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task5-browser-report.json:generic-api-key:234"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task70-grounded-generation-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 23,
+      "fp": "b99e0b79298c0cbe829f40f2a1abefbc9d3119b52003b77c7687fcf39d64202c",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task70-grounded-generation-2026-10-23/actual-report.json:generic-api-key:23"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task70-grounded-generation-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 138,
+      "fp": "b99e0b79298c0cbe829f40f2a1abefbc9d3119b52003b77c7687fcf39d64202c",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task70-grounded-generation-2026-10-23/actual-report.json:generic-api-key:138"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task70-grounded-generation-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 285,
+      "fp": "b99e0b79298c0cbe829f40f2a1abefbc9d3119b52003b77c7687fcf39d64202c",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task70-grounded-generation-2026-10-23/actual-report.json:generic-api-key:285"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task70-grounded-generation-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 402,
+      "fp": "b99e0b79298c0cbe829f40f2a1abefbc9d3119b52003b77c7687fcf39d64202c",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task70-grounded-generation-2026-10-23/actual-report.json:generic-api-key:402"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task70-grounded-generation-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 501,
+      "fp": "b99e0b79298c0cbe829f40f2a1abefbc9d3119b52003b77c7687fcf39d64202c",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task70-grounded-generation-2026-10-23/actual-report.json:generic-api-key:501"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task73-end-to-end-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 5653,
+      "fp": "3a564a0f3c525f3edf0e8f47f04a66696c730c662055d240486882d46374f56b",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task73-end-to-end-2026-10-23/actual-report.json:generic-api-key:5653"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task73-end-to-end-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 5768,
+      "fp": "3a564a0f3c525f3edf0e8f47f04a66696c730c662055d240486882d46374f56b",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task73-end-to-end-2026-10-23/actual-report.json:generic-api-key:5768"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task73-end-to-end-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 5915,
+      "fp": "3a564a0f3c525f3edf0e8f47f04a66696c730c662055d240486882d46374f56b",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task73-end-to-end-2026-10-23/actual-report.json:generic-api-key:5915"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task73-end-to-end-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 6032,
+      "fp": "3a564a0f3c525f3edf0e8f47f04a66696c730c662055d240486882d46374f56b",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task73-end-to-end-2026-10-23/actual-report.json:generic-api-key:6032"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task73-end-to-end-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 6131,
+      "fp": "3a564a0f3c525f3edf0e8f47f04a66696c730c662055d240486882d46374f56b",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task73-end-to-end-2026-10-23/actual-report.json:generic-api-key:6131"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 36,
+      "fp": "6155cb851a73e991019bcb125d4c7265b7530338ce541125c3ae5755a99e884c",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:36"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 920,
+      "fp": "94b8242da2b5c32edeeeb8451d31ab6efe6ba38b9485868fbf63021a40c59c35",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:920"
+    },
+    {
+      "g": "U",
+      "rule": "generic-api-key",
+      "path": "docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json",
+      "commit": "75e2565a83b4b0cf96aebe793a9da6823e67d165",
+      "line": 1451,
+      "fp": "434abb97a35c6622b0da172f7db3c644b0091cb85d13cd25ae6b2c05fd8871f8",
+      "gl": "75e2565a83b4b0cf96aebe793a9da6823e67d165:docs/engineering/verification/task77-gpu-recipes-2026-10-23/actual-report.json:generic-api-key:1451"
+    }
+  ]
+}

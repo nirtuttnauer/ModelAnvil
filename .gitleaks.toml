@@ -1,0 +1,42 @@
+title = "ModelAnvil"
+
+# Stock rules stay in force. These allowlists cover only the generic-api-key
+# false positives confirmed in docs/engineering/verification/anvil-043-2026-11-11/.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "SHA-256 digests of pinned files and host_key() coordination hashes in verification JSON. gitleaks 8.30 decodes the JSON unicode escapes added in 75e2565 and generic-api-key matches the digest."
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexTarget = "match"
+paths = [
+  '''(?:^|/)docs/engineering/(?:verification|qualification-reports)/.+\.json$''',
+  '''(?:^|/)docs/engineering/supported-capabilities\.json$''',
+]
+regexes = [
+  '''(?:tokenizer_config\.json|special_tokens_map\.json|added_tokens\.json|tokenizer\.json|tokenizer_digest|host_key|api_source_digest|candidate-api-verification\.json|current-candidate-api\.json|openapi\.json|access\.py)": ?"[0-9a-f]{64}"''',
+]
+
+[[allowlists]]
+description = "UUID tokenizer ids and reviewer principal ids (api_key: plus the API-key row primary key, not the credential) in verification JSON. gitleaks 8.30 decodes the JSON unicode escapes added in 75e2565."
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexTarget = "match"
+paths = [
+  '''(?:^|/)docs/engineering/(?:verification|qualification-reports)/.+\.json$''',
+  '''(?:^|/)docs/engineering/supported-capabilities\.json$''',
+]
+regexes = [
+  '''tokenizer_id": ?"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"''',
+  '''tokenizer": ?"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"''',
+  '''api_key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"''',
+]
+
+[[allowlists]]
+description = "32-hex fencing identifier in the finished task4 browser qualification report. ANVIL-017 QA ruled this same hit is not a live credential. gitleaks 8.30 decodes the JSON unicode escapes added in 75e2565."
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexTarget = "match"
+paths = ['''(?:^|/)docs/engineering/qualification-reports/task4-browser-run\.json$''']
+regexes = ['''fencing_token": "[0-9a-f]{32}"''']
