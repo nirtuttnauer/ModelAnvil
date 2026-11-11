@@ -3548,8 +3548,8 @@
       "path": "notice/audio-vctk-full-readme.txt",
       "archive_name": "audio-vctk-full-readme.txt",
       "upstream_url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/bb7edd96-5d96-4c0e-8989-1e45597e7b72/content",
-      "size": 5236,
-      "sha256": "ba814954324641403096c224e20061f80819d50dcde6b98dd253dc8c21395d44"
+      "size": 5270,
+      "sha256": "82b0100e20f05cb7f469ce75453be307f965ca684ea90db53187fa64292f27d9"
     },
     {
       "path": "notice/audio-vctk-full-license.txt",

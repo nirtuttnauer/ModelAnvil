@@ -133,3 +133,20 @@ Mixed-license aggregation sites also need per-asset checks rather than a single 
 ## What has been prepared
 
 The accompanying JSON catalog records source identities, output groups, license evidence URLs, download connector designs, preparation requirements, and three SVG presets. For unqualified candidates, fields for precise revisions, byte sizes, and counts remain unset until qualification. Connector paths are candidates to test against the selected snapshot. HumanEval is evaluation-only by default; xLAM requires user-approved gated access. FineVideo stays held pending license and access-term review. The Dataset Bank interface and a bounded Lucide acquisition connector now exist. Thirteen HTTP sources have measured, content-pinned subsets totaling 320 samples, including 80 GSM8K problems, 20 MBPP tasks and 20 Dolly instructions added on 17 October. Sample acquisition admits only frozen inventories; complete releases have [separate qualification](dataset-bank-full-downloads.md). Training adapters remain unqualified. SmolTalk is scoped to Smol-Magpie-Ultra; no license is asserted for its full mixture.
+
+## VCTK readme notice: author contact address
+
+Decision date: 11 November 2026. Decision: redact. The personal academic email on line 12 of `catalog/qualified-datasets/notices/audio-vctk-full-readme.txt` is replaced with `[contact address removed; see the upstream VCTK README]`. The rest of that file is verbatim. Creator names in the notice stay, including Junichi Yamagishi, Christophe Veaux, and Kirsten MacDonald. This edit is only in the current tree. It does not rewrite history.
+
+The corpus notice states that the corpus is licensed under Creative Commons Attribution 4.0 International. The archived license text is `catalog/qualified-datasets/notices/audio-vctk-full-license.txt`. The clause that governs what an attribution notice must retain is Section 3(a)(1)(A):
+
+> retain the following if it is supplied by the Licensor with the Licensed Material:
+> i. identification of the creator(s) of the Licensed Material and any others designated to receive attribution, in any reasonable manner requested by the Licensor (including by pseudonym if designated);
+> ii. a copyright notice;
+> iii. a notice that refers to this Public License;
+> iv. a notice that refers to the disclaimer of warranties;
+> v. a URI or hyperlink to the Licensed Material to the extent reasonably practicable;
+
+That list does not include a contact email. The notice still identifies the creators by name and keeps the copyright line, the license name, and the license URI that the upstream README supplies. Section 3(a)(2) of the same license states: "You may satisfy the conditions in Section 3(a)(1) in any reasonable manner based on the medium, means, and context in which You Share the Licensed Material. For example, it may be reasonable to satisfy the conditions by providing a URI or hyperlink to a resource that includes the required information."
+
+Hash update, same checks: `catalog/full-datasets/audio-vctk.json` pins this archived readme by `size` and `sha256`. `verify_notices` still requires the file bytes to match both. The redacted file is 5270 bytes, SHA-256 `82b0100e20f05cb7f469ce75453be307f965ca684ea90db53187fa64292f27d9`. The previous pin was 5236 bytes, SHA-256 `ba814954324641403096c224e20061f80819d50dcde6b98dd253dc8c21395d44`. `catalog/dataset-presets.json` `full_acquisition.pinned_revision`, and the same value in `qualified_revisions`, is the SHA-256 of the canonical JSON of that manifest. The manifest's `revision_selection` describes that digest as covering the publisher notices. `load_manifest` still requires an exact match. The revision is now `c6f3fd4c8dfbf933eab63a7f488f174f6476f958ded208afb0df3ccb631d5509`, replacing `31f515285efcc67d589b91bb97d1df691799c9eec4f43e25a7b8e77b69e470f4`. No test was skipped, xfailed, or removed.
