@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "75e6d05abdd4877dee25ba0a1e5669a9e9d2cab3",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-11-11T21:48:04+00:00",
+  "machine": {
+    "hostname": "cursor",
+    "os": "Linux-6.12.113+-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "python": "3.12.3",
+    "node": "v22.23.4"
+  },
+  "command": ".venv/bin/python /tmp/anvil013-cache-key.py",
+  "exit_code": 0,
+  "stdout": "pins_file modelanvil/runners/training/hf_runtime.py\nhashFiles 2548e82f6f43fdb5e9791779db72fe0c3bbc90fc8d26aa5013c149af5f2dfbbb\ncache_key smollm2-135m-2548e82f6f43fdb5e9791779db72fe0c3bbc90fc8d26aa5013c149af5f2dfbbb\ncache_path data/smollm2-135m\nmutated_pins_hashFiles 97485a1105e817271a0eaf53a4550e96e09c4aefcd724a67abaead0b921fd19b\nkey_changes True\nworkspace_present 5\nworkspace_missing []\nempty_cache_missing 5\nrestore_verified_without_download\n",
+  "stderr": "",
+  "runs": [
+    {
+      "name": "command",
+      "command": ".venv/bin/python /tmp/anvil013-cache-key.py",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}
