@@ -3,11 +3,15 @@
 
 The install commands are the fenced block marked in README.md. No Hub token is
 read or sent. A failed download, or a file that does not match the pinned
-checksum, exits non-zero before any training step.
+checksum, exits non-zero before any training step. After those steps, the
+native export is loaded in separate processes by scripts/verify_cpu_export.py
+and scripts/hf_candidate_infer.py. Each process must return tokens. The base
+snapshot stays pinned by digest. This checks that the path runs.
 """
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import re
 import shutil
@@ -74,6 +78,102 @@ def verify_snapshot(directory: Path, hashes: dict[str, str], limits: dict) -> No
                 digest.update(block)
         if digest.hexdigest() != expected:
             raise ValueError(f"{name}: pinned SmolLM2 checksum changed; refusing to train")
+
+
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _independent_env() -> dict[str, str]:
+    """Offline child environment. Hub tokens and the parent import path stay out."""
+    env = os.environ.copy()
+    for name in ("HF_TOKEN", "HUGGING_FACE_HUB_TOKEN", "HF_HUB_TOKEN", "PYTHONPATH"):
+        env.pop(name, None)
+    env["HF_HUB_OFFLINE"] = "1"
+    env["TRANSFORMERS_OFFLINE"] = "1"
+    env["HF_HUB_DISABLE_TELEMETRY"] = "1"
+    env["TOKENIZERS_PARALLELISM"] = "false"
+    env["OMP_NUM_THREADS"] = "1"
+    return env
+
+
+def _run_independent(command: list[str]) -> dict:
+    script = Path(command[2]).name if len(command) > 2 and command[1] == "-I" else Path(command[0]).name
+    print(f"loading exported candidate with {script}", flush=True)
+    completed = subprocess.run(command, stdout=subprocess.PIPE, text=True, env=_independent_env())
+    if completed.returncode != 0:
+        raise RuntimeError(f"{script} exited {completed.returncode}")
+    payload = None
+    for line in reversed(completed.stdout.splitlines()):
+        stripped = line.strip()
+        if stripped.startswith("{"):
+            payload = json.loads(stripped)
+            break
+    if not isinstance(payload, dict):
+        raise RuntimeError(f"{script} did not return a JSON object")
+    tokens = payload.get("generated_token_ids")
+    if not isinstance(tokens, list) or not tokens or any(type(item) is not int for item in tokens):
+        raise RuntimeError(f"{script} did not return tokens")
+    return payload
+
+
+def infer_exported_candidate(archive: Path) -> dict:
+    """Load one exported candidate twice, each time in its own process."""
+    root = Path(__file__).resolve().parents[1]
+    digest = _file_sha256(archive)
+    python = sys.executable
+    verified = _run_independent([
+        python, "-I", str(root / "scripts" / "verify_cpu_export.py"),
+        "--archive", str(archive),
+        "--sha256", digest,
+    ])
+    with tempfile.TemporaryDirectory(prefix="modelanvil-golden-candidate-") as temp:
+        import zipfile
+
+        with zipfile.ZipFile(archive) as zipped:
+            zipped.extractall(temp)
+        loaded = _run_independent([
+            python, "-I", str(root / "scripts" / "hf_candidate_infer.py"),
+            temp,
+            "--device", "cpu",
+            "--precision", "fp32",
+            "--prompt", "A telescope collects",
+            "--max-new-tokens", "8",
+        ])
+    if loaded.get("consumer_imported_modelanvil_or_django") is not False:
+        raise RuntimeError("hf_candidate_infer.py imported ModelAnvil or Django")
+    print(
+        "independent inference returned "
+        f"{len(verified['generated_token_ids'])} tokens from verify_cpu_export.py and "
+        f"{len(loaded['generated_token_ids'])} tokens from hf_candidate_infer.py",
+        flush=True,
+    )
+    return {
+        "verify_cpu_export": verified["generated_token_ids"],
+        "hf_candidate_infer": loaded["generated_token_ids"],
+    }
+
+
+def _write_native_export(client, headers: dict, run_id, destination: Path) -> None:
+    response = client.get(f"/api/v1/training-runs/{run_id}/download/?export_format=native", **headers)
+    if response.status_code != 200:
+        detail = getattr(response, "content", b"")[:500]
+        raise RuntimeError(f"native export failed: {response.status_code} {detail!r}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    chunks = response.streaming_content if getattr(response, "streaming", False) else [response.content]
+    total = 0
+    with destination.open("wb") as stream:
+        for chunk in chunks:
+            if isinstance(chunk, str):
+                chunk = chunk.encode()
+            total += len(chunk)
+            stream.write(chunk)
+    if total < 1:
+        raise RuntimeError("native export was empty")
 
 
 def _download_missing(directory: Path, names: list[str], source: dict) -> None:
@@ -210,6 +310,16 @@ def run_steps(directory: Path, steps: int) -> int:
             f"training did not finish {steps} CPU steps: outcome={outcome} status={run.status} step={run.current_step} error={detail}"
         )
     print(f"completed {run.current_step} SmolLM2-135M CPU LoRA steps", flush=True)
+    from modelanvil.runners.training.hf_runtime import FILE_HASHES, LIMITS
+
+    verify_snapshot(directory, FILE_HASHES, LIMITS)
+    export_root = Path(tempfile.mkdtemp(prefix="modelanvil-golden-export-"))
+    try:
+        archive = export_root / "candidate.zip"
+        _write_native_export(client, headers, run.run_id, archive)
+        infer_exported_candidate(archive)
+    finally:
+        shutil.rmtree(export_root, ignore_errors=True)
     return run.current_step
 
 
@@ -264,7 +374,7 @@ def orchestrate(sha: str, steps: int) -> int:
         print(f"golden path left the checkout at {destination}", file=sys.stderr)
         return 1
     shutil.rmtree(destination)
-    print(f"golden path completed {steps} SmolLM2-135M CPU steps at {sha}", flush=True)
+    print(f"golden path completed {steps} SmolLM2-135M CPU steps and independent inference at {sha}", flush=True)
     return 0
 
 

@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "9597028bfacf26f55d3c2ae3fed5d501983fe348",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-11-11T19:04:47+00:00",
+  "machine": {
+    "hostname": "cursor",
+    "os": "Linux-6.12.113+-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "python": "3.12.3",
+    "node": "v24.22.3"
+  },
+  "command": "bash /tmp/anvil012-pip-audit.sh",
+  "exit_code": 1,
+  "stdout": "=== requirements.audio.txt ===\nEXIT 0\n=== requirements.documents.txt ===\nName  Version ID              Fix Versions\n----- ------- --------------- ------------\npypdf 6.21.2  CVE-2026-119208 6.21.3\npypdf 6.21.2  CVE-2026-119206 6.21.3\npypdf 6.21.2  CVE-2026-119209 6.21.3\npypdf 6.21.2  CVE-2026-119207 6.21.3\npypdf 6.21.2  CVE-2026-119203 6.21.4\npypdf 6.21.2  CVE-2026-119205 6.21.4\npypdf 6.21.2  CVE-2026-119204 6.21.4\nEXIT 1\n=== requirements.embeddings.txt ===\nEXIT 0\n=== requirements.gpu.txt ===\nEXIT 0\n=== requirements.inference.txt ===\nEXIT 0\n=== requirements.production.txt ===\nEXIT 0\n=== requirements.selfhost.lock.txt ===\nEXIT 0\n=== requirements.specialists.txt ===\nEXIT 0\n=== requirements.tools.txt ===\nEXIT 0\n=== requirements.txt ===\nEXIT 0\n=== requirements.vision.txt ===\nEXIT 0\n",
+  "stderr": "No known vulnerabilities found\nFound 7 known vulnerabilities in 1 package\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\n",
+  "runs": [
+    {
+      "name": "command",
+      "command": "bash /tmp/anvil012-pip-audit.sh",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}
