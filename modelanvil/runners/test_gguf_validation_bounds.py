@@ -1,7 +1,9 @@
 """Invalid GGUF bytes are refused before any process, with no ready claim."""
+import importlib.util
 import struct
 import tempfile
 from pathlib import Path
+from unittest import skipUnless
 from unittest.mock import patch
 from django.test import SimpleTestCase
 from modelanvil.runners import gguf_validation
@@ -60,6 +62,7 @@ class GGUFValidationBoundTests(SimpleTestCase):
                         with self.assertRaises(ValueError):inspect_gguf(path)
                         with self.assertRaises(ValueError):validate_gguf(path)
 
+    @skipUnless(importlib.util.find_spec('gguf'),'Optional pinned GGUF reader not installed')
     def test_result_does_not_claim_the_model_is_ready(self):
         import numpy as np
         from gguf import GGUFWriter
