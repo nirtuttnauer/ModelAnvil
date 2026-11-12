@@ -138,3 +138,13 @@ Exit 1 after 0.6 s. Stderr: `ModelAnvil: Release checksum failed: images.tar`. `
 - No public DNS, ACME, git tag, GitHub release or published image. `production_qualified` stays `false` in the builder, the controller and this release.
 - The full suites and the shared gates are recorded in [gates.md](gates.md).
 - `deploy/selfhost/README.md`, `docs/engineering/self-host.md` and `docs/engineering/self-host-package.md` are unchanged; they are outside this ticket's file limits. `self-host-package.md` is the dated plan and still describes the old `cpu-<sha>` default.
+
+## Addendum: install on a fresh Docker engine (12 November 2026)
+
+The live installs above ran on an engine that already held the release images. This check runs `scripts/install_selfhost.py` on a Docker engine that has never seen ModelAnvil, so the install has to load `images.tar` itself.
+
+- Script: [fresh-engine-install.sh](fresh-engine-install.sh). It starts a new privileged `docker:dind` container (image pinned by digest, the same one ANVIL-029 used) with a new, empty `/var/lib/docker` volume. It mounts release `0.1.0` read-only and the scripts from `76fe094` (`main` after #122). Then it installs `python3` and `curl` in the container, runs `python3 /scripts/install_selfhost.py --directory /work/instance --release /release --http-port 18080 --https-port 18443 --credentials-stdin`, and finally runs `curl --fail --cacert /work/instance/ca.crt https://localhost:18443/api/v1/health/`. It ran under the host test lock.
+- Output: [fresh-engine-install.txt](fresh-engine-install.txt). Before the install, the inner engine had 0 images and 0 volumes. The install exited 0 in 21 s with `ready: true`, version `0.1.0`, and `production_qualified: false`. Health returned `{"status": "ok"}`, and curl exited 0. `stop` and `uninstall` exited 0, and the container and its volume were then removed.
+- The throwaway owner credentials were generated inside the container with `secrets.token_urlsafe(24)`, used from a 0600 file there, and deleted with the container. They were never printed or recorded.
+
+This is a fresh engine inside the Docker Desktop VM on Nir's Mac, a reset environment that never held ModelAnvil. It is not a separate physical machine. The second-machine install stays with ANVIL-026 and ANVIL-028.

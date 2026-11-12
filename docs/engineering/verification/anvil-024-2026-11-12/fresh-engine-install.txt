@@ -1,0 +1,20 @@
+start 2026-11-12T16:32:38Z
+inner engine images before install: 0
+inner engine volumes before install: 0
+apk exit 0
+Python 3.14.10
+{
+  "origin": "https://localhost:18443",
+  "ready": true,
+  "ca": "/work/instance/ca.crt",
+  "version": "0.1.0",
+  "production_qualified": false
+}
+install exit 0 seconds 21
+inner engine images after install: 
+{"status": "ok"}
+curl exit 0
+stop exit 0
+uninstall exit 0
+end 2026-11-12T16:33:34Z
+cleanup: container 0 volume 0
