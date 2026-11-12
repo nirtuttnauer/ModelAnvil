@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "b57a6f85140702951dfbde5da76721bed8ee3df7",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-11-12T14:45:38+00:00",
+  "machine": {
+    "hostname": "cursor",
+    "os": "Linux-6.12.113+-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "python": "3.12.3",
+    "node": "v24.22.3"
+  },
+  "command": "bash -c 'status=0; for f in requirements*.txt; do echo == $f ==; .venv/bin/pip-audit --progress-spinner=off -r $f || status=1; done; exit $status'",
+  "exit_code": 0,
+  "stdout": "== requirements.audio.txt ==\n== requirements.documents.txt ==\n== requirements.embeddings.txt ==\n== requirements.gpu.txt ==\n== requirements.inference.txt ==\n== requirements.production.txt ==\n== requirements.selfhost.lock.txt ==\n== requirements.specialists.txt ==\n== requirements.tools.txt ==\n== requirements.txt ==\n== requirements.vision.txt ==\n",
+  "stderr": "No known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\n",
+  "runs": [
+    {
+      "name": "command",
+      "command": "bash -c 'status=0; for f in requirements*.txt; do echo == $f ==; .venv/bin/pip-audit --progress-spinner=off -r $f || status=1; done; exit $status'",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "id": "rag-answer-format-v1",
+  "status": "draft",
+  "qa_review": "required before any measurement, scorer change, prompt change, or merge",
+  "measurement": "not run",
+  "does_not_modify": "rag-end-to-end-reproduction-v1",
+  "decision": "b",
+  "decision_date": "2026-10-28",
+  "purpose": "Freeze the answer format for a later position and citation check. Scoring is not eased. This file does not replace or widen rag-end-to-end-reproduction-v1.",
+  "position_answer_format": {
+    "source": "modelanvil/context_lab/positions.py normalize() and modelanvil/context_lab/position-protocol.json scoring, unchanged by this draft",
+    "metric": "normalized_exact_match",
+    "normalization": "Unicode NFKC, casefold, collapse whitespace, remove one terminal period",
+    "required_output": "the entire normalized string equals the expected access code",
+    "expected_codes": ["WILLOW", "CEDAR", "MAPLE"],
+    "instructed_shape": "only the requested access code; no explanation and no citation; UNKNOWN when the evidence does not give the code",
+    "rejected": "a full sentence that contains the correct code is incorrect"
+  },
+  "citation_answer_format": {
+    "source": "modelanvil/rag/generation.py citation_result(), unchanged by this draft",
+    "conditions_in_the_accepted_citation_count": ["none", "retrieved", "human"],
+    "accepted": "status answered only after source-membership validation of every [n] marker",
+    "evidence_supplied": "one or more allowed [n] markers whose labels are supplied chunks",
+    "no_evidence": "no citation markers; an invented marker is validation_refusal (unknown_citation)",
+    "missing_citation_when_evidence_supplied": "validation_refusal (missing_citation)",
+    "model_abstention": "leading-phrase check only, as implemented; a later occurrence of the phrase does not reclassify an accepted answer",
+    "known_unanswerable_rows": "separate from the three-condition accepted-citation count; policy abstention and format refusal stay distinct from model-declared abstention",
+    "not_certified": "source membership is not entailment or answer correctness"
+  },
+  "scoring_locked": [
+    "do not extract a code word from a sentence or explanation",
+    "do not accept substring, containment, or partial credit",
+    "do not count a correct sentence without a required citation as accepted",
+    "do not count an invented citation as accepted",
+    "do not insert citations or strip prose in a post-processor so a failing string passes",
+    "do not widen retrieval, ANN, position, generation-status, abstention, pin, schedule, or coverage rules in rag-end-to-end-reproduction-v1",
+    "compare() in scripts/rag_report.py continues to load only scripts/rag-reproduction-policy.json and to reject a changed v1 policy"
+  ],
+  "baseline_small_correctness_check": {
+    "label": "small correctness check",
+    "source_commit": "04916ee723f894ab0b3cec50b2ccc43596bceae0",
+    "saved_report": "docs/engineering/verification/task73-end-to-end-2026-10-23/actual-report.json",
+    "position_code_only_exact_match": "0.0000 (0/6) at start, middle, and end",
+    "generation_conditions_with_accepted_citations": "1/3",
+    "retrieval_shown_only_as_context": "MiniLM nDCG@5 1.0000 next to seeded random 0.0215 on 20 queries / 200 SciFact docs",
+    "claim_limit": "Not a long-context, entailment, leaderboard, or general quality result. No new measurement was run for this draft. QA has not verified the format-failure reading."
+  },
+  "limits": "Draft frozen before any new position or citation measurement. No prompt, decoder, scorer, or v1 tolerance was changed. A later format change needs QA acceptance of this policy first, then its own commit, and only then a measurement. v1 is never widened."
+}

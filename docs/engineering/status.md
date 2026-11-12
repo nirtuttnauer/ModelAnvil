@@ -30,10 +30,11 @@ QA ruling, 29 October 2026 (ANVIL-002, gate G-skip). A skip, xfail, or timeout a
 | `modelanvil.compute.tests.ConcurrentAllocationTests.test_concurrent_replays_create_one_provider_resource_and_one_reservation` | `pg` tag. Required local PostgreSQL run. |
 | `modelanvil.jobs.test_broker.RabbitMQLoopIntegrationTests.test_consumer_loop_executes_a_dispatch_and_stops_cleanly` | `pg` tag. Required local PostgreSQL run, which also provides RabbitMQ (`RABBITMQ_URL`). |
 | `modelanvil.runners.training.test_mlx_runtime.NativeAdapterModelTests.test_frozen_four_bit_base_actual_update_exact_resume_and_corruption` | Collected when `MODELANVIL_MLX_TEST_MODEL_DIR` points at the verified local model, tagged `pg`, and executed in that PostgreSQL run. |
+| `modelanvil.runners.alignment.test_grpo.IsolatedVerifierTests.test_linux_verifier_measures_its_own_image_after_a_large_parent` | `linux` tag. Checks Linux exec RSS inheritance. A premerge host that is not Linux excludes it before the run and lists it in `excluded_ids`; it runs in the Linux backend run and in CI. |
 
 `modelanvil.runners.test_gguf_runtime.GGUFNative.test_actual_cpu_generation_cancellation_and_unload` is collected when `MODELANVIL_GGUF_TEST_MODEL` is set (tag `gguf`). A missing Metal or GGUF fixture is not a runtime skip. Those IDs still have to run on a host that has the fixtures before the skip gate is closed for them.
 
-The default backend command is `python manage.py test --noinput --exclude-tag=pg`. The required PostgreSQL command is `python manage.py test --noinput --tag=pg` with `DATABASE_ENGINE=postgresql` and `RABBITMQ_URL`. The record schema is [local-evidence.v1.json](schemas/local-evidence.v1.json). `scripts/local_evidence.py` wraps a command and writes one record labeled `local`.
+The default backend command is `python manage.py test --noinput --exclude-tag=pg`. On a host that is not Linux, `make premerge` adds `--exclude-tag=linux`. The required PostgreSQL command is `python manage.py test --noinput --tag=pg` with `DATABASE_ENGINE=postgresql` and `RABBITMQ_URL`. The record schema is [local-evidence.v1.json](schemas/local-evidence.v1.json). `scripts/local_evidence.py` wraps a command and writes one record labeled `local`.
 
 ## Historical reviews
 
