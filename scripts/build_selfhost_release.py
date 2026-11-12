@@ -14,14 +14,26 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from deploy.selfhost.modelanvil import Instance,FILES,sha,write_json
 
+VERSION_FILE=ROOT/'deploy/selfhost/VERSION'
 
-def main():
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--output',type=Path,required=True);parser.add_argument('--version')
-    args=parser.parse_args();output=args.output.resolve()
+
+def release_version(argument):
+    """An explicit --version wins; otherwise the committed one-line package version file names the release."""
+    if argument is None:
+        lines=VERSION_FILE.read_text().splitlines()
+        if len(lines)!=1:raise ValueError('deploy/selfhost/VERSION must contain exactly one line.')
+        argument=lines[0]
+    if not re.fullmatch(r'[a-z0-9][a-z0-9.-]{0,79}',argument):raise ValueError('Use a lowercase release version of at most80characters.')
+    return argument
+
+
+def main(argv=None):
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--version',help='Overrides deploy/selfhost/VERSION for this build.')
+    args=parser.parse_args(argv);output=args.output.resolve()
     if output.exists():raise ValueError('Use a new output directory; existing releases are immutable.')
     if subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip():raise ValueError('Commit the release sources before building; source identity must describe the actual checkout.')
-    revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip();version=args.version or 'cpu-'+revision[:12]
-    if not re.fullmatch(r'[a-z0-9][a-z0-9.-]{0,79}',version):raise ValueError('Use a lowercase release version of at most80characters.')
+    revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip();version=release_version(args.version)
     controller=Instance(output);info=json.loads(controller.call(['info','--format','{{json .}}']))
     architecture={'aarch64':'arm64','x86_64':'amd64'}.get(info['Architecture'],info['Architecture'])
     if info['OSType']!='linux' or architecture!='arm64':raise ValueError('This release builder currently qualifies Linux arm64 only. Other architectures need their own tested lock and image qualification.')
