@@ -1,0 +1,18 @@
+=== repo-config 8.30 dir ===
+2:43PM INF scanned ~31102421 bytes (31.10 MB) in 1.7s
+2:43PM INF no leaks found
+EXIT_REPO:0
+=== stock 8.30 dir ===
+2:43PM INF scanned ~28202986 bytes (28.20 MB) in 1.33s
+2:43PM WRN leaks found: 370
+EXIT_STOCK:1
+=== 8.28 dir repo tree ===
+2:43PM INF scanned ~31102421 bytes (31.10 MB) in 694ms
+2:43PM INF no leaks found
+EXIT_828:0
+=== 8.30 detect repo config ===
+2:43PM INF 224 commits scanned.
+2:43PM INF scanned ~42739317 bytes (42.74 MB) in 2.59s
+2:43PM WRN leaks found: 36
+EXIT_DETECT:1
+GITLEAKS_DONE
