@@ -1,6 +1,6 @@
 # ModelAnvil supported capability baseline
 
-> **Supporting evidence, not the status page.** Use the [capability ledger](capability-ledger.md) for the current envelope. This file keeps the operation notes and activation contract.
+> **Operation notes, not the source of levels.** Capability levels and their evidence come from [supported-capabilities.json](supported-capabilities.json). The [capability ledger](capability-ledger.md) is the human-readable support page. This file keeps the operation notes and activation contract.
 
 23 October 2026 · TASK-44 · Small teams building private AI products
 
