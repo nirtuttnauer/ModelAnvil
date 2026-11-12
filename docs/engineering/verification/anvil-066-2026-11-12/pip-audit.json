@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "b46bdb6fe5cb1b15ecd9d2b6e4b1944afde02f70",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-11-12T14:52:18+00:00",
+  "machine": {
+    "hostname": "cursor",
+    "os": "Linux-6.12.113+-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "python": "3.12.3",
+    "node": "v24.22.3"
+  },
+  "command": "for f in requirements*.txt; do pip-audit --progress-spinner=off -r \"$f\"; done",
+  "exit_code": 0,
+  "stdout": "===== requirements.audio.txt =====\nNo known vulnerabilities found\nexit:0\n===== requirements.documents.txt =====\nNo known vulnerabilities found\nexit:0\n===== requirements.embeddings.txt =====\nNo known vulnerabilities found\nexit:0\n===== requirements.gpu.txt =====\nNo known vulnerabilities found\nexit:0\n===== requirements.inference.txt =====\nNo known vulnerabilities found\nexit:0\n===== requirements.production.txt =====\nNo known vulnerabilities found\nexit:0\n===== requirements.selfhost.lock.txt =====\nNo known vulnerabilities found\nexit:0\n===== requirements.specialists.txt =====\nNo known vulnerabilities found\nexit:0\n===== requirements.tools.txt =====\nNo known vulnerabilities found\nexit:0\n===== requirements.txt =====\nNo known vulnerabilities found\nexit:0\n===== requirements.vision.txt =====\nNo known vulnerabilities found\nexit:0\nAUDIT_EXIT:0\n",
+  "stderr": "",
+  "runs": [
+    {
+      "name": "command",
+      "command": "for f in requirements*.txt; do pip-audit --progress-spinner=off -r \"$f\"; done",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}
