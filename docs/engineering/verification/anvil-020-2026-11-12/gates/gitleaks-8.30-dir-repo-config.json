@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "b52802841198d1c6afe290411dbed687db9df33a",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-11-12T23:32:27+02:00",
+  "machine": {
+    "hostname": "Nirs-MacBook-Pro.local",
+    "os": "macOS-27.0.1-arm64-arm-64bit",
+    "arch": "arm64",
+    "python": "3.12.15",
+    "node": "v24.22.3"
+  },
+  "command": "gitleaks dir /tmp/anvil-export.qQxAlo --config /tmp/anvil-export.qQxAlo/.gitleaks.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/evidence/anvil-020-merged/raw/gl830-dir-repo.json",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "\u001b[90m11:32PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1mscanned ~47814629 bytes (47.81 MB) in 1.76s\u001b[0m\n\u001b[90m11:32PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1mno leaks found\u001b[0m\n",
+  "runs": [
+    {
+      "name": "command",
+      "command": "gitleaks dir /tmp/anvil-export.qQxAlo --config /tmp/anvil-export.qQxAlo/.gitleaks.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/evidence/anvil-020-merged/raw/gl830-dir-repo.json",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}

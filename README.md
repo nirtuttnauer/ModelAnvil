@@ -53,6 +53,16 @@ Baseline measurement: `04916ee723f894ab0b3cec50b2ccc43596bceae0` ([report](docs/
 
 Read the new column with its [limits](docs/engineering/verification/anvil-019-2026-11-12/report.md#what-the-new-numbers-do-not-show). The 3/3 is source-membership validation of the citation format, not answer correctness: the accepted no-evidence answer gives an invented code. The 6/6 is only at the end position, where the fact is the last evidence item before the question. Start and middle stay at 0/6, so the middle-dip rule is met only because the end score rose.
 
+<!-- rag-expanded-results:start -->
+| Small correctness check (ANVIL-020), nDCG@5 | Development, 531 queries | Held-out, 300 BEIR SciFact test queries |
+| --- | --- | --- |
+| MiniLM relevance | 0.6507 | 0.6243 |
+| Seeded random-vector baseline | 0.0000 | 0.0062 |
+| SQL full-text baseline | 0.0132 | 0.0154 |
+
+Full 5,183-document SciFact corpus in five production-limit shards; a small correctness check, not a benchmark. Thresholds were frozen from development in `44e7a9e` before the held-out run. The size awaits QA sign-off. [Report and limits](docs/engineering/verification/anvil-020-2026-11-12/report.md).
+<!-- rag-expanded-results:end -->
+
 ## Current capabilities
 
 <!-- capability-evidence:start -->

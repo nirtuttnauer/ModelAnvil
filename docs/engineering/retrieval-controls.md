@@ -28,3 +28,30 @@ The development maximum of random/full-text nDCG@5 freezes the minimum held-out 
 ANN recall is computed at10 **chunk** neighbors against exact SQL for effort10/40/100 and fixed100%/25%/5% memberships, five queries per role. The benchmark explicitly disables exact underfill fallback while measuring raw ANN. Production search keeps its default fallback and strict iterative scans. `ef_search`1–1000 is an optional query API field and appears in persisted execution receipts. A full result count does not prove ANN recall; document relevance is another independent measurement.
 
 CI's required pgvector job caches verified public inputs, runs this actual test and uploads a commit-named JSON artifact even when a measured gate fails. It also checks the frozen plan, unrelated data retention and original SQL/HNSW/access boundaries. The [dated report](verification/task69-retrieval-controls-2026-10-23/report.md) is the evidence source; TASK73 owns generated README results and qualification on the final merged CI SHA.
+
+## Expanded SciFact correctness check (ANVIL-020)
+
+A second, larger set runs next to the 200-document result above. It does not replace or change it: `benchmark-corpus-pins.json`, `benchmark-protocol.json` and their report stay as they were. Policy `rag-expanded-corpus-v1` in [`scripts/rag-expanded-corpus-policy.json`](../../scripts/rag-expanded-corpus-policy.json) fixes the size, split, shards and threshold rules. It was committed alone before any measurement on this set. The size was proposed without QA and awaits QA sign-off.
+
+- **Corpus**: all 5,183 SciFact abstracts from the same pinned publisher archive (ODC-By-1.0).
+- **Held-out**: all 300 claims of `data/claims_dev.jsonl`, which is the BEIR SciFact test split (339 judgments, CC-BY-4.0 claims). Judgments are each claim's cited documents, as in BEIR. Rebuilt as BEIR qrels TSV, they equal BEIR's `test.tsv` byte for byte. That file is pinned by SHA256 but not committed or needed at run time.
+- **Development**: the 531 training claims whose source group and normalized text share nothing with a held-out claim (600 judgments).
+- **Shards**: a production local index holds at most 2,000,000 bytes of source text, and the corpus has 7,792,860. The check therefore builds five ordinary knowledge bases, chosen by a SHA256 rule. Each shard returns its top 20 chunks through the production `RetrievalEngine`. The candidates are merged by score, then chunk ID. For exact cosine search and `ts_rank_cd` full text this gives the same ranking as one index, apart from the order of exact ties. Production limits are unchanged.
+
+The new pins are in [`modelanvil/rag/benchmark-expanded-pins.json`](../../modelanvil/rag/benchmark-expanded-pins.json): member SHA256, sizes, record counts and licenses, the rebuilt judgment digests, and the BEIR file's revision, SHA256 and card license. The frozen split and shard membership are in the [frozen plan](verification/anvil-020-2026-11-12/frozen-plan.json).
+
+```sh
+python -c "from modelanvil.rag.benchmark_corpus import cache_corpus; print(cache_corpus())"
+# Optional one-time cross-check against BEIR test.tsv (downloads 5,389 pinned bytes):
+python -c "import django; django.setup(); from modelanvil.rag.benchmark_expanded import cache_beir_qrels; print(cache_beir_qrels())"
+python manage.py verify_expanded_retrieval --phase plan --beir-cross-check --output /absolute/new-plan.json
+python manage.py verify_expanded_retrieval --phase development --output /absolute/development-report.json \
+  --freeze docs/engineering/verification/<dir>/frozen-thresholds.json
+git add docs/engineering/verification/<dir>/frozen-thresholds.json && git commit -m "Freeze the development thresholds"
+python manage.py verify_expanded_retrieval --phase held_out --output /absolute/held-out-report.json \
+  --thresholds docs/engineering/verification/<dir>/frozen-thresholds.json
+```
+
+The development phase evaluates only development queries. It sets the minimum relevance as the larger of the development random-vector and SQL full-text nDCG@5. It sets the ANN effort as the smallest `ef_search` with at least 0.95 mean neighbor recall in every filter. The held-out phase refuses to run unless the policy, the new pins, the frozen plan and the thresholds file are tracked and unchanged from HEAD, and it records the commit of each. It evaluates only held-out queries and passes only when MiniLM nDCG@5 is above the frozen minimum and above both held-out baselines. A failed run keeps its report and exits nonzero; nothing is re-run or retuned on held-out results. Each phase builds its own temporary tenant, five shards, MiniLM and random-vector indexes, and drops them afterwards, including its HNSW indexes.
+
+Measured on 2026-11-12 as a **small correctness check**: held-out MiniLM nDCG@5 0.6243 next to the seeded random-vector baseline 0.0062 and the SQL full-text baseline 0.0154 on 300 queries over 5,183 documents (development: 0.6507, 0.0000 and 0.0132 on 531 queries). It is not a benchmark. Results are not comparable with published BEIR nDCG@10, because token chunks are deduplicated to documents at cutoff 5. The public encoder may have seen this public data during pretraining. The `pg`-tagged test rebuilds the frozen plan from the cached archive. The measurement itself runs as the explicit command above, not in the test suite. [Dated report](verification/anvil-020-2026-11-12/report.md).
