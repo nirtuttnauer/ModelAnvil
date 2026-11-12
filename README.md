@@ -16,7 +16,20 @@ See the [supported capability baseline](docs/engineering/supported-capabilities.
 
 The [main integration inventory](docs/engineering/integration-inventory.md) maps all local/remote refs, retained checkouts, original uncommitted scopes and their merged deliveries or remaining holds. Current [MPS FP32 full-SFT/LoRA evidence](docs/engineering/verification/task40-current-mps-2026-10-23/report.md) covers a bounded three-step correctness/recovery check. Other GPU/runtime profiles retain separate qualification gates.
 
-[Start locally](#local-development) · [Current capabilities](#current-capabilities) · [Architecture](#architecture) · [Checks](#checks) · [Limits and work in progress](#limits-and-work-in-progress) · [Contributing](CONTRIBUTING.md)
+[Try it](#who-it-is-for-and-how-to-try-it) · [Start locally](#local-development) · [Current capabilities](#current-capabilities) · [Architecture](#architecture) · [Checks](#checks) · [Limits and work in progress](#limits-and-work-in-progress) · [Contributing](CONTRIBUTING.md)
+
+## Who it is for and how to try it
+
+ModelAnvil is built for a small team that wants to fine-tune and evaluate a small open-weight model on its own computer, and keep a record of what ran. On one machine, with no cloud account, it can:
+
+- prepare a versioned dataset from your own files (integrated execution);
+- train SmolLM2-135M for a few steps on CPU, or with the pinned profiles on an Apple GPU, which has three-step checks on one Mac (integrated execution);
+- evaluate a candidate against its base model and record an accept or reject decision (integrated execution);
+- export the trained weights and load them in a separate process (integrated execution).
+
+NVIDIA CUDA, AMD ROCm and Intel XPU training profiles are configuration only: the code paths exist, but no training run on those devices is recorded. The level in each [Current capabilities](#current-capabilities) row links its evidence. The retrieval numbers below are small correctness checks shown next to a random-vector baseline, not a benchmark.
+
+To try it, follow [Bounded CPU SmolLM2 checkout](#bounded-cpu-smollm2-checkout). `scripts/golden_path.sh <sha>` clones a pinned commit, runs only the README install commands, trains 3 CPU steps and loads the export in two separate processes. It needs Python 3.12, about 2 GB of free memory and a network connection for the pinned model download. If you run it, please tell us how it went with the [golden path feedback form](https://github.com/nirtuttnauer/ModelAnvil/issues/new?template=golden-path-feedback.md).
 
 ## Measured RAG reference
 
