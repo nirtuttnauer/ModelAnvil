@@ -1,8 +1,8 @@
 # Gates, gates
 
-Label: `local`. Measured at this branch's head `627b78d`, which merges current `main` into the ANVIL-020 commits (policy `98d8616` first, held-out record `b39556c` last).
+Label: `local`. Measured at `b528028`, this branch merged with `main` after #130, #131 and #133. The README merge kept both the ANVIL-019 reading note and this ticket's results block.
 
-Measured tree: `627b78dff2ca46aa999ef82b18f790ca1c72eec8`. `git status --porcelain` was empty before each command. Records use `docs/engineering/schemas/local-evidence.v1.json`.
+Measured tree: `b52802841198d1c6afe290411dbed687db9df33a`. `git status --porcelain` was empty before each command. Records use `docs/engineering/schemas/local-evidence.v1.json`.
 
 Machine: `Nirs-MacBook-Pro.local`, macOS-27.0.1-arm64-arm-64bit (Apple M5 Pro), Python 3.12.15, Node v24.22.3.
 
@@ -14,7 +14,7 @@ Fixtures on this host: `MODELANVIL_MLX_TEST_MODEL_DIR` (pinned SmolLM2-135M, eve
 
 | Run | Command | Collected | Excluded by tag | Passed | Skipped / xfail / timeout |
 | --- | --- | --- | --- | --- | --- |
-| backend | `-gates/.venv/bin/python manage.py test --noinput --exclude-tag=pg --exclude-tag=linux -v 1` | 1444 | 31 | 1444 | 0 / 0 / 0 |
+| backend | `-gates/.venv/bin/python manage.py test --noinput --exclude-tag=pg --exclude-tag=linux -v 1` | 1455 | 31 | 1455 | 0 / 0 / 0 |
 | frontend-install | `npm --prefix web ci` | 0 | 0 | 0 | 0 / 0 / 0 |
 | frontend | `npm --prefix web test` | 249 | 0 | 249 | 0 / 0 / 0 |
 | frontend-build | `npm --prefix web run build` | 0 | 0 | 0 | 0 / 0 / 0 |
@@ -47,7 +47,7 @@ Stock configuration means the upstream default `config/gitleaks.toml` of that gi
 
 - gitleaks 8.28.0 (ANVIL-017's scanner), stock, `dir`: 0 findings.
 - gitleaks 8.28.0, stock, `detect --log-opts="HEAD --remotes=origin --tags"`: 411 findings, 391 unique fingerprints, 0 not on `reviews/ANVIL-017-gitleaks-history.md`. The history scope is this branch plus GitHub's refs; local-only branches that were never pushed are outside it.
-- gitleaks 8.30.1, stock, `dir`: 370 findings, all the decoded-digest `generic-api-key` shape triaged by ANVIL-043.
+- gitleaks 8.30.1, stock, `dir`: 380 findings, all the decoded-digest `generic-api-key` shape triaged by ANVIL-043.
 - gitleaks 8.30.1 with the repository `.gitleaks.toml`, `dir`: 0 findings.
 
 ## G-rag
