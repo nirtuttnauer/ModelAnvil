@@ -98,3 +98,12 @@ The premerge backend command is `manage.py test --noinput --exclude-tag=pg`. `pr
 ## Result
 
 The `golden-path` job is in `.github/workflows/ci.yml` with SHA-pinned actions, `contents: read`, no `continue-on-error`, and an `actions/cache` key from `hashFiles` of `modelanvil/runners/training/hf_runtime.py`. No other job waits on it, and the ruleset does not require it. The job script exited 0 at `75e6d05`: install, 3 CPU LoRA steps, and 8 tokens from each separate-process consumer. The cache key changes when that pins file changes, and a restored snapshot verifies without a download. `make premerge` exited 0 with 1285, 249, and 28 passed, the same counts as main `4dd5060`, and with no runtime skip, xfail, or timeout. `pip-audit` exits 1 on the unchanged `pypdf==6.21.2` pin. `gitleaks dir` exits 1 with the same 370 findings as `4dd5060`. GitHub Actions did not run, so a green Actions check is still open.
+
+## Gate G-rag (addendum, 12 November 2026)
+
+This report had no G-rag section, and `premerge.json` stdout carries RAG numbers without a label. This addendum labels them. It changes no record, number, or test.
+
+- `TASK69_CONTROLS`: held-out nDCG real `1.0` next to seeded random `0.021535000000000002` and SQL full text `0.0`, development nDCG real `0.982545` next to random `0.0`, on 200 SciFact documents and 412 chunks. That is a small correctness check, not a benchmark. The documented baseline next to it in `README.md` is MiniLM nDCG@5 `1.0000` next to seeded random `0.0215` on 20 judged queries.
+- The `ndcg@3`, `recall@3`, `precision@3`, `hit@3`, and `mrr@3` lines are the embedding-candidate unit-test fixture: three hand-written passages (`refund`, `deliver`, `reset`) and their development queries. They show the evaluation code path runs. They are a small correctness check on a toy fixture and say nothing about retrieval quality.
+
+ANVIL-013 adds no RAG number of its own.
