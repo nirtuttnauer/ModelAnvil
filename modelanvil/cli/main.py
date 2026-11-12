@@ -11,7 +11,7 @@ import sys
 from typing import List, Optional
 
 from modelanvil.cli.client import ModelAnvilClient, ModelAnvilClientError
-from modelanvil.cli.config import get_setting, load_config, set_setting
+from modelanvil.cli.config import get_setting, redacted_config, set_setting
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -133,7 +133,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     try:
         if args.command == "config":
             if args.subcommand == "show":
-                res = load_config()
+                res = redacted_config()
                 if args.json:
                     print(json.dumps(res, indent=2))
                 else:
