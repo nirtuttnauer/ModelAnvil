@@ -67,6 +67,8 @@ The 370 `generic-api-key` findings introduced by `75e2565a83b4b0cf96aebe793a9da6
 
 `web/storybook-static/` from the Storybook build was removed before the dir scan. It is gitignored build output and is not in the commit.
 
+After this evidence directory was written, `gitleaks dir . --redact` on the working tree exited 0 (`no leaks found`, 36.42 MB). The same command limited to `docs/engineering/verification/anvil-072-2026-11-12` exited 0.
+
 ## Result
 
 `make premerge` exited 0. Backend 1289, frontend 249, and PostgreSQL 28 passed, with no runtime skip, xfail, or timeout. `pip-audit` exited 0 on all 11 requirement files. `gitleaks dir` exited 0. The pull request stays open.
