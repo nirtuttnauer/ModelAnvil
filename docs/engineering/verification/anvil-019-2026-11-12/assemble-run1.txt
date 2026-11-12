@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Users/nirtuttnauer/Documents/Code/modelanvil/.claude/worktrees/anvil-019/scripts/rag_report.py", line 157, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/Users/nirtuttnauer/Documents/Code/modelanvil/.claude/worktrees/anvil-019/scripts/rag_report.py", line 150, in main
+    if failure:raise failure
+               ^^^^^^^^^^^^^
+  File "/Users/nirtuttnauer/Documents/Code/modelanvil/.claude/worktrees/anvil-019/scripts/rag_report.py", line 146, in main
+    try:report['reproduction']=compare(reference,report)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/nirtuttnauer/Documents/Code/modelanvil/.claude/worktrees/anvil-019/scripts/rag_report.py", line 91, in compare
+    require([(r['condition'],r['status']) for r in a['runs']]==[(r['condition'],r['status']) for r in b['runs']],'Generation status reproduction failed.')
+  File "/Users/nirtuttnauer/Documents/Code/modelanvil/.claude/worktrees/anvil-019/scripts/rag_report.py", line 22, in require
+    if not ok:raise ValueError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Generation status reproduction failed.

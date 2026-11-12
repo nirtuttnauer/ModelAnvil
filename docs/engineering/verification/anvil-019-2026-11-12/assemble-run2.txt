@@ -1,0 +1,1 @@
+{"report": "/private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/anvil019-measure/out/combined-run2.json", "source": "a6a7ab64b82b250583d4b4cd5a1285e08d043441", "reproduced": true}

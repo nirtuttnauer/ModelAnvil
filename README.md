@@ -34,19 +34,24 @@ To try it, follow [Bounded CPU SmolLM2 checkout](#bounded-cpu-smollm2-checkout).
 ## Measured RAG reference
 
 <!-- rag-results:start -->
-| Measured CPU reference | Result | Scope |
-| --- | --- | --- |
-| MiniLM relevance nDCG@5 | 1.0000 | 20 judged queries; closed 200-document SciFact subset |
-| Seeded random-vector nDCG@5 | 0.0215 | 20 judged queries; closed 200-document SciFact subset |
-| Strict SQL full-text AND nDCG@5 | 0.0000 | 20 judged queries; closed 200-document SciFact subset |
-| Generation conditions with accepted citations | 1/3 | No evidence / retrieved / human evidence; membership validation only |
-| Known-unanswerable outcomes | 0 model abstentions, 1 policy abstentions, 1 format refusals | 2 authored cases; separate from retrieval relevance |
-| Start position code-only exact match | 0.0000 (0/6) | Code-only format required; descriptive middle dip not observed |
-| Middle position code-only exact match | 0.0000 (0/6) | Code-only format required; descriptive middle dip not observed |
-| End position code-only exact match | 0.0000 (0/6) | Code-only format required; descriptive middle dip not observed |
+Every number in this table is a **small correctness check** on a closed or authored CPU fixture, shown next to its baseline. MiniLM relevance sits next to the seeded random-vector control on the same 20 queries. Each answer-format result sits next to the unchanged `04916ee` result. Not a long-context, entailment, leaderboard or general quality result.
 
-Source measurement: `04916ee723f894ab0b3cec50b2ccc43596bceae0`. [Complete report and reproduction limits](docs/engineering/verification/task73-end-to-end-2026-10-23/report.md). This table is generated only from its saved JSON.
+| Small correctness check | Baseline `04916ee` | `a6a7ab6` under `rag-answer-format-v1` | Scope |
+| --- | --- | --- | --- |
+| MiniLM relevance nDCG@5 | 1.0000 | 1.0000 | 20 judged queries; closed 200-document SciFact subset |
+| Seeded random-vector nDCG@5 | 0.0215 | 0.0215 | 20 judged queries; closed 200-document SciFact subset |
+| Strict SQL full-text AND nDCG@5 | 0.0000 | 0.0000 | 20 judged queries; closed 200-document SciFact subset |
+| Generation conditions with accepted citations | 1/3 | 3/3 | No evidence / retrieved / human evidence; membership validation only |
+| Known-unanswerable outcomes | 0 model abstentions, 1 policy abstentions, 1 format refusals | 0 model abstentions, 1 policy abstentions, 1 format refusals | 2 authored cases; separate from retrieval relevance |
+| Known-unanswerable delivered false answers | 0 | 0 | Same 2 authored cases; an accepted citation on an unanswerable question |
+| Start position code-only exact match | 0.0000 (0/6) | 0.0000 (0/6) | Code-only format required; descriptive middle-dip rule (middle below the start/end mean) not met at baseline, met now |
+| Middle position code-only exact match | 0.0000 (0/6) | 0.0000 (0/6) | Code-only format required; descriptive middle-dip rule (middle below the start/end mean) not met at baseline, met now |
+| End position code-only exact match | 0.0000 (0/6) | 1.0000 (6/6) | Code-only format required; descriptive middle-dip rule (middle below the start/end mean) not met at baseline, met now |
+
+Baseline measurement: `04916ee723f894ab0b3cec50b2ccc43596bceae0` ([report](docs/engineering/verification/task73-end-to-end-2026-10-23/report.md)). Answer-format measurement: `a6a7ab64b82b250583d4b4cd5a1285e08d043441` under [rag-answer-format-v1](scripts/rag-answer-format-policy.json) ([report](docs/engineering/verification/anvil-019-2026-11-12/report.md)). Scoring, the v1 reproduction policy and every test are unchanged. This table is generated only from the two saved JSON reports.
 <!-- rag-results:end -->
+
+Read the new column with its [limits](docs/engineering/verification/anvil-019-2026-11-12/report.md#what-the-new-numbers-do-not-show). The 3/3 is source-membership validation of the citation format, not answer correctness: the accepted no-evidence answer gives an invented code. The 6/6 is only at the end position, where the fact is the last evidence item before the question. Start and middle stay at 0/6, so the middle-dip rule is met only because the end score rose.
 
 ## Current capabilities
 

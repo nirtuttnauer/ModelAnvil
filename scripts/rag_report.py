@@ -9,7 +9,10 @@ import subprocess
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-REFERENCE=ROOT/'docs/engineering/verification/task73-end-to-end-2026-10-23/actual-report.json'
+# The reproduction reference is the rag-answer-format-v1 measurement (ANVIL-019). The 04916ee report stays the
+# README baseline, shown beside it; compare() and the v1 tolerances are unchanged.
+REFERENCE=ROOT/'docs/engineering/verification/anvil-019-2026-11-12/actual-report.json'
+BASELINE=ROOT/'docs/engineering/verification/task73-end-to-end-2026-10-23/actual-report.json'
 POLICY=json.loads((ROOT/'scripts/rag-reproduction-policy.json').read_text())
 START='<!-- rag-results:start -->';END='<!-- rag-results:end -->'
 
@@ -106,23 +109,52 @@ def compare(reference,current):
             'current_source_commit':current['provenance']['commit'],'limits':'Raw answer strings and latency are retained but not exact-string or cross-host speed assertions.'}
 
 
-def table(report):
+def results(report):
     r,g,p=report['retrieval'],report['generation'],report['positions']
-    lines=[START,'| Measured CPU reference | Result | Scope |','| --- | --- | --- |']
+    rows=[]
     for mode,label in [('real','MiniLM relevance nDCG@5'),('random','Seeded random-vector nDCG@5'),('full_text','Strict SQL full-text AND nDCG@5')]:
-        lines.append(f"| {label} | {r['held_out'][mode]['metrics']['ndcg@5']:.4f} | 20 judged queries; closed 200-document SciFact subset |")
+        rows.append((label,f"{r['held_out'][mode]['metrics']['ndcg@5']:.4f}",'20 judged queries; closed 200-document SciFact subset'))
     accepted=sum(row['status']=='answered' for row in g['runs'][:3])
-    lines.append(f'| Generation conditions with accepted citations | {accepted}/3 | No evidence / retrieved / human evidence; membership validation only |')
-    a=g['abstention'];lines.append(f"| Known-unanswerable outcomes | {a['model_declared_abstentions']} model abstentions, {a['policy_abstentions']} policy abstentions, {a['validation_refusals']} format refusals | {a['known_unanswerable']} authored cases; separate from retrieval relevance |")
+    rows.append(('Generation conditions with accepted citations',f'{accepted}/3','No evidence / retrieved / human evidence; membership validation only'))
+    a=g['abstention'];rows.append(('Known-unanswerable outcomes',f"{a['model_declared_abstentions']} model abstentions, {a['policy_abstentions']} policy abstentions, {a['validation_refusals']} format refusals",f"{a['known_unanswerable']} authored cases; separate from retrieval relevance"))
+    dip='observed' if p['summary']['middle_dip_observed'] else 'not observed'
     for position in ['start','middle','end']:
-        dip='observed' if p['summary']['middle_dip_observed'] else 'not observed'
-        row=p['summary']['positions'][position];lines.append(f"| {position.capitalize()} position code-only exact match | {row['accuracy']:.4f} ({row['correct']}/{row['total']}) | Code-only format required; descriptive middle dip {dip} |")
-    lines.extend(['',f"Source measurement: `{report['provenance']['commit']}`. [Complete report and reproduction limits](docs/engineering/verification/task73-end-to-end-2026-10-23/report.md). This table is generated only from its saved JSON.",END])
+        row=p['summary']['positions'][position]
+        rows.append((f'{position.capitalize()} position code-only exact match',f"{row['accuracy']:.4f} ({row['correct']}/{row['total']})",f'Code-only format required; descriptive middle dip {dip}'))
+    return rows
+
+
+def link(path):
+    return path.relative_to(ROOT).with_name('report.md').as_posix()
+
+
+def table(report,baseline=None):
+    if baseline is None:
+        lines=[START,'| Measured CPU reference | Result | Scope |','| --- | --- | --- |']
+        lines.extend(f'| {label} | {result} | {scope} |' for label,result,scope in results(report))
+        lines.extend(['',f"Source measurement: `{report['provenance']['commit']}`. [Complete report and reproduction limits](docs/engineering/verification/task73-end-to-end-2026-10-23/report.md). This table is generated only from its saved JSON.",END])
+        return '\n'.join(lines)
+    old,new=baseline['provenance']['commit'],report['provenance']['commit']
+    lines=[START,'Every number in this table is a **small correctness check** on a closed or authored CPU fixture, shown next to its baseline. '
+        'MiniLM relevance sits next to the seeded random-vector control on the same 20 queries. Each answer-format result sits next to the unchanged '
+        f'`{old[:7]}` result. Not a long-context, entailment, leaderboard or general quality result.','',
+        f'| Small correctness check | Baseline `{old[:7]}` | `{new[:7]}` under `rag-answer-format-v1` | Scope |','| --- | --- | --- | --- |']
+    dip=lambda b:'met' if b['positions']['summary']['middle_dip_observed'] else 'not met'
+    for (label,before,scope),(_,after,current) in zip(results(baseline),results(report)):
+        if 'position code-only' in label:
+            scope=f'Code-only format required; descriptive middle-dip rule (middle below the start/end mean) {dip(baseline)} at baseline, {dip(report)} now'
+        lines.append(f'| {label} | {before} | {after} | {scope} |')
+        if label=='Known-unanswerable outcomes':
+            counts=[b['generation']['abstention']['delivered_false_answers'] for b in (baseline,report)]
+            lines.append(f'| Known-unanswerable delivered false answers | {counts[0]} | {counts[1]} | Same 2 authored cases; an accepted citation on an unanswerable question |')
+    lines.extend(['',f"Baseline measurement: `{old}` ([report]({link(BASELINE)})). "
+        f"Answer-format measurement: `{new}` under [rag-answer-format-v1](scripts/rag-answer-format-policy.json) ([report]({link(REFERENCE)})). "
+        'Scoring, the v1 reproduction policy and every test are unchanged. This table is generated only from the two saved JSON reports.',END])
     return '\n'.join(lines)
 
 
-def readme(report,write=False):
-    path=ROOT/'README.md';text=path.read_text();rendered=table(report)
+def readme(report,write=False,baseline=None):
+    path=ROOT/'README.md';text=path.read_text();rendered=table(report,baseline)
     if START in text:
         updated=text[:text.index(START)]+rendered+text[text.index(END)+len(END):]
     else:
@@ -135,7 +167,7 @@ def readme(report,write=False):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--retrieval');parser.add_argument('--generation');parser.add_argument('--positions');parser.add_argument('--output')
-    parser.add_argument('--reference',default=str(REFERENCE));parser.add_argument('--write-readme',action='store_true');parser.add_argument('--check-readme',action='store_true')
+    parser.add_argument('--reference',default=str(REFERENCE));parser.add_argument('--baseline',default=str(BASELINE));parser.add_argument('--write-readme',action='store_true');parser.add_argument('--check-readme',action='store_true')
     args=parser.parse_args()
     reference=json.loads(Path(args.reference).read_text()) if Path(args.reference).exists() else None
     if args.output:
@@ -151,7 +183,11 @@ def main():
         print(json.dumps({'report':args.output,'source':report['provenance']['commit'],'reproduced':bool(report.get('reproduction'))}))
     if args.write_readme or args.check_readme:
         require(reference is not None,'Saved reference report missing.')
-        readme(reference,args.write_readme)
+        baseline=None
+        if Path(args.baseline).resolve()!=Path(args.reference).resolve():
+            require(Path(args.baseline).exists(),'Saved baseline report missing.')
+            baseline=json.loads(Path(args.baseline).read_text())
+        readme(reference,args.write_readme,baseline)
 
 
 if __name__=='__main__':main()
