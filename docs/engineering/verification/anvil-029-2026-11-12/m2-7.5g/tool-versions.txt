@@ -1,0 +1,10 @@
+Python 3.14.10
+time (GNU Time) 1.10
+Copyright (C) 2026 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by David Keppel, David MacKenzie, and Assaf Gordon.
+client 29.9.3 server 29.9.3
+Docker Compose version v5.7.0

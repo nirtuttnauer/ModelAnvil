@@ -1,0 +1,20 @@
+total 52
+drwx------    5 root     root          4096 Nov 12 16:10 .
+drwxr-xr-x    3 root     root          4096 Nov 12 16:08 ..
+drwx------    2 root     root          4096 Nov 12 16:09 backup
+-rw-r--r--    1 root     root             0 Nov 12 16:09 backup-private.log
+-rw-r--r--    1 root     root           125 Nov 12 16:09 backup.json
+-rw-------    1 root     root           141 Nov 12 16:08 credentials-private.json
+-rw-r--r--    1 root     root             0 Nov 12 16:09 explicit-import-private.log
+-rw-r--r--    1 root     root           592 Nov 12 16:09 explicit-import.json
+-rw-r--r--    1 root     root             0 Nov 12 16:08 install-private.log
+-rw-r--r--    1 root     root           161 Nov 12 16:09 install.json
+drwx------    4 root     root          4096 Nov 12 16:10 instance
+-rw-r--r--    1 root     root          1081 Nov 12 16:10 qualification.json
+-rw-r--r--    1 root     root             0 Nov 12 16:09 restore-private.log
+-rw-r--r--    1 root     root           161 Nov 12 16:09 restore.json
+drwx------    4 root     root          4096 Nov 12 16:09 restored
+-rw-r--r--    1 root     root             0 Nov 12 16:09 retained-restart-private.log
+-rw-r--r--    1 root     root           161 Nov 12 16:10 retained-restart.json
+-rw-r--r--    1 root     root             0 Nov 12 16:09 uninstall-private.log
+-rw-r--r--    1 root     root           122 Nov 12 16:09 uninstall.json

@@ -1,6 +1,6 @@
 # ModelAnvil capability ledger
 
-28 October 2026. This is the current support surface. Historical plans and dated reviews stay in place, but they are not support claims. `production_qualified: false` for every operation below.
+28 October 2026. This is the human-readable support page. Capability levels and their evidence come from [supported-capabilities.json](supported-capabilities.json); where a level on this page differs, the JSON is canonical. Historical plans and dated reviews stay in place, but they are not support claims. `production_qualified: false` for every operation below.
 
 Evidence levels:
 
@@ -10,6 +10,7 @@ Evidence levels:
 | Simulation | A fixture or numerical stand-in produced the result. |
 | Integrated execution | The named code path ran on the named inputs. Model quality and hardware qualification are separate. |
 | Hardware qualified | Pinned inputs, outputs, runtime, hardware, independent inference, and operational checks passed for that envelope. No current path has this level. |
+| Unknown evidence | The record has no execution provenance. A completed, ready, or qualified status alone is not evidence. |
 
 Browser training, evaluation, export, and serving labels use these names. A Storybook `fixture` label is shown as simulation. The synthetic trainer in `modelanvil/runners/training/engine.py` stays simulation and cannot be accepted, exported as a real model, or promoted.
 

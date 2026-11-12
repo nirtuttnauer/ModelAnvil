@@ -1,0 +1,17 @@
+Activity seen on the host and the Docker Desktop VM during this run (30-second samples, plus before and after).
+Containers other than this run's own:
+  modelanvil-local-0ed3435685da-api-1 (20b2a07bdccc)
+  modelanvil-local-0ed3435685da-db-1 (7b822b0aac60)
+  modelanvil-local-0ed3435685da-reconciler-1 (20b2a07bdccc)
+  modelanvil-local-0ed3435685da-web-1 (d82a908d496b)
+  modelanvil-local-0ed3435685da-worker-1 (20b2a07bdccc)
+  modelanvil-local-a7cf9659dbae-api-1 (20b2a07bdccc)
+  modelanvil-local-a7cf9659dbae-db-1 (7b822b0aac60)
+  modelanvil-local-a7cf9659dbae-reconciler-1 (20b2a07bdccc)
+  modelanvil-local-a7cf9659dbae-web-1 (d82a908d496b)
+  modelanvil-local-a7cf9659dbae-worker-1 (20b2a07bdccc)
+  mosscms-app-1 (mosscms:local-onboarding-20261012-v2)
+  mosscms-personal-site-1 (mosscms-personal-site)
+Host processes matching build, qualification or test-suite patterns (command truncated):
+Host load averages (first, max 1-minute, last):
+  first 22.08, max 25.96, last 20.68
