@@ -68,7 +68,8 @@ class CliConfigModeTests(SimpleTestCase):
                 save_config({"url": "http://127.0.0.1:9", "token": _TOKEN})
                 self.assertEqual(Path(os.environ["MODELANVIL_CONFIG"]), cfg)
                 self.assertTrue(cfg.is_file())
-            self.assertEqual(os.path.commonpath([tmp, str(cfg.resolve())]), os.path.realpath(tmp))
+            # On macOS the temp dir is under /var, a symlink to /private/var; compare resolved paths.
+            self.assertEqual(os.path.commonpath([os.path.realpath(tmp), str(cfg.resolve())]), os.path.realpath(tmp))
         after = home_file.stat().st_mtime_ns if home_file.exists() else None
         self.assertEqual(before, after)
 
