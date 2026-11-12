@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 
-def inspect_gguf(path):
+def _header(path):
     path=Path(path)
     with path.open('rb') as stream:header=stream.read(24)
     if len(header)!=24 or header[:4]!=b'GGUF':
@@ -17,6 +17,13 @@ def inspect_gguf(path):
     version,tensors,fields=struct.unpack(endian+'IQQ',header[4:])
     if version not in (2,3) or not 1<=tensors<=100000 or not 1<=fields<=100000:
         raise ValueError('GGUF version, tensor count or metadata count is unsupported.')
+    if path.stat().st_size<=24:
+        raise ValueError('GGUF tensor payload is missing, empty or truncated.')
+    return path,tensors
+
+
+def inspect_gguf(path):
+    path,tensors=_header(path)
     from gguf import GGUFReader
     reader=GGUFReader(path)
     architecture=reader.get_field('general.architecture')
@@ -39,6 +46,7 @@ def inspect_gguf(path):
 
 def validate_gguf(path):
     """Keep malformed metadata parsing outside the API process with a fixed deadline."""
+    _header(path)
     try:
         result=subprocess.run([sys.executable,str(Path(__file__).resolve()),str(path)],
             capture_output=True,text=True,timeout=20,check=False)
