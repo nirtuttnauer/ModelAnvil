@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "6cecd13bb013e05cba0f32f673a3e360df4d743c",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-11-12T14:42:41+00:00",
+  "machine": {
+    "hostname": "cursor",
+    "os": "Linux-6.12.113+-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "python": "3.12.3",
+    "node": "v24.22.3"
+  },
+  "command": "gitleaks dir . --redact --no-banner --report-path /tmp/anvil064/gitleaks-dir-report.json --report-format json",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "2:42PM INF scanned ~31101233 bytes (31.10 MB) in 1.15s\n2:42PM INF no leaks found\n",
+  "runs": [
+    {
+      "name": "command",
+      "command": "gitleaks dir . --redact --no-banner --report-path /tmp/anvil064/gitleaks-dir-report.json --report-format json",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}
