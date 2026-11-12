@@ -94,6 +94,7 @@ def tools(values):
 
 
 def arguments(name,value,offered):
+    tools(offered)
     allowed={t['function']['name']:t['function']['parameters'] for t in offered}
     if name not in allowed or not isinstance(value,dict):raise ValueError('The model selected an unoffered tool or invalid arguments.')
     bounded(value)
