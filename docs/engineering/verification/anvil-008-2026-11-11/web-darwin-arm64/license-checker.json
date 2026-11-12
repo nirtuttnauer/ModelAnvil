@@ -1,0 +1,983 @@
+{
+  "@esbuild/darwin-arm64@0.28.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/evanw/esbuild",
+    "path": "<tmp>/web/node_modules/@esbuild/darwin-arm64",
+    "licenseFile": "<tmp>/web/node_modules/@esbuild/darwin-arm64/README.md"
+  },
+  "@oxc-project/types@0.153.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/oxc-project/oxc",
+    "publisher": "Boshen and oxc contributors",
+    "path": "<tmp>/web/node_modules/@oxc-project/types",
+    "licenseFile": "<tmp>/web/node_modules/@oxc-project/types/LICENSE"
+  },
+  "@rolldown/binding-darwin-arm64@1.2.13": {
+    "licenses": "MIT",
+    "repository": "https://github.com/rolldown/rolldown",
+    "path": "<tmp>/web/node_modules/@rolldown/binding-darwin-arm64",
+    "licenseFile": "<tmp>/web/node_modules/@rolldown/binding-darwin-arm64/README.md"
+  },
+  "@rolldown/pluginutils@1.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/rolldown/plugins",
+    "path": "<tmp>/web/node_modules/@rolldown/pluginutils",
+    "licenseFile": "<tmp>/web/node_modules/@rolldown/pluginutils/LICENSE"
+  },
+  "@types/debug@4.1.13": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "<tmp>/web/node_modules/@types/debug",
+    "licenseFile": "<tmp>/web/node_modules/@types/debug/LICENSE"
+  },
+  "@types/estree-jsx@1.0.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "<tmp>/web/node_modules/@types/estree-jsx",
+    "licenseFile": "<tmp>/web/node_modules/@types/estree-jsx/LICENSE"
+  },
+  "@types/estree@1.0.9": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "<tmp>/web/node_modules/@types/estree",
+    "licenseFile": "<tmp>/web/node_modules/@types/estree/LICENSE"
+  },
+  "@types/hast@3.0.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "<tmp>/web/node_modules/@types/hast",
+    "licenseFile": "<tmp>/web/node_modules/@types/hast/LICENSE"
+  },
+  "@types/mdast@4.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "<tmp>/web/node_modules/@types/mdast",
+    "licenseFile": "<tmp>/web/node_modules/@types/mdast/LICENSE"
+  },
+  "@types/ms@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "<tmp>/web/node_modules/@types/ms",
+    "licenseFile": "<tmp>/web/node_modules/@types/ms/LICENSE"
+  },
+  "@types/node@26.6.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "<tmp>/web/node_modules/@types/node",
+    "licenseFile": "<tmp>/web/node_modules/@types/node/LICENSE"
+  },
+  "@types/react@19.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "<tmp>/web/node_modules/@types/react",
+    "licenseFile": "<tmp>/web/node_modules/@types/react/LICENSE"
+  },
+  "@types/unist@2.0.11": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "<tmp>/web/node_modules/parse-entities/node_modules/@types/unist",
+    "licenseFile": "<tmp>/web/node_modules/parse-entities/node_modules/@types/unist/LICENSE"
+  },
+  "@types/unist@3.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "<tmp>/web/node_modules/@types/unist",
+    "licenseFile": "<tmp>/web/node_modules/@types/unist/LICENSE"
+  },
+  "@typescript/typescript-darwin-arm64@7.0.2": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/microsoft/TypeScript",
+    "publisher": "Microsoft Corp.",
+    "path": "<tmp>/web/node_modules/@typescript/typescript-darwin-arm64",
+    "licenseFile": "<tmp>/web/node_modules/@typescript/typescript-darwin-arm64/LICENSE",
+    "noticeFile": "<tmp>/web/node_modules/@typescript/typescript-darwin-arm64/NOTICE.txt"
+  },
+  "@ungap/structured-clone@1.4.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/ungap/structured-clone",
+    "publisher": "Andrea Giammarchi",
+    "path": "<tmp>/web/node_modules/@ungap/structured-clone",
+    "licenseFile": "<tmp>/web/node_modules/@ungap/structured-clone/LICENSE"
+  },
+  "@vitejs/plugin-react@6.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vitejs/vite-plugin-react",
+    "publisher": "Evan You",
+    "path": "<tmp>/web/node_modules/@vitejs/plugin-react",
+    "licenseFile": "<tmp>/web/node_modules/@vitejs/plugin-react/LICENSE"
+  },
+  "bail@2.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/bail",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/bail",
+    "licenseFile": "<tmp>/web/node_modules/bail/license"
+  },
+  "ccount@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/ccount",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/ccount",
+    "licenseFile": "<tmp>/web/node_modules/ccount/license"
+  },
+  "character-entities-html4@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/character-entities-html4",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/character-entities-html4",
+    "licenseFile": "<tmp>/web/node_modules/character-entities-html4/license"
+  },
+  "character-entities-legacy@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/character-entities-legacy",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/character-entities-legacy",
+    "licenseFile": "<tmp>/web/node_modules/character-entities-legacy/license"
+  },
+  "character-entities@2.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/character-entities",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/character-entities",
+    "licenseFile": "<tmp>/web/node_modules/character-entities/license"
+  },
+  "character-reference-invalid@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/character-reference-invalid",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/character-reference-invalid",
+    "licenseFile": "<tmp>/web/node_modules/character-reference-invalid/license"
+  },
+  "comma-separated-tokens@2.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/comma-separated-tokens",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/comma-separated-tokens",
+    "licenseFile": "<tmp>/web/node_modules/comma-separated-tokens/license"
+  },
+  "csstype@3.2.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/frenic/csstype",
+    "publisher": "Fredrik Nicol",
+    "path": "<tmp>/web/node_modules/csstype",
+    "licenseFile": "<tmp>/web/node_modules/csstype/LICENSE"
+  },
+  "debug@4.4.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/debug-js/debug",
+    "publisher": "Josh Junon",
+    "url": "https://github.com/qix-",
+    "path": "<tmp>/web/node_modules/debug",
+    "licenseFile": "<tmp>/web/node_modules/debug/LICENSE"
+  },
+  "decode-named-character-reference@1.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/decode-named-character-reference",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/decode-named-character-reference",
+    "licenseFile": "<tmp>/web/node_modules/decode-named-character-reference/license"
+  },
+  "dequal@2.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lukeed/dequal",
+    "publisher": "Luke Edwards",
+    "url": "https://lukeed.com",
+    "path": "<tmp>/web/node_modules/dequal",
+    "licenseFile": "<tmp>/web/node_modules/dequal/license"
+  },
+  "detect-libc@2.1.2": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/lovell/detect-libc",
+    "publisher": "Lovell Fuller",
+    "path": "<tmp>/web/node_modules/detect-libc",
+    "licenseFile": "<tmp>/web/node_modules/detect-libc/LICENSE"
+  },
+  "devlop@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/devlop",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/devlop",
+    "licenseFile": "<tmp>/web/node_modules/devlop/license"
+  },
+  "esbuild@0.28.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/evanw/esbuild",
+    "path": "<tmp>/web/node_modules/esbuild",
+    "licenseFile": "<tmp>/web/node_modules/esbuild/LICENSE.md"
+  },
+  "escape-string-regexp@5.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/escape-string-regexp",
+    "publisher": "Sindre Sorhus",
+    "url": "https://sindresorhus.com",
+    "path": "<tmp>/web/node_modules/escape-string-regexp",
+    "licenseFile": "<tmp>/web/node_modules/escape-string-regexp/license"
+  },
+  "estree-util-is-identifier-name@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/estree-util-is-identifier-name",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/estree-util-is-identifier-name",
+    "licenseFile": "<tmp>/web/node_modules/estree-util-is-identifier-name/license"
+  },
+  "extend@3.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/justmoon/node-extend",
+    "publisher": "Stefan Thomas",
+    "url": "http://www.justmoon.net",
+    "path": "<tmp>/web/node_modules/extend",
+    "licenseFile": "<tmp>/web/node_modules/extend/LICENSE"
+  },
+  "fdir@6.5.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/thecodrr/fdir",
+    "publisher": "thecodrr",
+    "path": "<tmp>/web/node_modules/fdir",
+    "licenseFile": "<tmp>/web/node_modules/fdir/LICENSE"
+  },
+  "fsevents@2.3.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/fsevents/fsevents",
+    "path": "<tmp>/web/node_modules/fsevents",
+    "licenseFile": "<tmp>/web/node_modules/fsevents/LICENSE"
+  },
+  "hast-util-to-jsx-runtime@2.3.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/hast-util-to-jsx-runtime",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/hast-util-to-jsx-runtime",
+    "licenseFile": "<tmp>/web/node_modules/hast-util-to-jsx-runtime/license"
+  },
+  "hast-util-whitespace@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/hast-util-whitespace",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/hast-util-whitespace",
+    "licenseFile": "<tmp>/web/node_modules/hast-util-whitespace/license"
+  },
+  "html-url-attributes@3.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/rehypejs/rehype-minify/tree/main/packages/html-url-attributes",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/html-url-attributes",
+    "licenseFile": "<tmp>/web/node_modules/html-url-attributes/license"
+  },
+  "inline-style-parser@0.2.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/remarkablemark/inline-style-parser",
+    "path": "<tmp>/web/node_modules/inline-style-parser",
+    "licenseFile": "<tmp>/web/node_modules/inline-style-parser/LICENSE"
+  },
+  "is-alphabetical@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/is-alphabetical",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/is-alphabetical",
+    "licenseFile": "<tmp>/web/node_modules/is-alphabetical/license"
+  },
+  "is-alphanumerical@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/is-alphanumerical",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/is-alphanumerical",
+    "licenseFile": "<tmp>/web/node_modules/is-alphanumerical/license"
+  },
+  "is-decimal@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/is-decimal",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/is-decimal",
+    "licenseFile": "<tmp>/web/node_modules/is-decimal/license"
+  },
+  "is-hexadecimal@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/is-hexadecimal",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/is-hexadecimal",
+    "licenseFile": "<tmp>/web/node_modules/is-hexadecimal/license"
+  },
+  "is-plain-obj@4.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/is-plain-obj",
+    "publisher": "Sindre Sorhus",
+    "url": "https://sindresorhus.com",
+    "path": "<tmp>/web/node_modules/is-plain-obj",
+    "licenseFile": "<tmp>/web/node_modules/is-plain-obj/license"
+  },
+  "lightningcss-darwin-arm64@1.33.0": {
+    "licenses": "MPL-2.0",
+    "repository": "https://github.com/parcel-bundler/lightningcss",
+    "path": "<tmp>/web/node_modules/lightningcss-darwin-arm64",
+    "licenseFile": "<tmp>/web/node_modules/lightningcss-darwin-arm64/LICENSE"
+  },
+  "lightningcss@1.33.0": {
+    "licenses": "MPL-2.0",
+    "repository": "https://github.com/parcel-bundler/lightningcss",
+    "path": "<tmp>/web/node_modules/lightningcss",
+    "licenseFile": "<tmp>/web/node_modules/lightningcss/LICENSE"
+  },
+  "longest-streak@3.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/longest-streak",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/longest-streak",
+    "licenseFile": "<tmp>/web/node_modules/longest-streak/license"
+  },
+  "lucide-react@1.53.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/lucide-icons/lucide",
+    "publisher": "Eric Fennis",
+    "path": "<tmp>/web/node_modules/lucide-react",
+    "licenseFile": "<tmp>/web/node_modules/lucide-react/LICENSE"
+  },
+  "markdown-table@3.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/markdown-table",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/markdown-table",
+    "licenseFile": "<tmp>/web/node_modules/markdown-table/license"
+  },
+  "mdast-util-find-and-replace@3.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/mdast-util-find-and-replace",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/mdast-util-find-and-replace",
+    "licenseFile": "<tmp>/web/node_modules/mdast-util-find-and-replace/license"
+  },
+  "mdast-util-from-markdown@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/mdast-util-from-markdown",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/mdast-util-from-markdown",
+    "licenseFile": "<tmp>/web/node_modules/mdast-util-from-markdown/license"
+  },
+  "mdast-util-gfm-autolink-literal@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/mdast-util-gfm-autolink-literal",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/mdast-util-gfm-autolink-literal",
+    "licenseFile": "<tmp>/web/node_modules/mdast-util-gfm-autolink-literal/license"
+  },
+  "mdast-util-gfm-footnote@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/mdast-util-gfm-footnote",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/mdast-util-gfm-footnote",
+    "licenseFile": "<tmp>/web/node_modules/mdast-util-gfm-footnote/license"
+  },
+  "mdast-util-gfm-strikethrough@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/mdast-util-gfm-strikethrough",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/mdast-util-gfm-strikethrough",
+    "licenseFile": "<tmp>/web/node_modules/mdast-util-gfm-strikethrough/license"
+  },
+  "mdast-util-gfm-table@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/mdast-util-gfm-table",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/mdast-util-gfm-table",
+    "licenseFile": "<tmp>/web/node_modules/mdast-util-gfm-table/license"
+  },
+  "mdast-util-gfm-task-list-item@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/mdast-util-gfm-task-list-item",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/mdast-util-gfm-task-list-item",
+    "licenseFile": "<tmp>/web/node_modules/mdast-util-gfm-task-list-item/license"
+  },
+  "mdast-util-gfm@3.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/mdast-util-gfm",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/mdast-util-gfm",
+    "licenseFile": "<tmp>/web/node_modules/mdast-util-gfm/license"
+  },
+  "mdast-util-mdx-expression@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/mdast-util-mdx-expression",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/mdast-util-mdx-expression",
+    "licenseFile": "<tmp>/web/node_modules/mdast-util-mdx-expression/license"
+  },
+  "mdast-util-mdx-jsx@3.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/mdast-util-mdx-jsx",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/mdast-util-mdx-jsx",
+    "licenseFile": "<tmp>/web/node_modules/mdast-util-mdx-jsx/license"
+  },
+  "mdast-util-mdxjs-esm@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/mdast-util-mdxjs-esm",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/mdast-util-mdxjs-esm",
+    "licenseFile": "<tmp>/web/node_modules/mdast-util-mdxjs-esm/license"
+  },
+  "mdast-util-phrasing@4.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/mdast-util-phrasing",
+    "publisher": "Victor Felder",
+    "url": "https://draft.li",
+    "path": "<tmp>/web/node_modules/mdast-util-phrasing",
+    "licenseFile": "<tmp>/web/node_modules/mdast-util-phrasing/license"
+  },
+  "mdast-util-to-hast@13.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/mdast-util-to-hast",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/mdast-util-to-hast",
+    "licenseFile": "<tmp>/web/node_modules/mdast-util-to-hast/license"
+  },
+  "mdast-util-to-markdown@2.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/mdast-util-to-markdown",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/mdast-util-to-markdown",
+    "licenseFile": "<tmp>/web/node_modules/mdast-util-to-markdown/license"
+  },
+  "mdast-util-to-string@4.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/mdast-util-to-string",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/mdast-util-to-string",
+    "licenseFile": "<tmp>/web/node_modules/mdast-util-to-string/license"
+  },
+  "micromark-core-commonmark@2.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-core-commonmark",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-core-commonmark",
+    "licenseFile": "<tmp>/web/node_modules/micromark-core-commonmark/license"
+  },
+  "micromark-extension-gfm-autolink-literal@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark-extension-gfm-autolink-literal",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-extension-gfm-autolink-literal",
+    "licenseFile": "<tmp>/web/node_modules/micromark-extension-gfm-autolink-literal/license"
+  },
+  "micromark-extension-gfm-footnote@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark-extension-gfm-footnote",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-extension-gfm-footnote",
+    "licenseFile": "<tmp>/web/node_modules/micromark-extension-gfm-footnote/license"
+  },
+  "micromark-extension-gfm-strikethrough@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark-extension-gfm-strikethrough",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-extension-gfm-strikethrough",
+    "licenseFile": "<tmp>/web/node_modules/micromark-extension-gfm-strikethrough/license"
+  },
+  "micromark-extension-gfm-table@2.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark-extension-gfm-table",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-extension-gfm-table",
+    "licenseFile": "<tmp>/web/node_modules/micromark-extension-gfm-table/license"
+  },
+  "micromark-extension-gfm-tagfilter@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark-extension-gfm-tagfilter",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-extension-gfm-tagfilter",
+    "licenseFile": "<tmp>/web/node_modules/micromark-extension-gfm-tagfilter/license"
+  },
+  "micromark-extension-gfm-task-list-item@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark-extension-gfm-task-list-item",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-extension-gfm-task-list-item",
+    "licenseFile": "<tmp>/web/node_modules/micromark-extension-gfm-task-list-item/license"
+  },
+  "micromark-extension-gfm@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark-extension-gfm",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-extension-gfm",
+    "licenseFile": "<tmp>/web/node_modules/micromark-extension-gfm/license"
+  },
+  "micromark-factory-destination@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-factory-destination",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-factory-destination",
+    "licenseFile": "<tmp>/web/node_modules/micromark-factory-destination/license"
+  },
+  "micromark-factory-label@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-factory-label",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-factory-label",
+    "licenseFile": "<tmp>/web/node_modules/micromark-factory-label/license"
+  },
+  "micromark-factory-space@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-factory-space",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-factory-space",
+    "licenseFile": "<tmp>/web/node_modules/micromark-factory-space/license"
+  },
+  "micromark-factory-title@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-factory-title",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-factory-title",
+    "licenseFile": "<tmp>/web/node_modules/micromark-factory-title/license"
+  },
+  "micromark-factory-whitespace@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-factory-whitespace",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-factory-whitespace",
+    "licenseFile": "<tmp>/web/node_modules/micromark-factory-whitespace/license"
+  },
+  "micromark-util-character@2.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-character",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-util-character",
+    "licenseFile": "<tmp>/web/node_modules/micromark-util-character/license"
+  },
+  "micromark-util-chunked@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-chunked",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-util-chunked",
+    "licenseFile": "<tmp>/web/node_modules/micromark-util-chunked/license"
+  },
+  "micromark-util-classify-character@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-classify-character",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-util-classify-character",
+    "licenseFile": "<tmp>/web/node_modules/micromark-util-classify-character/license"
+  },
+  "micromark-util-combine-extensions@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-combine-extensions",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-util-combine-extensions",
+    "licenseFile": "<tmp>/web/node_modules/micromark-util-combine-extensions/license"
+  },
+  "micromark-util-decode-numeric-character-reference@2.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-decode-numeric-character-reference",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-util-decode-numeric-character-reference",
+    "licenseFile": "<tmp>/web/node_modules/micromark-util-decode-numeric-character-reference/license"
+  },
+  "micromark-util-decode-string@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-decode-string",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-util-decode-string",
+    "licenseFile": "<tmp>/web/node_modules/micromark-util-decode-string/license"
+  },
+  "micromark-util-edit-map@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-edit-map",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-util-edit-map",
+    "licenseFile": "<tmp>/web/node_modules/micromark-util-edit-map/license"
+  },
+  "micromark-util-encode@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-encode",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-util-encode",
+    "licenseFile": "<tmp>/web/node_modules/micromark-util-encode/license"
+  },
+  "micromark-util-html-tag-name@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-html-tag-name",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-util-html-tag-name",
+    "licenseFile": "<tmp>/web/node_modules/micromark-util-html-tag-name/license"
+  },
+  "micromark-util-normalize-identifier@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-normalize-identifier",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-util-normalize-identifier",
+    "licenseFile": "<tmp>/web/node_modules/micromark-util-normalize-identifier/license"
+  },
+  "micromark-util-resolve-all@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-resolve-all",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-util-resolve-all",
+    "licenseFile": "<tmp>/web/node_modules/micromark-util-resolve-all/license"
+  },
+  "micromark-util-sanitize-uri@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-sanitize-uri",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-util-sanitize-uri",
+    "licenseFile": "<tmp>/web/node_modules/micromark-util-sanitize-uri/license"
+  },
+  "micromark-util-subtokenize@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-subtokenize",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-util-subtokenize",
+    "licenseFile": "<tmp>/web/node_modules/micromark-util-subtokenize/license"
+  },
+  "micromark-util-symbol@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-symbol",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-util-symbol",
+    "licenseFile": "<tmp>/web/node_modules/micromark-util-symbol/license"
+  },
+  "micromark-util-types@2.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-types",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark-util-types",
+    "licenseFile": "<tmp>/web/node_modules/micromark-util-types/license"
+  },
+  "micromark@4.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/micromark",
+    "licenseFile": "<tmp>/web/node_modules/micromark/license"
+  },
+  "modelanvil-web@0.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "<tmp>/web"
+  },
+  "ms@2.1.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vercel/ms",
+    "path": "<tmp>/web/node_modules/ms",
+    "licenseFile": "<tmp>/web/node_modules/ms/license.md"
+  },
+  "nanoid@3.3.20": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ai/nanoid",
+    "publisher": "Andrey Sitnik",
+    "path": "<tmp>/web/node_modules/nanoid",
+    "licenseFile": "<tmp>/web/node_modules/nanoid/LICENSE"
+  },
+  "parse-entities@4.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/parse-entities",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/parse-entities",
+    "licenseFile": "<tmp>/web/node_modules/parse-entities/license"
+  },
+  "picocolors@1.1.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/alexeyraspopov/picocolors",
+    "publisher": "Alexey Raspopov",
+    "path": "<tmp>/web/node_modules/picocolors",
+    "licenseFile": "<tmp>/web/node_modules/picocolors/LICENSE"
+  },
+  "picomatch@4.0.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromatch/picomatch",
+    "publisher": "Jon Schlinkert",
+    "url": "https://github.com/jonschlinkert",
+    "path": "<tmp>/web/node_modules/picomatch",
+    "licenseFile": "<tmp>/web/node_modules/picomatch/LICENSE"
+  },
+  "postcss@8.5.29": {
+    "licenses": "MIT",
+    "repository": "https://github.com/postcss/postcss",
+    "publisher": "Andrey Sitnik",
+    "path": "<tmp>/web/node_modules/postcss",
+    "licenseFile": "<tmp>/web/node_modules/postcss/LICENSE"
+  },
+  "property-information@7.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/property-information",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/property-information",
+    "licenseFile": "<tmp>/web/node_modules/property-information/license"
+  },
+  "react-dom@19.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/react/react",
+    "path": "<tmp>/web/node_modules/react-dom",
+    "licenseFile": "<tmp>/web/node_modules/react-dom/LICENSE"
+  },
+  "react-markdown@10.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/remarkjs/react-markdown",
+    "publisher": "Espen Hovlandsdal",
+    "path": "<tmp>/web/node_modules/react-markdown",
+    "licenseFile": "<tmp>/web/node_modules/react-markdown/license"
+  },
+  "react@19.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/react/react",
+    "path": "<tmp>/web/node_modules/react",
+    "licenseFile": "<tmp>/web/node_modules/react/LICENSE"
+  },
+  "remark-gfm@4.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/remarkjs/remark-gfm",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/remark-gfm",
+    "licenseFile": "<tmp>/web/node_modules/remark-gfm/license"
+  },
+  "remark-parse@11.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/remarkjs/remark/tree/main/packages/remark-parse",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/remark-parse",
+    "licenseFile": "<tmp>/web/node_modules/remark-parse/license"
+  },
+  "remark-rehype@11.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/remarkjs/remark-rehype",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/remark-rehype",
+    "licenseFile": "<tmp>/web/node_modules/remark-rehype/license"
+  },
+  "remark-stringify@11.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/remarkjs/remark/tree/main/packages/remark-stringify",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/remark-stringify",
+    "licenseFile": "<tmp>/web/node_modules/remark-stringify/license"
+  },
+  "rolldown@1.2.13": {
+    "licenses": "MIT",
+    "repository": "https://github.com/rolldown/rolldown",
+    "path": "<tmp>/web/node_modules/rolldown",
+    "licenseFile": "<tmp>/web/node_modules/rolldown/LICENSE"
+  },
+  "scheduler@0.28.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/react/react",
+    "path": "<tmp>/web/node_modules/scheduler",
+    "licenseFile": "<tmp>/web/node_modules/scheduler/LICENSE"
+  },
+  "source-map-js@1.2.2": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/7rulnik/source-map-js",
+    "publisher": "Valentin 7rulnik Semirulnik",
+    "path": "<tmp>/web/node_modules/source-map-js",
+    "licenseFile": "<tmp>/web/node_modules/source-map-js/LICENSE"
+  },
+  "space-separated-tokens@2.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/space-separated-tokens",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/space-separated-tokens",
+    "licenseFile": "<tmp>/web/node_modules/space-separated-tokens/license"
+  },
+  "stringify-entities@4.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/stringify-entities",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/stringify-entities",
+    "licenseFile": "<tmp>/web/node_modules/stringify-entities/license"
+  },
+  "style-to-js@1.1.21": {
+    "licenses": "MIT",
+    "repository": "https://github.com/remarkablemark/style-to-js",
+    "publisher": "Mark",
+    "path": "<tmp>/web/node_modules/style-to-js",
+    "licenseFile": "<tmp>/web/node_modules/style-to-js/LICENSE"
+  },
+  "style-to-object@1.0.14": {
+    "licenses": "MIT",
+    "repository": "https://github.com/remarkablemark/style-to-object",
+    "publisher": "Mark",
+    "path": "<tmp>/web/node_modules/style-to-object",
+    "licenseFile": "<tmp>/web/node_modules/style-to-object/LICENSE"
+  },
+  "tinyglobby@0.2.17": {
+    "licenses": "MIT",
+    "repository": "https://github.com/SuperchupuDev/tinyglobby",
+    "publisher": "Superchupu",
+    "path": "<tmp>/web/node_modules/tinyglobby",
+    "licenseFile": "<tmp>/web/node_modules/tinyglobby/LICENSE"
+  },
+  "trim-lines@3.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/trim-lines",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/trim-lines",
+    "licenseFile": "<tmp>/web/node_modules/trim-lines/license"
+  },
+  "trough@2.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/trough",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/trough",
+    "licenseFile": "<tmp>/web/node_modules/trough/license"
+  },
+  "typescript@7.0.2": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/microsoft/TypeScript",
+    "publisher": "Microsoft Corp.",
+    "path": "<tmp>/web/node_modules/typescript",
+    "licenseFile": "<tmp>/web/node_modules/typescript/LICENSE",
+    "noticeFile": "<tmp>/web/node_modules/typescript/NOTICE.txt"
+  },
+  "undici-types@8.9.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodejs/undici",
+    "path": "<tmp>/web/node_modules/undici-types",
+    "licenseFile": "<tmp>/web/node_modules/undici-types/LICENSE"
+  },
+  "unified@11.0.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unifiedjs/unified",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/unified",
+    "licenseFile": "<tmp>/web/node_modules/unified/license"
+  },
+  "unist-util-is@6.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/unist-util-is",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/unist-util-is",
+    "licenseFile": "<tmp>/web/node_modules/unist-util-is/license"
+  },
+  "unist-util-position@5.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/unist-util-position",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/unist-util-position",
+    "licenseFile": "<tmp>/web/node_modules/unist-util-position/license"
+  },
+  "unist-util-stringify-position@4.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/unist-util-stringify-position",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/unist-util-stringify-position",
+    "licenseFile": "<tmp>/web/node_modules/unist-util-stringify-position/license"
+  },
+  "unist-util-visit-parents@6.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/unist-util-visit-parents",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/unist-util-visit-parents",
+    "licenseFile": "<tmp>/web/node_modules/unist-util-visit-parents/license"
+  },
+  "unist-util-visit@5.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/syntax-tree/unist-util-visit",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/unist-util-visit",
+    "licenseFile": "<tmp>/web/node_modules/unist-util-visit/license"
+  },
+  "vfile-message@4.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vfile/vfile-message",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/vfile-message",
+    "licenseFile": "<tmp>/web/node_modules/vfile-message/license"
+  },
+  "vfile@6.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vfile/vfile",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/vfile",
+    "licenseFile": "<tmp>/web/node_modules/vfile/license"
+  },
+  "vite@8.3.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vitejs/vite",
+    "publisher": "Evan You",
+    "path": "<tmp>/web/node_modules/vite",
+    "licenseFile": "<tmp>/web/node_modules/vite/LICENSE.md"
+  },
+  "zwitch@2.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/zwitch",
+    "publisher": "Titus Wormer",
+    "url": "https://wooorm.com",
+    "path": "<tmp>/web/node_modules/zwitch",
+    "licenseFile": "<tmp>/web/node_modules/zwitch/license"
+  }
+}

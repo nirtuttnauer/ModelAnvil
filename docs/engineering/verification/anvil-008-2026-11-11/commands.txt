@@ -20,3 +20,52 @@ Maintainer email fields were removed before commit. Two other addresses inside s
 Audit, at 6febdec with an empty git status --porcelain. No --ignore-vuln.
   pip-audit 2.10.1 --progress-spinner off -r <each requirements*.txt>
 Ten files exited 0. requirements.documents.txt exited 1.
+
+--- 12 November 2026: Darwin arm64 run ---
+Label: local
+Base SHA: 56b35ccca6ed3d3a2aca0c28fbce1dabaa445be7 (origin/main; requirement files equal 6febdec except requirements.documents.txt, pypdf 6.21.2 -> 6.21.4 from #87)
+Host: Nirs-MacBook-Pro.local, Apple M5 Pro, macOS 27.0.1 (26A434), Darwin 27.0.0 arm64
+Tools: uv 0.13.7, CPython 3.12.15 (uv-managed), pip 26.3, pip-licenses 5.5.5 (prettytable 3.18.0, wcwidth 0.9.4) in its own venv, Node v26.13.1, npm 11.20.0, license-checker 25.0.1
+Date: 2026-11-12
+No PIP_* or UV_* environment variable and no pip config file was set, so no extra index URL.
+
+Python, once per requirements*.txt, in a new venv outside the repo, run from the repo root:
+  uv venv --seed --python 3.12 <venv>
+  <venv>/bin/python -m pip install --upgrade pip
+  <venv>/bin/python -m pip install -r <requirements file>
+  pip-licenses 5.5.5 --python <venv>/bin/python --from=mixed --format=json --with-urls --order=name
+  pip-licenses 5.5.5 --python <venv>/bin/python --from=all --format=json --with-urls --order=name
+  <venv>/bin/python -m pip freeze
+Exit: 0 for every step in all 11 groups. Saved as pip-licenses-darwin-arm64/<group>.mixed.json, <group>.all.json and <group>.freeze.txt.
+
+pip-licenses leaves out pip, setuptools, wheel, prettytable and wcwidth unless --with-system. One more run per group:
+  pip-licenses 5.5.5 --python <venv>/bin/python --from=all --format=json --with-urls --order=name --with-system --packages setuptools wheel prettytable wcwidth
+Exit: 0 for every group. Saved as pip-licenses-darwin-arm64/<group>.system.json. Result: setuptools 84.2.1 in audio, embeddings, gpu, inference, tools and vision (required by torch 2.13.0), setuptools 84.1.0 in specialists (direct); the other four groups returned [].
+
+Web, from a copy of web/package.json and web/package-lock.json (sha256 matched the repo files and the 11 November copy). web/ was not modified.
+  npm ci --ignore-scripts
+  npx --yes license-checker@25.0.1 --production --json
+  npx --yes license-checker@25.0.1 --version
+Exit: 0, 0, 1 (--version prints 25.0.1 and exits 1). Saved as web-darwin-arm64/license-checker.json, license-checker.version.txt, lock.sha256, lock.repo.sha256.
+
+Before commit: 95 email fields removed from license-checker.json; path, licenseFile and noticeFile start with <tmp>/web instead of the local temp path. In the pip-licenses JSON, one address inside the numpy and scipy License-Metadata text (the libquadmath notice) was replaced with [redacted], as in the 11 November files: 11 replacements across 9 all.json files. rg for an address pattern over every new file: exit 1.
+
+Table, no network:
+  python3 scripts/license_table.py --licenses pip-licenses-darwin-arm64 --web web-darwin-arm64/license-checker.json --csv spdx-table-darwin-arm64.csv --md spdx-table-darwin-arm64.md --title 'SPDX table, Darwin arm64' --intro '...' --check-venvs <venvs> --notices bundled-notices-darwin-arm64.tsv
+Exit: 0. 578 rows. --check-venvs reopened every license-file row in the installed wheels: 44 ok, 0 FAIL. A second run wrote a byte-identical CSV.
+
+Reproduction check of the 11 November table with the same script, against the 6febdec requirement files and web/package.json:
+  python3 scripts/license_table.py --licenses pip-licenses --root <6febdec requirement files> --web web/license-checker.json --csv <tmp> --md <tmp>
+Exit: 0. 692 of the 701 rows are identical and in the same order. The 9 others: the 7 MLX rows typed from PyPI (the script writes not-installed instead), and sentencepiece 0.2.1 and pypdfium2 5.14.0, which are now resolved. It also adds a not-installed row for setuptools in specialists, which pip-licenses filtered. spdx-table.md and spdx-table.csv were not rewritten.
+
+Unknown rows, read without installing or executing the package:
+  pip download --no-deps --only-binary=:all: --platform manylinux_2_28_x86_64 --python-version 3.12 cuda-toolkit==13.0.3.0
+  sentencepiece-0.2.1.tar.gz from files.pythonhosted.org, sha256 8138cec27c2f2282f4a34d9a016e3374cd40e5c6e9cb335063db66a0a3b71fad (matches PyPI)
+  pip download --no-deps --only-binary=:all: --platform manylinux_2_17_x86_64 --python-version 3.12 pypdfium2==5.14.0, and pypdfium2-5.14.0.tar.gz
+  PyPI JSON API for each name and version
+Read with unzip -l, unzip -p, tar -t and tar -x of named members.
+
+Bundled notices on manylinux wheels, by HTTP range reads of the zip directory and license members (no full download): numpy 2.3.3 cp312 manylinux_2_27_x86_64, scipy 1.18.1 cp312 manylinux_2_27_x86_64, torch 2.13.0 cp312 manylinux_2_28_x86_64.
+
+Identity counts and MIT promise search at 56b35cc: identity-counts-2026-11-12.txt and mit-promise-2026-11-12.txt.
+No test command, pip-audit or premerge ran for this update.

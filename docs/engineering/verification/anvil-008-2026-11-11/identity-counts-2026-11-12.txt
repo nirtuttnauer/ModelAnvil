@@ -1,0 +1,35 @@
+Label: local
+SHA: 56b35cc (origin/main on 2026-11-12, before the ANVIL-008 macOS commit)
+Date: 2026-11-12
+Commands: git log 56b35cc --format='%ae' and git log 56b35cc --format='%ce'
+Commits: 294
+Addresses are not recorded.
+
+Author commits by class:
+owner 266
+agent 28
+other 0
+
+Author identities by class:
+owner 4
+agent 1
+other 0
+
+Committer commits by class:
+owner 241
+agent 28
+other 25
+
+Committer identities by class:
+owner 2
+agent 1
+other 1
+
+Classes:
+owner — git name Nir Tuttnauer or nirtuttnauer. LICENSE names Copyright (c) 2026 Nir Tuttnauer.
+agent — git name Cursor Agent.
+other — git committer name GitHub, on 25 pull request merge commits. The author of each of those commits is the owner.
+
+Since 6febdec: 8 more commits, all authored by the owner and committed by GitHub (pull requests #80, #81, #82, #83, #84, #85, #86, #87). No address maps to more than one class.
+
+Unexplained third parties: 0
