@@ -1,0 +1,75 @@
+{
+  "id": "scifact-full-beir-test-v1",
+  "policy": "rag-expanded-corpus-v1",
+  "note": "New pins for ANVIL-020. modelanvil/rag/benchmark-corpus-pins.json is unchanged and still pins the archive these members come from.",
+  "archive": {
+    "pins_file": "modelanvil/rag/benchmark-corpus-pins.json",
+    "url": "https://scifact.s3-us-west-2.amazonaws.com/release/latest/data.tar.gz",
+    "sha256": "\u0031\u0031\u0063\u0036\u0032\u0031\u0032\u0038\u0038\u0064\u0034\u0031\u0061\u0063\u0031\u0034\u0034\u0064\u0032\u0039\u0062\u0031\u0033\u0062\u0030\u0066\u0038\u0035\u0030\u0033\u0062\u0033\u0038\u0032\u0030\u0062\u0037\u0064\u0036\u0065\u0038\u0062\u0031\u0066\u0036\u0066\u0066\u0032\u0034\u0064\u0066\u0066\u0033\u0033\u0035\u0063\u0031\u0039\u0036\u0064\u0037\u0036\u0062\u0065",
+    "byte_size": 3115079,
+    "license_url": "https://raw.githubusercontent.com/allenai/scifact/a5254a1bf108726a1704d8e191b8a7f2225a029f/LICENSE.md",
+    "license_sha256": "\u0035\u0036\u0065\u0065\u0036\u0039\u0062\u0063\u0036\u0033\u0039\u0063\u0062\u0061\u0062\u0038\u0066\u0030\u0062\u0032\u0065\u0034\u0062\u0036\u0037\u0030\u0039\u0031\u0065\u0063\u0035\u0065\u0039\u0033\u0039\u0030\u0061\u0061\u0039\u0039\u0061\u0031\u0064\u0036\u0035\u0066\u0030\u0061\u0033\u0035\u0065\u0034\u0032\u0037\u0034\u0036\u0038\u0036\u0063\u0039\u0061\u0038\u0030\u0036"
+  },
+  "corpus": {
+    "member": "data/corpus.jsonl",
+    "sha256": "\u0062\u0038\u0064\u0036\u0063\u0038\u0039\u0036\u0032\u0034\u0063\u0062\u0032\u0065\u0064\u0037\u0034\u0064\u0065\u0065\u0038\u0039\u0033\u0038\u0065\u0066\u0066\u0063\u0034\u0066\u0035\u0064\u0038\u0062\u0064\u0032\u0030\u0038\u0036\u0038\u0038\u0037\u0038\u0038\u0030\u0061\u0066\u0038\u0031\u0031\u0030\u0064\u0036\u0034\u0062\u0065\u0034\u0063\u0065\u0061\u0064\u0065\u0036\u0032",
+    "byte_size": 8307875,
+    "records": 5183,
+    "source_text_bytes": 7792860,
+    "license": "ODC-By-1.0"
+  },
+  "claims": {
+    "data/claims_train.jsonl": {
+      "role": "development",
+      "sha256": "\u0066\u0034\u0063\u0038\u0066\u0061\u0038\u0032\u0064\u0038\u0062\u0064\u0030\u0036\u0035\u0033\u0061\u0039\u0063\u0063\u0038\u0064\u0036\u0031\u0061\u0036\u0065\u0061\u0034\u0038\u0063\u0032\u0035\u0065\u0061\u0063\u0065\u0061\u0036\u0034\u0065\u0039\u0030\u0061\u0066\u0035\u0064\u0062\u0066\u0033\u0039\u0030\u0065\u0062\u0062\u0031\u0062\u0037\u0034\u0033\u0037\u0032\u0066\u0030",
+      "byte_size": 175616,
+      "records": 809,
+      "license": "CC-BY-4.0"
+    },
+    "data/claims_dev.jsonl": {
+      "role": "held_out",
+      "sha256": "\u0038\u0036\u0066\u0030\u0034\u0033\u0035\u0064\u0030\u0038\u0066\u0064\u0062\u0036\u0035\u0064\u0031\u0061\u0061\u0034\u0031\u0064\u0031\u0034\u0037\u0032\u0036\u0038\u0034\u0066\u0035\u0037\u0065\u0036\u0065\u0037\u0031\u0039\u0033\u0030\u0036\u0032\u0036\u0034\u0039\u0037\u0062\u0064\u0066\u0034\u0064\u0037\u0061\u0039\u0065\u0063\u0031\u0061\u0036\u0033\u0032\u0032\u0031\u0037",
+      "byte_size": 65007,
+      "records": 300,
+      "license": "CC-BY-4.0"
+    }
+  },
+  "qrels": {
+    "format": "BEIR qrels TSV: header query-id, corpus-id, score; one CRLF row per claim and cited document; claim file order; cited_doc_ids deduplicated; score 1.",
+    "held_out": {
+      "source": "rebuilt from data/claims_dev.jsonl (all 300 claims)",
+      "sha256": "\u0030\u0038\u0036\u0034\u0062\u0062\u0039\u0038\u0035\u0065\u0030\u0063\u0061\u0032\u0033\u0036\u0037\u0062\u0061\u0032\u0031\u0037\u0039\u0037\u0037\u0065\u0037\u0032\u0030\u0030\u0034\u0064\u0035\u0034\u0039\u0030\u0035\u0034\u0062\u0032\u0062\u0030\u0036\u0036\u0036\u0036\u0065\u0064\u0039\u0064\u0034\u0038\u0032\u0035\u0061\u0063\u0037\u0063\u0032\u0031\u0032\u0038\u0034\u0063",
+      "byte_size": 5389,
+      "queries": 300,
+      "judgments": 339,
+      "license": "CC-BY-4.0 (derived from the publisher claims)",
+      "beir_cross_check": {
+        "dataset": "BeIR/scifact-qrels",
+        "revision": "2938d17dc3b09882fdb8c12bbbe2e2dc0e75a029",
+        "file": "test.tsv",
+        "url": "https://huggingface.co/datasets/BeIR/scifact-qrels/raw/2938d17dc3b09882fdb8c12bbbe2e2dc0e75a029/test.tsv",
+        "sha256": "\u0030\u0038\u0036\u0034\u0062\u0062\u0039\u0038\u0035\u0065\u0030\u0063\u0061\u0032\u0033\u0036\u0037\u0062\u0061\u0032\u0031\u0037\u0039\u0037\u0037\u0065\u0037\u0032\u0030\u0030\u0034\u0064\u0035\u0034\u0039\u0030\u0035\u0034\u0062\u0032\u0062\u0030\u0036\u0036\u0036\u0036\u0065\u0064\u0039\u0064\u0034\u0038\u0032\u0035\u0061\u0063\u0037\u0063\u0032\u0031\u0032\u0038\u0034\u0063",
+        "byte_size": 5389,
+        "git_blob_sha1": "c62f58c75f10c0cee23483b7269bff2902ae4080",
+        "license": "cc-by-sa-4.0 per the Hugging Face card metadata; the card's Licensing Information section says Needs More Information",
+        "card_url": "https://huggingface.co/datasets/BeIR/scifact-qrels/raw/2938d17dc3b09882fdb8c12bbbe2e2dc0e75a029/README.md",
+        "card_sha256": "\u0066\u0064\u0033\u0034\u0061\u0032\u0038\u0033\u0030\u0065\u0035\u0035\u0037\u0066\u0031\u0065\u0033\u0032\u0064\u0034\u0036\u0064\u0030\u0062\u0033\u0034\u0061\u0032\u0031\u0038\u0064\u0032\u0038\u0030\u0063\u0039\u0038\u0030\u0030\u0065\u0065\u0034\u0030\u0037\u0031\u0035\u0037\u0039\u0036\u0031\u0030\u0064\u0034\u0066\u0066\u0035\u0038\u0037\u0062\u0034\u0066\u0064\u0034\u0035",
+        "card_byte_size": 13995,
+        "card_git_blob_sha1": "bc58b6940a415a26e38244f8c688ff5ef134abf0",
+        "use": "Operator-cache cross-check only. The BEIR file is not committed, redistributed or read at run time; its SHA256 equals the rebuilt held-out judgments."
+      }
+    },
+    "development": {
+      "source": "rebuilt from data/claims_train.jsonl, filtered to the 531 development claims of rag-expanded-corpus-v1",
+      "sha256": "\u0064\u0039\u0033\u0065\u0036\u0031\u0034\u0038\u0039\u0065\u0031\u0037\u0033\u0036\u0062\u0061\u0034\u0033\u0066\u0038\u0062\u0062\u0063\u0038\u0033\u0031\u0037\u0033\u0039\u0036\u0030\u0033\u0061\u0064\u0034\u0065\u0039\u0064\u0035\u0066\u0036\u0063\u0064\u0066\u0063\u0065\u0032\u0030\u0063\u0037\u0038\u0031\u0065\u0038\u0062\u0062\u0030\u0036\u0031\u0037\u0032\u0037\u0063\u0066",
+      "byte_size": 9464,
+      "queries": 531,
+      "judgments": 600,
+      "license": "CC-BY-4.0 (derived from the publisher claims)"
+    }
+  },
+  "citations": [
+    "Wadden et al. (2020), Fact or Fiction: Verifying Scientific Claims, EMNLP 2020, doi:10.18653/v1/2020.emnlp-main.609",
+    "Thakur et al. (2021), BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models, NeurIPS 2021 Datasets and Benchmarks Track"
+  ]
+}
