@@ -30,6 +30,7 @@ QRELS_HEADER = 'query-id\tcorpus-id\tscore\r\n'
 # Production limits from modelanvil/rag/ingestion.py index_documents; not changed here.
 MAX_SOURCE_BYTES = 2000000
 MAX_CHUNKS = 10000
+TITLE_FIELD_LIMIT = 255  # SourceDocument.title max_length
 BEIR_FILE = 'beir-scifact-test-qrels.tsv'
 
 
@@ -57,6 +58,11 @@ def dumps(value):
 
 def content(document):
     return document['title'] + '\n' + ' '.join(document['abstract'])
+
+
+def source_record(key, document):
+    """The indexed content keeps the full title; only the 255-character title field is shortened."""
+    return {'title': document['title'][:TITLE_FIELD_LIMIT], 'source_uri': 'scifact:' + key, 'content': content(document)}
 
 
 def normalized(text):
@@ -362,8 +368,8 @@ def run(phase, thresholds_path=None):
         built = []
         for shard in plan['shards']:
             base = KnowledgeBase.all_objects.create(tenant_id=tenant.pk, project=project, name=f'Pinned public SciFact shard {shard["shard"]}')
-            source = index_documents(base, [{'title': docs[key]['title'], 'source_uri': 'scifact:' + key, 'content': content(docs[key])}
-                for key in shard['document_ids']], retrieval['chunk_size'], retrieval['chunk_overlap'])
+            source = index_documents(base, [source_record(key, docs[key]) for key in shard['document_ids']],
+                retrieval['chunk_size'], retrieval['chunk_overlap'])
             chunks = list(DocumentChunk.all_objects.filter(tenant_id=tenant.pk, document__knowledge_base=base)
                 .select_related('document').order_by('document__source_uri', 'chunk_index'))
             if len(chunks) != shard['token_chunks']:
@@ -484,6 +490,7 @@ def run(phase, thresholds_path=None):
                 'policy_sha256': sha256(POLICY_PATH.read_bytes()), 'pins_sha256': sha256(PINS_PATH.read_bytes()),
                 'plan_digest': plan_digest, 'qrels_sha256': plan['qrels_sha256'][phase], 'archive_pins': ARCHIVE_PINS,
                 'size': plan['size'], 'queries_evaluated': len(rows), 'documents': len(docs),
+                'titles_shortened_to_field_limit': sum(len(d['title']) > TITLE_FIELD_LIMIT for d in docs.values()),
                 'shards': [{k: v for k, v in s.items() if k != 'document_ids'} for s in plan['shards']],
                 'chunks': sum(len(item['chunks']) for item in built), 'model_pins': adapter.PINS, 'runtime': adapter.environment(),
                 'hardware': {'system': platform.system(), 'release': platform.release(), 'architecture': platform.machine(),

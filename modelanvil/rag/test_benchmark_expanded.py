@@ -56,6 +56,13 @@ class ExpandedCorpusGuards(SimpleTestCase):
         data=expanded.qrels_tsv([claim(1,'a',[5,3,5]),claim(2,'b',[9])])
         self.assertEqual(data,b'query-id\tcorpus-id\tscore\r\n1\t5\t1\r\n1\t3\t1\r\n2\t9\t1\r\n')
 
+    def test_long_titles_fit_the_title_field_and_stay_in_the_indexed_content(self):
+        document={'doc_id':7,'title':'T'*300,'abstract':['First sentence.','Second sentence.']}
+        record=expanded.source_record('7',document)
+        self.assertEqual(record['title'],'T'*255)
+        self.assertEqual(record['content'],'T'*300+'\nFirst sentence. Second sentence.')
+        self.assertEqual(record['source_uri'],'scifact:7')
+
     def test_shard_merge_equals_one_ranking_over_all_chunks(self):
         rows=[SimpleNamespace(chunk_id=f'{i:04x}',score=score) for i,score in enumerate([.9,.5,.5,.7,.1,.9,.3,.8,.5,.2,.6,.4])]
         shards=[rows[0::3],rows[1::3],rows[2::3]]
