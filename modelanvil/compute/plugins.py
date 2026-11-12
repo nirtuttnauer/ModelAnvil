@@ -29,6 +29,10 @@ class ProviderError(Exception):
         super().__init__(self.code)
 
 
+# Request IDs are operator names. A dot or colon is a Python module or entrypoint, not an ID.
+_PLUGIN_ID = re.compile(r"[a-z0-9][a-z0-9_-]{0,99}")
+
+
 def installed_plugins(tenant_id, kind=None):
     return {key: value for key, value in settings.MODELANVIL_PLUGINS.items()
             if str(tenant_id) in value.get("tenant_ids", []) and (kind is None or value.get("kind") == kind)}
@@ -43,15 +47,13 @@ def provider_claim(plugin_id):
 
 
 def definition(plugin_id, tenant_id, kind):
-    if not isinstance(plugin_id, str):
+    if not isinstance(plugin_id, str) or _PLUGIN_ID.fullmatch(plugin_id) is None:
         raise PluginError("Invalid installed plugin ID.")
     if plugin_id in DEFERRED_UNTIL_PILOT:
         raise PluginError(f'{plugin_id} stays deferred until a recorded pilot asks for one provider.')
     entry = installed_plugins(tenant_id, kind).get(plugin_id)
     if entry is None:
         raise PluginError("Plugin is not installed for this tenant.")
-    if not re.fullmatch(r"[a-z0-9][a-z0-9._-]{0,99}", plugin_id):
-        raise PluginError("Invalid installed plugin ID.")
     if entry.get("contract_version") != "1.0" or "configuration_schema" not in entry:
         raise PluginError("Plugin must declare contract version 1.0 and its configuration schema.")
     digest = hashlib.sha256(json.dumps(entry, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
