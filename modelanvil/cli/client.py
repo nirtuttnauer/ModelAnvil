@@ -8,11 +8,15 @@ as well as worker administration and hybrid credential configuration (TECH-029).
 from __future__ import annotations
 
 import json
+import logging
 import os
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, NoReturn, Optional, Union
+
+logger = logging.getLogger(__name__)
+_REDACTED = "[redacted]"
 
 
 class ModelAnvilClientError(Exception):
@@ -54,6 +58,58 @@ class ModelAnvilClient:
             headers.update(custom)
         return headers
 
+    def _request_secrets(self, url: str) -> List[str]:
+        """Bearer token and token query values that must stay out of errors."""
+        secrets: List[str] = []
+        if self.token:
+            secrets.append(self.token)
+        query = urllib.parse.urlsplit(url).query
+        for key, value in urllib.parse.parse_qsl(query, keep_blank_values=False):
+            if key.lower() == "token" and value:
+                secrets.append(value)
+        expanded: List[str] = []
+        for secret in secrets:
+            expanded.append(secret)
+            quoted = urllib.parse.quote(secret, safe="")
+            if quoted != secret:
+                expanded.append(quoted)
+            quoted_plus = urllib.parse.quote_plus(secret)
+            if quoted_plus not in (secret, quoted):
+                expanded.append(quoted_plus)
+        unique: List[str] = []
+        for secret in sorted(set(expanded), key=len, reverse=True):
+            if secret and secret not in unique:
+                unique.append(secret)
+        return unique
+
+    def _redact_text(self, text: str, secrets: List[str]) -> str:
+        redacted = text
+        for secret in secrets:
+            redacted = redacted.replace(secret, _REDACTED)
+        return redacted
+
+    def _redact_payload(self, payload: Any, secrets: List[str]) -> Any:
+        if isinstance(payload, str):
+            return self._redact_text(payload, secrets)
+        if isinstance(payload, dict):
+            return {
+                self._redact_payload(key, secrets): self._redact_payload(value, secrets)
+                for key, value in payload.items()
+            }
+        if isinstance(payload, list):
+            return [self._redact_payload(item, secrets) for item in payload]
+        return payload
+
+    def _raise_client_error(
+        self,
+        message: str,
+        *,
+        status_code: Optional[int] = None,
+        payload: Any = None,
+    ) -> NoReturn:
+        logger.debug("API client error: %s", message)
+        raise ModelAnvilClientError(message, status_code=status_code, payload=payload)
+
     def request(
         self,
         method: str,
@@ -65,6 +121,7 @@ class ModelAnvilClient:
         norm_path = path if path.startswith("/") else f"/{path}"
         url = f"{self.base_url}{norm_path}"
         req_headers = self._headers(headers)
+        secrets = self._request_secrets(url)
 
         if self.transport is not None:
             # Custom transport (e.g. test client)
@@ -89,7 +146,8 @@ class ModelAnvilClient:
                     payload = json.loads(content.decode("utf-8"))
                 except Exception:
                     payload = content.decode("utf-8")
-                raise ModelAnvilClientError(
+                payload = self._redact_payload(payload, secrets)
+                self._raise_client_error(
                     f"HTTP {status_code}: {payload}", status_code=status_code, payload=payload
                 )
             if not content:
@@ -110,6 +168,8 @@ class ModelAnvilClient:
                 body_bytes = data
 
         req = urllib.request.Request(url, data=body_bytes, headers=req_headers, method=method.upper())
+        http_failure: Optional[tuple[int, Any]] = None
+        network_failure: Optional[str] = None
         try:
             with urllib.request.urlopen(req, timeout=self.timeout) as resp:
                 resp_bytes = resp.read()
@@ -122,11 +182,17 @@ class ModelAnvilClient:
                 payload = json.loads(err_body)
             except Exception:
                 payload = err_body
-            raise ModelAnvilClientError(
-                f"HTTP {err.code}: {payload}", status_code=err.code, payload=payload
-            ) from err
+            http_failure = (err.code, payload)
         except urllib.error.URLError as err:
-            raise ModelAnvilClientError(f"Network error: {err.reason}") from err
+            network_failure = str(err.reason)
+        if http_failure is not None:
+            status_code, payload = http_failure
+            payload = self._redact_payload(payload, secrets)
+            self._raise_client_error(
+                f"HTTP {status_code}: {payload}", status_code=status_code, payload=payload
+            )
+        if network_failure is not None:
+            self._raise_client_error(self._redact_text(f"Network error: {network_failure}", secrets))
 
     # -------------------------------------------------------------------------
     # Datasets API
