@@ -1,0 +1,26 @@
+2026-11-12T16:08:41Z apk-start 2026-11-12T16:08:41Z
+2026-11-12T16:08:44Z measure-start 2026-11-12T16:08:44.
+2026-11-12T16:10:28Z {
+2026-11-12T16:10:28Z   "schema_version": "modelanvil.selfhost-qualification.v1",
+2026-11-12T16:10:28Z   "production_qualified": false,
+2026-11-12T16:10:28Z   "fresh_install": true,
+2026-11-12T16:10:28Z   "verified_tls": true,
+2026-11-12T16:10:28Z   "owner_authentication": true,
+2026-11-12T16:10:28Z   "explicit_local_model_import": true,
+2026-11-12T16:10:28Z   "offline": true,
+2026-11-12T16:10:28Z   "external_acquisition_refused": true,
+2026-11-12T16:10:28Z   "actual_optimizer_steps": 4,
+2026-11-12T16:10:28Z   "checkpoint_count": 4,
+2026-11-12T16:10:28Z   "base_weights_sha256": "781970663eee1110dc870fe5359ee65c3aa6ffd1ba20fad7e90cdea8610d8eab",
+2026-11-12T16:10:28Z   "trained_weights_sha256": "4eb5d89d7717297d865202914c87aa4a840df12e16c44e996f2fac1f8cc6931a",
+2026-11-12T16:10:28Z   "isolated_restore_checked_state_and_all_artifact_hashes_equal": true,
+2026-11-12T16:10:28Z   "upgrade": "not_run; supply a distinct verified --upgrade-release",
+2026-11-12T16:10:28Z   "uninstall_retained_four_data_volumes": true,
+2026-11-12T16:10:28Z   "retained_installation_restarted": true,
+2026-11-12T16:10:28Z   "artifact_count": 4,
+2026-11-12T16:10:28Z   "source_release": "0.1.0",
+2026-11-12T16:10:28Z   "qualification_scope": "Small numerical CPU reference pipeline and local-CA Docker package; no pretrained/task quality, public DNS/ACME, physical second host or native signing qualification.",
+2026-11-12T16:10:28Z   "owned_synthetic_projects_removed": true,
+2026-11-12T16:10:28Z   "wall_seconds": 104.25459342298564
+2026-11-12T16:10:28Z }
+2026-11-12T16:10:28Z measure-end 2026-11-12T16:10:28. exit=0

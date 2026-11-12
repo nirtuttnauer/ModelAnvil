@@ -1,0 +1,5 @@
+memory.max 4294967296
+memory.swap.max 0
+cpu.max 400000 100000
+nproc 18
+Linux 9b9291d41016 7.0.14-linuxkit #1 SMP PREEMPT Fri Oct 30 13:45:20 UTC 2026 aarch64 GNU/Linux

@@ -1,0 +1,7 @@
+Activity seen on the host and the Docker Desktop VM during this run (30-second samples, plus before and after).
+Containers other than this run's own:
+  mosscms-app-1 (mosscms:local-onboarding-20261012-v2)
+  mosscms-personal-site-1 (mosscms-personal-site)
+Host processes matching build, qualification or test-suite patterns (command truncated):
+Host load averages (first, max 1-minute, last):
+  first 4.71, max 5.52, last 5.10

@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "c6f689e12562fd476ed26095ae841fbd766300c6",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-11-12T19:04:08+02:00",
+  "machine": {
+    "hostname": "Nirs-MacBook-Pro.local",
+    "os": "macOS-27.0.1-arm64-arm-64bit",
+    "arch": "arm64",
+    "python": "3.12.15",
+    "node": "v24.22.3"
+  },
+  "command": "/private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/tools/gl828/gitleaks detect --source . '--log-opts=HEAD --remotes=origin --tags' --config /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/tools/stock-8.28.0.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/evidence/anvil-016/raw/gl828-detect.json",
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "\u001b[90m7:04PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1m300 commits scanned.\u001b[0m\n\u001b[90m7:04PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1mscanned ~59825737 bytes (59.83 MB) in 2.17s\u001b[0m\n\u001b[90m7:04PM\u001b[0m \u001b[33mWRN\u001b[0m \u001b[1mleaks found: 411\u001b[0m\n",
+  "runs": [
+    {
+      "name": "command",
+      "command": "/private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/tools/gl828/gitleaks detect --source . '--log-opts=HEAD --remotes=origin --tags' --config /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/tools/stock-8.28.0.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/evidence/anvil-016/raw/gl828-detect.json",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}
