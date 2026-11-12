@@ -211,6 +211,17 @@ def pg_test_env(base: dict[str, str], cache_root: Path) -> dict[str, str]:
     return env
 
 
+def clear_pg_reports(env: dict[str, str]) -> list[str]:
+    """Remove the previous run's pg reports; the tests create them with open('x')."""
+    removed = []
+    for key in ("MODELANVIL_RAG_GENERATION_REPORT", "MODELANVIL_POSITION_REPORT", "MODELANVIL_RETRIEVAL_REPORT"):
+        path = Path(env[key])
+        if path.is_file():
+            path.unlink()
+            removed.append(path.name)
+    return removed
+
+
 def pg_display_command(python: str, cache_root: Path) -> str:
     shown = pg_test_env({}, cache_root)
     shown.pop("DATABASE_PASSWORD")
@@ -418,6 +429,10 @@ def execute(python: str, output: Path) -> int:
                 exit_code = code
             else:
                 display = pg_display_command(python, cache_root)
+                # A second premerge on the same host reuses the cache directory.
+                removed = clear_pg_reports(pg_test_env(env, cache_root))
+                if removed:
+                    sections.append(_section("pgvector stale reports removed", "\n".join(removed)))
                 print(_section("pgvector", display), flush=True)
                 code, stdout, stderr = run_argv(pg_command(python), pg_test_env(env, cache_root), ROOT)
                 text = _combine(stdout, stderr)

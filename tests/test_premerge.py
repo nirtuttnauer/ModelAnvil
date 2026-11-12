@@ -61,6 +61,19 @@ class PremergeTests(unittest.TestCase):
         self.assertIn("--exclude-tag=linux", command)
         self.assertEqual(premerge.host_excluded_tags("darwin"), ["pg", "linux"])
 
+    def test_stale_pg_reports_are_removed_before_a_second_run(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            env = premerge.pg_test_env({}, Path(tmp))
+            Path(env["MODELANVIL_RAG_GENERATION_REPORT"]).write_text("{}")
+            Path(env["MODELANVIL_POSITION_REPORT"]).write_text("{}")
+            keep = Path(tmp) / "rag-decoder"
+            keep.mkdir()
+            removed = premerge.clear_pg_reports(env)
+            self.assertEqual(sorted(removed), ["evidence-position-report.json", "rag-generation-report.json"])
+            self.assertFalse(Path(env["MODELANVIL_RAG_GENERATION_REPORT"]).exists())
+            self.assertTrue(keep.is_dir())
+            self.assertEqual(premerge.clear_pg_reports(env), [])
+
     def test_exclusions_match_ids(self):
         run = premerge.zero_run("backend", "manage.py test --exclude-tag=pg")
         premerge.apply_exclusions(run, ["modelanvil.rag.One", "modelanvil.rag.Two"])
