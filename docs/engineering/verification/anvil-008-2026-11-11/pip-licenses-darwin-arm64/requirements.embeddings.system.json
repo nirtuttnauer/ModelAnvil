@@ -1,0 +1,10 @@
+[
+  {
+    "License-Classifier": "UNKNOWN",
+    "License-Expression": "MIT",
+    "License-Metadata": "UNKNOWN",
+    "Name": "setuptools",
+    "URL": "https://github.com/pypa/setuptools",
+    "Version": "84.2.1"
+  }
+]
