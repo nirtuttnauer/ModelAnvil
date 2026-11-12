@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "7e43f3469e03f875311e65e2d45bb75eed62894c",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-11-12T14:45:07+00:00",
+  "machine": {
+    "hostname": "cursor",
+    "os": "Linux-6.12.113+-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "python": "3.12.3",
+    "node": "v24.22.3"
+  },
+  "command": "gitleaks detect --source . --redact --log-opts=--all",
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "\n    \u25cb\n    \u2502\u2572\n    \u2502 \u25cb\n    \u25cb \u2591\n    \u2591    gitleaks\n\n2:45PM INF 219 commits scanned.\n2:45PM INF scanned ~41881328 bytes (41.88 MB) in 2.43s\n2:45PM WRN leaks found: 36\n",
+  "runs": [
+    {
+      "name": "command",
+      "command": "gitleaks detect --source . --redact --log-opts=--all",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}
