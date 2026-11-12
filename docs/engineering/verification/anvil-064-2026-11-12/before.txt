@@ -1,0 +1,37 @@
+Before behavior of modelanvil/artifacts/tombstones.py on main, measured with a Django test probe against the unchanged module. A committed artifact was active. An unknown UUID and a non-UUID artifact id had no row.
+
+before-known-is: returned False
+before-known-enforce: returned None
+unknown-uuid-is: returned False
+unknown-uuid-enforce: returned None
+missing-empty-is: returned False
+missing-empty-enforce: returned None
+missing-none-is: returned False
+missing-none-enforce: returned None
+missing-blank-type-enforce: returned None
+missing-blank-tenant-enforce: returned None
+garbage-is: returned False
+garbage-enforce: returned None
+register-garbage: raised ValueError: Field 'id' expected a number but got 'not-a-uuid'.
+after-garbage-is: returned False
+after-garbage-enforce: returned None
+register-unknown-document-uuid: recorded a tombstone
+after-doc-is: returned True
+after-doc-enforce: raised PermissionDenied (tombstoned)
+register-empty: raised ValueError: Field 'id' expected a number but got ''.
+after-empty-is: returned False
+after-empty-enforce: returned None
+register-none: recorded a tombstone whose resource_id is the string None
+after-none-is: returned True
+after-none-enforce: raised PermissionDenied
+register-by-pk: recorded resource_id of the integer primary key and set the artifact state to tombstoned
+pk-check-by-pk-is: returned True
+pk-check-by-uuid-is: returned False
+pk-check-by-uuid-enforce: returned None
+model-tombstone-is: returned False
+model-tombstone-enforce: returned None
+register-known-artifact-id: recorded the public artifact id
+after-known-is: returned True
+after-known-enforce: raised PermissionDenied (tombstoned)
+
+A well-formed non-artifact id with no tombstone row stayed allowed. That matches the documented check for a non-artifact resource and is unchanged.
