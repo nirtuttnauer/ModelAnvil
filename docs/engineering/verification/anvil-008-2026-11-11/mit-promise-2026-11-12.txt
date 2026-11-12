@@ -1,0 +1,9 @@
+Label: local
+SHA: 56b35cc (origin/main on 2026-11-12, before the ANVIL-008 macOS commit)
+Date: 2026-11-12
+Command: rg -n -i 'always (be )?(free|mit)|will remain' README.md docs
+Exit: 0
+Output:
+docs/engineering/verification/anvil-008-2026-11-11/report.md:105:<the search command quoted in the 11 November report>
+docs/engineering/verification/anvil-008-2026-11-11/mit-promise.txt:4:<the search command quoted in the 11 November record>
+Both matches are the search command itself, quoted inside this evidence folder. No line in README.md or docs promises that present or future features stay MIT.

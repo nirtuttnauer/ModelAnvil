@@ -1,0 +1,40 @@
+group	distribution	version	file	line	declaration
+requirements.txt	numpy	2.3.3	LICENSE.txt	171	GPL-3.0-or-later WITH GCC-exception-3.1
+requirements.txt	numpy	2.3.3	LICENSE.txt	955	LGPL-2.1-or-later
+requirements.txt	psycopg	3.2.12	licenses/LICENSE.txt	1	file opens with GNU LESSER GENERAL PUBLIC LICENSE
+requirements.txt	psycopg_binary	3.2.12	licenses/LICENSE.txt	1	file opens with GNU LESSER GENERAL PUBLIC LICENSE
+requirements.production.txt	numpy	2.3.3	LICENSE.txt	171	GPL-3.0-or-later WITH GCC-exception-3.1
+requirements.production.txt	numpy	2.3.3	LICENSE.txt	955	LGPL-2.1-or-later
+requirements.production.txt	psycopg	3.2.12	licenses/LICENSE.txt	1	file opens with GNU LESSER GENERAL PUBLIC LICENSE
+requirements.production.txt	psycopg_binary	3.2.12	licenses/LICENSE.txt	1	file opens with GNU LESSER GENERAL PUBLIC LICENSE
+requirements.gpu.txt	numpy	2.3.3	LICENSE.txt	171	GPL-3.0-or-later WITH GCC-exception-3.1
+requirements.gpu.txt	numpy	2.3.3	LICENSE.txt	955	LGPL-2.1-or-later
+requirements.gpu.txt	torch	2.13.0	licenses/third_party/kineto/libkineto/third_party/dynolog/third_party/cpr/test/LICENSE	1	file opens with GNU GENERAL PUBLIC LICENSE
+requirements.inference.txt	numpy	2.3.3	LICENSE.txt	171	GPL-3.0-or-later WITH GCC-exception-3.1
+requirements.inference.txt	numpy	2.3.3	LICENSE.txt	955	LGPL-2.1-or-later
+requirements.inference.txt	torch	2.13.0	licenses/third_party/kineto/libkineto/third_party/dynolog/third_party/cpr/test/LICENSE	1	file opens with GNU GENERAL PUBLIC LICENSE
+requirements.embeddings.txt	numpy	2.3.3	LICENSE.txt	171	GPL-3.0-or-later WITH GCC-exception-3.1
+requirements.embeddings.txt	numpy	2.3.3	LICENSE.txt	955	LGPL-2.1-or-later
+requirements.embeddings.txt	scipy	1.18.1	LICENSE.txt	136	GPL-3.0-or-later WITH GCC-exception-3.1
+requirements.embeddings.txt	scipy	1.18.1	LICENSE.txt	921	LGPL-2.1-or-later
+requirements.embeddings.txt	torch	2.13.0	licenses/third_party/kineto/libkineto/third_party/dynolog/third_party/cpr/test/LICENSE	1	file opens with GNU GENERAL PUBLIC LICENSE
+requirements.audio.txt	numpy	2.3.3	LICENSE.txt	171	GPL-3.0-or-later WITH GCC-exception-3.1
+requirements.audio.txt	numpy	2.3.3	LICENSE.txt	955	LGPL-2.1-or-later
+requirements.audio.txt	scipy	1.18.1	LICENSE.txt	136	GPL-3.0-or-later WITH GCC-exception-3.1
+requirements.audio.txt	scipy	1.18.1	LICENSE.txt	921	LGPL-2.1-or-later
+requirements.audio.txt	torch	2.13.0	licenses/third_party/kineto/libkineto/third_party/dynolog/third_party/cpr/test/LICENSE	1	file opens with GNU GENERAL PUBLIC LICENSE
+requirements.vision.txt	numpy	2.3.3	LICENSE.txt	171	GPL-3.0-or-later WITH GCC-exception-3.1
+requirements.vision.txt	numpy	2.3.3	LICENSE.txt	955	LGPL-2.1-or-later
+requirements.vision.txt	torch	2.13.0	licenses/third_party/kineto/libkineto/third_party/dynolog/third_party/cpr/test/LICENSE	1	file opens with GNU GENERAL PUBLIC LICENSE
+requirements.tools.txt	numpy	2.5.4	licenses/LICENSE.txt	135	GPL-3.0-or-later WITH GCC-exception-3.1
+requirements.tools.txt	numpy	2.5.4	licenses/LICENSE.txt	919	LGPL-2.1-or-later
+requirements.tools.txt	torch	2.13.0	licenses/third_party/kineto/libkineto/third_party/dynolog/third_party/cpr/test/LICENSE	1	file opens with GNU GENERAL PUBLIC LICENSE
+requirements.selfhost.lock.txt	numpy	2.3.3	LICENSE.txt	171	GPL-3.0-or-later WITH GCC-exception-3.1
+requirements.selfhost.lock.txt	numpy	2.3.3	LICENSE.txt	955	LGPL-2.1-or-later
+requirements.selfhost.lock.txt	psycopg	3.2.12	licenses/LICENSE.txt	1	file opens with GNU LESSER GENERAL PUBLIC LICENSE
+requirements.selfhost.lock.txt	psycopg_binary	3.2.12	licenses/LICENSE.txt	1	file opens with GNU LESSER GENERAL PUBLIC LICENSE
+requirements.specialists.txt	numpy	2.5.4	licenses/LICENSE.txt	135	GPL-3.0-or-later WITH GCC-exception-3.1
+requirements.specialists.txt	numpy	2.5.4	licenses/LICENSE.txt	919	LGPL-2.1-or-later
+requirements.specialists.txt	scipy	1.18.1	LICENSE.txt	136	GPL-3.0-or-later WITH GCC-exception-3.1
+requirements.specialists.txt	scipy	1.18.1	LICENSE.txt	921	LGPL-2.1-or-later
+requirements.specialists.txt	torch	2.13.0	licenses/third_party/kineto/libkineto/third_party/dynolog/third_party/cpr/test/LICENSE	1	file opens with GNU GENERAL PUBLIC LICENSE
