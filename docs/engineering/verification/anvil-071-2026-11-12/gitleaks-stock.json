@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "1cceb099cc6f4bd0b58ddc3514f27b1c996255ef",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-11-12T14:54:30+00:00",
+  "machine": {
+    "hostname": "cursor",
+    "os": "Linux-6.12.113+-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "python": "3.12.3",
+    "node": "v24.22.3"
+  },
+  "command": "/tmp/tools/gitleaks dir /tmp/anvil071-archive --config /tmp/gitleaks-stock.toml --redact --no-banner --report-path /tmp/anvil071-gitleaks-stock-raw.json --report-format json",
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "2:54PM INF scanned ~28210280 bytes (28.21 MB) in 1.02s\n2:54PM WRN leaks found: 370\n",
+  "runs": [
+    {
+      "name": "command",
+      "command": "/tmp/tools/gitleaks dir /tmp/anvil071-archive --config /tmp/gitleaks-stock.toml --redact --no-banner --report-path /tmp/anvil071-gitleaks-stock-raw.json --report-format json",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}

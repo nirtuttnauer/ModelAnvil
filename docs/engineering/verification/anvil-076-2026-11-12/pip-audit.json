@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "5a794b2120eb23fca2b0fc369abd054f184c8618",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-11-12T14:56:00+00:00",
+  "machine": {
+    "hostname": "cursor",
+    "os": "Linux-6.12.113+-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "python": "3.12.3",
+    "node": "v24.22.3"
+  },
+  "command": "bash -lc '\nset -u\nstatus=0\nfor f in requirements*.txt; do\n  echo === $f ===\n  .venv/bin/pip-audit --progress-spinner=off -r \"$f\"\n  code=$?\n  echo EXIT $f $code\n  if [ $code -ne 0 ]; then status=$code; fi\ndone\nexit $status\n'",
+  "exit_code": 0,
+  "stdout": "=== requirements.audio.txt ===\nEXIT requirements.audio.txt 0\n=== requirements.documents.txt ===\nEXIT requirements.documents.txt 0\n=== requirements.embeddings.txt ===\nEXIT requirements.embeddings.txt 0\n=== requirements.gpu.txt ===\nEXIT requirements.gpu.txt 0\n=== requirements.inference.txt ===\nEXIT requirements.inference.txt 0\n=== requirements.production.txt ===\nEXIT requirements.production.txt 0\n=== requirements.selfhost.lock.txt ===\nEXIT requirements.selfhost.lock.txt 0\n=== requirements.specialists.txt ===\nEXIT requirements.specialists.txt 0\n=== requirements.tools.txt ===\nEXIT requirements.tools.txt 0\n=== requirements.txt ===\nEXIT requirements.txt 0\n=== requirements.vision.txt ===\nEXIT requirements.vision.txt 0\n",
+  "stderr": "No known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\n",
+  "runs": [
+    {
+      "name": "command",
+      "command": "bash -lc '\nset -u\nstatus=0\nfor f in requirements*.txt; do\n  echo === $f ===\n  .venv/bin/pip-audit --progress-spinner=off -r \"$f\"\n  code=$?\n  echo EXIT $f $code\n  if [ $code -ne 0 ]; then status=$code; fi\ndone\nexit $status\n'",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}

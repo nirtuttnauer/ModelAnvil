@@ -49,6 +49,31 @@ class PremergeTests(unittest.TestCase):
         run["passed"] = 4
         self.assertIsNone(premerge.runtime_problem([run]))
 
+    def test_linux_host_excludes_only_pg(self):
+        self.assertEqual(
+            premerge.backend_command("python", "linux"),
+            ["python", "manage.py", "test", "--noinput", "--exclude-tag=pg", "-v", "1"],
+        )
+
+    def test_other_hosts_also_exclude_linux_only_tests(self):
+        command = premerge.backend_command("python", "darwin")
+        self.assertIn("--exclude-tag=pg", command)
+        self.assertIn("--exclude-tag=linux", command)
+        self.assertEqual(premerge.host_excluded_tags("darwin"), ["pg", "linux"])
+
+    def test_stale_pg_reports_are_removed_before_a_second_run(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            env = premerge.pg_test_env({}, Path(tmp))
+            Path(env["MODELANVIL_RAG_GENERATION_REPORT"]).write_text("{}")
+            Path(env["MODELANVIL_POSITION_REPORT"]).write_text("{}")
+            keep = Path(tmp) / "rag-decoder"
+            keep.mkdir()
+            removed = premerge.clear_pg_reports(env)
+            self.assertEqual(sorted(removed), ["evidence-position-report.json", "rag-generation-report.json"])
+            self.assertFalse(Path(env["MODELANVIL_RAG_GENERATION_REPORT"]).exists())
+            self.assertTrue(keep.is_dir())
+            self.assertEqual(premerge.clear_pg_reports(env), [])
+
     def test_exclusions_match_ids(self):
         run = premerge.zero_run("backend", "manage.py test --exclude-tag=pg")
         premerge.apply_exclusions(run, ["modelanvil.rag.One", "modelanvil.rag.Two"])
@@ -75,6 +100,8 @@ class PremergeTests(unittest.TestCase):
         self.assertIn("RABBITMQ_URL=", display)
 
     def test_node_20_process_fails_before_any_suite(self):
+        record = ROOT / "docs" / "engineering" / "verification" / "anvil-009-2026-10-29" / "premerge.json"
+        before = record.read_bytes() if record.exists() else None
         with tempfile.TemporaryDirectory() as tmp:
             bindir = Path(tmp) / "bin"
             bindir.mkdir()
@@ -96,7 +123,8 @@ class PremergeTests(unittest.TestCase):
         self.assertIn("v20.19.0", completed.stderr)
         self.assertNotIn("Ran ", completed.stdout)
         self.assertNotIn("docker", completed.stdout.lower())
-        self.assertFalse((ROOT / "docs" / "engineering" / "verification" / "anvil-009-2026-10-29" / "premerge.json").exists())
+        # The default record path is committed (ANVIL-009); a rejected run must not rewrite it.
+        self.assertEqual(record.read_bytes() if record.exists() else None, before)
 
     def test_pins_match_ci_images(self):
         self.assertEqual((ROOT / ".nvmrc").read_text().strip(), "24")

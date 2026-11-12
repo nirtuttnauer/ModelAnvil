@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "cc1ff5db9c47b567d2ca1cf674ebcd5cd0abd8c4",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-11-12T14:57:02+00:00",
+  "machine": {
+    "hostname": "cursor",
+    "os": "Linux-6.12.113+-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "python": "3.12.3",
+    "node": "v24.22.3"
+  },
+  "command": "/tmp/anvil073/pip-audit.sh",
+  "exit_code": 0,
+  "stdout": "== pip-audit -r requirements.audio.txt ==\nexit 0\n== pip-audit -r requirements.documents.txt ==\nexit 0\n== pip-audit -r requirements.embeddings.txt ==\nexit 0\n== pip-audit -r requirements.gpu.txt ==\nexit 0\n== pip-audit -r requirements.inference.txt ==\nexit 0\n== pip-audit -r requirements.production.txt ==\nexit 0\n== pip-audit -r requirements.selfhost.lock.txt ==\nexit 0\n== pip-audit -r requirements.specialists.txt ==\nexit 0\n== pip-audit -r requirements.tools.txt ==\nexit 0\n== pip-audit -r requirements.txt ==\nexit 0\n== pip-audit -r requirements.vision.txt ==\nexit 0\n",
+  "stderr": "No known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\n",
+  "runs": [
+    {
+      "name": "command",
+      "command": "/tmp/anvil073/pip-audit.sh",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}

@@ -158,8 +158,19 @@ def _base_env() -> dict[str, str]:
     return env
 
 
-def backend_command(python: str) -> list[str]:
-    return [python, "manage.py", "test", "--noinput", "--exclude-tag=pg", "-v", "1"]
+# Tests tagged `linux` check Linux kernel behavior. A host that is not Linux
+# excludes them before the run, as it excludes `pg`; Linux hosts and CI run them.
+PLATFORM_TAG = "linux"
+
+
+def host_excluded_tags(platform: str | None = None) -> list[str]:
+    platform = sys.platform if platform is None else platform
+    return ["pg"] if platform.startswith("linux") else ["pg", PLATFORM_TAG]
+
+
+def backend_command(python: str, platform: str | None = None) -> list[str]:
+    excludes = [f"--exclude-tag={tag}" for tag in host_excluded_tags(platform)]
+    return [python, "manage.py", "test", "--noinput", *excludes, "-v", "1"]
 
 
 def frontend_commands() -> list[list[str]]:
@@ -198,6 +209,17 @@ def pg_test_env(base: dict[str, str], cache_root: Path) -> dict[str, str]:
         }
     )
     return env
+
+
+def clear_pg_reports(env: dict[str, str]) -> list[str]:
+    """Remove the previous run's pg reports; the tests create them with open('x')."""
+    removed = []
+    for key in ("MODELANVIL_RAG_GENERATION_REPORT", "MODELANVIL_POSITION_REPORT", "MODELANVIL_RETRIEVAL_REPORT"):
+        path = Path(env[key])
+        if path.is_file():
+            path.unlink()
+            removed.append(path.name)
+    return removed
 
 
 def pg_display_command(python: str, cache_root: Path) -> str:
@@ -258,7 +280,7 @@ def git_stdout(*args: str) -> str:
     return completed.stdout
 
 
-def excluded_pg_ids() -> list[str]:
+def excluded_backend_ids(tags: tuple[str, ...] = ("pg",)) -> list[str]:
     keys = ("DATABASE_ENGINE", "DATABASE_NAME", "DATABASE_TEST_NAME", "DATABASE_PASSWORD")
     saved = {key: os.environ.get(key) for key in keys}
     os.environ.pop("DATABASE_ENGINE", None)
@@ -266,7 +288,10 @@ def excluded_pg_ids() -> list[str]:
     os.environ["DATABASE_NAME"] = "/tmp/modelanvil-premerge/discover.sqlite3"
     os.environ["DATABASE_TEST_NAME"] = "/tmp/modelanvil-premerge/discover-test.sqlite3"
     try:
-        return tagged_test_ids(ROOT, tag="pg")
+        ids: list[str] = []
+        for tag in tags:
+            ids.extend(test_id for test_id in tagged_test_ids(ROOT, tag=tag) if test_id not in ids)
+        return ids
     finally:
         for key, value in saved.items():
             if value is None:
@@ -369,7 +394,7 @@ def execute(python: str, output: Path) -> int:
     sections.append(_section(backend_display, text))
     parsed = _rename(_django_only(parse_runs(text, backend_display)), "backend", backend_display)
     if parsed:
-        excluded = excluded_pg_ids()
+        excluded = excluded_backend_ids(tuple(host_excluded_tags()))
         for run in parsed:
             apply_exclusions(run, excluded)
         runs.extend(parsed)
@@ -404,6 +429,10 @@ def execute(python: str, output: Path) -> int:
                 exit_code = code
             else:
                 display = pg_display_command(python, cache_root)
+                # A second premerge on the same host reuses the cache directory.
+                removed = clear_pg_reports(pg_test_env(env, cache_root))
+                if removed:
+                    sections.append(_section("pgvector stale reports removed", "\n".join(removed)))
                 print(_section("pgvector", display), flush=True)
                 code, stdout, stderr = run_argv(pg_command(python), pg_test_env(env, cache_root), ROOT)
                 text = _combine(stdout, stderr)

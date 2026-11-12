@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "4dbda069a066b951fa2a9a2017ec1f2edfd76a19",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-11-12T15:23:44+02:00",
+  "machine": {
+    "hostname": "Nirs-MacBook-Pro.local",
+    "os": "macOS-27.0.1-arm64-arm-64bit",
+    "arch": "arm64",
+    "python": "3.12.15",
+    "node": "v24.22.3"
+  },
+  "command": "npm --prefix web ci",
+  "exit_code": 0,
+  "stdout": "\nadded 312 packages, and audited 313 packages in 8s\n\n144 packages are looking for funding\n  run `npm fund` for details\n\n5 vulnerabilities (4 moderate, 1 critical)\n\nTo address issues that do not require attention, run:\n  npm audit fix\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nRun `npm audit` for details.\n",
+  "stderr": "npm warn install-scripts 2 packages have install scripts not yet covered by allowScripts:\nnpm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)\nnpm warn install-scripts   fsevents@2.3.3 (install: (install scripts present))\nnpm warn install-scripts\nnpm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.\n",
+  "runs": [
+    {
+      "name": "command",
+      "command": "npm --prefix web ci",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}
