@@ -2,7 +2,7 @@
 
 Label: `local`. Machine: `cursor`, Linux-6.12.113+-x86_64-with-glibc2.39, Python 3.12.3, Node v24.22.3. Records use `docs/engineering/schemas/local-evidence.v1.json`. Test, check, audit, and gitleaks records were written by `.venv/bin/python scripts/local_evidence.py` or `scripts/premerge.py` from a clean `git status --porcelain`.
 
-The measured tree is `98199f3cd845b6a12d09d3a217e5a99edb31de75`. This report is the following docs-only commit. The commands below ran at `98199f3cd845b6a12d09d3a217e5a99edb31de75`. Adding these files changes the PR head by one commit.
+The measured tree is `98199f3cd845b6a12d09d3a217e5a99edb31de75`. The commands below ran at that SHA. The evidence commits after it add these records and do not change the tests.
 
 Base: `origin/main` `1d4ecd1a6f1a65f159649350be5c751645e0773a`.
 
@@ -18,7 +18,7 @@ Base: `origin/main` `1d4ecd1a6f1a65f159649350be5c751645e0773a`.
 | `gitleaks-detect.json` | 2026-11-12T14:45:13+00:00 | `gitleaks detect --redact --log-opts=--all` | 1 | 0 | 0 | 0 | 0 |
 | `gitleaks-detect-stock.json` | 2026-11-12T14:46:34+00:00 | `gitleaks detect --redact --log-opts=--all` with the upstream 8.30.1 config | 1 | 0 | 0 | 0 | 0 |
 
-`premerge.json` was produced by this command, with Node 24.22.3 first on `PATH`:
+`premerge.json` was produced by this command, with Node 24.22.3 at the front of `PATH`:
 
 ```sh
 .venv/bin/python scripts/premerge.py --output /tmp/anvil055-evidence/premerge.json
