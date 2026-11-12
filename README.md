@@ -35,6 +35,16 @@ The [main integration inventory](docs/engineering/integration-inventory.md) maps
 Source measurement: `04916ee723f894ab0b3cec50b2ccc43596bceae0`. [Complete report and reproduction limits](docs/engineering/verification/task73-end-to-end-2026-10-23/report.md). This table is generated only from its saved JSON.
 <!-- rag-results:end -->
 
+<!-- rag-expanded-results:start -->
+| Small correctness check (ANVIL-020), nDCG@5 | Development, 531 queries | Held-out, 300 BEIR SciFact test queries |
+| --- | --- | --- |
+| MiniLM relevance | 0.6507 | 0.6243 |
+| Seeded random-vector baseline | 0.0000 | 0.0062 |
+| SQL full-text baseline | 0.0132 | 0.0154 |
+
+Full 5,183-document SciFact corpus in five production-limit shards; a small correctness check, not a benchmark. Thresholds were frozen from development in `44e7a9e` before the held-out run. The size awaits QA sign-off. [Report and limits](docs/engineering/verification/anvil-020-2026-11-12/report.md).
+<!-- rag-expanded-results:end -->
+
 ## Current capabilities
 
 | Area | Implemented scope | Guide |
