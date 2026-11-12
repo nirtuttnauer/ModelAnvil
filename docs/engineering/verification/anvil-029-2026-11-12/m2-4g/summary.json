@@ -1,0 +1,98 @@
+{
+  "directory": "m2-4g",
+  "exit_code": "0",
+  "time_v": {
+    "command": "\"python3 /qual/qualify_selfhost.py --release /release --output /work/qualification\"",
+    "user_seconds": "2.21",
+    "system_seconds": "1.21",
+    "cpu_percent": "3%",
+    "elapsed": "1:42.84",
+    "max_rss_kbytes": "52184",
+    "major_faults": "0",
+    "exit_status": "0",
+    "elapsed_seconds": 102.84,
+    "max_rss_bytes": 53436416,
+    "max_rss_gib": 0.05
+  },
+  "cgroup_memory_peak_bytes": 3819618304,
+  "cgroup_memory_peak_gib": 3.557,
+  "memory.peak-after-engine-start": 79159296,
+  "engine-init.memory.peak": 2947780608,
+  "cgroup_memory_events": {
+    "low": 0,
+    "high": 0,
+    "max": 0,
+    "oom": 0,
+    "oom_kill": 0,
+    "oom_group_kill": 0,
+    "sock_throttled": 0
+  },
+  "docker_state": {
+    "ExitCode": 0,
+    "OOMKilled": false,
+    "StartedAt": "2026-11-12T16:10:31.334238552Z",
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Error": ""
+  },
+  "samples": 51,
+  "sampled_max_memory_current_bytes": 3726721024,
+  "sampled_max_anon_bytes": 796696576,
+  "sampled_max_anon_gib": 0.742,
+  "sampled_engine_init_memory_peak_bytes": 2947780608,
+  "inner_containers": {
+    "/modelanvil-local-ffcb8cea07c0-db-1": {
+      "memory_peak_bytes": 120455168,
+      "max_anon_bytes": 9449472
+    },
+    "/modelanvil-local-ffcb8cea07c0-migrate-run-ecb57d4edd94": {
+      "memory_peak_bytes": 107315200,
+      "max_anon_bytes": 100270080
+    },
+    "/modelanvil-local-ffcb8cea07c0-migrate-run-10c31b69d5ec": {
+      "memory_peak_bytes": 41160704,
+      "max_anon_bytes": 37597184
+    },
+    "/modelanvil-local-ffcb8cea07c0-api-1": {
+      "memory_peak_bytes": 207290368,
+      "max_anon_bytes": 193388544
+    },
+    "/modelanvil-local-ffcb8cea07c0-migrate-run-999fd9fe5d4d": {
+      "memory_peak_bytes": 30760960,
+      "max_anon_bytes": 27811840
+    },
+    "/modelanvil-local-ffcb8cea07c0-web-1": {
+      "memory_peak_bytes": 24760320,
+      "max_anon_bytes": 20398080
+    },
+    "/modelanvil-local-ffcb8cea07c0-reconciler-1": {
+      "memory_peak_bytes": 74612736,
+      "max_anon_bytes": 70135808
+    },
+    "/modelanvil-local-ffcb8cea07c0-worker-1": {
+      "memory_peak_bytes": 226086912,
+      "max_anon_bytes": 206782464
+    },
+    "/modelanvil-local-917f570abcbe-db-1": {
+      "memory_peak_bytes": 118091776,
+      "max_anon_bytes": 7966720
+    },
+    "/modelanvil-local-917f570abcbe-api-1": {
+      "memory_peak_bytes": 188133376,
+      "max_anon_bytes": 164110336
+    },
+    "/modelanvil-local-917f570abcbe-web-1": {
+      "memory_peak_bytes": 24940544,
+      "max_anon_bytes": 20348928
+    },
+    "/modelanvil-local-917f570abcbe-reconciler-1": {
+      "memory_peak_bytes": 74412032,
+      "max_anon_bytes": 70127616
+    },
+    "/modelanvil-local-917f570abcbe-worker-1": {
+      "memory_peak_bytes": 74452992,
+      "max_anon_bytes": 69693440
+    }
+  },
+  "docker_stats_max_usage_bytes": 1056964608,
+  "docker_stats_max_usage_gib": 0.984
+}

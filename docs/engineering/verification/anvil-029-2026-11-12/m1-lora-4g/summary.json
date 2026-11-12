@@ -1,0 +1,42 @@
+{
+  "directory": "m1-lora-4g",
+  "exit_code": "0",
+  "time_v": {
+    "command": "\"sh scripts/golden_path.sh 56b35ccca6ed3d3a2aca0c28fbce1dabaa445be7 --steps 3\"",
+    "user_seconds": "41.39",
+    "system_seconds": "7.48",
+    "cpu_percent": "49%",
+    "elapsed": "1:38.77",
+    "max_rss_kbytes": "1480736",
+    "major_faults": "74",
+    "exit_status": "0",
+    "elapsed_seconds": 98.77,
+    "max_rss_bytes": 1516273664,
+    "max_rss_gib": 1.412
+  },
+  "cgroup_memory_peak_bytes": 4294967296,
+  "cgroup_memory_peak_gib": 4.0,
+  "memory.peak-after-apt": 283107328,
+  "cgroup_memory_events": {
+    "low": 0,
+    "high": 0,
+    "max": 698,
+    "oom": 0,
+    "oom_kill": 0,
+    "oom_group_kill": 0,
+    "sock_throttled": 2
+  },
+  "docker_state": {
+    "ExitCode": 0,
+    "OOMKilled": false,
+    "StartedAt": "2026-11-12T15:54:44.486165711Z",
+    "FinishedAt": "2026-11-12T15:56:36.522544096Z",
+    "Error": ""
+  },
+  "samples": 112,
+  "sampled_max_memory_current_bytes": 4294909952,
+  "sampled_max_anon_bytes": 2417922048,
+  "sampled_max_anon_gib": 2.252,
+  "docker_stats_max_usage_bytes": 2465311227,
+  "docker_stats_max_usage_gib": 2.296
+}
