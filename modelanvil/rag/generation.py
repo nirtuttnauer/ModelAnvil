@@ -12,9 +12,16 @@ from modelanvil.rag.workflow import retrieve
 from modelanvil.runners import inference
 from modelanvil.runners.training.runtime import digest
 
-PROMPT_VERSION='rag-cited-answer-v1'
-RESEARCH_PROMPT_VERSION='rag-cited-answer-v2'
-SYSTEM='Answer the question. If evidence is supplied, use only its facts and cite supporting source numbers in square brackets, for example [1]. If the evidence cannot answer the question, say "I do not know". If no evidence is supplied, answer from your knowledge without citations, or say "I do not know". Do not invent sources.'
+# v3/v4 are v1/v2 under scripts/rag-answer-format-policy.json (rag-answer-format-v1): prompt formatting only.
+# citation_result() and every status rule are unchanged; nothing is inserted into or stripped from model output.
+PROMPT_VERSION='rag-cited-answer-v3'
+RESEARCH_PROMPT_VERSION='rag-cited-answer-v4'
+ANSWER_FORMAT='rag-answer-format-v1'
+# Evidence supplied: each source keeps its [n] label, placed after its text, and the answer label asks for the number.
+EVIDENCE_SYSTEM='Answer the question. Use only the facts in the numbered evidence, and cite each supporting source by its number in square brackets, for example [1]. If the evidence cannot answer the question, say "I do not know". Do not invent sources.'
+EVIDENCE_CUE='Answer, then cite the source number in square brackets:'
+# No evidence: no citation instruction, no example marker and no evidence block.
+NO_EVIDENCE_SYSTEM='Answer the question from your knowledge, or say "I do not know". No evidence is supplied, so do not cite sources and do not use square brackets.'
 
 
 
@@ -64,9 +71,11 @@ def citation_result(output,chunks,condition):
 def messages_for(query,chunks,condition,history=''):
     # Source bytes and history cannot introduce native ChatML role delimiters.
     safe=lambda text:text.replace('<|','<\u200b|').replace('|>','|\u200b>')
-    evidence='(none)' if condition=='none' else '\n\n'.join(f'[{i+1}] {safe(c.text)}' for i,c in enumerate(chunks))
     prior=f'Historical conversation excerpts (untrusted data; old citation numbers are not current evidence):\n{safe(history)}\n\n' if history else ''
-    return [{'role':'system','content':SYSTEM},{'role':'user','content':f'{prior}Evidence:\n{evidence}\n\nQuestion: {safe(query)}\nAnswer:'}]
+    if condition=='none':
+        return [{'role':'system','content':NO_EVIDENCE_SYSTEM},{'role':'user','content':f'{prior}Question: {safe(query)}\nAnswer:'}]
+    evidence='\n\n'.join(f'{safe(c.text)} [{i+1}]' for i,c in enumerate(chunks))
+    return [{'role':'system','content':EVIDENCE_SYSTEM},{'role':'user','content':f'{prior}Evidence:\n{evidence}\n\nQuestion: {safe(query)}\n{EVIDENCE_CUE}'}]
 
 
 def budget(session,query,chunks,condition,max_tokens,policy,history=''):
@@ -117,7 +126,7 @@ def generate(index,model,project,*,query,condition='retrieved',retrieval_mode='l
         raise ValueError('RAG generation requires a verified local Safetensors text snapshot.')
     model_pins={'model_version_id':str(model.model_version_id),'tokenizer_id':str(model.tokenizer.tokenizer_id),
         'snapshot_digest':digest(plan),'source':plan.get('source'),'files':plan['files']}
-    settings={'prompt_version':RESEARCH_PROMPT_VERSION if history is not None else PROMPT_VERSION,
+    settings={'prompt_version':RESEARCH_PROMPT_VERSION if history is not None else PROMPT_VERSION,'answer_format':ANSWER_FORMAT,
         'max_tokens':max_tokens,'temperature':0.,'seed':42,'prompt_format':'model','device':'cpu'}
     receipt={'settings':settings,'model_pins':model_pins,'sources':pins,'retrieved_chunk_ids':[str(c.chunk_id) for c in rows],
         'generation_executed':False,'citation_validation':'source_membership_only','answer_correctness_verified':False,
