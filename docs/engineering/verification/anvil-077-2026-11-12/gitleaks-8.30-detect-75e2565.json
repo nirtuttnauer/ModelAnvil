@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "8b7e47e1dd6da1281a869d4f49118175e4265d14",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-11-12T14:45:07+00:00",
+  "machine": {
+    "hostname": "cursor",
+    "os": "Linux-6.12.113+-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "python": "3.12.3",
+    "node": "v24.22.3"
+  },
+  "command": "/tmp/tools/gitleaks-8.30.1 detect --source . --config /tmp/tools/gitleaks-8.30.1.toml --redact --no-banner '--log-opts=75e2565a83b4b0cf96aebe793a9da6823e67d165^-1'",
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "2:45PM INF 1 commits scanned.\n2:45PM INF scanned ~376931 bytes (376.93 KB) in 197ms\n2:45PM WRN leaks found: 370\n",
+  "runs": [
+    {
+      "name": "command",
+      "command": "/tmp/tools/gitleaks-8.30.1 detect --source . --config /tmp/tools/gitleaks-8.30.1.toml --redact --no-banner '--log-opts=75e2565a83b4b0cf96aebe793a9da6823e67d165^-1'",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}
