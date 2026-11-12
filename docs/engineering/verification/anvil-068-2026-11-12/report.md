@@ -6,6 +6,12 @@ The measured tree is `80b063d08c4383407efc47b96c4552093d05cb8d`. This report is 
 
 Base: `origin/main` `1d4ecd1a6f1a65f159649350be5c751645e0773a`.
 
+## Re-run at 417480d
+
+The CI backend job on `ed30e3a` failed: `test_result_does_not_claim_the_model_is_ready` imports `gguf`, which is pinned only in `requirements.inference.txt`, and CI installs only `requirements.txt`. Commit `417480d6904ae5a0037e5260924a40b6afde1b59` adds the `skipUnless(importlib.util.find_spec('gguf'), ...)` guard that `test_gguf_validation.py` already uses. Nothing else changed after `80b063d`.
+
+The gates were re-run at `417480d` on a Mac, with its records in `mac-417480d/` and the write-up in `mac-417480d/gates.md`. `make premerge` exited 0: backend 1288 passed (`--exclude-tag=pg --exclude-tag=linux`), frontend 249, PostgreSQL 29, with no skip, xfail, or timeout and no fixture test left uncollected. The guarded test ran there because that environment has `gguf`. `make check` and `pip-audit` exited 0. Stock gitleaks 8.28.0 `dir` found 0; `detect` found 411, every fingerprint already on `reviews/ANVIL-017-gitleaks-history.md`, and none on `417480d`. The Linux records below remain the record for `80b063d` and for the one `linux`-tagged test the Mac excludes.
+
 ## Records
 
 | File | Recorded at | Command | Exit | Collected | Excluded by tag | Passed | Skipped / xfail / timeout |
@@ -73,4 +79,4 @@ The premerge backend command is `manage.py test --noinput --exclude-tag=pg`. `pr
 
 ## Result
 
-Invalid GGUF bytes are rejected before a child process. The inspection result does not claim the model is ready. `make premerge` exited 0 with 1288, 249, and 28 passed and no runtime skip, xfail, or timeout. `pip-audit` exited 0. `gitleaks dir` exited 0. The pull request stays open.
+Invalid GGUF bytes are rejected before a child process. The inspection result does not claim the model is ready. `make premerge` exited 0 with 1288, 249, and 28 passed and no runtime skip, xfail, or timeout. `pip-audit` exited 0. `gitleaks dir` exited 0. At `417480d` on a Mac, `make premerge` exited 0 with 1288, 249, and 29 passed and no runtime skip, xfail, or timeout (`mac-417480d/gates.md`). The pull request stays open.
