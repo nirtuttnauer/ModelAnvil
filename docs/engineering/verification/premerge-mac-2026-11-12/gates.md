@@ -1,8 +1,8 @@
 # Gates, premerge-mac-2026-11-12
 
-Label: `local`. Run on Nir's Mac for the change that lets `make premerge` pass on a host that is not Linux. The tree is `origin/main` `56b35cc` plus this one change, so these records are also the current-main gate run for the merged ANVIL tickets.
+Label: `local`. Run on Nir's Mac for the change that lets `make premerge` pass, and run again, on a host that is not Linux. The tree is `origin/main` `56b35cc` plus this change, so these records are also the current-main gate run for the merged ANVIL tickets.
 
-Measured tree: `77c98bbfeab5c9ecce19568a823bf9433eea9556`. `git status --porcelain` was empty before each command. Records use `docs/engineering/schemas/local-evidence.v1.json`.
+Measured tree: `29d0f7ecd897d20b2e03b26291163900d331d41b`. `git status --porcelain` was empty before each command. Records use `docs/engineering/schemas/local-evidence.v1.json`.
 
 Machine: `Nirs-MacBook-Pro.local`, macOS-27.0.1-arm64-arm-64bit (Apple M5 Pro), Python 3.12.15, Node v24.22.3.
 

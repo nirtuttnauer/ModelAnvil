@@ -1,9 +1,9 @@
 {
   "schema_version": "1",
   "label": "local",
-  "sha": "77c98bbfeab5c9ecce19568a823bf9433eea9556",
+  "sha": "29d0f7ecd897d20b2e03b26291163900d331d41b",
   "git_status_porcelain": "",
-  "recorded_at": "2026-11-12T15:45:10+02:00",
+  "recorded_at": "2026-11-12T16:01:11+02:00",
   "machine": {
     "hostname": "Nirs-MacBook-Pro.local",
     "os": "macOS-27.0.1-arm64-arm-64bit",
@@ -11,14 +11,14 @@
     "python": "3.12.15",
     "node": "v24.22.3"
   },
-  "command": "sh /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/evidence/premerge-mac-77c98bb/raw/audit.sh",
+  "command": "sh /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/evidence/premerge-mac-29d0f7e/raw/audit.sh",
   "exit_code": 0,
   "stdout": "== requirements.audio.txt\nexit 0\n== requirements.documents.txt\nexit 0\n== requirements.embeddings.txt\nexit 0\n== requirements.gpu.txt\nexit 0\n== requirements.inference.txt\nexit 0\n== requirements.production.txt\nexit 0\n== requirements.selfhost.lock.txt\nexit 0\n== requirements.specialists.txt\nexit 0\n== requirements.tools.txt\nexit 0\n== requirements.txt\nexit 0\n== requirements.vision.txt\nexit 0\n",
   "stderr": "No known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\nNo known vulnerabilities found\n",
   "runs": [
     {
       "name": "command",
-      "command": "sh /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/evidence/premerge-mac-77c98bb/raw/audit.sh",
+      "command": "sh /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/evidence/premerge-mac-29d0f7e/raw/audit.sh",
       "collected": 0,
       "excluded_by_tag": 0,
       "passed": 0,

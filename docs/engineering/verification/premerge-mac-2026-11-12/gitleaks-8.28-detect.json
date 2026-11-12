@@ -1,9 +1,9 @@
 {
   "schema_version": "1",
   "label": "local",
-  "sha": "77c98bbfeab5c9ecce19568a823bf9433eea9556",
+  "sha": "29d0f7ecd897d20b2e03b26291163900d331d41b",
   "git_status_porcelain": "",
-  "recorded_at": "2026-11-12T15:45:12+02:00",
+  "recorded_at": "2026-11-12T16:01:12+02:00",
   "machine": {
     "hostname": "Nirs-MacBook-Pro.local",
     "os": "macOS-27.0.1-arm64-arm-64bit",
@@ -11,14 +11,14 @@
     "python": "3.12.15",
     "node": "v24.22.3"
   },
-  "command": "/private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/tools/gl828/gitleaks detect --source . '--log-opts=HEAD --remotes=origin --tags' --config /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/tools/stock-8.28.0.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/evidence/premerge-mac-77c98bb/raw/gl828-detect.json",
+  "command": "/private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/tools/gl828/gitleaks detect --source . '--log-opts=HEAD --remotes=origin --tags' --config /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/tools/stock-8.28.0.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/evidence/premerge-mac-29d0f7e/raw/gl828-detect.json",
   "exit_code": 1,
   "stdout": "",
-  "stderr": "\u001b[90m3:45PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1m219 commits scanned.\u001b[0m\n\u001b[90m3:45PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1mscanned ~41873775 bytes (41.87 MB) in 609ms\u001b[0m\n\u001b[90m3:45PM\u001b[0m \u001b[33mWRN\u001b[0m \u001b[1mleaks found: 411\u001b[0m\n",
+  "stderr": "\u001b[90m4:01PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1m222 commits scanned.\u001b[0m\n\u001b[90m4:01PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1mscanned ~42316437 bytes (42.32 MB) in 604ms\u001b[0m\n\u001b[90m4:01PM\u001b[0m \u001b[33mWRN\u001b[0m \u001b[1mleaks found: 411\u001b[0m\n",
   "runs": [
     {
       "name": "command",
-      "command": "/private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/tools/gl828/gitleaks detect --source . '--log-opts=HEAD --remotes=origin --tags' --config /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/tools/stock-8.28.0.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/evidence/premerge-mac-77c98bb/raw/gl828-detect.json",
+      "command": "/private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/tools/gl828/gitleaks detect --source . '--log-opts=HEAD --remotes=origin --tags' --config /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/tools/stock-8.28.0.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-hO9v2b/16289924-d1d6-4d91-97ef-4c6c6397c323/scratchpad/evidence/premerge-mac-29d0f7e/raw/gl828-detect.json",
       "collected": 0,
       "excluded_by_tag": 0,
       "passed": 0,
