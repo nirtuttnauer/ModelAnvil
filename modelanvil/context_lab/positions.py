@@ -13,6 +13,9 @@ from modelanvil.runners import inference
 from modelanvil.runners.training.runtime import digest
 
 PROTOCOL=json.loads(Path(__file__).with_name('position-protocol.json').read_text())
+# scripts/rag-answer-format-policy.json (rag-answer-format-v1): the user turn restates the code-only shape
+# at its answer label. Prompt formatting only; normalize() and the exact-match scoring are unchanged.
+ANSWER_FORMAT={'policy':'rag-answer-format-v1','answer_cue':'The answer is a single capitalized word. Write that word only.\nWord:'}
 
 
 def normalize(value):
@@ -25,7 +28,7 @@ def messages(case,position):
     distractors.insert(offset,case['fact'])
     evidence='\n\n'.join(distractors)
     return [{'role':'system','content':PROTOCOL['system']},
-            {'role':'user','content':f"Evidence:\n{evidence}\n\nQuestion: {case['question']}\nAnswer:"}]
+            {'role':'user','content':f"Evidence:\n{evidence}\n\nQuestion: {case['question']}\n{ANSWER_FORMAT['answer_cue']}"}]
 
 
 def summarize(rows):
@@ -79,6 +82,6 @@ def run(model):
     try:source=subprocess.check_output(['git','rev-parse','HEAD'],cwd=Path(__file__).resolve().parents[2],text=True).strip()
     except (OSError,subprocess.CalledProcessError):source=None
     return {'protocol':PROTOCOL,'protocol_digest':digest(PROTOCOL),'fixture_digest':digest(PROTOCOL['cases']),
-        'source_commit':source,'model_pins':before,'model_snapshot_digest':digest(before),
+        'answer_format':ANSWER_FORMAT,'source_commit':source,'model_pins':before,'model_snapshot_digest':digest(before),
         'environment':environment,'runs':rows,'summary':summarize(rows),
         'limits':'Actual CPU runs on a small authored CC0 fixture. Equal fixed decoding is repeated, not resampled. Unique outputs and repeat accuracy variation are measured, including zero variation. This does not qualify arbitrary saved context recipes.'}

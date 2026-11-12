@@ -1,0 +1,53 @@
+# meta.txt (written by measure.sh inside the host test lock)
+lock_acquired_utc=2026-11-12T20:01:20Z
+head=a6a7ab64b82b250583d4b4cd5a1285e08d043441
+git_status_porcelain_begin
+git_status_porcelain_end
+machine=Apple M5 Pro Darwin 27.0.0 arm64 cpus=18 mem=51539607552
+python=3.12.15
+compose_up_exit=0
+pg_run1_start_utc=2026-11-12T20:01:26Z
+pg_run1_exit=0
+pg_run1_end_utc=2026-11-12T20:02:52Z
+pg_run2_start_utc=2026-11-12T20:02:52Z
+pg_run2_exit=0
+pg_run2_end_utc=2026-11-12T20:04:14Z
+targeted_sqlite_exit=0
+compose_down_exit=0
+lock_released_utc=2026-11-12T20:04:19Z
+
+# compose-up.txt
+ Network modelanvil-premerge_default Creating 
+ Network modelanvil-premerge_default Creating 
+ Network modelanvil-premerge_default Created 
+ Network modelanvil-premerge_default Created 
+ Container modelanvil-premerge-db-1 Creating 
+ Container modelanvil-premerge-rabbitmq-1 Creating 
+ Container modelanvil-premerge-rabbitmq-1 Created 
+ Container modelanvil-premerge-db-1 Created 
+ Container modelanvil-premerge-rabbitmq-1 Starting 
+ Container modelanvil-premerge-db-1 Starting 
+ Container modelanvil-premerge-rabbitmq-1 Started 
+ Container modelanvil-premerge-db-1 Started 
+ Container modelanvil-premerge-db-1 Waiting 
+ Container modelanvil-premerge-rabbitmq-1 Waiting 
+ Container modelanvil-premerge-rabbitmq-1 Healthy 
+ Container modelanvil-premerge-db-1 Healthy 
+pgvector/pgvector:pg16
+rabbitmq:4.1-alpine
+
+# compose-down.txt
+ Container modelanvil-premerge-rabbitmq-1 Stopping 
+ Container modelanvil-premerge-db-1 Stopping 
+ Container modelanvil-premerge-db-1 Stopped 
+ Container modelanvil-premerge-db-1 Removing 
+ Container modelanvil-premerge-db-1 Removed 
+ Container modelanvil-premerge-rabbitmq-1 Stopped 
+ Container modelanvil-premerge-rabbitmq-1 Removing 
+ Container modelanvil-premerge-rabbitmq-1 Removed 
+ Network modelanvil-premerge_default Removing 
+ Network modelanvil-premerge_default Removed 
+
+# assembly exit codes (after the lock, HEAD unchanged)
+assemble_run1_vs_04916ee_exit=1
+assemble_run2_vs_run1_exit=0

@@ -1,0 +1,235 @@
+{
+  "schema_version": "modelanvil.selfhost-drill.v1",
+  "started_at": "2026-11-12T20:18:21+00:00",
+  "directory": "$SCRATCH/live/instance",
+  "compose_project": "modelanvil-local-080d2e2d1e3d",
+  "previous_release": {
+    "path": "$RELEASES/0.1.0",
+    "version": "0.1.0",
+    "source_revision": "fe9a94c5d04e82769f87217672b9ef3eb58beb9c"
+  },
+  "release": {
+    "path": "$RELEASES/0.1.1",
+    "version": "0.1.1",
+    "source_revision": "bf7359ea82ee6376d092684a09da32bb1d861a6c"
+  },
+  "prompt": "a tiny",
+  "max_tokens": 8,
+  "steps": [
+    {
+      "step": "backup",
+      "command": [
+        "python3",
+        "$SCRATCH/live/instance/release/modelanvil.py",
+        "backup",
+        "--directory",
+        "$SCRATCH/live/instance",
+        "--output",
+        "$SCRATCH/live/backup"
+      ],
+      "started_at": "2026-11-12T20:18:24+00:00",
+      "seconds": 12.6,
+      "exit_code": 0,
+      "result": {
+        "backup": "$SCRATCH/live/backup",
+        "verified_checksums": 4,
+        "contains_private_identity_and_credentials": true
+      }
+    },
+    {
+      "step": "upgrade",
+      "command": [
+        "python3",
+        "$RELEASES/0.1.1/modelanvil.py",
+        "upgrade",
+        "--directory",
+        "$SCRATCH/live/instance",
+        "--release",
+        "$RELEASES/0.1.1",
+        "--backup",
+        "$SCRATCH/live/upgrade-backup"
+      ],
+      "started_at": "2026-11-12T20:18:39+00:00",
+      "seconds": 14.6,
+      "exit_code": 0,
+      "result": {
+        "origin": "https://localhost:41443",
+        "ready": true,
+        "ca": "$SCRATCH/live/instance/ca.crt",
+        "version": "0.1.1",
+        "production_qualified": false,
+        "previous_release_retained": "$SCRATCH/live/instance/release-history/0.1.0-d8e6a0cb",
+        "backup": "$SCRATCH/live/upgrade-backup"
+      }
+    },
+    {
+      "step": "rollback",
+      "command": [
+        "python3",
+        "$RELEASES/0.1.0/modelanvil.py",
+        "restore",
+        "--directory",
+        "$SCRATCH/live/rollback",
+        "--backup",
+        "$SCRATCH/live/upgrade-backup",
+        "--release",
+        "$RELEASES/0.1.0",
+        "--http-port",
+        "42080",
+        "--https-port",
+        "42443"
+      ],
+      "started_at": "2026-11-12T20:18:57+00:00",
+      "seconds": 13.7,
+      "exit_code": 0,
+      "result": {
+        "origin": "https://localhost:42443",
+        "ready": true,
+        "ca": "$SCRATCH/live/rollback/ca.crt",
+        "version": "0.1.0",
+        "production_qualified": false
+      }
+    }
+  ],
+  "checks": {
+    "after_backup": {
+      "equal": true,
+      "problems": [],
+      "tables": 107,
+      "tables_with_rows": 31,
+      "rows_total": 661,
+      "differing_tables": {},
+      "committed_artifacts": 4,
+      "artifact_files": 4,
+      "models": 2,
+      "pgvector": [
+        "0.8.7",
+        "0.8.7"
+      ],
+      "server_version": [
+        "16.15 (Debian 16.15-1.pgdg12+2)",
+        "16.15 (Debian 16.15-1.pgdg12+2)"
+      ],
+      "health": {
+        "health": {
+          "status": 200,
+          "body": {
+            "status": "ok"
+          }
+        },
+        "ready": {
+          "status": 200,
+          "body": {
+            "status": "ready"
+          }
+        }
+      }
+    },
+    "after_upgrade": {
+      "equal": true,
+      "problems": [],
+      "tables": 107,
+      "tables_with_rows": 31,
+      "rows_total": 661,
+      "differing_tables": {},
+      "committed_artifacts": 4,
+      "artifact_files": 4,
+      "models": 2,
+      "pgvector": [
+        "0.8.7",
+        "0.8.7"
+      ],
+      "server_version": [
+        "16.15 (Debian 16.15-1.pgdg12+2)",
+        "16.15 (Debian 16.15-1.pgdg12+2)"
+      ],
+      "health": {
+        "health": {
+          "status": 200,
+          "body": {
+            "status": "ok"
+          }
+        },
+        "ready": {
+          "status": 200,
+          "body": {
+            "status": "ready"
+          }
+        }
+      }
+    },
+    "after_rollback": {
+      "equal": true,
+      "problems": [],
+      "tables": 107,
+      "tables_with_rows": 31,
+      "rows_total": 661,
+      "differing_tables": {},
+      "committed_artifacts": 4,
+      "artifact_files": 4,
+      "models": 2,
+      "pgvector": [
+        "0.8.7",
+        "0.8.7"
+      ],
+      "server_version": [
+        "16.15 (Debian 16.15-1.pgdg12+2)",
+        "16.15 (Debian 16.15-1.pgdg12+2)"
+      ],
+      "health": {
+        "health": {
+          "status": 200,
+          "body": {
+            "status": "ok"
+          }
+        },
+        "ready": {
+          "status": 200,
+          "body": {
+            "status": "ready"
+          }
+        }
+      }
+    }
+  },
+  "passed": true,
+  "production_qualified": false,
+  "baseline": {
+    "taken_at": "2026-11-12T20:18:21+00:00",
+    "tables": 107,
+    "rows_total": 661,
+    "committed_artifacts": 4,
+    "artifact_files": 4,
+    "models": 2,
+    "server_version": "16.15 (Debian 16.15-1.pgdg12+2)",
+    "pgvector": "0.8.7",
+    "health": {
+      "health": {
+        "status": 200,
+        "body": {
+          "status": "ok"
+        }
+      },
+      "ready": {
+        "status": 200,
+        "body": {
+          "status": "ready"
+        }
+      }
+    }
+  },
+  "backup": {
+    "path": "$SCRATCH/live/backup",
+    "completed_at": "2026-11-12T20:18:29+00:00"
+  },
+  "rollback": {
+    "directory": "$SCRATCH/live/rollback",
+    "backup": "$SCRATCH/live/upgrade-backup",
+    "backup_release": "0.1.0",
+    "backup_completed_at": "2026-11-12T20:18:45+00:00",
+    "restore_started_at": "2026-11-12T20:18:57+00:00",
+    "backup_age_seconds": 12.5,
+    "restore_seconds": 13.7
+  },
+  "finished_at": "2026-11-12T20:19:16+00:00"
+}
