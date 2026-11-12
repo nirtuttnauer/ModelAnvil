@@ -1,0 +1,148 @@
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Excluding test tag(s): pg.
+Found 18 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: acceptance, corsheaders, django_filters, messages, ops, rest_framework, staticfiles
+  Apply all migrations: admin, annotation, artifacts, auth, budgets, compute, contenttypes, context_lab, core, data, identity, jobs, rag, releases, runners, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying identity.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying runners.0001_initial... OK
+  Applying runners.0002_evaluationsuite_evaluationsuiteversion_model_and_more... OK
+  Applying runners.0003_trainingrun_trainingcheckpoint... OK
+  Applying runners.0004_alignmentrun_alignmentcheckpoint... OK
+  Applying identity.0002_team_project_teammembership_projectconfig_and_more... OK
+  Applying identity.0003_alter_projectconfig_created_by... OK
+  Applying identity.0004_apikey_project_projectgrant... OK
+  Applying runners.0005_alignmentrun_project_evaluationrun_project_and_more... OK
+  Applying jobs.0001_initial... OK
+  Applying jobs.0002_outboxevent_last_error... OK
+  Applying jobs.0003_job_desired_action... OK
+  Applying jobs.0004_job_requirements... OK
+  Applying jobs.0005_workercredential... OK
+  Applying jobs.0006_workerpool_result_egress... OK
+  Applying jobs.0007_jobattempt_slots_reserved... OK
+  Applying artifacts.0001_initial... OK
+  Applying artifacts.0002_transfersession... OK
+  Applying artifacts.0003_transfersession_parts_purged_at... OK
+  Applying artifacts.0004_workerartifactgrant... OK
+  Applying artifacts.0005_deletiontombstone... OK
+  Applying artifacts.0006_artifact_project_dataset_project_and_more... OK
+  Applying runners.0006_trainingrun_dataset_revision_trainingrun_job_and_more... OK
+  Applying runners.0007_alignmentrun_execution_pins_and_more... OK
+  Applying runners.0008_model_import... OK
+  Applying runners.0009_chat_conversation... OK
+  Applying runners.0010_inference_request... OK
+  Applying runners.0011_chat_comparison... OK
+  Applying runners.0012_native_qlora_recipe... OK
+  Applying runners.0013_durable_evaluation... OK
+  Applying runners.0014_training_recovery... OK
+  Applying annotation.0001_initial... OK
+  Applying annotation.0002_reviewed_publication... OK
+  Applying annotation.0003_campaign_project_scope... OK
+  Applying runners.0015_arena_review_handoff... OK
+  Applying runners.0016_local_training_host... OK
+  Applying runners.0017_uuid7_identifiers... OK
+  Applying identity.0005_uuid7_identifiers... OK
+  Applying identity.0006_accountaction... OK
+  Applying identity.0007_reviewer_invitations... OK
+  Applying annotation.0004_uuid7_identifiers... OK
+  Applying annotation.0005_real_campaign_cycle... OK
+  Applying annotation.0006_application_feedback... OK
+  Applying artifacts.0007_uuid7_identifiers... OK
+  Applying budgets.0001_initial... OK
+  Applying budgets.0002_reservation_period_start... OK
+  Applying budgets.0003_usageevent_amount_usageevent_currency_raterevision... OK
+  Applying budgets.0004_usageadjustment... OK
+  Applying budgets.0005_uuid7_identifiers... OK
+  Applying compute.0001_initial... OK
+  Applying context_lab.0001_initial... OK
+  Applying context_lab.0002_uuid7_identifiers... OK
+  Applying context_lab.0003_measured_context_pairs... OK
+  Applying context_lab.0004_named_evidence_overflow... OK
+  Applying releases.0001_initial... OK
+  Applying releases.0002_deploymentrevision_project_release_project_and_more... OK
+  Applying releases.0003_local_serving_readiness... OK
+  Applying core.0001_initial... OK
+  Applying core.0002_alter_idempotencykey_unique_together_and_more... OK
+  Applying core.0003_audit_project_scope... OK
+  Applying core.0004_uuid7_identifiers... OK
+  Applying core.0005_local_activation_measurement... OK
+  Applying core.0006_private_data_policy... OK
+  Applying core.0007_external_chat_providers... OK
+  Applying core.0008_mcp_tool_permissions... OK
+  Applying data.0001_initial... OK
+  Applying data.0002_datasource_project_sourcesnapshot_project... OK
+  Applying data.0003_recipe_runs... OK
+  Applying data.0004_uuid7_identifiers... OK
+  Applying jobs.0008_worker_drain... OK
+  Applying jobs.0009_job_project_scope... OK
+  Applying jobs.0010_uuid7_identifiers... OK
+  Applying jobs.0011_exclusive_device_claim... OK
+  Applying runners.0018_add_grpo_algorithm... OK
+  Applying runners.0019_external_chat_providers... OK
+  Applying runners.0020_gpu_alignment_job... OK
+  Applying runners.0021_cpu_alignment_stage_receipts... OK
+  Applying runners.0022_speech_output_head_recipe... OK
+  Applying rag.0001_initial... OK
+  Applying rag.0002_uuid7_identifiers... OK
+  Applying rag.0003_private_data_policy... OK
+  Applying rag.0004_vector_extension... OK
+  Applying rag.0005_retrieval_comparison_provenance... OK
+  Applying rag.0006_token_chunk_recipes... OK
+  Applying rag.0007_real_embedding_spaces... OK
+  Applying rag.0008_retrieval_execution_receipt... OK
+  Applying rag.0009_embedding_candidates_and_protected_exposures... OK
+  Applying rag.0010_actual_grounded_generation... OK
+  Applying rag.0011_researchsession... OK
+  Applying releases.0004_uuid7_identifiers... OK
+  Applying sessions.0001_initial...test_decoder_metadata_label_cannot_replace_exact_file_pins_before_allocation (modelanvil.rag.test_research.ResearchSessionGuards.test_decoder_metadata_label_cannot_replace_exact_file_pins_before_allocation) ... {"timestamp": "2026-11-12T20:04:18+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a1d15c-6e6c-7023-9dac-7ea6b070c1dd", "tenant_id": "01a1d15c-6e28-7f75-a83d-56712d979af0", "http_status": 400}
+ok
+test_deleted_backing_ocr_artifact_is_excluded_by_shared_retrieval_engine (modelanvil.rag.test_research.ResearchSessionGuards.test_deleted_backing_ocr_artifact_is_excluded_by_shared_retrieval_engine) ... ok
+test_offline_research_never_starts_fetcher_and_missing_decoder_never_fabricates_answers (modelanvil.rag.test_research.ResearchSessionGuards.test_offline_research_never_starts_fetcher_and_missing_decoder_never_fabricates_answers) ... {"timestamp": "2026-11-12T20:04:18+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a1d15c-6e8a-7c67-8662-b34fa60e3bb0", "tenant_id": "01a1d15c-6e87-7a3a-979f-0d7ea6d1efbe", "http_status": 400}
+{"timestamp": "2026-11-12T20:04:18+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a1d15c-6e9a-7fff-9cb6-45d2f4484566", "tenant_id": "01a1d15c-6e87-7a3a-979f-0d7ea6d1efbe", "http_status": 400}
+ok
+test_owned_project_isolation_stale_revision_and_unqualified_media (modelanvil.rag.test_research.ResearchSessionGuards.test_owned_project_isolation_stale_revision_and_unqualified_media) ... {"timestamp": "2026-11-12T20:04:18+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a1d15c-6ebc-7223-8a9d-b6bf98a76f35", "tenant_id": "01a1d15c-6eaf-715e-80a2-97b7acacf82b", "http_status": 409}
+{"timestamp": "2026-11-12T20:04:18+0000", "level": "WARNING", "logger": "django.request", "message": "Application event", "request_id": "01a1d15c-6ec0-745a-baa4-a374c9abd3f1", "tenant_id": "01a1d15c-6eaf-715e-80a2-97b7acacf82b", "http_status": 404}
+ok
+test_remove_source_excludes_current_index_and_cached_turns_before_reuse (modelanvil.rag.test_research.ResearchSessionGuards.test_remove_source_excludes_current_index_and_cached_turns_before_reuse) ... ok
+test_accuracy_comes_from_outputs_and_middle_dip_is_not_assumed (modelanvil.context_lab.test_positions.PositionProtocolGuards.test_accuracy_comes_from_outputs_and_middle_dip_is_not_assumed) ... ok
+test_only_fact_position_changes_and_all_evidence_is_retained (modelanvil.context_lab.test_positions.PositionProtocolGuards.test_only_fact_position_changes_and_all_evidence_is_retained) ... ok
+test_citations_are_subsets_and_unanswerable_and_format_refusals_are_distinct (modelanvil.rag.test_generation.GenerationGuards.test_citations_are_subsets_and_unanswerable_and_format_refusals_are_distinct) ... ok
+test_required_question_and_output_reserve_never_silently_truncated (modelanvil.rag.test_generation.GenerationGuards.test_required_question_and_output_reserve_never_silently_truncated) ... ok
+test_actual_extraction_keeps_docx_locations_and_code_bytes_and_refuses_unqualified_media (modelanvil.rag.test_research.ResearchBoundaries.test_actual_extraction_keeps_docx_locations_and_code_bytes_and_refuses_unqualified_media) ... ok
+test_compaction_uses_only_verbatim_prefixes_and_measured_token_budget (modelanvil.rag.test_research.ResearchBoundaries.test_compaction_uses_only_verbatim_prefixes_and_measured_token_budget) ... ok
+test_document_delimiters_cannot_inject_native_roles (modelanvil.rag.test_research.ResearchBoundaries.test_document_delimiters_cannot_inject_native_roles) ... ok
+test_fetch_refuses_private_dns_credentials_http_and_native_page_code (modelanvil.rag.test_research.ResearchBoundaries.test_fetch_refuses_private_dns_credentials_http_and_native_page_code) ... ok
+test_ocr_draft_cannot_be_mistaken_for_a_qualified_extraction (modelanvil.rag.test_research.ResearchBoundaries.test_ocr_draft_cannot_be_mistaken_for_a_qualified_extraction) ... ok
+test_postgresql_search_terms_are_bounded_quoted_and_do_not_and_question_words (modelanvil.rag.test_research.ResearchBoundaries.test_postgresql_search_terms_are_bounded_quoted_and_do_not_and_question_words) ... ok
+test_mixed_source_and_unbound_citations_fail_without_cv_self_certification (modelanvil.rag.test_report.CombinedReportGuards.test_mixed_source_and_unbound_citations_fail_without_cv_self_certification) ... ok
+test_public_table_values_come_from_the_report (modelanvil.rag.test_report.CombinedReportGuards.test_public_table_values_come_from_the_report) ... ok
+test_real_metric_drift_or_schedule_changes_fail_frozen_reproduction (modelanvil.rag.test_report.CombinedReportGuards.test_real_metric_drift_or_schedule_changes_fail_frozen_reproduction) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.206s
+
+OK
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+ OK
+System check identified no issues (0 silenced).
