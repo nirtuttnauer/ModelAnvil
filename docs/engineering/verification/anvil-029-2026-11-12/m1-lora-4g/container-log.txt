@@ -1,0 +1,401 @@
+2026-11-12T15:54:44.543486419Z apt-start 2026-11-12T15:54:44.543125502Z
+2026-11-12T15:54:57.741300842Z measure-start 2026-11-12T15:54:57.741159467Z
+2026-11-12T15:54:57.845659967Z cloning 56b35ccca6ed3d3a2aca0c28fbce1dabaa445be7 into /tmp/modelanvil-golden-99ld6lds
+2026-11-12T15:54:57.848160217Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-12T15:54:57.848166800Z hint: is subject to change. To configure the initial branch name to use in all
+2026-11-12T15:54:57.848168050Z hint: of your new repositories, which will suppress this warning, call:
+2026-11-12T15:54:57.848168550Z hint: 
+2026-11-12T15:54:57.848169175Z hint: 	git config --global init.defaultBranch <name>
+2026-11-12T15:54:57.848170175Z hint: 
+2026-11-12T15:54:57.848170634Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-12T15:54:57.848171092Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-12T15:54:57.848171509Z hint: 
+2026-11-12T15:54:57.848171925Z hint: 	git branch -m <name>
+2026-11-12T15:54:57.848836759Z Initialized empty Git repository in /tmp/modelanvil-golden-99ld6lds/.git/
+2026-11-12T15:55:05.611093304Z From https://github.com/nirtuttnauer/ModelAnvil
+2026-11-12T15:55:05.611104096Z  * branch            56b35ccca6ed3d3a2aca0c28fbce1dabaa445be7 -> FETCH_HEAD
+2026-11-12T15:55:06.080142804Z HEAD is now at 56b35cc Reorder the sidebar around the local workflow (#80)
+2026-11-12T15:55:06.083818721Z + python3.12 -m venv .venv
+2026-11-12T15:55:07.358015930Z + .venv/bin/python -m pip install torch==2.13.0 --index-url https://download.pytorch.org/whl/cpu
+2026-11-12T15:55:07.514978472Z Looking in indexes: https://download.pytorch.org/whl/cpu
+2026-11-12T15:55:07.786037972Z Collecting torch==2.13.0
+2026-11-12T15:55:08.423481555Z   Downloading https://download-r2.pytorch.org/whl/cpu/torch-2.13.0%2Bcpu-cp312-cp312-manylinux_2_28_aarch64.whl.metadata (37 kB)
+2026-11-12T15:55:08.461130555Z Collecting filelock (from torch==2.13.0)
+2026-11-12T15:55:08.781895875Z   Downloading filelock-4.2.4-py3-none-any.whl.metadata (2.0 kB)
+2026-11-12T15:55:08.808011583Z Collecting typing-extensions>=4.10.0 (from torch==2.13.0)
+2026-11-12T15:55:08.872680375Z   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+2026-11-12T15:55:08.956248541Z Collecting setuptools>=77.0.3 (from torch==2.13.0)
+2026-11-12T15:55:08.969188250Z   Downloading https://download.pytorch.org/whl/setuptools-78.1.0-py3-none-any.whl.metadata (6.6 kB)
+2026-11-12T15:55:08.992914416Z Collecting sympy>=1.13.3 (from torch==2.13.0)
+2026-11-12T15:55:09.057773583Z   Downloading sympy-1.14.0-py3-none-any.whl.metadata (12 kB)
+2026-11-12T15:55:09.102617958Z Collecting networkx>=2.5.1 (from torch==2.13.0)
+2026-11-12T15:55:09.166669958Z   Downloading networkx-3.7-py3-none-any.whl.metadata (6.7 kB)
+2026-11-12T15:55:09.200555166Z Collecting jinja2 (from torch==2.13.0)
+2026-11-12T15:55:09.210970125Z   Downloading https://download.pytorch.org/whl/jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+2026-11-12T15:55:09.238527000Z Collecting fsspec>=0.8.5 (from torch==2.13.0)
+2026-11-12T15:55:09.364863166Z   Downloading fsspec-2026.9.0-py3-none-any.whl.metadata (10 kB)
+2026-11-12T15:55:09.405055708Z Collecting mpmath<1.4,>=1.1.0 (from sympy>=1.13.3->torch==2.13.0)
+2026-11-12T15:55:09.469323083Z   Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+2026-11-12T15:55:09.503673375Z Collecting MarkupSafe>=2.0 (from jinja2->torch==2.13.0)
+2026-11-12T15:55:09.514977208Z   Downloading https://download.pytorch.org/whl/markupsafe-3.0.3-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl.metadata (2.7 kB)
+2026-11-12T15:55:09.696509708Z Downloading https://download-r2.pytorch.org/whl/cpu/torch-2.13.0%2Bcpu-cp312-cp312-manylinux_2_28_aarch64.whl (155.0 MB)
+2026-11-12T15:55:20.326006047Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 155.0/155.0 MB 14.6 MB/s eta 0:00:00
+2026-11-12T15:55:20.391693922Z Downloading fsspec-2026.9.0-py3-none-any.whl (221 kB)
+2026-11-12T15:55:20.620496089Z Downloading networkx-3.7-py3-none-any.whl (2.1 MB)
+2026-11-12T15:55:20.893546089Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 9.1 MB/s eta 0:00:00
+2026-11-12T15:55:20.906196964Z Downloading https://download.pytorch.org/whl/setuptools-78.1.0-py3-none-any.whl (1.3 MB)
+2026-11-12T15:55:20.965133589Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 20.3 MB/s eta 0:00:00
+2026-11-12T15:55:21.029748255Z Downloading sympy-1.14.0-py3-none-any.whl (6.3 MB)
+2026-11-12T15:55:21.301898922Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.3/6.3 MB 23.2 MB/s eta 0:00:00
+2026-11-12T15:55:21.423812214Z Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+2026-11-12T15:55:21.494205714Z Downloading filelock-4.2.4-py3-none-any.whl (162 kB)
+2026-11-12T15:55:21.516518589Z Downloading https://download.pytorch.org/whl/jinja2-3.1.6-py3-none-any.whl (134 kB)
+2026-11-12T15:55:21.535943589Z Downloading https://download.pytorch.org/whl/markupsafe-3.0.3-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (24 kB)
+2026-11-12T15:55:21.603703631Z Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+2026-11-12T15:55:21.628552214Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 536.2/536.2 kB 25.4 MB/s eta 0:00:00
+2026-11-12T15:55:21.770139839Z Installing collected packages: mpmath, typing-extensions, sympy, setuptools, networkx, MarkupSafe, fsspec, filelock, jinja2, torch
+2026-11-12T15:55:31.447101510Z Successfully installed MarkupSafe-3.0.3 filelock-4.2.4 fsspec-2026.9.0 jinja2-3.1.6 mpmath-1.3.0 networkx-3.7 setuptools-78.1.0 sympy-1.14.0 torch-2.13.0+cpu typing-extensions-4.16.0
+2026-11-12T15:55:31.973287927Z + .venv/bin/python -m pip install -r requirements.txt -r requirements.gpu.txt
+2026-11-12T15:55:32.509589969Z Collecting Django==5.2.18 (from -r requirements.txt (line 1))
+2026-11-12T15:55:32.709392969Z   Downloading django-5.2.18-py3-none-any.whl.metadata (4.1 kB)
+2026-11-12T15:55:32.809113844Z Collecting djangorestframework==3.18.3 (from -r requirements.txt (line 2))
+2026-11-12T15:55:32.900528594Z   Downloading djangorestframework-3.18.3-py3-none-any.whl.metadata (7.8 kB)
+2026-11-12T15:55:32.990748844Z Collecting django-filter==25.2 (from -r requirements.txt (line 3))
+2026-11-12T15:55:33.055496678Z   Downloading django_filter-25.2-py3-none-any.whl.metadata (5.1 kB)
+2026-11-12T15:55:33.148750261Z Collecting django-cors-headers==4.9.0 (from -r requirements.txt (line 4))
+2026-11-12T15:55:33.211227011Z   Downloading django_cors_headers-4.9.0-py3-none-any.whl.metadata (16 kB)
+2026-11-12T15:55:33.327631970Z Collecting jsonschema==4.25.1 (from -r requirements.txt (line 5))
+2026-11-12T15:55:33.425080470Z   Downloading jsonschema-4.25.1-py3-none-any.whl.metadata (7.6 kB)
+2026-11-12T15:55:33.520610511Z Collecting psycopg==3.2.12 (from psycopg[binary]==3.2.12->-r requirements.txt (line 6))
+2026-11-12T15:55:33.588828095Z   Downloading psycopg-3.2.12-py3-none-any.whl.metadata (4.5 kB)
+2026-11-12T15:55:33.675625845Z Collecting pgvector==0.5.1 (from -r requirements.txt (line 7))
+2026-11-12T15:55:33.757975220Z   Downloading pgvector-0.5.1-py3-none-any.whl.metadata (19 kB)
+2026-11-12T15:55:33.849047345Z Collecting pika==1.3.2 (from -r requirements.txt (line 8))
+2026-11-12T15:55:33.947641637Z   Downloading pika-1.3.2-py3-none-any.whl.metadata (13 kB)
+2026-11-12T15:55:34.266850803Z Collecting boto3==1.43.110 (from -r requirements.txt (line 9))
+2026-11-12T15:55:34.329871637Z   Downloading boto3-1.43.110-py3-none-any.whl.metadata (6.6 kB)
+2026-11-12T15:55:34.507019220Z Collecting pyarrow==26.0.0 (from -r requirements.txt (line 10))
+2026-11-12T15:55:34.570815054Z   Downloading pyarrow-26.0.0-cp312-cp312-manylinux_2_28_aarch64.whl.metadata (3.0 kB)
+2026-11-12T15:55:34.756525637Z Collecting numpy==2.3.3 (from -r requirements.txt (line 11))
+2026-11-12T15:55:34.819855345Z   Downloading numpy-2.3.3-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl.metadata (62 kB)
+2026-11-12T15:55:35.049984470Z Collecting tokenizers==0.22.2 (from -r requirements.txt (line 13))
+2026-11-12T15:55:35.116458762Z   Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (7.3 kB)
+2026-11-12T15:55:35.217065179Z Collecting huggingface-hub==1.33.0 (from -r requirements.txt (line 14))
+2026-11-12T15:55:35.279125637Z   Downloading huggingface_hub-1.33.0-py3-none-any.whl.metadata (16 kB)
+2026-11-12T15:55:35.292818429Z Requirement already satisfied: torch==2.13.0 in ./.venv/lib/python3.12/site-packages (from -r requirements.gpu.txt (line 2)) (2.13.0+cpu)
+2026-11-12T15:55:35.383335012Z Collecting transformers==5.14.0 (from -r requirements.gpu.txt (line 3))
+2026-11-12T15:55:35.445703012Z   Downloading transformers-5.14.0-py3-none-any.whl.metadata (32 kB)
+2026-11-12T15:55:35.667788679Z Collecting safetensors==0.8.0 (from -r requirements.gpu.txt (line 4))
+2026-11-12T15:55:35.729608471Z   Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (4.2 kB)
+2026-11-12T15:55:35.816268512Z Collecting peft==0.21.2 (from -r requirements.gpu.txt (line 7))
+2026-11-12T15:55:35.879854887Z   Downloading peft-0.21.2-py3-none-any.whl.metadata (15 kB)
+2026-11-12T15:55:35.976586388Z Collecting accelerate==1.15.0 (from -r requirements.gpu.txt (line 8))
+2026-11-12T15:55:36.101390638Z   Downloading accelerate-1.15.0-py3-none-any.whl.metadata (19 kB)
+2026-11-12T15:55:36.199362179Z Collecting asgiref>=3.8.1 (from Django==5.2.18->-r requirements.txt (line 1))
+2026-11-12T15:55:36.263108513Z   Downloading asgiref-3.13.0-py3-none-any.whl.metadata (12 kB)
+2026-11-12T15:55:36.351391304Z Collecting sqlparse>=0.3.1 (from Django==5.2.18->-r requirements.txt (line 1))
+2026-11-12T15:55:36.412648221Z   Downloading sqlparse-0.6.1-py3-none-any.whl.metadata (6.9 kB)
+2026-11-12T15:55:36.579850596Z Collecting attrs>=22.2.0 (from jsonschema==4.25.1->-r requirements.txt (line 5))
+2026-11-12T15:55:36.643881596Z   Downloading attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+2026-11-12T15:55:36.733116180Z Collecting jsonschema-specifications>=2023.03.6 (from jsonschema==4.25.1->-r requirements.txt (line 5))
+2026-11-12T15:55:36.795025513Z   Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+2026-11-12T15:55:36.893385305Z Collecting referencing>=0.28.4 (from jsonschema==4.25.1->-r requirements.txt (line 5))
+2026-11-12T15:55:36.957275971Z   Downloading referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+2026-11-12T15:55:37.208991055Z Collecting rpds-py>=0.7.1 (from jsonschema==4.25.1->-r requirements.txt (line 5))
+2026-11-12T15:55:37.270278971Z   Downloading rpds_py-2026.9.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (4.1 kB)
+2026-11-12T15:55:37.277525888Z Requirement already satisfied: typing-extensions>=4.6 in ./.venv/lib/python3.12/site-packages (from psycopg==3.2.12->psycopg[binary]==3.2.12->-r requirements.txt (line 6)) (4.16.0)
+2026-11-12T15:55:37.502061930Z Collecting botocore<1.44.0,>=1.43.110 (from boto3==1.43.110->-r requirements.txt (line 9))
+2026-11-12T15:55:37.619098222Z   Downloading botocore-1.43.127-py3-none-any.whl.metadata (5.6 kB)
+2026-11-12T15:55:37.705005722Z Collecting jmespath<2.0.0,>=0.7.1 (from boto3==1.43.110->-r requirements.txt (line 9))
+2026-11-12T15:55:37.767778847Z   Downloading jmespath-1.1.0-py3-none-any.whl.metadata (7.6 kB)
+2026-11-12T15:55:37.857283472Z Collecting s3transfer<0.20.0,>=0.19.0 (from boto3==1.43.110->-r requirements.txt (line 9))
+2026-11-12T15:55:37.921460638Z   Downloading s3transfer-0.19.3-py3-none-any.whl.metadata (1.7 kB)
+2026-11-12T15:55:38.017445805Z Collecting click<9.0.0,>=8.4.2 (from huggingface-hub==1.33.0->-r requirements.txt (line 14))
+2026-11-12T15:55:38.142999597Z   Downloading click-8.5.1-py3-none-any.whl.metadata (2.6 kB)
+2026-11-12T15:55:38.151449639Z Requirement already satisfied: filelock>=3.10.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub==1.33.0->-r requirements.txt (line 14)) (4.2.4)
+2026-11-12T15:55:38.151707264Z Requirement already satisfied: fsspec>=2023.5.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub==1.33.0->-r requirements.txt (line 14)) (2026.9.0)
+2026-11-12T15:55:38.244333264Z Collecting hf-xet<2.0.0,>=1.6.0 (from huggingface-hub==1.33.0->-r requirements.txt (line 14))
+2026-11-12T15:55:38.309309014Z   Downloading hf_xet-1.8.0-cp38-abi3-manylinux_2_28_aarch64.whl.metadata (4.9 kB)
+2026-11-12T15:55:38.399779014Z Collecting httpx<1,>=0.23.0 (from huggingface-hub==1.33.0->-r requirements.txt (line 14))
+2026-11-12T15:55:38.460160097Z   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+2026-11-12T15:55:38.551739805Z Collecting packaging>=20.9 (from huggingface-hub==1.33.0->-r requirements.txt (line 14))
+2026-11-12T15:55:38.667784055Z   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+2026-11-12T15:55:38.763512916Z Collecting pyyaml>=5.1 (from huggingface-hub==1.33.0->-r requirements.txt (line 14))
+2026-11-12T15:55:38.825214541Z   Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl.metadata (2.4 kB)
+2026-11-12T15:55:38.939813250Z Collecting tqdm>=4.42.1 (from huggingface-hub==1.33.0->-r requirements.txt (line 14))
+2026-11-12T15:55:38.999458416Z   Downloading tqdm-4.70.1-py3-none-any.whl.metadata (57 kB)
+2026-11-12T15:55:39.026234416Z Requirement already satisfied: setuptools>=77.0.3 in ./.venv/lib/python3.12/site-packages (from torch==2.13.0->-r requirements.gpu.txt (line 2)) (78.1.0)
+2026-11-12T15:55:39.026307250Z Requirement already satisfied: sympy>=1.13.3 in ./.venv/lib/python3.12/site-packages (from torch==2.13.0->-r requirements.gpu.txt (line 2)) (1.14.0)
+2026-11-12T15:55:39.026423916Z Requirement already satisfied: networkx>=2.5.1 in ./.venv/lib/python3.12/site-packages (from torch==2.13.0->-r requirements.gpu.txt (line 2)) (3.7)
+2026-11-12T15:55:39.026512875Z Requirement already satisfied: jinja2 in ./.venv/lib/python3.12/site-packages (from torch==2.13.0->-r requirements.gpu.txt (line 2)) (3.1.6)
+2026-11-12T15:55:39.413828583Z Collecting regex>=2025.10.22 (from transformers==5.14.0->-r requirements.gpu.txt (line 3))
+2026-11-12T15:55:39.486662458Z   Downloading regex-2026.11.9-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl.metadata (40 kB)
+2026-11-12T15:55:39.581769792Z Collecting typer (from transformers==5.14.0->-r requirements.gpu.txt (line 3))
+2026-11-12T15:55:39.643861292Z   Downloading typer-0.29.1-py3-none-any.whl.metadata (16 kB)
+2026-11-12T15:55:39.829216500Z Collecting psutil (from peft==0.21.2->-r requirements.gpu.txt (line 7))
+2026-11-12T15:55:39.893955667Z   Downloading psutil-7.2.2-cp36-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl.metadata (22 kB)
+2026-11-12T15:55:40.066343000Z Collecting psycopg-binary==3.2.12 (from psycopg[binary]==3.2.12->-r requirements.txt (line 6))
+2026-11-12T15:55:40.128946917Z   Downloading psycopg_binary-3.2.12-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.whl.metadata (2.9 kB)
+2026-11-12T15:55:40.247775709Z Collecting python-dateutil<3.0.0,>=2.1 (from botocore<1.44.0,>=1.43.110->boto3==1.43.110->-r requirements.txt (line 9))
+2026-11-12T15:55:40.323303917Z   Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+2026-11-12T15:55:40.443957917Z Collecting urllib3!=2.2.0,<3,>=1.25.4 (from botocore<1.44.0,>=1.43.110->boto3==1.43.110->-r requirements.txt (line 9))
+2026-11-12T15:55:40.506850125Z   Downloading urllib3-2.8.0-py3-none-any.whl.metadata (7.4 kB)
+2026-11-12T15:55:40.595453167Z Collecting anyio (from httpx<1,>=0.23.0->huggingface-hub==1.33.0->-r requirements.txt (line 14))
+2026-11-12T15:55:40.657668834Z   Downloading anyio-4.16.0-py3-none-any.whl.metadata (4.7 kB)
+2026-11-12T15:55:40.777062626Z Collecting certifi (from httpx<1,>=0.23.0->huggingface-hub==1.33.0->-r requirements.txt (line 14))
+2026-11-12T15:55:40.841223042Z   Downloading certifi-2026.10.23-py3-none-any.whl.metadata (2.5 kB)
+2026-11-12T15:55:40.930190126Z Collecting httpcore==1.* (from httpx<1,>=0.23.0->huggingface-hub==1.33.0->-r requirements.txt (line 14))
+2026-11-12T15:55:41.002678626Z   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+2026-11-12T15:55:41.093757542Z Collecting idna (from httpx<1,>=0.23.0->huggingface-hub==1.33.0->-r requirements.txt (line 14))
+2026-11-12T15:55:41.156453126Z   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+2026-11-12T15:55:41.294720834Z Collecting h11>=0.16 (from httpcore==1.*->httpx<1,>=0.23.0->huggingface-hub==1.33.0->-r requirements.txt (line 14))
+2026-11-12T15:55:41.356895792Z   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+2026-11-12T15:55:41.420352042Z Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.12/site-packages (from sympy>=1.13.3->torch==2.13.0->-r requirements.gpu.txt (line 2)) (1.3.0)
+2026-11-12T15:55:41.422757834Z Requirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.12/site-packages (from jinja2->torch==2.13.0->-r requirements.gpu.txt (line 2)) (3.0.3)
+2026-11-12T15:55:41.545861543Z Collecting pydantic>=2.5.3 (from typer->transformers==5.14.0->-r requirements.gpu.txt (line 3))
+2026-11-12T15:55:41.607161168Z   Downloading pydantic-2.14.3-py3-none-any.whl.metadata (141 kB)
+2026-11-12T15:55:41.820877334Z Collecting shellingham>=1.3.0 (from typer->transformers==5.14.0->-r requirements.gpu.txt (line 3))
+2026-11-12T15:55:41.883200584Z   Downloading shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)
+2026-11-12T15:55:41.981886834Z Collecting rich>=13.8.0 (from typer->transformers==5.14.0->-r requirements.gpu.txt (line 3))
+2026-11-12T15:55:42.043711584Z   Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+2026-11-12T15:55:42.126577834Z Collecting annotated-doc>=0.0.2 (from typer->transformers==5.14.0->-r requirements.gpu.txt (line 3))
+2026-11-12T15:55:42.188798585Z   Downloading annotated_doc-0.0.6-py3-none-any.whl.metadata (6.5 kB)
+2026-11-12T15:55:42.344383668Z Collecting annotated-types>=0.6.0 (from pydantic>=2.5.3->typer->transformers==5.14.0->-r requirements.gpu.txt (line 3))
+2026-11-12T15:55:42.406601918Z   Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+2026-11-12T15:55:42.872600127Z Collecting pydantic-core==2.50.4 (from pydantic>=2.5.3->typer->transformers==5.14.0->-r requirements.gpu.txt (line 3))
+2026-11-12T15:55:42.934367335Z   Downloading pydantic_core-2.50.4-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.whl.metadata (6.6 kB)
+2026-11-12T15:55:43.016141835Z Collecting typing-inspection>=0.4.4 (from pydantic>=2.5.3->typer->transformers==5.14.0->-r requirements.gpu.txt (line 3))
+2026-11-12T15:55:43.077646668Z   Downloading typing_inspection-0.4.5-py3-none-any.whl.metadata (2.6 kB)
+2026-11-12T15:55:43.162530377Z Collecting six>=1.5 (from python-dateutil<3.0.0,>=2.1->botocore<1.44.0,>=1.43.110->boto3==1.43.110->-r requirements.txt (line 9))
+2026-11-12T15:55:43.224760043Z   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+2026-11-12T15:55:43.314188918Z Collecting markdown-it-py>=2.2.0 (from rich>=13.8.0->typer->transformers==5.14.0->-r requirements.gpu.txt (line 3))
+2026-11-12T15:55:43.441763877Z   Downloading markdown_it_py-4.3.0-py3-none-any.whl.metadata (7.9 kB)
+2026-11-12T15:55:43.533144377Z Collecting pygments<3.0.0,>=2.13.0 (from rich>=13.8.0->typer->transformers==5.14.0->-r requirements.gpu.txt (line 3))
+2026-11-12T15:55:43.595553502Z   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+2026-11-12T15:55:43.680580794Z Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=13.8.0->typer->transformers==5.14.0->-r requirements.gpu.txt (line 3))
+2026-11-12T15:55:43.740015669Z   Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+2026-11-12T15:55:43.818878877Z Downloading django-5.2.18-py3-none-any.whl (8.3 MB)
+2026-11-12T15:55:44.309149127Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.3/8.3 MB 20.5 MB/s eta 0:00:00
+2026-11-12T15:55:44.436951752Z Downloading djangorestframework-3.18.3-py3-none-any.whl (903 kB)
+2026-11-12T15:55:44.472451461Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 904.0/904.0 kB 25.7 MB/s eta 0:00:00
+2026-11-12T15:55:44.537642044Z Downloading django_filter-25.2-py3-none-any.whl (94 kB)
+2026-11-12T15:55:44.603228169Z Downloading django_cors_headers-4.9.0-py3-none-any.whl (12 kB)
+2026-11-12T15:55:44.671667544Z Downloading jsonschema-4.25.1-py3-none-any.whl (90 kB)
+2026-11-12T15:55:44.754020836Z Downloading psycopg-3.2.12-py3-none-any.whl (206 kB)
+2026-11-12T15:55:44.836614086Z Downloading pgvector-0.5.1-py3-none-any.whl (31 kB)
+2026-11-12T15:55:44.961662752Z Downloading pika-1.3.2-py3-none-any.whl (155 kB)
+2026-11-12T15:55:45.035999711Z Downloading boto3-1.43.110-py3-none-any.whl (140 kB)
+2026-11-12T15:55:45.112311294Z Downloading pyarrow-26.0.0-cp312-cp312-manylinux_2_28_aarch64.whl (50.9 MB)
+2026-11-12T15:55:47.248420212Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 50.9/50.9 MB 24.0 MB/s eta 0:00:00
+2026-11-12T15:55:47.311256045Z Downloading numpy-2.3.3-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (14.3 MB)
+2026-11-12T15:55:47.912781962Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 14.3/14.3 MB 23.7 MB/s eta 0:00:00
+2026-11-12T15:55:47.976157629Z Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (3.3 MB)
+2026-11-12T15:55:48.178959671Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 15.7 MB/s eta 0:00:00
+2026-11-12T15:55:48.244144087Z Downloading huggingface_hub-1.33.0-py3-none-any.whl (846 kB)
+2026-11-12T15:55:48.317198921Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 846.4/846.4 kB 88.9 MB/s eta 0:00:00
+2026-11-12T15:55:48.380878629Z Downloading transformers-5.14.0-py3-none-any.whl (11.6 MB)
+2026-11-12T15:55:48.868713629Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.6/11.6 MB 23.8 MB/s eta 0:00:00
+2026-11-12T15:55:48.932313213Z Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (502 kB)
+2026-11-12T15:55:49.028583004Z Downloading peft-0.21.2-py3-none-any.whl (835 kB)
+2026-11-12T15:55:49.062860004Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 835.4/835.4 kB 23.7 MB/s eta 0:00:00
+2026-11-12T15:55:49.155744004Z Downloading accelerate-1.15.0-py3-none-any.whl (394 kB)
+2026-11-12T15:55:49.239651338Z Downloading psycopg_binary-3.2.12-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.whl (4.6 MB)
+2026-11-12T15:55:49.421886921Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.6/4.6 MB 25.7 MB/s eta 0:00:00
+2026-11-12T15:55:49.483977296Z Downloading asgiref-3.13.0-py3-none-any.whl (27 kB)
+2026-11-12T15:55:49.553095880Z Downloading attrs-26.1.0-py3-none-any.whl (67 kB)
+2026-11-12T15:55:49.681204088Z Downloading botocore-1.43.127-py3-none-any.whl (16.3 MB)
+2026-11-12T15:55:50.390221463Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.3/16.3 MB 22.9 MB/s eta 0:00:00
+2026-11-12T15:55:50.454369338Z Downloading click-8.5.1-py3-none-any.whl (126 kB)
+2026-11-12T15:55:50.529196130Z Downloading hf_xet-1.8.0-cp38-abi3-manylinux_2_28_aarch64.whl (4.1 MB)
+2026-11-12T15:55:50.774207380Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.1/4.1 MB 16.3 MB/s eta 0:00:00
+2026-11-12T15:55:50.834796297Z Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+2026-11-12T15:55:50.905591089Z Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+2026-11-12T15:55:50.978819630Z Downloading jmespath-1.1.0-py3-none-any.whl (20 kB)
+2026-11-12T15:55:51.050166922Z Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+2026-11-12T15:55:51.118701755Z Downloading packaging-26.3-py3-none-any.whl (129 kB)
+2026-11-12T15:55:51.253526630Z Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (775 kB)
+2026-11-12T15:55:51.284681256Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 775.1/775.1 kB 23.5 MB/s eta 0:00:00
+2026-11-12T15:55:51.347272339Z Downloading referencing-0.37.0-py3-none-any.whl (26 kB)
+2026-11-12T15:55:51.430761089Z Downloading regex-2026.11.9-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (804 kB)
+2026-11-12T15:55:51.465208714Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 804.9/804.9 kB 26.5 MB/s eta 0:00:00
+2026-11-12T15:55:51.529369756Z Downloading rpds_py-2026.9.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (373 kB)
+2026-11-12T15:55:51.611909714Z Downloading s3transfer-0.19.3-py3-none-any.whl (90 kB)
+2026-11-12T15:55:51.685862464Z Downloading sqlparse-0.6.1-py3-none-any.whl (51 kB)
+2026-11-12T15:55:51.778077422Z Downloading tqdm-4.70.1-py3-none-any.whl (80 kB)
+2026-11-12T15:55:51.855899339Z Downloading psutil-7.2.2-cp36-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (156 kB)
+2026-11-12T15:55:51.931882464Z Downloading typer-0.29.1-py3-none-any.whl (121 kB)
+2026-11-12T15:55:52.004915548Z Downloading annotated_doc-0.0.6-py3-none-any.whl (5.3 kB)
+2026-11-12T15:55:52.079047923Z Downloading pydantic-2.14.3-py3-none-any.whl (494 kB)
+2026-11-12T15:55:52.169525506Z Downloading pydantic_core-2.50.4-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.whl (2.1 MB)
+2026-11-12T15:55:52.318870798Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 13.3 MB/s eta 0:00:00
+2026-11-12T15:55:52.381471881Z Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+2026-11-12T15:55:52.472869381Z Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+2026-11-12T15:55:52.549383089Z Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+2026-11-12T15:55:52.618566631Z Downloading urllib3-2.8.0-py3-none-any.whl (135 kB)
+2026-11-12T15:55:52.691178548Z Downloading anyio-4.16.0-py3-none-any.whl (134 kB)
+2026-11-12T15:55:52.826325131Z Downloading idna-3.20-py3-none-any.whl (69 kB)
+2026-11-12T15:55:52.896372965Z Downloading certifi-2026.10.23-py3-none-any.whl (135 kB)
+2026-11-12T15:55:52.975291798Z Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+2026-11-12T15:55:53.042684506Z Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+2026-11-12T15:55:53.115866923Z Downloading markdown_it_py-4.3.0-py3-none-any.whl (96 kB)
+2026-11-12T15:55:53.188618506Z Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+2026-11-12T15:55:53.239850256Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 24.8 MB/s eta 0:00:00
+2026-11-12T15:55:53.351689756Z Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+2026-11-12T15:55:53.431854507Z Downloading typing_inspection-0.4.5-py3-none-any.whl (14 kB)
+2026-11-12T15:55:53.500528132Z Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+2026-11-12T15:55:53.658240132Z Installing collected packages: urllib3, typing-inspection, tqdm, sqlparse, six, shellingham, safetensors, rpds-py, regex, pyyaml, pygments, pydantic-core, pyarrow, psycopg-binary, psycopg, psutil, pika, pgvector, packaging, numpy, mdurl, jmespath, idna, hf-xet, h11, click, certifi, attrs, asgiref, annotated-types, annotated-doc, referencing, python-dateutil, pydantic, markdown-it-py, httpcore, Django, anyio, rich, jsonschema-specifications, httpx, djangorestframework, django-filter, django-cors-headers, botocore, typer, s3transfer, jsonschema, huggingface-hub, tokenizers, boto3, accelerate, transformers, peft
+2026-11-12T15:56:02.569969386Z Successfully installed Django-5.2.18 accelerate-1.15.0 annotated-doc-0.0.6 annotated-types-0.8.0 anyio-4.16.0 asgiref-3.13.0 attrs-26.1.0 boto3-1.43.110 botocore-1.43.127 certifi-2026.10.23 click-8.5.1 django-cors-headers-4.9.0 django-filter-25.2 djangorestframework-3.18.3 h11-0.16.0 hf-xet-1.8.0 httpcore-1.0.9 httpx-0.28.1 huggingface-hub-1.33.0 idna-3.20 jmespath-1.1.0 jsonschema-4.25.1 jsonschema-specifications-2025.9.1 markdown-it-py-4.3.0 mdurl-0.1.2 numpy-2.3.3 packaging-26.3 peft-0.21.2 pgvector-0.5.1 pika-1.3.2 psutil-7.2.2 psycopg-3.2.12 psycopg-binary-3.2.12 pyarrow-26.0.0 pydantic-2.14.3 pydantic-core-2.50.4 pygments-2.21.0 python-dateutil-2.9.0.post0 pyyaml-6.0.3 referencing-0.37.0 regex-2026.11.9 rich-15.0.0 rpds-py-2026.9.1 s3transfer-0.19.3 safetensors-0.8.0 shellingham-1.5.4 six-1.17.0 sqlparse-0.6.1 tokenizers-0.22.2 tqdm-4.70.1 transformers-5.14.0 typer-0.29.1 typing-inspection-0.4.5 urllib3-2.8.0
+2026-11-12T15:56:02.931590303Z 
+2026-11-12T15:56:02.931613136Z [notice] A new release of pip is available: 25.0.1 -> 26.3
+2026-11-12T15:56:02.931614469Z [notice] To update, run: python -m pip install --upgrade pip
+2026-11-12T15:56:03.150338845Z + make migrate
+2026-11-12T15:56:03.151623261Z DJANGO_SETTINGS_MODULE=modelanvil.settings PYTHONPATH=. .venv/bin/python manage.py migrate
+2026-11-12T15:56:03.867256928Z Operations to perform:
+2026-11-12T15:56:03.867267262Z   Apply all migrations: admin, annotation, artifacts, auth, budgets, compute, contenttypes, context_lab, core, data, identity, jobs, rag, releases, runners, sessions
+2026-11-12T15:56:03.867268428Z Running migrations:
+2026-11-12T15:56:03.871231470Z   Applying contenttypes.0001_initial... OK
+2026-11-12T15:56:03.874548178Z   Applying contenttypes.0002_remove_content_type_name... OK
+2026-11-12T15:56:03.881315345Z   Applying auth.0001_initial... OK
+2026-11-12T15:56:03.884653262Z   Applying auth.0002_alter_permission_name_max_length... OK
+2026-11-12T15:56:03.887018053Z   Applying auth.0003_alter_user_email_max_length... OK
+2026-11-12T15:56:03.889770803Z   Applying auth.0004_alter_user_username_opts... OK
+2026-11-12T15:56:03.891920053Z   Applying auth.0005_alter_user_last_login_null... OK
+2026-11-12T15:56:03.892824595Z   Applying auth.0006_require_contenttypes_0002... OK
+2026-11-12T15:56:03.895461095Z   Applying auth.0007_alter_validators_add_error_messages... OK
+2026-11-12T15:56:03.897823678Z   Applying auth.0008_alter_user_username_max_length... OK
+2026-11-12T15:56:03.900018095Z   Applying auth.0009_alter_user_last_name_max_length... OK
+2026-11-12T15:56:03.902712845Z   Applying auth.0010_alter_group_name_max_length... OK
+2026-11-12T15:56:03.905215845Z   Applying auth.0011_update_proxy_permissions... OK
+2026-11-12T15:56:03.908057553Z   Applying auth.0012_alter_user_first_name_max_length... OK
+2026-11-12T15:56:03.917440762Z   Applying identity.0001_initial... OK
+2026-11-12T15:56:03.923552387Z   Applying admin.0001_initial... OK
+2026-11-12T15:56:03.928358262Z   Applying admin.0002_logentry_remove_auto_add... OK
+2026-11-12T15:56:03.932633178Z   Applying admin.0003_logentry_add_action_flag_choices... OK
+2026-11-12T15:56:03.937371845Z   Applying runners.0001_initial... OK
+2026-11-12T15:56:03.961829928Z   Applying runners.0002_evaluationsuite_evaluationsuiteversion_model_and_more... OK
+2026-11-12T15:56:03.973212845Z   Applying runners.0003_trainingrun_trainingcheckpoint... OK
+2026-11-12T15:56:03.983622845Z   Applying runners.0004_alignmentrun_alignmentcheckpoint... OK
+2026-11-12T15:56:04.004046387Z   Applying identity.0002_team_project_teammembership_projectconfig_and_more... OK
+2026-11-12T15:56:04.012971012Z   Applying identity.0003_alter_projectconfig_created_by... OK
+2026-11-12T15:56:04.023714637Z   Applying identity.0004_apikey_project_projectgrant... OK
+2026-11-12T15:56:04.099690387Z   Applying runners.0005_alignmentrun_project_evaluationrun_project_and_more... OK
+2026-11-12T15:56:04.113730303Z   Applying jobs.0001_initial... OK
+2026-11-12T15:56:04.147950428Z   Applying jobs.0002_outboxevent_last_error... OK
+2026-11-12T15:56:04.153710845Z   Applying jobs.0003_job_desired_action... OK
+2026-11-12T15:56:04.160161928Z   Applying jobs.0004_job_requirements... OK
+2026-11-12T15:56:04.165415887Z   Applying jobs.0005_workercredential... OK
+2026-11-12T15:56:04.170467428Z   Applying jobs.0006_workerpool_result_egress... OK
+2026-11-12T15:56:04.176939470Z   Applying jobs.0007_jobattempt_slots_reserved... OK
+2026-11-12T15:56:04.197951512Z   Applying artifacts.0001_initial... OK
+2026-11-12T15:56:04.203908220Z   Applying artifacts.0002_transfersession... OK
+2026-11-12T15:56:04.208525470Z   Applying artifacts.0003_transfersession_parts_purged_at... OK
+2026-11-12T15:56:04.215907803Z   Applying artifacts.0004_workerartifactgrant... OK
+2026-11-12T15:56:04.220428845Z   Applying artifacts.0005_deletiontombstone... OK
+2026-11-12T15:56:04.259356720Z   Applying artifacts.0006_artifact_project_dataset_project_and_more... OK
+2026-11-12T15:56:04.316494387Z   Applying runners.0006_trainingrun_dataset_revision_trainingrun_job_and_more... OK
+2026-11-12T15:56:04.370560345Z   Applying runners.0007_alignmentrun_execution_pins_and_more... OK
+2026-11-12T15:56:04.392657970Z   Applying runners.0008_model_import... OK
+2026-11-12T15:56:04.409226012Z   Applying runners.0009_chat_conversation... OK
+2026-11-12T15:56:04.456272595Z   Applying runners.0010_inference_request... OK
+2026-11-12T15:56:04.471379262Z   Applying runners.0011_chat_comparison... OK
+2026-11-12T15:56:04.481977970Z   Applying runners.0012_native_qlora_recipe... OK
+2026-11-12T15:56:04.514630262Z   Applying runners.0013_durable_evaluation... OK
+2026-11-12T15:56:04.544793845Z   Applying runners.0014_training_recovery... OK
+2026-11-12T15:56:04.690122637Z   Applying annotation.0001_initial... OK
+2026-11-12T15:56:04.726454679Z   Applying annotation.0002_reviewed_publication... OK
+2026-11-12T15:56:04.744821762Z   Applying annotation.0003_campaign_project_scope... OK
+2026-11-12T15:56:04.762915804Z   Applying runners.0015_arena_review_handoff... OK
+2026-11-12T15:56:04.765626762Z   Applying runners.0016_local_training_host... OK
+2026-11-12T15:56:04.900027262Z   Applying runners.0017_uuid7_identifiers... OK
+2026-11-12T15:56:04.991134179Z   Applying identity.0005_uuid7_identifiers... OK
+2026-11-12T15:56:05.008964804Z   Applying identity.0006_accountaction... OK
+2026-11-12T15:56:05.100233804Z   Applying identity.0007_reviewer_invitations... OK
+2026-11-12T15:56:05.124290095Z   Applying annotation.0004_uuid7_identifiers... OK
+2026-11-12T15:56:05.176404345Z   Applying annotation.0005_real_campaign_cycle... OK
+2026-11-12T15:56:05.206510762Z   Applying annotation.0006_application_feedback... OK
+2026-11-12T15:56:05.270218971Z   Applying artifacts.0007_uuid7_identifiers... OK
+2026-11-12T15:56:05.284028554Z   Applying budgets.0001_initial... OK
+2026-11-12T15:56:05.304780762Z   Applying budgets.0002_reservation_period_start... OK
+2026-11-12T15:56:05.313899637Z   Applying budgets.0003_usageevent_amount_usageevent_currency_raterevision... OK
+2026-11-12T15:56:05.317793304Z   Applying budgets.0004_usageadjustment... OK
+2026-11-12T15:56:05.323196596Z   Applying budgets.0005_uuid7_identifiers... OK
+2026-11-12T15:56:05.340960846Z   Applying compute.0001_initial... OK
+2026-11-12T15:56:05.357045346Z   Applying context_lab.0001_initial... OK
+2026-11-12T15:56:05.364066262Z   Applying context_lab.0002_uuid7_identifiers... OK
+2026-11-12T15:56:05.452727721Z   Applying context_lab.0003_measured_context_pairs... OK
+2026-11-12T15:56:05.507357804Z   Applying context_lab.0004_named_evidence_overflow... OK
+2026-11-12T15:56:05.681987846Z   Applying releases.0001_initial... OK
+2026-11-12T15:56:05.803019262Z   Applying releases.0002_deploymentrevision_project_release_project_and_more... OK
+2026-11-12T15:56:05.818910346Z   Applying releases.0003_local_serving_readiness... OK
+2026-11-12T15:56:05.824405554Z   Applying core.0001_initial... OK
+2026-11-12T15:56:05.839196012Z   Applying core.0002_alter_idempotencykey_unique_together_and_more... OK
+2026-11-12T15:56:05.864470179Z   Applying core.0003_audit_project_scope... OK
+2026-11-12T15:56:05.866854054Z   Applying core.0004_uuid7_identifiers... OK
+2026-11-12T15:56:05.906853096Z   Applying core.0005_local_activation_measurement... OK
+2026-11-12T15:56:05.969817179Z   Applying core.0006_private_data_policy... OK
+2026-11-12T15:56:05.987049679Z   Applying core.0007_external_chat_providers... OK
+2026-11-12T15:56:06.017445554Z   Applying core.0008_mcp_tool_permissions... OK
+2026-11-12T15:56:06.022797471Z   Applying data.0001_initial... OK
+2026-11-12T15:56:06.063050596Z   Applying data.0002_datasource_project_sourcesnapshot_project... OK
+2026-11-12T15:56:06.084562346Z   Applying data.0003_recipe_runs... OK
+2026-11-12T15:56:06.117755013Z   Applying data.0004_uuid7_identifiers... OK
+2026-11-12T15:56:06.134259804Z   Applying jobs.0008_worker_drain... OK
+2026-11-12T15:56:06.189807971Z   Applying jobs.0009_job_project_scope... OK
+2026-11-12T15:56:06.207965221Z   Applying jobs.0010_uuid7_identifiers... OK
+2026-11-12T15:56:06.228193554Z   Applying jobs.0011_exclusive_device_claim... OK
+2026-11-12T15:56:06.243015596Z   Applying runners.0018_add_grpo_algorithm... OK
+2026-11-12T15:56:06.282325596Z   Applying runners.0019_external_chat_providers... OK
+2026-11-12T15:56:06.388344054Z   Applying runners.0020_gpu_alignment_job... OK
+2026-11-12T15:56:06.423319846Z   Applying runners.0021_cpu_alignment_stage_receipts... OK
+2026-11-12T15:56:06.437582221Z   Applying runners.0022_speech_output_head_recipe... OK
+2026-11-12T15:56:06.481145596Z   Applying rag.0001_initial... OK
+2026-11-12T15:56:06.496933013Z   Applying rag.0002_uuid7_identifiers... OK
+2026-11-12T15:56:06.521129263Z   Applying rag.0003_private_data_policy... OK
+2026-11-12T15:56:06.544401971Z   Applying rag.0004_vector_extension... OK
+2026-11-12T15:56:06.576012388Z   Applying rag.0005_retrieval_comparison_provenance... OK
+2026-11-12T15:56:06.629566596Z   Applying rag.0006_token_chunk_recipes... OK
+2026-11-12T15:56:06.734848096Z   Applying rag.0007_real_embedding_spaces... OK
+2026-11-12T15:56:06.745004930Z   Applying rag.0008_retrieval_execution_receipt... OK
+2026-11-12T15:56:06.827996596Z   Applying rag.0009_embedding_candidates_and_protected_exposures... OK
+2026-11-12T15:56:06.854074805Z   Applying rag.0010_actual_grounded_generation... OK
+2026-11-12T15:56:06.880054930Z   Applying rag.0011_researchsession... OK
+2026-11-12T15:56:06.939081180Z   Applying releases.0004_uuid7_identifiers... OK
+2026-11-12T15:56:07.019139596Z   Applying sessions.0001_initial... OK
+2026-11-12T15:56:07.151654971Z + .venv/bin/python manage.py bootstrap_dev
+2026-11-12T15:56:07.647331972Z Created default tenant: Default Organization (01a1d079-37ca-7308-8589-470805fa89ee)
+2026-11-12T15:56:07.647343680Z Created default project: Primary Foundation Model (01a1d079-37cb-7263-8d67-82a7020a41fa)
+2026-11-12T15:56:07.647344472Z Created admin user: admin@modelanvil.local
+2026-11-12T15:56:07.647345597Z Granted OWNER role to admin@modelanvil.local in Default Organization
+2026-11-12T15:56:07.647347847Z Local dev API key active: mkv_dev_master_key_for_local_testing_12345
+2026-11-12T15:56:07.647348305Z Local development workspace is ready. Use Storybook for populated demo screens.
+2026-11-12T15:56:07.736269263Z + make check
+2026-11-12T15:56:07.737663388Z DJANGO_SETTINGS_MODULE=modelanvil.settings PYTHONPATH=. .venv/bin/python manage.py check
+2026-11-12T15:56:08.102872555Z System check identified no issues (0 silenced).
+2026-11-12T15:56:08.192618555Z + MODELANVIL_PUBLIC_MODEL_DOWNLOADS=1 OMP_NUM_THREADS=1 TOKENIZERS_PARALLELISM=false .venv/bin/python scripts/golden_path.py --train --steps 3
+2026-11-12T15:56:08.342023180Z downloading or verifying the pinned public SmolLM2-135M snapshot
+2026-11-12T15:56:08.725693708Z {"timestamp": "2026-11-12T15:56:08+0000", "level": "INFO", "logger": "httpx", "message": "Application event"}
+2026-11-12T15:56:08.726137708Z Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-11-12T15:56:08.726144291Z {"timestamp": "2026-11-12T15:56:08+0000", "level": "WARNING", "logger": "huggingface_hub.utils._http", "message": "Application event"}
+2026-11-12T15:56:08.882892875Z {"timestamp": "2026-11-12T15:56:08+0000", "level": "INFO", "logger": "httpx", "message": "Application event"}
+2026-11-12T15:56:09.236886375Z {"timestamp": "2026-11-12T15:56:09+0000", "level": "INFO", "logger": "httpx", "message": "Application event"}
+2026-11-12T15:56:22.707329840Z {"timestamp": "2026-11-12T15:56:22+0000", "level": "INFO", "logger": "httpx", "message": "Application event"}
+2026-11-12T15:56:22.718937465Z {"timestamp": "2026-11-12T15:56:22+0000", "level": "INFO", "logger": "httpx", "message": "Application event"}
+2026-11-12T15:56:22.730191298Z {"timestamp": "2026-11-12T15:56:22+0000", "level": "INFO", "logger": "httpx", "message": "Application event"}
+2026-11-12T15:56:22.883263756Z {"timestamp": "2026-11-12T15:56:22+0000", "level": "INFO", "logger": "httpx", "message": "Application event"}
+2026-11-12T15:56:22.893929298Z {"timestamp": "2026-11-12T15:56:22+0000", "level": "INFO", "logger": "httpx", "message": "Application event"}
+2026-11-12T15:56:22.905411798Z {"timestamp": "2026-11-12T15:56:22+0000", "level": "INFO", "logger": "httpx", "message": "Application event"}
+2026-11-12T15:56:23.096555048Z {"timestamp": "2026-11-12T15:56:23+0000", "level": "INFO", "logger": "httpx", "message": "Application event"}
+2026-11-12T15:56:23.108335715Z {"timestamp": "2026-11-12T15:56:23+0000", "level": "INFO", "logger": "httpx", "message": "Application event"}
+2026-11-12T15:56:23.123697548Z {"timestamp": "2026-11-12T15:56:23+0000", "level": "INFO", "logger": "httpx", "message": "Application event"}
+2026-11-12T15:56:23.287248548Z {"timestamp": "2026-11-12T15:56:23+0000", "level": "INFO", "logger": "httpx", "message": "Application event"}
+2026-11-12T15:56:23.300179423Z {"timestamp": "2026-11-12T15:56:23+0000", "level": "INFO", "logger": "httpx", "message": "Application event"}
+2026-11-12T15:56:23.310066215Z {"timestamp": "2026-11-12T15:56:23+0000", "level": "INFO", "logger": "httpx", "message": "Application event"}
+2026-11-12T15:56:26.589706466Z Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 8897.05it/s]
+2026-11-12T15:56:28.054227925Z completed 3 SmolLM2-135M CPU LoRA steps
+2026-11-12T15:56:28.867988634Z loading exported candidate with verify_cpu_export.py
+2026-11-12T15:56:31.043668385Z Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 5210.67it/s]
+2026-11-12T15:56:32.512948969Z loading exported candidate with hf_candidate_infer.py
+2026-11-12T15:56:34.564094679Z Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 5767.35it/s]
+2026-11-12T15:56:35.665274929Z independent inference returned 8 tokens from verify_cpu_export.py and 8 tokens from hf_candidate_infer.py
+2026-11-12T15:56:36.514133596Z golden path completed 3 SmolLM2-135M CPU steps and independent inference at 56b35ccca6ed3d3a2aca0c28fbce1dabaa445be7
+2026-11-12T15:56:36.518725888Z measure-end 2026-11-12T15:56:36.518557138Z exit=0
