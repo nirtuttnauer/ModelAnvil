@@ -158,8 +158,19 @@ def _base_env() -> dict[str, str]:
     return env
 
 
-def backend_command(python: str) -> list[str]:
-    return [python, "manage.py", "test", "--noinput", "--exclude-tag=pg", "-v", "1"]
+# Tests tagged `linux` check Linux kernel behavior. A host that is not Linux
+# excludes them before the run, as it excludes `pg`; Linux hosts and CI run them.
+PLATFORM_TAG = "linux"
+
+
+def host_excluded_tags(platform: str | None = None) -> list[str]:
+    platform = sys.platform if platform is None else platform
+    return ["pg"] if platform.startswith("linux") else ["pg", PLATFORM_TAG]
+
+
+def backend_command(python: str, platform: str | None = None) -> list[str]:
+    excludes = [f"--exclude-tag={tag}" for tag in host_excluded_tags(platform)]
+    return [python, "manage.py", "test", "--noinput", *excludes, "-v", "1"]
 
 
 def frontend_commands() -> list[list[str]]:
@@ -258,7 +269,7 @@ def git_stdout(*args: str) -> str:
     return completed.stdout
 
 
-def excluded_pg_ids() -> list[str]:
+def excluded_backend_ids(tags: tuple[str, ...] = ("pg",)) -> list[str]:
     keys = ("DATABASE_ENGINE", "DATABASE_NAME", "DATABASE_TEST_NAME", "DATABASE_PASSWORD")
     saved = {key: os.environ.get(key) for key in keys}
     os.environ.pop("DATABASE_ENGINE", None)
@@ -266,7 +277,10 @@ def excluded_pg_ids() -> list[str]:
     os.environ["DATABASE_NAME"] = "/tmp/modelanvil-premerge/discover.sqlite3"
     os.environ["DATABASE_TEST_NAME"] = "/tmp/modelanvil-premerge/discover-test.sqlite3"
     try:
-        return tagged_test_ids(ROOT, tag="pg")
+        ids: list[str] = []
+        for tag in tags:
+            ids.extend(test_id for test_id in tagged_test_ids(ROOT, tag=tag) if test_id not in ids)
+        return ids
     finally:
         for key, value in saved.items():
             if value is None:
@@ -369,7 +383,7 @@ def execute(python: str, output: Path) -> int:
     sections.append(_section(backend_display, text))
     parsed = _rename(_django_only(parse_runs(text, backend_display)), "backend", backend_display)
     if parsed:
-        excluded = excluded_pg_ids()
+        excluded = excluded_backend_ids(tuple(host_excluded_tags()))
         for run in parsed:
             apply_exclusions(run, excluded)
         runs.extend(parsed)

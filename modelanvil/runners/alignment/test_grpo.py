@@ -11,6 +11,8 @@ import time
 import unittest
 from unittest.mock import patch
 
+from django.test import tag
+
 from . import grpo, numerical as n, verifier_runtime
 from .test_numerical import base_bundle
 
@@ -98,6 +100,8 @@ class GRPONumericalTests(unittest.TestCase):
 
 
 class IsolatedVerifierTests(unittest.TestCase):
+    # Tagged so a premerge host that is not Linux excludes it before the run.
+    @tag('linux')
     @unittest.skipUnless(sys.platform == 'linux', 'Linux exec RSS inheritance regression')
     def test_linux_verifier_measures_its_own_image_after_a_large_parent(self):
         code = '''
