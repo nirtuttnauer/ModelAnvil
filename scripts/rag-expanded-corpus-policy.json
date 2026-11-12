@@ -1,0 +1,88 @@
+{
+  "id": "rag-expanded-corpus-v1",
+  "ticket": "ANVIL-020",
+  "status": "frozen before any measurement on this set",
+  "size_decision": "Proposed by the implementing agent because QA has not set a size. The size awaits QA sign-off and Nir may change it. A change gets a new policy id and its own commit before any new measurement.",
+  "label": "small correctness check",
+  "not_a_benchmark": "A larger correctness check on public data. It is not a leaderboard, a BEIR reproduction, a customer quality result or a general retrieval quality result. nDCG@5 over token chunks deduplicated to documents is not BEIR's nDCG@10 over whole documents.",
+  "does_not_modify": [
+    "modelanvil/rag/benchmark-corpus-pins.json",
+    "modelanvil/rag/benchmark-protocol.json (scifact-bounded-source-groups-v1: 200 documents, 20 development and 20 held-out queries)",
+    "scripts/rag-reproduction-policy.json (rag-end-to-end-reproduction-v1)",
+    "scripts/rag-answer-format-policy.json (rag-answer-format-v1)"
+  ],
+  "size": {
+    "documents": 5183,
+    "held_out_queries": 300,
+    "held_out_judgments": 339,
+    "held_out_judged_documents": 283,
+    "development_queries": 531,
+    "development_judgments": 600,
+    "development_judged_documents": 372,
+    "token_chunks_expected": 9765,
+    "reason": [
+      "The full SciFact corpus (5,183 abstracts) and all 300 judged claims of the BEIR SciFact test split are the largest judged set in the publisher archive that is already pinned. No new corpus download is needed, and the terms stay ODC-By-1.0 for abstracts and CC-BY-4.0 for claims.",
+      "The held-out split is the published BEIR SciFact test split. This project did not choose it, so results cannot steer it.",
+      "It runs on CPU at $0. Before any relevance result, the pinned MiniLM encoder embedded 221 corpus chunks at about 70 chunks per second on one CPU thread on this Mac, so the 9,765 chunks take about 2 to 3 minutes per phase."
+    ]
+  },
+  "sources": {
+    "archive": "modelanvil/rag/benchmark-corpus-pins.json (publisher archive, unchanged)",
+    "archive_sha256": "\u0031\u0031\u0063\u0036\u0032\u0031\u0032\u0038\u0038\u0064\u0034\u0031\u0061\u0063\u0031\u0034\u0034\u0064\u0032\u0039\u0062\u0031\u0033\u0062\u0030\u0066\u0038\u0035\u0030\u0033\u0062\u0033\u0038\u0032\u0030\u0062\u0037\u0064\u0036\u0065\u0038\u0062\u0031\u0066\u0036\u0066\u0066\u0032\u0034\u0064\u0066\u0066\u0033\u0033\u0035\u0063\u0031\u0039\u0036\u0064\u0037\u0036\u0062\u0065",
+    "corpus_member": "data/corpus.jsonl",
+    "held_out_member": "data/claims_dev.jsonl",
+    "development_member": "data/claims_train.jsonl",
+    "new_pins": "modelanvil/rag/benchmark-expanded-pins.json",
+    "qrels_cross_check": "The held-out judgments rebuilt from data/claims_dev.jsonl, written as BEIR qrels TSV, must have the pinned SHA256 of BEIR SciFact test.tsv (Hugging Face BeIR/scifact-qrels, revision 2938d17dc3b09882fdb8c12bbbe2e2dc0e75a029), so they equal it byte for byte. The BEIR file is downloaded once into an operator cache for this cross-check. It is not committed and not needed at run time."
+  },
+  "split": {
+    "relevance": "Each claim's cited_doc_ids, deduplicated in file order, grade 1 (the BEIR convention). A claim without supporting or refuting evidence keeps its cited abstract as the judged document.",
+    "held_out": "All 300 claims in data/claims_dev.jsonl.",
+    "source_groups": "Union-find over the cited_doc_ids and evidence keys of every claim in data/claims_train.jsonl and data/claims_dev.jsonl.",
+    "development": "Every claim in data/claims_train.jsonl whose source group contains no held-out claim and whose normalized text (casefold, collapsed whitespace) differs from every held-out claim.",
+    "order": "Within each role, SHA256('query:' + claim id) order, as in scifact-bounded-source-groups-v1.",
+    "no_sampling": "No model, metric or result selects documents or queries. Every corpus document is included."
+  },
+  "index": {
+    "shards": 5,
+    "shard_rule": "A document goes to shard int(SHA256('shard:' + doc_id)[:8], 16) % 5.",
+    "reason": "A production local index holds at most 2,000,000 bytes of active source text (modelanvil/rag/ingestion.py). The full corpus is 7,792,860 bytes. The production limit is not changed. Each shard is one ordinary knowledge base with its own lexical, MiniLM and random-vector indexes.",
+    "merge": "Each shard returns its top candidate_chunks through the production RetrievalEngine. Candidates are merged by score descending, then chunk_id. For exact cosine search and ts_rank_cd full text this equals one index over all chunks, apart from the order of exactly tied scores."
+  },
+  "retrieval": {
+    "encoder": "modelanvil/rag/embedding-pins.json (sentence-transformers/all-MiniLM-L6-v2 at its pinned revision), CPU only, torch threads 1",
+    "chunk_size": 254,
+    "chunk_overlap": 16,
+    "candidate_chunks": 20,
+    "cutoff_documents": 5,
+    "primary_metric": "ndcg@5",
+    "dense_search_for_relevance": "exact",
+    "random_seed": 69,
+    "random_vector_baseline": "Independent seeded Gaussian unit vectors for each chunk and query; 384 dimensions; no text semantics.",
+    "sql_full_text_baseline": "Production PostgreSQL simple tsvector / websearch_to_tsquery / ts_rank_cd with its conjunctive query semantics; not tuned. The report counts the documents it returns."
+  },
+  "ann": {
+    "unit": "Chunk-neighbor overlap with exact SQL inside each shard; separate from relevance.",
+    "cutoff_chunks": 10,
+    "ef_search": [
+      10,
+      40,
+      100
+    ],
+    "filter_percent": [
+      100,
+      25,
+      5
+    ],
+    "queries_per_split": 20,
+    "exact_fallback": "Disabled for the ANN measurement only; production keeps it."
+  },
+  "thresholds": {
+    "development_rule": "minimum_relevance is the larger of development random-vector nDCG@5 and development SQL full-text nDCG@5. chosen_ef_search is the smallest ef_search whose development mean neighbor recall, over queries and shards, is at least 0.95 for every filter. If none qualifies, the check fails.",
+    "freeze": "The development run writes frozen-thresholds.json, which is committed before the held-out run. The held-out command refuses to run unless this policy, the new pins, the frozen plan and the thresholds file are tracked and unchanged from HEAD, and it records the commit of each.",
+    "held_out_rule": "Passes only if chosen_ef_search is not null and held-out MiniLM nDCG@5 is greater than minimum_relevance and greater than both held-out baselines (random-vector and SQL full-text).",
+    "no_retry": "No re-run, retuning or change of size, split or thresholds based on held-out results. A failed held-out run is reported as failed."
+  },
+  "runtime_budget": "Each phase is expected to finish within 20 minutes on this Mac's CPU. Recorded, not a pass criterion.",
+  "limits": "Public data that the public pretrained encoder may have seen during pretraining; no contamination-free claim. Five shards with an exact merge, not one production index. ANN recall is measured per shard. Results are not compared with published BEIR numbers. This policy does not widen or replace any earlier policy or result."
+}
