@@ -1,0 +1,15 @@
+Skipped tests at 4dbda069a066b951fa2a9a2017ec1f2edfd76a19.
+Source: diagnostic run of `manage.py test --noinput --exclude-tag=pg -v 2`, 2026-11-12 15:28:34 to 15:32:07 +02:00,
+same interpreter and settings as backend-sqlite-console.txt. Result: Ran 1248 tests, OK (skipped=10).
+Format: test ID | skip reason printed by the test.
+
+modelanvil.api.test_dataset_preparation.DatasetPreparationApiTests.test_concurrent_preparation_allocates_distinct_revisions_and_advances_to_latest | Publication locking requires PostgreSQL.
+modelanvil.api.test_dataset_preparation_http.DatasetPreparationHttpTests.test_actual_frontend_client_imports_pdf_and_pins_parser_revision | Install requirements.documents.txt for actual PDF HTTP checks
+modelanvil.budgets.test_concurrency.AccountingConcurrencyTests.test_simultaneous_callback_creation_returns_the_same_event | Requires PostgreSQL transactions
+modelanvil.compute.tests.ConcurrentAllocationTests.test_concurrent_replays_create_one_provider_resource_and_one_reservation | Concurrent allocation qualification requires PostgreSQL.
+modelanvil.data.test_pdf_import.PdfExtractionTests.test_encrypted_blank_mixed_and_oversized_pdfs_refuse_whole_document | Install requirements.documents.txt for actual PDF parser checks
+modelanvil.data.test_pdf_import.PdfExtractionTests.test_real_pdf_pages_have_exact_text_hashes_locations_and_one_protected_group | Install requirements.documents.txt for actual PDF parser checks
+modelanvil.jobs.test_broker.RabbitMQLoopIntegrationTests.test_consumer_loop_executes_a_dispatch_and_stops_cleanly | requires a live RabbitMQ service
+modelanvil.runners.training.test_mlx_runtime.NativeAdapterModelTests.test_frozen_four_bit_base_actual_update_exact_resume_and_corruption | Requires explicit verified local model and Metal access
+modelanvil.runners.alignment.test_grpo.IsolatedVerifierTests.test_linux_verifier_measures_its_own_image_after_a_large_parent | Linux exec RSS inheritance regression
+modelanvil.runners.test_gguf_runtime.GGUFNative.test_actual_cpu_generation_cancellation_and_unload | Provide the pinned local GGUF fixture explicitly.
