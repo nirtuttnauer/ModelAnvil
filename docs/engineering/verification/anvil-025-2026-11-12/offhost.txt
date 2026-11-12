@@ -1,0 +1,79 @@
+2026-11-12T20:19:23+00:00 cleanup-before exit 0 seconds 0.0
+2026-11-12T20:19:23+00:00 volume-cleanup-before exit 1 seconds 0.0
+2026-11-12T20:19:23+00:00 stderr: Error response from daemon: get anvil025-offhost-docker: no such volume
+2026-11-12T20:19:23+00:00 dind-start exit 0 seconds 0.2
+2026-11-12T20:19:24+00:00 inner-info exit 0 seconds 0.1
+2026-11-12T20:19:24+00:00 inner engine {"ServerVersion": "29.9.3", "OSType": "linux", "Architecture": "aarch64", "MemTotal": 8317202432, "NCPU": 18, "Driver": "overlayfs", "ID": "a40c27fd-97a0-4e4d-b411-7f78deb21422", "Name": "995891897fa8"}
+2026-11-12T20:19:24+00:00 inner-images-before exit 0 seconds 0.1
+2026-11-12T20:19:24+00:00 0
+2026-11-12T20:19:24+00:00 inner-volumes-before exit 0 seconds 0.1
+2026-11-12T20:19:24+00:00 0
+2026-11-12T20:19:24+00:00 inner-containers-before exit 0 seconds 0.1
+2026-11-12T20:19:24+00:00 0
+2026-11-12T20:19:29+00:00 apk-add exit 0 seconds 4.1
+2026-11-12T20:19:29+00:00 inner-python exit 0 seconds 0.0
+2026-11-12T20:19:29+00:00 Python 3.14.10
+2026-11-12T20:19:29+00:00 offhost-dir exit 0 seconds 0.0
+2026-11-12T20:19:29+00:00 copy-backup exit 0 seconds 0.0
+2026-11-12T20:19:29+00:00 copy-baseline exit 0 seconds 0.0
+2026-11-12T20:19:29+00:00 copy-credentials exit 0 seconds 0.0
+2026-11-12T20:19:29+00:00 copy-helper exit 0 seconds 0.0
+2026-11-12T20:19:29+00:00 copy-sha256 exit 0 seconds 0.0
+2026-11-12T20:19:29+00:00 copy-modes exit 0 seconds 0.0
+2026-11-12T20:19:29+00:00 copy sha256 equal {"database.dump": true, "artifacts.tar": true, ".env": true, "instance.json": true, "backup.json": true} modes 600 /offhost/backup/artifacts.tar 600 /offhost/backup/backup.json 600 /offhost/backup/database.dump 600 /offhost/backup/instance.json 600 /offhost/backup/.env
+2026-11-12T20:19:53+00:00 restore exit 0 seconds 24.5
+2026-11-12T20:19:53+00:00 {
+  "origin": "https://localhost:43443",
+  "ready": true,
+  "ca": "/offhost/restored/ca.crt",
+  "version": "0.1.0",
+  "production_qualified": false
+}
+2026-11-12T20:19:53+00:00 inner-images-after exit 0 seconds 0.1
+2026-11-12T20:19:53+00:00 inner images after restore 
+2026-11-12T20:19:54+00:00 curl-health exit 0 seconds 0.5
+2026-11-12T20:19:54+00:00 {"status": "ok"}
+2026-11-12T20:19:54+00:00 curl-ready exit 0 seconds 0.1
+2026-11-12T20:19:54+00:00 {"status": "ready"}
+2026-11-12T20:19:58+00:00 drill-snapshot-expect exit 0 seconds 3.7
+2026-11-12T20:19:58+00:00 snapshot --expect exit 0 equal True problems []
+2026-11-12T20:19:58+00:00 copy-snapshot-out exit 0 seconds 0.0
+2026-11-12T20:20:01+00:00 api-chat exit 0 seconds 2.9
+2026-11-12T20:20:01+00:00 {
+  "chat": [
+    {
+      "model": "01a1d169-28b3-708c-91f0-ff3051e2ee95",
+      "content": "\ufffd7,E\ufffd7\ufffdb",
+      "finish_reason": "length",
+      "usage": {
+        "prompt_tokens": 8,
+        "completion_tokens": 8,
+        "total_tokens": 16
+      }
+    },
+    {
+      "model": "01a1d169-4579-7b24-9469-569c4e795c49",
+      "content": "apttty.",
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 8,
+        "completion_tokens": 8,
+        "total_tokens": 16
+      }
+    }
+  ]
+}
+2026-11-12T20:20:12+00:00 stop exit 0 seconds 10.9
+2026-11-12T20:20:12+00:00 uninstall exit 0 seconds 0.4
+2026-11-12T20:20:12+00:00 project exit 0 seconds 0.0
+2026-11-12T20:20:12+00:00 inner-volume-rm exit 0 seconds 0.1
+2026-11-12T20:20:12+00:00 modelanvil-local-93ceac61900d_artifacts
+modelanvil-local-93ceac61900d_caddy_config
+modelanvil-local-93ceac61900d_certificates
+modelanvil-local-93ceac61900d_database
+2026-11-12T20:20:12+00:00 inner-left exit 0 seconds 0.1
+2026-11-12T20:20:12+00:00 containers 0 volumes 0 networks 0
+2026-11-12T20:20:12+00:00 remove-private exit 0 seconds 0.1
+2026-11-12T20:20:12+00:00 dind-remove exit 0 seconds 0.1
+2026-11-12T20:20:13+00:00 dind-volume-remove exit 0 seconds 0.4
+2026-11-12T20:20:13+00:00 outer cleanup: container 0 volume 0

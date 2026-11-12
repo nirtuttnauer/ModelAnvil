@@ -1,0 +1,200 @@
+lock acquired 2026-11-12T20:17:05Z
+unit tests exit 0 2026-11-12T20:17:14Z
+Ran 27 tests in 4.333s
+OK
+commit exit 0 bf7359ea82ee6376d092684a09da32bb1d861a6c
+porcelain lines: 0
+build start 2026-11-12T20:17:14Z
+build exit 0 end 2026-11-12T20:17:51Z
+{"output": "$RELEASES/0.1.1", "version": "0.1.1", "source_revision": "bf7359ea82ee6376d092684a09da32bb1d861a6c", "images": {"api": "sha256:67fef97c390f4698c1d8dbd0ea65339759efe132030b971970cca130b27ecb4c", "web": "sha256:09e375c9eb1a41ce5e86af5e27ff70f413b382a5fa2ed68045d1a7b7e5966998", "db": "sha256:7b822b0aac60967beb1ea5e576b8602c94c300a157d187f385ae3e0da199b90a"}, "offline_bytes": 349829632}
+lock acquired 2026-11-12T20:17:52Z
+2026-11-12T20:17:52Z phase1 start; python 3.9.6
+2026-11-12T20:17:52Z credentials file mode 600
+2026-11-12T20:18:10Z install exit 0 seconds 18
+{
+  "origin": "https://localhost:41443",
+  "ready": true,
+  "ca": "$SCRATCH/live/instance/ca.crt",
+  "version": "0.1.0",
+  "production_qualified": false
+}
+{"status": "ok"} health curl exit 0
+2026-11-12T20:18:21Z seed exit 0 seconds 11
+{
+  "imported_model": "01a1d169-28b3-708c-91f0-ff3051e2ee95",
+  "run_id": "01a1d169-30c0-78f9-8873-da9ec72c007d",
+  "run_status": "completed",
+  "current_step": 4,
+  "checkpoints": 4,
+  "training_seconds": 7.0,
+  "trained_model": "01a1d169-4579-7b24-9469-569c4e795c49",
+  "chat": [
+    {
+      "model": "01a1d169-28b3-708c-91f0-ff3051e2ee95",
+      "content": "\ufffd7,E\ufffd7\ufffdb",
+      "finish_reason": "length",
+      "usage": {
+        "prompt_tokens": 8,
+        "completion_tokens": 8,
+        "total_tokens": 16
+      }
+    },
+    {
+      "model": "01a1d169-4579-7b24-9469-569c4e795c49",
+      "content": "apttty.",
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 8,
+        "completion_tokens": 8,
+        "total_tokens": 16
+      }
+    }
+  ]
+}
+2026-11-12T20:19:16Z drill exit 0 seconds 55
+{"status": "ok"} instance health curl exit 0
+{"status": "ready"} instance ready curl exit 0
+{"status": "ok"} rollback health curl exit 0
+{"status": "ready"} rollback ready curl exit 0
+2026-11-12T20:19:19Z rollback chat exit 0
+{
+  "chat": [
+    {
+      "model": "01a1d169-28b3-708c-91f0-ff3051e2ee95",
+      "content": "\ufffd7,E\ufffd7\ufffdb",
+      "finish_reason": "length",
+      "usage": {
+        "prompt_tokens": 8,
+        "completion_tokens": 8,
+        "total_tokens": 16
+      }
+    },
+    {
+      "model": "01a1d169-4579-7b24-9469-569c4e795c49",
+      "content": "apttty.",
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 8,
+        "completion_tokens": 8,
+        "total_tokens": 16
+      }
+    }
+  ]
+}
+2026-11-12T20:19:23Z upgraded chat exit 0
+{
+  "chat": [
+    {
+      "model": "01a1d169-28b3-708c-91f0-ff3051e2ee95",
+      "content": "\ufffd7,E\ufffd7\ufffdb",
+      "finish_reason": "length",
+      "usage": {
+        "prompt_tokens": 8,
+        "completion_tokens": 8,
+        "total_tokens": 16
+      }
+    },
+    {
+      "model": "01a1d169-4579-7b24-9469-569c4e795c49",
+      "content": "apttty.",
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 8,
+        "completion_tokens": 8,
+        "total_tokens": 16
+      }
+    }
+  ]
+}
+2026-11-12T20:19:23Z phase1 end
+2026-11-12T20:19:23+00:00 cleanup-before exit 0 seconds 0.0
+2026-11-12T20:19:23+00:00 volume-cleanup-before exit 1 seconds 0.0
+2026-11-12T20:19:23+00:00 stderr: Error response from daemon: get anvil025-offhost-docker: no such volume
+2026-11-12T20:19:23+00:00 dind-start exit 0 seconds 0.2
+2026-11-12T20:19:24+00:00 inner-info exit 0 seconds 0.1
+2026-11-12T20:19:24+00:00 inner engine {"ServerVersion": "29.9.3", "OSType": "linux", "Architecture": "aarch64", "MemTotal": 8317202432, "NCPU": 18, "Driver": "overlayfs", "ID": "a40c27fd-97a0-4e4d-b411-7f78deb21422", "Name": "995891897fa8"}
+2026-11-12T20:19:24+00:00 inner-images-before exit 0 seconds 0.1
+2026-11-12T20:19:24+00:00 0
+2026-11-12T20:19:24+00:00 inner-volumes-before exit 0 seconds 0.1
+2026-11-12T20:19:24+00:00 0
+2026-11-12T20:19:24+00:00 inner-containers-before exit 0 seconds 0.1
+2026-11-12T20:19:24+00:00 0
+2026-11-12T20:19:29+00:00 apk-add exit 0 seconds 4.1
+2026-11-12T20:19:29+00:00 inner-python exit 0 seconds 0.0
+2026-11-12T20:19:29+00:00 Python 3.14.10
+2026-11-12T20:19:29+00:00 offhost-dir exit 0 seconds 0.0
+2026-11-12T20:19:29+00:00 copy-backup exit 0 seconds 0.0
+2026-11-12T20:19:29+00:00 copy-baseline exit 0 seconds 0.0
+2026-11-12T20:19:29+00:00 copy-credentials exit 0 seconds 0.0
+2026-11-12T20:19:29+00:00 copy-helper exit 0 seconds 0.0
+2026-11-12T20:19:29+00:00 copy-sha256 exit 0 seconds 0.0
+2026-11-12T20:19:29+00:00 copy-modes exit 0 seconds 0.0
+2026-11-12T20:19:29+00:00 copy sha256 equal {"database.dump": true, "artifacts.tar": true, ".env": true, "instance.json": true, "backup.json": true} modes 600 /offhost/backup/artifacts.tar 600 /offhost/backup/backup.json 600 /offhost/backup/database.dump 600 /offhost/backup/instance.json 600 /offhost/backup/.env
+2026-11-12T20:19:53+00:00 restore exit 0 seconds 24.5
+2026-11-12T20:19:53+00:00 {
+  "origin": "https://localhost:43443",
+  "ready": true,
+  "ca": "/offhost/restored/ca.crt",
+  "version": "0.1.0",
+  "production_qualified": false
+}
+2026-11-12T20:19:53+00:00 inner-images-after exit 0 seconds 0.1
+2026-11-12T20:19:53+00:00 inner images after restore 
+2026-11-12T20:19:54+00:00 curl-health exit 0 seconds 0.5
+2026-11-12T20:19:54+00:00 {"status": "ok"}
+2026-11-12T20:19:54+00:00 curl-ready exit 0 seconds 0.1
+2026-11-12T20:19:54+00:00 {"status": "ready"}
+2026-11-12T20:19:58+00:00 drill-snapshot-expect exit 0 seconds 3.7
+2026-11-12T20:19:58+00:00 snapshot --expect exit 0 equal True problems []
+2026-11-12T20:19:58+00:00 copy-snapshot-out exit 0 seconds 0.0
+2026-11-12T20:20:01+00:00 api-chat exit 0 seconds 2.9
+2026-11-12T20:20:01+00:00 {
+  "chat": [
+    {
+      "model": "01a1d169-28b3-708c-91f0-ff3051e2ee95",
+      "content": "\ufffd7,E\ufffd7\ufffdb",
+      "finish_reason": "length",
+      "usage": {
+        "prompt_tokens": 8,
+        "completion_tokens": 8,
+        "total_tokens": 16
+      }
+    },
+    {
+      "model": "01a1d169-4579-7b24-9469-569c4e795c49",
+      "content": "apttty.",
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 8,
+        "completion_tokens": 8,
+        "total_tokens": 16
+      }
+    }
+  ]
+}
+2026-11-12T20:20:12+00:00 stop exit 0 seconds 10.9
+2026-11-12T20:20:12+00:00 uninstall exit 0 seconds 0.4
+2026-11-12T20:20:12+00:00 project exit 0 seconds 0.0
+2026-11-12T20:20:12+00:00 inner-volume-rm exit 0 seconds 0.1
+2026-11-12T20:20:12+00:00 modelanvil-local-93ceac61900d_artifacts
+modelanvil-local-93ceac61900d_caddy_config
+modelanvil-local-93ceac61900d_certificates
+modelanvil-local-93ceac61900d_database
+2026-11-12T20:20:12+00:00 inner-left exit 0 seconds 0.1
+2026-11-12T20:20:12+00:00 containers 0 volumes 0 networks 0
+2026-11-12T20:20:12+00:00 remove-private exit 0 seconds 0.1
+2026-11-12T20:20:12+00:00 dind-remove exit 0 seconds 0.1
+2026-11-12T20:20:13+00:00 dind-volume-remove exit 0 seconds 0.4
+2026-11-12T20:20:13+00:00 outer cleanup: container 0 volume 0
+offhost exit 0
+instance (modelanvil-local-080d2e2d1e3d) stop exit 0
+instance (modelanvil-local-080d2e2d1e3d) uninstall exit 0
+instance (modelanvil-local-080d2e2d1e3d) volume rm exit 0
+instance (modelanvil-local-080d2e2d1e3d) left: containers 0 volumes 0 networks 0
+rollback (modelanvil-local-3420ff77e118) stop exit 0
+rollback (modelanvil-local-3420ff77e118) uninstall exit 0
+rollback (modelanvil-local-3420ff77e118) volume rm exit 0
+rollback (modelanvil-local-3420ff77e118) left: containers 0 volumes 0 networks 0
+run-all end 2026-11-12T20:20:24Z
+gate-build-live end 2026-11-12T20:20:24Z
+wrapper exit 0
