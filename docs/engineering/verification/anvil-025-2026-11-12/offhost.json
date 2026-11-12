@@ -1,0 +1,326 @@
+{
+  "image": "docker:dind@sha256:08a98015fce594af7c382883bea080ea206de74402a95da9dc52b6428c8cd121",
+  "container": "anvil025-offhost",
+  "volume": "anvil025-offhost-docker",
+  "steps": [
+    {
+      "step": "cleanup-before",
+      "exit_code": 0,
+      "seconds": 0.0,
+      "started_at": "2026-11-12T20:19:23+00:00"
+    },
+    {
+      "step": "volume-cleanup-before",
+      "exit_code": 1,
+      "seconds": 0.0,
+      "started_at": "2026-11-12T20:19:23+00:00"
+    },
+    {
+      "step": "dind-start",
+      "exit_code": 0,
+      "seconds": 0.2,
+      "started_at": "2026-11-12T20:19:23+00:00"
+    },
+    {
+      "step": "inner-info",
+      "exit_code": 0,
+      "seconds": 0.1,
+      "started_at": "2026-11-12T20:19:24+00:00"
+    },
+    {
+      "step": "inner-images-before",
+      "exit_code": 0,
+      "seconds": 0.1,
+      "started_at": "2026-11-12T20:19:24+00:00"
+    },
+    {
+      "step": "inner-volumes-before",
+      "exit_code": 0,
+      "seconds": 0.1,
+      "started_at": "2026-11-12T20:19:24+00:00"
+    },
+    {
+      "step": "inner-containers-before",
+      "exit_code": 0,
+      "seconds": 0.1,
+      "started_at": "2026-11-12T20:19:24+00:00"
+    },
+    {
+      "step": "apk-add",
+      "exit_code": 0,
+      "seconds": 4.1,
+      "started_at": "2026-11-12T20:19:24+00:00"
+    },
+    {
+      "step": "inner-python",
+      "exit_code": 0,
+      "seconds": 0.0,
+      "started_at": "2026-11-12T20:19:29+00:00"
+    },
+    {
+      "step": "offhost-dir",
+      "exit_code": 0,
+      "seconds": 0.0,
+      "started_at": "2026-11-12T20:19:29+00:00"
+    },
+    {
+      "step": "copy-backup",
+      "exit_code": 0,
+      "seconds": 0.0,
+      "started_at": "2026-11-12T20:19:29+00:00"
+    },
+    {
+      "step": "copy-baseline",
+      "exit_code": 0,
+      "seconds": 0.0,
+      "started_at": "2026-11-12T20:19:29+00:00"
+    },
+    {
+      "step": "copy-credentials",
+      "exit_code": 0,
+      "seconds": 0.0,
+      "started_at": "2026-11-12T20:19:29+00:00"
+    },
+    {
+      "step": "copy-helper",
+      "exit_code": 0,
+      "seconds": 0.0,
+      "started_at": "2026-11-12T20:19:29+00:00"
+    },
+    {
+      "step": "copy-sha256",
+      "exit_code": 0,
+      "seconds": 0.0,
+      "started_at": "2026-11-12T20:19:29+00:00"
+    },
+    {
+      "step": "copy-modes",
+      "exit_code": 0,
+      "seconds": 0.0,
+      "started_at": "2026-11-12T20:19:29+00:00"
+    },
+    {
+      "step": "restore",
+      "exit_code": 0,
+      "seconds": 24.5,
+      "started_at": "2026-11-12T20:19:29+00:00"
+    },
+    {
+      "step": "inner-images-after",
+      "exit_code": 0,
+      "seconds": 0.1,
+      "started_at": "2026-11-12T20:19:53+00:00"
+    },
+    {
+      "step": "curl-health",
+      "exit_code": 0,
+      "seconds": 0.5,
+      "started_at": "2026-11-12T20:19:53+00:00"
+    },
+    {
+      "step": "curl-ready",
+      "exit_code": 0,
+      "seconds": 0.1,
+      "started_at": "2026-11-12T20:19:54+00:00"
+    },
+    {
+      "step": "drill-snapshot-expect",
+      "exit_code": 0,
+      "seconds": 3.7,
+      "started_at": "2026-11-12T20:19:54+00:00"
+    },
+    {
+      "step": "copy-snapshot-out",
+      "exit_code": 0,
+      "seconds": 0.0,
+      "started_at": "2026-11-12T20:19:58+00:00"
+    },
+    {
+      "step": "api-chat",
+      "exit_code": 0,
+      "seconds": 2.9,
+      "started_at": "2026-11-12T20:19:58+00:00"
+    },
+    {
+      "step": "stop",
+      "exit_code": 0,
+      "seconds": 10.9,
+      "started_at": "2026-11-12T20:20:01+00:00"
+    },
+    {
+      "step": "uninstall",
+      "exit_code": 0,
+      "seconds": 0.4,
+      "started_at": "2026-11-12T20:20:12+00:00"
+    },
+    {
+      "step": "project",
+      "exit_code": 0,
+      "seconds": 0.0,
+      "started_at": "2026-11-12T20:20:12+00:00"
+    },
+    {
+      "step": "inner-volume-rm",
+      "exit_code": 0,
+      "seconds": 0.1,
+      "started_at": "2026-11-12T20:20:12+00:00"
+    },
+    {
+      "step": "inner-left",
+      "exit_code": 0,
+      "seconds": 0.1,
+      "started_at": "2026-11-12T20:20:12+00:00"
+    },
+    {
+      "step": "remove-private",
+      "exit_code": 0,
+      "seconds": 0.1,
+      "started_at": "2026-11-12T20:20:12+00:00"
+    },
+    {
+      "step": "dind-remove",
+      "exit_code": 0,
+      "seconds": 0.1,
+      "started_at": "2026-11-12T20:20:12+00:00"
+    },
+    {
+      "step": "dind-volume-remove",
+      "exit_code": 0,
+      "seconds": 0.4,
+      "started_at": "2026-11-12T20:20:12+00:00"
+    }
+  ],
+  "inner_engine": {
+    "ServerVersion": "29.9.3",
+    "OSType": "linux",
+    "Architecture": "aarch64",
+    "MemTotal": 8317202432,
+    "NCPU": 18,
+    "Driver": "overlayfs",
+    "ID": "a40c27fd-97a0-4e4d-b411-7f78deb21422",
+    "Name": "995891897fa8"
+  },
+  "inner_images_before": 0,
+  "inner_volumes_before": 0,
+  "inner_containers_before": 0,
+  "inner_python": "Python 3.14.10",
+  "copy_sha256_equal": {
+    "database.dump": true,
+    "artifacts.tar": true,
+    ".env": true,
+    "instance.json": true,
+    "backup.json": true
+  },
+  "copy_bytes": {
+    "database.dump": 725726,
+    "artifacts.tar": 61440,
+    "instance.json": 423,
+    "backup.json": 441
+  },
+  "copy_modes": [
+    "600",
+    "/offhost/backup/artifacts.tar",
+    "600",
+    "/offhost/backup/backup.json",
+    "600",
+    "/offhost/backup/database.dump",
+    "600",
+    "/offhost/backup/instance.json",
+    "600",
+    "/offhost/backup/.env"
+  ],
+  "restore": {
+    "backup_completed_at": "2026-11-12T20:18:29+00:00",
+    "restore_started_at": "2026-11-12T20:19:29+00:00",
+    "restore_finished_at": "2026-11-12T20:19:53+00:00",
+    "backup_age_seconds": 59.7,
+    "restore_seconds": 24.5,
+    "result": {
+      "origin": "https://localhost:43443",
+      "ready": true,
+      "ca": "/offhost/restored/ca.crt",
+      "version": "0.1.0",
+      "production_qualified": false
+    }
+  },
+  "inner_images_after": [],
+  "release_images": {
+    "api": "sha256:20b2a07bdccc130ac1847faae755f24a69d53379e570704753d038713a80ad75",
+    "web": "sha256:d82a908d496b01001458be5f2f2011121f81c5234cbcc573191b242851134b1d",
+    "db": "sha256:7b822b0aac60967beb1ea5e576b8602c94c300a157d187f385ae3e0da199b90a"
+  },
+  "curl_health": {
+    "exit_code": 0,
+    "body": "{\"status\": \"ok\"}"
+  },
+  "curl_ready": {
+    "exit_code": 0,
+    "body": "{\"status\": \"ready\"}"
+  },
+  "snapshot_expect": {
+    "exit_code": 0,
+    "comparison": {
+      "equal": true,
+      "problems": [],
+      "tables": 107,
+      "tables_with_rows": 31,
+      "rows_total": 661,
+      "differing_tables": {},
+      "committed_artifacts": 4,
+      "artifact_files": 4,
+      "models": 2,
+      "pgvector": [
+        "0.8.7",
+        "0.8.7"
+      ],
+      "server_version": [
+        "16.15 (Debian 16.15-1.pgdg12+2)",
+        "16.15 (Debian 16.15-1.pgdg12+2)"
+      ],
+      "health": {
+        "health": {
+          "status": 200,
+          "body": {
+            "status": "ok"
+          }
+        },
+        "ready": {
+          "status": 200,
+          "body": {
+            "status": "ready"
+          }
+        }
+      }
+    },
+    "expected_taken_at": "2026-11-12T20:18:21+00:00",
+    "snapshot_taken_at": "2026-11-12T20:19:54+00:00"
+  },
+  "api_chat": {
+    "exit_code": 0,
+    "chat": [
+      {
+        "model": "01a1d169-28b3-708c-91f0-ff3051e2ee95",
+        "content": "\ufffd7,E\ufffd7\ufffdb",
+        "finish_reason": "length",
+        "usage": {
+          "prompt_tokens": 8,
+          "completion_tokens": 8,
+          "total_tokens": 16
+        }
+      },
+      {
+        "model": "01a1d169-4579-7b24-9469-569c4e795c49",
+        "content": "apttty.",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 8,
+          "completion_tokens": 8,
+          "total_tokens": 16
+        }
+      }
+    ]
+  },
+  "inner_project": "modelanvil-local-93ceac61900d",
+  "inner_left": "containers 0 volumes 0 networks 0",
+  "outer_left": "container 0 volume 0"
+}
