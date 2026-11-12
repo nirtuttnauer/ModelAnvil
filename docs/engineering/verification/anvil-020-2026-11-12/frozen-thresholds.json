@@ -1,0 +1,20 @@
+{
+  "schema": "modelanvil.retrieval-expanded-thresholds.v1",
+  "label": "small correctness check",
+  "policy_id": "rag-expanded-corpus-v1",
+  "plan_digest": "\u0037\u0065\u0035\u0035\u0032\u0064\u0065\u0061\u0037\u0039\u0064\u0064\u0038\u0033\u0038\u0066\u0061\u0031\u0066\u0062\u0036\u0036\u0062\u0066\u0033\u0030\u0065\u0062\u0035\u0032\u0035\u0062\u0030\u0032\u0038\u0062\u0037\u0032\u0038\u0039\u0063\u0063\u0066\u0036\u0036\u0065\u0039\u0038\u0038\u0066\u0031\u0061\u0030\u0035\u0063\u0063\u0062\u0037\u0034\u0061\u0064\u0061\u0061\u0037",
+  "source_phase": "development",
+  "development_commit": "a0e2b437cb30be1cdee0d210974562a67fd91187",
+  "development_report_sha256": "\u0064\u0030\u0035\u0062\u0037\u0065\u0035\u0034\u0035\u0033\u0031\u0030\u0063\u0061\u0066\u0031\u0031\u0062\u0037\u0063\u0036\u0061\u0030\u0062\u0065\u0036\u0034\u0032\u0037\u0062\u0030\u0034\u0039\u0038\u0031\u0034\u0038\u0064\u0063\u0063\u0032\u0036\u0036\u0061\u0039\u0064\u0066\u0064\u0033\u0065\u0032\u0030\u0065\u0032\u0039\u0036\u0061\u0061\u0039\u0066\u0032\u0063\u0037\u0033",
+  "thresholds": {
+    "minimum_relevance": 0.013182674199623353,
+    "chosen_ef_search": 40,
+    "source": "development baselines and development ANN only"
+  },
+  "rule": "minimum_relevance is the larger of development random-vector nDCG@5 and development SQL full-text nDCG@5. chosen_ef_search is the smallest ef_search whose development mean neighbor recall, over queries and shards, is at least 0.95 for every filter. If none qualifies, the check fails.",
+  "development_ndcg@5": {
+    "real": 0.6507020715630886,
+    "random": 0.0,
+    "full_text": 0.013182674199623353
+  }
+}
