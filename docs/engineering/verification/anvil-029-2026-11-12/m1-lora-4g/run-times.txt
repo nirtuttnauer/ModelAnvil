@@ -1,0 +1,3 @@
+lock-acquired 2026-11-12T15:54:42Z
+build-wait-end 2026-11-12T15:54:42Z polls=1
+container-exit 2026-11-12T15:56:37Z code=0

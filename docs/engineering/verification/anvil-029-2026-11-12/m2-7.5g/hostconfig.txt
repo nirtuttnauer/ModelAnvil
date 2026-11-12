@@ -1,0 +1,1 @@
+Memory=8053063680 MemorySwap=8053063680 NanoCpus=4000000000 Privileged=true Image=sha256:08a98015fce594af7c382883bea080ea206de74402a95da9dc52b6428c8cd121 Platform=linux
