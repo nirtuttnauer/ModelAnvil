@@ -1,0 +1,34 @@
+sha 53e7ff3ecf6094df6e89ab50d085db3072f34a4c
+status ''
+VERSION 0.1.0
+moved old 0.1.0 release to 0.1.0-fe9a94c
+retagged old api 0.1.0 as 0.1.0-fe9a94c
+retagged old web 0.1.0 as 0.1.0-fe9a94c
+== build 2026-11-13T01:12:19Z
+Successfully built 90915a6c9f7d
+Successfully tagged modelanvil-selfhost-web:0.1.0
+{"output": "~/.cache/modelanvil-selfhost/releases/0.1.0", "version": "0.1.0", "source_revision": "53e7ff3ecf6094df6e89ab50d085db3072f34a4c", "images": {"api": "sha256:cedfb414ac8afd5c032300c60fecdf95fea3f62674b2a7eebe503620d67a52f4", "web": "sha256:90915a6c9f7d8a73fd0a9338a26621c59cfb0a3382f769da9cb1bffe91d3403b", "db": "sha256:7b822b0aac60967beb1ea5e576b8602c94c300a157d187f385ae3e0da199b90a"}, "offline_bytes": 349849600}
+build exit 0
+manifest version 0.1.0 source_revision 53e7ff3ecf6094df6e89ab50d085db3072f34a4c production_qualified False
+manifest matches HEAD exit 0
+== fresh-engine install of the rebuilt release 2026-11-13T01:13:03Z
+start 2026-11-13T01:13:03Z
+inner engine images before install: 0
+inner engine volumes before install: 0
+apk exit 0
+Python 3.14.10
+{
+  "origin": "https://localhost:18443",
+  "ready": true,
+  "ca": "/work/instance/ca.crt",
+  "version": "0.1.0",
+  "production_qualified": false
+}
+install exit 0 seconds 24
+inner engine images after install: 
+{"status": "ok"}
+curl exit 0
+stop exit 0
+uninstall exit 0
+end 2026-11-13T01:13:41Z
+cleanup: container 0 volume 0
