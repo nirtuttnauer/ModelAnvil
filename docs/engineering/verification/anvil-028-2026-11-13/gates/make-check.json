@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "53e7ff3ecf6094df6e89ab50d085db3072f34a4c",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-11-13T03:10:47+02:00",
+  "machine": {
+    "hostname": "Nirs-MacBook-Pro.local",
+    "os": "macOS-27.0.1-arm64-arm-64bit",
+    "arch": "arm64",
+    "python": "3.12.15",
+    "node": "v24.22.3"
+  },
+  "command": "make check PYTHON=/Users/nirtuttnauer/Documents/Code/modelanvil/.claude/worktrees/anvil-gates/.venv/bin/python",
+  "exit_code": 0,
+  "stdout": "DJANGO_SETTINGS_MODULE=modelanvil.settings PYTHONPATH=. /Users/nirtuttnauer/Documents/Code/modelanvil/.claude/worktrees/anvil-gates/.venv/bin/python manage.py check\nSystem check identified no issues (0 silenced).\n",
+  "stderr": "",
+  "runs": [
+    {
+      "name": "command",
+      "command": "make check PYTHON=/Users/nirtuttnauer/Documents/Code/modelanvil/.claude/worktrees/anvil-gates/.venv/bin/python",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}
