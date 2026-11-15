@@ -17,6 +17,20 @@ class OperationCompatibilityTests(SimpleTestCase):
                 row=support.inspect(operation,device,**options)
                 self.assertFalse(row['installed_compatible']);self.assertFalse(row['model_loaded']);self.assertFalse(row['tensors_created'])
 
+    def test_mlx_qlora_names_bf16_compute_and_refuses_fp8_and_fp16_before_probe(self):
+        from modelanvil.runners.training import mlx_runtime
+        with patch.object(mlx_runtime,'observed_device',side_effect=AssertionError('Unexpected device probe')),patch.object(support,'inventory',side_effect=AssertionError('Unexpected backend probe')):
+            for precision,message in (('fp8','FP8'),('FP8_E4M3','FP8'),('fp16','loss scaling')):
+                row=support.inspect('qlora_adapter','mlx:0',precision=precision,quantization='int4')
+                self.assertFalse(row['installed_compatible']);self.assertIn(message,row['reason'])
+            row=support.inspect('full_sft','mps:0',precision='bf16')
+            self.assertFalse(row['installed_compatible']);self.assertIn('requires FP32',row['reason'])
+        device={'device':{'id':'mlx:0','backend':'mlx'}}
+        with patch.object(mlx_runtime,'require_packages'),patch.object(mlx_runtime,'observed_device',return_value=device),patch('modelanvil.runners.training.hardware.total_memory_bytes',return_value=32*1024**3):
+            row=support.inspect('qlora_adapter','mlx:0',precision='bf16',quantization='int4')
+        self.assertTrue(row['installed_compatible'],row['reason']);self.assertEqual(row['precision'],'bf16')
+        self.assertFalse(row['model_qualified']);self.assertFalse(row['production_qualified'])
+
     def test_missing_exact_dependency_pin_refuses_before_device_probe(self):
         with patch.object(hf_runtime,'require_packages',side_effect=ValueError('Install exact pinned runtime.')),patch.object(hf_runtime,'observed_device') as observed:
             row=support.inspect('full_sft','mps:0')
