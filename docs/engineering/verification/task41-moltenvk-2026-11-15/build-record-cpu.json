@@ -2,76 +2,107 @@
   "binaries": {
     "llama-bench": {
       "linked_libraries": [
-        "\t/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
-        "\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
-        "\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+        "/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
       ],
-      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb/bin/llama-bench",
-      "sha256": "ff99b47b0f652c9dbad2d6ae23141a3f0d03046329861102f68a9f74f2c3e392"
+      "metal_symbol_count": 0,
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb-cmake/bin/llama-bench",
+      "sha256": "1963820b9b66da42e820aa10894830eea6628165b7c32d4bd2c5d2afb078abce"
     },
     "llama-completion": {
       "linked_libraries": [
-        "\t/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
-        "\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
-        "\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+        "/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
       ],
-      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb/bin/llama-completion",
-      "sha256": "ab57ebba0760bd4c9080af7b42de3086e601777a0cd2ef3342948dfa2b3ca40b"
+      "metal_symbol_count": 0,
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb-cmake/bin/llama-completion",
+      "sha256": "63ac979c8e2af038226c6ea21e77cc6b55bcf87176bf37c822acdaa1a59d7e4b"
     },
     "llama-quantize": {
       "linked_libraries": [
-        "\t/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
-        "\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
-        "\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+        "/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
       ],
-      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb/bin/llama-quantize",
-      "sha256": "f3d22f0fd1bdb73bab6afa8e129e6faa5ad8bc3a646cda5a7293c83f8f435f69"
+      "metal_symbol_count": 0,
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb-cmake/bin/llama-quantize",
+      "sha256": "da27544a69c5b5ba9b3faf0f7a4f1c215fd03f8a3c60c8876841bb7b8f7a41e5"
     },
     "llama-server": {
       "linked_libraries": [
-        "\t/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
-        "\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
-        "\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+        "/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
       ],
-      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb/bin/llama-server",
-      "sha256": "a372f86a14bfae6b66c57a06a02a2918839ca3782a9810aeb1ab2fad0c1b3a45"
+      "metal_symbol_count": 0,
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb-cmake/bin/llama-server",
+      "sha256": "1101140b2d8b099f3b5ee1c35900cf566a42627f9b50fc65c33057fa94e786fc"
     },
     "test-backend-ops": {
       "linked_libraries": [
-        "\t/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
-        "\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
-        "\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+        "/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
       ],
-      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb/bin/test-backend-ops",
-      "sha256": "80f89fe97d1210517e8c0a9ac740068e06a692eef5440fcff048f90a10e37151"
+      "metal_symbol_count": 0,
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb-cmake/bin/test-backend-ops",
+      "sha256": "fd3830592584a39440e90a7035adb3bc9f22efb7888078a761cc6cc826af4048"
     }
   },
   "blas_compiled": false,
-  "compiler": "AppleClang 21.0.0",
+  "build_command": "cmake --build ~/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb-cmake --config Release -j 8 --target llama-server llama-completion llama-bench llama-quantize test-backend-ops",
+  "build_system": "cmake version 4.5.0",
+  "cmake_cache": {
+    "BUILD_SHARED_LIBS": "OFF",
+    "CMAKE_BUILD_TYPE": "Release",
+    "CMAKE_CXX_COMPILER": "/usr/bin/c++",
+    "CMAKE_C_COMPILER": "/usr/bin/cc",
+    "CMAKE_OSX_DEPLOYMENT_TARGET": "",
+    "CMAKE_OSX_SYSROOT": "",
+    "GGML_ACCELERATE": "ON",
+    "GGML_BACKEND_DL": "OFF",
+    "GGML_BLAS": "OFF",
+    "GGML_CPU_ALL_VARIANTS": "OFF",
+    "GGML_CPU_KLEIDIAI": "OFF",
+    "GGML_CPU_REPACK": "ON",
+    "GGML_CUDA": "OFF",
+    "GGML_LLAMAFILE": "ON",
+    "GGML_METAL": "OFF",
+    "GGML_NATIVE": "ON",
+    "GGML_OPENMP": "ON",
+    "GGML_RPC": "OFF",
+    "GGML_SCHED_MAX_COPIES": "4",
+    "GGML_VULKAN": "OFF",
+    "LLAMA_BUILD_UI": "OFF",
+    "LLAMA_CONNECT": "OFF",
+    "LLAMA_LLGUIDANCE": "OFF",
+    "LLAMA_OPENSSL": "OFF",
+    "LLAMA_SUBPROCESS": "ON",
+    "LLAMA_USE_PREBUILT_UI": "OFF"
+  },
   "compiler_version": "Apple clang version 21.0.0 (clang-2100.4.1.1)",
-  "cpu_arch_flags": [
+  "configure_command": "cmake -S ~/.cache/modelanvil-tools/src/llama.cpp-f5027fb -B ~/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb-cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DGGML_VULKAN=OFF -DGGML_METAL=OFF -DGGML_BLAS=OFF -DLLAMA_OPENSSL=OFF -DGGML_NATIVE=ON -DLLAMA_BUILD_UI=OFF -DLLAMA_USE_PREBUILT_UI=OFF",
+  "ggml_cpu_flags": [
+    "-DACCELERATE_LAPACK_ILP64",
+    "-DACCELERATE_NEW_LAPACK",
+    "-DGGML_SCHED_MAX_COPIES=4",
+    "-DGGML_USE_ACCELERATE",
+    "-DGGML_USE_CPU_REPACK",
+    "-DGGML_USE_LLAMAFILE",
+    "-D_DARWIN_C_SOURCE",
+    "-D_XOPEN_SOURCE=600",
+    "-O3",
+    "-DNDEBUG",
+    "-std=gnu11",
     "-U__ARM_FEATURE_SVE",
     "-mcpu=native+dotprod+i8mm+nosve+sme"
-  ],
-  "cpu_definitions": [
-    "GGML_USE_ACCELERATE",
-    "ACCELERATE_NEW_LAPACK",
-    "ACCELERATE_LAPACK_ILP64",
-    "GGML_USE_LLAMAFILE",
-    "GGML_USE_CPU_REPACK"
   ],
   "llama_build_number": 11836,
   "llama_commit": "f5027fb21307eb264aed483242603d68c87b0fe3",
   "metal_compiled": false,
-  "openssl": false,
-  "public_definitions": [
-    "-D_DARWIN_C_SOURCE",
-    "-DGGML_USE_CPU"
-  ],
-  "shared_libs": false,
-  "short_commit": "f5027fb21",
   "source_tree_clean": true,
-  "translation_units": 368,
-  "vulkan": false,
-  "webui_assets": false
+  "translation_units_in_compile_database": 325,
+  "vulkan": false
 }

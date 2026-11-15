@@ -69,7 +69,7 @@ These commands require a new output directory and create isolated synthetic appl
 | Device | Apple M5 Pro integrated GPU, Vulkan device `Vulkan0`, vendor `0x106b`, MoltenVK driver ID, unified memory (48 GiB heap reported) |
 | OS | macOS 27.2.1 (build 26B131), arm64 |
 | Driver / loader | Homebrew `molten-vk` 1.4.2 (Vulkan API 1.4.357, conformance 1.4.4.0, driverVersion 0.2.2210) through Homebrew `vulkan-loader` 1.4.363.0; only the MoltenVK ICD manifest is passed to the child and implicit layers are disabled |
-| Runtime | llama.cpp `f5027fb21307eb264aed483242603d68c87b0fe3` (build 11836) `llama-server`, Vulkan on, Metal and BLAS not compiled, static, built by the recorded CMake-equivalent script |
+| Runtime | llama.cpp `f5027fb21307eb264aed483242603d68c87b0fe3` (build 11836) `llama-server`, Vulkan on, Metal and BLAS not compiled, static, built with Homebrew CMake 4.5.0 |
 | Formats | GGUF, llama architecture, `general.file_type` F16, Q8_0 or Q4_K_M, at most 1 GiB of weights and 2,048 context tokens (measured: pinned SmolLM2-135M-Instruct). Q4_K_M on this 576-wide model is a mix of Q4_K, Q5_0, Q6_K and Q8_0 tensors because K-quants need 256-wide rows. Other quantizations, architectures, sizes and multimodal projectors are refused |
 | Placement | Every layer and the KV cache on `Vulkan0` (llama.cpp reports `offloaded 31/31 layers`). The token-embedding table stays in Vulkan host-visible memory and its `GET_ROWS` lookup runs on the CPU, as llama.cpp does for the input layer on every GPU backend; every other node of the model graph (`MUL_MAT`, `FLASH_ATTN_EXT`, `ROPE`, `RMS_NORM`, `SWIGLU`, `ADD`, `MUL`, `SET_ROWS`, `DUP` and the output-row `GET_ROWS`) runs on Vulkan |
 
@@ -78,7 +78,7 @@ The [TASK-41 evidence](verification/task41-moltenvk-2026-11-15/README.md) record
 ### Install, build and configure
 
 1. `brew install molten-vk vulkan-loader vulkan-headers vulkan-tools shaderc` (pulls `glslang`, `spirv-headers`, `spirv-tools`). `vulkaninfo --summary` must show one `Apple M5 Pro` device with `driverName = MoltenVK`.
-2. Check out llama.cpp `f5027fb21307eb264aed483242603d68c87b0fe3` outside the repository and build it with Vulkan on and Metal off. With CMake: `cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DGGML_VULKAN=ON -DGGML_METAL=OFF -DGGML_BLAS=OFF -DLLAMA_OPENSSL=OFF`. The measured binaries came from the [CMake-equivalent script](verification/task41-moltenvk-2026-11-15/build_llama_cpp.py) because this Mac has no CMake; its build record lists every flag, probe and hash.
+2. `brew install cmake`, check out llama.cpp `f5027fb21307eb264aed483242603d68c87b0fe3` outside the repository and build it with Vulkan on and Metal off: `cmake -S llama.cpp -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DGGML_VULKAN=ON -DGGML_METAL=OFF -DGGML_BLAS=OFF -DLLAMA_OPENSSL=OFF -DGGML_NATIVE=ON -DLLAMA_BUILD_UI=OFF -DLLAMA_USE_PREBUILT_UI=OFF`, then `cmake --build build --config Release -j 8 --target llama-server llama-completion llama-bench llama-quantize test-backend-ops`. The UI options keep the build offline (no web UI download); the server runs with `--no-webui`. The measured [build record](verification/task41-moltenvk-2026-11-15/build-record-vulkan.json) lists the CMake cache values, compile flags, linked libraries and hashes. Build the CPU-only reference the same way with `-DGGML_VULKAN=OFF`.
 3. Set operator-owned JSON (never accepted over HTTP):
 
 ```json

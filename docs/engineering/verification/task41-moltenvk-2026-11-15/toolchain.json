@@ -1,8 +1,20 @@
 {
-  "cmake": "Not installed on this host. Installing CMake was outside the authorised package scope (a pip install was refused), so build_llama_cpp.py reproduces the upstream CMake configuration with Apple clang.",
+  "cmake": "cmake 4.5.0 from Homebrew (brew install cmake, authorised by Nir on 2026-11-15) configured and built both llama.cpp builds; see build-record-vulkan.json and build-record-cpu.json.",
   "compiler": "Apple clang version 21.0.0 (clang-2100.4.1.1)",
   "homebrew": "Homebrew 7.0.13",
   "homebrew_packages": {
+    "cmake": {
+      "homepage": "https://www.cmake.org/",
+      "installed_as_dependency": null,
+      "installed_on_request": true,
+      "installed_version": "4.5.0",
+      "license": "BSD-3-Clause",
+      "poured_from_bottle": true,
+      "revision": 0,
+      "runtime_dependencies": [],
+      "stable": "4.5.0",
+      "tap": "homebrew/core"
+    },
     "glslang": {
       "homepage": "https://www.khronos.org/opengles/sdk/Reference-Compiler/",
       "installed_as_dependency": null,
@@ -133,7 +145,7 @@
     },
     "file_format_version": "1.0.0"
   },
-  "install_command": "brew install molten-vk vulkan-loader vulkan-headers vulkan-tools shaderc (2026-11-15; glslang, spirv-headers and spirv-tools came in as dependencies)",
+  "install_command": "brew install molten-vk vulkan-loader vulkan-headers vulkan-tools shaderc (2026-11-15; glslang, spirv-headers and spirv-tools came in as dependencies), then brew install cmake",
   "installed_files": {
     "glslc": {
       "path": "/opt/homebrew/bin/glslc",
