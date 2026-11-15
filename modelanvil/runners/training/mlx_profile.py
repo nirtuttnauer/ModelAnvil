@@ -34,8 +34,12 @@ FP16_REFUSAL = ('FP16 compute is not qualified: it needs dynamic loss scaling, w
     'Select bf16 or fp32.')
 ATTENTION_REFUSAL = ('MLX attention always runs mx.fast.scaled_dot_product_attention; eager, FlashAttention, xformers and '
     'SDPA-backend switches belong to other frameworks. Select mlx_fast_sdpa or mlx_fast_sdpa_force_fused.')
-OPTIMIZER_REFUSAL = ('Select optimizer adamw or adafactor. 8-bit and paged optimizers depend on CUDA bitsandbytes and '
+OPTIMIZER_REFUSAL = ('Select optimizer adamw. 8-bit and paged optimizers depend on CUDA bitsandbytes and '
     'are not available for MLX.')
+# Implemented and measured, but refused at preflight because they failed their quality gate on this hardware.
+UNQUALIFIED = {('optimizer', 'adafactor'): 'Adafactor is not qualified: with the pinned learning rate it failed the 1% '
+    'held-out-loss tolerance against AdamW in the controlled Apple GPU benchmark '
+    '(docs/engineering/verification/task16-mlx-2026-11-15). Select adamw.'}
 # Per-step metrics carry these short codes; the reasons are pinned once in the contract.
 UNAVAILABLE_METRICS = {'peak_reserved_bytes': 'not_exposed_by_mlx', 'gpu_utilization_percent': 'not_exposed_by_mlx'}
 UNAVAILABLE_REASONS = {'not_exposed_by_mlx': 'MLX 0.32.3 exposes active, peak-active and current cache bytes, but no '
@@ -43,6 +47,7 @@ UNAVAILABLE_REASONS = {'not_exposed_by_mlx': 'MLX 0.32.3 exposes active, peak-ac
 CONTRACT = {'version': PROFILE_VERSION, 'default': DEFAULT_PROFILE, 'compute_precisions': list(PRECISIONS),
     'refused_precisions': {'fp16': FP16_REFUSAL, 'fp8': FP8_REFUSAL}, 'sequence_layouts': list(LAYOUTS),
     'max_batch_samples': MAX_BATCH_SAMPLES, 'attention_kernels': list(ATTENTION_KERNELS), 'optimizers': OPTIMIZERS,
+    'unqualified': {f'{field}={value}': reason for (field, value), reason in UNQUALIFIED.items()},
     'adapter_and_optimizer_precision': 'fp32',
     'bf16': 'quantization scales/biases and block matmul inputs BF16; residual stream, norms, embeddings, logits FP32',
     'loss': 'mean cross-entropy over supervised next-token pairs in the step, FP32 logits',
@@ -52,8 +57,11 @@ CONTRACT = {'version': PROFILE_VERSION, 'default': DEFAULT_PROFILE, 'compute_pre
     'unavailable_reasons': UNAVAILABLE_REASONS}
 
 
-def validate_profile(value=None):
-    """Return the complete pinned profile, or raise ValueError naming the refused setting."""
+def validate_profile(value=None, *, allow_unqualified=False):
+    """Return the complete pinned profile, or raise ValueError naming the refused setting.
+
+    allow_unqualified exists only for the controlled benchmark, which measures refused options.
+    """
     if value is None:
         value = {}
     if not isinstance(value, dict):
@@ -86,6 +94,9 @@ def validate_profile(value=None):
         raise ValueError(ATTENTION_REFUSAL)
     if profile['optimizer'] not in OPTIMIZERS:
         raise ValueError(OPTIMIZER_REFUSAL)
+    for (field, refused), reason in UNQUALIFIED.items():
+        if profile[field] == refused and not allow_unqualified:
+            raise ValueError(reason)
     return profile
 
 

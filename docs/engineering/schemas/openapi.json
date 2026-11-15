@@ -16189,7 +16189,7 @@
       "MlxOptimizationProfile": {
         "type": "object",
         "additionalProperties": false,
-        "description": "Native MLX adapter training only, sent as hyperparameters.optimization. Omitted settings take the defaults shown. Unsupported or incompatible choices (FP16, any FP8 variant, packing with one sample per step, 8-bit or paged optimizers, non-MLX attention backends) block the optimization-profile preflight check before inputs resolve. The complete profile is pinned with the run; checkpoint resume refuses a different profile.",
+        "description": "Native MLX adapter training only, sent as hyperparameters.optimization. Omitted settings take the defaults shown. Unsupported or incompatible choices (FP16, any FP8 variant, packing with one sample per step, Adafactor, 8-bit or paged optimizers, non-MLX attention backends) block the optimization-profile preflight check before inputs resolve. The complete profile is pinned with the run; checkpoint resume refuses a different profile.",
         "properties": {
           "compute_precision": {
             "type": "string",
@@ -16233,11 +16233,10 @@
           "optimizer": {
             "type": "string",
             "enum": [
-              "adamw",
-              "adafactor"
+              "adamw"
             ],
             "default": "adamw",
-            "description": "adamw: the pinned AdamW. adafactor: factored second moment, no first moment, the same fixed learning rate."
+            "description": "The pinned AdamW. Adafactor is implemented and measured but refused at preflight: it failed the 1% held-out-loss tolerance against AdamW in the controlled Apple GPU benchmark."
           }
         }
       },

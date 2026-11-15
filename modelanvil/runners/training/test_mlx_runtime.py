@@ -38,8 +38,12 @@ class OptimizationProfileTests(SimpleTestCase):
         self.assertEqual(runtime.validate_hyperparameters(None), profiles.DEFAULT_PROFILE)
         self.assertEqual(runtime.validate_hyperparameters({}), profiles.DEFAULT_PROFILE)
         chosen = {'compute_precision': 'bf16', 'gradient_checkpointing': True, 'batch_samples': 8,
-            'sequence_layout': 'packed', 'attention_kernel': 'mlx_fast_sdpa_force_fused', 'optimizer': 'adafactor'}
+            'sequence_layout': 'packed', 'attention_kernel': 'mlx_fast_sdpa_force_fused', 'optimizer': 'adamw'}
         self.assertEqual(runtime.validate_hyperparameters({'optimization': chosen}), chosen)
+        # Adafactor is implemented for measurement but refused for runs: it failed its held-out gate.
+        self.assertEqual(profiles.validate_profile({'optimizer': 'adafactor'}, allow_unqualified=True)['optimizer'], 'adafactor')
+        with self.assertRaisesRegex(ValueError, 'Adafactor is not qualified'):
+            runtime.validate_hyperparameters({'optimization': {'optimizer': 'adafactor'}})
         self.assertEqual(profiles.validate_profile({'batch_samples': 4})['sequence_layout'], 'padded')
         self.assertEqual(runtime.CONTRACT['optimization_profile'], profiles.CONTRACT)
 
@@ -51,9 +55,10 @@ class OptimizationProfileTests(SimpleTestCase):
         self.assertEqual({k: v['default'] for k, v in published['properties'].items()}, profiles.DEFAULT_PROFILE)
         validator = Draft202012Validator(published)
         for value in (profiles.validate_profile(), profiles.validate_profile({'compute_precision': 'bf16', 'batch_samples': 8,
-                'sequence_layout': 'packed', 'gradient_checkpointing': True, 'optimizer': 'adafactor', 'attention_kernel': 'mlx_fast_sdpa_force_fused'})):
+                'sequence_layout': 'packed', 'gradient_checkpointing': True, 'attention_kernel': 'mlx_fast_sdpa_force_fused'})):
             self.assertEqual(list(validator.iter_errors(value)), [])
-        for value in ({'compute_precision': 'fp16'}, {'compute_precision': 'fp8'}, {'batch_samples': 9}, {'optimizer': 'adamw_8bit'}, {'learning_rate': 1}):
+        for value in ({'compute_precision': 'fp16'}, {'compute_precision': 'fp8'}, {'batch_samples': 9}, {'optimizer': 'adamw_8bit'},
+                {'optimizer': 'adafactor'}, {'learning_rate': 1}):
             self.assertTrue(list(validator.iter_errors(value)), value)
             with self.assertRaises(ValueError):
                 profiles.validate_profile(value)
@@ -74,6 +79,7 @@ class OptimizationProfileTests(SimpleTestCase):
             ({'gradient_checkpointing': 1}, 'true or false'),
             ({'attention_kernel': 'flash_attention_2'}, 'FlashAttention'), ({'attention_kernel': 'eager'}, 'FlashAttention'),
             ({'optimizer': 'adamw_8bit'}, 'bitsandbytes'), ({'optimizer': 'paged_adamw'}, 'bitsandbytes'),
+            ({'optimizer': 'adafactor'}, 'held-out-loss tolerance'),
             ({'learning_rate': 0.1}, 'Unsupported optimization settings: learning_rate'), ([], 'object')]
         for value, message in cases:
             with self.subTest(value=value), self.assertRaisesRegex(ValueError, message):
@@ -84,16 +90,16 @@ class OptimizationProfileTests(SimpleTestCase):
 
     def test_refused_profile_fails_before_any_input_or_device_work_and_valid_profile_is_pinned(self):
         with patch.object(runtime.hf, 'resolve_inputs') as resolved:
-            for profile in ({'compute_precision': 'fp8'}, {'sequence_layout': 'packed'}, {'optimizer': 'adamw_8bit'}):
+            for profile in ({'compute_precision': 'fp8'}, {'sequence_layout': 'packed'}, {'optimizer': 'adamw_8bit'}, {'optimizer': 'adafactor'}):
                 with self.subTest(profile=profile), self.assertRaises(ValueError):
                     runtime.resolve_inputs(hyperparameters={'optimization': profile}, dataset=None, base=None, tokenizer=None,
                         runner=None, pool=None, tenant=None, project=None, steps=1)
             resolved.assert_not_called()
             resolved.return_value = {'pins': {'optimizer': runtime.OPTIMIZER}, 'samples': [{'token_ids': [1, 2]}]}
-            inputs = runtime.resolve_inputs(hyperparameters={'optimization': {'optimizer': 'adafactor', 'batch_samples': 2}},
+            inputs = runtime.resolve_inputs(hyperparameters={'optimization': {'compute_precision': 'bf16', 'batch_samples': 2}},
                 dataset=None, base=None, tokenizer=None, runner=None, pool=None, tenant=None, project=None, steps=1)
-        self.assertEqual(inputs['pins']['optimizer'], profiles.ADAFACTOR)
-        self.assertEqual(inputs['pins']['optimization'], {**profiles.DEFAULT_PROFILE, 'optimizer': 'adafactor', 'batch_samples': 2})
+        self.assertEqual(inputs['pins']['optimizer'], profiles.ADAMW)
+        self.assertEqual(inputs['pins']['optimization'], {**profiles.DEFAULT_PROFILE, 'compute_precision': 'bf16', 'batch_samples': 2})
         self.assertNotIn('hyperparameters', resolved.call_args.kwargs)
 
     def test_registry_forwards_hyperparameters_only_to_the_native_profile(self):

@@ -54,6 +54,9 @@ CONFIGS = {
     'low_memory': {**BASELINE, 'compute_precision': 'bf16', 'gradient_checkpointing': True, 'optimizer': 'adafactor'},
     'low_memory_packed': {**BASELINE, 'compute_precision': 'bf16', 'gradient_checkpointing': True, 'optimizer': 'adafactor',
         'sequence_layout': 'packed'},
+    # Added after the first run showed Adafactor failing its gate: the combinations of options that passed.
+    'bf16_checkpointing': {**BASELINE, 'compute_precision': 'bf16', 'gradient_checkpointing': True},
+    'bf16_checkpointing_packed': {**BASELINE, 'compute_precision': 'bf16', 'gradient_checkpointing': True, 'sequence_layout': 'packed'},
     # Same samples and tokens, eight times as many smaller updates: a throughput reference, not a quality comparison.
     'reference_one_sample_per_step': profiles.DEFAULT_PROFILE,
 }
@@ -159,7 +162,7 @@ def measure(config, args):
     if not mx.metal.is_available():
         raise ValueError('Metal is unavailable; this benchmark refuses CPU execution.')
     mx.set_default_device(mx.gpu)
-    profile = profiles.validate_profile(CONFIGS[config])
+    profile = profiles.validate_profile(CONFIGS[config], allow_unqualified=True)
     corpus = json.loads(Path(args.corpus).read_text())
     train, held_out = corpus['train'], corpus['held_out']
     scale = BASELINE['batch_samples'] // profile['batch_samples']

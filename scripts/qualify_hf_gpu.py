@@ -99,7 +99,7 @@ assert Job.all_objects.filter(tenant_id=tenant.pk).count() == before_jobs
 assert BudgetReservation.all_objects.filter(tenant_id=tenant.pk).count() == before_reservations
 print('unsupported precision/adapter/quantization rejected without jobs or budget', flush=True)
 if args.recipe == 'qlora_adapter':
-    for profile in ({'compute_precision': 'fp8'}, {'compute_precision': 'fp16'}, {'sequence_layout': 'packed', 'batch_samples': 1}, {'optimizer': 'adamw_8bit'}):
+    for profile in ({'compute_precision': 'fp8'}, {'compute_precision': 'fp16'}, {'sequence_layout': 'packed', 'batch_samples': 1}, {'optimizer': 'adamw_8bit'}, {'optimizer': 'adafactor'}):
         changed = {**installed['launch'], 'hyperparameters': {'optimization': profile}}
         blocked = client.post('/api/v1/training-runs/preflight/', changed, format='json')
         # The profile fails first; inputs never resolve, so no file is staged and the device is not probed.
