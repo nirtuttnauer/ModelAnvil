@@ -1,0 +1,218 @@
+{
+ "checkpoints": [
+  {
+   "state_digest": "96f984a537cf235d0a41a47321e1e60aea2ab7131228e74d1fc15c80da5341f7",
+   "step": 1,
+   "weights_sha256": "2d2aea11acba5bc0ccc72356e154c05a4296c2e6f41e82a54d4983c20fe7325a"
+  },
+  {
+   "state_digest": "cb7c0a0075728328036098daa443a1d57d0fe63de009843cfb9feae6d083a0a0",
+   "step": 2,
+   "weights_sha256": "eb22b8263181c65635a02c6af6877aaf842461b6252ba675d0ae38d4907f9044"
+  },
+  {
+   "state_digest": "42898d7a015f25d38885e8e1657512596c1a715dbd5b0feb7663f330310b50ef",
+   "step": 3,
+   "weights_sha256": "78cb270a66aa1826d83ea5776631ecefb2b7ae13e844ea54f83095ceefe1570f"
+  }
+ ],
+ "checks_passed": [
+  "Busy device: preflight blocked and launch refused with no job or budget reservation.",
+  "Top-level precision bf16/fp16, invalid adapter and int8 quantization refused at preview and launch.",
+  "Profiles with FP8, FP16, packing one sample per step, adamw_8bit and Adafactor: preview blocked on optimization-profile before inputs resolved (pins null, no pinned-inputs check), launch refused, no job or budget reservation.",
+  "Approved launch ran three real optimizer steps on mlx:0 with the pinned BF16 + checkpointing + four-sample packed profile.",
+  "Independent CPU and Metal consumers (no Django or ModelAnvil import) reloaded the exported adapter with identical eight-token greedy output and weight hash.",
+  "A genuinely expired lease stopped publication at committed step 1; the next attempt restored adapters, optimizer state and cursor and produced exactly the uninterrupted step-3 adapter bytes.",
+  "Cancellation during an update settled one committed step and published no candidate; corrupt input committed and settled zero steps."
+ ],
+ "command": "python scripts/qualify_hf_gpu.py --model-dir <verified SmolLM2-135M> --device mlx:0 --recipe qlora_adapter --optimization '{\"compute_precision\":\"bf16\",\"gradient_checkpointing\":true,\"batch_samples\":4,\"sequence_layout\":\"packed\"}' --output <new private directory>",
+ "independent_cpu_inference_weights_sha256": "78cb270a66aa1826d83ea5776631ecefb2b7ae13e844ea54f83095ceefe1570f",
+ "independent_metal_inference": {
+  "completion": ", the world was a very different place",
+  "consumer_imported_modelanvil_or_django": false,
+  "execution": {
+   "backend": "mlx",
+   "device_residency_checked": true
+  },
+  "generated_token_ids": [
+   28,
+   260,
+   905,
+   436,
+   253,
+   1035,
+   896,
+   1379
+  ],
+  "prompt": "Once upon a time",
+  "weights_sha256": "78cb270a66aa1826d83ea5776631ecefb2b7ae13e844ea54f83095ceefe1570f"
+ },
+ "metrics": [
+  {
+   "compute_precision": "bf16",
+   "computed_positions": 44,
+   "cpu_seconds": 0.053790000000001115,
+   "device_residency_checked": true,
+   "engine_wall_seconds": 0.37771887500275625,
+   "gpu_allocated_bytes": 195376329,
+   "gpu_backend": "mlx",
+   "gpu_device": "mlx:0",
+   "gpu_utilization_percent": null,
+   "gradient_norm": 0.734903794499421,
+   "loss": 4.035465717315674,
+   "measured_at": "2026-11-15T17:23:52.660902+00:00",
+   "optimizer_state_bytes": 3686412,
+   "padding_positions": 0,
+   "peak_allocated_bytes": 267461532,
+   "peak_reserved_bytes": null,
+   "post_update_loss": 4.034276962280273,
+   "quantization": {
+    "bits": 4,
+    "group_size": 32,
+    "mode": "affine"
+   },
+   "sample_id": "4cef38c4-01b8-41af-8a86-0034995885ca",
+   "sample_ids": [
+    "4cef38c4-01b8-41af-8a86-0034995885ca",
+    "58aa3b30-d8da-4a33-abbd-e38f60e341e3",
+    "d56278a3-4ab9-4e15-9756-1b3e0e231bb3",
+    "9e564bde-4544-4f4f-b561-495cb8e029ab"
+   ],
+   "step": 1,
+   "tokens_per_second": 108.54633621288006,
+   "trainable_parameters": 460800,
+   "training_pairs": 41,
+   "unavailable_metrics": {
+    "gpu_utilization_percent": "not_exposed_by_mlx",
+    "peak_reserved_bytes": "not_exposed_by_mlx"
+   }
+  },
+  {
+   "compute_precision": "bf16",
+   "computed_positions": 44,
+   "cpu_seconds": 0.0350609999999989,
+   "device_residency_checked": true,
+   "engine_wall_seconds": 0.044059084000764415,
+   "gpu_allocated_bytes": 195163341,
+   "gpu_backend": "mlx",
+   "gpu_device": "mlx:0",
+   "gpu_utilization_percent": null,
+   "gradient_norm": 0.7331947013196306,
+   "loss": 4.040623188018799,
+   "measured_at": "2026-11-15T17:23:52.879558+00:00",
+   "optimizer_state_bytes": 3686412,
+   "padding_positions": 0,
+   "peak_allocated_bytes": 276035212,
+   "peak_reserved_bytes": null,
+   "post_update_loss": 4.021628379821777,
+   "quantization": {
+    "bits": 4,
+    "group_size": 32,
+    "mode": "affine"
+   },
+   "sample_id": "4cef38c4-01b8-41af-8a86-0034995885ca",
+   "sample_ids": [
+    "4cef38c4-01b8-41af-8a86-0034995885ca",
+    "58aa3b30-d8da-4a33-abbd-e38f60e341e3",
+    "d56278a3-4ab9-4e15-9756-1b3e0e231bb3",
+    "9e564bde-4544-4f4f-b561-495cb8e029ab"
+   ],
+   "step": 2,
+   "tokens_per_second": 930.5685973700374,
+   "trainable_parameters": 460800,
+   "training_pairs": 41,
+   "unavailable_metrics": {
+    "gpu_utilization_percent": "not_exposed_by_mlx",
+    "peak_reserved_bytes": "not_exposed_by_mlx"
+   }
+  },
+  {
+   "compute_precision": "bf16",
+   "computed_positions": 44,
+   "cpu_seconds": 0.03231300000000026,
+   "device_residency_checked": true,
+   "engine_wall_seconds": 0.03463883299991721,
+   "gpu_allocated_bytes": 195146940,
+   "gpu_backend": "mlx",
+   "gpu_device": "mlx:0",
+   "gpu_utilization_percent": null,
+   "gradient_norm": 0.7389797962844172,
+   "loss": 4.0240044593811035,
+   "measured_at": "2026-11-15T17:23:52.932074+00:00",
+   "optimizer_state_bytes": 3686412,
+   "padding_positions": 0,
+   "peak_allocated_bytes": 275822220,
+   "peak_reserved_bytes": null,
+   "post_update_loss": 4.02227783203125,
+   "quantization": {
+    "bits": 4,
+    "group_size": 32,
+    "mode": "affine"
+   },
+   "sample_id": "4cef38c4-01b8-41af-8a86-0034995885ca",
+   "sample_ids": [
+    "4cef38c4-01b8-41af-8a86-0034995885ca",
+    "58aa3b30-d8da-4a33-abbd-e38f60e341e3",
+    "d56278a3-4ab9-4e15-9756-1b3e0e231bb3",
+    "9e564bde-4544-4f4f-b561-495cb8e029ab"
+   ],
+   "step": 3,
+   "tokens_per_second": 1183.6426475481433,
+   "trainable_parameters": 460800,
+   "training_pairs": 41,
+   "unavailable_metrics": {
+    "gpu_utilization_percent": "not_exposed_by_mlx",
+    "peak_reserved_bytes": "not_exposed_by_mlx"
+   }
+  }
+ ],
+ "observed": "2026-11-15, Apple M5 Pro, macOS 27.2.1, MLX 0.32.3, isolated SQLite database and artifact directory, synthetic ten-sentence correctness corpus",
+ "openapi_contract_errors": [],
+ "pins": {
+  "build_digest": "6462f3a74c0a32cd4600d26425e47c530519149072f1b2980bec1939bcafae76",
+  "contract_digest": "21e216f3412473c5280fcdeae9b68257181cf23d246a0d8136429434e7d7a19d",
+  "optimization": {
+   "attention_kernel": "mlx_fast_sdpa",
+   "batch_samples": 4,
+   "compute_precision": "bf16",
+   "gradient_checkpointing": true,
+   "optimizer": "adamw",
+   "sequence_layout": "packed"
+  },
+  "optimizer": {
+   "algorithm": "adamw",
+   "beta1": 0.9,
+   "beta2": 0.999,
+   "epsilon": 1e-08,
+   "learning_rate": 2e-05,
+   "weight_decay": 0.0
+  },
+  "runtime": "modelanvil.smollm2-mlx-qlora.v1"
+ },
+ "recovery": {
+  "cancel": {
+   "candidate": null,
+   "run_id": "01a1e03c-e81d-79e0-9381-db29396c3b20",
+   "settled": "1.000000",
+   "steps": 1
+  },
+  "corruption": {
+   "candidate": null,
+   "run_id": "01a1e03c-ed39-739c-b7ca-ed6e09c0f767",
+   "settled": "0",
+   "steps": 0
+  },
+  "recovery": {
+   "attempts": 2,
+   "exactly_matches_uninterrupted": true,
+   "final_weights_sha256": "78cb270a66aa1826d83ea5776631ecefb2b7ae13e844ea54f83095ceefe1570f",
+   "run_id": "01a1e03c-e043-796f-aa26-561cc0559c74",
+   "steps": 3
+  },
+  "scope": "Real mlx:0 SmolLM2 GPU worker, isolated database, live fencing/cancellation/corruption/accounting. Does not qualify other vendors or production scheduling."
+ },
+ "requirements_precision": "bf16",
+ "schema": "modelanvil.task16-worker-qualification-excerpt.v1",
+ "scope": "One local mlx:0 worker on this Mac. Mechanics and exact recovery only; the synthetic corpus does not measure quality, and the throughput of these tiny steps is not a benchmark.",
+ "source_commit": "0ae0bbe (benchmark code unchanged since d058773)"
+}
