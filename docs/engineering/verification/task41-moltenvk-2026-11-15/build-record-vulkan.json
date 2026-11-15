@@ -1,0 +1,94 @@
+{
+  "binaries": {
+    "llama-bench": {
+      "linked_libraries": [
+        "\t/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "\t/opt/homebrew/opt/vulkan-loader/lib/libvulkan.1.dylib (compatibility version 1.0.0, current version 1.4.0)",
+        "\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+      ],
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb/bin/llama-bench",
+      "sha256": "1776153d3687312739d4c033a483f641698d663ce27a074863c7b116f13210a4"
+    },
+    "llama-completion": {
+      "linked_libraries": [
+        "\t/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "\t/opt/homebrew/opt/vulkan-loader/lib/libvulkan.1.dylib (compatibility version 1.0.0, current version 1.4.0)",
+        "\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+      ],
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb/bin/llama-completion",
+      "sha256": "647d153711cc1d54dac05cce1cc07e0599adba24aedb73cbe5c30936c0041da3"
+    },
+    "llama-quantize": {
+      "linked_libraries": [
+        "\t/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "\t/opt/homebrew/opt/vulkan-loader/lib/libvulkan.1.dylib (compatibility version 1.0.0, current version 1.4.0)",
+        "\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+      ],
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb/bin/llama-quantize",
+      "sha256": "c9aff0255980ce83e35cb0220ec5202987fcba6588300c72c8f73e43bb094c93"
+    },
+    "llama-server": {
+      "linked_libraries": [
+        "\t/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "\t/opt/homebrew/opt/vulkan-loader/lib/libvulkan.1.dylib (compatibility version 1.0.0, current version 1.4.0)",
+        "\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+      ],
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb/bin/llama-server",
+      "sha256": "efdaa68e680272d22530f109ed01122c30f0442d8d23bbbbf37b74e8c91acae3"
+    },
+    "test-backend-ops": {
+      "linked_libraries": [
+        "\t/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "\t/opt/homebrew/opt/vulkan-loader/lib/libvulkan.1.dylib (compatibility version 1.0.0, current version 1.4.0)",
+        "\t/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+      ],
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb/bin/test-backend-ops",
+      "sha256": "201f00ae22c589f39d414ea7c09ac16728a6e7d9450ec4445dfb05d39a23d2c5"
+    }
+  },
+  "blas_compiled": false,
+  "compiler": "AppleClang 21.0.0",
+  "compiler_version": "Apple clang version 21.0.0 (clang-2100.4.1.1)",
+  "cpu_arch_flags": [
+    "-U__ARM_FEATURE_SVE",
+    "-mcpu=native+dotprod+i8mm+nosve+sme"
+  ],
+  "cpu_definitions": [
+    "GGML_USE_ACCELERATE",
+    "ACCELERATE_NEW_LAPACK",
+    "ACCELERATE_LAPACK_ILP64",
+    "GGML_USE_LLAMAFILE",
+    "GGML_USE_CPU_REPACK"
+  ],
+  "glslc": "/opt/homebrew/bin/glslc",
+  "glslc_version": "shaderc v2026.4 unknown hash, 2026-09-11",
+  "llama_build_number": 11836,
+  "llama_commit": "f5027fb21307eb264aed483242603d68c87b0fe3",
+  "metal_compiled": false,
+  "openssl": false,
+  "public_definitions": [
+    "-D_DARWIN_C_SOURCE",
+    "-DGGML_USE_CPU",
+    "-DGGML_USE_VULKAN"
+  ],
+  "shared_libs": false,
+  "short_commit": "f5027fb21",
+  "source_tree_clean": true,
+  "translation_units": 526,
+  "vulkan": true,
+  "vulkan_glslc_features": {
+    "GGML_VULKAN_BFLOAT16_GLSLC_SUPPORT": true,
+    "GGML_VULKAN_COOPMAT2_DECODE_VECTOR_GLSLC_SUPPORT": true,
+    "GGML_VULKAN_COOPMAT2_GLSLC_SUPPORT": true,
+    "GGML_VULKAN_COOPMAT_GLSLC_SUPPORT": true,
+    "GGML_VULKAN_FLOAT_E2M1_GLSLC_SUPPORT": true,
+    "GGML_VULKAN_FLOAT_E4M3_GLSLC_SUPPORT": true,
+    "GGML_VULKAN_INTEGER_DOT_GLSLC_SUPPORT": true
+  },
+  "webui_assets": false
+}

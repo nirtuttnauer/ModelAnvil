@@ -1,0 +1,17 @@
+CommandError: Selected operation/device is unavailable; see the structured reason above.
+{
+  "operation": "full_sft",
+  "device": "vulkan:0",
+  "installed_compatible": false,
+  "reason": "Vulkan is an inference-only GGUF backend in ModelAnvil; Vulkan training is not supported. Select a qualified training device such as cpu, mps:0 or mlx:0.",
+  "model_loaded": false,
+  "tensors_created": false,
+  "model_qualified": false,
+  "production_qualified": false,
+  "qualification_scope": "Installation compatibility only. Actual model/device/operation evidence is separate.",
+  "precision": "fp32",
+  "quantization": "none",
+  "offload": false,
+  "inference_only": true,
+  "training_supported": false
+}

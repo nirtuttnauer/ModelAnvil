@@ -1,0 +1,57 @@
+{
+  "operation": "gguf_inference",
+  "device": "vulkan:0",
+  "installed_compatible": true,
+  "reason": "Installed GGUF runtime checks pass without loading a model. Launch verifies the exact file, every layer offloaded and device admission.",
+  "model_loaded": false,
+  "tensors_created": false,
+  "model_qualified": false,
+  "production_qualified": false,
+  "qualification_scope": "Inference only: pinned llama.cpp Vulkan build on the Apple M5 Pro GPU through MoltenVK 1.4.2 on macOS 27.2.1 arm64 for llama-architecture F16, Q8_0 and Q4_K_M GGUF. No discrete, cross-vendor, Linux, Windows or DirectML claim; no Vulkan training.",
+  "precision": null,
+  "quantization": "f16",
+  "offload": false,
+  "inference_only": true,
+  "training_supported": false,
+  "cpu_fallback": false,
+  "backend": "llama.cpp-vulkan",
+  "observed_device": {
+    "server": {
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb/bin/llama-server",
+      "sha256": "efdaa68e680272d22530f109ed01122c30f0442d8d23bbbbf37b74e8c91acae3",
+      "llama_commit": "f5027fb21307eb264aed483242603d68c87b0fe3"
+    },
+    "icd_manifest": {
+      "path": "/opt/homebrew/etc/vulkan/icd.d/MoltenVK_icd.json",
+      "sha256": "b514f51690582fb783383154b7a33c7816cc47e98ee1a1f652dccd3e996f0bf1",
+      "api_version": "1.4.0",
+      "portability_driver": true
+    },
+    "driver": {
+      "name": "MoltenVK",
+      "package": "molten-vk 1.4.2",
+      "sha256": "e21bceade8d0638bb2bc041f3166fbd54da19fa0958d8bbaff584afd7958d542",
+      "path": "/opt/homebrew/Cellar/molten-vk/1.4.2/lib/libMoltenVK.dylib"
+    },
+    "loader": {
+      "name": "Khronos Vulkan loader",
+      "package": "vulkan-loader 1.4.363.0",
+      "sha256": "6453921b5e0562364d60a4d742fb2db12c3e4e8c2ac2fb6d5938b6453a644208",
+      "path": "/opt/homebrew/Cellar/vulkan-loader/1.4.363.0/lib/libvulkan.1.4.363.dylib"
+    },
+    "host": {
+      "system": "Darwin",
+      "machine": "arm64",
+      "macos": "27.2.1"
+    },
+    "device": {
+      "id": "Vulkan0",
+      "name": "Apple M5 Pro",
+      "reported_memory_bytes": 51539607552,
+      "reported_free_bytes": 40200306688,
+      "memory_scope": "Unified memory heap reported by MoltenVK through llama.cpp; not dedicated VRAM or a reservation."
+    }
+  },
+  "cpu_fallback_policy": "Operator opt-in only (MODELANVIL_VULKAN_INFERENCE cpu_fallback); a fallback run is recorded and labelled cpu, never GPU.",
+  "recipe_changed": false
+}

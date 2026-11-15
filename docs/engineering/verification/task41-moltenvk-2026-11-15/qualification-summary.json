@@ -1,0 +1,2792 @@
+{
+  "builds": {
+    "cpu": {
+      "binaries": {
+        "llama-bench": "ff99b47b0f652c9dbad2d6ae23141a3f0d03046329861102f68a9f74f2c3e392",
+        "llama-completion": "ab57ebba0760bd4c9080af7b42de3086e601777a0cd2ef3342948dfa2b3ca40b",
+        "llama-quantize": "f3d22f0fd1bdb73bab6afa8e129e6faa5ad8bc3a646cda5a7293c83f8f435f69",
+        "llama-server": "a372f86a14bfae6b66c57a06a02a2918839ca3782a9810aeb1ab2fad0c1b3a45",
+        "test-backend-ops": "80f89fe97d1210517e8c0a9ac740068e06a692eef5440fcff048f90a10e37151"
+      },
+      "blas_compiled": false,
+      "compiler": "AppleClang 21.0.0",
+      "compiler_version": "Apple clang version 21.0.0 (clang-2100.4.1.1)",
+      "cpu_arch_flags": [
+        "-U__ARM_FEATURE_SVE",
+        "-mcpu=native+dotprod+i8mm+nosve+sme"
+      ],
+      "cpu_definitions": [
+        "GGML_USE_ACCELERATE",
+        "ACCELERATE_NEW_LAPACK",
+        "ACCELERATE_LAPACK_ILP64",
+        "GGML_USE_LLAMAFILE",
+        "GGML_USE_CPU_REPACK"
+      ],
+      "llama_build_number": 11836,
+      "llama_commit": "f5027fb21307eb264aed483242603d68c87b0fe3",
+      "metal_compiled": false,
+      "openssl": false,
+      "public_definitions": [
+        "-D_DARWIN_C_SOURCE",
+        "-DGGML_USE_CPU"
+      ],
+      "shared_libs": false,
+      "short_commit": "f5027fb21",
+      "source_tree_clean": true,
+      "translation_units": 368,
+      "vulkan": false,
+      "webui_assets": false
+    },
+    "vulkan": {
+      "binaries": {
+        "llama-bench": "1776153d3687312739d4c033a483f641698d663ce27a074863c7b116f13210a4",
+        "llama-completion": "647d153711cc1d54dac05cce1cc07e0599adba24aedb73cbe5c30936c0041da3",
+        "llama-quantize": "c9aff0255980ce83e35cb0220ec5202987fcba6588300c72c8f73e43bb094c93",
+        "llama-server": "efdaa68e680272d22530f109ed01122c30f0442d8d23bbbbf37b74e8c91acae3",
+        "test-backend-ops": "201f00ae22c589f39d414ea7c09ac16728a6e7d9450ec4445dfb05d39a23d2c5"
+      },
+      "blas_compiled": false,
+      "compiler": "AppleClang 21.0.0",
+      "compiler_version": "Apple clang version 21.0.0 (clang-2100.4.1.1)",
+      "cpu_arch_flags": [
+        "-U__ARM_FEATURE_SVE",
+        "-mcpu=native+dotprod+i8mm+nosve+sme"
+      ],
+      "cpu_definitions": [
+        "GGML_USE_ACCELERATE",
+        "ACCELERATE_NEW_LAPACK",
+        "ACCELERATE_LAPACK_ILP64",
+        "GGML_USE_LLAMAFILE",
+        "GGML_USE_CPU_REPACK"
+      ],
+      "glslc": "/opt/homebrew/bin/glslc",
+      "glslc_version": "shaderc v2026.4 unknown hash, 2026-09-11",
+      "llama_build_number": 11836,
+      "llama_commit": "f5027fb21307eb264aed483242603d68c87b0fe3",
+      "metal_compiled": false,
+      "openssl": false,
+      "public_definitions": [
+        "-D_DARWIN_C_SOURCE",
+        "-DGGML_USE_CPU",
+        "-DGGML_USE_VULKAN"
+      ],
+      "shared_libs": false,
+      "short_commit": "f5027fb21",
+      "source_tree_clean": true,
+      "translation_units": 526,
+      "vulkan": true,
+      "vulkan_glslc_features": {
+        "GGML_VULKAN_BFLOAT16_GLSLC_SUPPORT": true,
+        "GGML_VULKAN_COOPMAT2_DECODE_VECTOR_GLSLC_SUPPORT": true,
+        "GGML_VULKAN_COOPMAT2_GLSLC_SUPPORT": true,
+        "GGML_VULKAN_COOPMAT_GLSLC_SUPPORT": true,
+        "GGML_VULKAN_FLOAT_E2M1_GLSLC_SUPPORT": true,
+        "GGML_VULKAN_FLOAT_E4M3_GLSLC_SUPPORT": true,
+        "GGML_VULKAN_INTEGER_DOT_GLSLC_SUPPORT": true
+      },
+      "webui_assets": false
+    }
+  },
+  "child_environment": {
+    "cpu": {
+      "HOME": "<private>",
+      "LANG": "C",
+      "LC_ALL": "C",
+      "PATH": "/usr/bin:/bin",
+      "TMPDIR": "<private>"
+    },
+    "vulkan": {
+      "GGML_VK_VISIBLE_DEVICES": "0",
+      "HOME": "<private>",
+      "LANG": "C",
+      "LC_ALL": "C",
+      "PATH": "/usr/bin:/bin",
+      "TMPDIR": "<private>",
+      "VK_DRIVER_FILES": "/opt/homebrew/etc/vulkan/icd.d/MoltenVK_icd.json",
+      "VK_ICD_FILENAMES": "/opt/homebrew/etc/vulkan/icd.d/MoltenVK_icd.json",
+      "VK_LOADER_LAYERS_DISABLE": "~all~"
+    }
+  },
+  "finished_at": "2026-11-15T19:04:35+0200",
+  "generation_flags": [
+    "-n",
+    "64",
+    "--temp",
+    "0",
+    "--seed",
+    "42",
+    "-c",
+    "2048",
+    "-t",
+    "1",
+    "-tb",
+    "1",
+    "-no-cnv",
+    "--no-display-prompt",
+    "--fit",
+    "off",
+    "-lv",
+    "4"
+  ],
+  "host": {
+    "cpu": "Apple M5 Pro",
+    "machine": "arm64",
+    "macos": "27.2.1",
+    "memory_bytes": 51539607552,
+    "platform": "macOS-27.2.1-arm64-arm-64bit",
+    "sw_vers": [
+      "ProductName:\t\tmacOS",
+      "ProductVersion:\t\t27.2.1",
+      "BuildVersion:\t\t26B131",
+      ""
+    ]
+  },
+  "llama_list_devices": [
+    "Available devices:",
+    "  Vulkan0: Apple M5 Pro (49152 MiB, 38338 MiB free)"
+  ],
+  "models": {
+    "F16": {
+      "architecture": "llama",
+      "byte_size": 270886400,
+      "file": "smollm2-135m-instruct-f16.gguf",
+      "file_type_name": "MOSTLY_F16",
+      "general_file_type": 1,
+      "sha256": "8a74026b949a60575f3f23c5fd4a94915814d40c057134e3c4c2588e966655cb",
+      "tensor_count": 272,
+      "tensor_types": {
+        "F16": 211,
+        "F32": 61
+      }
+    },
+    "Q4_K_M": {
+      "architecture": "llama",
+      "byte_size": 105454592,
+      "file": "smollm2-135m-instruct-q4_k_m.gguf",
+      "file_type_name": "MOSTLY_Q4_K_M",
+      "general_file_type": 15,
+      "sha256": "310b730e0ae3f8306952ab2edccef5308e1b32fd6ef5cdc43d45cbc9ae6ca234",
+      "tensor_count": 272,
+      "tensor_types": {
+        "F32": 61,
+        "Q4_K": 16,
+        "Q5_0": 166,
+        "Q6_K": 14,
+        "Q8_0": 15
+      }
+    },
+    "Q8_0": {
+      "architecture": "llama",
+      "byte_size": 144811520,
+      "file": "smollm2-135m-instruct-q8_0.gguf",
+      "file_type_name": "MOSTLY_Q8_0",
+      "general_file_type": 7,
+      "sha256": "099b9a731e9eab4bf72402dca4fc70fee21d22d5b41f7b17dc6464bf5d21228d",
+      "tensor_count": 272,
+      "tensor_types": {
+        "F32": 61,
+        "Q8_0": 211
+      }
+    }
+  },
+  "prompts": [
+    "<|im_start|>user\nWhat is 2 + 2?<|im_end|>\n<|im_start|>assistant\n",
+    "<|im_start|>user\nName three primary colors.<|im_end|>\n<|im_start|>assistant\n",
+    "<|im_start|>user\nWrite one sentence about the ocean.<|im_end|>\n<|im_start|>assistant\n"
+  ],
+  "runs": {
+    "F16": {
+      "comparison": [
+        {
+          "common_prefix_characters": 201,
+          "cpu_repeat_identical": true,
+          "cpu_text": "To find the sum of 2 + 2, we can use the formula for the sum of an arithmetic series, which is given by the formula:\n\nSum = (n/2) * (a + l)\n\nwhere n is the number of terms, a is the first term, and l\n\n",
+          "prompt": 0,
+          "vulkan_equals_cpu": true,
+          "vulkan_repeat_identical": true,
+          "vulkan_text": "To find the sum of 2 + 2, we can use the formula for the sum of an arithmetic series, which is given by the formula:\n\nSum = (n/2) * (a + l)\n\nwhere n is the number of terms, a is the first term, and l\n\n"
+        },
+        {
+          "common_prefix_characters": 263,
+          "cpu_repeat_identical": true,
+          "cpu_text": "Three primary colors are:\n\n1. Red\n2. Blue\n3. Yellow\n\nRed is the most common primary color and is often used to create a bright and bold effect. Blue is used to create a deep blue and is often used to create a sense of depth and dimensionality. Yellow is used to\n\n",
+          "prompt": 1,
+          "vulkan_equals_cpu": true,
+          "vulkan_repeat_identical": true,
+          "vulkan_text": "Three primary colors are:\n\n1. Red\n2. Blue\n3. Yellow\n\nRed is the most common primary color and is often used to create a bright and bold effect. Blue is used to create a deep blue and is often used to create a sense of depth and dimensionality. Yellow is used to\n\n"
+        },
+        {
+          "common_prefix_characters": 193,
+          "cpu_repeat_identical": true,
+          "cpu_text": "The ocean is a vast, mysterious, and awe-inspiring body of water that stretches across the globe, playing a crucial role in supporting life and shaping our planet's ecosystems. [end of text]\n\n\n",
+          "prompt": 2,
+          "vulkan_equals_cpu": true,
+          "vulkan_repeat_identical": true,
+          "vulkan_text": "The ocean is a vast, mysterious, and awe-inspiring body of water that stretches across the globe, playing a crucial role in supporting life and shaping our planet's ecosystems. [end of text]\n\n\n"
+        }
+      ],
+      "cpu": {
+        "bench": [
+          {
+            "avg_ts": 406.500158,
+            "backends": "CPU",
+            "devices": "auto",
+            "flash_attn": -1,
+            "gpu_info": "",
+            "n_gen": 0,
+            "n_gpu_layers": 0,
+            "n_prompt": 128,
+            "n_threads": 1,
+            "stddev_ts": 0.90193,
+            "type_k": "f16",
+            "type_v": "f16"
+          },
+          {
+            "avg_ts": 233.211867,
+            "backends": "CPU",
+            "devices": "auto",
+            "flash_attn": -1,
+            "gpu_info": "",
+            "n_gen": 64,
+            "n_gpu_layers": 0,
+            "n_prompt": 0,
+            "n_threads": 1,
+            "stddev_ts": 9.378954,
+            "type_k": "f16",
+            "type_v": "f16"
+          }
+        ],
+        "completions": [
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 271.32,
+              "tokens": 63,
+              "tokens_per_second": 232.2
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  406 =   256 +      45 +     104                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 256.63
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 348422144,
+            "prompt": 0,
+            "prompt_eval": {
+              "ms": 43.16,
+              "tokens": 17,
+              "tokens_per_second": 393.85
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "To find the sum of 2 + 2, we can use the formula for the sum of an arithmetic series, which is given by the formula:\n\nSum = (n/2) * (a + l)\n\nwhere n is the number of terms, a is the first term, and l\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.372
+          },
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 265.41,
+              "tokens": 63,
+              "tokens_per_second": 237.37
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  406 =   256 +      45 +     104                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 256.63
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 348438528,
+            "prompt": 0,
+            "prompt_eval": {
+              "ms": 43.43,
+              "tokens": 17,
+              "tokens_per_second": 391.41
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "To find the sum of 2 + 2, we can use the formula for the sum of an arithmetic series, which is given by the formula:\n\nSum = (n/2) * (a + l)\n\nwhere n is the number of terms, a is the first term, and l\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.364
+          },
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 264.92,
+              "tokens": 63,
+              "tokens_per_second": 237.81
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  406 =   256 +      45 +     104                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 256.63
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 348241920,
+            "prompt": 1,
+            "prompt_eval": {
+              "ms": 35.52,
+              "tokens": 14,
+              "tokens_per_second": 394.2
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "Three primary colors are:\n\n1. Red\n2. Blue\n3. Yellow\n\nRed is the most common primary color and is often used to create a bright and bold effect. Blue is used to create a deep blue and is often used to create a sense of depth and dimensionality. Yellow is used to\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.355
+          },
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 274.01,
+              "tokens": 63,
+              "tokens_per_second": 229.91
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  406 =   256 +      45 +     104                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 256.63
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 348291072,
+            "prompt": 1,
+            "prompt_eval": {
+              "ms": 35.74,
+              "tokens": 14,
+              "tokens_per_second": 391.69
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "Three primary colors are:\n\n1. Red\n2. Blue\n3. Yellow\n\nRed is the most common primary color and is often used to create a bright and bold effect. Blue is used to create a deep blue and is often used to create a sense of depth and dimensionality. Yellow is used to\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.365
+          },
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 150.99,
+              "tokens": 36,
+              "tokens_per_second": 238.42
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  406 =   256 +      45 +     104                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 256.63
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 348372992,
+            "prompt": 2,
+            "prompt_eval": {
+              "ms": 40.33,
+              "tokens": 16,
+              "tokens_per_second": 396.69
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "The ocean is a vast, mysterious, and awe-inspiring body of water that stretches across the globe, playing a crucial role in supporting life and shaping our planet's ecosystems. [end of text]\n\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.245
+          },
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 160.52,
+              "tokens": 36,
+              "tokens_per_second": 224.28
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  406 =   256 +      45 +     104                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 256.63
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 348520448,
+            "prompt": 2,
+            "prompt_eval": {
+              "ms": 40.65,
+              "tokens": 16,
+              "tokens_per_second": 393.57
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "The ocean is a vast, mysterious, and awe-inspiring body of water that stretches across the globe, playing a crucial role in supporting life and shaping our planet's ecosystems. [end of text]\n\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.258
+          }
+        ]
+      },
+      "vulkan": {
+        "bench": [
+          {
+            "avg_ts": 9925.079959,
+            "backends": "Vulkan",
+            "devices": "Vulkan0",
+            "flash_attn": -1,
+            "gpu_info": "Apple M5 Pro",
+            "n_gen": 0,
+            "n_gpu_layers": 99,
+            "n_prompt": 128,
+            "n_threads": 1,
+            "stddev_ts": 138.158351,
+            "type_k": "f16",
+            "type_v": "f16"
+          },
+          {
+            "avg_ts": 299.032082,
+            "backends": "Vulkan",
+            "devices": "Vulkan0",
+            "flash_attn": -1,
+            "gpu_info": "Apple M5 Pro",
+            "n_gen": 64,
+            "n_gpu_layers": 99,
+            "n_prompt": 0,
+            "n_threads": 1,
+            "stddev_ts": 4.019786,
+            "type_k": "f16",
+            "type_v": "f16"
+          }
+        ],
+        "completions": [
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 208.31,
+              "tokens": 63,
+              "tokens_per_second": 302.44
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 37872 + ( 404 =   256 +      45 +     102) +       10875 |",
+              "|   - Host                   |                    60 =    54 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 256.63,
+              "Vulkan_Host": 54.0
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 181796864,
+            "prompt": 0,
+            "prompt_eval": {
+              "ms": 20.18,
+              "tokens": 17,
+              "tokens_per_second": 842.29
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "To find the sum of 2 + 2, we can use the formula for the sum of an arithmetic series, which is given by the formula:\n\nSum = (n/2) * (a + l)\n\nwhere n is the number of terms, a is the first term, and l\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.367
+          },
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 209.13,
+              "tokens": 63,
+              "tokens_per_second": 301.25
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 37872 + ( 404 =   256 +      45 +     102) +       10875 |",
+              "|   - Host                   |                    60 =    54 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 256.63,
+              "Vulkan_Host": 54.0
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 180109312,
+            "prompt": 0,
+            "prompt_eval": {
+              "ms": 13.32,
+              "tokens": 17,
+              "tokens_per_second": 1275.89
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "To find the sum of 2 + 2, we can use the formula for the sum of an arithmetic series, which is given by the formula:\n\nSum = (n/2) * (a + l)\n\nwhere n is the number of terms, a is the first term, and l\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.348
+          },
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 212.38,
+              "tokens": 63,
+              "tokens_per_second": 296.63
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 37872 + ( 404 =   256 +      45 +     102) +       10875 |",
+              "|   - Host                   |                    60 =    54 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 256.63,
+              "Vulkan_Host": 54.0
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 179617792,
+            "prompt": 1,
+            "prompt_eval": {
+              "ms": 13.23,
+              "tokens": 14,
+              "tokens_per_second": 1058.12
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "Three primary colors are:\n\n1. Red\n2. Blue\n3. Yellow\n\nRed is the most common primary color and is often used to create a bright and bold effect. Blue is used to create a deep blue and is often used to create a sense of depth and dimensionality. Yellow is used to\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.354
+          },
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 209.54,
+              "tokens": 63,
+              "tokens_per_second": 300.65
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 37872 + ( 404 =   256 +      45 +     102) +       10875 |",
+              "|   - Host                   |                    60 =    54 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 256.63,
+              "Vulkan_Host": 54.0
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 179519488,
+            "prompt": 1,
+            "prompt_eval": {
+              "ms": 13.31,
+              "tokens": 14,
+              "tokens_per_second": 1051.6
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "Three primary colors are:\n\n1. Red\n2. Blue\n3. Yellow\n\nRed is the most common primary color and is often used to create a bright and bold effect. Blue is used to create a deep blue and is often used to create a sense of depth and dimensionality. Yellow is used to\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.35
+          },
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 122.52,
+              "tokens": 36,
+              "tokens_per_second": 293.83
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 37872 + ( 404 =   256 +      45 +     102) +       10875 |",
+              "|   - Host                   |                    60 =    54 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 256.63,
+              "Vulkan_Host": 54.0
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 179847168,
+            "prompt": 2,
+            "prompt_eval": {
+              "ms": 13.27,
+              "tokens": 16,
+              "tokens_per_second": 1206.0
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "The ocean is a vast, mysterious, and awe-inspiring body of water that stretches across the globe, playing a crucial role in supporting life and shaping our planet's ecosystems. [end of text]\n\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.263
+          },
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 119.4,
+              "tokens": 36,
+              "tokens_per_second": 301.5
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 37872 + ( 404 =   256 +      45 +     102) +       10875 |",
+              "|   - Host                   |                    60 =    54 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 256.63,
+              "Vulkan_Host": 54.0
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 180076544,
+            "prompt": 2,
+            "prompt_eval": {
+              "ms": 13.31,
+              "tokens": 16,
+              "tokens_per_second": 1201.65
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "The ocean is a vast, mysterious, and awe-inspiring body of water that stretches across the globe, playing a crucial role in supporting life and shaping our planet's ecosystems. [end of text]\n\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.256
+          }
+        ]
+      },
+      "vulkan_graph_placement": {
+        "cpu_ops": [
+          "GET_ROWS"
+        ],
+        "nodes": 5190,
+        "ops": {
+          "ADD": {
+            "Vulka": 600
+          },
+          "DUP": {
+            "Vulka": 10
+          },
+          "FLASH_ATTN": {
+            "Vulka": 300
+          },
+          "GET_ROWS": {
+            "CPU": 20,
+            "Vulka": 20
+          },
+          "MUL": {
+            "Vulka": 610
+          },
+          "MUL_MAT": {
+            "Vulka": 2110
+          },
+          "RMS_NORM": {
+            "Vulka": 610
+          },
+          "ROPE": {
+            "Vulka": 600
+          },
+          "SET_ROWS": {
+            "Vulka": 10
+          },
+          "SWIGLU": {
+            "Vulka": 300
+          }
+        },
+        "returncode": 0,
+        "splits": [
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ]
+        ],
+        "vulkan_device_info": []
+      }
+    },
+    "Q4_K_M": {
+      "comparison": [
+        {
+          "common_prefix_characters": 37,
+          "cpu_repeat_identical": true,
+          "cpu_text": "To find the sum of 2 + 2, we can use the formula for the sum of an arithmetic series:\n\nThe sum of an arithmetic series is given by the formula:\n\nS = n(a + b) / 2\n\nwhere:\n\n- S is the sum of the\n\n",
+          "prompt": 0,
+          "vulkan_equals_cpu": false,
+          "vulkan_repeat_identical": true,
+          "vulkan_text": "To find the sum of 2 + 2, we can use a simple algebraic approach. Let's denote the sum as S. We can write the equation as:\n\nS = 2 + 2\n\nSubtracting 2 from both sides, we get:\n\nS - 2 =\n\n"
+        },
+        {
+          "common_prefix_characters": 139,
+          "cpu_repeat_identical": true,
+          "cpu_text": "Three primary colors are:\n\n1. Red: This is the most basic primary color, and it can be created by mixing equal amounts of blue and yellow.\n2. Blue: This is the second most basic primary color, and it can be created by mixing equal amounts of red and yellow.\n3. Yellow\n\n",
+          "prompt": 1,
+          "vulkan_equals_cpu": false,
+          "vulkan_repeat_identical": true,
+          "vulkan_text": "Three primary colors are:\n\n1. Red: This is the most basic primary color, and it can be created by mixing equal amounts of blue and yellow.\n\nRed is a primary color because it has the most fundamental properties of color, and it can be used to create a wide range of secondary colors.\n\n\n\n"
+        },
+        {
+          "common_prefix_characters": 142,
+          "cpu_repeat_identical": true,
+          "cpu_text": "The ocean is a vast, mysterious, and awe-inspiring place, teeming with life and teeming with secrets waiting to be uncovered. [end of text]\n\n\n",
+          "prompt": 2,
+          "vulkan_equals_cpu": true,
+          "vulkan_repeat_identical": true,
+          "vulkan_text": "The ocean is a vast, mysterious, and awe-inspiring place, teeming with life and teeming with secrets waiting to be uncovered. [end of text]\n\n\n"
+        }
+      ],
+      "cpu": {
+        "bench": [
+          {
+            "avg_ts": 348.332783,
+            "backends": "CPU",
+            "devices": "auto",
+            "flash_attn": -1,
+            "gpu_info": "",
+            "n_gen": 0,
+            "n_gpu_layers": 0,
+            "n_prompt": 128,
+            "n_threads": 1,
+            "stddev_ts": 7.76007,
+            "type_k": "f16",
+            "type_v": "f16"
+          },
+          {
+            "avg_ts": 273.83206,
+            "backends": "CPU",
+            "devices": "auto",
+            "flash_attn": -1,
+            "gpu_info": "",
+            "n_gen": 64,
+            "n_gpu_layers": 0,
+            "n_prompt": 0,
+            "n_threads": 1,
+            "stddev_ts": 2.612108,
+            "type_k": "f16",
+            "type_v": "f16"
+          }
+        ],
+        "completions": [
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 230.91,
+              "tokens": 63,
+              "tokens_per_second": 272.84
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  229 =    80 +      45 +     104                |",
+              "|   - CPU_REPACK         |                   47 =    47 +       0 +       0                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 1.16,
+              "CPU_REPACK": 47.54
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 232980480,
+            "prompt": 0,
+            "prompt_eval": {
+              "ms": 47.16,
+              "tokens": 17,
+              "tokens_per_second": 360.44
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "To find the sum of 2 + 2, we can use the formula for the sum of an arithmetic series:\n\nThe sum of an arithmetic series is given by the formula:\n\nS = n(a + b) / 2\n\nwhere:\n\n- S is the sum of the\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.341
+          },
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 232.94,
+              "tokens": 63,
+              "tokens_per_second": 270.46
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  229 =    80 +      45 +     104                |",
+              "|   - CPU_REPACK         |                   47 =    47 +       0 +       0                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 1.16,
+              "CPU_REPACK": 47.54
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 233127936,
+            "prompt": 0,
+            "prompt_eval": {
+              "ms": 48.48,
+              "tokens": 17,
+              "tokens_per_second": 350.68
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "To find the sum of 2 + 2, we can use the formula for the sum of an arithmetic series:\n\nThe sum of an arithmetic series is given by the formula:\n\nS = n(a + b) / 2\n\nwhere:\n\n- S is the sum of the\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.344
+          },
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 245.33,
+              "tokens": 63,
+              "tokens_per_second": 256.8
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  229 =    80 +      45 +     104                |",
+              "|   - CPU_REPACK         |                   47 =    47 +       0 +       0                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 1.16,
+              "CPU_REPACK": 47.54
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 232865792,
+            "prompt": 1,
+            "prompt_eval": {
+              "ms": 40.09,
+              "tokens": 14,
+              "tokens_per_second": 349.19
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "Three primary colors are:\n\n1. Red: This is the most basic primary color, and it can be created by mixing equal amounts of blue and yellow.\n2. Blue: This is the second most basic primary color, and it can be created by mixing equal amounts of red and yellow.\n3. Yellow\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.349
+          },
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 241.19,
+              "tokens": 63,
+              "tokens_per_second": 261.21
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  229 =    80 +      45 +     104                |",
+              "|   - CPU_REPACK         |                   47 =    47 +       0 +       0                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 1.16,
+              "CPU_REPACK": 47.54
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 232947712,
+            "prompt": 1,
+            "prompt_eval": {
+              "ms": 39.99,
+              "tokens": 14,
+              "tokens_per_second": 350.06
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "Three primary colors are:\n\n1. Red: This is the most basic primary color, and it can be created by mixing equal amounts of blue and yellow.\n2. Blue: This is the second most basic primary color, and it can be created by mixing equal amounts of red and yellow.\n3. Yellow\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.348
+          },
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 106.73,
+              "tokens": 27,
+              "tokens_per_second": 252.97
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  229 =    80 +      45 +     104                |",
+              "|   - CPU_REPACK         |                   47 =    47 +       0 +       0                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 1.16,
+              "CPU_REPACK": 47.54
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 232996864,
+            "prompt": 2,
+            "prompt_eval": {
+              "ms": 48.04,
+              "tokens": 16,
+              "tokens_per_second": 333.06
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "The ocean is a vast, mysterious, and awe-inspiring place, teeming with life and teeming with secrets waiting to be uncovered. [end of text]\n\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.22
+          },
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 104.15,
+              "tokens": 27,
+              "tokens_per_second": 259.24
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  229 =    80 +      45 +     104                |",
+              "|   - CPU_REPACK         |                   47 =    47 +       0 +       0                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 1.16,
+              "CPU_REPACK": 47.54
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 232931328,
+            "prompt": 2,
+            "prompt_eval": {
+              "ms": 47.41,
+              "tokens": 16,
+              "tokens_per_second": 337.48
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "The ocean is a vast, mysterious, and awe-inspiring place, teeming with life and teeming with secrets waiting to be uncovered. [end of text]\n\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.218
+          }
+        ]
+      },
+      "vulkan": {
+        "bench": [
+          {
+            "avg_ts": 7994.641178,
+            "backends": "Vulkan",
+            "devices": "Vulkan0",
+            "flash_attn": -1,
+            "gpu_info": "Apple M5 Pro",
+            "n_gen": 0,
+            "n_gpu_layers": 99,
+            "n_prompt": 128,
+            "n_threads": 1,
+            "stddev_ts": 28.835597,
+            "type_k": "f16",
+            "type_v": "f16"
+          },
+          {
+            "avg_ts": 375.371276,
+            "backends": "Vulkan",
+            "devices": "Vulkan0",
+            "flash_attn": -1,
+            "gpu_info": "Apple M5 Pro",
+            "n_gen": 64,
+            "n_gpu_layers": 99,
+            "n_prompt": 0,
+            "n_threads": 1,
+            "stddev_ts": 0.847536,
+            "type_k": "f16",
+            "type_v": "f16"
+          }
+        ],
+        "completions": [
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 172.92,
+              "tokens": 63,
+              "tokens_per_second": 364.34
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 38055 + ( 246 =    98 +      45 +     102) +       10849 |",
+              "|   - Host                   |                    35 =    28 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 98.87,
+              "Vulkan_Host": 28.69
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 156286976,
+            "prompt": 0,
+            "prompt_eval": {
+              "ms": 23.07,
+              "tokens": 17,
+              "tokens_per_second": 736.76
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "To find the sum of 2 + 2, we can use a simple algebraic approach. Let's denote the sum as S. We can write the equation as:\n\nS = 2 + 2\n\nSubtracting 2 from both sides, we get:\n\nS - 2 =\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.312
+          },
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 171.71,
+              "tokens": 63,
+              "tokens_per_second": 366.91
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 38055 + ( 246 =    98 +      45 +     102) +       10849 |",
+              "|   - Host                   |                    35 =    28 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 98.87,
+              "Vulkan_Host": 28.69
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 156221440,
+            "prompt": 0,
+            "prompt_eval": {
+              "ms": 23.98,
+              "tokens": 17,
+              "tokens_per_second": 708.78
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "To find the sum of 2 + 2, we can use a simple algebraic approach. Let's denote the sum as S. We can write the equation as:\n\nS = 2 + 2\n\nSubtracting 2 from both sides, we get:\n\nS - 2 =\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.315
+          },
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 170.52,
+              "tokens": 63,
+              "tokens_per_second": 369.45
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 38055 + ( 246 =    98 +      45 +     102) +       10849 |",
+              "|   - Host                   |                    35 =    28 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 98.87,
+              "Vulkan_Host": 28.69
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 156712960,
+            "prompt": 1,
+            "prompt_eval": {
+              "ms": 23.95,
+              "tokens": 14,
+              "tokens_per_second": 584.53
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "Three primary colors are:\n\n1. Red: This is the most basic primary color, and it can be created by mixing equal amounts of blue and yellow.\n\nRed is a primary color because it has the most fundamental properties of color, and it can be used to create a wide range of secondary colors.\n\n\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.314
+          },
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 172.38,
+              "tokens": 63,
+              "tokens_per_second": 365.47
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 38055 + ( 246 =    98 +      45 +     102) +       10849 |",
+              "|   - Host                   |                    35 =    28 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 98.87,
+              "Vulkan_Host": 28.69
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 155615232,
+            "prompt": 1,
+            "prompt_eval": {
+              "ms": 25.41,
+              "tokens": 14,
+              "tokens_per_second": 551.07
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "Three primary colors are:\n\n1. Red: This is the most basic primary color, and it can be created by mixing equal amounts of blue and yellow.\n\nRed is a primary color because it has the most fundamental properties of color, and it can be used to create a wide range of secondary colors.\n\n\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.316
+          },
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 75.27,
+              "tokens": 27,
+              "tokens_per_second": 358.72
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 38055 + ( 246 =    98 +      45 +     102) +       10849 |",
+              "|   - Host                   |                    35 =    28 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 98.87,
+              "Vulkan_Host": 28.69
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 156385280,
+            "prompt": 2,
+            "prompt_eval": {
+              "ms": 25.83,
+              "tokens": 16,
+              "tokens_per_second": 619.46
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "The ocean is a vast, mysterious, and awe-inspiring place, teeming with life and teeming with secrets waiting to be uncovered. [end of text]\n\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.218
+          },
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 75.94,
+              "tokens": 27,
+              "tokens_per_second": 355.55
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 38055 + ( 246 =    98 +      45 +     102) +       10849 |",
+              "|   - Host                   |                    35 =    28 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 98.87,
+              "Vulkan_Host": 28.69
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 156205056,
+            "prompt": 2,
+            "prompt_eval": {
+              "ms": 26.86,
+              "tokens": 16,
+              "tokens_per_second": 595.61
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "The ocean is a vast, mysterious, and awe-inspiring place, teeming with life and teeming with secrets waiting to be uncovered. [end of text]\n\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.217
+          }
+        ]
+      },
+      "vulkan_graph_placement": {
+        "cpu_ops": [
+          "GET_ROWS"
+        ],
+        "nodes": 5190,
+        "ops": {
+          "ADD": {
+            "Vulka": 600
+          },
+          "DUP": {
+            "Vulka": 10
+          },
+          "FLASH_ATTN": {
+            "Vulka": 300
+          },
+          "GET_ROWS": {
+            "CPU": 20,
+            "Vulka": 20
+          },
+          "MUL": {
+            "Vulka": 610
+          },
+          "MUL_MAT": {
+            "Vulka": 2110
+          },
+          "RMS_NORM": {
+            "Vulka": 610
+          },
+          "ROPE": {
+            "Vulka": 600
+          },
+          "SET_ROWS": {
+            "Vulka": 10
+          },
+          "SWIGLU": {
+            "Vulka": 300
+          }
+        },
+        "returncode": 0,
+        "splits": [
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ]
+        ],
+        "vulkan_device_info": []
+      }
+    },
+    "Q8_0": {
+      "comparison": [
+        {
+          "common_prefix_characters": 21,
+          "cpu_repeat_identical": true,
+          "cpu_text": "To find the sum of 2 and 2, we can use the formula for the sum of an arithmetic series, which is given by the formula:\n\nSum = (first term) \u00d7 (common difference) / 2\n\nIn this case, the first term is 2, and the common difference\n\n",
+          "prompt": 0,
+          "vulkan_equals_cpu": false,
+          "vulkan_repeat_identical": true,
+          "vulkan_text": "To find the sum of 2 + 2, we can use the formula for the sum of an arithmetic series, which is given by the formula:\n\nSum = (n/2) * (a + l)\n\nwhere n is the number of terms, a is the first term, and l\n\n"
+        },
+        {
+          "common_prefix_characters": 24,
+          "cpu_repeat_identical": true,
+          "cpu_text": "Three primary colors are red, blue, and yellow. These colors are the primary colors because they are the only colors that can be created by mixing other colors together. The primary colors are:\n\nRed is the primary color because it is the combination of the primary colors: blue and yellow. Blue and yellow are the\n\n",
+          "prompt": 1,
+          "vulkan_equals_cpu": false,
+          "vulkan_repeat_identical": true,
+          "vulkan_text": "Three primary colors are:\n\n1. Red\n2. Blue\n3. Yellow\n\nRed is the most common primary color and is often used to create the color red. Blue is used to create the color blue and is often used to create the color blue. Yellow is used to create the color yellow and is\n\n"
+        },
+        {
+          "common_prefix_characters": 116,
+          "cpu_repeat_identical": true,
+          "cpu_text": "The ocean is a vast, mysterious, and awe-inspiring landscape that stretches across the globe, teeming with life and mystery. Its depths are home to an incredible array of marine life, from the majestic blue whales to the majestic sharks, and from the vibrant coral reefs to the vast expanses of salt-tolerant kelp\n\n",
+          "prompt": 2,
+          "vulkan_equals_cpu": false,
+          "vulkan_repeat_identical": true,
+          "vulkan_text": "The ocean is a vast, mysterious, and awe-inspiring landscape that stretches across the globe, teeming with life and playing a crucial role in shaping our planet's climate and ecosystems. [end of text]\n\n\n"
+        }
+      ],
+      "cpu": {
+        "bench": [
+          {
+            "avg_ts": 1243.106054,
+            "backends": "CPU",
+            "devices": "auto",
+            "flash_attn": -1,
+            "gpu_info": "",
+            "n_gen": 0,
+            "n_gpu_layers": 0,
+            "n_prompt": 128,
+            "n_threads": 1,
+            "stddev_ts": 13.293972,
+            "type_k": "f16",
+            "type_v": "f16"
+          },
+          {
+            "avg_ts": 430.725509,
+            "backends": "CPU",
+            "devices": "auto",
+            "flash_attn": -1,
+            "gpu_info": "",
+            "n_gen": 64,
+            "n_gpu_layers": 0,
+            "n_prompt": 0,
+            "n_threads": 1,
+            "stddev_ts": 9.371466,
+            "type_k": "f16",
+            "type_v": "f16"
+          }
+        ],
+        "completions": [
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 147.92,
+              "tokens": 63,
+              "tokens_per_second": 425.9
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  178 =    28 +      45 +     104                |",
+              "|   - CPU_REPACK         |                  136 =   136 +       0 +       0                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 0.0,
+              "CPU_REPACK": 136.27
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 364478464,
+            "prompt": 0,
+            "prompt_eval": {
+              "ms": 17.57,
+              "tokens": 17,
+              "tokens_per_second": 967.61
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "To find the sum of 2 and 2, we can use the formula for the sum of an arithmetic series, which is given by the formula:\n\nSum = (first term) \u00d7 (common difference) / 2\n\nIn this case, the first term is 2, and the common difference\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.255
+          },
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 145.02,
+              "tokens": 63,
+              "tokens_per_second": 434.41
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  178 =    28 +      45 +     104                |",
+              "|   - CPU_REPACK         |                  136 =   136 +       0 +       0                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 0.0,
+              "CPU_REPACK": 136.27
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 364462080,
+            "prompt": 0,
+            "prompt_eval": {
+              "ms": 14.14,
+              "tokens": 17,
+              "tokens_per_second": 1202.43
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "To find the sum of 2 and 2, we can use the formula for the sum of an arithmetic series, which is given by the formula:\n\nSum = (first term) \u00d7 (common difference) / 2\n\nIn this case, the first term is 2, and the common difference\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.243
+          },
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 142.42,
+              "tokens": 63,
+              "tokens_per_second": 442.36
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  178 =    28 +      45 +     104                |",
+              "|   - CPU_REPACK         |                  136 =   136 +       0 +       0                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 0.0,
+              "CPU_REPACK": 136.27
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 364183552,
+            "prompt": 1,
+            "prompt_eval": {
+              "ms": 12.38,
+              "tokens": 14,
+              "tokens_per_second": 1131.04
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "Three primary colors are red, blue, and yellow. These colors are the primary colors because they are the only colors that can be created by mixing other colors together. The primary colors are:\n\nRed is the primary color because it is the combination of the primary colors: blue and yellow. Blue and yellow are the\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.238
+          },
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 145.27,
+              "tokens": 63,
+              "tokens_per_second": 433.67
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  178 =    28 +      45 +     104                |",
+              "|   - CPU_REPACK         |                  136 =   136 +       0 +       0                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 0.0,
+              "CPU_REPACK": 136.27
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 364281856,
+            "prompt": 1,
+            "prompt_eval": {
+              "ms": 13.78,
+              "tokens": 14,
+              "tokens_per_second": 1016.19
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "Three primary colors are red, blue, and yellow. These colors are the primary colors because they are the only colors that can be created by mixing other colors together. The primary colors are:\n\nRed is the primary color because it is the combination of the primary colors: blue and yellow. Blue and yellow are the\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.242
+          },
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 146.18,
+              "tokens": 63,
+              "tokens_per_second": 430.97
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  178 =    28 +      45 +     104                |",
+              "|   - CPU_REPACK         |                  136 =   136 +       0 +       0                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 0.0,
+              "CPU_REPACK": 136.27
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 364347392,
+            "prompt": 2,
+            "prompt_eval": {
+              "ms": 14.59,
+              "tokens": 16,
+              "tokens_per_second": 1096.87
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "The ocean is a vast, mysterious, and awe-inspiring landscape that stretches across the globe, teeming with life and mystery. Its depths are home to an incredible array of marine life, from the majestic blue whales to the majestic sharks, and from the vibrant coral reefs to the vast expanses of salt-tolerant kelp\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.243
+          },
+          {
+            "compute_buffer_mib": {
+              "CPU": 104.77
+            },
+            "devices_used": [],
+            "errors": [],
+            "eval": {
+              "ms": 142.84,
+              "tokens": 63,
+              "tokens_per_second": 441.06
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "CPU": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |",
+              "|   - Host               |                  178 =    28 +      45 +     104                |",
+              "|   - CPU_REPACK         |                  136 =   136 +       0 +       0                |"
+            ],
+            "model_buffer_mib": {
+              "CPU_Mapped": 0.0,
+              "CPU_REPACK": 136.27
+            },
+            "offloaded_layers": null,
+            "peak_rss_bytes": 364314624,
+            "prompt": 2,
+            "prompt_eval": {
+              "ms": 12.81,
+              "tokens": 16,
+              "tokens_per_second": 1249.41
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "The ocean is a vast, mysterious, and awe-inspiring landscape that stretches across the globe, teeming with life and mystery. Its depths are home to an incredible array of marine life, from the majestic blue whales to the majestic sharks, and from the vibrant coral reefs to the vast expanses of salt-tolerant kelp\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.238
+          }
+        ]
+      },
+      "vulkan": {
+        "bench": [
+          {
+            "avg_ts": 7865.346124,
+            "backends": "Vulkan",
+            "devices": "Vulkan0",
+            "flash_attn": -1,
+            "gpu_info": "Apple M5 Pro",
+            "n_gen": 0,
+            "n_gpu_layers": 99,
+            "n_prompt": 128,
+            "n_threads": 1,
+            "stddev_ts": 220.086661,
+            "type_k": "f16",
+            "type_v": "f16"
+          },
+          {
+            "avg_ts": 370.806424,
+            "backends": "Vulkan",
+            "devices": "Vulkan0",
+            "flash_attn": -1,
+            "gpu_info": "Apple M5 Pro",
+            "n_gen": 64,
+            "n_gpu_layers": 99,
+            "n_prompt": 0,
+            "n_threads": 1,
+            "stddev_ts": 18.397002,
+            "type_k": "f16",
+            "type_v": "f16"
+          }
+        ],
+        "completions": [
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 174.71,
+              "tokens": 63,
+              "tokens_per_second": 360.59
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 38018 + ( 283 =   136 +      45 +     102) +       10849 |",
+              "|   - Host                   |                    35 =    28 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 136.4,
+              "Vulkan_Host": 28.69
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 154402816,
+            "prompt": 0,
+            "prompt_eval": {
+              "ms": 18.62,
+              "tokens": 17,
+              "tokens_per_second": 912.85
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "To find the sum of 2 + 2, we can use the formula for the sum of an arithmetic series, which is given by the formula:\n\nSum = (n/2) * (a + l)\n\nwhere n is the number of terms, a is the first term, and l\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.304
+          },
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 179.47,
+              "tokens": 63,
+              "tokens_per_second": 351.04
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 38018 + ( 283 =   136 +      45 +     102) +       10849 |",
+              "|   - Host                   |                    35 =    28 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 136.4,
+              "Vulkan_Host": 28.69
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 154484736,
+            "prompt": 0,
+            "prompt_eval": {
+              "ms": 18.23,
+              "tokens": 17,
+              "tokens_per_second": 932.58
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "To find the sum of 2 + 2, we can use the formula for the sum of an arithmetic series, which is given by the formula:\n\nSum = (n/2) * (a + l)\n\nwhere n is the number of terms, a is the first term, and l\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.313
+          },
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 178.51,
+              "tokens": 63,
+              "tokens_per_second": 352.93
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 38018 + ( 283 =   136 +      45 +     102) +       10849 |",
+              "|   - Host                   |                    35 =    28 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 136.4,
+              "Vulkan_Host": 28.69
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 153600000,
+            "prompt": 1,
+            "prompt_eval": {
+              "ms": 18.53,
+              "tokens": 14,
+              "tokens_per_second": 755.37
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "Three primary colors are:\n\n1. Red\n2. Blue\n3. Yellow\n\nRed is the most common primary color and is often used to create the color red. Blue is used to create the color blue and is often used to create the color blue. Yellow is used to create the color yellow and is\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.313
+          },
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 175.4,
+              "tokens": 63,
+              "tokens_per_second": 359.18
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 38018 + ( 283 =   136 +      45 +     102) +       10849 |",
+              "|   - Host                   |                    35 =    28 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 136.4,
+              "Vulkan_Host": 28.69
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 153321472,
+            "prompt": 1,
+            "prompt_eval": {
+              "ms": 17.94,
+              "tokens": 14,
+              "tokens_per_second": 780.42
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "Three primary colors are:\n\n1. Red\n2. Blue\n3. Yellow\n\nRed is the most common primary color and is often used to create the color red. Blue is used to create the color blue and is often used to create the color blue. Yellow is used to create the color yellow and is\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.307
+          },
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 109.16,
+              "tokens": 37,
+              "tokens_per_second": 338.96
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 38018 + ( 283 =   136 +      45 +     102) +       10849 |",
+              "|   - Host                   |                    35 =    28 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 136.4,
+              "Vulkan_Host": 28.69
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 154140672,
+            "prompt": 2,
+            "prompt_eval": {
+              "ms": 18.45,
+              "tokens": 16,
+              "tokens_per_second": 867.21
+            },
+            "repeat": 1,
+            "returncode": 0,
+            "text": "The ocean is a vast, mysterious, and awe-inspiring landscape that stretches across the globe, teeming with life and playing a crucial role in shaping our planet's climate and ecosystems. [end of text]\n\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.242
+          },
+          {
+            "compute_buffer_mib": {
+              "Vulkan0": 102.52,
+              "Vulkan_Host": 6.52
+            },
+            "devices_used": [
+              [
+                "Vulkan0",
+                "Apple M5 Pro"
+              ]
+            ],
+            "errors": [],
+            "eval": {
+              "ms": 103.12,
+              "tokens": 37,
+              "tokens_per_second": 358.82
+            },
+            "flash_attention": "auto",
+            "flash_attention_enabled": true,
+            "graph_nodes": null,
+            "graph_splits": null,
+            "kv_buffer_mib": {
+              "Vulkan0": 45.0
+            },
+            "memory_breakdown": [
+              "| memory breakdown [MiB]     | total    free    self   model   context   compute    unaccounted |",
+              "|   - Vulkan0 (Apple M5 Pro) | 49152 = 38018 + ( 283 =   136 +      45 +     102) +       10849 |",
+              "|   - Host                   |                    35 =    28 +       0 +       6                |"
+            ],
+            "model_buffer_mib": {
+              "Vulkan0": 136.4,
+              "Vulkan_Host": 28.69
+            },
+            "offloaded_layers": "31/31",
+            "peak_rss_bytes": 154304512,
+            "prompt": 2,
+            "prompt_eval": {
+              "ms": 18.58,
+              "tokens": 16,
+              "tokens_per_second": 861.33
+            },
+            "repeat": 2,
+            "returncode": 0,
+            "text": "The ocean is a vast, mysterious, and awe-inspiring landscape that stretches across the globe, teeming with life and playing a crucial role in shaping our planet's climate and ecosystems. [end of text]\n\n\n",
+            "vulkan_device_info": [],
+            "wall_seconds": 0.232
+          }
+        ]
+      },
+      "vulkan_graph_placement": {
+        "cpu_ops": [
+          "GET_ROWS"
+        ],
+        "nodes": 5190,
+        "ops": {
+          "ADD": {
+            "Vulka": 600
+          },
+          "DUP": {
+            "Vulka": 10
+          },
+          "FLASH_ATTN": {
+            "Vulka": 300
+          },
+          "GET_ROWS": {
+            "CPU": 20,
+            "Vulka": 20
+          },
+          "MUL": {
+            "Vulka": 610
+          },
+          "MUL_MAT": {
+            "Vulka": 2110
+          },
+          "RMS_NORM": {
+            "Vulka": 610
+          },
+          "ROPE": {
+            "Vulka": 600
+          },
+          "SET_ROWS": {
+            "Vulka": 10
+          },
+          "SWIGLU": {
+            "Vulka": 300
+          }
+        },
+        "returncode": 0,
+        "splits": [
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ],
+          [
+            "0",
+            "CPU",
+            "0"
+          ],
+          [
+            "1",
+            "Vulkan0",
+            "9"
+          ]
+        ],
+        "vulkan_device_info": []
+      }
+    }
+  },
+  "schema": "modelanvil.vulkan-inference-qualification.v1",
+  "scope": "One Apple M5 Pro through MoltenVK on this macOS build; pinned SmolLM2-135M-Instruct GGUF files only. Not a discrete-GPU, cross-vendor, Linux, Windows/DirectML, training, model-quality or throughput guarantee.",
+  "started_at": "2026-11-15T19:03:00+0200",
+  "test_backend_ops": {
+    "flash_attention_test": {
+      "backends_line": "2/2 backends passed",
+      "cases_by_op": {
+        "FLASH_ATTN_EXT": 231
+      },
+      "failures": [],
+      "not_supported_cases": 0,
+      "ok_cases": 232,
+      "params_filter": "hsk=64,hsv=64,.*type_K=f16,type_V=f16",
+      "passed_line": "231/231 tests passed",
+      "returncode": 0,
+      "wall_seconds": 3.806
+    },
+    "graph_ops_observed": [
+      "ADD",
+      "DUP",
+      "FLASH_ATTN",
+      "GET_ROWS",
+      "MUL",
+      "MUL_MAT",
+      "RMS_NORM",
+      "ROPE",
+      "SET_ROWS",
+      "SWIGLU"
+    ],
+    "graph_ops_tested": [
+      "ADD",
+      "DUP",
+      "GET_ROWS",
+      "MUL",
+      "MUL_MAT",
+      "RMS_NORM",
+      "ROPE",
+      "SET_ROWS",
+      "SWIGLU",
+      "FLASH_ATTN_EXT"
+    ],
+    "support": {
+      "graph_op_support": {
+        "ADD": {
+          "supported": 105,
+          "unsupported": 49
+        },
+        "DUP": {
+          "supported": 10
+        },
+        "FLASH_ATTN_EXT": {
+          "supported": 5332,
+          "unsupported": 11
+        },
+        "GET_ROWS": {
+          "supported": 240
+        },
+        "MUL": {
+          "supported": 93,
+          "unsupported": 49
+        },
+        "MUL_MAT": {
+          "supported": 2466,
+          "unsupported": 398
+        },
+        "RMS_NORM": {
+          "supported": 53
+        },
+        "ROPE": {
+          "supported": 470
+        },
+        "SET_ROWS": {
+          "supported": 319,
+          "unsupported": 408
+        },
+        "SWIGLU": {
+          "supported": 24,
+          "unsupported": 12
+        }
+      },
+      "ops_probed": 117,
+      "ops_with_unsupported_cases": {
+        "ABS": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "ADD": {
+          "supported": 105,
+          "unsupported": 49
+        },
+        "CEIL": {
+          "supported": 14,
+          "unsupported": 4
+        },
+        "CONV_2D": {
+          "supported": 1966,
+          "unsupported": 1178
+        },
+        "CPY": {
+          "supported": 275,
+          "unsupported": 325
+        },
+        "DIV": {
+          "supported": 92,
+          "unsupported": 49
+        },
+        "DSV4_HC_PRE": {
+          "supported": 6,
+          "unsupported": 12
+        },
+        "ELU": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "EXP": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "EXPM1": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "FLASH_ATTN_EXT": {
+          "supported": 5332,
+          "unsupported": 11
+        },
+        "FLOOR": {
+          "supported": 14,
+          "unsupported": 4
+        },
+        "GEGLU": {
+          "supported": 24,
+          "unsupported": 12
+        },
+        "GEGLU_ERF": {
+          "supported": 24,
+          "unsupported": 12
+        },
+        "GEGLU_QUICK": {
+          "supported": 24,
+          "unsupported": 12
+        },
+        "GELU": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "GELU_ERF": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "GELU_QUICK": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "GET_ROWS_BACK": {
+          "supported": 4,
+          "unsupported": 56
+        },
+        "HARDSIGMOID": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "HARDSWISH": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "MUL": {
+          "supported": 93,
+          "unsupported": 49
+        },
+        "MUL_MAT": {
+          "supported": 2466,
+          "unsupported": 398
+        },
+        "MUL_MAT_ID": {
+          "supported": 939,
+          "unsupported": 6
+        },
+        "NEG": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "OUT_PROD": {
+          "supported": 71,
+          "unsupported": 1344
+        },
+        "REGLU": {
+          "supported": 24,
+          "unsupported": 12
+        },
+        "RELU": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "ROUND": {
+          "supported": 14,
+          "unsupported": 4
+        },
+        "SCALE": {
+          "supported": 4,
+          "unsupported": 3
+        },
+        "SET_ROWS": {
+          "supported": 319,
+          "unsupported": 408
+        },
+        "SGN": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "SIGMOID": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "SILU": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "SOFTPLUS": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "SSM_SCAN": {
+          "supported": 12,
+          "unsupported": 3
+        },
+        "STEP": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "SUB": {
+          "supported": 92,
+          "unsupported": 49
+        },
+        "SUM": {
+          "supported": 10,
+          "unsupported": 2
+        },
+        "SWIGLU": {
+          "supported": 24,
+          "unsupported": 12
+        },
+        "TANH": {
+          "supported": 8,
+          "unsupported": 4
+        },
+        "TOP_K_MASK": {
+          "unsupported": 24
+        },
+        "TRUNC": {
+          "supported": 14,
+          "unsupported": 4
+        },
+        "XIELU": {
+          "supported": 4,
+          "unsupported": 2
+        }
+      },
+      "returncode": 0
+    },
+    "test": {
+      "backends_line": "2/2 backends passed",
+      "cases_by_op": {
+        "ADD": 167,
+        "DUP": 10,
+        "GET_ROWS": 240,
+        "MUL": 143,
+        "MUL_MAT": 2865,
+        "RMS_NORM": 53,
+        "ROPE": 470,
+        "SET_ROWS": 727,
+        "SWIGLU": 36
+      },
+      "failures": [],
+      "not_supported_cases": 1110,
+      "ok_cases": 3602,
+      "passed_line": "3601/3601 tests passed",
+      "returncode": 0,
+      "wall_seconds": 65.166
+    }
+  },
+  "vulkaninfo_summary": [
+    "\tapiVersion         = 1.4.357",
+    "\tdriverVersion      = 0.2.2210",
+    "\tvendorID           = 0x106b",
+    "\tdeviceID           = 0x1b02020a",
+    "\tdeviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU",
+    "\tdeviceName         = Apple M5 Pro",
+    "\tdriverID           = DRIVER_ID_MOLTENVK",
+    "\tdriverName         = MoltenVK",
+    "\tdriverInfo         = 1.4.2",
+    "\tconformanceVersion = 1.4.4.0",
+    "\tdeviceUUID         = 0000106b-1b02-020a-0000-000000000000",
+    "\tdriverUUID         = 4d564b00-0000-28a2-1b02-020a00000000"
+  ]
+}

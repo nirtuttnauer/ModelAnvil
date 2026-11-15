@@ -1,0 +1,300 @@
+{
+  "finished_at": "2026-11-15T17:06:11+0000",
+  "installation": {
+    "device": {
+      "id": "Vulkan0",
+      "memory_scope": "Unified memory heap reported by MoltenVK through llama.cpp; not dedicated VRAM or a reservation.",
+      "name": "Apple M5 Pro",
+      "reported_free_bytes": 40200306688,
+      "reported_memory_bytes": 51539607552
+    },
+    "driver": {
+      "name": "MoltenVK",
+      "package": "molten-vk 1.4.2",
+      "path": "/opt/homebrew/Cellar/molten-vk/1.4.2/lib/libMoltenVK.dylib",
+      "sha256": "e21bceade8d0638bb2bc041f3166fbd54da19fa0958d8bbaff584afd7958d542"
+    },
+    "host": {
+      "machine": "arm64",
+      "macos": "27.2.1",
+      "system": "Darwin"
+    },
+    "icd_manifest": {
+      "api_version": "1.4.0",
+      "path": "/opt/homebrew/etc/vulkan/icd.d/MoltenVK_icd.json",
+      "portability_driver": true,
+      "sha256": "b514f51690582fb783383154b7a33c7816cc47e98ee1a1f652dccd3e996f0bf1"
+    },
+    "loader": {
+      "name": "Khronos Vulkan loader",
+      "package": "vulkan-loader 1.4.363.0",
+      "path": "/opt/homebrew/Cellar/vulkan-loader/1.4.363.0/lib/libvulkan.1.4.363.dylib",
+      "sha256": "6453921b5e0562364d60a4d742fb2db12c3e4e8c2ac2fb6d5938b6453a644208"
+    },
+    "server": {
+      "llama_commit": "f5027fb21307eb264aed483242603d68c87b0fe3",
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb/bin/llama-server",
+      "sha256": "efdaa68e680272d22530f109ed01122c30f0442d8d23bbbbf37b74e8c91acae3"
+    }
+  },
+  "qualification": "Inference only: pinned llama.cpp Vulkan build on the Apple M5 Pro GPU through MoltenVK 1.4.2 on macOS 27.2.1 arm64 for llama-architecture F16, Q8_0 and Q4_K_M GGUF. No discrete, cross-vendor, Linux, Windows or DirectML claim; no Vulkan training.",
+  "schema": "modelanvil.vulkan-session-evidence.v1",
+  "sessions": [
+    {
+      "cancelled_final": {
+        "elapsed_seconds": 0.02647633299784502,
+        "finish_reason": "cancelled",
+        "usage": {
+          "completion_tokens": 3,
+          "prompt_tokens": 38,
+          "total_tokens": 41
+        }
+      },
+      "decoded_text": "2 + 2 is a classic arithmetic operation that can be understood by converting it",
+      "evidence": {
+        "architecture": "llama",
+        "backend": "llama.cpp-vulkan",
+        "compute_buffer_bytes": {
+          "Vulkan0": 16263414,
+          "Vulkan_Host": 6836716
+        },
+        "device": {
+          "id": "Vulkan0",
+          "memory_scope": "Unified memory heap reported by MoltenVK through llama.cpp; not dedicated VRAM or a reservation.",
+          "name": "Apple M5 Pro",
+          "reported_free_bytes": 40200306688,
+          "reported_memory_bytes": 51539607552
+        },
+        "devices_used": [
+          {
+            "free_bytes_at_load": 40200306688,
+            "id": "Vulkan0",
+            "name": "Apple M5 Pro"
+          }
+        ],
+        "flash_attention": "enabled",
+        "gguf_file_type": "F16",
+        "gpu_execution": true,
+        "gpu_layers": 31,
+        "graph_nodes": null,
+        "graph_splits": null,
+        "kv_buffer_bytes": {
+          "Vulkan0": 47185920
+        },
+        "kv_offload": true,
+        "memory_scope": "llama.cpp-reported buffers; Vulkan_Host is host-visible unified memory holding the token embedding table, whose lookup llama.cpp keeps on the CPU by design.",
+        "model_buffer_bytes": {
+          "Vulkan0": 269096059,
+          "Vulkan_Host": 56623104
+        },
+        "model_layers": 31,
+        "offloaded_layers": 31,
+        "op_offload": true,
+        "qualification": "Inference only: pinned llama.cpp Vulkan build on the Apple M5 Pro GPU through MoltenVK 1.4.2 on macOS 27.2.1 arm64 for llama-architecture F16, Q8_0 and Q4_K_M GGUF. No discrete, cross-vendor, Linux, Windows or DirectML claim; no Vulkan training.",
+        "selected_device": "vulkan:0"
+      },
+      "file": "smollm2-135m-instruct-f16.gguf",
+      "final": {
+        "elapsed_seconds": 0.08139745800144738,
+        "finish_reason": "length",
+        "usage": {
+          "completion_tokens": 16,
+          "prompt_tokens": 38,
+          "total_tokens": 54
+        }
+      },
+      "listener_closed_after_unload": true,
+      "load_seconds_including_device_probe": 0.895,
+      "repeat_identical": true,
+      "server_exit_code": 0,
+      "server_load_report": [
+        "0.00.017.764 I llama_prepare_model_devices: using device Vulkan0 (Apple M5 Pro) (unknown id) - 38338 MiB free",
+        "0.00.032.963 I load_tensors: offloading output layer to GPU",
+        "0.00.032.965 I load_tensors: offloading 29 repeating layers to GPU",
+        "0.00.032.965 I load_tensors: offloaded 31/31 layers to GPU",
+        "0.00.032.966 I load_tensors:      Vulkan0 model buffer size =   256.63 MiB",
+        "0.00.032.966 I load_tensors:  Vulkan_Host model buffer size =    54.00 MiB",
+        "0.00.075.622 I llama_context: n_ctx                 = 2048",
+        "0.00.075.623 I llama_context: flash_attn            = auto",
+        "0.00.076.741 I llama_kv_cache:    Vulkan0 KV buffer size =    45.00 MiB",
+        "0.00.078.989 I resolve_fused_ops: Flash Attention enabled",
+        "0.00.083.789 I sched_reserve:    Vulkan0 compute buffer size =    15.51 MiB",
+        "0.00.083.791 I sched_reserve: Vulkan_Host compute buffer size =     6.52 MiB",
+        "0.00.114.055 I srv  llama_server: model loaded",
+        "0.00.114.057 I srv  llama_server: listening on http://127.0.0.1:59093"
+      ],
+      "unauthorized_status": 401
+    },
+    {
+      "cancelled_final": {
+        "elapsed_seconds": 0.02981862500018906,
+        "finish_reason": "cancelled",
+        "usage": {
+          "completion_tokens": 3,
+          "prompt_tokens": 38,
+          "total_tokens": 41
+        }
+      },
+      "decoded_text": "2 + 2 is a classic arithmetic operation that can be understood by its basic",
+      "evidence": {
+        "architecture": "llama",
+        "backend": "llama.cpp-vulkan",
+        "compute_buffer_bytes": {
+          "Vulkan0": 16263414,
+          "Vulkan_Host": 6836716
+        },
+        "device": {
+          "id": "Vulkan0",
+          "memory_scope": "Unified memory heap reported by MoltenVK through llama.cpp; not dedicated VRAM or a reservation.",
+          "name": "Apple M5 Pro",
+          "reported_free_bytes": 40200306688,
+          "reported_memory_bytes": 51539607552
+        },
+        "devices_used": [
+          {
+            "free_bytes_at_load": 40200306688,
+            "id": "Vulkan0",
+            "name": "Apple M5 Pro"
+          }
+        ],
+        "flash_attention": "enabled",
+        "gguf_file_type": "Q8_0",
+        "gpu_execution": true,
+        "gpu_layers": 31,
+        "graph_nodes": null,
+        "graph_splits": null,
+        "kv_buffer_bytes": {
+          "Vulkan0": 47185920
+        },
+        "kv_offload": true,
+        "memory_scope": "llama.cpp-reported buffers; Vulkan_Host is host-visible unified memory holding the token embedding table, whose lookup llama.cpp keeps on the CPU by design.",
+        "model_buffer_bytes": {
+          "Vulkan0": 143025766,
+          "Vulkan_Host": 30083645
+        },
+        "model_layers": 31,
+        "offloaded_layers": 31,
+        "op_offload": true,
+        "qualification": "Inference only: pinned llama.cpp Vulkan build on the Apple M5 Pro GPU through MoltenVK 1.4.2 on macOS 27.2.1 arm64 for llama-architecture F16, Q8_0 and Q4_K_M GGUF. No discrete, cross-vendor, Linux, Windows or DirectML claim; no Vulkan training.",
+        "selected_device": "vulkan:0"
+      },
+      "file": "smollm2-135m-instruct-q8_0.gguf",
+      "final": {
+        "elapsed_seconds": 0.0740097079979023,
+        "finish_reason": "length",
+        "usage": {
+          "completion_tokens": 16,
+          "prompt_tokens": 38,
+          "total_tokens": 54
+        }
+      },
+      "listener_closed_after_unload": true,
+      "load_seconds_including_device_probe": 0.841,
+      "repeat_identical": true,
+      "server_exit_code": 0,
+      "server_load_report": [
+        "0.00.017.959 I llama_prepare_model_devices: using device Vulkan0 (Apple M5 Pro) (unknown id) - 38338 MiB free",
+        "0.00.033.342 I load_tensors: offloading output layer to GPU",
+        "0.00.033.344 I load_tensors: offloading 29 repeating layers to GPU",
+        "0.00.033.344 I load_tensors: offloaded 31/31 layers to GPU",
+        "0.00.033.345 I load_tensors:      Vulkan0 model buffer size =   136.40 MiB",
+        "0.00.033.346 I load_tensors:  Vulkan_Host model buffer size =    28.69 MiB",
+        "0.00.061.379 I llama_context: n_ctx                 = 2048",
+        "0.00.061.380 I llama_context: flash_attn            = auto",
+        "0.00.062.571 I llama_kv_cache:    Vulkan0 KV buffer size =    45.00 MiB",
+        "0.00.064.819 I resolve_fused_ops: Flash Attention enabled",
+        "0.00.069.713 I sched_reserve:    Vulkan0 compute buffer size =    15.51 MiB",
+        "0.00.069.716 I sched_reserve: Vulkan_Host compute buffer size =     6.52 MiB",
+        "0.00.100.659 I srv  llama_server: model loaded",
+        "0.00.100.661 I srv  llama_server: listening on http://127.0.0.1:59101"
+      ],
+      "unauthorized_status": 401
+    },
+    {
+      "cancelled_final": {
+        "elapsed_seconds": 0.031978874998458195,
+        "finish_reason": "cancelled",
+        "usage": {
+          "completion_tokens": 3,
+          "prompt_tokens": 38,
+          "total_tokens": 41
+        }
+      },
+      "decoded_text": "2 + 2 is a classic arithmetic operation that can be performed using various methods",
+      "evidence": {
+        "architecture": "llama",
+        "backend": "llama.cpp-vulkan",
+        "compute_buffer_bytes": {
+          "Vulkan0": 16263414,
+          "Vulkan_Host": 6836716
+        },
+        "device": {
+          "id": "Vulkan0",
+          "memory_scope": "Unified memory heap reported by MoltenVK through llama.cpp; not dedicated VRAM or a reservation.",
+          "name": "Apple M5 Pro",
+          "reported_free_bytes": 40200306688,
+          "reported_memory_bytes": 51539607552
+        },
+        "devices_used": [
+          {
+            "free_bytes_at_load": 40200306688,
+            "id": "Vulkan0",
+            "name": "Apple M5 Pro"
+          }
+        ],
+        "flash_attention": "enabled",
+        "gguf_file_type": "Q4_K_M",
+        "gpu_execution": true,
+        "gpu_layers": 31,
+        "graph_nodes": null,
+        "graph_splits": null,
+        "kv_buffer_bytes": {
+          "Vulkan0": 47185920
+        },
+        "kv_offload": true,
+        "memory_scope": "llama.cpp-reported buffers; Vulkan_Host is host-visible unified memory holding the token embedding table, whose lookup llama.cpp keeps on the CPU by design.",
+        "model_buffer_bytes": {
+          "Vulkan0": 103672709,
+          "Vulkan_Host": 30083645
+        },
+        "model_layers": 31,
+        "offloaded_layers": 31,
+        "op_offload": true,
+        "qualification": "Inference only: pinned llama.cpp Vulkan build on the Apple M5 Pro GPU through MoltenVK 1.4.2 on macOS 27.2.1 arm64 for llama-architecture F16, Q8_0 and Q4_K_M GGUF. No discrete, cross-vendor, Linux, Windows or DirectML claim; no Vulkan training.",
+        "selected_device": "vulkan:0"
+      },
+      "file": "smollm2-135m-instruct-q4_k_m.gguf",
+      "final": {
+        "elapsed_seconds": 0.09544958300102735,
+        "finish_reason": "length",
+        "usage": {
+          "completion_tokens": 16,
+          "prompt_tokens": 38,
+          "total_tokens": 54
+        }
+      },
+      "listener_closed_after_unload": true,
+      "load_seconds_including_device_probe": 0.857,
+      "repeat_identical": true,
+      "server_exit_code": 0,
+      "server_load_report": [
+        "0.00.018.028 I llama_prepare_model_devices: using device Vulkan0 (Apple M5 Pro) (unknown id) - 38338 MiB free",
+        "0.00.033.270 I load_tensors: offloading output layer to GPU",
+        "0.00.033.272 I load_tensors: offloading 29 repeating layers to GPU",
+        "0.00.033.272 I load_tensors: offloaded 31/31 layers to GPU",
+        "0.00.033.273 I load_tensors:      Vulkan0 model buffer size =    98.87 MiB",
+        "0.00.033.274 I load_tensors:  Vulkan_Host model buffer size =    28.69 MiB",
+        "0.00.060.003 I llama_context: n_ctx                 = 2048",
+        "0.00.060.004 I llama_context: flash_attn            = auto",
+        "0.00.061.121 I llama_kv_cache:    Vulkan0 KV buffer size =    45.00 MiB",
+        "0.00.063.332 I resolve_fused_ops: Flash Attention enabled",
+        "0.00.068.130 I sched_reserve:    Vulkan0 compute buffer size =    15.51 MiB",
+        "0.00.068.132 I sched_reserve: Vulkan_Host compute buffer size =     6.52 MiB",
+        "0.00.103.523 I srv  llama_server: model loaded",
+        "0.00.103.526 I srv  llama_server: listening on http://127.0.0.1:59115"
+      ],
+      "unauthorized_status": 401
+    }
+  ],
+  "started_at": "2026-11-15T17:06:08+0000"
+}

@@ -59,7 +59,10 @@ The report always retains `model_qualified: false` and
 This tool does not register workers, grant capacity, reserve devices or enable GPU
 training in the browser. TASK-42 owns that integration and launch/claim revalidation.
 TASK-37–TASK-40 own named-hardware training/inference qualification for the four
-vendors. TASK-41 owns portable Vulkan inference; Vulkan, MLX, DirectML and other
-vendor runtimes are not advertised by this PyTorch probe. TASK-17 owns multi-GPU
+vendors. TASK-41 adds an inference-only llama.cpp Vulkan GGUF backend, `vulkan:0`,
+qualified only for this Mac's Apple GPU through MoltenVK; see
+[accelerator support](accelerator-support.md#vulkan-gguf-inference-task-41). This
+PyTorch probe does not advertise Vulkan, MLX, DirectML or other vendor runtimes, and
+`select_device` refuses `vulkan` selectors because Vulkan training is not supported. TASK-17 owns multi-GPU
 execution. Each model, operation, precision and adapter method requires its own
 evidence; GPU detection does not qualify LoRA, QLoRA or mixed-vendor distribution.
