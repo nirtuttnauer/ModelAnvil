@@ -37,7 +37,7 @@ def runtime_digest():
         ROOT/'modelanvil/runners/training/hf_runtime.py']
     files += [ROOT/'modelanvil/runners'/name for name in ('local_execution.py','gguf_runtime.py',
         'training/engine.py','training/general_transformer.py','training/runtime.py',
-        'training/general_runtime.py','training/cpu_hf_runtime.py','training/mlx_runtime.py')]
+        'training/general_runtime.py','training/cpu_hf_runtime.py','training/mlx_runtime.py','training/mlx_profile.py')]
     return digest([hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in files])
 
 

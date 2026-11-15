@@ -10873,6 +10873,22 @@
                 "type": "string"
               }
             }
+          },
+          "hyperparameters": {
+            "type": "object",
+            "description": "Runtime-specific. Native MLX adapter training accepts only {\"optimization\": MlxOptimizationProfile}; the other pinned pretrained profiles accept none.",
+            "properties": {
+              "optimization": {
+                "$ref": "#/components/schemas/MlxOptimizationProfile"
+              }
+            }
+          },
+          "metrics_log": {
+            "type": "array",
+            "readOnly": true,
+            "items": {
+              "$ref": "#/components/schemas/TrainingStepMetric"
+            }
           }
         }
       },
@@ -16167,6 +16183,148 @@
             ],
             "format": "uuid",
             "description": "Optional immutable source. Raw prompts must match eligible training rows; protected groups are excluded."
+          }
+        }
+      },
+      "MlxOptimizationProfile": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Native MLX adapter training only, sent as hyperparameters.optimization. Omitted settings take the defaults shown. Unsupported or incompatible choices (FP16, any FP8 variant, packing with one sample per step, 8-bit or paged optimizers, non-MLX attention backends) block the optimization-profile preflight check before inputs resolve. The complete profile is pinned with the run; checkpoint resume refuses a different profile.",
+        "properties": {
+          "compute_precision": {
+            "type": "string",
+            "enum": [
+              "fp32",
+              "bf16"
+            ],
+            "default": "fp32",
+            "description": "bf16: the attention and MLP matmuls take BF16 inputs with BF16 quantization scales; the residual stream, norms, embeddings and logits stay FP32, as do adapter weights, gradients and optimizer state."
+          },
+          "gradient_checkpointing": {
+            "type": "boolean",
+            "default": false,
+            "description": "mx.checkpoint per transformer block."
+          },
+          "batch_samples": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8,
+            "default": 1,
+            "description": "Whole samples per optimizer step, in manifest order. Steps and budgets still count optimizer steps."
+          },
+          "sequence_layout": {
+            "type": "string",
+            "enum": [
+              "padded",
+              "packed"
+            ],
+            "default": "padded",
+            "description": "padded: right padding with a causal mask and unsupervised padding. packed: one row with a block-diagonal causal mask; the pair joining two samples is unsupervised. Packing requires batch_samples of at least 2."
+          },
+          "attention_kernel": {
+            "type": "string",
+            "enum": [
+              "mlx_fast_sdpa",
+              "mlx_fast_sdpa_force_fused"
+            ],
+            "default": "mlx_fast_sdpa",
+            "description": "mx.fast.scaled_dot_product_attention with library kernel selection, or with force_fused=True."
+          },
+          "optimizer": {
+            "type": "string",
+            "enum": [
+              "adamw",
+              "adafactor"
+            ],
+            "default": "adamw",
+            "description": "adamw: the pinned AdamW. adafactor: factored second moment, no first moment, the same fixed learning rate."
+          }
+        }
+      },
+      "TrainingStepMetric": {
+        "type": "object",
+        "required": [
+          "step",
+          "loss"
+        ],
+        "description": "One committed optimizer step. Fields depend on the runtime. A null accelerator value was not measured and is never estimated; unavailable_metrics names the runtime-declared reason.",
+        "properties": {
+          "step": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "loss": {
+            "type": "number"
+          },
+          "measured_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Worker time when the step measurement finished."
+          },
+          "gradient_norm": {
+            "type": "number",
+            "minimum": 0
+          },
+          "tokens_per_second": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Supervised next-token pairs per engine wall second for this step."
+          },
+          "training_pairs": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Supervised next-token pairs; padding and packing boundaries excluded."
+          },
+          "padding_positions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "gpu_allocated_bytes": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "peak_allocated_bytes": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "Peak framework-allocated bytes during the step, including resident weights."
+          },
+          "peak_reserved_bytes": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "gpu_utilization_percent": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "optimizer_state_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "compute_precision": {
+            "type": "string"
+          },
+          "unavailable_metrics": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "not_exposed_by_mlx"
+              ]
+            },
+            "description": "not_exposed_by_mlx: MLX exposes active, peak-active and cache bytes, but no peak reserved-pool or GPU utilization counter."
           }
         }
       }

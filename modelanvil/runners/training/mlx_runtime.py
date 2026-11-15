@@ -12,6 +12,7 @@ from django.utils import timezone
 
 from modelanvil.device_admission import device_available, device_lease
 from modelanvil.runners.training import hf_runtime as hf
+from modelanvil.runners.training import mlx_profile as optimization
 from modelanvil.runners.training.runtime import digest, _locked_live_run, _finalize_worker_job
 from scripts.mlx_candidate_infer import QUANTIZATION, LORA, load_candidate, completion
 
@@ -21,7 +22,8 @@ PACKAGES = {**hf.PACKAGES, 'mlx': '0.32.3', 'mlx-metal': '0.32.3', 'mlx-lm': '0.
 CONTRACT = {'runtime': RUNTIME_ID, 'source': SOURCE, 'file_hashes': FILE_HASHES,
     'packages': PACKAGES, 'recipe': 'qlora_adapter', 'recipes': ['qlora_adapter'],
     'precision': 'fp32', 'quantization': QUANTIZATION, 'quantization_targets': 'linear_layers_only_full_precision_tied_embeddings', 'lora': LORA, 'optimizer': OPTIMIZER,
-    'limits': LIMITS, 'placement': 'one_trusted_local_metal_worker', 'device_admission': 'attempt_db_and_posix_user_host_v2'}
+    'limits': LIMITS, 'placement': 'one_trusted_local_metal_worker', 'device_admission': 'attempt_db_and_posix_user_host_v2',
+    'optimization_profile': optimization.CONTRACT}
 CONTRACT_DIGEST = digest(CONTRACT)
 file_ref, staged_files, _tokenizer = hf.file_ref, hf.staged_files, hf._tokenizer
 is_worker_run = hf.is_worker_run
@@ -38,8 +40,22 @@ def require_packages():
 
 
 def validate_options(*, precision='fp32', adapter=None, quantization=None, recipe_type='qlora_adapter'):
+    # precision names the adapter master weights; compute precision is part of hyperparameters.optimization.
+    if isinstance(precision, str) and 'fp8' in precision.lower():
+        raise ValueError(optimization.FP8_REFUSAL)
     if recipe_type != 'qlora_adapter' or precision != 'fp32' or adapter not in (None, 'qlora') or quantization not in (None, 'int4'):
-        raise ValueError('Select QLoRA with FP32 adapters and four-bit affine group-32 base weights.')
+        raise ValueError('Select QLoRA with FP32 adapters and four-bit affine group-32 base weights. '
+            'Choose BF16 compute with hyperparameters.optimization.compute_precision.')
+
+
+def validate_hyperparameters(hyperparameters):
+    """The only tunable settings: a validated optimization profile. Optimizer values stay pinned."""
+    if hyperparameters in (None, {}):
+        return optimization.validate_profile()
+    if not isinstance(hyperparameters, dict) or set(hyperparameters) != {'optimization'}:
+        raise ValueError('Native MLX adapter training accepts only hyperparameters.optimization; '
+            'learning rate and validation settings are pinned.')
+    return optimization.validate_profile(hyperparameters['optimization'])
 
 
 def runner_manifest():
@@ -47,13 +63,14 @@ def runner_manifest():
     value.update(adapter_id=RUNTIME_ID, image=f'local-python-contract@sha256:{CONTRACT_DIGEST}')
     value['capabilities'][0].update(architectures=[RUNTIME_ID], output_schema_refs=['mlx:quantized_lora_safetensors'])
     value['limitations'] = ['One pinned SmolLM2-135M snapshot and one explicit mlx:0 Metal device.',
-        'Four-bit affine group-32 frozen base, FP32 rank-8 q/v adapters; no distributed or other-vendor qualification.']
+        'Four-bit affine group-32 frozen base, FP32 rank-8 q/v adapters and optimizer state; FP32 or BF16 compute only.',
+        'No FP16, FP8, distributed or other-vendor qualification.']
     return value
 
 
 def build_digest():
     root = Path(__file__).resolve().parents[3]
-    return hashlib.sha256((hf.build_digest() + (Path(__file__).read_bytes() +
+    return hashlib.sha256((hf.build_digest() + (Path(__file__).read_bytes() + Path(optimization.__file__).read_bytes() +
         (root / 'scripts/mlx_candidate_infer.py').read_bytes()).hex()).encode()).hexdigest()
 
 
@@ -91,19 +108,25 @@ def capable_worker(worker):
         and caps.get('gpu_packages') == PACKAGES and worker.slots in (0, 1))
 
 
-def resolve_inputs(**kwargs):
+def resolve_inputs(*, hyperparameters=None, **kwargs):
+    # Refuse an incompatible profile before any artifact, tokenizer or device is touched.
+    profile = validate_hyperparameters(hyperparameters)
     kwargs.setdefault('recipe_type', 'qlora_adapter')
     inputs = hf.resolve_inputs(**kwargs, profile=sys.modules[__name__])
     if any('labels' in sample for sample in inputs['samples']):
         raise ValueError('Chat SFT currently requires the managed FP32 GPU profile; native QLoRA accepts plain text only.')
+    inputs['pins'].update(optimization=profile, optimizer=optimization.OPTIMIZERS[profile['optimizer']])
     return inputs
 
 
 def checkpoint_bundle(run, checkpoint):
     state = checkpoint.weights_manifest
-    if (not checkpoint.is_valid or digest(state) != checkpoint.state_digest or state.get('pins') != run.hardware_config['pins']
+    pins = run.hardware_config['pins']
+    if (state.get('pins') or {}).get('optimization') != pins.get('optimization'):
+        raise ValueError('MLX checkpoint was written with a different optimization profile; resume refused.')
+    if (not checkpoint.is_valid or digest(state) != checkpoint.state_digest or state.get('pins') != pins
         or state.get('step') != checkpoint.step or state.get('run_id') != str(run.run_id)
-        or state.get('optimizer') != {**OPTIMIZER, 'updates': checkpoint.step} or state.get('metrics') != checkpoint.metrics):
+        or state.get('optimizer') != {**pins.get('optimizer', OPTIMIZER), 'updates': checkpoint.step} or state.get('metrics') != checkpoint.metrics):
         raise ValueError('MLX checkpoint checksum, cursor or pinned optimizer changed.')
     with staged_files({**state['files'], 'optimizer.safetensors': state['adam']}, run.tenant_id, run.project_id):
         pass
@@ -137,7 +160,8 @@ def execute_training(run, context):
     runner = RunnerManifest.all_objects.get(manifest_id=pins['runner_id'], tenant_id=run.tenant_id)
     inputs = resolve_inputs(dataset=run.dataset_revision, base=run.base_model_version, tokenizer=run.tokenizer_version,
         runner=runner, pool=run.job.pool, tenant=run.tenant_id, project=run.project_id, steps=run.total_steps,
-        require_capacity=False, recipe_type=run.recipe_type, initialization_seed=run.initialization_seed)
+        require_capacity=False, recipe_type=run.recipe_type, initialization_seed=run.initialization_seed,
+        hyperparameters=run.hyperparameters)
     if inputs['pins'] != pins or context.attempt.worker_id != pins['worker_id']:
         raise ValueError('MLX runtime, inputs, device or worker changed after launch.')
     latest = run.checkpoints.filter(is_valid=True).order_by('-step').first()
@@ -160,56 +184,53 @@ def execute_training(run, context):
 
 def _execute_updates(run, context, inputs, files, recovery, latest):
     import mlx.core as mx
-    import mlx.nn as nn
-    import mlx.optimizers as optim
     from mlx.utils import tree_flatten
     from modelanvil.runners.models import TrainingCheckpoint, TrainingRun
-    model = optimizer = loss_fn = gradients = ids = loss = base = None
+    profile = run.hardware_config['pins']['optimization']
+    model = optimizer = batch = base = None
     try:
         with staged_files(recovery, run.tenant_id, run.project_id) as directory:
             model, tokenizer, config, adapter_config = load_candidate(directory, run.initialization_seed, training=True)
-            optimizer = optim.AdamW(learning_rate=OPTIMIZER['learning_rate'], betas=(OPTIMIZER['beta1'], OPTIMIZER['beta2']),
-                eps=OPTIMIZER['epsilon'], weight_decay=OPTIMIZER['weight_decay'])
+            if not latest:
+                # Store the actual FP32-scaled quantized frozen base once, before any compute cast; adapters and
+                # optimizer state are per-step. Frozen tensors are unchanged by updates.
+                base = {n.replace('.linear.', '.'): p for n, p in tree_flatten(model.parameters()) if not n.endswith(('.lora_a', '.lora_b'))}
+                mx.save_safetensors(str(directory / 'model.safetensors'), base)
+                (directory / 'config.json').write_text(json.dumps(config, sort_keys=True))
+                base = None
+            optimization.prepare_model(model, profile)
+            optimizer = optimization.make_optimizer(profile['optimizer'])
             if latest:
                 restore_optimizer(optimizer, model, directory, latest.step)
-            def loss_function(model, ids):
-                return nn.losses.cross_entropy(model(ids[:, :-1]), ids[:, 1:], reduction='mean')
-            loss_fn = nn.value_and_grad(model, loss_function)
+            trainable = sum(p.size for _, p in tree_flatten(model.trainable_parameters()))
             for step in range(run.current_step + 1, run.total_steps + 1):
                 if not context.heartbeat(progress=(step - 1) / run.total_steps):
                     return
-                sample = inputs['samples'][(step - 1) % len(inputs['samples'])]
-                ids = mx.array([sample['token_ids']])
+                samples = optimization.step_samples(inputs['samples'], step, profile['batch_samples'])
+                batch = optimization.build_batch(samples, profile['sequence_layout'])
                 mx.reset_peak_memory()
                 cpu_started, started = time.process_time(), time.perf_counter()
-                loss, gradients = loss_fn(model, ids)
-                mx.eval(loss, gradients)
-                if not mx.isfinite(loss).item() or any(not mx.all(mx.isfinite(g)).item() for _, g in tree_flatten(gradients)):
-                    raise ValueError('MLX adapter loss or gradients are non-finite.')
-                grad_norm = mx.sqrt(sum(mx.sum(g * g) for _, g in tree_flatten(gradients))).item()
-                optimizer.update(model, gradients)
-                mx.eval(model.parameters(), optimizer.state)
-                post_loss = loss_function(model, ids).item()
+                loss, grad_norm = optimization.train_step(model, optimizer, batch, profile)
+                post_loss = optimization.batch_loss(model, batch, profile).item()
                 if not mx.isfinite(mx.array(post_loss)).item():
                     raise ValueError('MLX update produced non-finite loss.')
                 elapsed = time.perf_counter() - started
-                metrics = {'step': step, 'loss': loss.item(), 'post_update_loss': post_loss,
-                    'sample_id': sample['sample_id'], 'training_pairs': len(sample['token_ids']) - 1,
+                metrics = {'step': step, 'loss': loss, 'post_update_loss': post_loss,
+                    'sample_id': samples[0]['sample_id'], 'sample_ids': batch['sample_ids'], 'training_pairs': batch['pairs'],
+                    'computed_positions': batch['positions'], 'padding_positions': batch['padding_positions'],
                     'cpu_seconds': time.process_time() - cpu_started, 'engine_wall_seconds': elapsed,
                     'gpu_backend': 'mlx', 'gpu_device': 'mlx:0', 'device_residency_checked': True,
-                    'gradient_norm': grad_norm, 'trainable_parameters': sum(p.size for _, p in tree_flatten(model.trainable_parameters())),
+                    'gradient_norm': grad_norm, 'trainable_parameters': trainable,
                     'gpu_allocated_bytes': mx.get_active_memory(), 'peak_allocated_bytes': mx.get_peak_memory(),
                     'peak_reserved_bytes': None, 'gpu_utilization_percent': None,
-                    'tokens_per_second': (len(sample['token_ids']) - 1) / elapsed, 'measured_at': timezone.now().isoformat(),
+                    'unavailable_metrics': optimization.UNAVAILABLE_METRICS,
+                    'optimizer_state_bytes': optimization.state_bytes(optimizer.state),
+                    'compute_precision': profile['compute_precision'],
+                    'tokens_per_second': batch['pairs'] / elapsed, 'measured_at': timezone.now().isoformat(),
                     'quantization': QUANTIZATION}
                 mx.save_safetensors(str(directory / 'adapters.safetensors'), dict(tree_flatten(model.trainable_parameters())))
                 mx.save_safetensors(str(directory / 'optimizer.safetensors'), dict(tree_flatten(optimizer.state)))
                 (directory / 'adapter_config.json').write_text(json.dumps(adapter_config, sort_keys=True))
-                if not latest and step == 1:
-                    # Store the actual quantized frozen base once; adapters and moments are per-step.
-                    base = {n.replace('.linear.', '.'): p for n, p in tree_flatten(model.parameters()) if not n.endswith(('.lora_a', '.lora_b'))}
-                    mx.save_safetensors(str(directory / 'model.safetensors'), base)
-                    (directory / 'config.json').write_text(json.dumps(config, sort_keys=True))
                 if not context.heartbeat(progress=(step - 1) / run.total_steps):
                     return
                 with transaction.atomic():
@@ -222,7 +243,7 @@ def _execute_updates(run, context, inputs, files, recovery, latest):
                     adam = hf._store_file(directory / 'optimizer.safetensors', run, context, step)
                     _locked_live_run(context, run.run_id)
                     state = {'run_id': str(run.run_id), 'step': step, 'pins': run.hardware_config['pins'], 'files': saved,
-                        'adam': adam, 'optimizer': {**OPTIMIZER, 'updates': step}, 'tokenizer': inputs['tokenizer'], 'metrics': metrics,
+                        'adam': adam, 'optimizer': {**run.hardware_config['pins']['optimizer'], 'updates': step}, 'tokenizer': inputs['tokenizer'], 'metrics': metrics,
                         'attempt_id': str(context.attempt.attempt_id), 'fencing_token': context.fencing_token}
                     TrainingCheckpoint.all_objects.create(tenant_id=run.tenant_id, training_run=locked, step=step,
                         state_digest=digest(state), weights_manifest=state, metrics=metrics)
@@ -235,7 +256,7 @@ def _execute_updates(run, context, inputs, files, recovery, latest):
         traceback.clear_frames(exc.__traceback__)
         raise
     finally:
-        model = optimizer = loss_fn = gradients = ids = loss = base = None
+        model = optimizer = batch = base = None
 
 
 def finalize_job(job, status):
