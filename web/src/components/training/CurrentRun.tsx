@@ -3,6 +3,7 @@ import { ChartEmpty, LineChart } from '../Charts';
 import { ModelExport } from '../ModelExport';
 import { TrainingRunProgress } from '../TrainingRunProgress';
 import { RunDetailsPanel } from './RunDetailsPanel';
+import { GpuTelemetry } from './GpuTelemetry';
 import { evaluationHash } from '../../api/improvement';
 import { trainingLossSeries } from '../../api/training-progress';
 import type { ModelVersion, Tokenizer, TrainingRun } from '../../api/training';
@@ -19,8 +20,7 @@ export function CurrentRun({ run, label, refreshedAt, progressError, onRefresh, 
   const series = trainingLossSeries(run.metrics_log);
   const trained = run.status === 'completed' && !!run.output_model_version_uuid;
   const summary = run.quality_summary;
-  const gpuRows = (run.metrics_log ?? []).filter(m => m.measured_at).slice(-10);
-  const runtimePin = (run as { runtime?: { pins?: { runtime?: string } } }).runtime?.pins?.runtime || '';
+  const runtimePin = run.runtime?.pins?.runtime || '';
   const [decisionOpen, setDecisionOpen] = useState(false);
   return <div className="training-current">
     <TrainingRunProgress key={`progress-${run.run_id}`} run={run} label={label} refreshedAt={refreshedAt} refreshError={progressError} onRefresh={onRefresh} onCancel={() => onCancel(run.run_id)} cancelBusy={busy} />
@@ -44,7 +44,7 @@ export function CurrentRun({ run, label, refreshedAt, progressError, onRefresh, 
     </Section>
     <Disclosure summary="Details" variant="card">
       <RunDetailsPanel run={run} label={label} tokenizers={tokenizers} models={models} token={token} variant="current" busy={busy} onCancel={onCancel}>
-        {gpuRows.length > 0 && <div className="table-scroll" tabIndex={0}><table data-ui="table"><caption>Measured GPU steps. Missing values are not estimated.</caption><thead><tr><th>Step</th><th>Validation loss</th><th>Gradient norm</th><th>Tokens/s</th><th>Allocated / peak MiB</th><th>GPU %</th><th>Trainable / total params</th></tr></thead><tbody>{gpuRows.map(m => <tr key={m.step}><td>{m.step}<br /><small className="muted">{m.measured_at}</small></td><td>{m.validation_loss?.toFixed(6) ?? 'Not reported'}{m.validation_prediction_tokens == null ? '' : <><br /><small className="muted">{m.validation_prediction_tokens} prediction tokens</small></>}</td><td>{m.gradient_norm?.toFixed(4) ?? 'Not reported'}</td><td>{m.tokens_per_second?.toFixed(2) ?? 'Not reported'}</td><td>{m.gpu_allocated_bytes == null ? 'Not reported' : (m.gpu_allocated_bytes / 1024 ** 2).toFixed(1)} / {m.peak_allocated_bytes == null ? 'Not reported' : (m.peak_allocated_bytes / 1024 ** 2).toFixed(1)}</td><td>{m.gpu_utilization_percent == null ? 'Not reported' : `${m.gpu_utilization_percent}%`}</td><td>{m.trainable_parameters?.toLocaleString() ?? 'Not reported'} / {m.total_parameters?.toLocaleString() ?? 'Not reported'}</td></tr>)}</tbody></table></div>}
+        <GpuTelemetry metrics={run.metrics_log} profile={run.runtime?.pins?.optimization} />
       </RunDetailsPanel>
     </Disclosure>
   </div>;

@@ -1,6 +1,7 @@
 import type { ModelCapabilities } from './resources';
 import type { GuidedRevision } from './guided-training';
 import type { ModelExportOption } from './model-export';
+import type { OptimizationProfile, TelemetryMetric } from './training-telemetry';
 
 export interface Tokenizer { id: number; tokenizer_id: string; name: string; revision_no: number; vocabulary_size?: number }
 export interface ModelVersion { id: number; model_version_id: string; model_name: string; architecture_ref?: string; revision_no: number; state: string; capabilities?: ModelCapabilities }
@@ -12,14 +13,13 @@ export interface Checkpoint {
   checkpoint_id: string; step: number; is_valid: boolean; state_digest: string;
   weights_manifest?: { format?: string; weights_sha256?: string; weights?: { weights_sha256: string }; tensors?: Record<string, unknown> };
 }
-export interface TrainingMetric {
-  step: number; loss: number; measured_at?: string; gradient_norm?: number; tokens_per_second?: number; engine_wall_seconds?: number; updates_since_checkpoint?: number;
-  gpu_allocated_bytes?: number; peak_allocated_bytes?: number | null; gpu_utilization_percent?: number | null; trainable_parameters?: number; total_parameters?: number;
+export interface TrainingMetric extends TelemetryMetric {
+  step: number; loss: number; measured_at?: string; engine_wall_seconds?: number; updates_since_checkpoint?: number;
   validation_loss?: number; validation_prediction_tokens?: number;
 }
 export interface TrainingRun {
   guided_evaluation?: { eligible: boolean; reason: string };
-  runtime?: { execution_mode?: string; pins?: { runtime?: string } };
+  runtime?: { execution_mode?: string; pins?: { runtime?: string; optimization?: OptimizationProfile } };
   execution_evidence?: { level: string; source: string };
   run_id: string; recipe_type: string; status: string; initialization_seed: number; current_step: number; progress_step?: number; total_steps: number;
   latest_loss: number | null; dataset_revision: number | null; dataset_manifest_digest?: string; pool: number | null; job: string | null;
