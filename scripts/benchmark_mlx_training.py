@@ -105,7 +105,9 @@ def build_corpus(model_dir, output):
     # Interleave files so every step mixes sources; the order is fixed by the sorted names.
     train = sorted(train, key=lambda r: (int(r['sample_id'].rsplit('#', 1)[1]), r['sample_id']))[:TRAIN_SAMPLES]
     held_out = sorted(held_out, key=lambda r: (int(r['sample_id'].rsplit('#', 1)[1]), r['sample_id']))[:HELD_OUT_SAMPLES]
-    corpus = {'commit': CORPUS_COMMIT, 'tokenizer_sha256': sha256(model_dir / 'tokenizer.json'), 'train': train, 'held_out': held_out}
+    # Digests sit under a 'sha256' key, never on a line keyed by a file name: scanners read "token...": <hex> as a secret.
+    corpus = {'commit': CORPUS_COMMIT, 'tokenizer': {'file': 'tokenizer.json', 'sha256': sha256(model_dir / 'tokenizer.json')},
+        'train': train, 'held_out': held_out}
     path = output / 'corpus.json'
     path.write_text(json.dumps(corpus, indent=1, sort_keys=True) + '\n')
     lengths = [len(r['token_ids']) for r in train]
@@ -137,7 +139,7 @@ def environment(model_dir):
         'mlx_device': {key: info.get(key) for key in ('device_name', 'architecture', 'memory_size', 'max_recommended_working_set_size', 'max_buffer_length')},
         'metal_available': mx.metal.is_available(), 'default_device': str(mx.default_device()),
         'git_sha': run('git', '-C', str(ROOT), 'rev-parse', 'HEAD'), 'code_dirty': bool(status),
-        'model_source': source, 'model_file_sha256': observed,
+        'model_source': source, 'model_files': [{'file': name, 'sha256': digest} for name, digest in sorted(observed.items())],
         'code_sha256': {path: sha256(ROOT / path) for path in ('modelanvil/runners/training/mlx_profile.py',
             'scripts/mlx_candidate_infer.py', 'scripts/benchmark_mlx_training.py')}}
 
