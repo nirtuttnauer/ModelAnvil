@@ -11,29 +11,39 @@ from urllib.parse import urlsplit
 MAX_WEIGHT_BYTES = 1024**3
 
 
+def read_metadata(path):
+    """Bounded GGUF header facts shared by the CPU and Vulkan sessions."""
+    import gguf
+    try:
+        reader = gguf.GGUFReader(str(path))
+        architecture = reader.fields['general.architecture'].contents()
+        context = reader.fields.get(f'{architecture}.context_length')
+        context = context.contents() if context else 2048
+        file_type = reader.fields.get('general.file_type')
+        file_type = file_type.contents() if file_type else None
+        has_chat_template = bool(reader.fields.get('tokenizer.chat_template'))
+    except (KeyError, TypeError, ValueError, OverflowError):
+        raise ValueError('GGUF model metadata is invalid or unsupported.') from None
+    if type(context) is not int or context < 1:
+        raise ValueError('GGUF model has an invalid context limit.')
+    del reader
+    return {'architecture': architecture, 'context_limit': min(context, 2048), 'file_type': file_type,
+            'has_chat_template': has_chat_template}
+
+
 class GGUFSession:
     def __init__(self, path):
         path = Path(path)
         if not 0 < path.stat().st_size <= MAX_WEIGHT_BYTES:
             raise ValueError('CPU GGUF weights must fit within the verified 1 GiB limit.')
         try:
-            import gguf
+            import gguf  # noqa: F401
             import requests
             import xllamacpp
         except ImportError:
             raise ValueError('Install requirements.inference.txt for CPU GGUF inference.') from None
-        try:
-            reader = gguf.GGUFReader(str(path))
-            architecture = reader.fields['general.architecture'].contents()
-            context = reader.fields.get(f'{architecture}.context_length')
-            context = context.contents() if context else 2048
-            self.has_chat_template = bool(reader.fields.get('tokenizer.chat_template'))
-        except (KeyError, TypeError, ValueError, OverflowError):
-            raise ValueError('GGUF model metadata is invalid or unsupported.') from None
-        if type(context) is not int or context < 1:
-            raise ValueError('GGUF model has an invalid context limit.')
-        self.context_limit = min(context, 2048)
-        del reader
+        metadata = read_metadata(path)
+        self.has_chat_template, self.context_limit = metadata['has_chat_template'], metadata['context_limit']
         params = xllamacpp.CommonParams()
         params.model.path = str(path)
         params.n_ctx = self.context_limit
