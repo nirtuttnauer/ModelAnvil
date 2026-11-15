@@ -17,8 +17,8 @@
   "backend": "llama.cpp-vulkan",
   "observed_device": {
     "server": {
-      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb/bin/llama-server",
-      "sha256": "efdaa68e680272d22530f109ed01122c30f0442d8d23bbbbf37b74e8c91acae3",
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb-cmake/bin/llama-server",
+      "sha256": "4163f614da82e461430598f03b0c51bf84bf03f43429bbeac5ccc074b739e7f7",
       "llama_commit": "f5027fb21307eb264aed483242603d68c87b0fe3"
     },
     "icd_manifest": {

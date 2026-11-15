@@ -1,5 +1,5 @@
 {
-  "docs/engineering/verification/task41-moltenvk-2026-11-15/build_llama_cpp.py": "a6cfed06b24bec6e26683406bb8826d17c5bdd453858cfd53487f29327dc0d26",
+  "docs/engineering/verification/task41-moltenvk-2026-11-15/record_cmake_build.py": "805cc591f62796a37ea7a15ec307b433d944b50509b96df1ec3f780650697a64",
   "docs/engineering/verification/task41-moltenvk-2026-11-15/session_evidence.py": "a01f45064242a17d578ccddc925b34033ffee56147677a070abe6bb72c743d97",
   "modelanvil/accelerators.py": "b12a3c53ee739f0ca5fa7ff72a50e39a3e1a3c39bcac5c2728d5fbae6fe8e4fb",
   "modelanvil/api/views/model_workspace.py": "0d116322a28505ea82251f34bb0d0a1a2dda12cfefd32bb28919ac46f4678f10",
@@ -12,5 +12,6 @@
   "modelanvil/runners/vulkan_runtime.py": "ee7d29f9a170033f63ce56cd7cd41802937db7b1facbcbfc89c1a027f9e6123a",
   "modelanvil/runners/vulkan_server_process.py": "7b2760147a56a944d6dded63bf14024287c9c0b400efc6a2df6aaf86cf1df1f6",
   "modelanvil/settings.py": "7b89482d44c3256c2a792a268e926776ba5a3272a99b5d49291d2b7d85cca63b",
+  "scripts/local_evidence.py": "cca81b3fc8c2c5760d92e6ff5742fb7f2abb1186dc5e131e8e9652c722f5c77e",
   "scripts/qualify_vulkan_inference.py": "02dbe84d277634bc9aecb8dafb963f83a714fc32c9173b1b5b3a7241df237088"
 }

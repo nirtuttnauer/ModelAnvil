@@ -1,5 +1,11 @@
-TASK-41 test receipts, 2026-11-15. Working tree: base 0cbd830 plus the TASK-41 changes committed with this evidence.
-Every run went through ~/.cache/modelanvil-tools/run_locked.py (host-wide compute lock). Python 3.12.15; in-memory SQLite test DB.
+TASK-41 test receipts, 2026-11-15 19:21-19:24 +0200, CMake builds (cmake 4.5.0). Code at 3f3a98e (branch rebased onto 5b28613);
+the only uncommitted changes during the run were evidence/doc files. Every run went through ~/.cache/modelanvil-tools/run_locked.py
+(host-wide compute lock), in one locked job. Python 3.12.15; in-memory SQLite test DB.
+
+## Quantized fixtures reproduced with the CMake CPU-only llama-quantize
+$ env -i PATH=/usr/bin:/bin HOME=<tmp> llama-quantize smollm2-135m-instruct-f16.gguf <tmp>/Q8_0.gguf Q8_0 4   (and Q4_K_M)
+requantize Q8_0 exit=0 new=099b9a731e9eab4bf72402dca4fc70fee21d22d5b41f7b17dc6464bf5d21228d fixture=099b9a731e9eab4bf72402dca4fc70fee21d22d5b41f7b17dc6464bf5d21228d
+requantize Q4_K_M exit=0 new=310b730e0ae3f8306952ab2edccef5308e1b32fd6ef5cdc43d45cbc9ae6ca234 fixture=310b730e0ae3f8306952ab2edccef5308e1b32fd6ef5cdc43d45cbc9ae6ca234
 
 ## Focused backend suite (Vulkan backend not configured; CPU GGUF native test enabled)
 $ MODELANVIL_GGUF_TEST_MODEL=~/.cache/modelanvil-fixtures/smollm2-135m-instruct-f16.gguf PYTHONPATH=. python manage.py test \
@@ -8,7 +14,7 @@ $ MODELANVIL_GGUF_TEST_MODEL=~/.cache/modelanvil-fixtures/smollm2-135m-instruct-
     modelanvil.api.test_model_workspace modelanvil.api.test_inference_replay modelanvil.api.test_external_chat \
     modelanvil.jobs.test_device_claims modelanvil.api.test_openapi modelanvil.runners.training.test_cpu_exports \
     modelanvil.runners.training.test_hf_runtime --noinput -v 2
-Ran 139 tests in 21.372s
+Ran 139 tests in 20.496s
 OK
 
 New TASK-41 tests in that run (all passed; fixture sessions stand in for llama.cpp, no hardware claim):
@@ -25,14 +31,14 @@ New TASK-41 tests in that run (all passed; fixture sessions stand in for llama.c
 Existing CPU GGUF native test in that run (actual xllamacpp CPU execution, passed):
   GGUFNative.test_actual_cpu_generation_cancellation_and_unload
 
-## Tagged native Vulkan tests (actual pinned llama-server on the Apple M5 Pro through MoltenVK; F16, Q8_0 and Q4_K_M)
-$ MODELANVIL_VULKAN_INFERENCE='{"server":{"path":"~/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb/bin/llama-server","sha256":"efdaa68e680272d22530f109ed01122c30f0442d8d23bbbbf37b74e8c91acae3"},"icd":"/opt/homebrew/etc/vulkan/icd.d/MoltenVK_icd.json","loader":"/opt/homebrew/opt/vulkan-loader/lib/libvulkan.1.dylib"}' \
+## Tagged native Vulkan tests (actual CMake-built llama-server on the Apple M5 Pro through MoltenVK; F16, Q8_0 and Q4_K_M)
+$ MODELANVIL_VULKAN_INFERENCE='{"server":{"path":"/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb-cmake/bin/llama-server","sha256":"4163f614da82e461430598f03b0c51bf84bf03f43429bbeac5ccc074b739e7f7"},"icd":"/opt/homebrew/etc/vulkan/icd.d/MoltenVK_icd.json","loader":"/opt/homebrew/opt/vulkan-loader/lib/libvulkan.1.dylib"}' \
   MODELANVIL_GGUF_TEST_MODEL=~/.cache/modelanvil-fixtures/smollm2-135m-instruct-f16.gguf \
   MODELANVIL_GGUF_TEST_QUANTIZED=~/.cache/modelanvil-fixtures/smollm2-135m-instruct-q8_0.gguf:~/.cache/modelanvil-fixtures/smollm2-135m-instruct-q4_k_m.gguf \
   PYTHONPATH=. python manage.py test modelanvil.runners.test_vulkan_runtime --tag=vulkan --noinput -v 2
   VulkanNative.test_actual_offload_generation_cancellation_recovery_and_unload
   VulkanNativeChat.test_actual_vulkan_chat_receipt_is_device_bound_and_project_isolated
-Ran 2 tests in 7.410s
+Ran 2 tests in 7.426s
 OK
 (The logged HTTP 404 during the chat test is the expected refusal of the other project's API key.)
 
@@ -55,6 +61,6 @@ $ (cd web && node --test tests/openapi.test.mjs)   # Node 24, builtin test runne
 ℹ fail 0
 modelanvil.api.test_openapi passed inside the focused suite.
 
-## Earlier attempt
-The first focused run (19:02) had 3 errors in one new test: it read .data from a JsonResponse error body. The assertion now
-reads response.content; the full focused and native runs above were repeated afterwards (19:05).
+## Replaced runs
+The same suites, the qualification and the session receipts were first run on the binaries from the hand-written clang build
+before CMake was installed. They passed with the same counts, but that build has been replaced and those runs are not this evidence.
