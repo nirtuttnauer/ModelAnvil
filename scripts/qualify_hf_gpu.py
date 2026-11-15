@@ -106,7 +106,7 @@ if args.recipe == 'qlora_adapter':
         assert blocked.status_code == 200 and 'optimization-profile' in blocked.data['blocking_checks'], blocked.data
         assert blocked.data['pins'] is None and 'pinned-inputs' not in [c['check'] for c in blocked.data['checks']], blocked.data
         refused = client.post('/api/v1/training-runs/', changed, format='json', HTTP_IDEMPOTENCY_KEY=uuid.uuid4().hex)
-        assert refused.status_code == 400 and 'optimization-profile' in str(refused.data), refused.data
+        assert refused.status_code == 400 and 'optimization-profile' in refused.content.decode(), refused.content
     assert Job.all_objects.filter(tenant_id=tenant.pk).count() == before_jobs
     assert BudgetReservation.all_objects.filter(tenant_id=tenant.pk).count() == before_reservations
     print('incompatible optimization profiles blocked in preflight without jobs or budget', flush=True)
