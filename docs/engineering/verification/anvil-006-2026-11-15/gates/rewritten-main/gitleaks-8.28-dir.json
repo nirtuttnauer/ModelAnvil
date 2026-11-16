@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "7dccebe6dc1d86ad8624b021ee60aac18e6fddf9",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-11-15T18:40:23+02:00",
+  "machine": {
+    "hostname": "Mac",
+    "os": "macOS-27.2.1-arm64-arm-64bit",
+    "arch": "arm64",
+    "python": "3.12.15",
+    "node": "v24.22.3"
+  },
+  "command": "/Users/nirtuttnauer/.cache/modelanvil-tools/gitleaks-8.28.0/gitleaks dir /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-qf4QY9/440ec32f-29b2-461b-b998-a12b6a631dae/scratchpad/tree.V7qw --config /Users/nirtuttnauer/.cache/modelanvil-tools/gitleaks-8.28.0/gitleaks.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-qf4QY9/440ec32f-29b2-461b-b998-a12b6a631dae/scratchpad/evidence/anvil-006-rewritten-main/raw/gl828-dir.json",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "\u001b[90m6:40PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1mscanned ~48812089 bytes (48.81 MB) in 250ms\u001b[0m\n\u001b[90m6:40PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1mno leaks found\u001b[0m\n",
+  "runs": [
+    {
+      "name": "command",
+      "command": "/Users/nirtuttnauer/.cache/modelanvil-tools/gitleaks-8.28.0/gitleaks dir /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-qf4QY9/440ec32f-29b2-461b-b998-a12b6a631dae/scratchpad/tree.V7qw --config /Users/nirtuttnauer/.cache/modelanvil-tools/gitleaks-8.28.0/gitleaks.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-qf4QY9/440ec32f-29b2-461b-b998-a12b6a631dae/scratchpad/evidence/anvil-006-rewritten-main/raw/gl828-dir.json",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}
