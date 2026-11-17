@@ -19,7 +19,7 @@ from modelanvil.device_admission import device_lease
 _allocation = threading.Lock()
 MAX_BYTES = 8 * 1024**3
 _RUNTIME_CODE = {name: hashlib.sha256((Path(__file__).parent / name).read_bytes()).hexdigest()
-                 for name in ('inference.py', 'gguf_runtime.py', 'training/hf_runtime.py', 'capabilities.py',
+                 for name in ('inference.py', 'gguf_runtime.py', 'vulkan_runtime.py', 'training/hf_runtime.py', 'capabilities.py',
                               '../api/views/model_workspace.py', '../../scripts/mlx_candidate_infer.py', 'vlm_inference.py', 'training/vlm_math.py', 'training/vlm_data.py')}
 
 
@@ -41,6 +41,10 @@ def runtime_provenance(format, device):
     for name in packages:
         try: versions[name] = importlib.metadata.version(name)
         except importlib.metadata.PackageNotFoundError: versions[name] = None
+    if format == 'gguf' and device == 'vulkan:0':
+        from modelanvil.runners import vulkan_runtime
+        # Server binary, ICD, MoltenVK and loader bytes: a changed build or driver is a new runtime.
+        versions['llama.cpp-vulkan'] = vulkan_runtime.runtime_identity()
     return {'implementation': _RUNTIME_CODE, 'format': format, 'device': device,
         'host': host_key(), 'cpu': cpu_brand(), 'platform': platform.platform(), 'python': platform.python_version(),
         'packages': versions}
@@ -91,7 +95,15 @@ def runtime_observation(session):
                          memory_scope='Observed PyTorch process allocations/headroom; no true peak/reserved counters.')
         else: value['backend'] = 'torch-cpu' if session['device'] == 'cpu' else 'torch-device'
     elif session['format'] == 'gguf':
-        value.update(backend='llama.cpp-cpu', gpu_layers=0, kv_offload=False, op_offload=False)
+        evidence = getattr(session['model'], 'evidence', None)
+        if evidence:
+            value.update(evidence)
+        else:
+            value.update(backend='llama.cpp-cpu', gpu_execution=False, gpu_layers=0, kv_offload=False, op_offload=False)
+        if session.get('fallback'):
+            # Opt-in CPU fallback is recorded and labelled CPU; it is never GPU execution.
+            value['fallback'] = dict(session['fallback'])
+        value['billing_device'] = value['actual_device']
     if session['format'] == 'vision':
         value['image'] = session['image_pin']
         value['processor'] = {'source': session['processor'].__class__.__name__, 'image_tokens': 64, 'size': 512, 'image_splitting': False}
@@ -317,8 +329,12 @@ def rendered_prompt(tokenizer, messages, prompt_format='model'):
 
 
 @contextmanager
-def local_session(version, *, tenant, project, device='cpu', image_id=None):
-    """One model per process and exclusive local device use; close always unloads."""
+def local_session(version, *, tenant, project, device='cpu', image_id=None, allow_cpu_fallback=False):
+    """One model per process and exclusive local device use; close always unloads.
+
+    ``allow_cpu_fallback`` is for callers that report ``session['fallback']`` as CPU execution; even then the
+    operator must opt in through MODELANVIL_VULKAN_INFERENCE.
+    """
     from modelanvil.runners.training import runtime, general_runtime
     if version.state in ('archived', 'rejected'):
         raise ValueError('This model version is archived or rejected.')
@@ -353,17 +369,35 @@ def local_session(version, *, tenant, project, device='cpu', image_id=None):
         raise ValueError('Local inference is busy; retry after the current request finishes.')
     model, session, admission = None, {}, ExitStack()
     try:
-        admission.enter_context(device_lease(device))
+        lease = admission.enter_context(ExitStack())
+        descriptor = lease.enter_context(device_lease(device, pass_descriptor=True))
         with staged_snapshot(plan['files'], tenant, project) as directory:
             if plan['format'] == 'gguf':
-                if device != 'cpu':
-                    raise ValueError('GGUF GPU inference needs a separately qualified llama.cpp build.')
+                if device not in ('cpu', 'vulkan:0'):
+                    raise ValueError('GGUF inference runs on explicit cpu or the separately qualified, inference-only vulkan:0 backend.')
                 from modelanvil.runners.gguf_runtime import GGUFSession
                 weights = [n for n in plan['files'] if n.endswith('.gguf')]
                 if len(weights) != 1:
                     raise ValueError('Import exactly one GGUF file.')
-                model = GGUFSession(directory / weights[0])
-                session.update(format='gguf', model=model, device=device)
+                actual = device
+                if device == 'vulkan:0':
+                    from modelanvil.runners import vulkan_runtime
+                    try:
+                        # The server child inherits the lease, so an orphan cannot overlap another GPU user.
+                        model = vulkan_runtime.VulkanGGUFSession(directory / weights[0], lease_descriptor=descriptor)
+                    except vulkan_runtime.VulkanUnavailable as exc:
+                        if not (allow_cpu_fallback and vulkan_runtime.cpu_fallback_opted_in()):
+                            raise ValueError(f'{exc} CPU fallback is disabled; select cpu explicitly.') from None
+                        # Operator opt-in only: release the GPU lease and admit CPU work like an explicit CPU request.
+                        lease.close()
+                        lease.enter_context(device_lease('cpu'))
+                        model = GGUFSession(directory / weights[0])
+                        actual = 'cpu'
+                        session['fallback'] = {'requested_device': device, 'actual_device': 'cpu', 'reason': str(exc),
+                                               'operator_opt_in': True, 'gpu_execution': False, 'billing_device': 'cpu'}
+                else:
+                    model = GGUFSession(directory / weights[0])
+                session.update(format='gguf', model=model, device=actual)
                 yield session
             elif plan['format'] == 'mlx':
                 if device != 'mlx:0':

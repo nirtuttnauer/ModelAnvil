@@ -1,0 +1,134 @@
+{
+  "binaries": {
+    "llama-bench": {
+      "linked_libraries": [
+        "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "/opt/homebrew/opt/vulkan-loader/lib/libvulkan.1.dylib (compatibility version 1.0.0, current version 1.4.0)",
+        "/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+      ],
+      "metal_symbol_count": 0,
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb-cmake/bin/llama-bench",
+      "sha256": "62653c9e2f6282c15ba3d0c5ed2089680eb2c65ae9cb21d27e135e824e97873e"
+    },
+    "llama-completion": {
+      "linked_libraries": [
+        "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "/opt/homebrew/opt/vulkan-loader/lib/libvulkan.1.dylib (compatibility version 1.0.0, current version 1.4.0)",
+        "/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+      ],
+      "metal_symbol_count": 0,
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb-cmake/bin/llama-completion",
+      "sha256": "dfe5e2a6f2eb46bc7218db056ae200aa9c3732f57368141f95a4547455d3349f"
+    },
+    "llama-quantize": {
+      "linked_libraries": [
+        "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "/opt/homebrew/opt/vulkan-loader/lib/libvulkan.1.dylib (compatibility version 1.0.0, current version 1.4.0)",
+        "/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+      ],
+      "metal_symbol_count": 0,
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb-cmake/bin/llama-quantize",
+      "sha256": "94325f2016a634053e67854136ee12214236a0147572d0879665b12ea4f623de"
+    },
+    "llama-server": {
+      "linked_libraries": [
+        "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "/opt/homebrew/opt/vulkan-loader/lib/libvulkan.1.dylib (compatibility version 1.0.0, current version 1.4.0)",
+        "/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+      ],
+      "metal_symbol_count": 0,
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb-cmake/bin/llama-server",
+      "sha256": "4163f614da82e461430598f03b0c51bf84bf03f43429bbeac5ccc074b739e7f7"
+    },
+    "test-backend-ops": {
+      "linked_libraries": [
+        "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "/opt/homebrew/opt/vulkan-loader/lib/libvulkan.1.dylib (compatibility version 1.0.0, current version 1.4.0)",
+        "/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+      ],
+      "metal_symbol_count": 0,
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb-cmake/bin/test-backend-ops",
+      "sha256": "8fd58d2f8aeda762ce08d3a39019dbbaac2c7bcf824922b9c10c5e3bd6d2a53c"
+    }
+  },
+  "blas_compiled": false,
+  "build_command": "cmake --build ~/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb-cmake --config Release -j 8 --target llama-server llama-completion llama-bench llama-quantize test-backend-ops",
+  "build_system": "cmake version 4.5.0",
+  "cmake_cache": {
+    "BUILD_SHARED_LIBS": "OFF",
+    "CMAKE_BUILD_TYPE": "Release",
+    "CMAKE_CXX_COMPILER": "/usr/bin/c++",
+    "CMAKE_C_COMPILER": "/usr/bin/cc",
+    "CMAKE_OSX_DEPLOYMENT_TARGET": "",
+    "CMAKE_OSX_SYSROOT": "",
+    "GGML_ACCELERATE": "ON",
+    "GGML_BACKEND_DL": "OFF",
+    "GGML_BLAS": "OFF",
+    "GGML_CPU_ALL_VARIANTS": "OFF",
+    "GGML_CPU_KLEIDIAI": "OFF",
+    "GGML_CPU_REPACK": "ON",
+    "GGML_CUDA": "OFF",
+    "GGML_LLAMAFILE": "ON",
+    "GGML_METAL": "OFF",
+    "GGML_NATIVE": "ON",
+    "GGML_OPENMP": "ON",
+    "GGML_RPC": "OFF",
+    "GGML_SCHED_MAX_COPIES": "4",
+    "GGML_VULKAN": "ON",
+    "LLAMA_BUILD_UI": "OFF",
+    "LLAMA_CONNECT": "OFF",
+    "LLAMA_LLGUIDANCE": "OFF",
+    "LLAMA_OPENSSL": "OFF",
+    "LLAMA_SUBPROCESS": "ON",
+    "LLAMA_USE_PREBUILT_UI": "OFF",
+    "SPIRV-Headers_DIR": "/opt/homebrew/share/cmake/SPIRV-Headers",
+    "Vulkan_GLSLC_EXECUTABLE": "/opt/homebrew/bin/glslc",
+    "Vulkan_INCLUDE_DIR": "/opt/homebrew/include",
+    "Vulkan_LIBRARY": "/opt/homebrew/lib/libvulkan.dylib"
+  },
+  "compiler_version": "Apple clang version 21.0.0 (clang-2100.4.1.1)",
+  "configure_command": "cmake -S ~/.cache/modelanvil-tools/src/llama.cpp-f5027fb -B ~/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb-cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DGGML_VULKAN=ON -DGGML_METAL=OFF -DGGML_BLAS=OFF -DLLAMA_OPENSSL=OFF -DGGML_NATIVE=ON -DLLAMA_BUILD_UI=OFF -DLLAMA_USE_PREBUILT_UI=OFF",
+  "ggml_cpu_flags": [
+    "-DACCELERATE_LAPACK_ILP64",
+    "-DACCELERATE_NEW_LAPACK",
+    "-DGGML_SCHED_MAX_COPIES=4",
+    "-DGGML_USE_ACCELERATE",
+    "-DGGML_USE_CPU_REPACK",
+    "-DGGML_USE_LLAMAFILE",
+    "-D_DARWIN_C_SOURCE",
+    "-D_XOPEN_SOURCE=600",
+    "-O3",
+    "-DNDEBUG",
+    "-std=gnu11",
+    "-U__ARM_FEATURE_SVE",
+    "-mcpu=native+dotprod+i8mm+nosve+sme"
+  ],
+  "ggml_vulkan_flags": [
+    "-DGGML_SCHED_MAX_COPIES=4",
+    "-DGGML_VULKAN_BFLOAT16_GLSLC_SUPPORT",
+    "-DGGML_VULKAN_COOPMAT2_DECODE_VECTOR_GLSLC_SUPPORT",
+    "-DGGML_VULKAN_COOPMAT2_GLSLC_SUPPORT",
+    "-DGGML_VULKAN_COOPMAT_GLSLC_SUPPORT",
+    "-DGGML_VULKAN_FLOAT_E2M1_GLSLC_SUPPORT",
+    "-DGGML_VULKAN_FLOAT_E4M3_GLSLC_SUPPORT",
+    "-DGGML_VULKAN_INTEGER_DOT_GLSLC_SUPPORT",
+    "-D_DARWIN_C_SOURCE",
+    "-D_XOPEN_SOURCE=600",
+    "-O3",
+    "-DNDEBUG",
+    "-std=gnu++17"
+  ],
+  "glslc_version": "shaderc v2026.4 unknown hash, 2026-09-11",
+  "llama_build_number": 11836,
+  "llama_commit": "f5027fb21307eb264aed483242603d68c87b0fe3",
+  "metal_compiled": false,
+  "source_tree_clean": true,
+  "translation_units_in_compile_database": 483,
+  "vulkan": true,
+  "vulkan_shader_sources": 155
+}

@@ -1,0 +1,66 @@
+TASK-41 test receipts, 2026-11-15 19:21-19:24 +0200, CMake builds (cmake 4.5.0). Code at 3f3a98e (branch rebased onto 5b28613);
+the only uncommitted changes during the run were evidence/doc files. Every run went through ~/.cache/modelanvil-tools/run_locked.py
+(host-wide compute lock), in one locked job. Python 3.12.15; in-memory SQLite test DB.
+
+## Quantized fixtures reproduced with the CMake CPU-only llama-quantize
+$ env -i PATH=/usr/bin:/bin HOME=<tmp> llama-quantize smollm2-135m-instruct-f16.gguf <tmp>/Q8_0.gguf Q8_0 4   (and Q4_K_M)
+requantize Q8_0 exit=0 new=099b9a731e9eab4bf72402dca4fc70fee21d22d5b41f7b17dc6464bf5d21228d fixture=099b9a731e9eab4bf72402dca4fc70fee21d22d5b41f7b17dc6464bf5d21228d
+requantize Q4_K_M exit=0 new=310b730e0ae3f8306952ab2edccef5308e1b32fd6ef5cdc43d45cbc9ae6ca234 fixture=310b730e0ae3f8306952ab2edccef5308e1b32fd6ef5cdc43d45cbc9ae6ca234
+
+## Focused backend suite (Vulkan backend not configured; CPU GGUF native test enabled)
+$ MODELANVIL_GGUF_TEST_MODEL=~/.cache/modelanvil-fixtures/smollm2-135m-instruct-f16.gguf PYTHONPATH=. python manage.py test \
+    modelanvil.runners.test_vulkan_runtime modelanvil.runners.test_gguf_runtime modelanvil.runners.test_gguf_validation \
+    modelanvil.api.test_accelerator_support modelanvil.test_accelerators modelanvil.test_device_admission \
+    modelanvil.api.test_model_workspace modelanvil.api.test_inference_replay modelanvil.api.test_external_chat \
+    modelanvil.jobs.test_device_claims modelanvil.api.test_openapi modelanvil.runners.training.test_cpu_exports \
+    modelanvil.runners.training.test_hf_runtime --noinput -v 2
+Ran 139 tests in 20.496s
+OK
+
+New TASK-41 tests in that run (all passed; fixture sessions stand in for llama.cpp, no hardware claim):
+  GPUTrainingSetupRefusalTests.test_gpu_worker_setup_refuses_vulkan_before_creating_any_record
+  InferenceOnlyRefusalTests.test_training_selection_on_vulkan_is_refused_before_any_probe_or_allocation
+  InferenceOnlyRefusalTests.test_vulkan_shares_the_physical_apple_device_lease
+  InstallationVerificationTests.test_child_environment_pins_the_icd_and_drops_inherited_overrides
+  InstallationVerificationTests.test_exact_installed_bytes_and_host_are_required_without_starting_a_process
+  InstallationVerificationTests.test_unqualified_quantization_and_oversize_weights_are_refused_before_launch
+  LoadEvidenceTests.test_full_offload_on_the_qualified_device_is_required
+  VulkanChatAdmissionTests.test_opt_in_fallback_is_recorded_labelled_cpu_and_never_a_gpu_receipt
+  VulkanChatAdmissionTests.test_unavailable_vulkan_fails_closed_without_operator_opt_in
+  VulkanChatAdmissionTests.test_vulkan_receipt_lease_recovery_and_project_isolation
+Existing CPU GGUF native test in that run (actual xllamacpp CPU execution, passed):
+  GGUFNative.test_actual_cpu_generation_cancellation_and_unload
+
+## Tagged native Vulkan tests (actual CMake-built llama-server on the Apple M5 Pro through MoltenVK; F16, Q8_0 and Q4_K_M)
+$ MODELANVIL_VULKAN_INFERENCE='{"server":{"path":"/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-vulkan-f5027fb-cmake/bin/llama-server","sha256":"4163f614da82e461430598f03b0c51bf84bf03f43429bbeac5ccc074b739e7f7"},"icd":"/opt/homebrew/etc/vulkan/icd.d/MoltenVK_icd.json","loader":"/opt/homebrew/opt/vulkan-loader/lib/libvulkan.1.dylib"}' \
+  MODELANVIL_GGUF_TEST_MODEL=~/.cache/modelanvil-fixtures/smollm2-135m-instruct-f16.gguf \
+  MODELANVIL_GGUF_TEST_QUANTIZED=~/.cache/modelanvil-fixtures/smollm2-135m-instruct-q8_0.gguf:~/.cache/modelanvil-fixtures/smollm2-135m-instruct-q4_k_m.gguf \
+  PYTHONPATH=. python manage.py test modelanvil.runners.test_vulkan_runtime --tag=vulkan --noinput -v 2
+  VulkanNative.test_actual_offload_generation_cancellation_recovery_and_unload
+  VulkanNativeChat.test_actual_vulkan_chat_receipt_is_device_bound_and_project_isolated
+Ran 2 tests in 7.426s
+OK
+(The logged HTTP 404 during the chat test is the expected refusal of the other project's API key.)
+
+## ModelAnvil session receipts
+$ MODELANVIL_VULKAN_INFERENCE=<same JSON as above> python docs/engineering/verification/task41-moltenvk-2026-11-15/session_evidence.py \
+    --output session-evidence.json smollm2-135m-instruct-f16.gguf smollm2-135m-instruct-q8_0.gguf smollm2-135m-instruct-q4_k_m.gguf
+exit 0 -> session-evidence.json
+
+## Support report
+$ MODELANVIL_VULKAN_INFERENCE=<same JSON as above> python manage.py accelerator_support --operation gguf_inference --device vulkan:0 --quantization f16
+exit 0, installed_compatible true -> support-gguf-inference-vulkan.json
+$ MODELANVIL_VULKAN_INFERENCE=<same JSON as above> python manage.py accelerator_support --operation full_sft --device vulkan:0
+exit 1 (expected), installed_compatible false, reason: Vulkan is an inference-only GGUF backend in ModelAnvil; Vulkan training is not supported. Select a qualified training device such as cpu, mps:0 or mlx:0.
+
+## OpenAPI contract
+$ cmp contracts/schemas/openapi.json docs/engineering/schemas/openapi.json   # identical
+$ (cd web && node --test tests/openapi.test.mjs)   # Node 24, builtin test runner only
+ℹ tests 3
+ℹ pass 3
+ℹ fail 0
+modelanvil.api.test_openapi passed inside the focused suite.
+
+## Replaced runs
+The same suites, the qualification and the session receipts were first run on the binaries from the hand-written clang build
+before CMake was installed. They passed with the same counts, but that build has been replaced and those runs are not this evidence.

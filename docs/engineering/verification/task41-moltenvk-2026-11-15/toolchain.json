@@ -1,0 +1,190 @@
+{
+  "cmake": "cmake 4.5.0 from Homebrew (brew install cmake, authorised by Nir on 2026-11-15) configured and built both llama.cpp builds; see build-record-vulkan.json and build-record-cpu.json.",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.4.1.1)",
+  "homebrew": "Homebrew 7.0.13",
+  "homebrew_packages": {
+    "cmake": {
+      "homepage": "https://www.cmake.org/",
+      "installed_as_dependency": null,
+      "installed_on_request": true,
+      "installed_version": "4.5.0",
+      "license": "BSD-3-Clause",
+      "poured_from_bottle": true,
+      "revision": 0,
+      "runtime_dependencies": [],
+      "stable": "4.5.0",
+      "tap": "homebrew/core"
+    },
+    "glslang": {
+      "homepage": "https://www.khronos.org/opengles/sdk/Reference-Compiler/",
+      "installed_as_dependency": null,
+      "installed_on_request": false,
+      "installed_version": "16.6.0",
+      "license": "BSD-3-Clause AND GPL-3.0-or-later AND MIT AND Apache-2.0",
+      "poured_from_bottle": true,
+      "revision": 0,
+      "runtime_dependencies": [
+        "spirv-headers 1.4.363.0",
+        "spirv-tools 1.4.363.0"
+      ],
+      "stable": "16.6.0",
+      "tap": "homebrew/core"
+    },
+    "molten-vk": {
+      "homepage": "https://github.com/KhronosGroup/MoltenVK",
+      "installed_as_dependency": null,
+      "installed_on_request": true,
+      "installed_version": "1.4.2",
+      "license": "Apache-2.0",
+      "poured_from_bottle": true,
+      "revision": 0,
+      "runtime_dependencies": [],
+      "stable": "1.4.2",
+      "tap": "homebrew/core"
+    },
+    "shaderc": {
+      "homepage": "https://github.com/google/shaderc",
+      "installed_as_dependency": null,
+      "installed_on_request": true,
+      "installed_version": "2026.4",
+      "license": "Apache-2.0",
+      "poured_from_bottle": true,
+      "revision": 0,
+      "runtime_dependencies": [],
+      "stable": "2026.4",
+      "tap": "homebrew/core"
+    },
+    "spirv-headers": {
+      "homepage": "https://github.com/KhronosGroup/SPIRV-Headers",
+      "installed_as_dependency": null,
+      "installed_on_request": false,
+      "installed_version": "1.4.363.0",
+      "license": "MIT",
+      "poured_from_bottle": true,
+      "revision": 0,
+      "runtime_dependencies": [],
+      "stable": "1.4.363.0",
+      "tap": "homebrew/core"
+    },
+    "spirv-tools": {
+      "homepage": "https://github.com/KhronosGroup/SPIRV-Tools",
+      "installed_as_dependency": null,
+      "installed_on_request": false,
+      "installed_version": "1.4.363.0",
+      "license": "Apache-2.0",
+      "poured_from_bottle": true,
+      "revision": 0,
+      "runtime_dependencies": [],
+      "stable": "1.4.363.0",
+      "tap": "homebrew/core"
+    },
+    "vulkan-headers": {
+      "homepage": "https://www.vulkan.org/",
+      "installed_as_dependency": null,
+      "installed_on_request": false,
+      "installed_version": "1.4.363.0",
+      "license": "Apache-2.0",
+      "poured_from_bottle": true,
+      "revision": 0,
+      "runtime_dependencies": [],
+      "stable": "1.4.363.0",
+      "tap": "homebrew/core"
+    },
+    "vulkan-loader": {
+      "homepage": "https://github.com/KhronosGroup/Vulkan-Loader",
+      "installed_as_dependency": null,
+      "installed_on_request": true,
+      "installed_version": "1.4.363.0",
+      "license": "Apache-2.0",
+      "poured_from_bottle": true,
+      "revision": 0,
+      "runtime_dependencies": [
+        "vulkan-headers 1.4.363.0"
+      ],
+      "stable": "1.4.363.0",
+      "tap": "homebrew/core"
+    },
+    "vulkan-tools": {
+      "homepage": "https://github.com/KhronosGroup/Vulkan-Tools",
+      "installed_as_dependency": null,
+      "installed_on_request": true,
+      "installed_version": "1.4.363.0",
+      "license": "Apache-2.0",
+      "poured_from_bottle": true,
+      "revision": 0,
+      "runtime_dependencies": [
+        "spirv-headers 1.4.363.0",
+        "spirv-tools 1.4.363.0",
+        "glslang 16.6.0",
+        "vulkan-headers 1.4.363.0",
+        "vulkan-loader 1.4.363.0",
+        "molten-vk 1.4.2"
+      ],
+      "stable": "1.4.363.0",
+      "tap": "homebrew/core"
+    }
+  },
+  "host": {
+    "cpu": "Apple M5 Pro",
+    "machine": "arm64",
+    "macos": "27.2.1",
+    "memory_bytes": 51539607552,
+    "platform": "macOS-27.2.1-arm64-arm-64bit",
+    "sw_vers": [
+      "ProductName:\t\tmacOS",
+      "ProductVersion:\t\t27.2.1",
+      "BuildVersion:\t\t26B131",
+      ""
+    ]
+  },
+  "icd_manifest_content": {
+    "ICD": {
+      "api_version": "1.4.0",
+      "is_portability_driver": true,
+      "library_path": "../../../lib/libMoltenVK.dylib"
+    },
+    "file_format_version": "1.0.0"
+  },
+  "install_command": "brew install molten-vk vulkan-loader vulkan-headers vulkan-tools shaderc (2026-11-15; glslang, spirv-headers and spirv-tools came in as dependencies), then brew install cmake",
+  "installed_files": {
+    "glslc": {
+      "path": "/opt/homebrew/bin/glslc",
+      "resolved": "/opt/homebrew/Cellar/shaderc/2026.4/bin/glslc",
+      "sha256": "219d44f4ebddc8ca8e9497804dfa965d30ec0c50abd5c1cd949efe0a12754f6b"
+    },
+    "icd_manifest": {
+      "path": "/opt/homebrew/etc/vulkan/icd.d/MoltenVK_icd.json",
+      "resolved": "/opt/homebrew/Cellar/molten-vk/1.4.2/etc/vulkan/icd.d/MoltenVK_icd.json",
+      "sha256": "b514f51690582fb783383154b7a33c7816cc47e98ee1a1f652dccd3e996f0bf1"
+    },
+    "moltenvk_library": {
+      "path": "/opt/homebrew/lib/libMoltenVK.dylib",
+      "resolved": "/opt/homebrew/Cellar/molten-vk/1.4.2/lib/libMoltenVK.dylib",
+      "sha256": "e21bceade8d0638bb2bc041f3166fbd54da19fa0958d8bbaff584afd7958d542"
+    },
+    "vulkan_loader": {
+      "path": "/opt/homebrew/opt/vulkan-loader/lib/libvulkan.1.dylib",
+      "resolved": "/opt/homebrew/Cellar/vulkan-loader/1.4.363.0/lib/libvulkan.1.4.363.dylib",
+      "sha256": "6453921b5e0562364d60a4d742fb2db12c3e4e8c2ac2fb6d5938b6453a644208"
+    }
+  },
+  "llama_list_devices": [
+    "Available devices:",
+    "  Vulkan0: Apple M5 Pro (49152 MiB, 38338 MiB free)"
+  ],
+  "sdk": "27.2",
+  "vulkaninfo_summary_gpu0": [
+    "\tapiVersion         = 1.4.357",
+    "\tdriverVersion      = 0.2.2210",
+    "\tvendorID           = 0x106b",
+    "\tdeviceID           = 0x1b02020a",
+    "\tdeviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU",
+    "\tdeviceName         = Apple M5 Pro",
+    "\tdriverID           = DRIVER_ID_MOLTENVK",
+    "\tdriverName         = MoltenVK",
+    "\tdriverInfo         = 1.4.2",
+    "\tconformanceVersion = 1.4.4.0",
+    "\tdeviceUUID         = 0000106b-1b02-020a-0000-000000000000",
+    "\tdriverUUID         = 4d564b00-0000-28a2-1b02-020a00000000"
+  ]
+}

@@ -38,6 +38,17 @@ FIXTURE_TESTS = (
         "modelanvil.runners.test_gguf_runtime.GGUFNative."
         "test_actual_cpu_generation_cancellation_and_unload",
     ),
+    # TASK-41: collected only with both the qualified Vulkan server config and the GGUF fixture.
+    (
+        "MODELANVIL_VULKAN_INFERENCE",
+        "modelanvil.runners.test_vulkan_runtime.VulkanNative."
+        "test_actual_offload_generation_cancellation_recovery_and_unload",
+    ),
+    (
+        "MODELANVIL_VULKAN_INFERENCE",
+        "modelanvil.runners.test_vulkan_runtime.VulkanNativeChat."
+        "test_actual_vulkan_chat_receipt_is_device_bound_and_project_isolated",
+    ),
 )
 
 _RAN = re.compile(r"^Ran (?P<collected>\d+) tests? in ", re.MULTILINE)

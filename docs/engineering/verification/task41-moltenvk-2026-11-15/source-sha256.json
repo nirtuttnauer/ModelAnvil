@@ -1,0 +1,17 @@
+{
+  "docs/engineering/verification/task41-moltenvk-2026-11-15/record_cmake_build.py": "805cc591f62796a37ea7a15ec307b433d944b50509b96df1ec3f780650697a64",
+  "docs/engineering/verification/task41-moltenvk-2026-11-15/session_evidence.py": "a01f45064242a17d578ccddc925b34033ffee56147677a070abe6bb72c743d97",
+  "modelanvil/accelerators.py": "b12a3c53ee739f0ca5fa7ff72a50e39a3e1a3c39bcac5c2728d5fbae6fe8e4fb",
+  "modelanvil/api/views/model_workspace.py": "0d116322a28505ea82251f34bb0d0a1a2dda12cfefd32bb28919ac46f4678f10",
+  "modelanvil/device_admission.py": "deb05f82fa4101c6e06959ddb929203cb27bc41b54046bd14f890f12be9ffc87",
+  "modelanvil/runners/accelerator_support.py": "49b8cf5140dbf01c901f490092f2928a1b5fe434256fa81102d934dda82089ce",
+  "modelanvil/runners/capabilities.py": "fe19e0f3828136e8b95514e92985d848aac0143689eb631450507b8b05bdcac0",
+  "modelanvil/runners/gguf_runtime.py": "2b6a8f60fc92a6c953eee6386282402f0cfb58b423daf94b2a3ddeec2963fb45",
+  "modelanvil/runners/inference.py": "55ad322b36d49400ff43ffefac84cde60aa16cb0466ef7770896158f6b1ae18e",
+  "modelanvil/runners/test_vulkan_runtime.py": "076549ea9605ee2c675ac51f50502df01c030da3e59925a03c015be6f87cda1b",
+  "modelanvil/runners/vulkan_runtime.py": "ee7d29f9a170033f63ce56cd7cd41802937db7b1facbcbfc89c1a027f9e6123a",
+  "modelanvil/runners/vulkan_server_process.py": "7b2760147a56a944d6dded63bf14024287c9c0b400efc6a2df6aaf86cf1df1f6",
+  "modelanvil/settings.py": "7b89482d44c3256c2a792a268e926776ba5a3272a99b5d49291d2b7d85cca63b",
+  "scripts/local_evidence.py": "cca81b3fc8c2c5760d92e6ff5742fb7f2abb1186dc5e131e8e9652c722f5c77e",
+  "scripts/qualify_vulkan_inference.py": "02dbe84d277634bc9aecb8dafb963f83a714fc32c9173b1b5b3a7241df237088"
+}
