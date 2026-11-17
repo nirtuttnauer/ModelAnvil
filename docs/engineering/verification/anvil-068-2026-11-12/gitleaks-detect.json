@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "label": "local",
+  "sha": "80b063d08c4383407efc47b96c4552093d05cb8d",
+  "git_status_porcelain": "",
+  "recorded_at": "2026-11-12T14:44:35+00:00",
+  "machine": {
+    "hostname": "cursor",
+    "os": "Linux-6.12.113+-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "python": "3.12.3",
+    "node": "v24.22.3"
+  },
+  "command": "/tmp/tools/gitleaks detect --source . --redact --report-path /tmp/anvil068-evidence/gitleaks-detect-report.json --report-format json --log-opts=--all",
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "\n    \u25cb\n    \u2502\u2572\n    \u2502 \u25cb\n    \u25cb \u2591\n    \u2591    gitleaks\n\n2:44PM INF 224 commits scanned.\n2:44PM INF scanned ~42739107 bytes (42.74 MB) in 3.07s\n2:44PM WRN leaks found: 36\n",
+  "runs": [
+    {
+      "name": "command",
+      "command": "/tmp/tools/gitleaks detect --source . --redact --report-path /tmp/anvil068-evidence/gitleaks-detect-report.json --report-format json --log-opts=--all",
+      "collected": 0,
+      "excluded_by_tag": 0,
+      "passed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "timeout": 0,
+      "excluded_ids": []
+    }
+  ]
+}
