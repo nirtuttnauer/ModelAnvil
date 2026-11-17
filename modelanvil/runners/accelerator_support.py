@@ -55,7 +55,13 @@ def inspect(operation,selector,*,precision='fp32',quantization='none',offload=Fa
     if operation=='gguf_inference':return inspect_gguf(row,selector,quantization,offload)
     if not isinstance(selector,str) or not re.fullmatch(r'cpu|(?:cuda|rocm|xpu):(?:0|[1-9][0-9]*)|mps:0|mlx:0',selector):
         return refuse('Select an explicit cpu, cuda:N, rocm:N, xpu:N, mps:0, mlx:0 or (GGUF inference only) vulkan:0; auto selection is unavailable.')
-    if precision!='fp32' or type(offload) is not bool or offload:
+    if type(offload) is not bool or offload:
+        return refuse('This profile requires FP32 and refuses model/optimizer offloading; no recipe is changed automatically.')
+    if isinstance(precision,str) and 'fp8' in precision.lower():
+        return refuse('FP8 is not qualified on any listed device: MLX 0.32.3 has no FP8 training dtype on Apple GPUs, and no other GPU has an FP8 measurement.')
+    if operation=='qlora_adapter' and precision not in ('fp32','bf16'):
+        return refuse('Native QLoRA computes in FP32 or BF16 with FP32 adapters and optimizer state; FP16 needs loss scaling and is not qualified.')
+    if operation!='qlora_adapter' and precision!='fp32':
         return refuse('This profile requires FP32 and refuses model/optimizer offloading; no recipe is changed automatically.')
     if quantization!=('int4' if operation=='qlora_adapter' else 'none'):
         return refuse('Native QLoRA requires explicit int4 base weights and FP32 adapters; other listed profiles require unquantized weights.')
@@ -105,6 +111,7 @@ def report():
             if device['id'] not in selectors:selectors.append(device['id'])
     rows=[inspect(operation,device,quantization={'qlora_adapter':'int4','gguf_inference':'f16'}.get(operation,'none'),observed=observed)
         for operation in OPERATIONS for device in selectors]
+    rows.append(inspect('qlora_adapter','mlx:0',precision='bf16',quantization='int4',observed=observed))
     return {'schema_version':'modelanvil.operation-support.v1','observed_at':datetime.now(timezone.utc).isoformat(),
         'host':{'system':platform.system(),'release':platform.release(),'machine':platform.machine()},
         'framework_inventory':observed,'operations':rows,'automatic_backend_selection':False,

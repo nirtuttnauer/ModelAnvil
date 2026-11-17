@@ -9,6 +9,7 @@ import { LineagePanel, type LineagePath } from '../components/LineagePanel';
 import { InspectorPanel } from '../components/InspectorPanel';
 import { ContextBlockEditor, ContextBlockInputs } from '../components/ContextBlockEditor';
 import { RetrievalEvidenceCard } from '../components/RetrievalEvidenceCard';
+import { GpuTelemetry } from '../components/training/GpuTelemetry';
 import { objectInput } from '../components/form-data';
 import '../design-system/index.css';
 import './workbench-stories.css';
@@ -187,5 +188,30 @@ export const RetrievalEvidence: Story = { render: () => <RetrievalEvidenceCard c
   const canvas = within(canvasElement); await expect(canvas.getByText('Lexical score: 0')).toBeVisible(); await expect(canvasElement.querySelectorAll('mark').length).toBeGreaterThan(0);
   await userEvent.click(canvas.getByText('Full source text')); await expect(canvas.getByText(/<script>This is source text/)).toBeVisible(); await expect(canvasElement.querySelector('.evidence-full-text script')).toBeNull();
   await userEvent.click(canvas.getByText('Source metadata and identity')); await expect(canvas.getByText('Revision', { exact: true })).toBeVisible(); verified(canvasElement);
+} };
+const mlxProfile = { compute_precision: 'bf16', gradient_checkpointing: true, batch_samples: 8, sequence_layout: 'packed', attention_kernel: 'mlx_fast_sdpa', optimizer: 'adafactor' };
+const mlxTelemetry = [1, 2, 3].map(step => ({
+  step, loss: 3.2 - step * 0.1, measured_at: `2026-11-15T16:40:0${step}.250000+00:00`, gradient_norm: 0.5 / step, tokens_per_second: 1800 + step,
+  training_pairs: 640, padding_positions: 0, gpu_allocated_bytes: 220 * 1024 ** 2, peak_allocated_bytes: 960 * 1024 ** 2,
+  peak_reserved_bytes: null, gpu_utilization_percent: null, trainable_parameters: 460800,
+  unavailable_metrics: { peak_reserved_bytes: 'not_exposed_by_mlx', gpu_utilization_percent: 'not_exposed_by_mlx' },
+}));
+export const GpuTelemetryUnavailableCounters: Story = { render: () => <GpuTelemetry metrics={mlxTelemetry} profile={mlxProfile} />, play: async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  await expect(canvas.getByText(/BF16 compute, FP32 adapters · 8 samples per step, packed/)).toBeVisible();
+  await expect(canvas.getByText('2026-11-15 16:40:03 UTC')).toBeVisible();
+  await expect(canvas.getByText('2.900000')).toBeVisible();
+  await expect(canvas.getAllByText('220.0 / 960.0 / Not exposed by MLX')).toHaveLength(3);
+  await expect(canvas.getAllByText('Not exposed by MLX')).toHaveLength(3);
+  await expect(canvas.getByText(/Peak reserved memory and GPU utilization: MLX exposes/)).toBeVisible();
+  verified(canvasElement);
+} };
+export const GpuTelemetryNotReported: Story = { render: () => <GpuTelemetry metrics={[{ step: 4, loss: 1.25, measured_at: '2026-11-15T16:41:00Z', peak_allocated_bytes: null }]} />, play: async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  await expect(canvas.getByText('1.250000')).toBeVisible();
+  await expect(canvas.queryByText(/Optimization profile/)).not.toBeInTheDocument();
+  await expect(canvas.queryByText(/Not exposed by MLX/)).not.toBeInTheDocument();
+  await expect(canvas.getAllByText(/Not reported/).length).toBeGreaterThan(3);
+  verified(canvasElement);
 } };
 export const EmptyEvidence: Story = { render: () => <><MetricComparison metrics={[]} /><ReleaseGateChecklist criteria={[]} state="unknown" /><LineagePanel paths={[]} /><ContextBlockEditor blocks={[]} /></> };

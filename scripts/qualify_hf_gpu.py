@@ -16,7 +16,10 @@ parser.add_argument('--device', required=True, help='Explicit cpu, mps:0, cuda:N
 parser.add_argument('--output', type=Path, required=True, help='New directory for isolated state and evidence')
 parser.add_argument('--recipe', choices=['full_sft', 'lora_adapter', 'qlora_adapter', 'continued_pretraining'], default='full_sft')
 parser.add_argument('--samples', type=Path, help='Optional real versioned canonical text corpus; otherwise use synthetic correctness fixtures')
+parser.add_argument('--optimization', help='Native MLX only: JSON hyperparameters.optimization profile to launch with')
 args = parser.parse_args()
+if args.optimization and args.recipe != 'qlora_adapter':
+    parser.error('--optimization applies to the native MLX qlora_adapter recipe only')
 args.model_dir = args.model_dir.resolve()
 args.output = args.output.resolve()
 args.output.mkdir(parents=True, exist_ok=False)
@@ -70,6 +73,9 @@ call_command('setup_gpu_training',tenant_id=tenant.pk,project_id=project.pk,name
 installed=json.loads(output.getvalue())
 from modelanvil.device_admission import device_available, device_lease
 installed['launch']['recipe_type'] = args.recipe
+optimization = json.loads(args.optimization) if args.optimization else None
+if optimization is not None:
+    installed['launch']['hyperparameters'] = {'optimization': optimization}
 weight_name = 'adapters.safetensors' if args.recipe == 'qlora_adapter' else ('adapter_model.safetensors' if args.recipe == 'lora_adapter' else 'model.safetensors')
 secret,hashed=generate_api_key()
 ApiKey.objects.create(tenant=tenant,name='qualification',role=Role.ENGINEER,secret_hash=hashed)
@@ -92,6 +98,18 @@ for options in ({'precision':'bf16'}, {'precision':'fp16'}, {'adapter':'invalid'
 assert Job.all_objects.filter(tenant_id=tenant.pk).count() == before_jobs
 assert BudgetReservation.all_objects.filter(tenant_id=tenant.pk).count() == before_reservations
 print('unsupported precision/adapter/quantization rejected without jobs or budget', flush=True)
+if args.recipe == 'qlora_adapter':
+    for profile in ({'compute_precision': 'fp8'}, {'compute_precision': 'fp16'}, {'sequence_layout': 'packed', 'batch_samples': 1}, {'optimizer': 'adamw_8bit'}, {'optimizer': 'adafactor'}):
+        changed = {**installed['launch'], 'hyperparameters': {'optimization': profile}}
+        blocked = client.post('/api/v1/training-runs/preflight/', changed, format='json')
+        # The profile fails first; inputs never resolve, so no file is staged and the device is not probed.
+        assert blocked.status_code == 200 and 'optimization-profile' in blocked.data['blocking_checks'], blocked.data
+        assert blocked.data['pins'] is None and 'pinned-inputs' not in [c['check'] for c in blocked.data['checks']], blocked.data
+        refused = client.post('/api/v1/training-runs/', changed, format='json', HTTP_IDEMPOTENCY_KEY=uuid.uuid4().hex)
+        assert refused.status_code == 400 and 'optimization-profile' in refused.content.decode(), refused.content
+    assert Job.all_objects.filter(tenant_id=tenant.pk).count() == before_jobs
+    assert BudgetReservation.all_objects.filter(tenant_id=tenant.pk).count() == before_reservations
+    print('incompatible optimization profiles blocked in preflight without jobs or budget', flush=True)
 print('preflight approved' ,preview.data['requirements'],flush=True)
 launch=client.post('/api/v1/training-runs/',{**installed['launch'],'preflight_token':preview.data['preflight_token']},format='json',HTTP_IDEMPOTENCY_KEY=name)
 assert launch.status_code==201,launch.data
@@ -155,7 +173,7 @@ print('GPU inference matches CPU candidate reload', flush=True)
 if args.samples:
  from modelanvil.runners.training.runtime import read_artifact
  prepared=json.loads(read_artifact(run.dataset_revision.manifest_artifact,run.tenant_id,run.project_id))
- consumed={m['sample_id'] for m in run.metrics_log}
+ consumed={i for m in run.metrics_log for i in m.get('sample_ids',[m['sample_id']])}
  split_by_id={identifier:split for split,identifiers in prepared['split_manifest'].items() for identifier in identifiers}
  quality_samples=[]
  for row in prepared['rows']:
@@ -195,7 +213,7 @@ def execute(run,hook=None):
  if hook:
   if args.recipe == 'qlora_adapter':
    import mlx.optimizers as optim
-   optimizer_class, method = optim.AdamW, 'update'
+   optimizer_class, method = (optim.Adafactor if (optimization or {}).get('optimizer') == 'adafactor' else optim.AdamW), 'update'
   else:
    optimizer_class, method = torch.optim.AdamW, 'step'
   original=getattr(optimizer_class, method);calls=0

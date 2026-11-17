@@ -81,7 +81,7 @@ def estimate_from_pilot(inputs, *, tenant, pool, project):
     pilots = get_accessible_queryset(TrainingRun, tenant_id=tenant, project_id=project).filter(pool=pool, status='completed').order_by('-completed_at')[:20]
     for run in pilots:
         prior = (run.hardware_config or {}).get('pins', {})
-        if any(prior.get(k) != pins.get(k) for k in ('runtime', 'contract_digest', 'build_digest', 'config', 'optimizer', 'tokenizer_digest', 'dataset_digest', 'base_digest', 'sample_digest', 'validation')):
+        if any(prior.get(k) != pins.get(k) for k in ('runtime', 'contract_digest', 'build_digest', 'config', 'optimizer', 'optimization', 'tokenizer_digest', 'dataset_digest', 'base_digest', 'sample_digest', 'validation')):
             continue
         checkpoint = run.checkpoints.filter(step=run.total_steps).first()
         if not checkpoint:
@@ -132,7 +132,17 @@ def build_preflight_report(*, recipe_type, tokenizer_version, base_model_version
         check('runner-contract', 'compatibility', runner.enabled and runner.digest == digest(module.runner_manifest())
               and runner.manifest == module.runner_manifest() and runner.compatibility.get('contract_digest') == module.CONTRACT_DIGEST,
               'Runner must be enabled and match the qualified runtime contract.', 'Register or select the enabled exact runtime manifest.')
-    if execution_mode == 'worker' and supported_recipe and all((dataset_revision, base_model_version, tokenizer_version, runner, pool)):
+    profile_ok = True
+    if module is not None and hasattr(module, 'validate_hyperparameters'):
+        # Checked before inputs resolve, so an incompatible profile never stages files or touches the device.
+        try:
+            selected = module.validate_hyperparameters(hyperparameters)
+            check('optimization-profile', 'compatibility', True, 'Optimization profile is supported for this runtime and hardware.', detail=selected)
+        except ValueError as exc:
+            profile_ok = False
+            check('optimization-profile', 'compatibility', False, str(exc),
+                'Correct hyperparameters.optimization to a supported combination, or omit it for the default profile.')
+    if execution_mode == 'worker' and supported_recipe and profile_ok and all((dataset_revision, base_model_version, tokenizer_version, runner, pool)):
         try:
             inputs = resolve_inputs(dataset=dataset_revision, base=base_model_version, tokenizer=tokenizer_version,
                                     runner=runner, pool=pool, tenant=tenant, project=project, steps=total_steps, require_capacity=False,
@@ -186,7 +196,9 @@ def build_preflight_report(*, recipe_type, tokenizer_version, base_model_version
                 requirements.update(adapter=inputs['pins']['adapter'], trainable_parameters=inputs['pins']['trainable_parameters'],
                     storage_assumption='Immutable shared base references plus FP32 adapter weights and Adam moments per step; shared local host.')
             if recipe_type == 'qlora_adapter':
-                requirements.update(quantization=inputs['pins']['quantization'], storage_assumption='Frozen four-bit base plus FP32 adapters and Adam moments per checkpoint; shared local host.')
+                requirements.update(quantization=inputs['pins']['quantization'], storage_assumption='Frozen four-bit base plus FP32 adapters and optimizer state per checkpoint; shared local host.')
+            if inputs['pins'].get('optimization'):
+                requirements.update(optimization=inputs['pins']['optimization'], precision=inputs['pins']['optimization']['compute_precision'])
         try:
             space = storage_capacity(required)
             check('storage', 'capacity', all(v['available_bytes'] >= required for v in space.values()),

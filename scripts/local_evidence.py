@@ -27,12 +27,16 @@ SCHEMA_PATH = ROOT / "docs" / "engineering" / "schemas" / "local-evidence.v1.jso
 
 # Fixture qualifications that are collected only when their verified local
 # input is present. A missing fixture is not recorded as a runtime skip.
+_MLX_MODEL_TESTS = (
+    "test_adafactor_factored_state_updates_and_restores_exactly",
+    "test_bf16_compute_keeps_fp32_adapters_and_close_gradients",
+    "test_checkpointing_and_fused_attention_reproduce_gradients",
+    "test_frozen_four_bit_base_actual_update_exact_resume_and_corruption",
+    "test_padding_and_packing_preserve_sample_boundaries_and_supervision",
+)
 FIXTURE_TESTS = (
-    (
-        "MODELANVIL_MLX_TEST_MODEL_DIR",
-        "modelanvil.runners.training.test_mlx_runtime.NativeAdapterModelTests."
-        "test_frozen_four_bit_base_actual_update_exact_resume_and_corruption",
-    ),
+    *(("MODELANVIL_MLX_TEST_MODEL_DIR", "modelanvil.runners.training.test_mlx_runtime.NativeAdapterModelTests." + name)
+      for name in _MLX_MODEL_TESTS),
     (
         "MODELANVIL_GGUF_TEST_MODEL",
         "modelanvil.runners.test_gguf_runtime.GGUFNative."

@@ -20,6 +20,7 @@
   .training-run-toolbar { margin-top: var(--space-4); }
   .training-run-toolbar select { min-width: min(360px, 100%); }
   .training-current { display: grid; gap: var(--space-24); }
+  .training-telemetry { display: grid; gap: var(--space-8); }
   .training-progress { display: grid; gap: var(--space-12); padding: var(--space-20); border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface); }
   .training-progress header, .training-progress header > div:first-child { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8) var(--space-12); }
   .training-progress header { justify-content: space-between; }
