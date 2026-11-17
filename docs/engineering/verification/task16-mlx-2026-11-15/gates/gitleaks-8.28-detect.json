@@ -1,24 +1,24 @@
 {
   "schema_version": "1",
   "label": "local",
-  "sha": "6226dc6a3fd5601894a5847a2010857fd840ea4e",
+  "sha": "0f6415a256b11d2b06eb218d033857f9424d2ca0",
   "git_status_porcelain": "",
-  "recorded_at": "2026-11-15T19:49:49+02:00",
+  "recorded_at": "2026-11-17T12:32:45+02:00",
   "machine": {
-    "hostname": "Mac",
+    "hostname": "Nirs-MacBook-Pro.local",
     "os": "macOS-27.2.1-arm64-arm-64bit",
     "arch": "arm64",
     "python": "3.12.15",
     "node": "v24.22.3"
   },
-  "command": "/Users/nirtuttnauer/.cache/modelanvil-tools/gitleaks-8.28.0/gitleaks detect --source . '--log-opts=HEAD --remotes=origin --tags' --config /Users/nirtuttnauer/.cache/modelanvil-tools/gitleaks-8.28.0/gitleaks.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-qf4QY9/440ec32f-29b2-461b-b998-a12b6a631dae/scratchpad/evidence/task-16/raw/gl828-detect.json",
+  "command": "/Users/nirtuttnauer/.cache/modelanvil-tools/gitleaks-8.28.0/gitleaks detect --source . '--log-opts=HEAD --remotes=origin --tags' --config /Users/nirtuttnauer/.cache/modelanvil-tools/gitleaks-8.28.0/gitleaks.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-qf4QY9/440ec32f-29b2-461b-b998-a12b6a631dae/scratchpad/evidence/task-16-merged/raw/gl828-detect.json",
   "exit_code": 1,
   "stdout": "",
-  "stderr": "\u001b[90m7:49PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1m352 commits scanned.\u001b[0m\n\u001b[90m7:49PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1mscanned ~70932998 bytes (70.93 MB) in 660ms\u001b[0m\n\u001b[90m7:49PM\u001b[0m \u001b[33mWRN\u001b[0m \u001b[1mleaks found: 411\u001b[0m\n",
+  "stderr": "\u001b[90m12:32PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1m354 commits scanned.\u001b[0m\n\u001b[90m12:32PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1mscanned ~71365003 bytes (71.36 MB) in 642ms\u001b[0m\n\u001b[90m12:32PM\u001b[0m \u001b[33mWRN\u001b[0m \u001b[1mleaks found: 411\u001b[0m\n",
   "runs": [
     {
       "name": "command",
-      "command": "/Users/nirtuttnauer/.cache/modelanvil-tools/gitleaks-8.28.0/gitleaks detect --source . '--log-opts=HEAD --remotes=origin --tags' --config /Users/nirtuttnauer/.cache/modelanvil-tools/gitleaks-8.28.0/gitleaks.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-qf4QY9/440ec32f-29b2-461b-b998-a12b6a631dae/scratchpad/evidence/task-16/raw/gl828-detect.json",
+      "command": "/Users/nirtuttnauer/.cache/modelanvil-tools/gitleaks-8.28.0/gitleaks detect --source . '--log-opts=HEAD --remotes=origin --tags' --config /Users/nirtuttnauer/.cache/modelanvil-tools/gitleaks-8.28.0/gitleaks.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-qf4QY9/440ec32f-29b2-461b-b998-a12b6a631dae/scratchpad/evidence/task-16-merged/raw/gl828-detect.json",
       "collected": 0,
       "excluded_by_tag": 0,
       "passed": 0,

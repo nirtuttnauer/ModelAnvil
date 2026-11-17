@@ -1,24 +1,24 @@
 {
   "schema_version": "1",
   "label": "local",
-  "sha": "6226dc6a3fd5601894a5847a2010857fd840ea4e",
+  "sha": "0f6415a256b11d2b06eb218d033857f9424d2ca0",
   "git_status_porcelain": "",
-  "recorded_at": "2026-11-15T19:49:48+02:00",
+  "recorded_at": "2026-11-17T12:32:44+02:00",
   "machine": {
-    "hostname": "Mac",
+    "hostname": "Nirs-MacBook-Pro.local",
     "os": "macOS-27.2.1-arm64-arm-64bit",
     "arch": "arm64",
     "python": "3.12.15",
     "node": "v24.22.3"
   },
-  "command": "/opt/homebrew/bin/gitleaks dir /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-qf4QY9/440ec32f-29b2-461b-b998-a12b6a631dae/scratchpad/tree.W3zk --config /Users/nirtuttnauer/Documents/Code/modelanvil/.claude/worktrees/task-16/.gitleaks.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-qf4QY9/440ec32f-29b2-461b-b998-a12b6a631dae/scratchpad/evidence/task-16/raw/gl830-dir-repo.json",
+  "command": "/opt/homebrew/bin/gitleaks dir /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-qf4QY9/440ec32f-29b2-461b-b998-a12b6a631dae/scratchpad/tree.5hAD --config /Users/nirtuttnauer/Documents/Code/modelanvil/.claude/worktrees/task-16/.gitleaks.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-qf4QY9/440ec32f-29b2-461b-b998-a12b6a631dae/scratchpad/evidence/task-16-merged/raw/gl830-dir-repo.json",
   "exit_code": 0,
   "stdout": "",
-  "stderr": "\u001b[90m7:49PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1mscanned ~50363954 bytes (50.36 MB) in 1.64s\u001b[0m\n\u001b[90m7:49PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1mno leaks found\u001b[0m\n",
+  "stderr": "\u001b[90m12:32PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1mscanned ~52346454 bytes (52.35 MB) in 1.69s\u001b[0m\n\u001b[90m12:32PM\u001b[0m \u001b[32mINF\u001b[0m \u001b[1mno leaks found\u001b[0m\n",
   "runs": [
     {
       "name": "command",
-      "command": "/opt/homebrew/bin/gitleaks dir /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-qf4QY9/440ec32f-29b2-461b-b998-a12b6a631dae/scratchpad/tree.W3zk --config /Users/nirtuttnauer/Documents/Code/modelanvil/.claude/worktrees/task-16/.gitleaks.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-qf4QY9/440ec32f-29b2-461b-b998-a12b6a631dae/scratchpad/evidence/task-16/raw/gl830-dir-repo.json",
+      "command": "/opt/homebrew/bin/gitleaks dir /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-qf4QY9/440ec32f-29b2-461b-b998-a12b6a631dae/scratchpad/tree.5hAD --config /Users/nirtuttnauer/Documents/Code/modelanvil/.claude/worktrees/task-16/.gitleaks.toml --redact --no-banner --report-format json --report-path /private/tmp/claude-501/-Users-nirtuttnauer--claude-spares-spare-qf4QY9/440ec32f-29b2-461b-b998-a12b6a631dae/scratchpad/evidence/task-16-merged/raw/gl830-dir-repo.json",
       "collected": 0,
       "excluded_by_tag": 0,
       "passed": 0,

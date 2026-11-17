@@ -1,12 +1,12 @@
 # Gates, TASK-16 MLX optimization profile
 
-Label: `local`. Measured at `6226dc6`, this branch's MLX optimization profile, benchmark and telemetry on top of `main` `5b28613` (PR #136).
+Label: `local`. Measured at `0f6415a`, this branch's MLX optimization profile, benchmark and telemetry with `main` `29a567e` (PR #138, TASK-41) merged in.
 
-Measured commit: `6226dc6a3fd5601894a5847a2010857fd840ea4e`. `git status --porcelain` was empty before each command. Records use `docs/engineering/schemas/local-evidence.v1.json`.
+Measured commit: `0f6415a256b11d2b06eb218d033857f9424d2ca0`. `git status --porcelain` was empty before each command. Records use `docs/engineering/schemas/local-evidence.v1.json`.
 
-Machine: `Mac`, macOS-27.2.1-arm64-arm-64bit (Apple M5 Pro), Python 3.12.15, Node v24.22.3.
+Machine: `Nirs-MacBook-Pro.local`, macOS-27.2.1-arm64-arm-64bit (Apple M5 Pro), Python 3.12.15, Node v24.22.3.
 
-Fixtures on this host: `MODELANVIL_MLX_TEST_MODEL_DIR` (pinned SmolLM2-135M, every file hash checked) and `MODELANVIL_GGUF_TEST_MODEL` (FP16 GGUF converted from the pinned SmolLM2-135M-Instruct).
+Fixtures on this host: `MODELANVIL_MLX_TEST_MODEL_DIR` (pinned SmolLM2-135M, every file hash checked), `MODELANVIL_GGUF_TEST_MODEL` (FP16 GGUF converted from the pinned SmolLM2-135M-Instruct), `MODELANVIL_GGUF_TEST_QUANTIZED` (the Q8_0 and Q4_K_M copies recorded in the TASK-41 README) and `MODELANVIL_VULKAN_INFERENCE` (the CMake-built llama.cpp `f5027fb` `llama-server`, SHA-256 `4163f614da82e461430598f03b0c51bf84bf03f43429bbeac5ccc074b739e7f7`, with the Homebrew MoltenVK ICD and loader; `cpu_fallback` off).
 
 ## G-local and G-skip
 
@@ -14,16 +14,16 @@ Fixtures on this host: `MODELANVIL_MLX_TEST_MODEL_DIR` (pinned SmolLM2-135M, eve
 
 | Run | Command | Collected | Excluded by tag | Passed | Skipped / xfail / timeout |
 | --- | --- | --- | --- | --- | --- |
-| backend | `python manage.py test --noinput --exclude-tag=pg --exclude-tag=linux -v 1` | 1463 | 35 | 1463 | 0 / 0 / 0 |
+| backend | `python manage.py test --noinput --exclude-tag=pg --exclude-tag=linux -v 1` | 1475 | 35 | 1475 | 0 / 0 / 0 |
 | frontend-install | `npm --prefix web ci` | 0 | 0 | 0 | 0 / 0 / 0 |
 | frontend | `npm --prefix web test` | 252 | 0 | 252 | 0 / 0 / 0 |
 | frontend-build | `npm --prefix web run build` | 0 | 0 | 0 | 0 / 0 / 0 |
 | frontend-storybook | `npm --prefix web run build-storybook` | 0 | 0 | 0 | 0 / 0 / 0 |
 | pgvector | `python manage.py test --noinput --tag=pg -v 1` | 34 | 0 | 34 | 0 / 0 / 0 |
 
-Fixture tests not collected: 0, so all five MLX model tests ran in the PostgreSQL run on the Apple GPU. Against the previous record ([ANVIL-003 at `29b0d75`](../../anvil-003-2026-11-15/gates/gates.md): 1455 / 249 / 30), backend is 1463 (+8 new tests in `test_mlx_runtime`, `test_accelerator_support` and related modules), frontend 252 (+3 in `training-telemetry.test.mjs`) and PostgreSQL 34 (+4 MLX fixture tests tagged `pg`, which is why 35 instead of 31 are excluded from the backend run).
+Fixture tests not collected: 0, so all five MLX model tests ran in the PostgreSQL run and both native Vulkan tests ran in the backend run, on the Apple GPU. The counts add the two branches: backend 1475 is the 1463 of this branch's earlier record at `6226dc6` plus the 12 TASK-41 tests from `main` ([TASK-41 at `3381f9d`](../../task41-moltenvk-2026-11-15/gates/gates.md): 1467 / 249 / 30, which is 1455 + 12); frontend 252 and PostgreSQL 34 equal the earlier TASK-16 record, because TASK-41 added no frontend or `pg` tests. This record replaces the earlier one at `6226dc6`, which predates the merge of `main`.
 
-Excluded before the run by the `linux` tag on this macOS host: `modelanvil.runners.alignment.test_grpo.IsolatedVerifierTests.test_linux_verifier_measures_its_own_image_after_a_large_parent`. It checks Linux exec RSS inheritance and runs in the Linux backend run and in CI. Every other excluded ID is a `pg` test and ran in the PostgreSQL run (34 of 34).
+Excluded before the run by the `linux` tag on this macOS host: `modelanvil.runners.alignment.test_grpo.IsolatedVerifierTests.test_linux_verifier_measures_its_own_image_after_a_large_parent`. It checks Linux exec RSS inheritance and runs in the Linux backend run and in CI. Every other excluded ID is a `pg` test and ran in the PostgreSQL run.
 
 ## G-audit
 
