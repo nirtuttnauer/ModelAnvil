@@ -113,6 +113,10 @@ def select_device(report, selector, *, min_memory_bytes=0):
     """Resolve an explicit device in this process's visibility namespace."""
     if type(min_memory_bytes) is not int or min_memory_bytes < 0:
         raise AcceleratorError("Required memory must be a nonnegative integer number of bytes.")
+    if isinstance(selector, str) and re.fullmatch(r"vulkan(?::\d+)?", selector):
+        # TASK-41: llama.cpp Vulkan serves GGUF inference only; no tensor framework trains on it.
+        raise AcceleratorError("Vulkan is an inference-only GGUF backend in ModelAnvil; Vulkan training is not "
+                               "supported. Select cuda:N, rocm:N, xpu:N or mps:0 explicitly; CPU fallback is disabled.")
     if not isinstance(selector, str) or not re.fullmatch(r"(?:cuda|rocm|xpu):(?:0|[1-9][0-9]*)|mps(?::0)?", selector):
         raise AcceleratorError("Select cuda:N, rocm:N, xpu:N or mps:0 explicitly; CPU fallback is disabled.")
     selector = "mps:0" if selector == "mps" else selector

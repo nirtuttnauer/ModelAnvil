@@ -24,6 +24,9 @@ MODELANVIL_DEVICE_LOCK_ROOT = os.environ.get('MODELANVIL_DEVICE_LOCK_ROOT',
 
 # Trusted local CPU conversion tools; paths and SHA-256 pins never come from HTTP.
 MODELANVIL_CPU_EXPORT_TOOLS = json.loads(os.environ.get("MODELANVIL_CPU_EXPORT_TOOLS") or "{}")
+# TASK-41 inference-only llama.cpp Vulkan server (MoltenVK on the qualified Apple GPU) and the
+# operator's explicit CPU fallback opt-in; never supplied over HTTP.
+MODELANVIL_VULKAN_INFERENCE = json.loads(os.environ.get("MODELANVIL_VULKAN_INFERENCE") or "{}")
 # Separate from acquisition tokens: exact tenant/project/repository publication grants.
 MODELANVIL_HUB_EXPORT_TARGETS = json.loads(os.environ.get("MODELANVIL_HUB_EXPORT_TARGETS") or "{}")
 

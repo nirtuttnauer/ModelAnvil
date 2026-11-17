@@ -52,7 +52,7 @@ They are listed on the test records as `fixture_tests_not_collected`. The skip g
 - `gitleaks dir --redact` on the working tree at `b383764d495faa5ba5bb65d108ee33b46e1ed5fd` exited 1 with 404 findings, all rule `generic-api-key`. Console: `gitleaks-dir.summary.txt`. Findings: `gitleaks-dir.txt`.
 - `gitleaks detect --redact` at that SHA scanned 164 commits and exited 1 with 411 findings, all rule `generic-api-key`. Console: `gitleaks-detect.summary.txt`. Findings: `gitleaks-detect.txt`.
 
-The saved reports redact match text (`Secret` is `REDACTED`). The finding identity is the rule, file, line, and commit. There is no QA-signed ANVIL-017 triage list anywhere in the repository, so none of the 411 history findings can be matched to one. This gate is unmet.
+The saved reports redact match text (`Secret` is `REDACTED`). On 2026-11-15 (TASK-75, ANVIL-006) the 35 commit-author `Email` values in `gitleaks-detect.txt` that held a legacy owner address were replaced with `[legacy owner address redacted 2026-11-15]`; every other byte of the report is unchanged. The finding identity is the rule, file, line, and commit. There is no QA-signed ANVIL-017 triage list anywhere in the repository, so none of the 411 history findings can be matched to one. This gate is unmet.
 
 ## Gate G-rag
 

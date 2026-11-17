@@ -12610,7 +12610,8 @@
           },
           "device": {
             "type": "string",
-            "default": "cpu"
+            "default": "cpu",
+            "description": "Explicit local device: cpu, mps:0, mlx:0 or, for GGUF models only, vulkan:0 (inference-only llama.cpp Vulkan backend qualified only for the Apple M5 Pro GPU through MoltenVK 1.4.2 on macOS 27.2.1; no Vulkan training). An unavailable vulkan:0 fails closed unless the operator opted in to CPU fallback; a fallback response reports device cpu, requested_device and a fallback record in the modelanvil object and is never labelled GPU execution."
           },
           "stream": {
             "type": "boolean",

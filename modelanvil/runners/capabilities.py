@@ -99,9 +99,10 @@ def model_capabilities(version):
             from modelanvil.runners.gguf_runtime import MAX_WEIGHT_BYTES
             if not 0 < weight_bytes <= MAX_WEIGHT_BYTES:
                 raise ValueError('CPU GGUF weights must fit within the verified 1 GiB limit.')
-            if not find_spec('xllamacpp'):
+            from modelanvil.runners import vulkan_runtime
+            devices = (['cpu'] if find_spec('xllamacpp') else []) + (['vulkan:0'] if vulkan_runtime.installed() else [])
+            if not devices:
                 raise ValueError('Install the optional llama.cpp runtime for CPU GGUF inference.')
-            devices = ['cpu']
         elif format == 'mlx':
             from modelanvil.runners.inference import validate_mlx_profile
             validate_mlx_profile(config, weight_bytes, native_adapter=bool(plan.get('trained') and plan.get('recipe') == 'qlora_adapter'))

@@ -566,6 +566,7 @@ class InferenceViewSet(TenantScopedViewSet):
                                **({'_runtime': runtime_evidence} if runtime_evidence else {})})
         output = ''
         measurement = {}
+        session = {}
 
         def assert_current():
             from modelanvil.identity.auth import ApiKeyAuthentication, TenantRBAC
@@ -592,9 +593,13 @@ class InferenceViewSet(TenantScopedViewSet):
             return inference_replay.headers(response, replay, True)
 
         def completion_body(final):
+            # Opt-in CPU fallback reports the device that actually ran, never the requested GPU.
+            fallback = session.get('fallback')
             return {**base, 'object': 'chat.completion', 'choices': [{'index': 0,
                 'message': {'role': 'assistant', 'content': output}, 'finish_reason': final['finish_reason']}],
-                'usage': final['usage'], 'modelanvil': {'device': options['device'], 'elapsed_seconds': final['elapsed_seconds'],
+                'usage': final['usage'], 'modelanvil': {'device': fallback['actual_device'] if fallback else options['device'],
+                    'elapsed_seconds': final['elapsed_seconds'],
+                    **({'requested_device': options['device'], 'fallback': fallback} if fallback else {}),
                     **({'runtime': runtime_evidence} if runtime_evidence else {})}}
 
         def record_finish(status, final=None):
@@ -604,8 +609,13 @@ class InferenceViewSet(TenantScopedViewSet):
             provider_evidence = {'provider_snapshot': {**record.provider_snapshot, 'reported_model': final.get('provider_model')}} if provider is not None and status == 'completed' else {}
             from django.db import transaction
             if status == 'completed' and provider is None:
-                from modelanvil.runners.inference import runtime_observation
+                from modelanvil.runners.inference import runtime_observation, runtime_provenance, runtime_signature
                 runtime_evidence['observation'] = runtime_observation(session)
+                if session.get('fallback'):
+                    # A fallback receipt is CPU evidence; it cannot load-test the requested GPU device.
+                    actual = session['fallback']['actual_device']
+                    runtime_evidence.update(device=actual, requested_device=options['device'],
+                        signature=runtime_signature(guard.format, actual), provenance=runtime_provenance(guard.format, actual))
                 record.configuration['_runtime'] = runtime_evidence
             with transaction.atomic():
                 changed = InferenceRequest.all_objects.filter(pk=record.pk, status='running').update(status=status,
@@ -621,7 +631,7 @@ class InferenceViewSet(TenantScopedViewSet):
                     temperature=options['temperature'], seed=options['seed'], prompt_format=options['prompt_format'], device=options['device']))
             else:
                 session = stack.enter_context(local_session(version, tenant=tenant, project=project.pk, device=options['device'],
-                    **({'image_id': image_id} if image_id is not None else {})))
+                    allow_cpu_fallback=True, **({'image_id': image_id} if image_id is not None else {})))
                 measurement = session.setdefault('measurement', {})
                 parts = generate(session, options['messages'], max_tokens=options['max_tokens'],
                                  temperature=options['temperature'], seed=options['seed'], prompt_format=options['prompt_format'])

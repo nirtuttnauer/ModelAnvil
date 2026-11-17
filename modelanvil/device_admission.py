@@ -22,7 +22,9 @@ def host_key():
 def device_key(selector):
     if not isinstance(selector, str):
         raise ValueError('Select an explicit supported local device.')
-    if selector in {'mps:0', 'mlx:0'}:
+    # vulkan:0 is qualified only as MoltenVK on this Apple GPU, so it shares the physical Apple lease;
+    # the Vulkan runtime refuses any other device before loading.
+    if selector in {'mps:0', 'mlx:0', 'vulkan:0'}:
         return 'apple-0'
     if selector == 'cpu':
         return 'cpu'

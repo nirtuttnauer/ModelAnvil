@@ -1,0 +1,108 @@
+{
+  "binaries": {
+    "llama-bench": {
+      "linked_libraries": [
+        "/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+      ],
+      "metal_symbol_count": 0,
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb-cmake/bin/llama-bench",
+      "sha256": "1963820b9b66da42e820aa10894830eea6628165b7c32d4bd2c5d2afb078abce"
+    },
+    "llama-completion": {
+      "linked_libraries": [
+        "/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+      ],
+      "metal_symbol_count": 0,
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb-cmake/bin/llama-completion",
+      "sha256": "63ac979c8e2af038226c6ea21e77cc6b55bcf87176bf37c822acdaa1a59d7e4b"
+    },
+    "llama-quantize": {
+      "linked_libraries": [
+        "/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+      ],
+      "metal_symbol_count": 0,
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb-cmake/bin/llama-quantize",
+      "sha256": "da27544a69c5b5ba9b3faf0f7a4f1c215fd03f8a3c60c8876841bb7b8f7a41e5"
+    },
+    "llama-server": {
+      "linked_libraries": [
+        "/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+      ],
+      "metal_symbol_count": 0,
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb-cmake/bin/llama-server",
+      "sha256": "1101140b2d8b099f3b5ee1c35900cf566a42627f9b50fc65c33057fa94e786fc"
+    },
+    "test-backend-ops": {
+      "linked_libraries": [
+        "/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)",
+        "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate (compatibility version 1.0.0, current version 4.0.0)",
+        "/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)"
+      ],
+      "metal_symbol_count": 0,
+      "path": "/Users/nirtuttnauer/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb-cmake/bin/test-backend-ops",
+      "sha256": "fd3830592584a39440e90a7035adb3bc9f22efb7888078a761cc6cc826af4048"
+    }
+  },
+  "blas_compiled": false,
+  "build_command": "cmake --build ~/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb-cmake --config Release -j 8 --target llama-server llama-completion llama-bench llama-quantize test-backend-ops",
+  "build_system": "cmake version 4.5.0",
+  "cmake_cache": {
+    "BUILD_SHARED_LIBS": "OFF",
+    "CMAKE_BUILD_TYPE": "Release",
+    "CMAKE_CXX_COMPILER": "/usr/bin/c++",
+    "CMAKE_C_COMPILER": "/usr/bin/cc",
+    "CMAKE_OSX_DEPLOYMENT_TARGET": "",
+    "CMAKE_OSX_SYSROOT": "",
+    "GGML_ACCELERATE": "ON",
+    "GGML_BACKEND_DL": "OFF",
+    "GGML_BLAS": "OFF",
+    "GGML_CPU_ALL_VARIANTS": "OFF",
+    "GGML_CPU_KLEIDIAI": "OFF",
+    "GGML_CPU_REPACK": "ON",
+    "GGML_CUDA": "OFF",
+    "GGML_LLAMAFILE": "ON",
+    "GGML_METAL": "OFF",
+    "GGML_NATIVE": "ON",
+    "GGML_OPENMP": "ON",
+    "GGML_RPC": "OFF",
+    "GGML_SCHED_MAX_COPIES": "4",
+    "GGML_VULKAN": "OFF",
+    "LLAMA_BUILD_UI": "OFF",
+    "LLAMA_CONNECT": "OFF",
+    "LLAMA_LLGUIDANCE": "OFF",
+    "LLAMA_OPENSSL": "OFF",
+    "LLAMA_SUBPROCESS": "ON",
+    "LLAMA_USE_PREBUILT_UI": "OFF"
+  },
+  "compiler_version": "Apple clang version 21.0.0 (clang-2100.4.1.1)",
+  "configure_command": "cmake -S ~/.cache/modelanvil-tools/src/llama.cpp-f5027fb -B ~/.cache/modelanvil-tools/llama.cpp-cpu-f5027fb-cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DGGML_VULKAN=OFF -DGGML_METAL=OFF -DGGML_BLAS=OFF -DLLAMA_OPENSSL=OFF -DGGML_NATIVE=ON -DLLAMA_BUILD_UI=OFF -DLLAMA_USE_PREBUILT_UI=OFF",
+  "ggml_cpu_flags": [
+    "-DACCELERATE_LAPACK_ILP64",
+    "-DACCELERATE_NEW_LAPACK",
+    "-DGGML_SCHED_MAX_COPIES=4",
+    "-DGGML_USE_ACCELERATE",
+    "-DGGML_USE_CPU_REPACK",
+    "-DGGML_USE_LLAMAFILE",
+    "-D_DARWIN_C_SOURCE",
+    "-D_XOPEN_SOURCE=600",
+    "-O3",
+    "-DNDEBUG",
+    "-std=gnu11",
+    "-U__ARM_FEATURE_SVE",
+    "-mcpu=native+dotprod+i8mm+nosve+sme"
+  ],
+  "llama_build_number": 11836,
+  "llama_commit": "f5027fb21307eb264aed483242603d68c87b0fe3",
+  "metal_compiled": false,
+  "source_tree_clean": true,
+  "translation_units_in_compile_database": 325,
+  "vulkan": false
+}
