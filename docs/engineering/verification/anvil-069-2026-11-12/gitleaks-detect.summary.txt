@@ -1,0 +1,4 @@
+2:45PM INF 224 commits scanned.
+2:45PM INF scanned ~42739410 bytes (42.74 MB) in 2.98s
+2:45PM WRN leaks found: 36
+EXIT_DETECT:1
